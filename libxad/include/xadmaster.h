@@ -570,7 +570,6 @@ struct xadSpecial
 #define XADFIB_XADSTRFILENAME  18 /* the xfi_FileName fields is an XAD string (V12) */
 #define XADFIB_XADSTRLINKNAME  19 /* the xfi_LinkName fields is an XAD string (V12) */
 #define XADFIB_XADSTRCOMMENT   20 /* the xfi_Comment fields is an XAD string (V12) */
-#define XADFIB_MACBINARY       21 /* file is MacBinary encoded (hack) */
 
 #define XADFIF_CRYPTED          (1<<XADFIB_CRYPTED)
 #define XADFIF_DIRECTORY        (1<<XADFIB_DIRECTORY)
@@ -593,7 +592,6 @@ struct xadSpecial
 #define XADFIF_XADSTRFILENAME   (1<<XADFIB_XADSTRFILENAME)
 #define XADFIF_XADSTRLINKNAME   (1<<XADFIB_XADSTRLINKNAME)
 #define XADFIF_XADSTRCOMMENT    (1<<XADFIB_XADSTRCOMMENT)
-#define XADFIF_MACBINARY        (1<<XADFIB_MACBINARY)
 
 /* NOTE: the texts passed with that structure must not always be printable.
    Although the clients should add an additional (not counted) zero at the text

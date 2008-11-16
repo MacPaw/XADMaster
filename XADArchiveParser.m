@@ -3,6 +3,7 @@
 
 #import "XADZipParser.h"
 #import "XADGZipParser.h"
+#import "XADLibXADParser.h"
 
 const NSString *XADFileNameKey=@"XADFileName";
 const NSString *XADFileSizeKey=@"XADFileSize";
@@ -16,6 +17,8 @@ const NSString *XADFinderFlagsKey=@"XADFinderFlags";
 const NSString *XADPosixPermissionsKey=@"XADPosixPermissions";
 const NSString *XADPosixUserKey=@"XADPosixUser";
 const NSString *XADPosixGroupKey=@"XADGroupUser";
+const NSString *XADPosixUserNameKey=@"XADPosixUser";
+const NSString *XADPosixGroupNameKey=@"XADGroupUser";
 const NSString *XADIsEncryptedKey=@"XADIsEncrypted";
 const NSString *XADIsDirectoryKey=@"XADIsDirectory";
 const NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
@@ -36,6 +39,7 @@ static int maxheader=0;
 	parserclasses=[[NSMutableArray arrayWithObjects:
 		[XADZipParser class],
 		[XADGZipParser class],
+		[XADLibXADParser class],
 	nil] retain];
 
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
@@ -84,7 +88,7 @@ static int maxheader=0;
 	if(self=[super init])
 	{
 		sourcehandle=[handle retain];
-		name=[[name lastPathComponent] retain];
+		archivename=[[name lastPathComponent] retain];
 
 		delegate=nil;
 		password=nil;
@@ -159,7 +163,19 @@ static int maxheader=0;
 
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding
 {
-	return [XADString XADStringWithString:[[[NSString alloc] initWithData:[NSData dataWithBytes:bytes length:length] encoding:encoding] autorelease]];
+	return [XADString XADStringWithString:[[[NSString alloc] initWithData:
+	[NSData dataWithBytes:bytes length:length] encoding:encoding] autorelease]];
+}
+
+-(XADString *)XADStringWithCString:(const void *)string
+{
+	return [stringsource XADStringWithData:[NSData dataWithBytes:string length:strlen(string)]];
+}
+
+-(XADString *)XADStringWithCString:(const void *)string encoding:(NSStringEncoding)encoding
+{
+	return [XADString XADStringWithString:[[[NSString alloc] initWithData:
+	[NSData dataWithBytes:string length:strlen(string)] encoding:encoding] autorelease]];
 }
 
 -(NSData *)encodedPassword

@@ -3,50 +3,29 @@
 
 @interface XADLibXADParser:XADArchiveParser
 {
-	XADArchivePipe *pipe;
-	XADError lasterror;
-
-	NSString *filename;
-	NSArray *volumes;
-	NSData *memdata;
-	XADArchive *parentarchive;
-
-	id delegate;
-	NSStringEncoding name_encoding;
-	NSString *password;
-	NSTimeInterval update_interval;
-	double update_time;
+//	XADArchivePipe *pipe;
+//	XADError lasterror;
 
 	struct xadMasterBase *xmb;
 	struct xadArchiveInfo *archive;
-	struct Hook progresshook;
+	struct Hook inhook,progresshook;
 
-	NSMutableArray *fileinfos;
-	NSMutableDictionary *dittoforks;
-	NSMutableArray *writeperms;
-
-	int currentry;
-	xadSize extractsize,totalsize;
-	NSString *immediatedestination;
-	BOOL immediatefailed;
-
-	UniversalDetector *detector;
-	NSStringEncoding detected_encoding;
-	float detector_confidence;
-
+	BOOL addonbuild;
+	int numadded;
 }
 
--(BOOL)_finishInit:(xadTAGPTR)tags error:(XADError *)error;
--(xadUINT32)_newEntryCallback:(struct xadProgressInfo *)info;
++(int)requiredHeaderSize;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
--(NSData *)_contentsOfFileInfo:(struct xadFileInfo *)info;
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
+-(void)dealloc;
 
--(void)setProgressInterval:(NSTimeInterval)interval;
--(xadUINT32)_progressCallback:(struct xadProgressInfo *)info;
+-(void)parse;
+-(void)newEntryCallback:(struct xadProgressInfo *)proginfo;
+-(NSMutableDictionary *)dictionaryForFileInfo:(struct xadFileInfo *)info;
 
--(struct xadMasterBase *)xadMasterBase;
--(struct xadArchiveInfo *)xadArchiveInfo;
--(struct xadFileInfo *)xadFileInfoForEntry:(int)n;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)properties;
 
+-(NSString *)formatName;
 
 @end

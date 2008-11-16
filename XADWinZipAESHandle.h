@@ -10,9 +10,6 @@
 	int keybytes;
 	off_t startoffs;
 
-	NSData *salt;
-	int verify;
-
 	AES_KEY key;
 	uint8_t counter[16],aesbuffer[16];
 	HMAC_CTX hmac;

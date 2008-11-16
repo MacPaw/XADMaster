@@ -20,19 +20,18 @@ static uint8_t DecryptByte(XADZipCryptHandle *self)
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata testByte:(uint8_t)testbyte
 {
-	NSData *headerdata=[handle readDataOfLength:12];
 	if(self=[super initWithHandle:handle length:length-12])
 	{
-		header=[headerdata retain];
 		password=[passdata retain];
 		test=testbyte;
+
+		[self setParentStartOffset:[handle offsetInFile]];
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[header release];
 	[password release];
 	[super dealloc];
 }
@@ -49,10 +48,9 @@ static uint8_t DecryptByte(XADZipCryptHandle *self)
 	const uint8_t *passbytes=[password bytes];
 	for(int i=0;i<passlength;i++) UpdateKeys(self,passbytes[i]);
 
-	const uint8_t *headbytes=[header bytes];
 	for(int i=0;i<12;i++)
 	{
-		uint8_t b=headbytes[i]^DecryptByte(self);
+		uint8_t b=CSFilterNextByte(self)^DecryptByte(self);
 		UpdateKeys(self,b);
 		if(i==11&&b!=test) [XADException raisePasswordException];
 	}

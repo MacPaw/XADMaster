@@ -15,7 +15,7 @@
 -(void)parseZipExtraWithDictionary:(NSMutableDictionary *)dict length:(int)length;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict;
--(CSHandle *)decompressionHandleWithHandle:(CSHandle *)parent method:(int)method size:(off_t)size;
+-(CSHandle *)decompressionHandleWithHandle:(CSHandle *)parent method:(int)method flags:(int)flags size:(off_t)size;
 
 -(NSString *)formatName;
 

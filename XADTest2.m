@@ -19,9 +19,12 @@
 	for(int i=0;i<length;i++) crc=XADCRC32(crc,bytes[i],XADCRC32Table_edb88320);
 	NSLog(@"crc: %d length:%d",~crc,length);
 
-//	NSMutableString *name=[NSMutableString stringWithString:[[dict objectForKey:XADFileNameKey] string]];
-//	[name replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[name length])];
-//	[data writeToFile:name atomically:YES];
+/*	if(~crc!=[[dict objectForKey:@"ZipCRC32"] unsignedIntValue])
+	{
+		NSMutableString *name=[NSMutableString stringWithString:[[dict objectForKey:XADFileNameKey] string]];
+		[name replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[name length])];
+		[data writeToFile:name atomically:YES];
+	}*/
 
 	NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,[data length]<256?[data length]:256)]);
 }

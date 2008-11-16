@@ -10,9 +10,6 @@
 		parent=[handle retain];
 		password=[passdata retain];
 		keybytes=keylength;
-
-		salt=[handle copyDataOfLength:keybytes/2];
-		verify=[handle readUInt16LE];
 		startoffs=[handle offsetInFile];
 
 		hmac_inited=NO;
@@ -24,7 +21,6 @@
 {
 	[parent release];
 	[password release];
-	[salt release];
 
 	if(hmac_inited) HMAC_CTX_cleanup(&hmac);
 
@@ -69,9 +65,9 @@ static void DeriveKey(NSData *password,NSData *salt,int iterations,uint8_t *keyb
 	[parent seekToFileOffset:startoffs];
 
 	uint8_t keybuf[2*keybytes+2];
-	DeriveKey(password,salt,1000,keybuf,sizeof(keybuf));
+	DeriveKey(password,[parent readDataOfLength:keybytes/2],1000,keybuf,sizeof(keybuf));
 
-	if(keybuf[2*keybytes]+(keybuf[2*keybytes+1]<<8)!=verify) [XADException raisePasswordException];
+	if([parent readUInt16LE]!=keybuf[2*keybytes]+(keybuf[2*keybytes+1]<<8)) [XADException raisePasswordException];
 
 	AES_set_encrypt_key(keybuf,keybytes*8,&key);
 	memset(counter,0,16);

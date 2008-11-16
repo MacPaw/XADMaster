@@ -1,6 +1,7 @@
 #import "CSFilterHandle.h"
 
 NSString *CSFilterEOFReachedException=@"CSFilterEOFReachedException";
+NSString *CSFilterInvalidDataException=@"CSFilterInvalidDataException";
 
 @implementation CSFilterHandle
 
@@ -47,6 +48,11 @@ NSString *CSFilterEOFReachedException=@"CSFilterEOFReachedException";
 	[filterparent release];
 	free(filterbuffer);
 	[super dealloc];
+}
+
+-(void)setParentStartOffset:(off_t)offset
+{
+	filterstartoffs=offset;
 }
 
 -(void)seekParentToFileOffset:(off_t)offset

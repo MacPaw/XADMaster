@@ -1,6 +1,6 @@
 #import "CSStreamHandle.h"
 
-
+extern NSString *CSFilterInvalidDataException;
 
 @interface CSFilterHandle:CSStreamHandle
 {
@@ -20,6 +20,7 @@
 -(id)initAsCopyOf:(CSFilterHandle *)other;
 -(void)dealloc;
 
+-(void)setParentStartOffset:(off_t)offset;
 -(void)seekParentToFileOffset:(off_t)offset;
 
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer;

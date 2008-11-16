@@ -40,6 +40,7 @@
 	int centraloffset=[fh readUInt32LE];
 	int commentlength=[fh readUInt16LE];
 
+	// TODO: multi-archives
 	NSLog(@"disknumber:%d centraldirstartdisk:%d numentriesdisk:%d numentries:%d centralsize:%d centraloffset:%d",
 	disknumber,centraldirstartdisk,numentriesdisk,numentries,centralsize,centraloffset);
 
@@ -91,7 +92,7 @@
 			uint32_t localuncompsize=[fh readUInt32LE];
 			int localnamelength=[fh readUInt16LE];
 			int localextralength=[fh readUInt16LE];
-NSLog(@"date:%x",localdate);
+
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithInt:extractversion],@"ZipExtractVersion",
 				[NSNumber numberWithInt:flags],@"ZipFlags",
@@ -102,7 +103,6 @@ NSLog(@"date:%x",localdate);
 				[NSNumber numberWithUnsignedLong:compsize],XADCompressedSizeKey,
 				[NSNumber numberWithUnsignedLong:uncompsize],XADFileSizeKey,
 				[NSNumber numberWithLongLong:[fh offsetInFile]+localnamelength+localextralength],XADDataOffsetKey,
-				// fi2->xfi_EntryInfo = ziptypes[ZIPPI(fi2)->CompressionMethod];
 			nil];
 			if(flags&0x01) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 
@@ -118,7 +118,7 @@ NSLog(@"date:%x",localdate);
 				case 6: compressionname=@"imploded"; break;
 				case 8: compressionname=@"deflated"; break;
 			}
-			if(compressionname) [dict setObject:compressionname forKey:XADCompressionNameKey];
+			if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
 
 			NSData *namedata=nil;
 			if(localnamelength)
@@ -198,14 +198,13 @@ NSLog(@"date:%x",localdate);
 			[NSNumber numberWithInt:0],@"ZipExtractVersion",
 			[NSNumber numberWithInt:0],@"ZipFlags",
 			[NSNumber numberWithInt:0],@"ZipCompressionMethod",
-			[NSDate dateWithTimeIntervalSinceNow:0],XADLastModificationDateKey,
 			//[NSNumber numberWithUnsignedInt:crc],@"ZipCRC32",
 			[NSNumber numberWithUnsignedLong:commentlength],XADCompressedSizeKey,
 			[NSNumber numberWithUnsignedLong:commentlength],XADFileSizeKey,
 			[NSNumber numberWithLongLong:commentoffs],XADDataOffsetKey,
 			[self XADStringWithString:@"ZipComment.txt"],XADFileNameKey,
 		nil];
-		// TODO: no filename, no date flags, metadata flag
+		// TODO: no filename, metadata flag
 
 		[self addEntryWithDictionary:dict];
 	}
@@ -317,7 +316,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			{
 				int ctype=[fh readUInt16LE];
 				[fh skipBytes:4]; // skip CRC
-				mh=[self decompressionHandleWithHandle:fh method:ctype size:len];
+				mh=[self decompressionHandleWithHandle:fh method:ctype flags:0 size:len];
 			}
 			if(mh&&len>=26)
 			{
@@ -403,6 +402,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	CSHandle *fh=[self handleAtDataOffsetForDictionary:dict];
 
 	int compressionmethod=[[dict objectForKey:@"ZipCompressionMethod"] intValue];
+	int flags=[[dict objectForKey:@"ZipFlags"] intValue];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
 
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
@@ -434,7 +434,6 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		}
 		else
 		{
-			int flags=[[dict objectForKey:@"ZipFlags"] intValue];
 			if(flags&0x40) [XADException raiseNotSupportedException];
 
 			uint8_t test;
@@ -446,18 +445,19 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		}
 	}
 
-	CSHandle *handle=[self decompressionHandleWithHandle:fh method:compressionmethod size:size];
+	CSHandle *handle=[self decompressionHandleWithHandle:fh method:compressionmethod flags:flags size:size];
 	if(!handle) [XADException raiseNotSupportedException];
 	return handle;
 }
 
--(CSHandle *)decompressionHandleWithHandle:(CSHandle *)parent method:(int)method size:(off_t)size
+-(CSHandle *)decompressionHandleWithHandle:(CSHandle *)parent method:(int)method flags:(int)flags size:(off_t)size
 {
 	switch(method)
 	{
 		case 0: return [parent nonCopiedSubHandleOfLength:size];
 		case 1: return [[[XADZipShrinkHandle alloc] initWithHandle:parent length:size] autorelease];
-//		case 6: return [[[XADZipImplodeHandle alloc] initWith:] autorelease];
+		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
+						largeDictionary:flags&0x02 literalTree:flags&0x04] autorelease];
 		case 8: return [CSZlibHandle zlibNoHeaderHandleWithHandle:parent length:size];
 		// case 9:
 		default: return nil;

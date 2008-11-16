@@ -15,6 +15,8 @@ extern const NSString *XADFinderFlagsKey;
 extern const NSString *XADPosixPermissionsKey;
 extern const NSString *XADPosixUserKey;
 extern const NSString *XADPosixGroupKey;
+extern const NSString *XADPosixUserNameKey;
+extern const NSString *XADPosixGroupNameKey;
 extern const NSString *XADIsEncryptedKey;
 extern const NSString *XADIsDirectoryKey;
 extern const NSString *XADIsMacBinaryKey;
@@ -73,6 +75,8 @@ extern const NSString *XADFinderFlags;
 -(XADString *)XADStringWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length;
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding;
+-(XADString *)XADStringWithCString:(const void *)string;
+-(XADString *)XADStringWithCString:(const void *)string encoding:(NSStringEncoding)encoding;
 
 -(void)setEncrypted:(BOOL)encryptedflag;
 -(NSData *)encodedPassword;

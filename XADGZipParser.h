@@ -4,7 +4,6 @@
 
 @interface XADGZipParser:XADArchiveParser
 {
-	off_t datapos;
 }
 
 +(int)requiredHeaderSize;

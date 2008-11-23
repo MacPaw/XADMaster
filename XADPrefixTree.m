@@ -1,5 +1,7 @@
 #import "XADPrefixTree.h"
 
+NSString *XADInvalidPrefixCodeException=@"XADInvalidPrefixCodeException";
+
 @implementation XADPrefixTree
 
 static inline int *NodePointer(XADPrefixTree *self,int node) { return self->tree[node]; }
@@ -23,25 +25,25 @@ static inline BOOL IsLeafNode(XADPrefixTree *self,int node) { return NodePointer
 static inline void SetLeaf(XADPrefixTree *self,int node,int value) { NodePointer(self,node)[0]=NodePointer(self,node)[1]=value; }
 
 
-int CSFilterNextSymbolFromTree(CSFilterHandle *filter,XADPrefixTree *tree)
+int CSInputNextSymbolFromTree(CSInputBuffer *buf,XADPrefixTree *tree)
 {
 	int node=0;
 	for(;;)
 	{
-		int bit=CSFilterNextBit(filter);
-		if(IsOpenBranch(tree,node,bit)) [NSException raise:CSFilterInvalidDataException format:@"Invalid prefix code in bitstream"];
+		int bit=CSInputNextBit(buf);
+		if(IsOpenBranch(tree,node,bit)) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
 		node=Branch(tree,node,bit);
 		if(IsLeafNode(tree,node)) return Leaf(tree,node);
 	}
 }
 
-int CSFilterNextSymbolFromTreeLE(CSFilterHandle *filter,XADPrefixTree *tree)
+int CSInputNextSymbolFromTreeLE(CSInputBuffer *buf,XADPrefixTree *tree)
 {
 	int node=0;
 	for(;;)
 	{
-		int bit=CSFilterNextBitLE(filter);
-		if(IsOpenBranch(tree,node,bit)) [NSException raise:CSFilterInvalidDataException format:@"Invalid prefix code in bitstream"];
+		int bit=CSInputNextBitLE(buf);
+		if(IsOpenBranch(tree,node,bit)) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
 		node=Branch(tree,node,bit);
 		if(IsLeafNode(tree,node)) return Leaf(tree,node);
 	}
@@ -60,6 +62,7 @@ int CSFilterNextSymbolFromTreeLE(CSFilterHandle *filter,XADPrefixTree *tree)
 		tree[0][1]=-2;
 		numentries=1;
 		isstatic=NO;
+		stack=nil;
 	}
 	return self;
 }
@@ -77,6 +80,7 @@ int CSFilterNextSymbolFromTreeLE(CSFilterHandle *filter,XADPrefixTree *tree)
 -(void)dealloc
 {
 	if(!isstatic) free(tree);
+	[stack release];
 	[super dealloc];
 }
 
@@ -126,4 +130,52 @@ int CSFilterNextSymbolFromTreeLE(CSFilterHandle *filter,XADPrefixTree *tree)
 	SetLeaf(self,lastnode,value);
 }
 
+-(void)startBuildingTree
+{
+	currnode=0;
+	if(!stack) stack=[NSMutableArray new];
+	else [stack removeAllObjects];
+}
+
+-(void)startZeroBranch
+{
+	int new=NewNode(self);
+	SetBranch(self,currnode,0,new);
+	[self _pushNode];
+	currnode=new;
+}
+
+-(void)startOneBranch
+{
+	int new=NewNode(self);
+	SetBranch(self,currnode,1,new);
+	[self _pushNode];
+	currnode=new;
+}
+
+-(void)finishBranches
+{
+	[self _popNode];
+}
+
+-(void)makeLeafWithValue:(int)value
+{
+	SetLeaf(self,currnode,value);
+	[self _popNode];
+}
+
+-(void)_pushNode
+{
+	[stack addObject:[NSNumber numberWithInt:currnode]];
+}
+
+-(void)_popNode
+{
+	if(![stack count]) return; // the final pop will underflow the stack otherwise
+	NSNumber *num=[stack lastObject];
+	[stack removeLastObject];
+	currnode=[num intValue];
+}
+
 @end
+

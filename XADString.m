@@ -78,7 +78,9 @@
 -(NSString *)description
 {
 	// TODO: more info?
-	return [self string];
+	NSString *str=[self string];
+	if(str) return str;
+	else return [data description];
 }
 
 @end
@@ -109,10 +111,11 @@
 
 	// check if string is ASCII, and convert it directly to an NSString if it is
 	const char *ptr=[data bytes];
-	for(;*ptr;ptr++) if(*ptr<0x20||*ptr>=0x80) break;
+	int length=[data length];
+	for(int i=0;i<length;i++) if(*ptr<0x20||*ptr>=0x80)
+	return [[[XADString alloc] initWithData:data source:self] autorelease];
 
-	if(*ptr) return [[[XADString alloc] initWithData:data source:self] autorelease];
-	else return [[[XADString alloc] initWithString:[[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease]] autorelease];
+	return [[[XADString alloc] initWithString:[[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease]] autorelease];
 }
 
 -(XADString *)XADStringWithString:(NSString *)string

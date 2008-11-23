@@ -8,7 +8,7 @@
 +(void)raiseNotSupportedException  { [self raiseExceptionWithXADError:XADNotSupportedError]; }
 +(void)raisePasswordException { [self raiseExceptionWithXADError:XADPasswordError]; }
 +(void)raiseDecrunchException { [self raiseExceptionWithXADError:XADDecrunchError]; }
-+(void)raiseChecksumError { [self raiseExceptionWithXADError:XADChecksumError]; }
++(void)raiseChecksumException { [self raiseExceptionWithXADError:XADChecksumError]; }
 +(void)raiseDataFormatException { [self raiseExceptionWithXADError:XADDataFormatError]; }
 
 +(void)raiseExceptionWithXADError:(XADError)errnum

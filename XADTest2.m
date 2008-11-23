@@ -1,5 +1,7 @@
+
+
 #import <XADMaster/XADArchiveParser.h>
-#import <XADChecksums.h>
+#import <XADMaster/XADChecksums.h>
 
 @interface TestDelegate:NSObject
 @end
@@ -10,23 +12,46 @@
 {
 	NSLog(@"%@",dict);
 
-	CSHandle *fh=[parser handleForEntryWithDictionary:dict];
+	CSHandle *fh=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
+
 	NSData *data=[fh remainingFileContents];
 
-	uint32_t crc=0xffffffff;
-	int length=[data length];
-	const uint8_t *bytes=[data bytes];
-	for(int i=0;i<length;i++) crc=XADCRC32(crc,bytes[i],XADCRC32Table_edb88320);
-	NSLog(@"crc: %d length:%d",~crc,length);
-
-/*	if(~crc!=[[dict objectForKey:@"ZipCRC32"] unsignedIntValue])
+//	if(~crc!=[[dict objectForKey:@"ZipCRC32"] unsignedIntValue])
+/*	if(![dict objectForKey:XADIsResourceForkKey])
 	{
 		NSMutableString *name=[NSMutableString stringWithString:[[dict objectForKey:XADFileNameKey] string]];
 		[name replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[name length])];
 		[data writeToFile:name atomically:YES];
 	}*/
 
+	NSLog(@"Checksum: %@, Length: %d",[fh hasChecksum]?[fh isChecksumCorrect]?@"Correct":@"Incorrect":@"Unknown",[data length]);
+
 	NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,[data length]<256?[data length]:256)]);
+
+	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
+	NSString *subname=[[dict objectForKey:XADFileNameKey] string];
+	NSString *ext=[[subname pathExtension] lowercaseString];
+	if([ext isEqual:@"sit"]&&!(rsrc&&[rsrc boolValue]))
+	{
+		NSMutableString *name=[NSMutableString stringWithString:[[dict objectForKey:XADFileNameKey] string]];
+		[name replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[name length])];
+		[data writeToFile:name atomically:YES];
+
+		[fh seekToFileOffset:0];
+
+//@try {
+		XADArchiveParser *parser=[XADArchiveParser archiveParserForHandle:fh name:subname];
+
+		NSLog(@"----------- Parsing sub-archive %@ -----------",subname);
+
+		[parser setDelegate:[[TestDelegate new] autorelease]];
+		[parser parse];
+
+		NSLog(@"----------- Finished sub-archive %@ -----------",subname);
+//} @catch(id e) {
+//	NSLog(@"Failed to parse sub archive %@ due to exception: %@",subname,e);
+//}
+	}
 }
 
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser
@@ -47,7 +72,7 @@ int main(int argc,char **argv)
 
 		NSLog(@"Parsing %@",filename);
 
-		[parser setDelegate:[TestDelegate new]];
+		[parser setDelegate:[[TestDelegate new] autorelease]];
 		[parser setPassword:@"test"];
 //		[parser setPassword:@"www.joomla.com.tr"];
 

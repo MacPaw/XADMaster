@@ -1,7 +1,7 @@
-#import "CSFilterHandle.h"
+#import "CSByteStreamHandle.h"
 #import "XADPrefixTree.h"
 
-@interface XADZipImplodeHandle:CSFilterHandle
+@interface XADZipImplodeHandle:CSByteStreamHandle
 {
 	uint8_t *dictionarywindow;
 	int dictionarymask,offsetbits;
@@ -17,7 +17,7 @@ largeDictionary:(BOOL)largedict literalTree:(BOOL)hasliterals;
 
 -(XADPrefixTree *)parseImplodeTreeOfSize:(int)size handle:(CSHandle *)fh;
 
--(void)resetFilter;
+-(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end

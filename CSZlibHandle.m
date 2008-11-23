@@ -16,6 +16,11 @@
 	return [[[CSZlibHandle alloc] initWithHandle:handle length:length header:YES name:[handle name]] autorelease];
 }
 
++(CSZlibHandle *)zlibNoHeaderHandleWithHandle:(CSHandle *)handle
+{
+	return [[[CSZlibHandle alloc] initWithHandle:handle length:0x7fffffffffffffff header:NO name:[handle name]] autorelease];
+}
+
 +(CSZlibHandle *)zlibNoHeaderHandleWithHandle:(CSHandle *)handle length:(off_t)length
 {
 	return [[[CSZlibHandle alloc] initWithHandle:handle length:length header:NO name:[handle name]] autorelease];
@@ -30,7 +35,7 @@
 	{
 		fh=[handle retain];
 		startoffs=[fh offsetInFile];
-		inited=eof=NO;
+		inited=eof=seekback=NO;
 
 		zs.zalloc=Z_NULL;
 		zs.zfree=Z_NULL;
@@ -83,6 +88,10 @@
 
 	[super dealloc];
 }
+
+
+
+-(void)setSeekBackAtEOF:(BOOL)seekateof { seekback=seekateof; }
 
 
 
@@ -140,7 +149,12 @@
 		}
 
 		int err=inflate(&zs,0);
-		if(err==Z_STREAM_END) { eof=YES; break; }
+		if(err==Z_STREAM_END)
+		{
+			if(seekback) [fh skipBytes:-zs.avail_in];
+			eof=YES;
+			break;
+		}
 		else if(err!=Z_OK) [self _raiseZlib];
 	}
 

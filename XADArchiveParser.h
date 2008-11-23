@@ -19,14 +19,12 @@ extern const NSString *XADPosixUserNameKey;
 extern const NSString *XADPosixGroupNameKey;
 extern const NSString *XADIsEncryptedKey;
 extern const NSString *XADIsDirectoryKey;
+extern const NSString *XADIsResourceForkKey;
 extern const NSString *XADIsMacBinaryKey;
 extern const NSString *XADLinkDestinationKey;
 extern const NSString *XADCommentKey;
 extern const NSString *XADDataOffsetKey;
 extern const NSString *XADCompressionNameKey;
-//extern const NSString *XADResourceSizeKey;
-//extern const NSString *XADResourceCompressedSizeKey;
-//extern const NSString *XADResourceOffsetKey;
 
 // Internal use
 extern const NSString *XADResourceDataKey;
@@ -64,9 +62,11 @@ extern const NSString *XADFinderFlags;
 
 // Internal functions
 
+-(NSString *)name;
 -(CSHandle *)handle;
 -(CSHandle *)handleAtDataOffsetForDictionary:(NSDictionary *)dict;
--(NSString *)name;
+
+-(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
 
 -(void)addEntryWithDictionary:(NSDictionary *)dictionary;
 
@@ -89,7 +89,7 @@ extern const NSString *XADFinderFlags;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
 -(void)parse;
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)properties;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;
 
 @end

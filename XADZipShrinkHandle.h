@@ -1,28 +1,19 @@
-#import "CSFilterHandle.h"
+#import "CSByteStreamHandle.h"
+#import "LZW.h"
 
-typedef struct XADZipShrinkTreeNode
+@interface XADZipShrinkHandle:CSByteStreamHandle
 {
-	uint16_t chr;
-	int16_t parent;
-} XADZipShrinkTreeNode;
+	LZW *lzw;
+	int symbolsize;
 
-@interface XADZipShrinkHandle:CSFilterHandle
-{
-	int numsymbols,symbolsize;
-	XADZipShrinkTreeNode *nodes;
-
-	int prevsymbol;
-
-	int currbyte,numbytes;
+	int currbyte;
 	uint8_t buffer[8192];
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
 -(void)dealloc;
 
--(void)clearTable;
-
--(void)resetFilter;
+-(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end

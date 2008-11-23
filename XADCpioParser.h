@@ -1,16 +1,14 @@
-//
-//  XADCpioParser.h
-//  XADMaster
-//
-//  Created by Dag Ågren on 2008-11-16.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
+#import "XADArchiveParser.h"
 
-#import <Cocoa/Cocoa.h>
-
-
-@interface XADCpioParser : NSObject {
-
+@interface XADCpioParser:XADArchiveParser
+{
 }
+
++(int)requiredHeaderSize;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
+
+-(void)parse;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
+-(NSString *)formatName;
 
 @end

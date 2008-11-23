@@ -12,6 +12,8 @@
 
 	BOOL addonbuild;
 	int numadded;
+
+	NSMutableData *namedata;
 }
 
 +(int)requiredHeaderSize;
@@ -20,11 +22,13 @@
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
 
+-(char *)encodedName;
+
 -(void)parse;
 -(void)newEntryCallback:(struct xadProgressInfo *)proginfo;
 -(NSMutableDictionary *)dictionaryForFileInfo:(struct xadFileInfo *)info;
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)properties;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)properties wantChecksum:(BOOL)checksum;
 
 -(NSString *)formatName;
 

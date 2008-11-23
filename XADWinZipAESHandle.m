@@ -12,7 +12,7 @@
 		keybytes=keylength;
 		startoffs=[handle offsetInFile];
 
-		hmac_inited=NO;
+		hmac_inited=hmac_correct=NO;
 	}
 	return self;
 }
@@ -78,6 +78,7 @@ static void DeriveKey(NSData *password,NSData *salt,int iterations,uint8_t *keyb
 	HMAC_Init(&hmac,keybuf+keybytes,keybytes,EVP_sha1());
 
 	hmac_inited=YES;
+	hmac_correct=NO;
 }
 
 
@@ -87,12 +88,12 @@ static void DeriveKey(NSData *password,NSData *salt,int iterations,uint8_t *keyb
 
 	HMAC_Update(&hmac,buffer,actual);
 
-	if(streampos+actual>=streamlength) // TODO: perhaps move this check elsewhere?
+	if(streampos+actual>=streamlength)
 	{
-		NSData *filedigest=[parent readDataOfLength:10];
-		uint8_t calcdigest[20];
+		uint8_t filedigest[10],calcdigest[20];
+		[parent readBytes:10 toBuffer:filedigest];
 		HMAC_Final(&hmac,calcdigest,NULL);
-		if(memcmp(calcdigest,[filedigest bytes],10)) [XADException raiseChecksumError];
+		hmac_correct=memcmp(calcdigest,filedigest,10)==0;
 	}
 
 	for(int i=0;i<actual;i++)
@@ -109,5 +110,9 @@ static void DeriveKey(NSData *password,NSData *salt,int iterations,uint8_t *keyb
 
 	return actual;
 }
+
+-(BOOL)hasChecksum { return YES; }
+
+-(BOOL)isChecksumCorrect { return hmac_correct; }
 
 @end

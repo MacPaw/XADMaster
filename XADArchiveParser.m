@@ -1,8 +1,14 @@
 #import "XADArchiveParser.h"
 #import "CSFileHandle.h"
+#import "CSMultiHandle.h"
 
 #import "XADZipParser.h"
 #import "XADGZipParser.h"
+#import "XADStuffItParser.h"
+#import "XADStuffIt5Parser.h"
+#import "XADBinHexParser.h"
+#import "XADCompactProParser.h"
+#import "XADCompressParser.h"
 #import "XADLibXADParser.h"
 
 const NSString *XADFileNameKey=@"XADFileName";
@@ -21,6 +27,7 @@ const NSString *XADPosixUserNameKey=@"XADPosixUser";
 const NSString *XADPosixGroupNameKey=@"XADGroupUser";
 const NSString *XADIsEncryptedKey=@"XADIsEncrypted";
 const NSString *XADIsDirectoryKey=@"XADIsDirectory";
+const NSString *XADIsResourceForkKey=@"XADIsResourceFork";
 const NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 const NSString *XADLinkDestinationKey=@"XADLinkDestination";
 const NSString *XADCommentKey=@"XADComment";
@@ -39,6 +46,11 @@ static int maxheader=0;
 	parserclasses=[[NSMutableArray arrayWithObjects:
 		[XADZipParser class],
 		[XADGZipParser class],
+		[XADStuffIt5Parser class],
+		[XADStuffItParser class],
+		[XADBinHexParser class],
+		[XADCompactProParser class],
+		[XADCompressParser class],
 		[XADLibXADParser class],
 	nil] retain];
 
@@ -61,11 +73,13 @@ static int maxheader=0;
 	while(parserclass=[enumerator nextObject])
 	{
 		[handle seekToFileOffset:0];
-		if([parserclass recognizeFileWithHandle:handle firstBytes:header name:name])
-		{
-			[handle seekToFileOffset:0];
-			return [[[parserclass alloc] initWithHandle:handle name:name] autorelease];
-		}
+		//@try {
+			if([parserclass recognizeFileWithHandle:handle firstBytes:header name:name])
+			{
+				[handle seekToFileOffset:0];
+				return [[[parserclass alloc] initWithHandle:handle name:name] autorelease];
+			}
+		//} @catch(id e) {} // ignore parsers that throw errors on recognition or init
 	}
 	return nil;
 }
@@ -121,6 +135,8 @@ static int maxheader=0;
 
 
 
+-(NSString *)name { return archivename; }
+
 -(CSHandle *)handle { return sourcehandle; }
 
 -(CSHandle *)handleAtDataOffsetForDictionary:(NSDictionary *)dict
@@ -129,7 +145,20 @@ static int maxheader=0;
 	return sourcehandle;
 }
 
--(NSString *)name { return archivename; }
+-(off_t)offsetForVolume:(int)disk offset:(off_t)offset
+{
+	if([sourcehandle respondsToSelector:@selector(handles)])
+	{
+		NSArray *handles=[(id)sourcehandle handles];
+		int count=[handles count];
+		for(int i=0;i<count&&i<disk;i++) offset+=[[handles objectAtIndex:i] fileSize];
+	}
+
+	return offset;
+}
+
+
+
 
 -(void)addEntryWithDictionary:(NSDictionary *)dictionary
 {
@@ -201,7 +230,7 @@ static int maxheader=0;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name { return NO; }
 
 -(void)parse {}
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)properties { return nil; }
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum { return nil; }
 -(NSString *)formatName { return nil; }
 
 @end

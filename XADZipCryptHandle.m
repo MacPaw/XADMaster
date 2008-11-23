@@ -6,10 +6,10 @@
 
 static void UpdateKeys(XADZipCryptHandle *self,uint8_t b)
 {
-	self->key0=XADCRC32(self->key0,b,XADCRC32Table_edb88320);
+	self->key0=XADCRC(self->key0,b,XADCRCTable_edb88320);
 	self->key1+=self->key0&0xff;
 	self->key1=self->key1*134775813+1;
-	self->key2=XADCRC32(self->key2,self->key1>>24,XADCRC32Table_edb88320);
+	self->key2=XADCRC(self->key2,self->key1>>24,XADCRCTable_edb88320);
 }
 
 static uint8_t DecryptByte(XADZipCryptHandle *self)
@@ -24,8 +24,6 @@ static uint8_t DecryptByte(XADZipCryptHandle *self)
 	{
 		password=[passdata retain];
 		test=testbyte;
-
-		[self setParentStartOffset:[handle offsetInFile]];
 	}
 	return self;
 }
@@ -38,7 +36,7 @@ static uint8_t DecryptByte(XADZipCryptHandle *self)
 
 
 
--(void)resetFilter
+-(void)resetByteStream
 {
 	key0=305419896;
 	key1=591751049;
@@ -50,7 +48,7 @@ static uint8_t DecryptByte(XADZipCryptHandle *self)
 
 	for(int i=0;i<12;i++)
 	{
-		uint8_t b=CSFilterNextByte(self)^DecryptByte(self);
+		uint8_t b=CSInputNextByte(input)^DecryptByte(self);
 		UpdateKeys(self,b);
 		if(i==11&&b!=test) [XADException raisePasswordException];
 	}
@@ -58,7 +56,7 @@ static uint8_t DecryptByte(XADZipCryptHandle *self)
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
-	uint8_t b=CSFilterNextByte(self)^DecryptByte(self);
+	uint8_t b=CSInputNextByte(input)^DecryptByte(self);
 //NSLog(@"%02x",b);
 	UpdateKeys(self,b);
 	return b;

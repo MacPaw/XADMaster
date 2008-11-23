@@ -58,6 +58,8 @@
 	[super dealloc];
 }
 
+-(NSArray *)handles { return handles; }
+
 -(off_t)fileSize
 {
 	off_t size=0;

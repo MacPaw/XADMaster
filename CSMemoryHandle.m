@@ -98,6 +98,13 @@
 }
 
 
+-(NSData *)fileContents { return data; }
+
+-(NSData *)remainingFileContents
+{
+	if(pos==0) return data;
+	else return [super remainingFileContents];
+}
 
 -(NSData *)readDataOfLength:(int)length
 {
@@ -120,6 +127,7 @@
 -(NSData *)copyDataOfLength:(int)length { return [[self readDataOfLength:length] retain]; }
 
 -(NSData *)copyDataOfLengthAtMost:(int)length { return [[self readDataOfLengthAtMost:length] retain]; }
+
 
 
 

@@ -1,5 +1,8 @@
 #import "XADGZipParser.h"
 #import "CSZlibHandle.h"
+#import "XADChecksums.h"
+
+// TODO: implement SFX 
 
 @implementation XADGZipParser
 
@@ -61,10 +64,8 @@
 
 	off_t datapos=[handle offsetInFile];
 
-	// TODO: handle broken archives?
 	[handle seekToEndOfFile];
-	[handle skipBytes:-8];
-	uint32_t crc=[handle readUInt32LE];
+	[handle skipBytes:-4];
 	uint32_t size=[handle readUInt32LE];
 
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -72,7 +73,6 @@
 		[NSNumber numberWithUnsignedLongLong:[handle offsetInFile]-datapos-8],XADCompressedSizeKey,
 		[NSNumber numberWithUnsignedLongLong:datapos],XADDataOffsetKey,
 		[NSDate dateWithTimeIntervalSince1970:time],XADLastModificationDateKey,
-		[NSNumber numberWithUnsignedInt:crc],@"GzipCRC",
 		[NSNumber numberWithUnsignedInt:extraflags],@"GzipExtraFlags",
 		[NSNumber numberWithUnsignedInt:os],@"GzipOS",
 	nil];
@@ -87,7 +87,7 @@
 		else if([extension isEqual:@"adz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"adf"];
 		else contentname=[name stringByDeletingPathExtension];
 
-		[dict setObject:contentname forKey:XADFileNameKey];
+		[dict setObject:[self XADStringWithString:contentname] forKey:XADFileNameKey];
 		// TODO: set no filename flag
 	}
 
@@ -96,11 +96,18 @@
 	[self addEntryWithDictionary:dict];
 }
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum
 {
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dictionary];
-	return [CSZlibHandle zlibNoHeaderHandleWithHandle:handle
-	length:[[dictionary objectForKey:XADFileSizeKey] intValue]];
+	CSZlibHandle *zh=[CSZlibHandle zlibNoHeaderHandleWithHandle:handle];
+
+	if(checksum)
+	{
+		[zh setSeekBackAtEOF:YES]; // enable seeking back after zlib reads too much data at the end
+		return [XADCRCSuffixHandle IEEECRC32SuffixHandleWithHandle:zh
+		CRCHandle:handle bigEndianCRC:NO conditioned:YES];
+	}
+	else return zh;
 }
 
 -(NSString *)formatName { return @"Gzip"; }

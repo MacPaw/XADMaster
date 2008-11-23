@@ -13,6 +13,8 @@
 -(id)initAsCopyOf:(CSMultiHandle *)other;
 -(void)dealloc;
 
+-(NSArray *)handles;
+
 -(off_t)fileSize;
 -(off_t)offsetInFile;
 -(BOOL)atEndOfFile;

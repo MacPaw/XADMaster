@@ -1,6 +1,6 @@
-#import "CSFilterHandle.h"
+#import "CSByteStreamHandle.h"
 
-@interface XADZipCryptHandle:CSFilterHandle
+@interface XADZipCryptHandle:CSByteStreamHandle
 {
 	NSData *password,*header;
 	uint8_t test;
@@ -11,7 +11,7 @@
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata testByte:(uint8_t)testbyte;
 -(void)dealloc;
 
--(void)resetFilter;
+-(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end

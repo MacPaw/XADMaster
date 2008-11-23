@@ -16,6 +16,38 @@
 		endofstream=NO;
 		needsreset=YES;
 		nextstreambyte=-1;
+
+		input=NULL;
+	}
+	return self;
+}
+
+-(id)initWithHandle:(CSHandle *)handle
+{
+	return [self initWithHandle:handle length:CSHandleMaxLength bufferSize:4096];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
+{
+	return [self initWithHandle:handle length:length bufferSize:4096];
+}
+
+-(id)initWithHandle:(CSHandle *)handle bufferSize:(int)buffersize
+{
+	return [self initWithHandle:handle length:CSHandleMaxLength bufferSize:buffersize];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length bufferSize:(int)buffersize;
+{
+	if(self=[super initWithName:[handle name]])
+	{
+		streampos=0;
+		streamlength=length;
+		endofstream=NO;
+		needsreset=YES;
+		nextstreambyte=-1;
+
+		input=CSInputBufferAlloc(handle,buffersize);
 	}
 	return self;
 }
@@ -25,6 +57,14 @@
 	[self _raiseNotSupported:_cmd];
 	return nil;
 }
+
+-(void)dealloc
+{
+	CSInputBufferFree(input);
+	[super dealloc];
+}
+
+
 
 -(off_t)fileSize
 {
@@ -86,9 +126,9 @@
 {
 	if(needsreset) { [self resetStream]; needsreset=NO; }
 
-	if(!num) return 0;
 	if(endofstream) return 0;
 	if(streampos+num>streamlength) num=streamlength-streampos;
+	if(!num) return 0;
 
 	int offs=0;
 	if(nextstreambyte>=0)

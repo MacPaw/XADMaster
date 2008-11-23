@@ -38,10 +38,11 @@
 
 -(off_t)fileSize
 {
-	off_t parentsize=[parent fileSize];
+	return start-end;
+/*	off_t parentsize=[parent fileSize];
 	if(parentsize>end) return end-start;
 	else if(parentsize<start) return 0;
-	else return parentsize-start;
+	else return parentsize-start;*/
 }
 
 -(off_t)offsetInFile

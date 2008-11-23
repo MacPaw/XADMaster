@@ -39,7 +39,7 @@ typedef int XADError;
 +(void)raiseNotSupportedException;
 +(void)raiseDecrunchException;
 +(void)raisePasswordException;
-+(void)raiseChecksumError;
++(void)raiseChecksumException;
 +(void)raiseDataFormatException;
 +(void)raiseExceptionWithXADError:(XADError)errnum;
 

@@ -1,11 +1,267 @@
 #import "XADChecksums.h"
 
-uint32_t XADCRC32(uint32_t prevcrc,uint8_t byte,uint32_t *table)
+
+
+@implementation CSHandle (Checksums)
+
+-(BOOL)hasChecksum { return NO; }
+-(BOOL)isChecksumCorrect { return YES; }
+
+@end
+
+
+
+@implementation XADCRCHandle
+
++(XADCRCHandle *)IEEECRC32HandleWithHandle:(CSHandle *)handle length:(off_t)length
+correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
+{
+	if(conditioned) return [[[self alloc] initWithHandle:handle length:length initialCRC:0xffffffff
+	correctCRC:correctcrc^0xffffffff CRCTable:XADCRCTable_edb88320] autorelease];
+	else return [[[self alloc] initWithHandle:handle length:length initialCRC:0
+	correctCRC:correctcrc CRCTable:XADCRCTable_edb88320] autorelease];
+}
+
++(XADCRCHandle *)IBMCRC16HandleWithHandle:(CSHandle *)handle length:(off_t)length
+correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
+{
+	if(conditioned) return [[[self alloc] initWithHandle:handle length:length initialCRC:0xffff
+	correctCRC:correctcrc^0xffff CRCTable:XADCRCTable_a001] autorelease];
+	else return [[[self alloc] initWithHandle:handle length:length initialCRC:0
+	correctCRC:correctcrc CRCTable:XADCRCTable_a001] autorelease];
+}
+
++(XADCRCHandle *)CCITTCRC16HandleWithHandle:(CSHandle *)handle length:(off_t)length
+correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
+{
+	if(conditioned) return [[[self alloc] initWithHandle:handle length:length initialCRC:0xffff
+	correctCRC:XADUnReverseCRC16(correctcrc)^0xffff CRCTable:XADCRCReverseTable_1021] autorelease];
+	else return [[[self alloc] initWithHandle:handle length:length initialCRC:0
+	correctCRC:XADUnReverseCRC16(correctcrc) CRCTable:XADCRCReverseTable_1021] autorelease];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length initialCRC:(uint32_t)initialcrc
+correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
+{
+	if(self=[super initWithName:[handle name] length:length])
+	{
+		parent=[handle retain];
+		crc=initcrc=initialcrc;
+		compcrc=correctcrc;
+		table=crctable;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[parent release];
+	[super dealloc];
+}
+
+-(void)resetStream
+{
+	[parent seekToFileOffset:0];
+	crc=initcrc;
+}
+
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer
+{
+	int actual=[parent readAtMost:num toBuffer:buffer];
+	crc=XADCalculateCRC(crc,buffer,actual,table);
+	return actual;
+}
+
+-(BOOL)hasChecksum { return YES; }
+
+-(BOOL)isChecksumCorrect
+{
+	if([parent hasChecksum]&&![parent isChecksumCorrect]) return NO;
+	return [super atEndOfFile]&&crc==compcrc;
+}
+
+@end
+
+
+
+@implementation XADCRCSuffixHandle
+
++(XADCRCHandle *)IEEECRC32SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
+bigEndianCRC:(BOOL)bigendian conditioned:(BOOL)conditioned
+{
+	if(conditioned) return [[[self alloc] initWithHandle:handle CRCHandle:crchandle initialCRC:0xffffffff
+	CRCSize:4 bigEndianCRC:bigendian CRCTable:XADCRCTable_edb88320] autorelease];
+	else return [[[self alloc] initWithHandle:handle CRCHandle:crchandle initialCRC:0
+	CRCSize:4 bigEndianCRC:bigendian CRCTable:XADCRCTable_edb88320] autorelease];
+}
+
++(XADCRCHandle *)CCITTCRC16SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
+bigEndianCRC:(BOOL)bigendian conditioned:(BOOL)conditioned
+{
+	// Evil trick: negating the big endian flag does the same thing as XADUnReverseCRC16()
+	if(conditioned) return [[[self alloc] initWithHandle:handle CRCHandle:crchandle initialCRC:0xffff
+	CRCSize:2 bigEndianCRC:!bigendian  CRCTable:XADCRCReverseTable_1021] autorelease];
+	else return [[[self alloc] initWithHandle:handle CRCHandle:crchandle initialCRC:0
+	CRCSize:2 bigEndianCRC:!bigendian CRCTable:XADCRCReverseTable_1021] autorelease];
+}
+
+-(id)initWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle initialCRC:(uint32_t)initialcrc
+CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)crctable
+{
+	if(self=[super initWithName:[handle name]])
+	{
+		parent=[handle retain];
+		crcparent=[crchandle retain];
+		crcsize=crcbytes;
+		bigend=bigendian;
+		crc=initcrc=initialcrc;
+		table=crctable;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[parent release];
+	[super dealloc];
+}
+
+-(void)resetStream
+{
+	[parent seekToFileOffset:0];
+	crc=initcrc;
+}
+
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer
+{
+	int actual=[parent readAtMost:num toBuffer:buffer];
+	crc=XADCalculateCRC(crc,buffer,actual,table);
+	return actual;
+}
+
+-(BOOL)hasChecksum { return YES; }
+
+-(BOOL)isChecksumCorrect
+{
+	if([parent hasChecksum]&&![parent isChecksumCorrect]) return NO;
+	if(![parent atEndOfFile]) return NO; 
+
+	if(crcparent)
+	{
+		@try {
+			if(bigend&&crcsize==2) compcrc=[crcparent readUInt16BE];
+			else if(bigend&&crcsize==4) compcrc=[crcparent readUInt32BE];
+			else if(!bigend&&crcsize==2) compcrc=[crcparent readUInt16LE];
+			else if(!bigend&&crcsize==4) compcrc=[crcparent readUInt32LE];
+		} @catch(id e) { compcrc=(crc+1)^initcrc; } // make sure check fails if reading failed
+		[crcparent release];
+		crcparent=nil;
+	}
+
+	return crc==(compcrc^initcrc);
+}
+
+@end
+
+
+
+uint16_t XADCRC16Reverse(uint16_t prevcrc,uint8_t byte,const uint16_t *table)
+{
+	return table[(prevcrc>>8)^byte]^(prevcrc<<8);
+}
+
+uint32_t XADCRC(uint32_t prevcrc,uint8_t byte,const uint32_t *table)
 {
 	return table[(prevcrc^byte)&0xff]^(prevcrc>>8);
 }
 
-uint32_t XADCRC32Table_edb88320[256]=
+uint32_t XADCalculateCRC(uint32_t prevcrc,uint8_t *buffer,int length,const uint32_t *table)
+{
+	uint32_t crc=prevcrc;
+	for(int i=0;i<length;i++) crc=XADCRC(crc,buffer[i],table);
+	return crc;
+}
+
+int XADUnReverseCRC16(int val)
+{
+	val=((val>>8)&0x00FF)|((val&0x00FF)<<8);
+	return val;
+}
+
+const uint32_t XADCRCTable_a001[256]=
+{
+	0x00000000,0x0000c0c1,0x0000c181,0x00000140,0x0000c301,0x000003c0,0x00000280,0x0000c241,
+	0x0000c601,0x000006c0,0x00000780,0x0000c741,0x00000500,0x0000c5c1,0x0000c481,0x00000440,
+	0x0000cc01,0x00000cc0,0x00000d80,0x0000cd41,0x00000f00,0x0000cfc1,0x0000ce81,0x00000e40,
+	0x00000a00,0x0000cac1,0x0000cb81,0x00000b40,0x0000c901,0x000009c0,0x00000880,0x0000c841,
+	0x0000d801,0x000018c0,0x00001980,0x0000d941,0x00001b00,0x0000dbc1,0x0000da81,0x00001a40,
+	0x00001e00,0x0000dec1,0x0000df81,0x00001f40,0x0000dd01,0x00001dc0,0x00001c80,0x0000dc41,
+	0x00001400,0x0000d4c1,0x0000d581,0x00001540,0x0000d701,0x000017c0,0x00001680,0x0000d641,
+	0x0000d201,0x000012c0,0x00001380,0x0000d341,0x00001100,0x0000d1c1,0x0000d081,0x00001040,
+	0x0000f001,0x000030c0,0x00003180,0x0000f141,0x00003300,0x0000f3c1,0x0000f281,0x00003240,
+	0x00003600,0x0000f6c1,0x0000f781,0x00003740,0x0000f501,0x000035c0,0x00003480,0x0000f441,
+	0x00003c00,0x0000fcc1,0x0000fd81,0x00003d40,0x0000ff01,0x00003fc0,0x00003e80,0x0000fe41,
+	0x0000fa01,0x00003ac0,0x00003b80,0x0000fb41,0x00003900,0x0000f9c1,0x0000f881,0x00003840,
+	0x00002800,0x0000e8c1,0x0000e981,0x00002940,0x0000eb01,0x00002bc0,0x00002a80,0x0000ea41,
+	0x0000ee01,0x00002ec0,0x00002f80,0x0000ef41,0x00002d00,0x0000edc1,0x0000ec81,0x00002c40,
+	0x0000e401,0x000024c0,0x00002580,0x0000e541,0x00002700,0x0000e7c1,0x0000e681,0x00002640,
+	0x00002200,0x0000e2c1,0x0000e381,0x00002340,0x0000e101,0x000021c0,0x00002080,0x0000e041,
+	0x0000a001,0x000060c0,0x00006180,0x0000a141,0x00006300,0x0000a3c1,0x0000a281,0x00006240,
+	0x00006600,0x0000a6c1,0x0000a781,0x00006740,0x0000a501,0x000065c0,0x00006480,0x0000a441,
+	0x00006c00,0x0000acc1,0x0000ad81,0x00006d40,0x0000af01,0x00006fc0,0x00006e80,0x0000ae41,
+	0x0000aa01,0x00006ac0,0x00006b80,0x0000ab41,0x00006900,0x0000a9c1,0x0000a881,0x00006840,
+	0x00007800,0x0000b8c1,0x0000b981,0x00007940,0x0000bb01,0x00007bc0,0x00007a80,0x0000ba41,
+	0x0000be01,0x00007ec0,0x00007f80,0x0000bf41,0x00007d00,0x0000bdc1,0x0000bc81,0x00007c40,
+	0x0000b401,0x000074c0,0x00007580,0x0000b541,0x00007700,0x0000b7c1,0x0000b681,0x00007640,
+	0x00007200,0x0000b2c1,0x0000b381,0x00007340,0x0000b101,0x000071c0,0x00007080,0x0000b041,
+	0x00005000,0x000090c1,0x00009181,0x00005140,0x00009301,0x000053c0,0x00005280,0x00009241,
+	0x00009601,0x000056c0,0x00005780,0x00009741,0x00005500,0x000095c1,0x00009481,0x00005440,
+	0x00009c01,0x00005cc0,0x00005d80,0x00009d41,0x00005f00,0x00009fc1,0x00009e81,0x00005e40,
+	0x00005a00,0x00009ac1,0x00009b81,0x00005b40,0x00009901,0x000059c0,0x00005880,0x00009841,
+	0x00008801,0x000048c0,0x00004980,0x00008941,0x00004b00,0x00008bc1,0x00008a81,0x00004a40,
+	0x00004e00,0x00008ec1,0x00008f81,0x00004f40,0x00008d01,0x00004dc0,0x00004c80,0x00008c41,
+	0x00004400,0x000084c1,0x00008581,0x00004540,0x00008701,0x000047c0,0x00004680,0x00008641,
+	0x00008201,0x000042c0,0x00004380,0x00008341,0x00004100,0x000081c1,0x00008081,0x00004040,
+};
+
+const uint32_t XADCRCReverseTable_1021[256]=
+{
+	0x00000000,0x00002110,0x00004220,0x00006330,0x00008440,0x0000a550,0x0000c660,0x0000e770,
+	0x00000881,0x00002991,0x00004aa1,0x00006bb1,0x00008cc1,0x0000add1,0x0000cee1,0x0000eff1,
+	0x00003112,0x00001002,0x00007332,0x00005222,0x0000b552,0x00009442,0x0000f772,0x0000d662,
+	0x00003993,0x00001883,0x00007bb3,0x00005aa3,0x0000bdd3,0x00009cc3,0x0000fff3,0x0000dee3,
+	0x00006224,0x00004334,0x00002004,0x00000114,0x0000e664,0x0000c774,0x0000a444,0x00008554,
+	0x00006aa5,0x00004bb5,0x00002885,0x00000995,0x0000eee5,0x0000cff5,0x0000acc5,0x00008dd5,
+	0x00005336,0x00007226,0x00001116,0x00003006,0x0000d776,0x0000f666,0x00009556,0x0000b446,
+	0x00005bb7,0x00007aa7,0x00001997,0x00003887,0x0000dff7,0x0000fee7,0x00009dd7,0x0000bcc7,
+	0x0000c448,0x0000e558,0x00008668,0x0000a778,0x00004008,0x00006118,0x00000228,0x00002338,
+	0x0000ccc9,0x0000edd9,0x00008ee9,0x0000aff9,0x00004889,0x00006999,0x00000aa9,0x00002bb9,
+	0x0000f55a,0x0000d44a,0x0000b77a,0x0000966a,0x0000711a,0x0000500a,0x0000333a,0x0000122a,
+	0x0000fddb,0x0000dccb,0x0000bffb,0x00009eeb,0x0000799b,0x0000588b,0x00003bbb,0x00001aab,
+	0x0000a66c,0x0000877c,0x0000e44c,0x0000c55c,0x0000222c,0x0000033c,0x0000600c,0x0000411c,
+	0x0000aeed,0x00008ffd,0x0000eccd,0x0000cddd,0x00002aad,0x00000bbd,0x0000688d,0x0000499d,
+	0x0000977e,0x0000b66e,0x0000d55e,0x0000f44e,0x0000133e,0x0000322e,0x0000511e,0x0000700e,
+	0x00009fff,0x0000beef,0x0000dddf,0x0000fccf,0x00001bbf,0x00003aaf,0x0000599f,0x0000788f,
+	0x00008891,0x0000a981,0x0000cab1,0x0000eba1,0x00000cd1,0x00002dc1,0x00004ef1,0x00006fe1,
+	0x00008010,0x0000a100,0x0000c230,0x0000e320,0x00000450,0x00002540,0x00004670,0x00006760,
+	0x0000b983,0x00009893,0x0000fba3,0x0000dab3,0x00003dc3,0x00001cd3,0x00007fe3,0x00005ef3,
+	0x0000b102,0x00009012,0x0000f322,0x0000d232,0x00003542,0x00001452,0x00007762,0x00005672,
+	0x0000eab5,0x0000cba5,0x0000a895,0x00008985,0x00006ef5,0x00004fe5,0x00002cd5,0x00000dc5,
+	0x0000e234,0x0000c324,0x0000a014,0x00008104,0x00006674,0x00004764,0x00002454,0x00000544,
+	0x0000dba7,0x0000fab7,0x00009987,0x0000b897,0x00005fe7,0x00007ef7,0x00001dc7,0x00003cd7,
+	0x0000d326,0x0000f236,0x00009106,0x0000b016,0x00005766,0x00007676,0x00001546,0x00003456,
+	0x00004cd9,0x00006dc9,0x00000ef9,0x00002fe9,0x0000c899,0x0000e989,0x00008ab9,0x0000aba9,
+	0x00004458,0x00006548,0x00000678,0x00002768,0x0000c018,0x0000e108,0x00008238,0x0000a328,
+	0x00007dcb,0x00005cdb,0x00003feb,0x00001efb,0x0000f98b,0x0000d89b,0x0000bbab,0x00009abb,
+	0x0000754a,0x0000545a,0x0000376a,0x0000167a,0x0000f10a,0x0000d01a,0x0000b32a,0x0000923a,
+	0x00002efd,0x00000fed,0x00006cdd,0x00004dcd,0x0000aabd,0x00008bad,0x0000e89d,0x0000c98d,
+	0x0000267c,0x0000076c,0x0000645c,0x0000454c,0x0000a23c,0x0000832c,0x0000e01c,0x0000c10c,
+	0x00001fef,0x00003eff,0x00005dcf,0x00007cdf,0x00009baf,0x0000babf,0x0000d98f,0x0000f89f,
+	0x0000176e,0x0000367e,0x0000554e,0x0000745e,0x0000932e,0x0000b23e,0x0000d10e,0x0000f01e,
+};
+
+
+const uint32_t XADCRCTable_edb88320[256]=
 {
 	0x00000000,0x77073096,0xee0e612c,0x990951ba,0x076dc419,0x706af48f,0xe963a535,0x9e6495a3,
 	0x0edb8832,0x79dcb8a4,0xe0d5e91e,0x97d2d988,0x09b64c2b,0x7eb17cbd,0xe7b82d07,0x90bf1d91,

@@ -25,6 +25,8 @@
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer;
 
+-(NSData *)fileContents;
+-(NSData *)remainingFileContents;
 -(NSData *)readDataOfLength:(int)length;
 -(NSData *)readDataOfLengthAtMost:(int)length;
 -(NSData *)copyDataOfLength:(int)length;

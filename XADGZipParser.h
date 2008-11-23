@@ -14,7 +14,7 @@
 
 -(void)parse;
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 
 -(NSString *)formatName;
 

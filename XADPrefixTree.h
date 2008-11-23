@@ -1,10 +1,15 @@
-#import <CSFilterHandle.h>
+#import "CSInputBuffer.h"
+
+extern NSString *XADInvalidPrefixCodeException;
 
 @interface XADPrefixTree:NSObject
 {
 	int (*tree)[2];
 	int numentries;
 	BOOL isstatic;
+
+	int currnode;
+	NSMutableArray *stack;
 }
 
 +(XADPrefixTree *)prefixTree;
@@ -16,7 +21,15 @@
 -(void)addValue:(int)value forCode:(int)code length:(int)length;
 -(void)addValue:(int)value forCode:(int)code length:(int)length repeatAt:(int)repeatpos;
 
+-(void)startBuildingTree;
+-(void)startZeroBranch;
+-(void)startOneBranch;
+-(void)finishBranches;
+-(void)makeLeafWithValue:(int)value;
+-(void)_pushNode;
+-(void)_popNode;
+
 @end
 
-int CSFilterNextSymbolFromTree(CSFilterHandle *filter,XADPrefixTree *tree);
-int CSFilterNextSymbolFromTreeLE(CSFilterHandle *filter,XADPrefixTree *tree);
+int CSInputNextSymbolFromTree(CSInputBuffer *buf,XADPrefixTree *tree);
+int CSInputNextSymbolFromTreeLE(CSInputBuffer *buf,XADPrefixTree *tree);

@@ -1,5 +1,5 @@
 #import "XADLibXADParser.h"
-
+#import "CSMultiHandle.h"
 
 
 static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgressInfo *info);
@@ -16,19 +16,25 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
-	return YES;
+	return NO;
 }
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
 	if(self=[super initWithHandle:handle name:name])
 	{
+		xmb=NULL;
+		archive=NULL;
+
+		namedata=[[[self name] dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
+		[namedata increaseLengthBy:1];
+
 		if(xmb=xadOpenLibrary(12))
 		{
 			if(archive=xadAllocObjectA(xmb,XADOBJ_ARCHIVEINFO,NULL))
 			{
 				inhook.h_Entry=InFunc;
-				inhook.h_Data=(void *)handle;
+				inhook.h_Data=(void *)self;
 				progresshook.h_Entry=ProgressFunc;
 				progresshook.h_Data=(void *)self;
 
@@ -45,31 +51,15 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 	xadFreeInfo(xmb,archive); // check?
 	xadFreeObjectA(xmb,archive,NULL);
 
+	[namedata release];
+
 	[super dealloc];
 }
 
+-(char *)encodedName { return [namedata mutableBytes]; }
+
 -(void)parse
 {
-	// TODO: convert multi-part
-/*	volumes=[[XADArchive volumesForFile:file] retain];
-
-		if(volumes)
-		{
-			filename=[[volumes objectAtIndex:0] retain];
-
-			int n=[volumes count];
-			struct xadSplitFile split[n];
-
-			for(int i=0;i<n;i++)
-			{
-				if(i!=n-1) split[i].xsf_Next=&split[i+1];
-				else split[i].xsf_Next=NULL;
-
-				split[i].xsf_Type=XAD_INFILENAME;
-				split[i].xsf_Data=(xadPTRINT)[[volumes objectAtIndex:i] fileSystemRepresentation];
-				split[i].xsf_Size=0;
-			}*/
-
 	addonbuild=YES;
 	numadded=0;
 
@@ -77,8 +67,6 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 		XAD_INHOOK,(xadUINT32)&inhook,
 		XAD_PROGRESSHOOK,(xadUINT32)&progresshook,
 	TAG_DONE};
-
-// TODO: hack to set filename!
 
 	int err=xadGetInfoA(xmb,archive,tags);
 	if(!err&&archive->xai_DiskInfo)
@@ -112,12 +100,34 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 
 static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *param)
 {
-	CSHandle *fh=(CSHandle *)hook->h_Data;
+	struct xadArchiveInfo *archive=object;
+	XADLibXADParser *parser=(XADLibXADParser *)hook->h_Data;
+
+	CSHandle *fh=[parser handle];
 
 	switch(param->xhp_Command)
 	{
 		case XADHC_INIT:
-			return 0;
+		{
+			if([fh respondsToSelector:@selector(handles)])
+			{
+				NSArray *handles=[(id)fh handles];
+				int count=[handles count];
+
+				archive->xai_MultiVolume=calloc(sizeof(xadSize),count+1);
+
+				off_t total=0;
+				for(int i=0;i<count;i++)
+				{
+					archive->xai_MultiVolume[i]=total;
+					total+=[[handles objectAtIndex:i] fileSize];
+				}
+			}
+
+			archive->xai_InName=[parser encodedName];
+
+			return XADERR_OK;
+		}
 
 		case XADHC_SEEK:
 			[fh skipBytes:param->xhp_CommandData];
@@ -130,10 +140,14 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 			return XADERR_OK;
 
 		case XADHC_FULLSIZE:
-			param->xhp_CommandData=[fh fileSize];
+			@try {
+				param->xhp_CommandData=[fh fileSize];
+			} @catch(id e) { return XADERR_NOTSUPPORTED; }
 			return XADERR_OK;
 
 		case XADHC_FREE:
+			free(archive->xai_MultiVolume);
+			archive->xai_MultiVolume=NULL;
 			return XADERR_OK;
 
  		default:
@@ -152,14 +166,15 @@ static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgress
 	{
 		case XADPMODE_PROGRESS:
 			//return [archive _progressCallback:info];
+			return XADPIF_OK;
 
 		case XADPMODE_NEWENTRY:
 			[parser newEntryCallback:info];
 			return XADPIF_OK;
 
-		case XADPMODE_END: // handled in class
-		case XADPMODE_ERROR: // handled in class
-		case XADPMODE_GETINFOEND: // handled in class
+		case XADPMODE_END:
+		case XADPMODE_ERROR:
+		case XADPMODE_GETINFOEND:
 		default:
 		break;
 	}
@@ -244,7 +259,7 @@ static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgress
 
 
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)properties
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)properties wantChecksum:(BOOL)checksum
 {
 	return nil;
 }
@@ -270,7 +285,30 @@ static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgress
 
 
 
+/*
+@implementation XADLibXADHandle
 
+-(id)initWith
+{
+}
+
+-(void)dealloc
+{
+}
+
+-(void)resetStream
+{
+	[parser stopExtracting];
+	[parser startExtractingFromEntry:dict];
+}
+
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer
+{
+	return [parser extractDataToBuffer:buffer length:num];
+}
+
+@end
+*/
 
 /*
 -(NSData *)_contentsOfFileInfo:(struct xadFileInfo *)info

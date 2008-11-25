@@ -1,4 +1,6 @@
-#import "XADRarParser.h"
+#import "XADRARParser.h"
+#import "XADException.h"
+#import "NSDateXAD.h"
 
 #define RARFLAG_SKIP_IF_UNKNOWN 0x4000
 #define RARFLAG_LONG_BLOCK    0x8000
@@ -62,17 +64,17 @@ static int TestSignature(const uint8_t *ptr)
 
 +(int)requiredHeaderSize
 {
-	retrun 0x40000;
+	return 0x40000;
 }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
 	const uint8_t *bytes=[data bytes];
-	int length=[data length]
+	int length=[data length];
 
 	if(length<7) return NO; // TODO: fix to use correct min size
 
-	for(int i=0;i<=length-7;i++) if(TestSignature(data+i)) return YES;
+	for(int i=0;i<=length-7;i++) if(TestSignature(bytes+i)) return YES;
 
 	return NO;
 }
@@ -90,7 +92,7 @@ static int TestSignature(const uint8_t *ptr)
 	[fh readBytes:7 toBuffer:buf];	
 
 	int sigtype;
-	while(!(sigtype=RarTestSignature(buf)))
+	while(!(sigtype=TestSignature(buf)))
 	{
 		buf[0]=buf[1]; buf[1]=buf[2]; buf[2]=buf[3];
 		buf[3]=buf[4]; buf[4]=buf[5]; buf[5]=buf[6];
@@ -99,7 +101,7 @@ static int TestSignature(const uint8_t *ptr)
 
 	if(sigtype==RAR_OLDSIGNATURE)
 	{
-		[XADException raiseNotSuppertedException];
+		[XADException raiseNotSupportedException];
 		// [fh skipBytes:-3];
 		// TODO: handle old RARs.
 	}
@@ -109,19 +111,19 @@ static int TestSignature(const uint8_t *ptr)
 	{
 		off_t blockstart=[fh offsetInFile];
 
-		int blockcrc=[fh readUInt16LE];
+		/*int blockcrc=*/[fh readUInt16LE];
 		int type=[fh readUInt8];
-		int flags=[sh readUInt16LE];
-		int shortsize=[sh readUInt16LE];
+		int flags=[fh readUInt16LE];
+		int shortsize=[fh readUInt16LE];
 		off_t longsize=0;
 		if(flags&RARFLAG_LONG_BLOCK) longsize=[fh readUInt32LE];
 
-//printf("block:%x flags:%x size1:%d size2:%qu ",type,flags,size1,size2);
+NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 
 		switch(type)
 		{
 			case 0x73: // archive header
-				if(flags&RARMHD_PASSWORD) [XADException raiseNotSupported];
+				if(flags&RARMHD_PASSWORD) [XADException raiseNotSupportedException];
 				archiveflags=flags;
 
 				if(flags&RARMHD_ENCRYPTVER)
@@ -144,8 +146,8 @@ static int TestSignature(const uint8_t *ptr)
 
 				if(flags&RARLHD_LARGE)
 				{
-					longsize+=[fh readUInt32LE]<<32;
-					unpsize+=[fh readUInt32LE]<<32;
+					longsize+=(off_t)[fh readUInt32LE]<<32;
+					unpsize+=(off_t)[fh readUInt32LE]<<32;
 				}
 
 				NSData *namedata=[fh readDataOfLength:namelength];
@@ -167,7 +169,7 @@ static int TestSignature(const uint8_t *ptr)
 
 				if(flags&RARLHD_SPLIT_BEFORE)
 				{
-					if(!currdcit) break;
+					if(!currdict) break;
 
 					/*struct xadSkipInfo *si=xadAllocObjectA(XADM XADOBJ_SKIPINFO,NULL);
 					if(!si)
@@ -194,7 +196,7 @@ static int TestSignature(const uint8_t *ptr)
 						[self XADStringWithData:namedata],XADFileNameKey,
 						[NSNumber numberWithLongLong:unpsize],XADFileSizeKey,
 						[NSNumber numberWithLongLong:longsize],XADCompressedSizeKey,
-						[NSDate XADDateWithDOSDateTime:dostime],XADModificationDateKey,
+						[NSDate XADDateWithMSDOSDateTime:dostime],XADLastModificationDateKey,
 
 						[NSNumber numberWithLongLong:blockstart+shortsize],XADDataOffsetKey,
 						[NSNumber numberWithLongLong:longsize],XADDataLengthKey,
@@ -206,8 +208,19 @@ static int TestSignature(const uint8_t *ptr)
 						[NSNumber numberWithUnsignedInt:attrs],@"RARAttributes",
 					nil];
 
-					if(flags&RARLHD_PASSWORD) [currdict setObject:[NSNumber numberWithBoolean:YES] forKey:XADIsEncryptedKey];
-					if((flags&RARLHD_WINDOWMASK)==RARLHD_DIRECTORY) [currdict setObject:[NSNumber numberWithBoolean:YES] forKey:XADIsDirectoryKey];
+					if(flags&RARLHD_PASSWORD) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+					if((flags&RARLHD_WINDOWMASK)==RARLHD_DIRECTORY) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+					if(os==3) [currdict setObject:[NSNumber numberWithUnsignedInt:attrs] forKey:XADPosixPermissionsKey];
+
+					switch(method)
+					{
+						case 0x30: [currdict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey]; break;
+						case 0x31: [currdict setObject:[self XADStringWithString:@"Fastest"] forKey:XADCompressionNameKey]; break;
+						case 0x32: [currdict setObject:[self XADStringWithString:@"Fast"] forKey:XADCompressionNameKey]; break;
+						case 0x33: [currdict setObject:[self XADStringWithString:@"Normal"] forKey:XADCompressionNameKey]; break;
+						case 0x34: [currdict setObject:[self XADStringWithString:@"Good"] forKey:XADCompressionNameKey]; break;
+						case 0x35: [currdict setObject:[self XADStringWithString:@"Best"] forKey:XADCompressionNameKey]; break;
+					}
 
 /*					BOOL solid;
 					if(version<15) solid=compressed&&(RARPAI(ai)->flags&RARMHD_SOLID)&&ai->xai_FileInfo;
@@ -271,7 +284,7 @@ static int TestSignature(const uint8_t *ptr)
 
 -(NSString *)formatName
 {
-	retrun @"RAR";
+	return @"RAR";
 }
 
 @end

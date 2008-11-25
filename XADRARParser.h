@@ -1,7 +1,8 @@
 #import "XADArchiveParser.h"
 
-@interface XADRarParser:XADArchiveParser
+@interface XADRARParser:XADArchiveParser
 {
+	int archiveflags,encryptversion;
 }
 
 +(int)requiredHeaderSize;

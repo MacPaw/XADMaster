@@ -1,12 +1,14 @@
 #import "XADStuffItParser.h"
 #import "XADEndianAccess.h"
 #import "XADChecksums.h"
+#import "XADPaths.h"
 #import "XADException.h"
 #import "NSDateXAD.h"
 
 #import "XADStuffItRLEHandle.h"
 #import "XADStuffItHuffmanHandle.h"
 #import "XADStuffItArsenicHandle.h"
+#import "XADStuffIt13Handle.h"
 #import "XADStuffItOldHandles.h"
 #import "XADCompressHandle.h"
 
@@ -63,7 +65,7 @@
 	CSHandle *fh=[self handle];
 
 	/*uint32_t signature=*/[fh readID];
-	int numfiles=[fh readUInt16BE];
+	/*int numfiles=*/[fh readUInt16BE];
 	int totalsize=[fh readUInt32BE];
 	//uint32_t signature2=[fh readID];
 	//int version=[fh readUInt8];
@@ -72,10 +74,8 @@
 
 	NSMutableDictionary *currdir=nil;
 
-int i=0;
 	while([fh offsetInFile]+SIT_FILEHDRSIZE<=totalsize)
 	{
-i++;
 		uint8_t header[SIT_FILEHDRSIZE];
 		[fh readBytes:112 toBuffer:header];
 
@@ -90,7 +90,7 @@ i++;
 
 			int namelen=header[SITFH_FNAMESIZE];
 			if(namelen>63) namelen=63;
-			NSData *pathdata=[self pathNameDataWithParentDictionary:currdir bytes:(char *)header+SITFH_FNAME length:namelen];
+			NSData *pathdata=XADBuildMacPathWithBuffer([currdir objectForKey:@"StuffItPathData"],(char *)header+SITFH_FNAME,namelen);
 			XADString *path=[self XADStringWithData:pathdata]; // TODO: encoding:NSMacOS...?
 
 			off_t start=[fh offsetInFile];
@@ -133,6 +133,7 @@ i++;
 
 						[NSNumber numberWithBool:YES],XADIsResourceForkKey,
 						[NSNumber numberWithLongLong:start],XADDataOffsetKey,
+						[NSNumber numberWithUnsignedInt:resourcecomplen],XADDataLengthKey,
 						[NSNumber numberWithInt:resourcemethod],@"StuffItCompressionMethod",
 						[NSNumber numberWithInt:GetUInt16BE(header+SITFH_RSRCCRC)],@"StuffItCRC16",
 						currdir,@"StuffItParentDirectory",
@@ -148,7 +149,7 @@ i++;
 					[self addEntryWithDictionary:dict];
 				}
 
-				if(datalength)
+				if(datalength||resourcelength==0)
 				{
 					NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 						path,XADFileNameKey,
@@ -161,6 +162,7 @@ i++;
 						[NSNumber numberWithInt:GetUInt16BE(header+SITFH_FNDRFLAGS)],XADFinderFlagsKey,
 
 						[NSNumber numberWithLongLong:start+resourcecomplen],XADDataOffsetKey,
+						[NSNumber numberWithUnsignedInt:datacomplen],XADDataLengthKey,
 						[NSNumber numberWithInt:datamethod],@"StuffItCompressionMethod",
 						[NSNumber numberWithInt:GetUInt16BE(header+SITFH_DATACRC)],@"StuffItCRC16",
 						currdir,@"StuffItParentDirectory",
@@ -185,27 +187,6 @@ i++;
 		}
 		else [XADException raiseChecksumException];
 	}
-
-	NSLog(@"files: %d %d",numfiles,i);
-}
-
--(NSData *)pathNameDataWithParentDictionary:(NSMutableDictionary *)parent bytes:(const char *)bytes length:(int)length
-{
-	NSMutableData *data=[NSMutableData data];
-
-	if(parent)
-	{
-		[data appendData:[parent objectForKey:@"StuffItPathData"]];
-		[data appendBytes:"/" length:1];
-	}
-
-	for(int i=0;i<length;i++)
-	{
-		if(bytes[i]=='/') [data appendBytes:":" length:1];
-		else [data appendBytes:&bytes[i] length:1];
-	}
-
-	return data;
 }
 
 -(XADString *)nameOfCompressionMethod:(int)method
@@ -220,7 +201,7 @@ i++;
 		case 5: compressionname=@"LZAH"; break;
 		case 6: compressionname=@"Fixed Huffman"; break;
 		case 8: compressionname=@"MW"; break;
-		case 13: compressionname=@"Table Huffman"; break;
+		case 13: compressionname=@"LZH"; break;
 		case 14: compressionname=@"Installer"; break;
 		case 15: compressionname=@"Arsenic"; break;
 	}
@@ -239,14 +220,15 @@ i++;
 	CSHandle *handle;
 	switch(compressionmethod&0x0f)
 	{
-		case 0: handle=[fh nonCopiedSubHandleOfLength:size]; break;
+		case 0: handle=fh; break;
 		case 1: handle=[[[XADStuffItRLEHandle alloc] initWithHandle:fh length:size] autorelease]; break;
 		case 2: handle=[[[XADCompressHandle alloc] initWithHandle:fh length:size flags:0x8e] autorelease]; break;
 		case 3: handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:fh length:size] autorelease]; break;
 		case 5: handle=[[[XADStuffItLZAHHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
 		//case 6:  fixed huffman
 		case 8: handle=[[[XADStuffItMWHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
-		case 13: handle=[[[XADStuffIt13Handle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
+		case 13: if(!getenv("XAD_OLD")) handle=[[[XADStuffIt13Handle alloc] initWithHandle:fh length:size] autorelease];
+		else handle=[[[XADStuffItOld13Handle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
 		case 14: handle=[[[XADStuffIt14Handle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
 		case 15: if(!getenv("XAD_OLD")) handle=[[[XADStuffItArsenicHandle alloc] initWithHandle:fh length:size] autorelease];
 		else handle=[[[XADStuffItOldArsenicHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;

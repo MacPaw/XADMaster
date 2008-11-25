@@ -24,6 +24,7 @@ extern const NSString *XADIsMacBinaryKey;
 extern const NSString *XADLinkDestinationKey;
 extern const NSString *XADCommentKey;
 extern const NSString *XADDataOffsetKey;
+extern const NSString *XADDataLengthKey;
 extern const NSString *XADCompressionNameKey;
 
 // Internal use
@@ -69,6 +70,7 @@ extern const NSString *XADFinderFlags;
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
 
 -(void)addEntryWithDictionary:(NSDictionary *)dictionary;
+-(void)addEntryWithDictionary:(NSDictionary *)dictionary retainPosition:(BOOL)retainpos;
 
 -(XADString *)XADStringWithString:(NSString *)string;
 -(XADString *)XADStringWithData:(NSData *)data;

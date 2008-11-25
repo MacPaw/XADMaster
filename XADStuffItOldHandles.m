@@ -538,6 +538,7 @@ static void SIT13_Func2(struct SIT13Data *s, struct SIT13Buffer *buf, xadUINT16 
       for(n = m = 0; n < 8*4; n += 4)
         m += SIT13Bits[(l>>n)&0xF]<<(7*4-n);
       SIT13_Func1(s, buf, m, j, buf2[i].data);
+fprintf(stderr,"code:%x rev:%x length:%d val:%d\n",l,m,j,buf2[i].data);
     }
   }
 }
@@ -606,6 +607,7 @@ static void SIT13_Extract(struct SIT13Data *s, struct xadInOut *io)
         j = xadIOGetBitsLow(io, 1) ? s->Buffer4[j].d2 : s->Buffer4[j].d1;
       l = s->Buffer4[j].freq;
     }
+fprintf(stderr,"lit: %x\n",l);
     if(l < 0x100)
     {
       s->Window[wpos++] = xadIOPutChar(io, l);
@@ -1531,7 +1533,7 @@ static xadINT32 SIT_Arsenic(struct xadInOut *io)
 
 @end
 
-@implementation XADStuffIt13Handle
+@implementation XADStuffItOld13Handle
 
 -(xadINT32)unpackData
 {

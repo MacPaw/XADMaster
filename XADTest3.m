@@ -64,7 +64,7 @@
 
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 	NSString *ext=[[name pathExtension] lowercaseString];
-	if(([ext isEqual:@"sit"]|[ext isEqual:@"tar"])&&!(rsrc&&[rsrc boolValue]))
+	if(([ext isEqual:@"sit"]||[ext isEqual:@"cpt"]||[ext isEqual:@"tar"])&&!(rsrc&&[rsrc boolValue]))
 	{
 		[fh seekToFileOffset:0];
 
@@ -95,10 +95,11 @@ int main(int argc,char **argv)
 		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:2] autorelease]];
 		[parser setPassword:@"test"];
 
-//		@try {
+		@try {
 			[parser parse];
-//		} @catch(id e) {
-//		}
+		} @catch(id e) {
+			NSLog(@"Exception: %@",e);
+		}
 
 		[pool release];
 	}

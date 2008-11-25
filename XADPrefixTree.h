@@ -18,8 +18,10 @@ extern NSString *XADInvalidPrefixCodeException;
 -(id)initWithStaticTable:(int (*)[2])statictable;
 -(void)dealloc;
 
--(void)addValue:(int)value forCode:(int)code length:(int)length;
--(void)addValue:(int)value forCode:(int)code length:(int)length repeatAt:(int)repeatpos;
+-(void)addValue:(int)value forCodeWithHighBitFirst:(uint32_t)code length:(int)length;
+-(void)addValue:(int)value forCodeWithHighBitFirst:(uint32_t)code length:(int)length repeatAt:(int)repeatpos;
+-(void)addValue:(int)value forCodeWithLowBitFirst:(uint32_t)code length:(int)length;
+-(void)addValue:(int)value forCodeWithLowBitFirst:(uint32_t)code length:(int)length repeatAt:(int)repeatpos;
 
 -(void)startBuildingTree;
 -(void)startZeroBranch;

@@ -1,4 +1,5 @@
 #import "XADStuffIt5Parser.h"
+#import "XADPaths.h"
 #import "XADException.h"
 #import "NSDateXAD.h"
 
@@ -182,9 +183,8 @@
 
 		off_t datastart=[fh offsetInFile];
 
-		NSData *pathdata=[self pathNameDataWithParentDictionary:
-		[directories objectForKey:[NSNumber numberWithUnsignedInt:diroffs]]
-		bytes:[namedata bytes] length:[namedata length]];
+		NSDictionary *parent=[directories objectForKey:[NSNumber numberWithUnsignedInt:diroffs]];
+		NSData *pathdata=XADBuildMacPathWithData([parent objectForKey:@"StuffItPathData"],namedata);
 		XADString *path=[self XADStringWithData:pathdata];
 
 		if(flags&SIT5FLAGS_DIRECTORY)
@@ -206,7 +206,9 @@
 		}
 		else
 		{
-			if(something&0x01)
+			BOOL hasresource=something&0x01;
+
+			if(hasresource)
 			{
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					path,XADFileNameKey,
@@ -220,6 +222,7 @@
 					[NSNumber numberWithBool:YES],XADIsResourceForkKey,
 
 					[NSNumber numberWithLongLong:datastart],XADDataOffsetKey,
+					[NSNumber numberWithUnsignedInt:resourcecomplen],XADDataLengthKey,
 					[NSNumber numberWithInt:resourcemethod],@"StuffItCompressionMethod",
 					[NSNumber numberWithInt:resourcecrc],@"StuffItCRC16",
 					[NSNumber numberWithInt:flags],@"StuffItFlags",
@@ -237,7 +240,7 @@
 				[self addEntryWithDictionary:dict];
 			}
 
-			if(datalength) // !(buffer[i+1]&0x01)))
+			if(datalength||!hasresource)
 			{
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					path,XADFileNameKey,
@@ -250,6 +253,7 @@
 					[NSNumber numberWithInt:finderflags],XADFinderFlagsKey,
 
 					[NSNumber numberWithLongLong:datastart+resourcecomplen],XADDataOffsetKey,
+					[NSNumber numberWithUnsignedInt:datacomplen],XADDataLengthKey,
 					[NSNumber numberWithInt:datamethod],@"StuffItCompressionMethod",
 					[NSNumber numberWithInt:datacrc],@"StuffItCRC16",
 					[NSNumber numberWithInt:flags],@"StuffItFlags",

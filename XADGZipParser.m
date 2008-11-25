@@ -73,6 +73,7 @@
 		[NSNumber numberWithUnsignedLongLong:[handle offsetInFile]-datapos-8],XADCompressedSizeKey,
 		[NSNumber numberWithUnsignedLongLong:datapos],XADDataOffsetKey,
 		[NSDate dateWithTimeIntervalSince1970:time],XADLastModificationDateKey,
+		[self XADStringWithString:@"Deflate"],XADCompressionNameKey,
 		[NSNumber numberWithUnsignedInt:extraflags],@"GzipExtraFlags",
 		[NSNumber numberWithUnsignedInt:os],@"GzipOS",
 	nil];

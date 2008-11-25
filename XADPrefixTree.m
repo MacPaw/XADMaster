@@ -84,12 +84,12 @@ int CSInputNextSymbolFromTreeLE(CSInputBuffer *buf,XADPrefixTree *tree)
 	[super dealloc];
 }
 
--(void)addValue:(int)value forCode:(int)code length:(int)length
+-(void)addValue:(int)value forCodeWithHighBitFirst:(uint32_t)code length:(int)length
 {
-	[self addValue:value forCode:code length:length repeatAt:length];
+	[self addValue:value forCodeWithHighBitFirst:code length:length repeatAt:length];
 }
 
--(void)addValue:(int)value forCode:(int)code length:(int)length repeatAt:(int)repeatpos
+-(void)addValue:(int)value forCodeWithHighBitFirst:(uint32_t)code length:(int)length repeatAt:(int)repeatpos
 {
 	if(isstatic) [NSException raise:NSGenericException format:@"Attempted to add codes to a static prefix tree"];
 
@@ -128,6 +128,30 @@ int CSInputNextSymbolFromTreeLE(CSInputBuffer *buf,XADPrefixTree *tree)
 
 	if(!IsEmptyNode(self,lastnode)) [NSException raise:NSInvalidArgumentException format:@"Prefix found"];
 	SetLeaf(self,lastnode,value);
+}
+
+static uint32_t Reverse32(uint32_t val)
+{
+	val=((val>>1)&0x55555555)|((val&0x55555555)<<1);
+	val=((val>>2)&0x33333333)|((val&0x33333333)<<2);
+	val=((val>>4)&0x0F0F0F0F)|((val&0x0F0F0F0F)<<4);
+	val=((val>>8)&0x00FF00FF)|((val&0x00FF00FF)<<8);
+	return (val>>16)|(val<<16);
+}
+
+static uint32_t ReverseN(uint32_t val,int length)
+{
+	return Reverse32(val)>>(32-length);
+}
+
+-(void)addValue:(int)value forCodeWithLowBitFirst:(uint32_t)code length:(int)length
+{
+	[self addValue:value forCodeWithHighBitFirst:ReverseN(code,length) length:length repeatAt:length];
+}
+
+-(void)addValue:(int)value forCodeWithLowBitFirst:(uint32_t)code length:(int)length repeatAt:(int)repeatpos
+{
+	[self addValue:value forCodeWithHighBitFirst:ReverseN(code,length) length:length repeatAt:repeatpos];
 }
 
 -(void)startBuildingTree

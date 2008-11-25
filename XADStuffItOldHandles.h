@@ -10,7 +10,7 @@
 -(xadINT32)unpackData;
 @end
 
-@interface XADStuffIt13Handle:XADLibXADIOHandle {}
+@interface XADStuffItOld13Handle:XADLibXADIOHandle {}
 -(xadINT32)unpackData;
 @end
 

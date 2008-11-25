@@ -32,6 +32,7 @@ const NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 const NSString *XADLinkDestinationKey=@"XADLinkDestination";
 const NSString *XADCommentKey=@"XADComment";
 const NSString *XADDataOffsetKey=@"XADDataOffset";
+const NSString *XADDataLengthKey=@"XADDataLength";
 const NSString *XADCompressionNameKey=@"XADCompressionName";
 
 
@@ -142,7 +143,10 @@ static int maxheader=0;
 -(CSHandle *)handleAtDataOffsetForDictionary:(NSDictionary *)dict
 {
 	[sourcehandle seekToFileOffset:[[dict objectForKey:XADDataOffsetKey] longLongValue]];
-	return sourcehandle;
+
+	NSNumber *length=[dict objectForKey:XADDataLengthKey];
+	if(length) return [sourcehandle nonCopiedSubHandleOfLength:[length longLongValue]];
+	else return sourcehandle;
 }
 
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset
@@ -162,11 +166,22 @@ static int maxheader=0;
 
 -(void)addEntryWithDictionary:(NSDictionary *)dictionary
 {
+	[self addEntryWithDictionary:dictionary retainPosition:NO];
+}
+
+-(void)addEntryWithDictionary:(NSDictionary *)dictionary retainPosition:(BOOL)retainpos
+{
 	// If an encrypted file is added, set the global encryption flag
 	NSNumber *num=[dictionary objectForKey:XADIsEncryptedKey];
 	if(num&&[num boolValue]) [self setEncrypted:YES];
 
-	[delegate archiveParser:self foundEntryWithDictionary:dictionary];
+	if(retainpos)
+	{
+		off_t pos=[sourcehandle offsetInFile];
+		[delegate archiveParser:self foundEntryWithDictionary:dictionary];
+		[sourcehandle seekToFileOffset:pos];
+	}
+	else [delegate archiveParser:self foundEntryWithDictionary:dictionary];
 }
 
 

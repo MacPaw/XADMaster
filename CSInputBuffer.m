@@ -48,6 +48,12 @@ void CSInputSetStartOffset(CSInputBuffer *buf,off_t offset)
 }
 
 
+off_t CSInputBufferOffset(CSInputBuffer *buf)
+{
+	return [buf->parent offsetInFile]-buf->startoffs-buf->bufbytes+buf->currbyte;
+}
+
+
 
 void _CSInputFillBuffer(CSInputBuffer *buf)
 {

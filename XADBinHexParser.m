@@ -96,7 +96,7 @@
 	[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
 		[self XADStringWithData:namedata encoding:NSMacOSRomanStringEncoding],XADFileNameKey,
 		[NSNumber numberWithUnsignedInt:resourcelen],XADFileSizeKey,
-		[NSNumber numberWithUnsignedInt:(resourcelen*4)/3],XADCompressedSizeKey,
+		//[NSNumber numberWithUnsignedInt:(resourcelen*4)/3],XADCompressedSizeKey,
 		[NSNumber numberWithUnsignedInt:type],XADFileTypeKey,
 		[NSNumber numberWithUnsignedInt:creator],XADFileCreatorKey,
 		[NSNumber numberWithUnsignedShort:flags],XADFinderFlagsKey,

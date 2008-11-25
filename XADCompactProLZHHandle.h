@@ -1,15 +1,14 @@
 #import "XADLZSSHandle.h"
 #import "XADPrefixTree.h"
 
-@interface XADZipImplodeHandle:XADLZSSHandle
+@interface XADCompactProLZHHandle:XADLZSSHandle
 {
 	XADPrefixTree *literaltree,*lengthtree,*offsettree;
-	int offsetbits;
-	BOOL literals;
+	int blocksize,blockcount;
+	off_t blockstart;
 }
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length
-largeDictionary:(BOOL)largedict literalTree:(BOOL)hasliterals;
+-(id)initWithHandle:(CSHandle *)handle blockSize:(int)blocklen;
 -(void)dealloc;
 
 -(void)resetLZSSHandle;

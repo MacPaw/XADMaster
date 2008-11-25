@@ -24,6 +24,7 @@
 	[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
 		[self XADStringWithString:[[self name] stringByDeletingPathExtension]],XADFileNameKey,
 		[NSNumber numberWithLongLong:[[self handle] fileSize]-3],XADCompressedSizeKey,
+		[self XADStringWithString:@"LZC"],XADCompressionNameKey,
 		[NSNumber numberWithLongLong:3],XADDataOffsetKey,
 		[NSNumber numberWithInt:flags],@"CompressFlags",
 	nil]];

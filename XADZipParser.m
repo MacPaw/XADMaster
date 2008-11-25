@@ -104,20 +104,22 @@
 				[NSNumber numberWithUnsignedLong:compsize],XADCompressedSizeKey,
 				[NSNumber numberWithUnsignedLong:uncompsize],XADFileSizeKey,
 				[NSNumber numberWithLongLong:[fh offsetInFile]+localnamelength+localextralength],XADDataOffsetKey,
+				[NSNumber numberWithUnsignedLong:compsize],XADDataLengthKey,
 			nil];
 			if(flags&0x01) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 
 			NSString *compressionname=nil;
 			switch(compressionmethod)
 			{
-				case 0: compressionname=@"Stored"; break;
-				case 1: compressionname=@"Shrunk"; break;
-				case 2: compressionname=@"Reduced 1"; break;
-				case 3: compressionname=@"Reduced 2"; break;
-				case 4: compressionname=@"Reduced 3"; break;
-				case 5: compressionname=@"Reduced 4"; break;
-				case 6: compressionname=@"Imploded"; break;
-				case 8: compressionname=@"Deflated"; break;
+				case 0: compressionname=@"None"; break;
+				case 1: compressionname=@"Shrink"; break;
+				case 2: compressionname=@"Reduce 1"; break;
+				case 3: compressionname=@"Reduce 2"; break;
+				case 4: compressionname=@"Reduce 3"; break;
+				case 5: compressionname=@"Reduce 4"; break;
+				case 6: compressionname=@"Implode"; break;
+				case 8: compressionname=@"Deflate"; break;
+				case 9: compressionname=@"Deflate64"; break;
 			}
 			if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
 
@@ -203,6 +205,7 @@
 			[NSNumber numberWithUnsignedLong:commentlength],XADCompressedSizeKey,
 			[NSNumber numberWithUnsignedLong:commentlength],XADFileSizeKey,
 			[NSNumber numberWithLongLong:commentoffs],XADDataOffsetKey,
+			[NSNumber numberWithUnsignedLong:commentlength],XADDataLengthKey,
 			[self XADStringWithString:@"ZipComment.txt"],XADFileNameKey,
 		nil];
 		// TODO: no filename, metadata flag
@@ -448,7 +451,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 {
 	switch(method)
 	{
-		case 0: return [parent nonCopiedSubHandleOfLength:size];
+		case 0: return parent;
 		case 1: return [[[XADZipShrinkHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
 						largeDictionary:flags&0x02 literalTree:flags&0x04] autorelease];

@@ -31,7 +31,7 @@
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 	NSString *subname=[[dict objectForKey:XADFileNameKey] string];
 	NSString *ext=[[subname pathExtension] lowercaseString];
-	if([ext isEqual:@"sit"]&&!(rsrc&&[rsrc boolValue]))
+	if(([ext isEqual:@"sit"]||[ext isEqual:@"cpt"])&&!(rsrc&&[rsrc boolValue]))
 	{
 		NSMutableString *name=[NSMutableString stringWithString:[[dict objectForKey:XADFileNameKey] string]];
 		[name replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[name length])];

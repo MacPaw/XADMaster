@@ -19,6 +19,8 @@ void CSInputFlush(CSInputBuffer *buf);
 void CSInputSeekToOffset(CSInputBuffer *buf,off_t offset);
 void CSInputSetStartOffset(CSInputBuffer *buf,off_t offset);
 
+off_t CSInputBufferOffset(CSInputBuffer *buf);
+
 void _CSInputFillBuffer(CSInputBuffer *buf);
 
 void CSInputSkipBits(CSInputBuffer *buf,int bits);

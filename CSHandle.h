@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-#import <sys/types.h>
+#import <stdint.h>
 
 
 #define CSHandleMaxLength 0x7fffffffffffffff

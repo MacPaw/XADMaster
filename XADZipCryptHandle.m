@@ -1,6 +1,6 @@
 #import "XADZipCryptHandle.h"
-#import "XADChecksums.h"
 #import "XADException.h"
+#import "Checksums.h"
 
 @implementation XADZipCryptHandle
 

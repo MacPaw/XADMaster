@@ -1,6 +1,6 @@
 #import "XADStuffIt5Parser.h"
-#import "XADPaths.h"
 #import "XADException.h"
+#import "Paths.h"
 #import "NSDateXAD.h"
 
 // TODO: StuffIt 5 exe

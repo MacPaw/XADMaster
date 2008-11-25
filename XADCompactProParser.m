@@ -1,9 +1,9 @@
 #import "XADCompactProParser.h"
 #import "XADCompactProRLEHandle.h"
 #import "XADCompactProLZHHandle.h"
-#import "XADChecksums.h"
-#import "XADPaths.h"
 #import "XADException.h"
+#import "Checksums.h"
+#import "Paths.h"
 #import "NSDateXAD.h"
 
 // TODO: actually implement this format!

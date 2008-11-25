@@ -1,4 +1,4 @@
-#import "XADPaths.h"
+#import "Paths.h"
 
 NSData *XADBuildMacPathWithData(NSData *parent,NSData *data)
 {

@@ -1,8 +1,8 @@
 #import "XADStuffItParser.h"
-#import "XADEndianAccess.h"
-#import "XADChecksums.h"
-#import "XADPaths.h"
 #import "XADException.h"
+#import "EndianAccess.h"
+#import "Checksums.h"
+#import "Paths.h"
 #import "NSDateXAD.h"
 
 #import "XADStuffItRLEHandle.h"

@@ -1,5 +1,5 @@
 #import "XADStuffItOldHandles.h"
-#import "XADChecksums.h"
+#import "Checksums.h"
 
 /*****************************************************************************/
 

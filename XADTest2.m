@@ -1,7 +1,4 @@
-
-
 #import <XADMaster/XADArchiveParser.h>
-#import <XADMaster/XADChecksums.h>
 
 @interface TestDelegate:NSObject
 @end

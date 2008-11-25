@@ -3,8 +3,8 @@
 #import "XADZipShrinkHandle.h"
 #import "XADZipCryptHandle.h"
 #import "XADWinZipAESHandle.h"
-#import "XADChecksums.h"
 #import "CSZlibHandle.h"
+#import "Checksums.h"
 #import "NSDateXAD.h"
 
 

@@ -1,5 +1,4 @@
 #import <XADMaster/XADArchiveParser.h>
-#import <XADMaster/XADChecksums.h>
 
 @interface ArchiveTester:NSObject
 {

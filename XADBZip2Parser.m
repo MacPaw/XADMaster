@@ -2,6 +2,6 @@
 
 // TODO: actually implement this format!
 
-@implementation XADBZip2Parser
+@implementation XADBzip2Parser
 
 @end

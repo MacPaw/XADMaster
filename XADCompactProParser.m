@@ -76,7 +76,7 @@
 			uint32_t modificationdate=[fh readUInt32BE];
 			int finderflags=[fh readUInt16BE];
 			uint32_t crc=[fh readUInt32BE];
-			int flags=[fh readUInt16BE];
+			int flags=[fh readUInt16BE]; // TODO: bit 0 means encryption
 			uint32_t resourcelength=[fh readUInt32BE];
 			uint32_t datalength=[fh readUInt32BE];
 			uint32_t resourcecomplen=[fh readUInt32BE];

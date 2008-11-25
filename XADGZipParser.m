@@ -4,7 +4,7 @@
 
 // TODO: implement SFX 
 
-@implementation XADGZipParser
+@implementation XADGzipParser
 
 +(int)requiredHeaderSize { return 3; }
 

@@ -3,7 +3,8 @@
 #import "CSMultiHandle.h"
 
 #import "XADZipParser.h"
-#import "XADGZipParser.h"
+#import "XADGzipParser.h"
+#import "XADRARParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
 #import "XADBinHexParser.h"
@@ -46,7 +47,8 @@ static int maxheader=0;
 	if(parserclasses) return;
 	parserclasses=[[NSMutableArray arrayWithObjects:
 		[XADZipParser class],
-		[XADGZipParser class],
+		[XADGzipParser class],
+		[XADRARParser class],
 		[XADStuffIt5Parser class],
 		[XADStuffItParser class],
 		[XADBinHexParser class],

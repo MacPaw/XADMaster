@@ -1,8 +1,8 @@
 #import "XADArchiveParser.h"
 
-// TODO: GZipSFX
+// TODO: GzipSFX
 
-@interface XADGZipParser:XADArchiveParser
+@interface XADGzipParser:XADArchiveParser
 {
 }
 

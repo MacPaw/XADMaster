@@ -97,7 +97,7 @@ static const int MetaCodeLengths[37];
 	XADPrefixTree *tree=[XADPrefixTree prefixTree];
 	int code=0,codesleft=numcodes;
 
-	for(int length=1;length<32;length++)
+	for(int length=1;length<=32;length++)
 	for(int i=0;i<numcodes;i++)
 	{
 		if(lengths[i]!=length) continue;

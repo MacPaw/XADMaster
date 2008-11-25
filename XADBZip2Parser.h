@@ -1,6 +1,6 @@
 #import "XADArchiveParser.h"
 
-@interface XADBZip2Parser:XADArchiveParser
+@interface XADBzip2Parser:XADArchiveParser
 {
 }
 

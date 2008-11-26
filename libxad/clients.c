@@ -5,7 +5,7 @@
     the xad packing library clients
 
     XAD library system for archive handling
-    Copyright (C) 1998 and later by Dirk Stöcker <soft@dstoecker.de>
+    Copyright (C) 1998 and later by Dirk StË†cker <soft@dstoecker.de>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -72,7 +72,7 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/MXM-SimpleArc.c"
 #include "clients/PackDev.c"
 #include "clients/PackDisk.c"
-#include "clients/Rar.c"
+//#include "clients/Rar.c"
 #include "clients/RPM.c"
 #include "clients/StuffIt.c"
 #include "clients/SuperDuper3.c"

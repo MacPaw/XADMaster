@@ -67,6 +67,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 	if(streampos>=blockstartpos&&streampos<blockstartpos+blocklength)
 	{
+		if(!currblock) return 0;
+
 		int offs=streampos-blockstartpos;
 		int count=blocklength-offs;
 		if(count>num) count=num;
@@ -78,11 +80,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	{
 		int produced=[self produceBlockAtOffset:streampos+n];
 
-		if(produced==0)
-		{
-			endofstream=YES;
-			break;
-		}
+		if(produced==0||!currblock) break;
 
 		int count=imin(produced,num-n);
 		memcpy(buffer+n,currblock,count);

@@ -1,45 +1,17 @@
-// kludged for libxad
+// Kludged for XADMaster
 
 #ifndef _RAR_RARCOMMON_
 #define _RAR_RARCOMMON_
 
-typedef xadSignSize Int64;
-
-#define int64to32(x) ((uint)(x))
-#define int32to64(high,low) ((((Int64)(high))<<32)+(low))
-#define is64plus(x) (x>=0)
+#include <stdlib.h>
+#include <string.h>
 
 #define FALSE 0
 #define TRUE  1
 
-#include <stdlib.h>
-#include <string.h>
-
 #define ENABLE_ACCESS
 
 #define  NM  1024
-
-//#include <unistd.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <sys/file.h>
-//#include <sys/param.h>
-//#include <sys/mount.h>
-
-/*#include <pwd.h>
-#include <grp.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <dirent.h>
-#include <time.h>
-#include <signal.h>
-#include <utime.h>
-#include <locale.h>*/
 
   #if defined(__BIG_ENDIAN__) && !defined(BIG_ENDIAN)
     #define BIG_ENDIAN
@@ -55,7 +27,6 @@ typedef xadSignSize Int64;
 #define ALLOW_NOT_ALIGNED_INT
 #endif
 
-
 #define rarmalloc malloc
 #define rarcalloc calloc
 #define rarrealloc realloc
@@ -70,14 +41,19 @@ class ErrorHandler
 	void MemoryError();
 };
 
+//#include "raros.hpp"
+//#include "os.hpp"
+
+//#include "version.hpp"
 #include "rartypes.hpp"
 #include "rardefs.hpp"
 //#include "rarlang.hpp"
-//#include "int64.hpp"
+#include "int64.hpp"
 //#include "unicode.hpp"
 //#include "errhnd.hpp"
 #include "array.hpp"
 //#include "timefn.hpp"
+//#include "options.hpp"
 //#include "headers.hpp"
 //#include "rarfn.hpp"
 //#include "pathfn.hpp"
@@ -95,7 +71,6 @@ class ErrorHandler
 //#include "savepos.hpp"
 #include "getbits.hpp"
 //#include "rdwrfn.hpp"
-//#include "options.hpp"
 //#include "archive.hpp"
 //#include "match.hpp"
 //#include "cmddata.hpp"
@@ -128,15 +103,16 @@ uint CRC(uint StartCRC,const void *Addr,uint Size);
 class ComprDataIO
 {
 	public:
-	ComprDataIO(struct xadArchiveInfo *archiveinfo,struct xadMasterBase *xadMasterBase);
+	ComprDataIO(void *handle);
 	int UnpRead(byte *Addr,uint Count);
 	void UnpWrite(byte *Addr,uint Count);
 
-	struct xadArchiveInfo *ai;
-	struct xadMasterBase *xmb;
-	xadSize bytesleft;
-	xadBOOL dryrun;
-	xadUINT32 *crcptr;
+	void *handle;
+	//struct xadArchiveInfo *ai;
+	//struct xadMasterBase *xmb;
+	//xadSize bytesleft;
+	//xadBOOL dryrun;
+	//xadUINT32 *crcptr;
 };
 
 #endif

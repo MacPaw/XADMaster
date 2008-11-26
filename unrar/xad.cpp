@@ -1,31 +1,19 @@
-#include "../../include/xadmaster.h"
-
 #include "rar.hpp"
 
-#include "unpack.cpp"
-#include "rarvm.cpp"
-#include "getbits.cpp"
-
+//#include "unpack.cpp"
+//#include "rarvm.cpp"
+//#include "getbits.cpp"
 
 
 ErrorHandler ErrHandler;
 
+void ErrorHandler::MemoryError() { /*throw XADERR_NOMEMORY;*/ }
 
 
-void ErrorHandler::MemoryError() { throw XADERR_NOMEMORY; }
-
-
-
-
-ComprDataIO::ComprDataIO(struct xadArchiveInfo *archiveinfo,struct xadMasterBase *xadMasterBase)
-{
-	ai=archiveinfo;
-	xmb=xadMasterBase;
-}
 
 int ComprDataIO::UnpRead(byte *Addr,uint Count)
 {
-	if(Count>bytesleft) Count=bytesleft;
+/*	if(Count>bytesleft) Count=bytesleft;
 
 	xadERROR err=xadHookTagAccess(xmb,XADAC_READ,Count,Addr,ai,
 		XAD_USESKIPINFO,1,
@@ -34,16 +22,17 @@ int ComprDataIO::UnpRead(byte *Addr,uint Count)
 
 	bytesleft-=Count;
 
-	return Count;
+	return Count;*/
+return 0;
 }
 
 void ComprDataIO::UnpWrite(byte *Addr,uint Count)
 {
-	if(dryrun) return;
+/*	if(dryrun) return;
 	xadERROR err=xadHookTagAccess(xmb,XADAC_WRITE,Count,Addr,ai,
 		XAD_GETCRC32,crcptr,
 	TAG_DONE);
-	if(err) throw err;
+	if(err) throw err;*/
 }
 
 
@@ -67,13 +56,7 @@ uint CRC(uint StartCRC,const void *Addr,uint Size)
 
 
 
-struct RarCppPrivate
-{
-	ComprDataIO *io;
-	Unpack *unpack;
-};
-
-extern "C" xadPTR rar_make_unpacker(struct xadArchiveInfo *ai,struct xadMasterBase *xadMasterBase)
+/*extern "C" xadPTR rar_make_unpacker(struct xadArchiveInfo *ai,struct xadMasterBase *xadMasterBase)
 {
 	RarCppPrivate *unpacker=new RarCppPrivate;
 	if(!unpacker) return NULL;
@@ -115,3 +98,4 @@ extern "C" void rar_destroy_unpacker(xadPTR *unpacker)
 		delete (RarCppPrivate *)unpacker;
 	}
 }
+*/

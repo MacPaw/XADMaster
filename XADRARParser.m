@@ -1,44 +1,47 @@
 #import "XADRARParser.h"
+#import "XADRARHandle.h"
+#import "XADRARAESHandle.h"
 #import "XADException.h"
+#import "Checksums.h"
 #import "NSDateXAD.h"
 
 #define RARFLAG_SKIP_IF_UNKNOWN 0x4000
 #define RARFLAG_LONG_BLOCK    0x8000
 
-#define RARMHD_VOLUME         0x0001
-#define RARMHD_COMMENT        0x0002
-#define RARMHD_LOCK           0x0004
-#define RARMHD_SOLID          0x0008
-#define RARMHD_PACK_COMMENT   0x0010
-#define RARMHD_NEWNUMBERING   0x0010
-#define RARMHD_AV             0x0020
-#define RARMHD_PROTECT        0x0040
-#define RARMHD_PASSWORD       0x0080
-#define RARMHD_FIRSTVOLUME    0x0100
-#define RARMHD_ENCRYPTVER     0x0200
+#define MHD_VOLUME         0x0001
+#define MHD_COMMENT        0x0002
+#define MHD_LOCK           0x0004
+#define MHD_SOLID          0x0008
+#define MHD_PACK_COMMENT   0x0010
+#define MHD_NEWNUMBERING   0x0010
+#define MHD_AV             0x0020
+#define MHD_PROTECT        0x0040
+#define MHD_PASSWORD       0x0080
+#define MHD_FIRSTVOLUME    0x0100
+#define MHD_ENCRYPTVER     0x0200
 
-#define RARLHD_SPLIT_BEFORE   0x0001
-#define RARLHD_SPLIT_AFTER    0x0002
-#define RARLHD_PASSWORD       0x0004
-#define RARLHD_COMMENT        0x0008
-#define RARLHD_SOLID          0x0010
+#define LHD_SPLIT_BEFORE   0x0001
+#define LHD_SPLIT_AFTER    0x0002
+#define LHD_PASSWORD       0x0004
+#define LHD_COMMENT        0x0008
+#define LHD_SOLID          0x0010
 
-#define RARLHD_WINDOWMASK     0x00e0
-#define RARLHD_WINDOW64       0x0000
-#define RARLHD_WINDOW128      0x0020
-#define RARLHD_WINDOW256      0x0040
-#define RARLHD_WINDOW512      0x0060
-#define RARLHD_WINDOW1024     0x0080
-#define RARLHD_WINDOW2048     0x00a0
-#define RARLHD_WINDOW4096     0x00c0
-#define RARLHD_DIRECTORY      0x00e0
+#define LHD_WINDOWMASK     0x00e0
+#define LHD_WINDOW64       0x0000
+#define LHD_WINDOW128      0x0020
+#define LHD_WINDOW256      0x0040
+#define LHD_WINDOW512      0x0060
+#define LHD_WINDOW1024     0x0080
+#define LHD_WINDOW2048     0x00a0
+#define LHD_WINDOW4096     0x00c0
+#define LHD_DIRECTORY      0x00e0
 
-#define RARLHD_LARGE          0x0100
-#define RARLHD_UNICODE        0x0200
-#define RARLHD_SALT           0x0400
-#define RARLHD_VERSION        0x0800
-#define RARLHD_EXTTIME        0x1000
-#define RARLHD_EXTFLAGS       0x2000
+#define LHD_LARGE          0x0100
+#define LHD_UNICODE        0x0200
+#define LHD_SALT           0x0400
+#define LHD_VERSION        0x0800
+#define LHD_EXTTIME        0x1000
+#define LHD_EXTFLAGS       0x2000
 
 #define RARMETHOD_STORE 0x30
 #define RARMETHOD_FASTEST 0x31
@@ -123,10 +126,10 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 		switch(type)
 		{
 			case 0x73: // archive header
-				if(flags&RARMHD_PASSWORD) [XADException raiseNotSupportedException];
+				if(flags&MHD_PASSWORD) [XADException raiseNotSupportedException];
 				archiveflags=flags;
 
-				if(flags&RARMHD_ENCRYPTVER)
+				if(flags&MHD_ENCRYPTVER)
 				{
 					[fh skipBytes:8]; // TODO: figure out what these are
 					encryptversion=[fh readUInt8];
@@ -144,7 +147,7 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 				int namelength=[fh readUInt16LE];
 				uint32_t attrs=[fh readUInt32LE];
 
-				if(flags&RARLHD_LARGE)
+				if(flags&LHD_LARGE)
 				{
 					longsize+=(off_t)[fh readUInt32LE]<<32;
 					unpsize+=(off_t)[fh readUInt32LE]<<32;
@@ -159,7 +162,7 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 				if(currdict)
 				{
 					// If we can't continue from the last piece, store it as a broken file and clear.
-					if(!(flags&RARLHD_SPLIT_BEFORE)||![namedata isEqual:[currdict objectForKey:@"RARNameData"]])
+					if(!(flags&LHD_SPLIT_BEFORE)||![namedata isEqual:[currdict objectForKey:@"RARNameData"]])
 					{
 						// TODO: set partial flag on file, corrupt on archive
 						[self addEntryWithDictionary:currdict];
@@ -167,7 +170,7 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 					}
 				}
 
-				if(flags&RARLHD_SPLIT_BEFORE)
+				if(flags&LHD_SPLIT_BEFORE)
 				{
 					if(!currdict) break;
 
@@ -208,8 +211,8 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 						[NSNumber numberWithUnsignedInt:attrs],@"RARAttributes",
 					nil];
 
-					if(flags&RARLHD_PASSWORD) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
-					if((flags&RARLHD_WINDOWMASK)==RARLHD_DIRECTORY) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+					if(flags&LHD_PASSWORD) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+					if((flags&LHD_WINDOWMASK)==LHD_DIRECTORY) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 					if(os==3) [currdict setObject:[NSNumber numberWithUnsignedInt:attrs] forKey:XADPosixPermissionsKey];
 
 					switch(method)
@@ -223,8 +226,8 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 					}
 
 /*					BOOL solid;
-					if(version<15) solid=compressed&&(RARPAI(ai)->flags&RARMHD_SOLID)&&ai->xai_FileInfo;
-					else solid=(flags&RARLHD_SOLID)!=0;
+					if(version<15) solid=compressed&&(RARPAI(ai)->flags&MHD_SOLID)&&ai->xai_FileInfo;
+					else solid=(flags&LHD_SOLID)!=0;
 
 					RARPFI(fi)->solid=solid;
 					RARPFI(fi)->compressed=compressed;
@@ -253,7 +256,7 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 
 				lastpos=blockstart+shortsize+longsize;
 
-				if(!(flags&RARLHD_SPLIT_AFTER))
+				if(!(flags&LHD_SPLIT_AFTER))
 				{
 					[self addEntryWithDictionary:currdict];
 					currdict=nil;
@@ -279,7 +282,15 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	return nil;
+	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
+	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
+
+	XADRARHandle *rh=[[[XADRARHandle alloc] initWithHandle:handle length:size
+	version:[[dict objectForKey:@"RARCompressionVersion"] intValue]] autorelease];
+
+	if(checksum) return [XADCRCHandle IEEECRC32HandleWithHandle:rh length:size
+	correctCRC:[[dict objectForKey:@"RARCRC32"] unsignedIntValue] conditioned:YES];
+	else return rh;
 }
 
 -(NSString *)formatName

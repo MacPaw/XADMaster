@@ -136,6 +136,8 @@ static int maxheader=0;
 	password=[newpassword retain];
 }
 
+-(NSString *)password { return password; }
+
 
 
 -(NSString *)name { return archivename; }

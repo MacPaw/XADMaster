@@ -84,7 +84,8 @@ static int TestSignature(const uint8_t *ptr)
 
 -(void)parse
 {
-	CSHandle *fh=[self handle];
+	CSHandle *handle=[self handle];
+	XADRARAESHandle *encryptedhandle=nil;
 
 	NSMutableDictionary *currdict=nil;
 	NSMutableDictionary *lastcompressed=nil,*lastnonsolid=NULL;
@@ -92,14 +93,14 @@ static int TestSignature(const uint8_t *ptr)
 	off_t lastpos;
 
 	uint8_t buf[7];
-	[fh readBytes:7 toBuffer:buf];	
+	[handle readBytes:7 toBuffer:buf];	
 
 	int sigtype;
 	while(!(sigtype=TestSignature(buf)))
 	{
 		buf[0]=buf[1]; buf[1]=buf[2]; buf[2]=buf[3];
 		buf[3]=buf[4]; buf[4]=buf[5]; buf[5]=buf[6];
-		buf[6]=[fh readUInt8];
+		buf[6]=[handle readUInt8];
 	}
 
 	if(sigtype==RAR_OLDSIGNATURE)
@@ -109,30 +110,50 @@ static int TestSignature(const uint8_t *ptr)
 		// TODO: handle old RARs.
 	}
 
+	archiveflags=0;
+
 	BOOL parsing=YES;
 	while(parsing)
 	{
-		off_t blockstart=[fh offsetInFile];
+		off_t blockstart=[handle offsetInFile];
+
+		CSHandle *fh=encryptedhandle?encryptedhandle:handle;
 
 		/*int blockcrc=*/[fh readUInt16LE];
 		int type=[fh readUInt8];
 		int flags=[fh readUInt16LE];
-		int shortsize=[fh readUInt16LE];
-		off_t longsize=0;
-		if(flags&RARFLAG_LONG_BLOCK) longsize=[fh readUInt32LE];
+		int headersize=[fh readUInt16LE];
+		off_t datasize=0;
+		if(flags&RARFLAG_LONG_BLOCK) datasize=[fh readUInt32LE];
 
-NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
+NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,headersize,datasize);
 
 		switch(type)
 		{
 			case 0x73: // archive header
-				if(flags&MHD_PASSWORD) [XADException raiseNotSupportedException];
 				archiveflags=flags;
 
 				if(flags&MHD_ENCRYPTVER)
 				{
-					[fh skipBytes:8]; // TODO: figure out what these are
+					[fh skipBytes:6]; // Skip signature stuff
 					encryptversion=[fh readUInt8];
+NSLog(@"encryptver: %d",encryptversion);
+				}
+				else encryptversion=0; // ?
+
+				if(flags&MHD_PASSWORD)
+				{
+					// Salt is stored at the start of the next block for some reason
+					[fh seekToFileOffset:blockstart+headersize+datasize];
+					NSData *salt=[fh readDataOfLength:8];
+
+					// TODO: check for password
+
+					encryptedhandle=[[[XADRARAESHandle alloc] initWithHandle:fh
+					password:[self password] salt:salt brokenHash:encryptversion<36] autorelease];
+
+					// Kludge position so the next seek goes to the right place
+					blockstart+=8;
 				}
 			break;
 
@@ -149,7 +170,7 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 
 				if(flags&LHD_LARGE)
 				{
-					longsize+=(off_t)[fh readUInt32LE]<<32;
+					datasize+=(off_t)[fh readUInt32LE]<<32;
 					unpsize+=(off_t)[fh readUInt32LE]<<32;
 				}
 
@@ -188,9 +209,9 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 //printf("(created skipinfo: %qu,%qu) ",si->xsi_Position,si->xsi_SkipSize);
 
 					[currdict setObject:[NSNumber numberWithLongLong:
-					[[currdict objectForKey:XADCompressedSizeKey] longLongValue]+longsize] forKey:XADCompressedSizeKey];
+					[[currdict objectForKey:XADCompressedSizeKey] longLongValue]+datasize] forKey:XADCompressedSizeKey];
 					[currdict setObject:[NSNumber numberWithLongLong:
-					[[currdict objectForKey:XADDataLengthKey] longLongValue]+longsize] forKey:XADDataLengthKey];
+					[[currdict objectForKey:XADDataLengthKey] longLongValue]+datasize] forKey:XADDataLengthKey];
 					[currdict setObject:[NSNumber numberWithUnsignedInt:crc] forKey:@"RARCRC32"];
 				}
 				else
@@ -198,11 +219,11 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 					currdict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 						[self XADStringWithData:namedata],XADFileNameKey,
 						[NSNumber numberWithLongLong:unpsize],XADFileSizeKey,
-						[NSNumber numberWithLongLong:longsize],XADCompressedSizeKey,
+						[NSNumber numberWithLongLong:datasize],XADCompressedSizeKey,
 						[NSDate XADDateWithMSDOSDateTime:dostime],XADLastModificationDateKey,
 
-						[NSNumber numberWithLongLong:blockstart+shortsize],XADDataOffsetKey,
-						[NSNumber numberWithLongLong:longsize],XADDataLengthKey,
+						[NSNumber numberWithLongLong:blockstart+headersize],XADDataOffsetKey,
+						[NSNumber numberWithLongLong:datasize],XADDataLengthKey,
 						[NSNumber numberWithInt:flags],@"RARFlags",
 						[NSNumber numberWithInt:version],@"RARCompressionVersion",
 						[NSNumber numberWithInt:method],@"RARCompressionMethod",
@@ -215,15 +236,19 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 					if((flags&LHD_WINDOWMASK)==LHD_DIRECTORY) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 					if(os==3) [currdict setObject:[NSNumber numberWithUnsignedInt:attrs] forKey:XADPosixPermissionsKey];
 
+					NSString *methodname=nil;
 					switch(method)
 					{
-						case 0x30: [currdict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey]; break;
-						case 0x31: [currdict setObject:[self XADStringWithString:@"Fastest"] forKey:XADCompressionNameKey]; break;
-						case 0x32: [currdict setObject:[self XADStringWithString:@"Fast"] forKey:XADCompressionNameKey]; break;
-						case 0x33: [currdict setObject:[self XADStringWithString:@"Normal"] forKey:XADCompressionNameKey]; break;
-						case 0x34: [currdict setObject:[self XADStringWithString:@"Good"] forKey:XADCompressionNameKey]; break;
-						case 0x35: [currdict setObject:[self XADStringWithString:@"Best"] forKey:XADCompressionNameKey]; break;
+						case 0x30: methodname=@"None"; break;
+						case 0x31: methodname=@"Fastest"; break;
+						case 0x32: methodname=@"Fast"; break;
+						case 0x33: methodname=@"Normal"; break;
+						case 0x34: methodname=@"Good"; break;
+						case 0x35: methodname=@"Best"; break;
 					}
+					if(methodname) [currdict setObject:[self XADStringWithString:
+					[NSString stringWithFormat:@"%@ v%d.%d",methodname,version/10,version%10]]
+					forKey:XADCompressionNameKey]; break;
 
 /*					BOOL solid;
 					if(version<15) solid=compressed&&(RARPAI(ai)->flags&MHD_SOLID)&&ai->xai_FileInfo;
@@ -254,7 +279,7 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 
 				// TODO: check crc?
 
-				lastpos=blockstart+shortsize+longsize;
+				lastpos=blockstart+headersize+datasize;
 
 				if(!(flags&LHD_SPLIT_AFTER))
 				{
@@ -269,7 +294,8 @@ NSLog(@"block:%x flags:%x size1:%d size2:%qu ",type,flags,shortsize,longsize);
 			break;
 		}
 
-		[fh seekToFileOffset:blockstart+shortsize+longsize];
+		if(encryptedhandle) [encryptedhandle readAndDiscardBytes:blockstart+headersize-[handle offsetInFile]];
+		[handle seekToFileOffset:blockstart+headersize+datasize];
 	}
 
 	if(currdict)

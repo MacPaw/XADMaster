@@ -78,11 +78,12 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 	while(n<num)
 	{
-		int produced=[self produceBlockAtOffset:streampos+n];
+		blockstartpos+=blocklength;
+		blocklength=[self produceBlockAtOffset:streampos+n];
 
-		if(produced==0||!currblock) break;
+		if(blocklength==0||!currblock) break;
 
-		int count=imin(produced,num-n);
+		int count=imin(blocklength,num-n);
 		memcpy(buffer+n,currblock,count);
 		n+=count;
 

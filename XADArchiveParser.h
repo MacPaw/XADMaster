@@ -60,6 +60,7 @@ extern const NSString *XADFinderFlags;
 
 -(BOOL)isEncrypted;
 -(void)setPassword:(NSString *)newpassword;
+-(NSString *)password;
 
 // Internal functions
 

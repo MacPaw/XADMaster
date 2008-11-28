@@ -73,8 +73,8 @@
 		1BC8896B0ECF9AE2006B47FE /* XADCpioParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC889690ECF9AE2006B47FE /* XADCpioParser.h */; };
 		1BC8896C0ECF9AE2006B47FE /* XADCpioParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */; };
 		1BC889A90ECFC556006B47FE /* XADLibXADParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D59F0DDA665800D9C000 /* XADLibXADParser.m */; };
-		1BC88A270ED06D76006B47FE /* XADPrefixTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC88A250ED06D76006B47FE /* XADPrefixTree.h */; };
-		1BC88A280ED06D76006B47FE /* XADPrefixTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88A260ED06D76006B47FE /* XADPrefixTree.m */; };
+		1BC88A270ED06D76006B47FE /* XADPrefixCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC88A250ED06D76006B47FE /* XADPrefixCode.h */; };
+		1BC88A280ED06D76006B47FE /* XADPrefixCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88A260ED06D76006B47FE /* XADPrefixCode.m */; };
 		1BC88BF20ED1D95B006B47FE /* XADStuffIt5Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88BF00ED1D95B006B47FE /* XADStuffIt5Parser.m */; };
 		1BC88BF30ED1D95B006B47FE /* XADStuffIt5Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC88BF10ED1D95B006B47FE /* XADStuffIt5Parser.h */; };
 		1BC88C350ED20675006B47FE /* XADStuffItParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */; };
@@ -325,8 +325,8 @@
 		1BC889660ECF9AD5006B47FE /* XADTarParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTarParser.m; sourceTree = "<group>"; };
 		1BC889690ECF9AE2006B47FE /* XADCpioParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCpioParser.h; sourceTree = "<group>"; };
 		1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCpioParser.m; sourceTree = "<group>"; };
-		1BC88A250ED06D76006B47FE /* XADPrefixTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPrefixTree.h; sourceTree = "<group>"; };
-		1BC88A260ED06D76006B47FE /* XADPrefixTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPrefixTree.m; sourceTree = "<group>"; };
+		1BC88A250ED06D76006B47FE /* XADPrefixCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPrefixCode.h; sourceTree = "<group>"; };
+		1BC88A260ED06D76006B47FE /* XADPrefixCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPrefixCode.m; sourceTree = "<group>"; };
 		1BC88BF00ED1D95B006B47FE /* XADStuffIt5Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffIt5Parser.m; sourceTree = "<group>"; };
 		1BC88BF10ED1D95B006B47FE /* XADStuffIt5Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffIt5Parser.h; sourceTree = "<group>"; };
 		1BC88D430ED31A31006B47FE /* LZW.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZW.h; sourceTree = "<group>"; };
@@ -809,8 +809,8 @@
 		1BC89A7D0EDB1BA6006B47FE /* Compression Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				1BC88A250ED06D76006B47FE /* XADPrefixTree.h */,
-				1BC88A260ED06D76006B47FE /* XADPrefixTree.m */,
+				1BC88A250ED06D76006B47FE /* XADPrefixCode.h */,
+				1BC88A260ED06D76006B47FE /* XADPrefixCode.m */,
 				1BC89A760EDB12F8006B47FE /* XADLZSSHandle.h */,
 				1BC89A740EDB12F8006B47FE /* XADLZSSHandle.m */,
 				1BC88D430ED31A31006B47FE /* LZW.h */,
@@ -909,7 +909,7 @@
 				1BC885CD0ECD11CF006B47FE /* XADWinZipAESHandle.h in Headers */,
 				1BC889670ECF9AD5006B47FE /* XADTarParser.h in Headers */,
 				1BC8896B0ECF9AE2006B47FE /* XADCpioParser.h in Headers */,
-				1BC88A270ED06D76006B47FE /* XADPrefixTree.h in Headers */,
+				1BC88A270ED06D76006B47FE /* XADPrefixCode.h in Headers */,
 				1BC88BF30ED1D95B006B47FE /* XADStuffIt5Parser.h in Headers */,
 				1BC88D450ED31A31006B47FE /* LZW.h in Headers */,
 				1BC88D4D0ED31A46006B47FE /* XADCompressParser.h in Headers */,
@@ -1117,7 +1117,7 @@
 				1BC889680ECF9AD5006B47FE /* XADTarParser.m in Sources */,
 				1BC8896C0ECF9AE2006B47FE /* XADCpioParser.m in Sources */,
 				1BC889A90ECFC556006B47FE /* XADLibXADParser.m in Sources */,
-				1BC88A280ED06D76006B47FE /* XADPrefixTree.m in Sources */,
+				1BC88A280ED06D76006B47FE /* XADPrefixCode.m in Sources */,
 				1BC88BF20ED1D95B006B47FE /* XADStuffIt5Parser.m in Sources */,
 				1BC88C350ED20675006B47FE /* XADStuffItParser.m in Sources */,
 				1BC88C8C0ED22752006B47FE /* XADBinHexParser.m in Sources */,

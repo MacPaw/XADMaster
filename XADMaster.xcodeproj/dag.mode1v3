@@ -229,6 +229,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -270,6 +272,7 @@
 								<string>1BC885C60ECD11A9006B47FE</string>
 								<string>1BC88B750ED0E399006B47FE</string>
 								<string>1BC89D020EDCC1D4006B47FE</string>
+								<string>1BC89A7D0EDB1BA6006B47FE</string>
 								<string>1B06D6100DDCBE4400D9C000</string>
 								<string>1B5A7BA50A24F9E300B189EB</string>
 								<string>32C88DFF0371C24200C91783</string>
@@ -284,14 +287,13 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>30</integer>
-									<integer>28</integer>
-									<integer>12</integer>
+									<integer>62</integer>
+									<integer>61</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 334}, {220, 729}}</string>
+							<string>{{0, 419}, {220, 729}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -321,14 +323,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>XADRARParser.m</string>
+								<string>XADPrefixCode.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -336,11 +336,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>XADRARParser.m</string>
+										<string>XADPrefixCode.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>1BC89EFF0EDED676006B47FE</string>
+										<string>1BC89F100EE06B21006B47FE</string>
 										<key>history</key>
 										<array>
 											<string>1B0DE3F80A3650C00009B697</string>
@@ -437,8 +437,6 @@
 											<string>1BC89B6F0EDB4BAC006B47FE</string>
 											<string>1BC89BA00EDB4EFF006B47FE</string>
 											<string>1BC89BB90EDB584A006B47FE</string>
-											<string>1BC89BC30EDB5C50006B47FE</string>
-											<string>1BC89BC40EDB5C50006B47FE</string>
 											<string>1BC89BD70EDB689E006B47FE</string>
 											<string>1BC89BD80EDB689E006B47FE</string>
 											<string>1BC89BE60EDB6C4D006B47FE</string>
@@ -489,7 +487,9 @@
 											<string>1BC89EF00EDED562006B47FE</string>
 											<string>1BC89EF10EDED562006B47FE</string>
 											<string>1BC89EF20EDED562006B47FE</string>
-											<string>1BC89EEB0EDED53A006B47FE</string>
+											<string>1BC89F0A0EE06B21006B47FE</string>
+											<string>1BC89F0B0EE06B21006B47FE</string>
+											<string>1BC89F0C0EE06B21006B47FE</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -572,8 +572,6 @@
 											<string>1BC889300ECF929A006B47FE</string>
 											<string>1BC889740ECF9AF4006B47FE</string>
 											<string>1BC889750ECF9AF4006B47FE</string>
-											<string>1BC88A750ED0ADE0006B47FE</string>
-											<string>1BC88A760ED0ADE0006B47FE</string>
 											<string>1BC88A830ED0ADE0006B47FE</string>
 											<string>1BC88A900ED0ADE0006B47FE</string>
 											<string>1BC88B9B0ED0EE1C006B47FE</string>
@@ -1136,7 +1134,6 @@
 											<string>1BC899610EDA30AC006B47FE</string>
 											<string>1BC899620EDA30AC006B47FE</string>
 											<string>1BC899630EDA30AC006B47FE</string>
-											<string>1BC899640EDA30AC006B47FE</string>
 											<string>1BC8996C0EDA347D006B47FE</string>
 											<string>1BC899740EDA3768006B47FE</string>
 											<string>1BC899750EDA3768006B47FE</string>
@@ -1199,7 +1196,6 @@
 											<string>1BC89AA70EDB3032006B47FE</string>
 											<string>1BC89AA90EDB3032006B47FE</string>
 											<string>1BC89AAB0EDB3032006B47FE</string>
-											<string>1BC89AAC0EDB3032006B47FE</string>
 											<string>1BC89AAD0EDB3032006B47FE</string>
 											<string>1BC89AAE0EDB3032006B47FE</string>
 											<string>1BC89AAF0EDB3032006B47FE</string>
@@ -1302,8 +1298,6 @@
 											<string>1BC89BBB0EDB584A006B47FE</string>
 											<string>1BC89BBC0EDB584A006B47FE</string>
 											<string>1BC89BC60EDB5C50006B47FE</string>
-											<string>1BC89BC70EDB5C50006B47FE</string>
-											<string>1BC89BC80EDB5C50006B47FE</string>
 											<string>1BC89BD10EDB67CF006B47FE</string>
 											<string>1BC89BD20EDB67CF006B47FE</string>
 											<string>1BC89BD30EDB67CF006B47FE</string>
@@ -1512,6 +1506,9 @@
 											<string>1BC89EF30EDED562006B47FE</string>
 											<string>1BC89EF40EDED562006B47FE</string>
 											<string>1BC89EF50EDED562006B47FE</string>
+											<string>1BC89F0D0EE06B21006B47FE</string>
+											<string>1BC89F0E0EE06B21006B47FE</string>
+											<string>1BC89F0F0EE06B21006B47FE</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -1736,8 +1733,8 @@
 		<string>1BC88B120ED0BBA0006B47FE</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1B06D57B0DDA632000D9C000</string>
 		<string>/Users/dag/Code/The Unarchiver/XADMaster/XADMaster.xcodeproj</string>
+		<string>1B06D57B0DDA632000D9C000</string>
 	</array>
 	<key>WindowString</key>
 	<string>192 90 1020 788 0 0 1440 878 </string>
@@ -1763,7 +1760,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>XADRARParser.m</string>
+								<string>XADPrefixCode.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>

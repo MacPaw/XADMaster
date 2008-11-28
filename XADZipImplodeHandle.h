@@ -13,7 +13,7 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals;
 -(void)dealloc;
 
 -(void)resetLZSSHandle;
--(XADPrefixTree *)allocAndParseTreeOfSize:(int)size;
+-(XADPrefixCode *)allocAndParseCodeOfSize:(int)size;
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length;
 
 @end

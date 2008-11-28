@@ -89,7 +89,6 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 {
 	if(self=[self init])
 	{
-		XADPrefixTree *tree=[XADPrefixTree new];
 		int code=0,symbolsleft=numsymbols;
 
 		for(int length=1;length<=maxlength;length++)
@@ -97,7 +96,10 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 		{
 			if(lengths[i]!=length) continue;
 			// Instead of reversing to get a low-bit-first code, we shift and use high-bit-first.
-			[tree addValue:i forCodeWithHighBitFirst:code>>32-length length:length];
+if(zeros)
+			[self addValue:i forCodeWithHighBitFirst:code>>32-length length:length];
+else
+			[self addValue:i forCodeWithHighBitFirst:~code>>32-length length:length];
 			code+=1<<32-length;
 			if(--symbolsleft==0) return self; // early exit if all codes have been handled
 		}

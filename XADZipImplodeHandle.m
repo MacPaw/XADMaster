@@ -52,45 +52,6 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 	}
 
 	return [[XADPrefixCode alloc] initWithLengths:codelengths numberOfSymbols:size maximumLength:16 shortestCodeIsZeros:NO];
-
-/*	int codelength[numgroups];
-	int numcodes[numgroups];
-	int valuestart[numgroups];
-	int totalcodes=0;
-
-	for(int i=0;i<numgroups;i++)
-	{
-		int val=CSInputNextByte(input);
-
-		codelength[i]=(val&0x0f)+1;
-		numcodes[i]=(val>>4)+1;
-		valuestart[i]=totalcodes;
-		totalcodes+=numcodes[i];
-	}
-
-	if(totalcodes!=size) [XADException raiseIllegalDataException];
-
-	XADPrefixTree *code=[XADPrefixTree prefixTree];
-
-	int code=0;
-	for(int length=16;length>=1;length--)
-	for(int n=numgroups-1;n>=0;n--)
-	{
-		if(codelength[n]!=length) continue;
-
-		int num=numcodes[n];
-		int start=valuestart[n];
-
-		for(int j=num-1;j>=0;j--)
-		{
-			// Instead of reversing to get a low-bit-first code, we shift and use high-bit-first.
-			[code addValue:start+j forCodeWithHighBitFirst:code>>16-length length:length];
-			code+=1<<16-length;
-		}
-	}
-
-	return code;*/
-
 }
 
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length

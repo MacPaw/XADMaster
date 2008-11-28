@@ -1,9 +1,9 @@
 #import "CSByteStreamHandle.h"
-#import "XADPrefixTree.h"
+#import "XADPrefixCode.h"
 
 @interface XADStuffItHuffmanHandle:CSByteStreamHandle
 {
-	XADPrefixTree *tree;
+	XADPrefixCode *code;
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;

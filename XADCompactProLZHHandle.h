@@ -1,9 +1,9 @@
 #import "XADLZSSHandle.h"
-#import "XADPrefixTree.h"
+#import "XADPrefixCode.h"
 
 @interface XADCompactProLZHHandle:XADLZSSHandle
 {
-	XADPrefixTree *literaltree,*lengthtree,*offsettree;
+	XADPrefixCode *literalcode,*lengthcode,*offsetcode;
 	int blocksize,blockcount;
 	off_t blockstart;
 }
@@ -12,7 +12,7 @@
 -(void)dealloc;
 
 -(void)resetLZSSHandle;
--(XADPrefixTree *)parseTreeOfSize:(int)size;
+-(XADPrefixCode *)allocAndParseCodeOfSize:(int)size;
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length;
 
 @end

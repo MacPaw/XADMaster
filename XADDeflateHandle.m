@@ -1,5 +1,7 @@
 #import "XADDeflateHandle.m"
 
+@implementation XADDeflateHandle
+
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length windowSize:(int)windowsize
 {
 	if(self=[super initWithHandle:handle length:length windowSize:windowsize])
@@ -69,3 +71,6 @@
 		default: [XADException raiseDecrunchException];
 	}
 }
+
+
+@end

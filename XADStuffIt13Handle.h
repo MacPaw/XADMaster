@@ -1,18 +1,17 @@
 #import "XADLZSSHandle.h"
-#import "XADPrefixTree.h"
+#import "XADPrefixCode.h"
 
 @interface XADStuffIt13Handle:XADLZSSHandle
 {
-	XADPrefixTree *firsttree,*secondtree,*offsettree;
-	XADPrefixTree *currtree;
+	XADPrefixCode *firstcode,*secondcode,*offsetcode;
+	XADPrefixCode *currcode;
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
 -(void)dealloc;
 
 -(void)resetLZSSHandle;
--(XADPrefixTree *)parseTreeOfSize:(int)numcodes metaTree:(XADPrefixTree *)metatree;
--(XADPrefixTree *)createTreeWithLengths:(const int *)lengths numberOfCodes:(int)numcodes;
+-(XADPrefixCode *)allocAndParseCodeOfSize:(int)numcodes metaCode:(XADPrefixCode *)metacode;
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length;
 
 @end

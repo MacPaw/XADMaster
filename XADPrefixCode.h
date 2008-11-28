@@ -2,7 +2,7 @@
 
 extern NSString *XADInvalidPrefixCodeException;
 
-@interface XADPrefixTree:NSObject
+@interface XADPrefixCode:NSObject
 {
 	int (*tree)[2];
 	int numentries;
@@ -12,10 +12,14 @@ extern NSString *XADInvalidPrefixCodeException;
 	NSMutableArray *stack;
 }
 
-+(XADPrefixTree *)prefixTree;
++(XADPrefixCode *)prefixCode;
++(XADPrefixCode *)prefixCodeWithLengths:(const int *)lengths numberOfSymbols:(int)numsymbols
+maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros;
 
 -(id)init;
 -(id)initWithStaticTable:(int (*)[2])statictable;
+-(id)initWithLengths:(const int *)lengths numberOfSymbols:(int)numsymbols
+maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros;
 -(void)dealloc;
 
 -(void)addValue:(int)value forCodeWithHighBitFirst:(uint32_t)code length:(int)length;
@@ -33,5 +37,5 @@ extern NSString *XADInvalidPrefixCodeException;
 
 @end
 
-int CSInputNextSymbolFromTree(CSInputBuffer *buf,XADPrefixTree *tree);
-int CSInputNextSymbolFromTreeLE(CSInputBuffer *buf,XADPrefixTree *tree);
+int CSInputNextSymbolUsingCode(CSInputBuffer *buf,XADPrefixCode *code);
+int CSInputNextSymbolUsingCodeLE(CSInputBuffer *buf,XADPrefixCode *code);

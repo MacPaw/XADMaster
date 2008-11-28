@@ -454,7 +454,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		case 0: return parent;
 		case 1: return [[[XADZipShrinkHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
-						largeDictionary:flags&0x02 literalTree:flags&0x04] autorelease];
+						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
 		case 8: return [CSZlibHandle zlibNoHeaderHandleWithHandle:parent length:size];
 		// case 9:
 		default: return nil;

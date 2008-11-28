@@ -1,10 +1,10 @@
 #import "XADStuffIt13Handle.h"
 #import "XADException.h"
 
-static const int *FirstTreeLengths[5];
-static const int *SecondTreeLengths[5];
-static const int *OffsetTreeLengths[5];
-static const int OffsetTreeSize[5];
+static const int *FirstCodeLengths[5];
+static const int *SecondCodeLengths[5];
+static const int *OffsetCodeLengths[5];
+static const int OffsetCodeSize[5];
 static const int MetaCodes[37];
 static const int MetaCodeLengths[37];
 
@@ -14,59 +14,59 @@ static const int MetaCodeLengths[37];
 {
 	if(self=[super initWithHandle:handle length:length windowSize:65536])
 	{
-		firsttree=secondtree=offsettree=nil;
+		firstcode=secondcode=offsetcode=nil;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[firsttree release];
-	[secondtree release];
-	[offsettree release];
+	[firstcode release];
+	[secondcode release];
+	[offsetcode release];
 	[super dealloc];
 }
 
 -(void)resetLZSSHandle
 {
-	[firsttree release];
-	[secondtree release];
-	[offsettree release];
-	firsttree=secondtree=offsettree=nil;
+	[firstcode release];
+	[secondcode release];
+	[offsetcode release];
+	firstcode=secondcode=offsetcode=nil;
 
 	int val=CSInputNextByte(input);
 
-	int tree=val>>4;
+	int code=val>>4;
 
-	if(tree==0)
+	if(code==0)
 	{
-		XADPrefixTree *metatree=[XADPrefixTree prefixTree];
-		for(int i=0;i<37;i++) [metatree addValue:i forCodeWithLowBitFirst:MetaCodes[i] length:MetaCodeLengths[i]];
+		XADPrefixCode *metacode=[XADPrefixCode prefixCode];
+		for(int i=0;i<37;i++) [metacode addValue:i forCodeWithLowBitFirst:MetaCodes[i] length:MetaCodeLengths[i]];
 
-		firsttree=[[self parseTreeOfSize:321 metaTree:metatree] retain];
-		if(val&0x08) secondtree=[firsttree retain];
-		else secondtree=[[self parseTreeOfSize:321 metaTree:metatree] retain];
-		offsettree=[[self parseTreeOfSize:(val&0x07)+10 metaTree:metatree] retain];
+		firstcode=[self allocAndParseCodeOfSize:321 metaCode:metacode];
+		if(val&0x08) secondcode=[firstcode retain];
+		else secondcode=[self allocAndParseCodeOfSize:321 metaCode:metacode];
+		offsetcode=[self allocAndParseCodeOfSize:(val&0x07)+10 metaCode:metacode];
 	}
-	else if(tree<6)
+	else if(code<6)
 	{
-		firsttree=[[self createTreeWithLengths:FirstTreeLengths[tree-1] numberOfCodes:321] retain];
-		secondtree=[[self createTreeWithLengths:SecondTreeLengths[tree-1] numberOfCodes:321] retain];
-		offsettree=[[self createTreeWithLengths:OffsetTreeLengths[tree-1] numberOfCodes:OffsetTreeSize[tree-1]] retain];
+		firstcode=[[XADPrefixCode alloc] initWithLengths:FirstCodeLengths[code-1] numberOfSymbols:321 maximumLength:32 shortestCodeIsZeros:YES];
+		secondcode=[[XADPrefixCode alloc] initWithLengths:SecondCodeLengths[code-1] numberOfSymbols:321 maximumLength:32 shortestCodeIsZeros:YES];
+		offsetcode=[[XADPrefixCode alloc] initWithLengths:OffsetCodeLengths[code-1] numberOfSymbols:OffsetCodeSize[code-1] maximumLength:32 shortestCodeIsZeros:YES];
 	}
 	else [XADException raiseIllegalDataException];
 
-	currtree=firsttree;
+	currcode=firstcode;
 }
 
--(XADPrefixTree *)parseTreeOfSize:(int)numcodes metaTree:(XADPrefixTree *)metatree
+-(XADPrefixCode *)allocAndParseCodeOfSize:(int)numcodes metaCode:(XADPrefixCode *)metacode
 {
 	int length=0;
 	int lengths[numcodes];
 
 	for(int i=0;i<numcodes;i++)
 	{
-		int val=CSInputNextSymbolFromTreeLE(input,metatree);
+		int val=CSInputNextSymbolUsingCodeLE(input,metacode);
 
 		switch(val)
 		{
@@ -89,46 +89,28 @@ static const int MetaCodeLengths[37];
 		lengths[i]=length;
 	}
 
-	return [self createTreeWithLengths:lengths numberOfCodes:numcodes];
-}
-
--(XADPrefixTree *)createTreeWithLengths:(const int *)lengths numberOfCodes:(int)numcodes
-{
-	XADPrefixTree *tree=[XADPrefixTree prefixTree];
-	int code=0,codesleft=numcodes;
-
-	for(int length=1;length<=32;length++)
-	for(int i=0;i<numcodes;i++)
-	{
-		if(lengths[i]!=length) continue;
-		// Instead of reversing to get a low-bit-first code, we shift and use high-bit-first.
-		[tree addValue:i forCodeWithHighBitFirst:code>>32-length length:length];
-		code+=1<<32-length;
-		if(--codesleft==0) return tree; // early exit if all codes have been handled
-	}
-
-	return tree;
+	return [[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:numcodes maximumLength:32 shortestCodeIsZeros:YES];
 }
 
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length
 {
-	int val=CSInputNextSymbolFromTreeLE(input,currtree);
+	int val=CSInputNextSymbolUsingCodeLE(input,currcode);
 
 	if(val<0x100)
 	{
-		currtree=firsttree;
+		currcode=firstcode;
 		return val;
     }
 	else
 	{
-		currtree=secondtree;
+		currcode=secondcode;
 
 		if(val<0x13e) *length=val-0x100+3;
 		else if(val==0x13e) *length=CSInputNextBitStringLE(input,10)+65;
 		else if(val==0x13f) *length=CSInputNextBitStringLE(input,15)+65;
 		else return XADLZSSEnd;
 
-		int bitlength=CSInputNextSymbolFromTreeLE(input,offsettree);
+		int bitlength=CSInputNextSymbolUsingCodeLE(input,offsetcode);
 		if(bitlength==0) *offset=1;
 		else if(bitlength==1) *offset=2;
 		else *offset=(1<<bitlength-1)+CSInputNextBitStringLE(input,bitlength-1)+1;
@@ -141,7 +123,7 @@ static const int MetaCodeLengths[37];
 
 
 
-static const int FirstTreeLengths_1[321]=
+static const int FirstCodeLengths_1[321]=
 {
 	 4, 5, 7, 8, 8, 9, 9, 9, 9, 7, 9, 9, 9, 8, 9, 9,
 	 9, 9, 9, 9, 9, 9, 9,10, 9, 9,10,10, 9,10, 9, 9,
@@ -166,7 +148,7 @@ static const int FirstTreeLengths_1[321]=
 	 5,
 };
 
-static const int SecondTreeLengths_1[321]=
+static const int SecondCodeLengths_1[321]=
 {
 	 4, 5, 6, 6, 7, 7, 6, 7, 7, 7, 6, 8, 7, 8, 8, 8,
 	 8, 9, 6, 9, 8, 9, 8, 9, 9, 9, 8,10, 5, 9, 7, 9,
@@ -191,12 +173,12 @@ static const int SecondTreeLengths_1[321]=
 	 8,
 };
 
-static const int OffsetTreeLengths_1[11]=
+static const int OffsetCodeLengths_1[11]=
 {
 	 5, 6, 3, 3, 3, 3, 3, 3, 3, 4, 6,
 };
 
-static const int FirstTreeLengths_2[321]=
+static const int FirstCodeLengths_2[321]=
 {
 	 4, 7, 7, 8, 7, 8, 8, 8, 8, 7, 8, 7, 8, 7, 9, 8,
 	 8, 8, 9, 9, 9, 9,10,10, 9,10,10,10,10,10, 9, 9,
@@ -221,7 +203,7 @@ static const int FirstTreeLengths_2[321]=
 	10,
 };
 
-static const int SecondTreeLengths_2[321]=
+static const int SecondCodeLengths_2[321]=
 {
 	 5, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 8, 7, 8, 7, 7,
 	 7, 8, 8, 8, 8, 9, 8, 9, 8, 9, 9, 9, 7, 9, 8, 8,
@@ -246,12 +228,12 @@ static const int SecondTreeLengths_2[321]=
 	 9,
 };
 
-static const int OffsetTreeLengths_2[13]=
+static const int OffsetCodeLengths_2[13]=
 {
 	 5, 6, 4, 4, 3, 3, 3, 3, 3, 4, 4, 4, 6,
 };
 
-static const int FirstTreeLengths_3[321]=
+static const int FirstCodeLengths_3[321]=
 {
 	 6, 6, 6, 6, 6, 9, 8, 8, 4, 9, 8, 9, 8, 9, 9, 9,
 	 8, 9, 9,10, 8,10,10,10, 9,10,10,10, 9,10,10, 9,
@@ -276,7 +258,7 @@ static const int FirstTreeLengths_3[321]=
 	10,
 };
 
-static const int SecondTreeLengths_3[321]=
+static const int SecondCodeLengths_3[321]=
 {
 	 5, 6, 6, 6, 6, 7, 7, 7, 6, 8, 7, 8, 7, 9, 8, 8,
 	 7, 7, 8, 9, 9, 9, 9,10, 8, 9, 9,10, 8,10, 9, 8,
@@ -301,12 +283,12 @@ static const int SecondTreeLengths_3[321]=
 	10,
 };
 
-static const int OffsetTreeLengths_3[14]=
+static const int OffsetCodeLengths_3[14]=
 {
 	 6, 7, 4, 4, 3, 3, 3, 3, 3, 4, 4, 4, 5, 7,
 };
 
-static const int FirstTreeLengths_4[321]=
+static const int FirstCodeLengths_4[321]=
 {
 	 2, 6, 6, 7, 7, 8, 7, 8, 7, 8, 8, 9, 8, 9, 9, 9,
 	 8, 8, 9, 9, 9,10,10, 9, 8,10, 9,10, 9,10, 9, 9,
@@ -331,7 +313,7 @@ static const int FirstTreeLengths_4[321]=
 	 4,
 };
 
-static const int SecondTreeLengths_4[321]=
+static const int SecondCodeLengths_4[321]=
 {
 	 4, 5, 6, 6, 6, 6, 7, 7, 6, 7, 7, 9, 6, 8, 8, 7,
 	 7, 8, 8, 8, 6, 9, 8, 8, 7, 9, 8, 9, 8, 9, 8, 9,
@@ -356,12 +338,12 @@ static const int SecondTreeLengths_4[321]=
 	 5,
 };
 
-static const int OffsetTreeLengths_4[11]=
+static const int OffsetCodeLengths_4[11]=
 {
 	 3, 6, 5, 4, 2, 3, 3, 3, 4, 4, 6,
 };
 
-static const int FirstTreeLengths_5[321]=
+static const int FirstCodeLengths_5[321]=
 {
 	 7, 9, 9, 9, 9, 9, 9, 9, 9, 8, 9, 9, 9, 7, 9, 9,
 	 9, 9, 9, 9, 9, 9, 9,10, 9,10, 9,10, 9,10, 9, 9,
@@ -386,7 +368,7 @@ static const int FirstTreeLengths_5[321]=
 	 9,
 };
 
-static const int SecondTreeLengths_5[321]=
+static const int SecondCodeLengths_5[321]=
 {
 	 8,10,11,11,11,12,11,11,12, 6,11,12,10, 5,12,12,
 	12,12,12,12,12,13,13,14,13,13,12,13,12,13,12,15,
@@ -411,27 +393,27 @@ static const int SecondTreeLengths_5[321]=
 	 7,
 };
 
-static const int OffsetTreeLengths_5[11]=
+static const int OffsetCodeLengths_5[11]=
 {
 	 6, 7, 7, 6, 4, 3, 2, 2, 3, 3, 6,
 };
 
-static const int *FirstTreeLengths[5]=
+static const int *FirstCodeLengths[5]=
 {
-	FirstTreeLengths_1,FirstTreeLengths_2,FirstTreeLengths_3,FirstTreeLengths_4,FirstTreeLengths_5
+	FirstCodeLengths_1,FirstCodeLengths_2,FirstCodeLengths_3,FirstCodeLengths_4,FirstCodeLengths_5
 };
 
-static const int *SecondTreeLengths[5]=
+static const int *SecondCodeLengths[5]=
 {
-	SecondTreeLengths_1,SecondTreeLengths_2,SecondTreeLengths_3,SecondTreeLengths_4,SecondTreeLengths_5
+	SecondCodeLengths_1,SecondCodeLengths_2,SecondCodeLengths_3,SecondCodeLengths_4,SecondCodeLengths_5
 };
 
-static const int *OffsetTreeLengths[5]=
+static const int *OffsetCodeLengths[5]=
 {
-	OffsetTreeLengths_1,OffsetTreeLengths_2,OffsetTreeLengths_3,OffsetTreeLengths_4,OffsetTreeLengths_5
+	OffsetCodeLengths_1,OffsetCodeLengths_2,OffsetCodeLengths_3,OffsetCodeLengths_4,OffsetCodeLengths_5
 };
 
-static const int OffsetTreeSize[5]={11,13,14,11,11};
+static const int OffsetCodeSize[5]={11,13,14,11,11};
 
 static const int MetaCodes[37]=
 {

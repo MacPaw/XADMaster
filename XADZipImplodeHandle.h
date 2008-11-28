@@ -1,19 +1,19 @@
 #import "XADLZSSHandle.h"
-#import "XADPrefixTree.h"
+#import "XADPrefixCode.h"
 
 @interface XADZipImplodeHandle:XADLZSSHandle
 {
-	XADPrefixTree *literaltree,*lengthtree,*offsettree;
+	XADPrefixCode *literalcode,*lengthcode,*offsetcode;
 	int offsetbits;
 	BOOL literals;
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
-largeDictionary:(BOOL)largedict literalTree:(BOOL)hasliterals;
+largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals;
 -(void)dealloc;
 
 -(void)resetLZSSHandle;
--(XADPrefixTree *)parseTreeOfSize:(int)size;
+-(XADPrefixTree *)allocAndParseTreeOfSize:(int)size;
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length;
 
 @end

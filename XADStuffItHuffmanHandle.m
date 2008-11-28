@@ -6,23 +6,23 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		tree=nil;
+		code=nil;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[tree release];
+	[code release];
 	[super dealloc];
 }
 
 -(void)resetByteStream
 {
-	[tree release];
-	tree=[XADPrefixTree new];
+	[code release];
+	code=[XADPrefixCode new];
 
-	[tree startBuildingTree];
+	[code startBuildingTree];
 	[self parseTree];
 }
 
@@ -30,21 +30,21 @@
 {
 	if(CSInputNextBit(input)==1)
 	{
-		[tree makeLeafWithValue:CSInputNextBitString(input,8)];
+		[code makeLeafWithValue:CSInputNextBitString(input,8)];
 	}
 	else
 	{
-		[tree startZeroBranch];
+		[code startZeroBranch];
 		[self parseTree];
-		[tree startOneBranch];
+		[code startOneBranch];
 		[self parseTree];
-		[tree finishBranches];
+		[code finishBranches];
 	}
 }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
-	return CSInputNextSymbolFromTree(input,tree);
+	return CSInputNextSymbolUsingCode(input,code);
 }
 
 @end

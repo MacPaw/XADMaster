@@ -1,12 +1,12 @@
-#import "XADPrefixTree.h"
+#import "XADPrefixCode.h"
 
 NSString *XADInvalidPrefixCodeException=@"XADInvalidPrefixCodeException";
 
-@implementation XADPrefixTree
+@implementation XADPrefixCode
 
-static inline int *NodePointer(XADPrefixTree *self,int node) { return self->tree[node]; }
+static inline int *NodePointer(XADPrefixCode *self,int node) { return self->tree[node]; }
 
-static inline int NewNode(XADPrefixTree *self)
+static inline int NewNode(XADPrefixCode *self)
 {
 	self->tree=reallocf(self->tree,(self->numentries+1)*sizeof(int)*2);
 	NodePointer(self,self->numentries)[0]=-1;
@@ -14,44 +14,51 @@ static inline int NewNode(XADPrefixTree *self)
 	return self->numentries++;
 }
 
-static inline BOOL IsEmptyNode(XADPrefixTree *self,int node) { return NodePointer(self,node)[0]==-1&&NodePointer(self,node)[1]==-2; }
+static inline BOOL IsEmptyNode(XADPrefixCode *self,int node) { return NodePointer(self,node)[0]==-1&&NodePointer(self,node)[1]==-2; }
 
-static inline int Branch(XADPrefixTree *self,int node,int bit) { return NodePointer(self,node)[bit]; }
-static inline BOOL IsOpenBranch(XADPrefixTree *self,int node,int bit) { return NodePointer(self,node)[bit]<0; }
-static inline void SetBranch(XADPrefixTree *self,int node,int bit,int nextnode) { NodePointer(self,node)[bit]=nextnode; }
+static inline int Branch(XADPrefixCode *self,int node,int bit) { return NodePointer(self,node)[bit]; }
+static inline BOOL IsOpenBranch(XADPrefixCode *self,int node,int bit) { return NodePointer(self,node)[bit]<0; }
+static inline void SetBranch(XADPrefixCode *self,int node,int bit,int nextnode) { NodePointer(self,node)[bit]=nextnode; }
 
-static inline int Leaf(XADPrefixTree *self,int node) { return NodePointer(self,node)[0]; }
-static inline BOOL IsLeafNode(XADPrefixTree *self,int node) { return NodePointer(self,node)[0]==NodePointer(self,node)[1]; }
-static inline void SetLeaf(XADPrefixTree *self,int node,int value) { NodePointer(self,node)[0]=NodePointer(self,node)[1]=value; }
+static inline int Leaf(XADPrefixCode *self,int node) { return NodePointer(self,node)[0]; }
+static inline BOOL IsLeafNode(XADPrefixCode *self,int node) { return NodePointer(self,node)[0]==NodePointer(self,node)[1]; }
+static inline void SetLeaf(XADPrefixCode *self,int node,int value) { NodePointer(self,node)[0]=NodePointer(self,node)[1]=value; }
 
 
-int CSInputNextSymbolFromTree(CSInputBuffer *buf,XADPrefixTree *tree)
+int CSInputNextSymbolUsingCode(CSInputBuffer *buf,XADPrefixCode *code)
 {
 	int node=0;
 	for(;;)
 	{
 		int bit=CSInputNextBit(buf);
-		if(IsOpenBranch(tree,node,bit)) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
-		node=Branch(tree,node,bit);
-		if(IsLeafNode(tree,node)) return Leaf(tree,node);
+		if(IsOpenBranch(code,node,bit)) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
+		node=Branch(code,node,bit);
+		if(IsLeafNode(code,node)) return Leaf(code,node);
 	}
 }
 
-int CSInputNextSymbolFromTreeLE(CSInputBuffer *buf,XADPrefixTree *tree)
+int CSInputNextSymbolUsingCodeLE(CSInputBuffer *buf,XADPrefixCode *code)
 {
 	int node=0;
 	for(;;)
 	{
 		int bit=CSInputNextBitLE(buf);
-		if(IsOpenBranch(tree,node,bit)) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
-		node=Branch(tree,node,bit);
-		if(IsLeafNode(tree,node)) return Leaf(tree,node);
+		if(IsOpenBranch(code,node,bit)) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
+		node=Branch(code,node,bit);
+		if(IsLeafNode(code,node)) return Leaf(code,node);
 	}
 }
 
 
 
-+(XADPrefixTree *)prefixTree { return [[self new] autorelease]; }
++(XADPrefixCode *)prefixCode { return [[self new] autorelease]; }
+
++(XADPrefixCode *)prefixCodeWithLengths:(const int *)lengths numberOfSymbols:(int)numsymbols
+maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
+{
+	return [[[self alloc] initWithLengths:lengths numberOfSymbols:numsymbols
+	maximumLength:maxlength shortestCodeIsZeros:zeros] autorelease];
+}
 
 -(id)init
 {
@@ -76,6 +83,29 @@ int CSInputNextSymbolFromTreeLE(CSInputBuffer *buf,XADPrefixTree *tree)
 	}
 	return self;
 }
+
+-(id)initWithLengths:(const int *)lengths numberOfSymbols:(int)numsymbols
+maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
+{
+	if(self=[self init])
+	{
+		XADPrefixTree *tree=[XADPrefixTree new];
+		int code=0,symbolsleft=numsymbols;
+
+		for(int length=1;length<=maxlength;length++)
+		for(int i=0;i<numsymbols;i++)
+		{
+			if(lengths[i]!=length) continue;
+			// Instead of reversing to get a low-bit-first code, we shift and use high-bit-first.
+			[tree addValue:i forCodeWithHighBitFirst:code>>32-length length:length];
+			code+=1<<32-length;
+			if(--symbolsleft==0) return self; // early exit if all codes have been handled
+		}
+	}
+
+	return self;
+}
+
 
 -(void)dealloc
 {

@@ -4,7 +4,7 @@
 @implementation XADZipImplodeHandle
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
-largeDictionary:(BOOL)largedict literalTree:(BOOL)hasliterals
+largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 {
 	if(self=[super initWithHandle:handle length:length windowSize:largedict?8192:4096])
 	{
@@ -13,36 +13,47 @@ largeDictionary:(BOOL)largedict literalTree:(BOOL)hasliterals
 
 		literals=hasliterals;
 
-		literaltree=lengthtree=offsettree=nil;
+		literalcode=lengthcode=offsetcode=nil;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[literaltree release];
-	[lengthtree release];
-	[offsettree release];
+	[literalcode release];
+	[lengthcode release];
+	[offsetcode release];
 	[super dealloc];
 }
 
 -(void)resetLZSSHandle
 {
-	[literaltree release];
-	[lengthtree release];
-	[offsettree release];
-	literaltree=lengthtree=offsettree=nil;
+	[literalcode release];
+	[lengthcode release];
+	[offsetcode release];
+	literalcode=lengthcode=offsetcode=nil;
 
-	if(literals) literaltree=[[self parseTreeOfSize:256] retain];
-	lengthtree=[[self parseTreeOfSize:64] retain];
-	offsettree=[[self parseTreeOfSize:64] retain];
+	if(literals) literalcode=[self allocAndParseCodeOfSize:256];
+	lengthcode=[self allocAndParseCodeOfSize:64];
+	offsetcode=[self allocAndParseCodeOfSize:64];
 }
 
--(XADPrefixTree *)parseTreeOfSize:(int)size
+-(XADPrefixCode *)allocAndParseCodeOfSize:(int)size
 {
 	int numgroups=CSInputNextByte(input)+1;
 
-	int codelength[numgroups];
+	int codelengths[size],currcode=0;
+	for(int i=0;i<numgroups;i++)
+	{
+		int val=CSInputNextByte(input);
+		int num=(val>>4)+1;
+		int length=(val&0x0f)+1;
+		while(num--) codelengths[currcode++]=length;
+	}
+
+	return [[XADPrefixCode alloc] initWithLengths:codelengths numberOfSymbols:size maximumLength:16 shortestCodeIsZeros:NO];
+
+/*	int codelength[numgroups];
 	int numcodes[numgroups];
 	int valuestart[numgroups];
 	int totalcodes=0;
@@ -59,7 +70,7 @@ largeDictionary:(BOOL)largedict literalTree:(BOOL)hasliterals
 
 	if(totalcodes!=size) [XADException raiseIllegalDataException];
 
-	XADPrefixTree *tree=[XADPrefixTree prefixTree];
+	XADPrefixTree *code=[XADPrefixTree prefixTree];
 
 	int code=0;
 	for(int length=16;length>=1;length--)
@@ -73,28 +84,29 @@ largeDictionary:(BOOL)largedict literalTree:(BOOL)hasliterals
 		for(int j=num-1;j>=0;j--)
 		{
 			// Instead of reversing to get a low-bit-first code, we shift and use high-bit-first.
-			[tree addValue:start+j forCodeWithHighBitFirst:code>>16-length length:length];
+			[code addValue:start+j forCodeWithHighBitFirst:code>>16-length length:length];
 			code+=1<<16-length;
 		}
 	}
 
-	return tree;
+	return code;*/
+
 }
 
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length
 {
 	if(CSInputNextBitLE(input))
 	{
-		if(literaltree) return CSInputNextSymbolFromTreeLE(input,literaltree);
+		if(literalcode) return CSInputNextSymbolUsingCodeLE(input,literalcode);
 		else return CSInputNextBitStringLE(input,8);
 	}
 	else
 	{
 		*offset=CSInputNextBitStringLE(input,offsetbits);
-		*offset|=CSInputNextSymbolFromTreeLE(input,offsettree)<<offsetbits;
+		*offset|=CSInputNextSymbolUsingCodeLE(input,offsetcode)<<offsetbits;
 		*offset+=1;
 
-		*length=CSInputNextSymbolFromTreeLE(input,lengthtree)+2;
+		*length=CSInputNextSymbolUsingCodeLE(input,lengthcode)+2;
 		if(*length==65) *length+=CSInputNextBitStringLE(input,8);
 		if(literals) *length++;
 

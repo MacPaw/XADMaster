@@ -3,7 +3,9 @@
 
 @interface XADDeflateHandle:XADLZSSHandle
 {
-	XADPrefixCode *literalcode,*offsetcode;
+	XADPrefixCode *literalcode,*distancecode;
+	XADPrefixCode *fixedliteralcode,*fixeddistancecode;
+	BOOL storedblock,last;
 	int storedcount;
 }
 

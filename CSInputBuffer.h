@@ -58,6 +58,14 @@ static inline int CSInputNextByte(CSInputBuffer *buf)
 	return byte;
 }
 
+// TODO: Move to endianaccess, implement and use CSInputBytePointer()
+static inline uint16_t CSInputNextUInt16LE(CSInputBuffer *buf)
+{
+	uint16_t val=CSInputNextByte(buf);
+	val|=(uint16_t)CSInputNextByte(buf)<<8;
+	return val;
+}
+
 
 
 

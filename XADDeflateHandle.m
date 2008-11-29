@@ -1,4 +1,5 @@
-#import "XADDeflateHandle.m"
+#import "XADDeflateHandle.h"
+#import "XADException.h"
 
 @implementation XADDeflateHandle
 
@@ -121,7 +122,7 @@
 	int lengths[size];
 	for(int i=0;i<size;)
 	{
-		int val=CSInputNextSymbolFromCodeLE(input,metacode);
+		int val=CSInputNextSymbolUsingCodeLE(input,metacode);
 
 		if(val<16) lengths[i++]=val;
 		else

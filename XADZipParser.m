@@ -456,7 +456,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		case 1: return [[[XADZipShrinkHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
 						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
-		case 8: return [CSZlibHandle zlibNoHeaderHandleWithHandle:parent length:size];
+		//case 8: return [CSZlibHandle zlibNoHeaderHandleWithHandle:parent length:size];
+		case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size windowSize:32768] autorelease];
 		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size windowSize:65536] autorelease];
 		default: return nil;
 	}

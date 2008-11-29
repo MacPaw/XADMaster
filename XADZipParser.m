@@ -1,6 +1,7 @@
 #import "XADZipParser.h"
 #import "XADZipImplodeHandle.h"
 #import "XADZipShrinkHandle.h"
+#import "XADDeflateHandle.h"
 #import "XADZipCryptHandle.h"
 #import "XADWinZipAESHandle.h"
 #import "CSZlibHandle.h"
@@ -456,7 +457,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
 						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
 		case 8: return [CSZlibHandle zlibNoHeaderHandleWithHandle:parent length:size];
-		// case 9:
+		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size windowSize:65536] autorelease];
 		default: return nil;
 	}
 }

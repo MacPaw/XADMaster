@@ -43,4 +43,6 @@ typedef int XADError;
 +(void)raiseDataFormatException;
 +(void)raiseExceptionWithXADError:(XADError)errnum;
 
++(NSString *)describeXADError:(XADError)errnum;
+
 @end

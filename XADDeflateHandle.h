@@ -3,13 +3,16 @@
 
 @interface XADDeflateHandle:XADLZSSHandle
 {
+	BOOL deflate64;
+
 	XADPrefixCode *literalcode,*distancecode;
 	XADPrefixCode *fixedliteralcode,*fixeddistancecode;
-	BOOL storedblock,last;
+	BOOL storedblock,lastblock;
 	int storedcount;
 }
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length windowSize:(int)windowsize;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length deflate64:(BOOL)deflate64mode;
 -(void)dealloc;
 
 -(void)resetLZSSHandle;

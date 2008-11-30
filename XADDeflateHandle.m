@@ -3,10 +3,16 @@
 
 @implementation XADDeflateHandle
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length windowSize:(int)windowsize
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	if(self=[super initWithHandle:handle length:length windowSize:windowsize])
+	return [self initWithHandle:handle length:length deflate64:NO];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length deflate64:(BOOL)deflate64mode
+{
+	if(self=[super initWithHandle:handle length:length windowSize:deflate64mode?65536:32768])
 	{
+		deflate64=deflate64mode
 		literalcode=distancecode=nil;
 		fixedliteralcode=fixeddistancecode=nil;
 	}
@@ -33,7 +39,7 @@
 	{
 		if(!storedcount)
 		{
-			if(last) return XADLZSSEnd;
+			if(lastblock) return XADLZSSEnd;
 			[self readBlockHeader];
 			return [self nextLiteralOrOffset:offset andLength:length];
 		}
@@ -47,7 +53,7 @@
 		if(literal<256) return literal;
 		else if(literal==256)
 		{
-			if(last) return XADLZSSEnd;
+			if(lastblock) return XADLZSSEnd;
 			[self readBlockHeader];
 			return [self nextLiteralOrOffset:offset andLength:length];
 		}
@@ -58,7 +64,11 @@
 			int size=(literal-261)/4;
 			*length=baselengths[literal-265]+CSInputNextBitStringLE(input,size);
 		}
-		else *length=258;
+		else // literal==285
+		{
+			if(deflate64) *length=3+CSInputNextBitStringLE(input,16);
+			else *length=258;
+		}
 
 		int distance=CSInputNextSymbolUsingCodeLE(input,distancecode);
 
@@ -66,7 +76,7 @@
 		else
 		{
 			static const int baseoffsets[]={5,7,9,13,17,25,33,49,65,97,129,193,257,
-			385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577};
+			385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,49153,65537};
 			int size=(distance-2)/2;
 			*offset=baseoffsets[distance-4]+CSInputNextBitStringLE(input,size);
 		}
@@ -80,13 +90,14 @@
 	[literalcode release];
 	[distancecode release];
 
-	last=CSInputNextBitLE(input);
+	lastblock=CSInputNextBitLE(input);
 
 	int type=CSInputNextBitStringLE(input,2);
 	switch(type)
 	{
 		case 0: // stored
 		{
+			CSInputSkipToByteBoundary(input);
 			int count=CSInputNextUInt16LE(input);
 			if(count!=~CSInputNextUInt16LE(input)) [XADException raiseDecrunchException];
 			storedcount=count;

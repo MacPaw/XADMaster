@@ -1,12 +1,10 @@
-#import "XADCompactProParser.h"
-#import "XADCompactProRLEHandle.h"
-#import "XADCompactProLZHHandle.h"
+#import "XADALZipParser.h"
+#import "XADDeflateHandle.h"
 #import "XADException.h"
 #import "Checksums.h"
-#import "Paths.h"
 #import "NSDateXAD.h"
 
-@implementation XADCompactProParser
+@implementation XADALZipParser
 
 +(int)requiredHeaderSize { return 8; }
 
@@ -15,37 +13,31 @@
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
-	return length>=8&&bytes[0]==1&&[[[name pathExtension] lowercaseString] isEqual:@"cpt"];
+	return length>=8&&bytes[0]=='A'&&bytes[0]=='L'&&bytes[0]=='Z'&&bytes[0]==1&&bytes[7]==0;
 }
 
 -(void)parse
 {
 	CSHandle *fh=[self handle];
 
-	/*int marker=*/[fh readUInt8];
-	/*int volume=*/[fh readUInt8];
-	/*int xmagic=*/[fh readUInt16BE];
-	uint32_t offset=[fh readUInt32BE];
+	[fh skipBytes:8];
 
-	[fh seekToFileOffset:offset];
-
-	/*uint32_t headcrc=*/[fh readUInt32BE];
-	int numentries=[fh readUInt16BE];
-	int commentlen=[fh readUInt8];
-	[fh skipBytes:commentlen];
-
-	[self parseDirectoryWithNameData:nil numberOfEntries:numentries];
-
-	// TODO: handle comment
-}
-
--(void)parseDirectoryWithNameData:(NSData *)parentdata numberOfEntries:(int)numentries
-{
-	CSHandle *fh=[self handle];
-
-	while(numentries)
+	for(;;)
 	{
-		int namelen=[fh readUInt8];
+		uint32_t signature=[fh readID];
+
+		if(signature=='BLZ\001')
+		{
+			int namelen=[fh readUInt16LE];
+			int attrs=[fh readUInt8];
+			uint32_t dostime=[fh readUInt32LE];
+			int flags=[fh readUInt8];
+			[fh skipBytes:1];
+
+			int sizebytes=flags>>4;
+			if(sizebytes)
+			{
+			}
 		NSData *namedata=[fh readDataOfLength:namelen&0x7f];
 		NSData *pathdata=XADBuildMacPathWithData(parentdata,namedata);
 
@@ -142,6 +134,8 @@
 			[fh seekToFileOffset:next];
 			numentries--;
 		}
+		else if(signature=='CLZ\001') break;
+		else [XADException raiseIllegalDataException];
 	}
 }
 
@@ -150,18 +144,21 @@
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
 
-	if([[dict objectForKey:@"CompactProLZH"] boolValue])
-	handle=[[[XADCompactProLZHHandle alloc] initWithHandle:handle blockSize:0x1fff0] autorelease];
+	switch([[dict objectForKey:@"ALZipCompressionMethod"] intValue])
+	{
+		case 0: break; // No compression
+		//case 1: handle=[[[XADBzip2Handle alloc]
+		case 2: handle=[[[XADDeflateHandle alloc] initWithHandle:handle length:size] autorelease]; break;
+		//case 3:
+		default: return nil;
+	}
 
-	handle=[[[XADCompactProRLEHandle alloc] initWithHandle:handle length:size] autorelease];
-
-	NSNumber *crc=[dict objectForKey:@"CompactProCRC32"];
-	if(checksum&&crc)
-	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:size correctCRC:~[crc unsignedIntValue] conditioned:YES];
+	if(checksum) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:size
+	correctCRC:[[dict objectForKey:@"ALZipCRC32"] unsignedIntValue] conditioned:YES];
 
 	return handle;
 }
 
--(NSString *)formatName { return @"Compact Pro"; }
+-(NSString *)formatName { return @"ALZip"; }
 
 @end

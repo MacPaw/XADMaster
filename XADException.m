@@ -16,7 +16,7 @@
 	[NSException raise:@"XADException" format:@"%@",[self describeXADError:errnum]];
 }
 
-+(NSString *)describeXADError:(XADError)errnum
++(NSString *)describeXADError:(XADError)error
 {
 	switch(error)
 	{

@@ -1,5 +1,18 @@
 #import <XADMaster/XADArchiveParser.h>
 
+NSString *EscapeString(NSString *str)
+{
+	NSMutableString *res=[NSMutableString string];
+	int length=[str length];
+	for(int i=0;i<length;i++)
+	{
+		unichar c=[str characterAtIndex:i];
+		if(c<32) [res appendFormat:@"^%c",c+64];
+		else [res appendFormat:@"%C",c];
+	}
+	return res;
+}
+
 @interface ArchiveTester:NSObject
 {
 	int indent;
@@ -22,7 +35,7 @@
 	for(int i=0;i<indent;i++) printf(" ");
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
-	NSString *link=[dict objectForKey:XADLinkDestinationKey];
+	NSString *link=[[dict objectForKey:XADLinkDestinationKey] string];
 	CSHandle *fh;
 
 	if(dir&&[dir boolValue]) printf("- ");
@@ -36,7 +49,7 @@
 		else printf("? ");
 	}
 
-	NSString *name=[[dict objectForKey:XADFileNameKey] string];
+	NSString *name=EscapeString([[dict objectForKey:XADFileNameKey] string]);
 	printf("%s (",[name UTF8String]);
 
 	if(dir&&[dir boolValue]) printf("dir");
@@ -97,7 +110,7 @@ int main(int argc,char **argv)
 		@try {
 			[parser parse];
 		} @catch(id e) {
-			NSLog(@"Exception: %@",e);
+			printf("*** Exception: %s\n",[[e description] UTF8String]);
 		}
 
 		[pool release];

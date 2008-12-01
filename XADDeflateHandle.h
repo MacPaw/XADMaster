@@ -19,7 +19,6 @@
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length;
 
 -(void)readBlockHeader;
--(XADPrefixCode *)allocAndParseCodeOfSize:(int)size metaCode:(XADPrefixCode *)metacode;
 -(XADPrefixCode *)allocAndParseMetaCodeOfSize:(int)size;
 -(XADPrefixCode *)fixedLiteralCode;
 -(XADPrefixCode *)fixedDistanceCode;

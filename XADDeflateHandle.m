@@ -12,7 +12,7 @@
 {
 	if(self=[super initWithHandle:handle length:length windowSize:deflate64mode?65536:32768])
 	{
-		deflate64=deflate64mode
+		deflate64=deflate64mode;
 		literalcode=distancecode=nil;
 		fixedliteralcode=fixeddistancecode=nil;
 	}
@@ -76,7 +76,7 @@
 		else
 		{
 			static const int baseoffsets[]={5,7,9,13,17,25,33,49,65,97,129,193,257,
-			385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,49153,65537};
+			385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,32769,49153};
 			int size=(distance-2)/2;
 			*offset=baseoffsets[distance-4]+CSInputNextBitStringLE(input,size);
 		}
@@ -89,6 +89,8 @@
 {
 	[literalcode release];
 	[distancecode release];
+	literalcode=nil;
+	distancecode=nil;
 
 	lastblock=CSInputNextBitLE(input);
 
@@ -99,7 +101,7 @@
 		{
 			CSInputSkipToByteBoundary(input);
 			int count=CSInputNextUInt16LE(input);
-			if(count!=~CSInputNextUInt16LE(input)) [XADException raiseDecrunchException];
+			if(count!=(CSInputNextUInt16LE(input)^0xffff)) [XADException raiseDecrunchException];
 			storedcount=count;
 			storedblock=YES;
 		}
@@ -113,12 +115,45 @@
 
 		case 2: // dynamic huffman
 		{
-			int numliterals=CSInputNextBitStringLE(input,5)+256;
+			int numliterals=CSInputNextBitStringLE(input,5)+257;
 			int numdistances=CSInputNextBitStringLE(input,5)+1;
-			int nummetas=CSInputNextBitStringLE(input,4)+3;
+			int nummetas=CSInputNextBitStringLE(input,4)+4;
+
 			XADPrefixCode *metacode=[self allocAndParseMetaCodeOfSize:nummetas]; // BUG: might leak if the following throw an exception!
-			literalcode=[self allocAndParseCodeOfSize:numliterals metaCode:metacode];
-			distancecode=[self allocAndParseCodeOfSize:numdistances metaCode:metacode];
+
+			int total=numliterals+numdistances;
+			int lengths[total];
+			for(int i=0;i<total;)
+			{
+				int val=CSInputNextSymbolUsingCodeLE(input,metacode);
+
+				if(val<16) lengths[i++]=val;
+				else if(val==16)
+				{
+					int repeats=CSInputNextBitStringLE(input,2)+3;
+
+					if(i==0||i+repeats>total) [XADException raiseDecrunchException];
+
+					for(int j=0;j<repeats;j++) lengths[i+j]=lengths[i-1];
+					i+=repeats;
+				}
+				else
+				{
+					int repeats;
+					if(val==17) repeats=CSInputNextBitStringLE(input,3)+3;
+					else repeats=CSInputNextBitStringLE(input,7)+11;
+
+//if(i+repeats>total) repeats=total-i;
+					if(i+repeats>total) [XADException raiseDecrunchException];
+
+					for(int j=0;j<repeats;j++) lengths[i+j]=0;
+					i+=repeats;
+				}
+			}
+
+			literalcode=[[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:numliterals maximumLength:15 shortestCodeIsZeros:YES];
+			distancecode=[[XADPrefixCode alloc] initWithLengths:lengths+numliterals numberOfSymbols:numdistances maximumLength:15 shortestCodeIsZeros:YES];
+
 			[metacode release];
 			storedblock=NO;
 		}
@@ -128,34 +163,10 @@
 	}
 }
 
--(XADPrefixCode *)allocAndParseCodeOfSize:(int)size metaCode:(XADPrefixCode *)metacode
-{
-	int lengths[size];
-	for(int i=0;i<size;)
-	{
-		int val=CSInputNextSymbolUsingCodeLE(input,metacode);
-
-		if(val<16) lengths[i++]=val;
-		else
-		{
-			int repeats;
-			if(val==16) repeats=CSInputNextBitStringLE(input,2)+3;
-			if(val==17) repeats=CSInputNextBitStringLE(input,3)+3;
-			else repeats=CSInputNextBitStringLE(input,7)+10;
-
-			if(i==0||i+repeats>size) [XADException raiseDecrunchException];
-
-			for(int j=0;j<repeats;j++) lengths[i+j]=lengths[i-1];
-			i+=repeats;
-		}
-	}
-	return [[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:size maximumLength:15 shortestCodeIsZeros:YES];
-}
-
 -(XADPrefixCode *)allocAndParseMetaCodeOfSize:(int)size
 {
-	static const int order[]={16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15};
-	int lengths[size];
+	static const int order[19]={16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15};
+	int lengths[19];
 	for(int i=0;i<size;i++) lengths[order[i]]=CSInputNextBitStringLE(input,3);
 	for(int i=size;i<19;i++) lengths[order[i]]=0;
 	return [[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:19 maximumLength:7 shortestCodeIsZeros:YES];

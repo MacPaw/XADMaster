@@ -43,8 +43,8 @@
 	int commentlength=[fh readUInt16LE];
 
 	// TODO: multi-archives
-	NSLog(@"disknumber:%d centraldirstartdisk:%d numentriesdisk:%d numentries:%d centralsize:%d centraloffset:%d",
-	disknumber,centraldirstartdisk,numentriesdisk,numentries,centralsize,centraloffset);
+//	NSLog(@"disknumber:%d centraldirstartdisk:%d numentriesdisk:%d numentries:%d centralsize:%d centraloffset:%d",
+//	disknumber,centraldirstartdisk,numentriesdisk,numentries,centralsize,centraloffset);
 
 	off_t commentoffs=0;
 	if(commentlength) commentoffs=[fh offsetInFile];
@@ -456,8 +456,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		case 1: return [[[XADZipShrinkHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
 						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
-		//case 8: return [CSZlibHandle zlibNoHeaderHandleWithHandle:parent length:size];
-		case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
+		case 8: return [CSZlibHandle zlibNoHeaderHandleWithHandle:parent length:size];
+		//case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size deflate64:YES] autorelease];
 		default: return nil;
 	}

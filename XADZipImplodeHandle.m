@@ -50,6 +50,7 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 		int length=(val&0x0f)+1;
 		while(num--) codelengths[currcode++]=length;
 	}
+	if(currcode!=size) [XADException raiseDecrunchException];
 
 	return [[XADPrefixCode alloc] initWithLengths:codelengths numberOfSymbols:size maximumLength:16 shortestCodeIsZeros:NO];
 }
@@ -58,21 +59,23 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 {
 	if(CSInputNextBitLE(input))
 	{
-		if(literalcode) return CSInputNextSymbolUsingCodeLE(input,literalcode);
+		if(literals) return CSInputNextSymbolUsingCodeLE(input,literalcode);
 		else return CSInputNextBitStringLE(input,8);
 	}
 	else
 	{
+
 		*offset=CSInputNextBitStringLE(input,offsetbits);
 		*offset|=CSInputNextSymbolUsingCodeLE(input,offsetcode)<<offsetbits;
 		*offset+=1;
 
 		*length=CSInputNextSymbolUsingCodeLE(input,lengthcode)+2;
 		if(*length==65) *length+=CSInputNextBitStringLE(input,8);
-		if(literals) *length++;
+		if(literals) (*length)++;
 
 		return XADLZSSMatch;
 	}
 }
 
 @end
+

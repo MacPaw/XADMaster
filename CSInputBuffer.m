@@ -67,7 +67,7 @@ void _CSInputFillBuffer(CSInputBuffer *buf)
 	}
 
 	buf->bufbytes=left+[buf->parent readAtMost:buf->bufsize-left toBuffer:buf->buffer+left];
-	if(buf->bufbytes!=buf->bufsize) buf->eof=YES;
+	if(buf->bufbytes==left) buf->eof=YES;
 
 	buf->currbyte=0;
 }

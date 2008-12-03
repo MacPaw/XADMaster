@@ -1,14 +1,14 @@
-#import "CSHandle.h"
+#import "CSStreamHandle.h"
 
 #include <zlib.h>
 
-@interface CSZlibHandle:CSHandle
+@interface CSZlibHandle:CSStreamHandle
 {
-	CSHandle *fh;
+	CSHandle *parent;
 	off_t startoffs;
 	z_stream zs;
-	BOOL inited,eof,seekback;
-	//uint8_t inbuffer[128*1024];
+	BOOL inited,seekback;
+
 	uint8_t inbuffer[16*1024];
 }
 
@@ -23,12 +23,8 @@
 
 -(void)setSeekBackAtEOF:(BOOL)seekateof;
 
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
-
--(void)seekToFileOffset:(off_t)offs;
--(void)seekToEndOfFile;
--(int)readAtMost:(int)num toBuffer:(void *)buffer;
+-(void)resetStream;
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer;
 
 -(void)_raiseZlib;
 

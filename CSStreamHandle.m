@@ -122,6 +122,8 @@
 	[self readAndDiscardBytes:offs-streampos];
 }
 
+-(void)seekToEndOfFile { [self readAndDiscardAtMost:CSHandleMaxLength]; }
+
 -(int)readAtMost:(int)num toBuffer:(void *)buffer
 {
 	if(needsreset) { [self resetStream]; needsreset=NO; }
@@ -141,7 +143,7 @@
 
 	int actual=[self streamAtMost:num-offs toBuffer:((uint8_t *)buffer)+offs];
 
-	if(actual!=num-offs) endofstream=YES;
+	if(actual==0) endofstream=YES;
 
 	streampos+=actual;
 

@@ -50,11 +50,11 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/TR-DOS.c"
 #endif
 
-#include "clients/7-Zip.c"
+//#include "clients/7-Zip.c"
 #include "clients/Ace.c"
 #include "clients/AMPK.c"
 //#include "clients/BinHex.c"
-#include "clients/bzip2.c"
+//#include "clients/bzip2.c"
 #include "clients/CAB.c"
 #include "clients/Cpio.c"
 #include "clients/CrunchDisk.c"

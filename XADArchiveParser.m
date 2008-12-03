@@ -4,6 +4,7 @@
 
 #import "XADZipParser.h"
 #import "XADGzipParser.h"
+#import "XADBzip2Parser.h"
 #import "XADRARParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
@@ -49,6 +50,7 @@ static int maxheader=0;
 	parserclasses=[[NSMutableArray arrayWithObjects:
 		[XADZipParser class],
 		[XADGzipParser class],
+		[XADBzip2Parser class],
 		[XADRARParser class],
 		[XADStuffIt5Parser class],
 		[XADStuffItParser class],

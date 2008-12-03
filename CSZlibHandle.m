@@ -33,27 +33,13 @@
 {
 	if(self=[super initWithName:descname])
 	{
-		fh=[handle retain];
-		startoffs=[fh offsetInFile];
-		inited=eof=seekback=NO;
-
-		zs.zalloc=Z_NULL;
-		zs.zfree=Z_NULL;
-		zs.opaque=Z_NULL;
-		zs.avail_in=0;
-		zs.next_in=Z_NULL;
-
-		int err;
-		if(header) err=inflateInit(&zs);
-		else err=inflateInit2(&zs,-MAX_WBITS);
-
-		if(err!=Z_OK)
-		{
-			[self release];
-			[NSException raise:@"CSZlibException" format:@"Error initializing zlib for \"%@\": %d.",name,err];
-		}
-
+		parent=[handle retain];
+		startoffs=[parent offsetInFile];
 		inited=YES;
+		seekback=NO;
+
+		if(header) inflateInit(&zs);
+		else inflateInit2(&zs,-MAX_WBITS);
 	}
 	return self;
 }
@@ -62,11 +48,12 @@
 {
 	if(self=[super initAsCopyOf:other])
 	{
-		fh=[other->fh copy];
+		parent=[other->parent copy];
 		startoffs=other->startoffs;
 		inited=NO;
-		eof=other->eof;
 		seekback=other->seekback;
+
+		memset(&zs,0,sizeof(zs));
 
 		if(inflateCopy(&zs,&other->zs)==Z_OK)
 		{
@@ -85,58 +72,21 @@
 -(void)dealloc
 {
 	if(inited) inflateEnd(&zs);
-	[fh release];
+	[parent release];
 
 	[super dealloc];
 }
 
-
-
 -(void)setSeekBackAtEOF:(BOOL)seekateof { seekback=seekateof; }
 
-
-
--(off_t)offsetInFile
+-(void)resetStream
 {
-	return zs.total_out;
+	[parent seekToFileOffset:startoffs];
+	inflateReset(&zs);
 }
 
--(BOOL)atEndOfFile { return eof; }
-
-
-
--(void)seekToFileOffset:(off_t)offs
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer
 {
-	if(offs<zs.total_out)
-	{
-		if(zs.total_out==0) return;
-
-		zs.avail_in=0;
-		zs.next_in=Z_NULL;
-		if(inflateReset(&zs)!=Z_OK) [self _raiseZlib];
-		[fh seekToFileOffset:startoffs];
-	}
-
-	[self readAndDiscardBytes:offs-zs.total_out];
-}
-
--(void)seekToEndOfFile
-{
-	@try
-	{
-		[self seekToFileOffset:0x7fffffff];
-	}
-	@catch(NSException *e)
-	{
-		if([[e name] isEqual:@"CSEndOfFileException"]) return;
-		@throw e;
-	}
-}
-
--(int)readAtMost:(int)num toBuffer:(void *)buffer
-{
-	if(eof) return 0;
-
 	zs.next_out=buffer;
 	zs.avail_out=num;
 
@@ -144,16 +94,16 @@
 	{
 		if(!zs.avail_in)
 		{
-			if([fh atEndOfFile]) { eof=YES; break; }
-			zs.avail_in=[fh readAtMost:sizeof(inbuffer) toBuffer:inbuffer];
-			zs.next_in=inbuffer;
+			zs.avail_in=[parent readAtMost:sizeof(inbuffer) toBuffer:inbuffer];
+			zs.next_in=(void *)inbuffer;
+
+			if(!zs.avail_in) [parent _raiseEOF];
 		}
 
 		int err=inflate(&zs,0);
 		if(err==Z_STREAM_END)
 		{
-			if(seekback) [fh skipBytes:-zs.avail_in];
-			eof=YES;
+			if(seekback) [parent skipBytes:-zs.avail_in];
 			break;
 		}
 		else if(err!=Z_OK) [self _raiseZlib];
@@ -161,8 +111,6 @@
 
 	return num-zs.avail_out;
 }
-
-
 
 -(void)_raiseZlib
 {

@@ -255,15 +255,25 @@ CSReadValueImpl(uint32_t,readID,CSBEUInt32)
 	if([self readAtMost:num toBuffer:buffer]!=num) [self _raiseEOF];
 }
 
--(void)readAndDiscardBytes:(off_t)num
+
+
+-(off_t)readAndDiscardAtMost:(off_t)num
 {
+	off_t skipped=0;
 	uint8_t buf[16384];
-	while(num)
+	while(skipped<num)
 	{
 		off_t numbytes=num>sizeof(buf)?sizeof(buf):num;
-		if([self readAtMost:numbytes toBuffer:buf]!=numbytes) [self _raiseEOF];
-		num-=numbytes;
+		int actual=[self readAtMost:numbytes toBuffer:buf];
+		skipped+=actual;
+		if(actual!=numbytes) break;
 	}
+	return skipped;
+}
+
+-(void)readAndDiscardBytes:(off_t)num
+{
+	if([self readAndDiscardAtMost:num]!=num) [self _raiseEOF];
 }
 
 

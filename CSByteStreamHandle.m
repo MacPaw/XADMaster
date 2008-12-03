@@ -34,7 +34,7 @@ NSString *CSByteStreamEOFReachedException=@"CSByteStreamEOFReachedException";
 {
 	int n=0;
 
-	//@try
+	@try
 	{
 		while(n<num)
 		{
@@ -43,11 +43,12 @@ NSString *CSByteStreamEOFReachedException=@"CSByteStreamEOFReachedException";
 			if(endofstream) break;
 		}
 	}
-/*	@catch(id e)
+	@catch(id e)
 	{
-		if([e isKindOfClass:[NSException class]]&&[e name]==CSByteStreamEOFReachedException) endofstream=YES;
+		if([e isKindOfClass:[NSException class]]
+		&&[e name]==CSByteStreamEOFReachedException) endofstream=YES;
 		else @throw e;
-	}*/
+	}
 
 	return n;
 }

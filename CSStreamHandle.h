@@ -24,6 +24,7 @@
 -(off_t)offsetInFile;
 -(BOOL)atEndOfFile;
 -(void)seekToFileOffset:(off_t)offs;
+-(void)seekToEndOfFile;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
 
 -(void)resetStream;

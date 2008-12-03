@@ -5,6 +5,7 @@
 #import "XADZipCryptHandle.h"
 #import "XADWinZipAESHandle.h"
 #import "CSZlibHandle.h"
+#import "CSBzip2Handle.h"
 #import "Checksums.h"
 #import "NSDateXAD.h"
 
@@ -459,6 +460,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		case 8: return [CSZlibHandle deflateHandleWithHandle:parent length:size];
 		//case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size deflate64:YES] autorelease];
+		case 12: return [CSBzip2Handle bzip2HandleWithHandle:parent length:size];
 		default: return nil;
 	}
 }

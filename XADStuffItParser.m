@@ -12,6 +12,7 @@
 #import "XADStuffItOldHandles.h"
 #import "XADCompressHandle.h"
 
+// TODO: implement final bits of libxad's Stuffit.c
 
 @implementation XADStuffItParser
 

@@ -75,6 +75,8 @@ extern NSString *CSNotSupportedException;
 -(NSData *)copyDataOfLength:(int)length;
 -(NSData *)copyDataOfLengthAtMost:(int)length;
 -(void)readBytes:(int)num toBuffer:(void *)buffer;
+
+-(off_t)readAndDiscardAtMost:(off_t)num;
 -(void)readAndDiscardBytes:(off_t)num;
 
 -(CSHandle *)subHandleOfLength:(off_t)length;

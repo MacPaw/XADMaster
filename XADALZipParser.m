@@ -1,5 +1,6 @@
 #import "XADALZipParser.h"
 #import "CSZlibHandle.h"
+#import "CSBzip2Handle.h"
 #import "XADDeflateHandle.h"
 #import "XADException.h"
 #import "Checksums.h"
@@ -123,7 +124,7 @@ static void CalculateSillyTable(int *table,int param)
 {
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
-	off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
+	//off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 	uint32_t crc=[[dict objectForKey:@"ALZipCRC32"] unsignedIntValue];
 
 	if([dict objectForKey:XADIsEncryptedKey])
@@ -137,7 +138,7 @@ static void CalculateSillyTable(int *table,int param)
 	switch([[dict objectForKey:@"ALZipCompressionMethod"] intValue])
 	{
 		case 0: break; // No compression
-		//case 1: handle=[[[XADBzip2Handle alloc]
+		case 1: handle=[CSBzip2Handle bzip2HandleWithHandle:handle length:size]; break;
 		case 2: handle=[CSZlibHandle deflateHandleWithHandle:handle length:size]; break;
 		case 3:
 		{

@@ -131,6 +131,7 @@
 		1BC89F140EE0CD71006B47FE /* XADDeflateHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89F120EE0CD71006B47FE /* XADDeflateHandle.m */; };
 		1BC8A07C0EE4C4DA006B47FE /* XADALZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */; };
 		1BC8A07D0EE4C4DA006B47FE /* XADALZipParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */; };
+		1BC8A0F10EE61C42006B47FE /* CSBzip2Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8A0EF0EE61C42006B47FE /* CSBzip2Handle.h */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -402,6 +403,8 @@
 		1BC89F120EE0CD71006B47FE /* XADDeflateHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADDeflateHandle.m; sourceTree = "<group>"; };
 		1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADALZipParser.m; sourceTree = "<group>"; };
 		1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADALZipParser.h; sourceTree = "<group>"; };
+		1BC8A0EF0EE61C42006B47FE /* CSBzip2Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSBzip2Handle.h; sourceTree = "<group>"; };
+		1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSBzip2Handle.m; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMaster_Prefix.pch; sourceTree = "<group>"; };
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
@@ -669,6 +672,8 @@
 				1B3FAAFB0EC3859F006D2F06 /* CSBlockStreamHandle.m */,
 				1B3FAAFE0EC3859F006D2F06 /* CSZlibHandle.h */,
 				1B3FAAFF0EC3859F006D2F06 /* CSZlibHandle.m */,
+				1BC8A0EF0EE61C42006B47FE /* CSBzip2Handle.h */,
+				1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */,
 				1BC8903D0ED47D76006B47FE /* CSInputBuffer.h */,
 				1BC8903F0ED47D76006B47FE /* CSInputBuffer.m */,
 			);
@@ -952,6 +957,7 @@
 				1BC89DEC0EDDBB33006B47FE /* XADRARAESHandle.h in Headers */,
 				1BC89F130EE0CD71006B47FE /* XADDeflateHandle.h in Headers */,
 				1BC8A07D0EE4C4DA006B47FE /* XADALZipParser.h in Headers */,
+				1BC8A0F10EE61C42006B47FE /* CSBzip2Handle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

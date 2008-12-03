@@ -100,7 +100,7 @@
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum
 {
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dictionary];
-	CSZlibHandle *zh=[CSZlibHandle zlibNoHeaderHandleWithHandle:handle];
+	CSZlibHandle *zh=[CSZlibHandle deflateHandleWithHandle:handle];
 
 	if(checksum)
 	{

@@ -70,7 +70,7 @@ static void CalculateSillyTable(int *table,int param)
 				[NSNumber numberWithInt:flags],@"ALZipFlags",
 			nil];
 
-			if(attrs&0x20) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+			if(attrs&0x10) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 			if(flags&0x01) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 
 			off_t compsize=0;
@@ -124,7 +124,7 @@ static void CalculateSillyTable(int *table,int param)
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
 	off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
-	uint32_t crc=[[dict objectForKey:@"ZipCRC32"] unsignedIntValue];
+	uint32_t crc=[[dict objectForKey:@"ALZipCRC32"] unsignedIntValue];
 
 	if([dict objectForKey:XADIsEncryptedKey])
 	{
@@ -138,7 +138,7 @@ static void CalculateSillyTable(int *table,int param)
 	{
 		case 0: break; // No compression
 		//case 1: handle=[[[XADBzip2Handle alloc]
-		case 2: handle=[CSZlibHandle zlibNoHeaderHandleWithHandle:handle length:size]; break;
+		case 2: handle=[CSZlibHandle deflateHandleWithHandle:handle length:size]; break;
 		case 3:
 		{
 			handle=[[[XADDeflateHandle alloc] initWithHandle:handle length:size] autorelease];

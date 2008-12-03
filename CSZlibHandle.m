@@ -8,7 +8,7 @@
 
 +(CSZlibHandle *)zlibHandleWithHandle:(CSHandle *)handle
 {
-	return [[[CSZlibHandle alloc] initWithHandle:handle length:0x7fffffffffffffff header:YES name:[handle name]] autorelease];
+	return [[[CSZlibHandle alloc] initWithHandle:handle length:CSHandleMaxLength header:YES name:[handle name]] autorelease];
 }
 
 +(CSZlibHandle *)zlibHandleWithHandle:(CSHandle *)handle length:(off_t)length
@@ -16,12 +16,12 @@
 	return [[[CSZlibHandle alloc] initWithHandle:handle length:length header:YES name:[handle name]] autorelease];
 }
 
-+(CSZlibHandle *)zlibNoHeaderHandleWithHandle:(CSHandle *)handle
++(CSZlibHandle *)deflateHandleWithHandle:(CSHandle *)handle
 {
-	return [[[CSZlibHandle alloc] initWithHandle:handle length:0x7fffffffffffffff header:NO name:[handle name]] autorelease];
+	return [[[CSZlibHandle alloc] initWithHandle:handle length:CSHandleMaxLength header:NO name:[handle name]] autorelease];
 }
 
-+(CSZlibHandle *)zlibNoHeaderHandleWithHandle:(CSHandle *)handle length:(off_t)length
++(CSZlibHandle *)deflateHandleWithHandle:(CSHandle *)handle length:(off_t)length
 {
 	return [[[CSZlibHandle alloc] initWithHandle:handle length:length header:NO name:[handle name]] autorelease];
 }
@@ -66,6 +66,7 @@
 		startoffs=other->startoffs;
 		inited=NO;
 		eof=other->eof;
+		seekback=other->seekback;
 
 		if(inflateCopy(&zs,&other->zs)==Z_OK)
 		{

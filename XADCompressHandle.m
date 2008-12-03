@@ -6,14 +6,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle flags:(int)compressflags
 {
-	if(self=[super initWithHandle:handle])
-	{
-		blockmode=compressflags&0x80;
-		lzw=AllocLZW(1<<(compressflags&0x1f),blockmode?1:0);
-		bufsize=1024;
-		buffer=malloc(bufsize);
-	}
-	return self;
+	return [self initWithHandle:handle length:CSHandleMaxLength flags:compressflags];
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length flags:(int)compressflags

@@ -14,8 +14,8 @@
 
 +(CSZlibHandle *)zlibHandleWithHandle:(CSHandle *)handle;
 +(CSZlibHandle *)zlibHandleWithHandle:(CSHandle *)handle length:(off_t)length;
-+(CSZlibHandle *)zlibNoHeaderHandleWithHandle:(CSHandle *)handle;
-+(CSZlibHandle *)zlibNoHeaderHandleWithHandle:(CSHandle *)handle length:(off_t)length;
++(CSZlibHandle *)deflateHandleWithHandle:(CSHandle *)handle;
++(CSZlibHandle *)deflateHandleWithHandle:(CSHandle *)handle length:(off_t)length;
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length header:(BOOL)header name:(NSString *)descname;
 -(id)initAsCopyOf:(CSZlibHandle *)other;

@@ -64,7 +64,6 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 	}
 	else
 	{
-
 		*offset=CSInputNextBitStringLE(input,offsetbits);
 		*offset|=CSInputNextSymbolUsingCodeLE(input,offsetcode)<<offsetbits;
 		*offset+=1;

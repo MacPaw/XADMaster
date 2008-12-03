@@ -9,11 +9,15 @@
 	XADPrefixCode *fixedliteralcode,*fixeddistancecode;
 	BOOL storedblock,lastblock;
 	int storedcount;
+
+	int order[19];
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length deflate64:(BOOL)deflate64mode;
 -(void)dealloc;
+
+-(void)setMetaTableOrder:(const int *)order;
 
 -(void)resetLZSSHandle;
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length;

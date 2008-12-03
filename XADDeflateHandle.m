@@ -15,6 +15,9 @@
 		deflate64=deflate64mode;
 		literalcode=distancecode=nil;
 		fixedliteralcode=fixeddistancecode=nil;
+
+		static const int ziporder[19]={16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15};
+		[self setMetaTableOrder:ziporder];
 	}
 	return self;
 }
@@ -27,6 +30,8 @@
 	[fixeddistancecode release];
 	[super dealloc];
 }
+
+-(void)setMetaTableOrder:(const int *)neworder { memcpy(order,neworder,sizeof(order)); }
 
 -(void)resetLZSSHandle
 {
@@ -165,10 +170,15 @@
 
 -(XADPrefixCode *)allocAndParseMetaCodeOfSize:(int)size
 {
-	static const int order[19]={16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15};
 	int lengths[19];
 	for(int i=0;i<size;i++) lengths[order[i]]=CSInputNextBitStringLE(input,3);
+//for(int i=0;i<size;i++) NSLog(@"%d",lengths[order[i]]);
+
 	for(int i=size;i<19;i++) lengths[order[i]]=0;
+
+//NSLog(@"-----------");
+//for(int i=0;i<19;i++) NSLog(@"%d",lengths[i]);
+
 	return [[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:19 maximumLength:7 shortestCodeIsZeros:YES];
 }
 

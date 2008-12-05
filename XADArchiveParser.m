@@ -12,6 +12,7 @@
 #import "XADCompactProParser.h"
 #import "XADCompressParser.h"
 #import "XADALZipParser.h"
+#import "XADPowerPackerParser.h"
 #import "XADLibXADParser.h"
 
 const NSString *XADFileNameKey=@"XADFileName";
@@ -58,6 +59,7 @@ static int maxheader=0;
 		[XADCompactProParser class],
 		[XADCompressParser class],
 		[XADALZipParser class],
+		[XADPowerPackerParser class],
 		[XADLibXADParser class],
 	nil] retain];
 

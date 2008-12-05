@@ -23,6 +23,7 @@
 
 	[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
 		[self XADStringWithString:[[self name] stringByDeletingPathExtension]],XADFileNameKey,
+// TODO: fix fileSize call
 		[NSNumber numberWithLongLong:[[self handle] fileSize]-3],XADCompressedSizeKey,
 		[self XADStringWithString:@"LZC"],XADCompressionNameKey,
 		[NSNumber numberWithLongLong:3],XADDataOffsetKey,

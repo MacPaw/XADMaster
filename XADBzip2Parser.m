@@ -1,5 +1,5 @@
-#import "XADBZip2Parser.h"
-#import "CSBZip2Handle.h"
+#import "XADBzip2Parser.h"
+#import "CSBzip2Handle.h"
 
 @implementation XADBzip2Parser
 

@@ -1,4 +1,4 @@
-#import "XADGZipParser.h"
+#import "XADGzipParser.h"
 #import "CSZlibHandle.h"
 #import "Checksums.h"
 

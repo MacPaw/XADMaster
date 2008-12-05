@@ -1,4 +1,5 @@
 #import "XADPrefixCode.h"
+#import "SystemSpecific.h"
 
 NSString *XADInvalidPrefixCodeException=@"XADInvalidPrefixCodeException";
 

@@ -22,6 +22,9 @@
 		1B06D5BB0DDA67E000D9C000 /* XADString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5B90DDA67E000D9C000 /* XADString.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B0DD5980A29091F0009B697 /* XADArchivePipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B0DD5960A29091F0009B697 /* XADArchivePipe.h */; };
 		1B2110720A4452C2005ED2AF /* XADRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2110700A4452C2005ED2AF /* XADRegex.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B2F17E60EE8AF7B0000DAFF /* XADSkipHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F17E40EE8AF7B0000DAFF /* XADSkipHandle.h */; };
+		1B2F17E70EE8AF7B0000DAFF /* XADSkipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */; };
+		1B2F17EA0EE8B9490000DAFF /* SystemSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F17E80EE8B9490000DAFF /* SystemSpecific.h */; };
 		1B3FAB000EC3859F006D2F06 /* CSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAB010EC3859F006D2F06 /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */; };
 		1B3FAB020EC3859F006D2F06 /* CSSubHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */; settings = {ATTRIBUTES = (); }; };
@@ -278,6 +281,9 @@
 		1B210D4D0A40E457005ED2AF /* xadIO.doc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = xadIO.doc; path = libxad_reject/amiga/source/clients/xadIO.doc; sourceTree = "<group>"; };
 		1B21106F0A4452C2005ED2AF /* XADRegex.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XADRegex.m; sourceTree = "<group>"; };
 		1B2110700A4452C2005ED2AF /* XADRegex.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XADRegex.h; sourceTree = "<group>"; };
+		1B2F17E40EE8AF7B0000DAFF /* XADSkipHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSkipHandle.h; sourceTree = "<group>"; };
+		1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADSkipHandle.m; sourceTree = "<group>"; };
+		1B2F17E80EE8B9490000DAFF /* SystemSpecific.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSpecific.h; sourceTree = "<group>"; };
 		1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSHandle.h; sourceTree = "<group>"; };
 		1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHandle.m; sourceTree = "<group>"; };
 		1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSubHandle.h; sourceTree = "<group>"; };
@@ -692,6 +698,32 @@
 			name = XADTest;
 			sourceTree = "<group>";
 		};
+		1BBCC59F0EE748F9006C3AE2 /* Compressors */ = {
+			isa = PBXGroup;
+			children = (
+				1B578C560DDCFFD0005B0F68 /* XADGzipParser.h */,
+				1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */,
+				1B578C5A0DDCFFE0005B0F68 /* XADBzip2Parser.h */,
+				1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */,
+				1BC88D490ED31A46006B47FE /* XADCompressParser.h */,
+				1BC88D480ED31A46006B47FE /* XADCompressParser.m */,
+				1BC88D4A0ED31A46006B47FE /* XADCompressHandle.h */,
+				1BC88D470ED31A46006B47FE /* XADCompressHandle.m */,
+			);
+			name = Compressors;
+			sourceTree = "<group>";
+		};
+		1BBCC5A00EE74902006C3AE2 /* Archivers */ = {
+			isa = PBXGroup;
+			children = (
+				1BC889650ECF9AD5006B47FE /* XADTarParser.h */,
+				1BC889660ECF9AD5006B47FE /* XADTarParser.m */,
+				1BC889690ECF9AE2006B47FE /* XADCpioParser.h */,
+				1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */,
+			);
+			name = Archivers;
+			sourceTree = "<group>";
+		};
 		1BC885C60ECD11A9006B47FE /* Zip */ = {
 			isa = PBXGroup;
 			children = (
@@ -714,12 +746,15 @@
 		1BC886D80ECE18EF006B47FE /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				1B2F17E40EE8AF7B0000DAFF /* XADSkipHandle.h */,
+				1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */,
 				1BC89C9E0EDCAA51006B47FE /* Checksums.h */,
 				1BC89C9D0EDCAA51006B47FE /* Checksums.m */,
 				1BC89CA50EDCAA5F006B47FE /* EndianAccess.h */,
 				1BC89CA60EDCAA5F006B47FE /* EndianAccess.m */,
 				1BC89CA10EDCAA5A006B47FE /* Paths.h */,
 				1BC89CA20EDCAA5A006B47FE /* Paths.m */,
+				1B2F17E80EE8B9490000DAFF /* SystemSpecific.h */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -786,18 +821,8 @@
 		1BC88C8B0ED22666006B47FE /* Unix */ = {
 			isa = PBXGroup;
 			children = (
-				1B578C560DDCFFD0005B0F68 /* XADGzipParser.h */,
-				1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */,
-				1B578C5A0DDCFFE0005B0F68 /* XADBzip2Parser.h */,
-				1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */,
-				1BC889650ECF9AD5006B47FE /* XADTarParser.h */,
-				1BC889660ECF9AD5006B47FE /* XADTarParser.m */,
-				1BC889690ECF9AE2006B47FE /* XADCpioParser.h */,
-				1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */,
-				1BC88D490ED31A46006B47FE /* XADCompressParser.h */,
-				1BC88D480ED31A46006B47FE /* XADCompressParser.m */,
-				1BC88D4A0ED31A46006B47FE /* XADCompressHandle.h */,
-				1BC88D470ED31A46006B47FE /* XADCompressHandle.m */,
+				1BBCC59F0EE748F9006C3AE2 /* Compressors */,
+				1BBCC5A00EE74902006C3AE2 /* Archivers */,
 			);
 			name = Unix;
 			sourceTree = "<group>";
@@ -960,6 +985,8 @@
 				1BC89F130EE0CD71006B47FE /* XADDeflateHandle.h in Headers */,
 				1BC8A07D0EE4C4DA006B47FE /* XADALZipParser.h in Headers */,
 				1BC8A0F10EE61C42006B47FE /* CSBzip2Handle.h in Headers */,
+				1B2F17E60EE8AF7B0000DAFF /* XADSkipHandle.h in Headers */,
+				1B2F17EA0EE8B9490000DAFF /* SystemSpecific.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1181,6 +1208,7 @@
 				1BC8A07C0EE4C4DA006B47FE /* XADALZipParser.m in Sources */,
 				1BBCC4FA0EE73AC9006C3AE2 /* CSBzip2Handle.m in Sources */,
 				1BBCC5790EE747F6006C3AE2 /* XADBzip2Parser.m in Sources */,
+				1B2F17E70EE8AF7B0000DAFF /* XADSkipHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

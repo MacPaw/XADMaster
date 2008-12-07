@@ -28,6 +28,7 @@ extern const NSString *XADCommentKey;
 extern const NSString *XADDataOffsetKey;
 extern const NSString *XADDataLengthKey;
 extern const NSString *XADCompressionNameKey;
+extern const NSString *XADIsSolidKey;
 
 // Internal use
 extern const NSString *XADResourceDataKey;

@@ -132,7 +132,7 @@
 		1BC89D4A0EDCC2FB006B47FE /* getbits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D160EDCC1F3006B47FE /* getbits.cpp */; };
 		1BC89D4B0EDCC2FF006B47FE /* rarvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */; };
 		1BC89D790EDCC6ED006B47FE /* XADRARHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89D770EDCC6ED006B47FE /* XADRARHandle.h */; };
-		1BC89D7A0EDCC6ED006B47FE /* XADRARHandle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRARHandle.mm */; };
+		1BC89D7A0EDCC6ED006B47FE /* XADRARHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */; };
 		1BC89DEC0EDDBB33006B47FE /* XADRARAESHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */; };
 		1BC89DED0EDDBB33006B47FE /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
 		1BC89F130EE0CD71006B47FE /* XADDeflateHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89F110EE0CD71006B47FE /* XADDeflateHandle.h */; };
@@ -141,6 +141,8 @@
 		1BC8A07D0EE4C4DA006B47FE /* XADALZipParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */; };
 		1BC8A0F10EE61C42006B47FE /* CSBzip2Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8A0EF0EE61C42006B47FE /* CSBzip2Handle.h */; };
 		1BCD5B2A0EEA276A00D86C43 /* XADRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B21106F0A4452C2005ED2AF /* XADRegex.m */; };
+		1BCD5C350EEC605400D86C43 /* RARUnpacker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD5C330EEC605400D86C43 /* RARUnpacker.h */; };
+		1BCD5C360EEC605400D86C43 /* RARUnpacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -409,7 +411,7 @@
 		1BC89D1D0EDCC1F3006B47FE /* unpack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = unpack.hpp; path = unrar/unpack.hpp; sourceTree = "<group>"; };
 		1BC89D1E0EDCC1F3006B47FE /* unpack15.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unpack15.cpp; path = unrar/unpack15.cpp; sourceTree = "<group>"; };
 		1BC89D770EDCC6ED006B47FE /* XADRARHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRARHandle.h; sourceTree = "<group>"; };
-		1BC89D780EDCC6ED006B47FE /* XADRARHandle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XADRARHandle.mm; sourceTree = "<group>"; };
+		1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRARHandle.m; sourceTree = "<group>"; };
 		1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRARAESHandle.h; sourceTree = "<group>"; };
 		1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRARAESHandle.m; sourceTree = "<group>"; };
 		1BC89F110EE0CD71006B47FE /* XADDeflateHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDeflateHandle.h; sourceTree = "<group>"; };
@@ -418,6 +420,8 @@
 		1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADALZipParser.h; sourceTree = "<group>"; };
 		1BC8A0EF0EE61C42006B47FE /* CSBzip2Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSBzip2Handle.h; sourceTree = "<group>"; };
 		1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSBzip2Handle.m; sourceTree = "<group>"; };
+		1BCD5C330EEC605400D86C43 /* RARUnpacker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARUnpacker.h; sourceTree = "<group>"; };
+		1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RARUnpacker.cpp; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMaster_Prefix.pch; sourceTree = "<group>"; };
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
@@ -780,9 +784,11 @@
 				1B06D5A60DDA667A00D9C000 /* XADRARParser.h */,
 				1B06D5A70DDA667A00D9C000 /* XADRARParser.m */,
 				1BC89D770EDCC6ED006B47FE /* XADRARHandle.h */,
-				1BC89D780EDCC6ED006B47FE /* XADRARHandle.mm */,
+				1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */,
 				1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */,
 				1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */,
+				1BCD5C330EEC605400D86C43 /* RARUnpacker.h */,
+				1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */,
 				1BC89D020EDCC1D4006B47FE /* unrar */,
 			);
 			name = Rar;
@@ -880,27 +886,27 @@
 		1BC89D020EDCC1D4006B47FE /* unrar */ = {
 			isa = PBXGroup;
 			children = (
-				1BC89D0F0EDCC1F3006B47FE /* rar.hpp */,
-				1BC89D1D0EDCC1F3006B47FE /* unpack.hpp */,
-				1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */,
-				1BC89D070EDCC1F3006B47FE /* unpack20.cpp */,
-				1BC89D1E0EDCC1F3006B47FE /* unpack15.cpp */,
+				1BC89D190EDCC1F3006B47FE /* array.hpp */,
+				1BC89D0C0EDCC1F3006B47FE /* coder.cpp */,
+				1BC89D170EDCC1F3006B47FE /* coder.hpp */,
+				1BC89D120EDCC1F3006B47FE /* compress.hpp */,
+				1BC89D160EDCC1F3006B47FE /* getbits.cpp */,
 				1BC89D080EDCC1F3006B47FE /* getbits.hpp */,
 				1BC89D0B0EDCC1F3006B47FE /* int64.hpp */,
-				1BC89D0C0EDCC1F3006B47FE /* coder.cpp */,
-				1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */,
-				1BC89D0E0EDCC1F3006B47FE /* rardefs.hpp */,
-				1BC89D100EDCC1F3006B47FE /* suballoc.cpp */,
-				1BC89D110EDCC1F3006B47FE /* suballoc.hpp */,
-				1BC89D120EDCC1F3006B47FE /* compress.hpp */,
 				1BC89D130EDCC1F3006B47FE /* model.cpp */,
 				1BC89D140EDCC1F3006B47FE /* model.hpp */,
-				1BC89D160EDCC1F3006B47FE /* getbits.cpp */,
-				1BC89D170EDCC1F3006B47FE /* coder.hpp */,
+				1BC89D0F0EDCC1F3006B47FE /* rar.hpp */,
+				1BC89D0E0EDCC1F3006B47FE /* rardefs.hpp */,
 				1BC89D180EDCC1F3006B47FE /* rartypes.hpp */,
-				1BC89D190EDCC1F3006B47FE /* array.hpp */,
+				1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */,
 				1BC89D1B0EDCC1F3006B47FE /* rarvm.hpp */,
 				1BC89D1C0EDCC1F3006B47FE /* rarvmtbl.cpp */,
+				1BC89D100EDCC1F3006B47FE /* suballoc.cpp */,
+				1BC89D110EDCC1F3006B47FE /* suballoc.hpp */,
+				1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */,
+				1BC89D1D0EDCC1F3006B47FE /* unpack.hpp */,
+				1BC89D1E0EDCC1F3006B47FE /* unpack15.cpp */,
+				1BC89D070EDCC1F3006B47FE /* unpack20.cpp */,
 			);
 			name = unrar;
 			sourceTree = "<group>";
@@ -1003,6 +1009,7 @@
 				1B2F17E60EE8AF7B0000DAFF /* XADSkipHandle.h in Headers */,
 				1B2F17EA0EE8B9490000DAFF /* SystemSpecific.h in Headers */,
 				1B2F18400EE965880000DAFF /* XADPowerPackerParser.h in Headers */,
+				1BCD5C350EEC605400D86C43 /* RARUnpacker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1218,7 +1225,7 @@
 				1BC89D490EDCC2F4006B47FE /* unpack.cpp in Sources */,
 				1BC89D4A0EDCC2FB006B47FE /* getbits.cpp in Sources */,
 				1BC89D4B0EDCC2FF006B47FE /* rarvm.cpp in Sources */,
-				1BC89D7A0EDCC6ED006B47FE /* XADRARHandle.mm in Sources */,
+				1BC89D7A0EDCC6ED006B47FE /* XADRARHandle.m in Sources */,
 				1BC89DED0EDDBB33006B47FE /* XADRARAESHandle.m in Sources */,
 				1BC89F140EE0CD71006B47FE /* XADDeflateHandle.m in Sources */,
 				1BC8A07C0EE4C4DA006B47FE /* XADALZipParser.m in Sources */,
@@ -1227,6 +1234,7 @@
 				1B2F18410EE965880000DAFF /* XADPowerPackerParser.m in Sources */,
 				1B2F18990EE9A4440000DAFF /* XADSkipHandle.m in Sources */,
 				1BCD5B2A0EEA276A00D86C43 /* XADRegex.m in Sources */,
+				1BCD5C360EEC605400D86C43 /* RARUnpacker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

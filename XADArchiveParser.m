@@ -40,6 +40,7 @@ const NSString *XADCommentKey=@"XADComment";
 const NSString *XADDataOffsetKey=@"XADDataOffset";
 const NSString *XADDataLengthKey=@"XADDataLength";
 const NSString *XADCompressionNameKey=@"XADCompressionName";
+const NSString *XADIsSolidKey=@"XADIsSolid";
 
 
 @implementation XADArchiveParser

@@ -1,4 +1,5 @@
 #import "CSBlockStreamHandle.h"
+#import "RARUnpacker.h"
 
 @interface XADRARHandle:CSBlockStreamHandle
 {
@@ -7,7 +8,7 @@
 
 	int method;
 
-	void *ioptr,*unpackptr;
+	RARUnpacker *unpacker;
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length version:(int)version;
@@ -15,8 +16,5 @@
 
 -(void)resetBlockStream;
 -(int)produceBlockAtOffset:(off_t)pos;
-
--(CSHandle *)sourceHandle;
--(void)receiveBlock:(void *)block length:(int)length;
 
 @end

@@ -400,7 +400,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		}
 		else
 		{
-			NSLog(@"unknown extension: %x %d %@",extid,size,[fh readDataOfLength:size]);
+			//NSLog(@"unknown extension: %x %d %@",extid,size,[fh readDataOfLength:size]);
 			[fh skipBytes:-size];
 		}
 

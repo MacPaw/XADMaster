@@ -112,7 +112,7 @@
 	// check if string is ASCII, and convert it directly to an NSString if it is
 	const char *ptr=[data bytes];
 	int length=[data length];
-	for(int i=0;i<length;i++) if(*ptr<0x20||*ptr>=0x80)
+	for(int i=0;i<length;i++) if(ptr[i]<0x20||ptr[i]>=0x80)
 	return [[[XADString alloc] initWithData:data source:self] autorelease];
 
 	return [[[XADString alloc] initWithString:[[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease]] autorelease];

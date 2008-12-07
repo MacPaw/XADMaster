@@ -132,14 +132,15 @@ static int TestSignature(const uint8_t *ptr)
 
 	archiveflags=0;
 
-	BOOL parsing=YES;
-	while(parsing)
+	for(;;)
 	{
 		off_t blockstart=[handle offsetInFile];
 
 		CSHandle *fh=encryptedhandle?encryptedhandle:handle;
 
-		/*int blockcrc=*/[fh readUInt16LE];
+		@try { /*int blockcrc=*/[fh readUInt16LE]; }
+		@catch(id e) { break; }
+
 		int type=[fh readUInt8];
 		int flags=[fh readUInt16LE];
 		int headersize=[fh readUInt16LE];
@@ -195,10 +196,7 @@ NSLog(@"encryptver: %d",encryptversion);
 				}
 
 				NSData *namedata=[fh readDataOfLength:namelength];
-
-				#ifndef NO_FILENAME_MANGLING
-				//for(int i=0;i<namesize;i++) if(namebuf[i]=='\\') namebuf[i]='/'; 
-				#endif
+				// TODO: unicode names
 
 				if(currdict)
 				{
@@ -215,18 +213,7 @@ NSLog(@"encryptver: %d",encryptversion);
 				{
 					if(!currdict) break;
 
-					/*struct xadSkipInfo *si=xadAllocObjectA(XADM XADOBJ_SKIPINFO,NULL);
-					if(!si)
-					{
-						err=XADERR_NOMEMORY;
-						goto rar_getinfo_end;
-					}
-
-					si->xsi_Position=lastpos;
-					si->xsi_SkipSize=block_start+size1-lastpos;
-					si->xsi_Next=ai->xai_SkipInfo;
-					ai->xai_SkipInfo=si;*/
-//printf("(created skipinfo: %qu,%qu) ",si->xsi_Position,si->xsi_SkipSize);
+					[[self skipHandle] addSkipFrom:lastpos to:blockstart+headersize];
 
 					[currdict setObject:[NSNumber numberWithLongLong:
 					[[currdict objectForKey:XADCompressedSizeKey] longLongValue]+datasize] forKey:XADCompressedSizeKey];
@@ -250,6 +237,7 @@ NSLog(@"encryptver: %d",encryptversion);
 						[NSNumber numberWithUnsignedInt:crc],@"RARCRC32",
 						[NSNumber numberWithInt:os],@"RAROS",
 						[NSNumber numberWithUnsignedInt:attrs],@"RARAttributes",
+						namedata,@"RARNameData",
 					nil];
 
 					if(flags&LHD_PASSWORD) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
@@ -260,42 +248,35 @@ NSLog(@"encryptver: %d",encryptversion);
 					switch(method)
 					{
 						case 0x30: methodname=@"None"; break;
-						case 0x31: methodname=@"Fastest"; break;
-						case 0x32: methodname=@"Fast"; break;
-						case 0x33: methodname=@"Normal"; break;
-						case 0x34: methodname=@"Good"; break;
-						case 0x35: methodname=@"Best"; break;
+						case 0x31: methodname=[NSString stringWithFormat:@"Fastest v%d.%d",version/10,version%10]; break;
+						case 0x32: methodname=[NSString stringWithFormat:@"Fast v%d.%d",version/10,version%10]; break;
+						case 0x33: methodname=[NSString stringWithFormat:@"Normal v%d.%d",version/10,version%10]; break;
+						case 0x34: methodname=[NSString stringWithFormat:@"Good v%d.%d",version/10,version%10]; break;
+						case 0x35: methodname=[NSString stringWithFormat:@"Best v%d.%d",version/10,version%10]; break;
 					}
-					if(methodname) [currdict setObject:[self XADStringWithString:
-					[NSString stringWithFormat:@"%@ v%d.%d",methodname,version/10,version%10]]
-					forKey:XADCompressionNameKey]; break;
+					if(methodname) [currdict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 
-/*					BOOL solid;
-					if(version<15) solid=compressed&&(RARPAI(ai)->flags&MHD_SOLID)&&ai->xai_FileInfo;
-					else solid=(flags&LHD_SOLID)!=0;
-
-					RARPFI(fi)->solid=solid;
-					RARPFI(fi)->compressed=compressed;
-
-					if(compressed)
+					if(method!=0x30) // handle solidness, only for compressed files
 					{
+						BOOL solid;
+						if(version<15) solid=(archiveflags&MHD_SOLID)&&lastcompressed;
+						else solid=(flags&LHD_SOLID)!=0;
+
 						if(solid)
 						{
-							RARPFI(fi)->solid_start=last_nonsolid;
-							if(last_compressed) RARPFI(last_compressed)->next_solid=fi;
+							[currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsSolidKey];
+							//RARPFI(fi)->solid_start=last_nonsolid;
+							//if(last_compressed) RARPFI(last_compressed)->next_solid=fi;
 						}
 						else
 						{
-							RARPFI(fi)->solid_start=fi;
-							last_nonsolid=fi;
+							lastnonsolid=currdict;
 						}
-						last_compressed=fi;
-					}*/
+						lastcompressed=currdict;
+					}
 
 					currpart=0;
 				}
-
-//printf("file:%s fixedsize2:%qu fullsize:%qu ver:%d meth:%x crc:%x",fi->xfi_FileName,size2,fi->xfi_Size,RARPFI(fi)->version,RARPFI(fi)->method,EndGetI32(buf+5));
 
 				// TODO: check crc?
 
@@ -307,10 +288,6 @@ NSLog(@"encryptver: %d",encryptversion);
 					currdict=nil;
 				}
 			}
-			break;
-
-			case 0x7b: // archive end
-				parsing=NO;
 			break;
 		}
 
@@ -331,12 +308,14 @@ NSLog(@"encryptver: %d",encryptversion);
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
 
-	XADRARHandle *rh=[[[XADRARHandle alloc] initWithHandle:handle length:size
+	if([[dict objectForKey:@"RARCompressionMethod"] intValue]!=0x30)
+	handle=[[[XADRARHandle alloc] initWithHandle:handle length:size
 	version:[[dict objectForKey:@"RARCompressionVersion"] intValue]] autorelease];
 
-	if(checksum) return [XADCRCHandle IEEECRC32HandleWithHandle:rh length:size
+	if(checksum) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:size
 	correctCRC:[[dict objectForKey:@"RARCRC32"] unsignedIntValue] conditioned:YES];
-	else return rh;
+
+	return handle;
 }
 
 -(NSString *)formatName

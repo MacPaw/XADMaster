@@ -100,19 +100,16 @@ class ErrorHandler
 
 uint CRC(uint StartCRC,const void *Addr,uint Size);
 
+struct RARUnpacker;
+
 class ComprDataIO
 {
 	public:
-	ComprDataIO(void *handle);
+	ComprDataIO(RARUnpacker *unpacker);
 	int UnpRead(byte *Addr,uint Count);
 	void UnpWrite(byte *Addr,uint Count);
 
-	void *handle;
-	//struct xadArchiveInfo *ai;
-	//struct xadMasterBase *xmb;
-	//xadSize bytesleft;
-	//xadBOOL dryrun;
-	//xadUINT32 *crcptr;
+	RARUnpacker *unpacker;
 };
 
 #endif

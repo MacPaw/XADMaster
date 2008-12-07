@@ -1,17 +1,17 @@
 #import "CSHandle.h"
 
-struct XADSkip
+typedef struct XADSkipRegion
 {
-	off_t start,length;
-} XADSkip;
+	off_t actual,skip;
+} XADSkipRegion;
 
-static inline XADSkip XADMakeSkip(off_t start,off_t length) { XADSkip skip={start,length}; return skip; }
+//static inline XADSkip XADMakeSkip(off_t start,off_t length) { XADSkip skip={start,length}; return skip; }
 
-@interface XADSkipHandle:NSObject
+@interface XADSkipHandle:CSHandle
 {
 	CSHandle *parent;
-	XADSkip *skips;
-	int numskips;
+	XADSkipRegion *regions;
+	int numregions;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;

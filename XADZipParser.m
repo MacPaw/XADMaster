@@ -26,6 +26,26 @@
 	return NO;
 }
 
++(XADRegex *)volumeRegexForFilename:(NSString *)filename
+{
+	NSArray *matches;
+
+	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.(zip|z[0-9]{2})$" options:REG_ICASE])
+	return [XADRegex regexWithPattern:[NSString stringWithFormat:
+	@"^%@\\.(zip|z[0-9]{2})$",[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE];
+
+	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.[0-9]{3}$" options:REG_ICASE])
+	return [XADRegex regexWithPattern:[NSString stringWithFormat:
+	@"^%@\\.[0-9]{3}$",[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE];
+
+	return nil;
+}
+
++(BOOL)isFirstVolume:(NSString *)filename
+{
+	return [filename rangeOfString:@".zip" options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
+}
+
 -(void)parse
 {
 	CSHandle *fh=[self handle];
@@ -35,11 +55,11 @@
 
 	[self findCentralDirectory];
 
-	int disknumber=[fh readUInt16LE];
+	/*int disknumber=*/[fh readUInt16LE];
 	int centraldirstartdisk=[fh readUInt16LE];
-	int numentriesdisk=[fh readUInt16LE];
+	/*int numentriesdisk=*/[fh readUInt16LE];
 	int numentries=[fh readUInt16LE];
-	int centralsize=[fh readUInt32LE];
+	/*int centralsize=*/[fh readUInt32LE];
 	int centraloffset=[fh readUInt32LE];
 	int commentlength=[fh readUInt16LE];
 
@@ -57,7 +77,7 @@
 		uint32_t centralid=[fh readID];
 		if(centralid!=0x504b0102) [XADException raiseIllegalDataException]; // could try recovering here
 
-		int creatorversion=[fh readUInt8];
+		/*int creatorversion=*/[fh readUInt8];
 		int system=[fh readUInt8];
 		int extractversion=[fh readUInt16LE];
 		int flags=[fh readUInt16LE];
@@ -70,7 +90,7 @@
 		int extralength=[fh readUInt16LE];
 		int commentlength=[fh readUInt16LE];
 		int startdisk=[fh readUInt16LE];
-		int infileattrib=[fh readUInt16LE];
+		/*int infileattrib=*/[fh readUInt16LE];
 		uint32_t extfileattrib=[fh readUInt32LE];
 		uint32_t locheaderoffset=[fh readUInt32LE];
 
@@ -86,13 +106,15 @@
 		uint32_t localid=[fh readID];
 		if(localid==0x504b0304||localid==0x504b0506) // kludge for strange archives
 		{
-			int localextractversion=[fh readUInt16LE];
-			int localflags=[fh readUInt16LE];
-			int localcompressionmethod=[fh readUInt16LE];
+			//int localextractversion=[fh readUInt16LE];
+			//int localflags=[fh readUInt16LE];
+			//int localcompressionmethod=[fh readUInt16LE];
+			[fh skipBytes:6];
 			uint32_t localdate=[fh readUInt32LE];
-			uint32_t localcrc=[fh readUInt32LE];
-			uint32_t localcompsize=[fh readUInt32LE];
-			uint32_t localuncompsize=[fh readUInt32LE];
+			//uint32_t localcrc=[fh readUInt32LE];
+			//uint32_t localcompsize=[fh readUInt32LE];
+			//uint32_t localuncompsize=[fh readUInt32LE];
+			[fh skipBytes:12];
 			int localnamelength=[fh readUInt16LE];
 			int localextralength=[fh readUInt16LE];
 

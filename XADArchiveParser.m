@@ -15,6 +15,8 @@
 #import "XADPowerPackerParser.h"
 #import "XADLibXADParser.h"
 
+#include <dirent.h>
+
 const NSString *XADFileNameKey=@"XADFileName";
 const NSString *XADFileSizeKey=@"XADFileSize";
 const NSString *XADCompressedSizeKey=@"XADCompressedSize";
@@ -74,35 +76,96 @@ static int maxheader=0;
 
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(!parserclasses) return nil;
 	NSData *header=[handle readDataOfLengthAtMost:maxheader];
-
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
 	Class parserclass;
 	while(parserclass=[enumerator nextObject])
 	{
 		[handle seekToFileOffset:0];
-		//@try {
+		@try {
 			if([parserclass recognizeFileWithHandle:handle firstBytes:header name:name])
 			{
 				[handle seekToFileOffset:0];
 				return [[[parserclass alloc] initWithHandle:handle name:name] autorelease];
 			}
-		//} @catch(id e) {} // ignore parsers that throw errors on recognition or init
+		} @catch(id e) {} // ignore parsers that throw errors on recognition or init
 	}
 	return nil;
 }
 
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename
 {
-	CSFileHandle *fh;
+	CSHandle *handle;
 
+	NSArray *volumes=[self volumesForFilename:filename];
+	if(volumes)
+	{
+		@try
+		{
+			NSMutableArray *handles=[NSMutableArray array];
+			NSEnumerator *enumerator=[volumes objectEnumerator];
+			NSString *volume;
+
+			while(volume=[enumerator nextObject])
+			[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
+
+			return [self archiveParserForHandle:[CSMultiHandle multiHandleWithHandleArray:handles]
+			name:[volumes objectAtIndex:0]];
+		}
+		@catch(id e) { }
+	}
+
+	trysingle:
 	@try {
-		fh=[CSFileHandle fileHandleForReadingAtPath:filename];
+		handle=[CSFileHandle fileHandleForReadingAtPath:filename];
 	} @catch(id e) { return nil; }
 
-	return [self archiveParserForHandle:fh name:filename];
+	return [self archiveParserForHandle:handle name:filename];
 }
+
+
+static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
+{
+	Class parserclass=classptr;
+	BOOL isfirst1=[parserclass isFirstVolume:str1];
+	BOOL isfirst2=[parserclass isFirstVolume:str2];
+
+	if(isfirst1&&!isfirst2) return NSOrderedAscending;
+	else if(!isfirst1&&isfirst2) return NSOrderedDescending;
+//	else return [str1 compare:str2 options:NSCaseInsensitiveSearch|NSNumericSearch];
+	else return [str1 compare:str2 options:NSCaseInsensitiveSearch];
+}
+
++(NSArray *)volumesForFilename:(NSString *)name
+{
+	NSEnumerator *enumerator=[parserclasses objectEnumerator];
+	Class parserclass;
+	while(parserclass=[enumerator nextObject])
+	{
+		XADRegex *regex=[parserclass volumeRegexForFilename:name];
+		if(!regex) continue;
+
+		NSMutableArray *volumes=[NSMutableArray array];
+		NSString *dirname=[name stringByDeletingLastPathComponent];
+		DIR *dir=opendir([dirname fileSystemRepresentation]);
+
+		struct dirent *ent;
+		while(ent=readdir(dir))
+		{
+			NSString *filename=[dirname stringByAppendingPathComponent:[NSString stringWithUTF8String:ent->d_name]];
+			if([regex matchesString:filename]) [volumes addObject:filename];
+		}
+
+		closedir(dir);
+
+		[volumes sortUsingFunction:XADVolumeSort context:parserclass];
+
+		if([volumes count]>1) return volumes;
+	}
+	return nil;
+}
+
+
 
 
 
@@ -113,6 +176,7 @@ static int maxheader=0;
 		sourcehandle=[handle retain];
 		archivename=[[name lastPathComponent] retain];
 
+		skiphandle=nil;
 		delegate=nil;
 		password=nil;
 		isencrypted=NO;
@@ -125,6 +189,7 @@ static int maxheader=0;
 -(void)dealloc
 {
 	[sourcehandle release];
+	[skiphandle release];
 	[archivename release];
 	[stringsource release];
 	[super dealloc];
@@ -154,9 +219,25 @@ static int maxheader=0;
 {
 	[sourcehandle seekToFileOffset:[[dict objectForKey:XADDataOffsetKey] longLongValue]];
 
+	CSHandle *handle=skiphandle?skiphandle:sourcehandle;
+
 	NSNumber *length=[dict objectForKey:XADDataLengthKey];
-	if(length) return [sourcehandle nonCopiedSubHandleOfLength:[length longLongValue]];
-	else return sourcehandle;
+	if(length) return [handle nonCopiedSubHandleOfLength:[length longLongValue]];
+	else return handle;
+}
+
+-(XADSkipHandle *)skipHandle
+{
+	if(!skiphandle) skiphandle=[[XADSkipHandle alloc] initWithHandle:sourcehandle];
+	return skiphandle;
+}
+
+
+
+-(NSArray *)volumes
+{
+	if([sourcehandle respondsToSelector:@selector(handles)]) return [(id)sourcehandle handles];
+	else return nil;
 }
 
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset
@@ -251,8 +332,11 @@ static int maxheader=0;
 }
 
 
+
 +(int)requiredHeaderSize { return 0; }
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name { return NO; }
++(XADRegex *)volumeRegexForFilename:(NSString *)filename { return nil; }
++(BOOL)isFirstVolume:(NSString *)filename { return NO; }
 
 -(void)parse {}
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum { return nil; }
@@ -267,5 +351,3 @@ static int maxheader=0;
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser { return NO; }
 
 @end
-
-

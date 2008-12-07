@@ -1,7 +1,9 @@
 #import <Foundation/Foundation.h>
 #import "XADException.h"
 #import "XADString.h"
+#import "XADRegex.h"
 #import "CSHandle.h"
+#import "XADSkipHandle.h"
 
 extern const NSString *XADFileNameKey;
 extern const NSString *XADFileSizeKey;
@@ -38,6 +40,7 @@ extern const NSString *XADFinderFlags;
 @interface XADArchiveParser:NSObject
 {
 	CSHandle *sourcehandle;
+	XADSkipHandle *skiphandle;
 	NSString *archivename;
 
 	id delegate;
@@ -51,6 +54,7 @@ extern const NSString *XADFinderFlags;
 +(void)initialize;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename;
++(NSArray *)volumesForFilename:(NSString *)name;
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
@@ -67,7 +71,9 @@ extern const NSString *XADFinderFlags;
 -(NSString *)name;
 -(CSHandle *)handle;
 -(CSHandle *)handleAtDataOffsetForDictionary:(NSDictionary *)dict;
+-(XADSkipHandle *)skipHandle;
 
+-(NSArray *)volumes;
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
 
 -(void)addEntryWithDictionary:(NSDictionary *)dictionary;
@@ -90,6 +96,8 @@ extern const NSString *XADFinderFlags;
 
 +(int)requiredHeaderSize;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
++(XADRegex *)volumeRegexForFilename:(NSString *)filename;
++(BOOL)isFirstVolume:(NSString *)filename;
 
 -(void)parse;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum;
@@ -103,3 +111,5 @@ extern const NSString *XADFinderFlags;
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser;
 
 @end
+
+NSMutableArray *XADSortVolumes(NSMutableArray *volumes,NSString *firstfileextension);

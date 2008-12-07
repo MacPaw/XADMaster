@@ -26,6 +26,7 @@
 		1B2F17EA0EE8B9490000DAFF /* SystemSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F17E80EE8B9490000DAFF /* SystemSpecific.h */; };
 		1B2F18400EE965880000DAFF /* XADPowerPackerParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F183E0EE965880000DAFF /* XADPowerPackerParser.h */; };
 		1B2F18410EE965880000DAFF /* XADPowerPackerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F183F0EE965880000DAFF /* XADPowerPackerParser.m */; };
+		1B2F18990EE9A4440000DAFF /* XADSkipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */; };
 		1B3FAB000EC3859F006D2F06 /* CSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAB010EC3859F006D2F06 /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */; };
 		1B3FAB020EC3859F006D2F06 /* CSSubHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */; settings = {ATTRIBUTES = (); }; };
@@ -139,6 +140,7 @@
 		1BC8A07C0EE4C4DA006B47FE /* XADALZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */; };
 		1BC8A07D0EE4C4DA006B47FE /* XADALZipParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */; };
 		1BC8A0F10EE61C42006B47FE /* CSBzip2Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8A0EF0EE61C42006B47FE /* CSBzip2Handle.h */; };
+		1BCD5B2A0EEA276A00D86C43 /* XADRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B21106F0A4452C2005ED2AF /* XADRegex.m */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -1223,6 +1225,8 @@
 				1BBCC4FA0EE73AC9006C3AE2 /* CSBzip2Handle.m in Sources */,
 				1BBCC5790EE747F6006C3AE2 /* XADBzip2Parser.m in Sources */,
 				1B2F18410EE965880000DAFF /* XADPowerPackerParser.m in Sources */,
+				1B2F18990EE9A4440000DAFF /* XADSkipHandle.m in Sources */,
+				1BCD5B2A0EEA276A00D86C43 /* XADRegex.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

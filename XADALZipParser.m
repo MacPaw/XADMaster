@@ -2,7 +2,7 @@
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
 #import "XADDeflateHandle.h"
-#import "XADException.h"
+#import "XADRegex.h"
 #import "Checksums.h"
 #import "NSDateXAD.h"
 
@@ -47,9 +47,36 @@ static void CalculateSillyTable(int *table,int param)
 	return length>=8&&bytes[0]=='A'&&bytes[1]=='L'&&bytes[2]=='Z'&&bytes[3]==1&&bytes[7]==0;
 }
 
++(XADRegex *)volumeRegexForFilename:(NSString *)filename
+{
+	NSArray *matches;
+	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.(alz|a[0-9]{2}|b[0-9]{2})$" options:REG_ICASE])
+	return [XADRegex regexWithPattern:[NSString stringWithFormat:
+	@"^%@\\.(alz|a[0-9]{2}|b[0-9]{2})$",[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE];
+
+	return nil;
+}
+
++(BOOL)isFirstVolume:(NSString *)filename
+{
+	return [filename rangeOfString:@".alz" options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
+}
+
 -(void)parse
 {
-	CSHandle *fh=[self handle];
+	XADSkipHandle *fh=[self skipHandle];
+
+	NSArray *volumes=[self volumes];
+	if(volumes)
+	{
+		int count=[volumes count];
+		off_t offs=0;
+		for(int i=0;i<count-1;i++)
+		{
+			offs+=[[volumes objectAtIndex:i] fileSize];
+			[fh addSkipFrom:offs-16 to:offs+8];
+		}
+	}
 
 	[fh skipBytes:8];
 
@@ -107,11 +134,10 @@ static void CalculateSillyTable(int *table,int param)
 			NSData *namedata=[fh readDataOfLength:namelen];
 			[dict setObject:[self XADStringWithData:namedata] forKey:XADFileNameKey];
 
+			[dict setObject:[NSNumber numberWithLongLong:[[self handle] offsetInFile]] forKey:XADDataOffsetKey];
+
 			off_t pos=[fh offsetInFile];
-			[dict setObject:[NSNumber numberWithLongLong:pos] forKey:XADDataOffsetKey];
-
 			[self addEntryWithDictionary:dict];
-
 			[fh seekToFileOffset:pos+compsize];
 		}
 		else if(signature=='CLZ\001') break;

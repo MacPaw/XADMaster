@@ -104,7 +104,7 @@
 
 -(void)seekToEndOfFile
 {
-	currhandle==[handles count]-1;
+	currhandle=[handles count]-1;
 	[(CSHandle *)[handles objectAtIndex:currhandle] seekToEndOfFile];
 }
 

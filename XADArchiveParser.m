@@ -147,8 +147,12 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 		if(!regex) continue;
 
 		NSMutableArray *volumes=[NSMutableArray array];
+
 		NSString *dirname=[name stringByDeletingLastPathComponent];
+		if(!dirname||[dirname length]==0) dirname=@".";
+
 		DIR *dir=opendir([dirname fileSystemRepresentation]);
+		if(!dir) return nil;
 
 		struct dirent *ent;
 		while(ent=readdir(dir))

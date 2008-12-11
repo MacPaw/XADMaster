@@ -268,9 +268,9 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	return [[[CSSubHandle alloc] initWithHandle:[[self copy] autorelease] from:[self offsetInFile] length:length] autorelease];
 }
 
--(CSHandle *)subHandleWithRange:(NSRange)range;
+-(CSHandle *)subHandleFrom:(off_t)start length:(off_t)length
 {
-	return [[[CSSubHandle alloc] initWithHandle:[[self copy] autorelease] from:range.location length:range.length] autorelease];
+	return [[[CSSubHandle alloc] initWithHandle:[[self copy] autorelease] from:start length:length] autorelease];
 }
 
 -(CSHandle *)nonCopiedSubHandleOfLength:(off_t)length
@@ -278,9 +278,9 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	return [[[CSSubHandle alloc] initWithHandle:self from:[self offsetInFile] length:length] autorelease];
 }
 
--(CSHandle *)nonCopiedSubHandleWithRange:(NSRange)range;
+-(CSHandle *)nonCopiedSubHandleFrom:(off_t)start length:(off_t)length
 {
-	return [[[CSSubHandle alloc] initWithHandle:self from:range.location length:range.length] autorelease];
+	return [[[CSSubHandle alloc] initWithHandle:self from:start length:length] autorelease];
 }
 
 

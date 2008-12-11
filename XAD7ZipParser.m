@@ -90,24 +90,30 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	off_t nextheaderoffs=[handle readUInt64LE];
 	off_t nextheadersize=[handle readUInt64LE];
 
-	[handle skipBytes:nextheaderoffs+4];
+	[handle seekToFileOffset:nextheaderoffs+32];
 
 	CSHandle *fh=handle;
 
 	for(;;)
 	{
-NSLog(@"%qu %qu",[fh offsetInFile],nextheaderoffs);
 		uint64_t type=ReadNumber(fh);
 		if(type==1) break; // Header
 		else if(type==23)
 		{
 			NSDictionary *streams=[self parseStreamsInfoForHandle:fh];
+			NSArray *folders=[streams objectForKey:@"Folders"];
+			if([folders count]!=1) [XADException raiseIllegalDataException];
+			fh=[self handleForFolder:[folders objectAtIndex:0] substreamIndex:0];
 			NSLog(@"%@",streams);
 		}
 		else [XADException raiseIllegalDataException];
 	}
 
-	NSLog(@"%@",[fh remainingFileContents]);
+/*	for(;;)
+	{
+		uint64_t type=ReadNumber(fh);
+	}*/
+
 
 //	while(dict=)
 //	[self addEntryWithDictionary:dict];
@@ -116,22 +122,21 @@ NSLog(@"%qu %qu",[fh offsetInFile],nextheaderoffs);
 -(NSDictionary *)parseStreamsInfoForHandle:(CSHandle *)handle
 {
 	NSMutableDictionary *dict=[NSMutableDictionary dictionary];
-	NSArray *folders=nil;
+	NSArray *folders=nil,*packedstreams=nil;
 	for(;;)
 	{
 		uint64_t type=ReadNumber(handle);
-NSLog(@"%qu",type);
 		switch(type)
 		{
 			case 0: // End
 				return dict;
 
 			case 6: // PackInfo
-				[dict setObject:[self parsePackInfoForHandle:handle] forKey:@"PackedStreams"];
+				[dict setObject:packedstreams=[self parsePackedStreamsForHandle:handle] forKey:@"PackedStreams"];
 			break;
 
 			case 7: // CodersInfo
-				[dict setObject:folders=[self parseCodersInfoForHandle:handle] forKey:@"Folders"];
+				[dict setObject:folders=[self parseFoldersForHandle:handle packedStreams:packedstreams] forKey:@"Folders"];
 			break;
 
 			case 8: // SubStreamsInfo
@@ -144,9 +149,9 @@ NSLog(@"%qu",type);
 	return nil; // can't happen
 }
 
--(NSArray *)parsePackInfoForHandle:(CSHandle *)handle
+-(NSArray *)parsePackedStreamsForHandle:(CSHandle *)handle
 {
-	uint64_t dataoffset=ReadNumber(handle);
+	uint64_t dataoffset=ReadNumber(handle)+32;
 	uint64_t numpackedstreams=ReadNumber(handle);
 	NSMutableArray *packedstreams=ArrayWithLength(numpackedstreams);
 
@@ -180,7 +185,7 @@ NSLog(@"%qu",type);
 	return nil; // can't happen
 }
 
--(NSArray *)parseCodersInfoForHandle:(CSHandle *)handle
+-(NSArray *)parseFoldersForHandle:(CSHandle *)handle packedStreams:(NSArray *)packedstreams
 {
 	FindAttribute(handle,11); // Folder
 
@@ -191,7 +196,7 @@ NSLog(@"%qu",type);
 	if(external!=0) [XADException raiseNotSupportedException]; // TODO: figure out how the hell to handle this
 
 	for(int i=0;i<numfolders;i++)
-	[self parseFolderForHandle:handle dictionary:[folders objectAtIndex:i]];
+	[self parseFolderForHandle:handle dictionary:[folders objectAtIndex:i] packedStreams:packedstreams];
 
 	for(;;)
 	{
@@ -221,22 +226,19 @@ NSLog(@"%qu",type);
 	return nil; // can't happen
 }
 
--(void)parseFolderForHandle:(CSHandle *)handle dictionary:(NSMutableDictionary *)dictionary
+-(void)parseFolderForHandle:(CSHandle *)handle dictionary:(NSMutableDictionary *)dictionary packedStreams:(NSArray *)packedstreams
 {
 	uint64_t numcoders=ReadNumber(handle);
-	NSMutableArray *coders=ArrayWithLength(numcoders);
-	NSMutableArray *allinstreams=[NSMutableArray array];
-	NSMutableArray *alloutstreams=[NSMutableArray array];
+	NSMutableArray *instreams=[NSMutableArray array];
+	NSMutableArray *outstreams=[NSMutableArray array];
 
 	// Load coders
 	for(int i=0;i<numcoders;i++)
 	{
 		int flags=[handle readUInt8];
+		NSData *coderid=[handle readDataOfLength:flags&0x0f];
 
-		SetNumberEntryInArray(coders,i,flags,@"Flags");
-		SetObjectEntryInArray(coders,i,[handle readDataOfLength:flags&0x0f],@"ID");
-
-		uint64_t numinstreams=0,numoutstreams=0;
+		int numinstreams=0,numoutstreams=0;
 		if(flags&0x10)
 		{
 			numinstreams=ReadNumber(handle);
@@ -244,30 +246,25 @@ NSLog(@"%qu",type);
 		}
 		else numoutstreams=numinstreams=1;
 
-		NSArray *instreams=ArrayWithLength(numinstreams);
-		for(int j=0;j<numinstreams;j++)
-		{
-			SetNumberEntryInArray(instreams,j,i,@"CoderIndex");
-			SetNumberEntryInArray(instreams,j,j,@"SubIndex");
-		}
+		NSData *properties=nil;
+		if(flags&0x20) properties=[handle readDataOfLength:ReadNumber(handle)];
 
-		NSArray *outstreams=ArrayWithLength(numoutstreams);
-		for(int j=0;j<numoutstreams;j++)
-		{
-			SetNumberEntryInArray(outstreams,j,i,@"CoderIndex");
-			SetNumberEntryInArray(outstreams,j,j,@"SubIndex");
-		}
+		NSMutableDictionary *coder=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+			coderid,@"ID",
+			[NSNumber numberWithInt:[instreams count]],@"FirstInStreamIndex",
+			[NSNumber numberWithInt:[outstreams count]],@"FirstOutStreamIndex",
+			properties,@"Properties",
+		nil];
 
-		SetObjectEntryInArray(coders,i,instreams,@"InStreams");
-		SetObjectEntryInArray(coders,i,outstreams,@"OutStreams");
-		[allinstreams addObjectsFromArray:instreams];
-		[alloutstreams addObjectsFromArray:outstreams];
+		for(int j=0;j<numinstreams;j++) [instreams addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+			coder,@"Coder",
+			[NSNumber numberWithInt:j],@"SubIndex",
+		nil]];
 
-		if(flags&0x20)
-		{
-			uint64_t size=ReadNumber(handle);
-			SetObjectEntryInArray(coders,i,[handle readDataOfLength:size],@"Properties");
-		}
+		for(int j=0;j<numoutstreams;j++) [outstreams addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+			coder,@"Coder",
+			[NSNumber numberWithInt:j],@"SubIndex",
+		nil]];
 
 		while(flags&0x80)
 		{
@@ -278,12 +275,11 @@ NSLog(@"%qu",type);
 		}
 	}
 
-	[dictionary setObject:coders forKey:@"Coders"];
-	[dictionary setObject:allinstreams forKey:@"InStreams"];
-	[dictionary setObject:alloutstreams forKey:@"OutStreams"];
+	[dictionary setObject:instreams forKey:@"InStreams"];
+	[dictionary setObject:outstreams forKey:@"OutStreams"];
 
-	int totalinstreams=[allinstreams count];
-	int totaloutstreams=[allinstreams count];
+	int totalinstreams=[instreams count];
+	int totaloutstreams=[outstreams count];
 
 	// Load binding pairs
 	int numbindpairs=totaloutstreams-1;
@@ -291,8 +287,8 @@ NSLog(@"%qu",type);
 	{
 		uint64_t inindex=ReadNumber(handle);
 		uint64_t outindex=ReadNumber(handle);
-		SetNumberEntryInArray(allinstreams,inindex,outindex,@"SourceIndex");
-		SetNumberEntryInArray(alloutstreams,outindex,inindex,@"DestinationIndex");
+		SetNumberEntryInArray(instreams,inindex,outindex,@"SourceIndex");
+		SetNumberEntryInArray(outstreams,outindex,inindex,@"DestinationIndex");
 	}
 
 	// Load packed stream indexes, if any
@@ -300,34 +296,29 @@ NSLog(@"%qu",type);
 	if(numpackedstreams==1)
 	{
 		for(int i=0;i<totalinstreams;i++)
+		if(![[instreams objectAtIndex:i] objectForKey:@"SourceIndex"])
 		{
-			if(![[allinstreams objectAtIndex:i] objectForKey:@"SourceIndex"])
-			{
-				SetNumberEntryInArray(allinstreams,i,0,@"PackedStreamIndex");
-				break;
-			}
+			SetObjectEntryInArray(instreams,i,[packedstreams objectAtIndex:0],@"PackedStream");
+			break;
 		}
 	}
 	else
 	{
 		for(int i=0;i<numpackedstreams;i++)
-		SetNumberEntryInArray(allinstreams,ReadNumber(handle),i,@"PackedStreamIndex");
+		SetObjectEntryInArray(instreams,ReadNumber(handle),[packedstreams objectAtIndex:i],@"PackedStream");
 	}
 
 	// Find output stream
 	for(int i=0;i<totaloutstreams;i++)
+	if(![[outstreams objectAtIndex:i] objectForKey:@"DestinationIndex"])
 	{
-		if(![[alloutstreams objectAtIndex:i] objectForKey:@"DestinationIndex"])
-		{
-			[dictionary setObject:[NSNumber numberWithInt:i] forKey:@"FinalOutStreamIndex"];
-			break;
-		}
+		[dictionary setObject:[NSNumber numberWithInt:i] forKey:@"FinalOutStreamIndex"];
+		break;
 	}
 }
 
 -(NSArray *)parseSubStreamsInfoForHandle:(CSHandle *)handle folders:(NSArray *)folders
 {
-	uint64_t totalsubstreams=0;
 	int numfolders=[folders count];
 	NSMutableArray *allsubstreams=[NSMutableArray array];
 
@@ -439,6 +430,69 @@ NSLog(@"%qu",type);
 {
 	return nil;
 }
+
+-(CSHandle *)handleForFolder:(NSDictionary *)folder substreamIndex:(int)substream
+{
+	int final=[[folder objectForKey:@"FinalOutStreamIndex"] intValue];
+
+	CSHandle *handle=[self outHandleForFolder:folder index:final];
+
+	// TODO: substream,crc
+
+	return handle;
+}
+
+-(CSHandle *)outHandleForFolder:(NSDictionary *)folder index:(int)index
+{
+	NSDictionary *outstream=[[folder objectForKey:@"OutStreams"] objectAtIndex:index];
+	uint64_t size=[[outstream objectForKey:@"Size"] unsignedLongLongValue];
+	NSDictionary *coder=[outstream objectForKey:@"Coder"];
+	NSData *coderid=[coder objectForKey:@"ID"];
+	const uint8_t *idbytes=[coderid bytes];
+	int idlength=[coderid length];
+
+	if(idlength==1)
+	{
+		if(idbytes[0]==0x00) return [self inHandleForFolder:folder coder:coder index:0];
+	}
+	else if(idlength==3)
+	{
+		if(idbytes[0]==0x03&&idbytes[1]==0x01&&idbytes[2]==0x01)
+		return [[[XADLZMAHandle alloc] initWithHandle:[self inHandleForFolder:folder coder:coder index:0]
+		length:size propertyData:[coder objectForKey:@"Properties"]] autorelease];
+	}
+	return nil;
+}
+
+-(CSHandle *)inHandleForFolder:(NSDictionary *)folder coder:(NSDictionary *)coder index:(int)index
+{
+	return [self inHandleForFolder:folder index:[[coder objectForKey:@"FirstInStreamIndex"] intValue]+index];
+}
+
+-(CSHandle *)inHandleForFolder:(NSDictionary *)folder index:(int)index
+{
+	NSDictionary *instream=[[folder objectForKey:@"InStreams"] objectAtIndex:index];
+
+	NSDictionary *packedstream=[instream objectForKey:@"PackedStream"];
+	if(packedstream)
+	{
+		uint64_t start=[[packedstream objectForKey:@"Offset"] unsignedLongLongValue];
+		uint64_t length=[[packedstream objectForKey:@"Size"] unsignedLongLongValue];
+	
+		return [[self handle] nonCopiedSubHandleFrom:start length:length];
+	}
+
+	NSNumber *sourceindex=[instream objectForKey:@"SourceIndex"];
+	if(sourceindex)
+	{
+		return [self outHandleForFolder:folder index:[sourceindex intValue]];
+	}
+
+	return nil;
+}
+
+
+
 
 -(NSString *)formatName { return @"7-Zip"; }
 

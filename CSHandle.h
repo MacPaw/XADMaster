@@ -80,9 +80,9 @@ extern NSString *CSNotSupportedException;
 -(void)readAndDiscardBytes:(off_t)num;
 
 -(CSHandle *)subHandleOfLength:(off_t)length;
--(CSHandle *)subHandleWithRange:(NSRange)range;
+-(CSHandle *)subHandleFrom:(off_t)start length:(off_t)length;
 -(CSHandle *)nonCopiedSubHandleOfLength:(off_t)length;
--(CSHandle *)nonCopiedSubHandleWithRange:(NSRange)range;
+-(CSHandle *)nonCopiedSubHandleFrom:(off_t)start length:(off_t)length;
 
 -(void)writeInt8:(int8_t)val;
 -(void)writeUInt8:(uint8_t)val;

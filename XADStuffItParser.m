@@ -1,6 +1,5 @@
 #import "XADStuffItParser.h"
 #import "XADException.h"
-#import "EndianAccess.h"
 #import "Checksums.h"
 #import "Paths.h"
 #import "NSDateXAD.h"
@@ -25,9 +24,9 @@
 
 	if(length<14) return NO;
 
-	if(GetUInt32BE(bytes+10)==0x724c6175)
+	if(CSUInt32BE(bytes+10)==0x724c6175)
 	{
-		if(GetUInt32BE(bytes)==0x53495421) return YES;
+		if(CSUInt32BE(bytes)==0x53495421) return YES;
 		// Installer archives?
 		if(bytes[0]=='S'&&bytes[1]=='T')
 		{
@@ -80,12 +79,12 @@
 		uint8_t header[SIT_FILEHDRSIZE];
 		[fh readBytes:112 toBuffer:header];
 
-		if(GetUInt16BE(header+SITFH_HDRCRC)==XADCalculateCRC(0,header,110,XADCRCTable_a001))
+		if(CSUInt16BE(header+SITFH_HDRCRC)==XADCalculateCRC(0,header,110,XADCRCTable_a001))
 		{
-			int resourcelength=GetUInt32BE(header+SITFH_RSRCLENGTH);
-			int resourcecomplen=GetUInt32BE(header+SITFH_COMPRLENGTH);
-			int datalength=GetUInt32BE(header+SITFH_DATALENGTH);
-			int datacomplen=GetUInt32BE(header+SITFH_COMPDLENGTH);
+			int resourcelength=CSUInt32BE(header+SITFH_RSRCLENGTH);
+			int resourcecomplen=CSUInt32BE(header+SITFH_COMPRLENGTH);
+			int datalength=CSUInt32BE(header+SITFH_DATALENGTH);
+			int datacomplen=CSUInt32BE(header+SITFH_COMPDLENGTH);
 			int datamethod=header[SITFH_COMPDMETHOD];
 			int resourcemethod=header[SITFH_COMPRMETHOD];
 
@@ -100,9 +99,9 @@
 			{
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					path,XADFileNameKey,
-					[NSDate XADDateWithTimeIntervalSince1904:GetUInt32BE(header+SITFH_MODDATE)],XADLastModificationDateKey,
-					[NSDate XADDateWithTimeIntervalSince1904:GetUInt32BE(header+SITFH_CREATIONDATE)],XADCreationDateKey,
-					[NSNumber numberWithInt:GetUInt16BE(header+SITFH_FNDRFLAGS)],XADFinderFlagsKey,
+					[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(header+SITFH_MODDATE)],XADLastModificationDateKey,
+					[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(header+SITFH_CREATIONDATE)],XADCreationDateKey,
+					[NSNumber numberWithInt:CSUInt16BE(header+SITFH_FNDRFLAGS)],XADFinderFlagsKey,
 					[NSNumber numberWithBool:YES],XADIsDirectoryKey,
 					pathdata,@"StuffItPathData",
 					currdir,@"StuffItParentDirectory",
@@ -126,17 +125,17 @@
 						path,XADFileNameKey,
 						[NSNumber numberWithUnsignedInt:resourcelength],XADFileSizeKey,
 						[NSNumber numberWithUnsignedInt:resourcecomplen],XADCompressedSizeKey,
-						[NSDate XADDateWithTimeIntervalSince1904:GetUInt32BE(header+SITFH_MODDATE)],XADLastModificationDateKey,
-						[NSDate XADDateWithTimeIntervalSince1904:GetUInt32BE(header+SITFH_CREATIONDATE)],XADCreationDateKey,
-						[NSNumber numberWithUnsignedInt:GetUInt32BE(header+SITFH_FTYPE)],XADFileTypeKey,
-						[NSNumber numberWithUnsignedInt:GetUInt32BE(header+SITFH_CREATOR)],XADFileCreatorKey,
-						[NSNumber numberWithInt:GetUInt16BE(header+SITFH_FNDRFLAGS)],XADFinderFlagsKey,
+						[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(header+SITFH_MODDATE)],XADLastModificationDateKey,
+						[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(header+SITFH_CREATIONDATE)],XADCreationDateKey,
+						[NSNumber numberWithUnsignedInt:CSUInt32BE(header+SITFH_FTYPE)],XADFileTypeKey,
+						[NSNumber numberWithUnsignedInt:CSUInt32BE(header+SITFH_CREATOR)],XADFileCreatorKey,
+						[NSNumber numberWithInt:CSUInt16BE(header+SITFH_FNDRFLAGS)],XADFinderFlagsKey,
 
 						[NSNumber numberWithBool:YES],XADIsResourceForkKey,
 						[NSNumber numberWithLongLong:start],XADDataOffsetKey,
 						[NSNumber numberWithUnsignedInt:resourcecomplen],XADDataLengthKey,
 						[NSNumber numberWithInt:resourcemethod],@"StuffItCompressionMethod",
-						[NSNumber numberWithInt:GetUInt16BE(header+SITFH_RSRCCRC)],@"StuffItCRC16",
+						[NSNumber numberWithInt:CSUInt16BE(header+SITFH_RSRCCRC)],@"StuffItCRC16",
 						currdir,@"StuffItParentDirectory",
 					nil];
 
@@ -156,16 +155,16 @@
 						path,XADFileNameKey,
 						[NSNumber numberWithUnsignedInt:datalength],XADFileSizeKey,
 						[NSNumber numberWithUnsignedInt:datacomplen],XADCompressedSizeKey,
-						[NSDate XADDateWithTimeIntervalSince1904:GetUInt32BE(header+SITFH_MODDATE)],XADLastModificationDateKey,
-						[NSDate XADDateWithTimeIntervalSince1904:GetUInt32BE(header+SITFH_CREATIONDATE)],XADCreationDateKey,
-						[NSNumber numberWithUnsignedInt:GetUInt32BE(header+SITFH_FTYPE)],XADFileTypeKey,
-						[NSNumber numberWithUnsignedInt:GetUInt32BE(header+SITFH_CREATOR)],XADFileCreatorKey,
-						[NSNumber numberWithInt:GetUInt16BE(header+SITFH_FNDRFLAGS)],XADFinderFlagsKey,
+						[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(header+SITFH_MODDATE)],XADLastModificationDateKey,
+						[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(header+SITFH_CREATIONDATE)],XADCreationDateKey,
+						[NSNumber numberWithUnsignedInt:CSUInt32BE(header+SITFH_FTYPE)],XADFileTypeKey,
+						[NSNumber numberWithUnsignedInt:CSUInt32BE(header+SITFH_CREATOR)],XADFileCreatorKey,
+						[NSNumber numberWithInt:CSUInt16BE(header+SITFH_FNDRFLAGS)],XADFinderFlagsKey,
 
 						[NSNumber numberWithLongLong:start+resourcecomplen],XADDataOffsetKey,
 						[NSNumber numberWithUnsignedInt:datacomplen],XADDataLengthKey,
 						[NSNumber numberWithInt:datamethod],@"StuffItCompressionMethod",
-						[NSNumber numberWithInt:GetUInt16BE(header+SITFH_DATACRC)],@"StuffItCRC16",
+						[NSNumber numberWithInt:CSUInt16BE(header+SITFH_DATACRC)],@"StuffItCRC16",
 						currdir,@"StuffItParentDirectory",
 					nil];
 

@@ -29,7 +29,6 @@
 	[parent release];
 
 	[super dealloc];
-
 }
 
 -(void)resetStream

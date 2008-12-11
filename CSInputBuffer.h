@@ -58,13 +58,23 @@ static inline int CSInputNextByte(CSInputBuffer *buf)
 	return byte;
 }
 
-// TODO: Move to endianaccess, implement and use CSInputBytePointer()
-static inline uint16_t CSInputNextUInt16LE(CSInputBuffer *buf)
-{
-	uint16_t val=CSInputNextByte(buf);
-	val|=(uint16_t)CSInputNextByte(buf)<<8;
-	return val;
+#define CSInputNextValueImpl(type,name,conv) \
+static inline type name(CSInputBuffer *buf) \
+{ \
+	_CSInputCheckAndFillBuffer(buf); \
+	type val=conv(buf->buffer+buf->currbyte); \
+	CSInputSkipBytes(buf,sizeof(type)); \
+	return val; \
 }
+
+CSInputNextValueImpl(int16_t,CSInputNextInt16LE,CSInt16LE)
+CSInputNextValueImpl(int32_t,CSInputNextInt32LE,CSInt32LE)
+CSInputNextValueImpl(uint16_t,CSInputNextUInt16LE,CSUInt16LE)
+CSInputNextValueImpl(uint32_t,CSInputNextUInt32LE,CSUInt32LE)
+CSInputNextValueImpl(int16_t,CSInputNextInt16BE,CSInt16BE)
+CSInputNextValueImpl(int32_t,CSInputNextInt32BE,CSInt32BE)
+CSInputNextValueImpl(uint16_t,CSInputNextUInt16BE,CSUInt16BE)
+CSInputNextValueImpl(uint32_t,CSInputNextUInt32BE,CSUInt32BE)
 
 
 

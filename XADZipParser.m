@@ -2,6 +2,7 @@
 #import "XADZipImplodeHandle.h"
 #import "XADZipShrinkHandle.h"
 #import "XADDeflateHandle.h"
+#import "XADLZMAHandle.h"
 #import "XADZipCryptHandle.h"
 #import "XADWinZipAESHandle.h"
 #import "CSZlibHandle.h"
@@ -144,6 +145,8 @@
 				case 6: compressionname=@"Implode"; break;
 				case 8: compressionname=@"Deflate"; break;
 				case 9: compressionname=@"Deflate64"; break;
+				case 12: compressionname=@"Bzip2"; break;
+				case 14: compressionname=@"LZMA"; break;
 			}
 			if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
 
@@ -442,6 +445,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 				case 3: keybytes=32; break;
 			}
 
+			// TODO: handle checksums for WinZip AES files!
 			fh=[[[XADWinZipAESHandle alloc] initWithHandle:fh length:compsize
 			password:[self encodedPassword] keyLength:keybytes] autorelease];
 		}
@@ -483,6 +487,14 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		//case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size deflate64:YES] autorelease];
 		case 12: return [CSBzip2Handle bzip2HandleWithHandle:parent length:size];
+		case 14:
+		{
+			[parent skipBytes:2];
+			int len=[parent readUInt16LE];
+			NSData *props=[parent readDataOfLength:len];
+			return [[[XADLZMAHandle alloc] initWithHandle:parent length:size propertyData:props] autorelease];
+		}
+		break;
 		default: return nil;
 	}
 }

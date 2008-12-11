@@ -308,6 +308,8 @@ NSLog(@"encryptver: %d",encryptversion);
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
 
+	if([dict objectForKey:XADIsEncryptedKey]) return nil;
+
 	if([[dict objectForKey:@"RARCompressionMethod"] intValue]!=0x30)
 	handle=[[[XADRARHandle alloc] initWithHandle:handle length:size
 	version:[[dict objectForKey:@"RARCompressionVersion"] intValue]] autorelease];

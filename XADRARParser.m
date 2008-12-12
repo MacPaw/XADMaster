@@ -242,7 +242,13 @@ NSLog(@"encryptver: %d",encryptversion);
 
 					if(flags&LHD_PASSWORD) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 					if((flags&LHD_WINDOWMASK)==LHD_DIRECTORY) [currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-					if(os==3) [currdict setObject:[NSNumber numberWithUnsignedInt:attrs] forKey:XADPosixPermissionsKey];
+
+					switch(os)
+					{
+						case 0: [currdict setObject:[NSNumber numberWithUnsignedInt:attrs] forKey:XADDOSFileAttributesKey]; break;
+						case 2: [currdict setObject:[NSNumber numberWithUnsignedInt:attrs] forKey:XADWindowsFileAttributesKey]; break;
+						case 3: [currdict setObject:[NSNumber numberWithUnsignedInt:attrs] forKey:XADPosixPermissionsKey]; break;
+					}
 
 					NSString *methodname=nil;
 					switch(method)

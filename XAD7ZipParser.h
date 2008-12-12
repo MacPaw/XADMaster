@@ -11,14 +11,20 @@
 
 -(void)parse;
 
--(NSDictionary *)parseStreamsInfoForHandle:(CSHandle *)handle;
+-(NSArray *)parseFilesForHandle:(CSHandle *)handle;
+
+-(void)parseBitVectorForHandle:(CSHandle *)handle array:(NSArray *)array key:(NSString *)key;
+-(NSIndexSet *)parseDefintionVectorForHandle:(CSHandle *)handle numberOfElements:(int)num;
+-(void)parseDatesForHandle:(CSHandle *)handle array:(NSMutableArray *)array key:(NSString *)key;
+-(void)parseCRCsForHandle:(CSHandle *)handle array:(NSMutableArray *)array;
+-(void)parseNamesForHandle:(CSHandle *)handle array:(NSMutableArray *)array;
+-(void)parseAttributesForHandle:(CSHandle *)handle array:(NSMutableArray *)array;
+
+-(NSDictionary *)parseStreamsForHandle:(CSHandle *)handle;
 -(NSArray *)parsePackedStreamsForHandle:(CSHandle *)handle;
 -(NSArray *)parseFoldersForHandle:(CSHandle *)handle packedStreams:(NSArray *)packedstreams;
 -(void)parseFolderForHandle:(CSHandle *)handle dictionary:(NSMutableDictionary *)dictionary packedStreams:(NSArray *)packedstreams;
 -(NSArray *)parseSubStreamsInfoForHandle:(CSHandle *)handle folders:(NSArray *)folders;
-
--(NSIndexSet *)parseBoolVector:(CSHandle *)handle numberOfElements:(int)num;
--(void)parseCRCsForHandle:(CSHandle *)handle array:(NSMutableArray *)array;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(CSHandle *)handleForFolder:(NSDictionary *)folder substreamIndex:(int)substream;

@@ -18,30 +18,32 @@
 
 #include <dirent.h>
 
-const NSString *XADFileNameKey=@"XADFileName";
-const NSString *XADFileSizeKey=@"XADFileSize";
-const NSString *XADCompressedSizeKey=@"XADCompressedSize";
-const NSString *XADLastModificationDateKey=@"XADLastModificationDate";
-const NSString *XADLastAccessDateKey=@"XADLastAccessDate";
-const NSString *XADCreationDateKey=@"XADCreationDate";
-const NSString *XADFileTypeKey=@"XADFileType";
-const NSString *XADFileCreatorKey=@"XADFileCreator";
-const NSString *XADFinderFlagsKey=@"XADFinderFlags";
-const NSString *XADPosixPermissionsKey=@"XADPosixPermissions";
-const NSString *XADPosixUserKey=@"XADPosixUser";
-const NSString *XADPosixGroupKey=@"XADGroupUser";
-const NSString *XADPosixUserNameKey=@"XADPosixUser";
-const NSString *XADPosixGroupNameKey=@"XADGroupUser";
-const NSString *XADIsEncryptedKey=@"XADIsEncrypted";
-const NSString *XADIsDirectoryKey=@"XADIsDirectory";
-const NSString *XADIsResourceForkKey=@"XADIsResourceFork";
-const NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
-const NSString *XADLinkDestinationKey=@"XADLinkDestination";
-const NSString *XADCommentKey=@"XADComment";
-const NSString *XADDataOffsetKey=@"XADDataOffset";
-const NSString *XADDataLengthKey=@"XADDataLength";
-const NSString *XADCompressionNameKey=@"XADCompressionName";
-const NSString *XADIsSolidKey=@"XADIsSolid";
+NSString *XADFileNameKey=@"XADFileName";
+NSString *XADFileSizeKey=@"XADFileSize";
+NSString *XADCompressedSizeKey=@"XADCompressedSize";
+NSString *XADLastModificationDateKey=@"XADLastModificationDate";
+NSString *XADLastAccessDateKey=@"XADLastAccessDate";
+NSString *XADCreationDateKey=@"XADCreationDate";
+NSString *XADFileTypeKey=@"XADFileType";
+NSString *XADFileCreatorKey=@"XADFileCreator";
+NSString *XADFinderFlagsKey=@"XADFinderFlags";
+NSString *XADPosixPermissionsKey=@"XADPosixPermissions";
+NSString *XADPosixUserKey=@"XADPosixUser";
+NSString *XADPosixGroupKey=@"XADGroupUser";
+NSString *XADDOSFileAttributesKey=@"XADDOSFileAttributes";
+NSString *XADWindowsFileAttributesKey=@"XADWindowsFileAttributes";
+NSString *XADPosixUserNameKey=@"XADPosixUser";
+NSString *XADPosixGroupNameKey=@"XADGroupUser";
+NSString *XADIsEncryptedKey=@"XADIsEncrypted";
+NSString *XADIsDirectoryKey=@"XADIsDirectory";
+NSString *XADIsResourceForkKey=@"XADIsResourceFork";
+NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
+NSString *XADLinkDestinationKey=@"XADLinkDestination";
+NSString *XADCommentKey=@"XADComment";
+NSString *XADDataOffsetKey=@"XADDataOffset";
+NSString *XADDataLengthKey=@"XADDataLength";
+NSString *XADCompressionNameKey=@"XADCompressionName";
+NSString *XADIsSolidKey=@"XADIsSolid";
 
 
 @implementation XADArchiveParser

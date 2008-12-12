@@ -51,13 +51,6 @@ static ISzAlloc allocator={Alloc,Free};
 
 	while(total<num)
 	{
-		if(bufoffs>=bufbytes)
-		{
-			bufbytes=[parent readAtMost:sizeof(inbuffer) toBuffer:inbuffer];
-			if(!bufbytes) [parent _raiseEOF];
-			bufoffs=0;
-		}
-
 		size_t destlen=num-total;
 		size_t srclen=bufbytes-bufoffs;
 		ELzmaStatus status;
@@ -68,7 +61,13 @@ static ISzAlloc allocator={Alloc,Free};
 		bufoffs+=srclen;
 
 		if(res!=SZ_OK) [XADException raiseDecrunchException];
-		if(status==LZMA_STATUS_FINISHED_WITH_MARK) { [self endStream]; break; }
+		if(status==LZMA_STATUS_NEEDS_MORE_INPUT)
+		{
+			bufbytes=[parent readAtMost:sizeof(inbuffer) toBuffer:inbuffer];
+			if(!bufbytes) [parent _raiseEOF];
+			bufoffs=0;
+		}
+		else if(status==LZMA_STATUS_FINISHED_WITH_MARK) { [self endStream]; break; }
 	}
 
 	return total;

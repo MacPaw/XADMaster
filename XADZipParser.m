@@ -184,6 +184,7 @@
 			if(system==0) // ms-dos
 			{
 				if(extfileattrib&0x10) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+				[dict setObject:[NSNumber numberWithInt:extfileattrib] forKey:XADDOSFileAttributesKey];
 			}
 			else if(system==3) // unix
 			{

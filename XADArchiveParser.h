@@ -5,38 +5,40 @@
 #import "CSHandle.h"
 #import "XADSkipHandle.h"
 
-extern const NSString *XADFileNameKey;
-extern const NSString *XADFileSizeKey;
-extern const NSString *XADCompressedSizeKey;
-extern const NSString *XADLastModificationDateKey;
-extern const NSString *XADLastAccessDateKey;
-extern const NSString *XADCreationDateKey;
-extern const NSString *XADFileTypeKey;
-extern const NSString *XADFileCreatorKey;
-extern const NSString *XADFinderFlagsKey;
-extern const NSString *XADPosixPermissionsKey;
-extern const NSString *XADPosixUserKey;
-extern const NSString *XADPosixGroupKey;
-extern const NSString *XADPosixUserNameKey;
-extern const NSString *XADPosixGroupNameKey;
-extern const NSString *XADIsEncryptedKey;
-extern const NSString *XADIsDirectoryKey;
-extern const NSString *XADIsResourceForkKey;
-extern const NSString *XADIsMacBinaryKey;
-extern const NSString *XADLinkDestinationKey;
-extern const NSString *XADCommentKey;
-extern const NSString *XADDataOffsetKey;
-extern const NSString *XADDataLengthKey;
-extern const NSString *XADCompressionNameKey;
-extern const NSString *XADIsSolidKey;
+extern NSString *XADFileNameKey;
+extern NSString *XADFileSizeKey;
+extern NSString *XADCompressedSizeKey;
+extern NSString *XADLastModificationDateKey;
+extern NSString *XADLastAccessDateKey;
+extern NSString *XADCreationDateKey;
+extern NSString *XADFileTypeKey;
+extern NSString *XADFileCreatorKey;
+extern NSString *XADFinderFlagsKey;
+extern NSString *XADPosixPermissionsKey;
+extern NSString *XADPosixUserKey;
+extern NSString *XADPosixGroupKey;
+extern NSString *XADPosixUserNameKey;
+extern NSString *XADPosixGroupNameKey;
+extern NSString *XADDOSFileAttributesKey;
+extern NSString *XADWindowsFileAttributesKey;
+extern NSString *XADIsEncryptedKey;
+extern NSString *XADIsDirectoryKey;
+extern NSString *XADIsResourceForkKey;
+extern NSString *XADIsMacBinaryKey;
+extern NSString *XADLinkDestinationKey;
+extern NSString *XADCommentKey;
+extern NSString *XADDataOffsetKey;
+extern NSString *XADDataLengthKey;
+extern NSString *XADCompressionNameKey;
+extern NSString *XADIsSolidKey;
 
 // Internal use
-extern const NSString *XADResourceDataKey;
-extern const NSString *XADDittoPropertiesKey;
+extern NSString *XADResourceDataKey;
+extern NSString *XADDittoPropertiesKey;
 
 // Deprecated
-extern const NSString *XADResourceForkData;
-extern const NSString *XADFinderFlags;
+extern NSString *XADResourceForkData;
+extern NSString *XADFinderFlags;
 
 @interface XADArchiveParser:NSObject
 {
@@ -83,14 +85,14 @@ extern const NSString *XADFinderFlags;
 -(XADString *)XADStringWithString:(NSString *)string;
 -(XADString *)XADStringWithData:(NSData *)data;
 -(XADString *)XADStringWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
--(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length;
--(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding;
--(XADString *)XADStringWithCString:(const void *)string;
--(XADString *)XADStringWithCString:(const void *)string encoding:(NSStringEncoding)encoding;
+-(XADString *)XADStringWithBytes:(void *)bytes length:(int)length;
+-(XADString *)XADStringWithBytes:(void *)bytes length:(int)length encoding:(NSStringEncoding)encoding;
+-(XADString *)XADStringWithCString:(void *)string;
+-(XADString *)XADStringWithCString:(void *)string encoding:(NSStringEncoding)encoding;
 
 -(void)setEncrypted:(BOOL)encryptedflag;
 -(NSData *)encodedPassword;
--(const char *)encodedCStringPassword;
+-(char *)encodedCStringPassword;
 
 
 // Subclasses implement these:

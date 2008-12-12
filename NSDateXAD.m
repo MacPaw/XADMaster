@@ -18,4 +18,10 @@
 	return [NSDate dateWithTimeIntervalSince1970:interval-2082938400];
 }
 
++(NSDate *)XADDateWithWindowsFileTimeLow:(uint32_t)low high:(uint32_t)high;
+{
+	uint64_t ticks=((uint64_t)high<<32)|(uint64_t)low;
+	return [NSDate dateWithTimeIntervalSince1970:(double)ticks/10000000-11644473600];
+}
+
 @end

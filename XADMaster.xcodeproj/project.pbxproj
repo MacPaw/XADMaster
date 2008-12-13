@@ -123,7 +123,7 @@
 		1BC89BC20EDB5C2E006B47FE /* XADStuffIt13Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89A770EDB12F8006B47FE /* XADStuffIt13Handle.m */; };
 		1BC89C720EDC5E18006B47FE /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
 		1BC89C9F0EDCAA51006B47FE /* Checksums.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89C9D0EDCAA51006B47FE /* Checksums.m */; };
-		1BC89CA00EDCAA51006B47FE /* Checksums.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89C9E0EDCAA51006B47FE /* Checksums.h */; };
+		1BC89CA00EDCAA51006B47FE /* Checksums.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89C9E0EDCAA51006B47FE /* Checksums.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BC89CA30EDCAA5A006B47FE /* Paths.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89CA10EDCAA5A006B47FE /* Paths.h */; };
 		1BC89CA40EDCAA5A006B47FE /* Paths.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89CA20EDCAA5A006B47FE /* Paths.m */; };
 		1BC89D490EDCC2F4006B47FE /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */; };

@@ -43,7 +43,7 @@ NSString *EscapeString(NSString *str)
 	else
 	{
 		fh=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
-		NSData *data=[fh remainingFileContents];
+		[fh seekToEndOfFile];
 
 		if(fh&&[fh hasChecksum]) printf("%c ",[fh isChecksumCorrect]?'o':'x');
 		else printf("? ");
@@ -63,7 +63,7 @@ NSString *EscapeString(NSString *str)
 		printf("/");
 
 		NSNumber *size=[dict objectForKey:XADFileSizeKey];
-		if(compsize) printf("%lld",[size longLongValue]);
+		if(size) printf("%lld",[size longLongValue]);
 		else printf("?");
 
 		NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];

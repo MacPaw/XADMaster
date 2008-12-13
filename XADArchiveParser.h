@@ -4,6 +4,7 @@
 #import "XADRegex.h"
 #import "CSHandle.h"
 #import "XADSkipHandle.h"
+#import "Checksums.h"
 
 extern NSString *XADFileNameKey;
 extern NSString *XADFileSizeKey;

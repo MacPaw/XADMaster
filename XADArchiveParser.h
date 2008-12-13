@@ -24,6 +24,7 @@ extern NSString *XADDOSFileAttributesKey;
 extern NSString *XADWindowsFileAttributesKey;
 extern NSString *XADIsEncryptedKey;
 extern NSString *XADIsDirectoryKey;
+extern NSString *XADIsLinkKey;
 extern NSString *XADIsResourceForkKey;
 extern NSString *XADIsMacBinaryKey;
 extern NSString *XADLinkDestinationKey;
@@ -70,6 +71,8 @@ extern NSString *XADFinderFlags;
 -(void)setPassword:(NSString *)newpassword;
 -(NSString *)password;
 
+-(XADString *)linkDestinationForDictionary:(NSDictionary *)dictionary;
+
 // Internal functions
 
 -(NSString *)name;
@@ -80,8 +83,8 @@ extern NSString *XADFinderFlags;
 -(NSArray *)volumes;
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
 
--(void)addEntryWithDictionary:(NSDictionary *)dictionary;
--(void)addEntryWithDictionary:(NSDictionary *)dictionary retainPosition:(BOOL)retainpos;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary retainPosition:(BOOL)retainpos;
 
 -(XADString *)XADStringWithString:(NSString *)string;
 -(XADString *)XADStringWithData:(NSData *)data;

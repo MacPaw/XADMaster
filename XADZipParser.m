@@ -464,7 +464,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	}
 
 	CSHandle *handle=[self decompressionHandleWithHandle:fh method:compressionmethod flags:flags size:size];
-//	if(!handle) [XADException raiseNotSupportedException];
+	if(!handle) return nil;
 
 	if(checksum)
 	{

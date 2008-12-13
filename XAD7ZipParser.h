@@ -11,7 +11,6 @@
 +(int)requiredHeaderSize;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 +(XADRegex *)volumeRegexForFilename:(NSString *)filename;
-+(BOOL)isFirstVolume:(NSString *)filename;
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
@@ -41,6 +40,11 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 -(CSHandle *)outHandleForFolder:(NSDictionary *)folder index:(int)index;
 -(CSHandle *)inHandleForFolder:(NSDictionary *)folder coder:(NSDictionary *)coder index:(int)index;
 -(CSHandle *)inHandleForFolder:(NSDictionary *)folder index:(int)index;
+
+-(int)IDForCoder:(NSDictionary *)coder;
+-(NSString *)compressorNameForFolder:(NSDictionary *)folder;
+-(NSString *)compressorNameForFolder:(NSDictionary *)folder index:(int)index;
+-(NSString *)compressorNameForCoder:(NSDictionary *)coder;
 
 -(NSString *)formatName;
 

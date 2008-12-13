@@ -12,15 +12,15 @@
 	CSHandle *fh=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
 
 	NSData *data=[fh remainingFileContents];
-
-//	if(~crc!=[[dict objectForKey:@"ZipCRC32"] unsignedIntValue])
-/*	if(![dict objectForKey:XADIsResourceForkKey])
+/*
+//	if(![dict objectForKey:XADIsResourceForkKey])
+	if([[[dict objectForKey:XADCompressionNameKey] string] isEqual:@"LZMA+BCJ"])
 	{
 		NSMutableString *name=[NSMutableString stringWithString:[[dict objectForKey:XADFileNameKey] string]];
 		[name replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[name length])];
 		[data writeToFile:name atomically:YES];
-	}*/
-
+	}
+*/
 	NSLog(@"Checksum: %@, Length: %d",[fh hasChecksum]?[fh isChecksumCorrect]?@"Correct":@"Incorrect":@"Unknown",[data length]);
 
 	NSLog(@"%@",[data subdataWithRange:NSMakeRange(0,[data length]<256?[data length]:256)]);

@@ -25,7 +25,7 @@
 		[self XADStringWithString:[[self name] stringByDeletingPathExtension]],XADFileNameKey,
 // TODO: fix fileSize call
 		[NSNumber numberWithLongLong:[[self handle] fileSize]-3],XADCompressedSizeKey,
-		[self XADStringWithString:@"LZC"],XADCompressionNameKey,
+		[self XADStringWithString:@"Compress"],XADCompressionNameKey,
 		[NSNumber numberWithLongLong:3],XADDataOffsetKey,
 		[NSNumber numberWithInt:flags],@"CompressFlags",
 	nil]];

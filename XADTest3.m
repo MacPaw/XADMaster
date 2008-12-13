@@ -35,7 +35,7 @@ NSString *EscapeString(NSString *str)
 	for(int i=0;i<indent;i++) printf(" ");
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
-	NSString *link=[[dict objectForKey:XADLinkDestinationKey] string];
+	NSString *link=[[parser linkDestinationForDictionary:dict] string];
 	CSHandle *fh;
 
 	if(dir&&[dir boolValue]) printf("- ");
@@ -45,7 +45,8 @@ NSString *EscapeString(NSString *str)
 		fh=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
 		[fh seekToEndOfFile];
 
-		if(fh&&[fh hasChecksum]) printf("%c ",[fh isChecksumCorrect]?'o':'x');
+		if(!fh) printf("! ");
+		else if([fh hasChecksum]) printf("%c ",[fh isChecksumCorrect]?'o':'x');
 		else printf("? ");
 	}
 
@@ -65,6 +66,9 @@ NSString *EscapeString(NSString *str)
 		NSNumber *size=[dict objectForKey:XADFileSizeKey];
 		if(size) printf("%lld",[size longLongValue]);
 		else printf("?");
+
+		XADString *compname=[dict objectForKey:XADCompressionNameKey];
+		if(compname) printf(", %s",[[compname string] UTF8String]);
 
 		NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 		if(rsrc&&[rsrc boolValue]) printf(", rsrc");

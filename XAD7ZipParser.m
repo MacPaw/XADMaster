@@ -1,6 +1,11 @@
 #import "XAD7ZipParser.h"
 #import "XADLZMAHandle.h"
+#import "XAD7ZipBranchHandles.h"
+#import "XAD7ZipBCJ2Handle.h"
 #import "XADDeflateHandle.h"
+#import "XADZipShrinkHandle.h"
+#import "XADRARHandle.h"
+#import "XADCompressHandle.h"
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
 #import "Checksums.h"
@@ -68,18 +73,12 @@ static void FindAttribute(CSHandle *handle,int attribute)
 
 +(XADRegex *)volumeRegexForFilename:(NSString *)filename
 {
-/*	NSArray *matches;
-	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.(alz|a[0-9]{2}|b[0-9]{2})$" options:REG_ICASE])
+	NSArray *matches;
+	if(matches=[filename substringsCapturedByPattern:@"^(.*\\.7z)\\.([0-9]+)$" options:REG_ICASE])
 	return [XADRegex regexWithPattern:[NSString stringWithFormat:
-	@"^%@\\.(alz|a[0-9]{2}|b[0-9]{2})$",[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE];
-*/
-	return nil;
-}
+	@"^%@\\.([0-9]+)$",[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE];
 
-+(BOOL)isFirstVolume:(NSString *)filename
-{
-//	return [filename rangeOfString:@".alz" options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
-	return NO;
+	return nil;
 }
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
@@ -160,6 +159,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	}
 
 	end: 0;
+
 	NSArray *substreams=[mainstreams objectForKey:@"SubStreams"];
 	int currsubstream=0;
 
@@ -178,9 +178,24 @@ static void FindAttribute(CSHandle *handle,int attribute)
 		else
 		{
 			NSDictionary *substream=[substreams objectAtIndex:currsubstream];
+			int folderindex=[[substream objectForKey:@"FolderIndex"] intValue];
+			
 			[file setObject:[NSNumber numberWithInt:currsubstream] forKey:@"7zSubStreamIndex"];
 			[file setObject:[substream objectForKey:@"Size"] forKey:XADFileSizeKey];
+			[file setObject:[self XADStringWithString:[self compressorNameForFolder:
+			[[mainstreams objectForKey:@"Folders"] objectAtIndex:folderindex]]]
+			forKey:XADCompressionNameKey];
+
 			currsubstream++;
+		}
+
+		// UNIX permissions kludge
+		uint32_t winattrs=[[file objectForKey:XADWindowsFileAttributesKey] unsignedIntValue];
+		if(winattrs&0x8000)
+		{
+			int perms=winattrs>>16;
+			[file setObject:[NSNumber numberWithInt:winattrs] forKey:XADPosixPermissionsKey];
+			if((perms&0xf000)==0xa000) [file setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 		}
 
 		if(![file objectForKey:@"7zIsAntiFile"]) [self addEntryWithDictionary:file];
@@ -647,6 +662,8 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 
 
 
+
+
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	NSNumber *index=[dict objectForKey:@"7zSubStreamIndex"];
@@ -672,6 +689,7 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 	uint64_t start=[[substream objectForKey:@"StartOffset"] unsignedLongLongValue];
 	uint64_t size=[[substream objectForKey:@"Size"] unsignedLongLongValue];
 	CSHandle *handle=[currfolderhandle nonCopiedSubHandleFrom:start length:size];
+	if(!handle) return nil;
 
 	if(checksum)
 	{
@@ -688,20 +706,56 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 	NSDictionary *outstream=[[folder objectForKey:@"OutStreams"] objectAtIndex:index];
 	uint64_t size=[[outstream objectForKey:@"Size"] unsignedLongLongValue];
 	NSDictionary *coder=[outstream objectForKey:@"Coder"];
-	NSData *coderid=[coder objectForKey:@"ID"];
-	const uint8_t *idbytes=[coderid bytes];
-	int idlength=[coderid length];
+	NSData *props=[coder objectForKey:@"Properties"];
 
-	if(idlength==1)
+	CSHandle *inhandle=[self inHandleForFolder:folder coder:coder index:0];
+	if(!inhandle) return nil;
+
+	switch([self IDForCoder:coder])
 	{
-		if(idbytes[0]==0x00) return [self inHandleForFolder:folder coder:coder index:0];
+		case 0x00000000: return inhandle;
+		//case 0x02030200: return @"Swap2";
+		//case 0x02030400: return @"Swap4";
+		//case 0x02040000: return @"Delta";
+		case 0x03010100: return [[[XADLZMAHandle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
+		case 0x03030103: return [[[XAD7ZipBCJHandle alloc] initWithHandle:inhandle length:size] autorelease];
+		case 0x0303011b:
+		{
+			CSHandle *inhandle1=[self inHandleForFolder:folder coder:coder index:1];
+			CSHandle *inhandle2=[self inHandleForFolder:folder coder:coder index:2];
+			CSHandle *inhandle3=[self inHandleForFolder:folder coder:coder index:3];
+			if(!inhandle1||!inhandle2||!inhandle3) return nil;
+			return [[[XAD7ZipBCJ2Handle alloc] initWithHandle:inhandle callHandle:inhandle1
+			jumpHandle:inhandle2 rangeHandle:inhandle3 length:size] autorelease];
+		}
+		case 0x03030205: return [[[XAD7ZipPPCHandle alloc] initWithHandle:inhandle length:size] autorelease];;
+		//case 0x03030301: return [[[XAD7ZipAlphaHandle alloc] initWithHandle:inhandle length:size] autorelease];;
+		case 0x03030401: return [[[XAD7ZipIA64Handle alloc] initWithHandle:inhandle length:size] autorelease];;
+		case 0x03030501: return [[[XAD7ZipARMHandle alloc] initWithHandle:inhandle length:size] autorelease];;
+		//case 0x03030605: return [[[XAD7ZipM68kHandle alloc] initWithHandle:inhandle length:size] autorelease];;
+		case 0x03030701: return [[[XAD7ZipThumbHandle alloc] initWithHandle:inhandle length:size] autorelease];;
+		case 0x03030805: return [[[XAD7ZipSPARCHandle alloc] initWithHandle:inhandle length:size] autorelease];;
+		//case 0x03040100: return @"PPMD";
+		case 0x04010000: return inhandle;
+		case 0x04010100: return [[[XADZipShrinkHandle alloc] initWithHandle:inhandle length:size] autorelease];
+		//case 0x04010600: return @"Implode";
+		case 0x04010800: return [CSZlibHandle deflateHandleWithHandle:inhandle length:size];
+		case 0x04010900: return [[[XADDeflateHandle alloc] initWithHandle:inhandle length:size deflate64:YES] autorelease];
+		case 0x04011200:
+		case 0x04020200: return [CSBzip2Handle bzip2HandleWithHandle:inhandle length:size];
+		//case 0x04030100: return @"RAR v1.5";
+		//case 0x04030200: return @"RAR v2.0";
+		//case 0x04030300: return @"RAR v2.9";
+		//case 0x04040100: return @"ARJ";
+		//case 0x04040200: return @"ARJ v4";
+		case 0x04050000: [[[XADCompressHandle alloc] initWithHandle:inhandle length:size flags:((uint8_t *)[props bytes])[0]] autorelease];
+		//case 0x04060000: return @"Lzh";
+		//case 0x04080000: return @"Cab";
+		//case 0x04090100: return @"DeflateNSIS";
+		//case 0x04090200: return @"Bzip2NSIS";
+		default: return nil;
 	}
-	else if(idlength==3)
-	{
-		if(idbytes[0]==0x03&&idbytes[1]==0x01&&idbytes[2]==0x01)
-		return [[[XADLZMAHandle alloc] initWithHandle:[self inHandleForFolder:folder coder:coder index:0]
-		length:size propertyData:[coder objectForKey:@"Properties"]] autorelease];
-	}
+
 	return nil;
 }
 
@@ -719,7 +773,14 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 	{
 		uint64_t start=[[packedstream objectForKey:@"Offset"] unsignedLongLongValue];
 		uint64_t length=[[packedstream objectForKey:@"Size"] unsignedLongLongValue];
-		return [[self handle] nonCopiedSubHandleFrom:start length:length];
+
+		// Try to make a copied subhandle in case there are multiple-input coders
+		// like BCJ2 in use. If it fails, use noncopied ones, but this will cause
+		// BCJ2 to break.
+		CSHandle *handle;
+		@try { handle=[[self handle] subHandleFrom:start length:length]; }
+		@catch(id e) { handle=[[self handle] nonCopiedSubHandleFrom:start length:length]; }
+		return handle;
 	}
 
 	NSNumber *sourceindex=[instream objectForKey:@"SourceIndex"];
@@ -731,6 +792,83 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 	return nil;
 }
 
+
+
+-(int)IDForCoder:(NSDictionary *)coder
+{
+	NSData *coderid=[coder objectForKey:@"ID"];
+	const uint8_t *idbytes=[coderid bytes];
+	int idlength=[coderid length];
+
+	switch(idlength)
+	{
+		case 1: return idbytes[0]<<24;
+		case 2: return (idbytes[0]<<24)|(idbytes[1]<<16);
+		case 3: return (idbytes[0]<<24)|(idbytes[1]<<16)|(idbytes[2]<<8);
+		case 4: return (idbytes[0]<<24)|(idbytes[1]<<16)|(idbytes[2]<<8)|idbytes[3];
+		default: return -1;
+	}
+}
+
+-(NSString *)compressorNameForFolder:(NSDictionary *)folder
+{
+	int finalindex=[[folder objectForKey:@"FinalOutStreamIndex"] intValue];
+	return [self compressorNameForFolder:folder index:finalindex];
+}
+
+-(NSString *)compressorNameForFolder:(NSDictionary *)folder index:(int)index
+{
+	NSDictionary *outstream=[[folder objectForKey:@"OutStreams"] objectAtIndex:index];
+	NSDictionary *coder=[outstream objectForKey:@"Coder"];
+	NSDictionary *instream=[[folder objectForKey:@"InStreams"] objectAtIndex:[[coder objectForKey:@"FirstInStreamIndex"] intValue]];
+	NSString *name=[self compressorNameForCoder:coder];
+
+	NSNumber *source=[instream objectForKey:@"SourceIndex"];
+	if(!source) return name;
+	else return [NSString stringWithFormat:@"%@+%@",
+	[self compressorNameForFolder:folder index:[source intValue]],name];
+}
+
+
+-(NSString *)compressorNameForCoder:(NSDictionary *)coder
+{
+	switch([self IDForCoder:coder])
+	{
+		case 0x00000000: return @"None";
+		case 0x02030200: return @"Swap2";
+		case 0x02030400: return @"Swap4";
+		case 0x02040000: return @"Delta";
+		case 0x03010100: return @"LZMA";
+		case 0x03030103: return @"BCJ";
+		case 0x0303011b: return @"BCJ2";
+		case 0x03030205: return @"PPC";
+		case 0x03030301: return @"Alpha";
+		case 0x03030401: return @"IA64";
+		case 0x03030501: return @"ARM";
+		case 0x03030605: return @"M68k";
+		case 0x03030701: return @"ARM Thumb";
+		case 0x03030805: return @"SPARC";
+		case 0x03040100: return @"PPMD";
+		case 0x04010000: return @"None";
+		case 0x04010100: return @"Shrink";
+		case 0x04010600: return @"Implode";
+		case 0x04010800: return @"Deflate";
+		case 0x04010900: return @"Deflate64";
+		case 0x04011200: return @"Bzip2";
+		case 0x04020200: return @"Bzip2";
+		case 0x04030100: return @"RAR v1.5";
+		case 0x04030200: return @"RAR v2.0";
+		case 0x04030300: return @"RAR v2.9";
+		case 0x04040100: return @"ARJ";
+		case 0x04040200: return @"ARJ v4";
+		case 0x04050000: return @"Compress";
+		case 0x04060000: return @"Lzh";
+		case 0x04080000: return @"Cab";
+		case 0x04090100: return @"DeflateNSIS";
+		case 0x04090200: return @"Bzip2NSIS";
+		default: return nil;
+	}
+}
 
 
 

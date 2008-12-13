@@ -50,11 +50,8 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/TR-DOS.c"
 #endif
 
-//#include "clients/7-Zip.c"
 #include "clients/Ace.c"
 #include "clients/AMPK.c"
-//#include "clients/BinHex.c"
-//#include "clients/bzip2.c"
 #include "clients/CAB.c"
 #include "clients/Cpio.c"
 #include "clients/CrunchDisk.c"
@@ -72,14 +69,12 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/MXM-SimpleArc.c"
 #include "clients/PackDev.c"
 #include "clients/PackDisk.c"
-//#include "clients/Rar.c"
 #include "clients/RPM.c"
-#include "clients/StuffIt.c"
+#include "clients/StuffIt.c" // TODO: implement all and remove
 #include "clients/SuperDuper3.c"
 #include "clients/Tar.c"
 #include "clients/xDisk.c"
 #include "clients/xMash.c"
-//#include "clients/Zip.c"
 #include "clients/Zoom.c"
 
 const struct xadClient * const RealFirstClient = XADNEXTCLIENT;

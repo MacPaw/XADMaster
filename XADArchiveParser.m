@@ -14,6 +14,7 @@
 #import "XADCompressParser.h"
 #import "XADALZipParser.h"
 #import "XADPowerPackerParser.h"
+#import "XADLZMAParser.h"
 #import "XADLibXADParser.h"
 
 #include <dirent.h>
@@ -36,6 +37,7 @@ NSString *XADPosixUserNameKey=@"XADPosixUser";
 NSString *XADPosixGroupNameKey=@"XADGroupUser";
 NSString *XADIsEncryptedKey=@"XADIsEncrypted";
 NSString *XADIsDirectoryKey=@"XADIsDirectory";
+NSString *XADIsLinkKey=@"XADIsLink";
 NSString *XADIsResourceForkKey=@"XADIsResourceFork";
 NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 NSString *XADLinkDestinationKey=@"XADLinkDestination";
@@ -67,6 +69,7 @@ static int maxheader=0;
 		[XADCompressParser class],
 		[XADALZipParser class],
 		[XADPowerPackerParser class],
+		[XADLZMAParser class],
 		[XADLibXADParser class],
 	nil] retain];
 
@@ -218,6 +221,24 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 -(NSString *)password { return password; }
 
+-(XADString *)linkDestinationForDictionary:(NSDictionary *)dictionary
+{
+	NSNumber *islink=[dictionary objectForKey:XADIsLinkKey];
+	if(!islink||![islink boolValue]) return nil;
+
+	XADString *linkdest=[dictionary objectForKey:XADLinkDestinationKey];
+	if(linkdest) return linkdest;
+
+	CSHandle *handle=[self handleForEntryWithDictionary:dictionary wantChecksum:YES];
+	NSData *linkdata=[handle remainingFileContents];
+	if([handle hasChecksum]&&![handle isChecksumCorrect]) return nil; // TODO: do something else here?
+
+	return [self XADStringWithData:linkdata];
+}
+
+
+
+
 
 
 -(NSString *)name { return archivename; }
@@ -264,16 +285,19 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 
 
--(void)addEntryWithDictionary:(NSDictionary *)dictionary
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary
 {
 	[self addEntryWithDictionary:dictionary retainPosition:NO];
 }
 
--(void)addEntryWithDictionary:(NSDictionary *)dictionary retainPosition:(BOOL)retainpos
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary retainPosition:(BOOL)retainpos
 {
 	// If an encrypted file is added, set the global encryption flag
 	NSNumber *num=[dictionary objectForKey:XADIsEncryptedKey];
 	if(num&&[num boolValue]) [self setEncrypted:YES];
+
+	XADString *linkdest=[dictionary objectForKey:XADLinkDestinationKey];
+	if(linkdest) [dictionary setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 
 	if(retainpos)
 	{

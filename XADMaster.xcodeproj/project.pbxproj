@@ -157,6 +157,8 @@
 		1BCD61980EF4208C00D86C43 /* XAD7ZipBCJ2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61960EF4208C00D86C43 /* XAD7ZipBCJ2Handle.m */; };
 		1BCD62AB0EF4722400D86C43 /* XADLZMAParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD62A90EF4722400D86C43 /* XADLZMAParser.h */; };
 		1BCD62AC0EF4722400D86C43 /* XADLZMAParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */; };
+		1BCD630E0EF487B500D86C43 /* XADXARParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD630C0EF487B500D86C43 /* XADXARParser.h */; };
+		1BCD630F0EF487B500D86C43 /* XADXARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -447,6 +449,8 @@
 		1BCD61960EF4208C00D86C43 /* XAD7ZipBCJ2Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XAD7ZipBCJ2Handle.m; sourceTree = "<group>"; };
 		1BCD62A90EF4722400D86C43 /* XADLZMAParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZMAParser.h; sourceTree = "<group>"; };
 		1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZMAParser.m; sourceTree = "<group>"; };
+		1BCD630C0EF487B500D86C43 /* XADXARParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADXARParser.h; sourceTree = "<group>"; };
+		1BCD630D0EF487B500D86C43 /* XADXARParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADXARParser.m; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMaster_Prefix.pch; sourceTree = "<group>"; };
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
@@ -763,6 +767,8 @@
 				1BC889660ECF9AD5006B47FE /* XADTarParser.m */,
 				1BC889690ECF9AE2006B47FE /* XADCpioParser.h */,
 				1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */,
+				1BCD630C0EF487B500D86C43 /* XADXARParser.h */,
+				1BCD630D0EF487B500D86C43 /* XADXARParser.m */,
 			);
 			name = Archivers;
 			sourceTree = "<group>";
@@ -1060,6 +1066,7 @@
 				1BCD616D0EF3582300D86C43 /* XAD7ZipBranchHandles.h in Headers */,
 				1BCD61970EF4208C00D86C43 /* XAD7ZipBCJ2Handle.h in Headers */,
 				1BCD62AB0EF4722400D86C43 /* XADLZMAParser.h in Headers */,
+				1BCD630E0EF487B500D86C43 /* XADXARParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1293,6 +1300,7 @@
 				1BCD616E0EF3582300D86C43 /* XAD7ZipBranchHandles.m in Sources */,
 				1BCD61980EF4208C00D86C43 /* XAD7ZipBCJ2Handle.m in Sources */,
 				1BCD62AC0EF4722400D86C43 /* XADLZMAParser.m in Sources */,
+				1BCD630F0EF487B500D86C43 /* XADXARParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,16 +1,33 @@
-#import "XADLZMAParser.h"
+#import "XADLZMAAloneParser.h"
 #import "XADLZMAHandle.h"
 
-@implementation XADLZMAParser
+@implementation XADLZMAAloneParser
 
 +(int)requiredHeaderSize { return 0; }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 {
 	// Geez, put some magic bytes in your file formats, people!
-	if([name rangeOfString:@".lzma" options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound) return YES;
-	if([name rangeOfString:@".tlz" options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound) return YES;
-	return NO;
+
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+
+	if(length<13) return NO;
+
+	if(bytes[0]>=9*5*5) return NO;
+
+	uint32_t dictsize=CSGetUInt32LE(&bytes[1]);
+	uint32_t test=dictsize&(dictsize-1);
+	if(test!=0)
+	if((test&(test-1))!=0||(test&(test>>1))!=0) return NO;
+
+	if(!(bytes[11]==0x00&&bytes[12]==0x00)&&!(bytes[11]==0xff&&bytes[12]==0xff)) return NO;
+
+	return YES;
+
+//	if([name rangeOfString:@".lzma" options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound) return YES;
+//	if([name rangeOfString:@".tlz" options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound) return YES;
+//	return NO;
 }
 
 -(void)parse
@@ -57,6 +74,6 @@
 
 }
 
--(NSString *)formatName { return @"LZMA"; }
+-(NSString *)formatName { return @"LZMA_Alone"; }
 
 @end

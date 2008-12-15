@@ -3,10 +3,12 @@
 #import "CSMultiHandle.h"
 
 #import "XADZipParser.h"
-#import "XADGzipParser.h"
-#import "XADBzip2Parser.h"
 #import "XADRARParser.h"
 #import "XAD7ZipParser.h"
+#import "XADGzipParser.h"
+#import "XADBzip2Parser.h"
+#import "XADLZMAParser.h"
+#import "XADXARParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
 #import "XADBinHexParser.h"
@@ -14,7 +16,7 @@
 #import "XADCompressParser.h"
 #import "XADALZipParser.h"
 #import "XADPowerPackerParser.h"
-#import "XADLZMAParser.h"
+#import "XADLZMAAloneParser.h"
 #import "XADLibXADParser.h"
 
 #include <dirent.h>
@@ -31,10 +33,10 @@ NSString *XADFinderFlagsKey=@"XADFinderFlags";
 NSString *XADPosixPermissionsKey=@"XADPosixPermissions";
 NSString *XADPosixUserKey=@"XADPosixUser";
 NSString *XADPosixGroupKey=@"XADGroupUser";
+NSString *XADPosixUserNameKey=@"XADPosixUserName";
+NSString *XADPosixGroupNameKey=@"XADGroupUserName";
 NSString *XADDOSFileAttributesKey=@"XADDOSFileAttributes";
 NSString *XADWindowsFileAttributesKey=@"XADWindowsFileAttributes";
-NSString *XADPosixUserNameKey=@"XADPosixUser";
-NSString *XADPosixGroupNameKey=@"XADGroupUser";
 NSString *XADIsEncryptedKey=@"XADIsEncrypted";
 NSString *XADIsDirectoryKey=@"XADIsDirectory";
 NSString *XADIsLinkKey=@"XADIsLink";
@@ -58,10 +60,12 @@ static int maxheader=0;
 	if(parserclasses) return;
 	parserclasses=[[NSMutableArray arrayWithObjects:
 		[XADZipParser class],
-		[XADGzipParser class],
-		[XADBzip2Parser class],
 		[XADRARParser class],
 		[XAD7ZipParser class],
+		[XADGzipParser class],
+		[XADBzip2Parser class],
+		[XADLZMAParser class],
+		[XADXARParser class],
 		[XADStuffIt5Parser class],
 		[XADStuffItParser class],
 		[XADBinHexParser class],
@@ -69,7 +73,7 @@ static int maxheader=0;
 		[XADCompressParser class],
 		[XADALZipParser class],
 		[XADPowerPackerParser class],
-		[XADLZMAParser class],
+		[XADLZMAAloneParser class],
 		[XADLibXADParser class],
 	nil] retain];
 

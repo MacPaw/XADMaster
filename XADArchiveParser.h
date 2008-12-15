@@ -15,6 +15,7 @@ extern NSString *XADCreationDateKey;
 extern NSString *XADFileTypeKey;
 extern NSString *XADFileCreatorKey;
 extern NSString *XADFinderFlagsKey;
+extern NSString *XADFinderInfoKey;
 extern NSString *XADPosixPermissionsKey;
 extern NSString *XADPosixUserKey;
 extern NSString *XADPosixGroupKey;

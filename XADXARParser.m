@@ -16,6 +16,7 @@
 #define FinderInfoState 7
 
 static const NSString *StringFormat=@"String";
+static const NSString *XADStringFormat=@"XADString";
 static const NSString *DecimalFormat=@"Decimal";
 static const NSString *OctalFormat=@"Octal";
 static const NSString *HexFormat=@"Hex";
@@ -55,8 +56,8 @@ static const NSString *DateFormat=@"Date";
 		[NSArray arrayWithObjects:XADPosixPermissionsKey,OctalFormat,nil],@"mode",
 		[NSArray arrayWithObjects:XADPosixUserKey,DecimalFormat,nil],@"uid",
 		[NSArray arrayWithObjects:XADPosixGroupKey,DecimalFormat,nil],@"gid",
-		[NSArray arrayWithObjects:XADPosixUserNameKey,StringFormat,nil],@"user",
-		[NSArray arrayWithObjects:XADPosixGroupNameKey,StringFormat,nil],@"group",
+		[NSArray arrayWithObjects:XADPosixUserNameKey,XADStringFormat,nil],@"user",
+		[NSArray arrayWithObjects:XADPosixGroupNameKey,XADStringFormat,nil],@"group",
 	nil];
 
 	datadefinitions=[NSDictionary dictionaryWithObjectsAndKeys:
@@ -64,8 +65,8 @@ static const NSString *DateFormat=@"Date";
 		[NSArray arrayWithObjects:XADDataOffsetKey,DecimalFormat,nil],@"offset",
 		[NSArray arrayWithObjects:XADDataLengthKey,DecimalFormat,nil],@"length",
 		[NSArray arrayWithObjects:@"XARChecksum",HexFormat,nil],@"extracted-checksum",
-		[NSArray arrayWithObjects:@"XARChecksumStyle",DecimalFormat,nil],@"extracted-checksum style",
-		[NSArray arrayWithObjects:@"XAREncodingStyle",DecimalFormat,nil],@"encoding style",
+		[NSArray arrayWithObjects:@"XARChecksumStyle",StringFormat,nil],@"extracted-checksum style",
+		[NSArray arrayWithObjects:@"XAREncodingStyle",StringFormat,nil],@"encoding style",
 	nil];
 
 	resforkdefinitions=[NSDictionary dictionaryWithObjectsAndKeys:
@@ -73,8 +74,8 @@ static const NSString *DateFormat=@"Date";
 		[NSArray arrayWithObjects:XADDataOffsetKey,DecimalFormat,nil],@"offset",
 		[NSArray arrayWithObjects:XADDataLengthKey,DecimalFormat,nil],@"length",
 		[NSArray arrayWithObjects:@"XARChecksum",HexFormat,nil],@"extracted-checksum",
-		[NSArray arrayWithObjects:@"XARChecksumStyle",DecimalFormat,nil],@"extracted-checksum style",
-		[NSArray arrayWithObjects:@"XAREncodingStyle",DecimalFormat,nil],@"encoding style",
+		[NSArray arrayWithObjects:@"XARChecksumStyle",StringFormat,nil],@"extracted-checksum style",
+		[NSArray arrayWithObjects:@"XAREncodingStyle",StringFormat,nil],@"encoding style",
 	nil];
 
 	finderdefinitions=[NSDictionary dictionaryWithObjectsAndKeys:
@@ -82,8 +83,8 @@ static const NSString *DateFormat=@"Date";
 		[NSArray arrayWithObjects:@"Offset",DecimalFormat,nil],@"offset",
 		[NSArray arrayWithObjects:@"Length",DecimalFormat,nil],@"length",
 		[NSArray arrayWithObjects:@"Checksum",HexFormat,nil],@"extracted-checksum",
-		[NSArray arrayWithObjects:@"ChecksumStyle",DecimalFormat,nil],@"extracted-checksum style",
-		[NSArray arrayWithObjects:@"EncodingStyle",DecimalFormat,nil],@"encoding style",
+		[NSArray arrayWithObjects:@"ChecksumStyle",StringFormat,nil],@"extracted-checksum style",
+		[NSArray arrayWithObjects:@"EncodingStyle",StringFormat,nil],@"encoding style",
 	nil];
 
 	files=[NSMutableArray array];
@@ -94,7 +95,7 @@ static const NSString *DateFormat=@"Date";
 	CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:[fh nonCopiedSubHandleFrom:headsize length:tablecompsize]];
 	NSData *data=[zh readDataOfLength:tableuncompsize];
 
-NSLog(@"%@",[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
+	//NSLog(@"%@",[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
 
 	NSXMLParser *xml=[[[NSXMLParser alloc] initWithData:data] autorelease];
 	[xml setDelegate:self];
@@ -126,27 +127,26 @@ NSLog(@"%@",[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] 
 	else if([type isEqual:@"symlink"])
 	{
 		if(!link) return;
-		[file setObject:link forKey:XADLinkDestinationKey];
+		[file setObject:[self XADStringWithString:link] forKey:XADLinkDestinationKey];
 	}
 
 	if(finderinfo)
 	{
 		CSHandle *handle=[self handleForEncodingStyle:[finderinfo objectForKey:@"EncodingStyle"]
-		offset:[[finderinfo objectForKey:@"Offset"] longLongValue]
-		length:[[finderinfo objectForKey:@"Length"] longLongValue]
-		size:[[finderinfo objectForKey:@"Size"] longLongValue]
-		checksum:[finderinfo objectForKey:@"Checksum"]
+		offset:[finderinfo objectForKey:@"Offset"] length:[finderinfo objectForKey:@"Length"]
+		size:[finderinfo objectForKey:@"Size"] checksum:[finderinfo objectForKey:@"Checksum"]
 		checksumStyle:[finderinfo objectForKey:@"ChecksumStyle"]];
 
 		NSData *data=[handle remainingFileContents];
 		if(data&&(![handle hasChecksum]||[handle isChecksumCorrect]))
-		{
-			NSLog(@"finderinfo: %@",data);
-		}
+		[file setObject:data forKey:XADFinderInfoKey];
 	}
 
 	NSNumber *datalen=[file objectForKey:XADDataLengthKey];
 	if(datalen) [file setObject:datalen forKey:XADCompressedSizeKey];
+	else [file setObject:[NSNumber numberWithInt:0] forKey:XADCompressedSizeKey];
+
+	if(![file objectForKey:XADFileSizeKey]) [file setObject:[NSNumber numberWithInt:0] forKey:XADFileSizeKey];
 
 	[self addEntryWithDictionary:file];
 
@@ -155,6 +155,10 @@ NSLog(@"%@",[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] 
 		NSMutableDictionary *resfile=[NSMutableDictionary dictionaryWithDictionary:file];
 		[resfile addEntriesFromDictionary:resfork];
 		[resfile setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
+
+		NSNumber *datalen=[resfile objectForKey:XADDataLengthKey];
+		if(datalen) [resfile setObject:datalen forKey:XADCompressedSizeKey];
+
 		[self addEntryWithDictionary:resfile];
 	}
 
@@ -314,7 +318,7 @@ definitions:(NSDictionary *)definitions destinationDictionary:(NSMutableDictiona
 	NSString *key;
 	while(key=[enumerator nextObject])
 	{
-		NSArray *definition=[attributes objectForKey:[NSString stringWithFormat:@"%@ %@",name,key]];
+		NSArray *definition=[definitions objectForKey:[NSString stringWithFormat:@"%@ %@",name,key]];
 		if(definition) [self parseDefinition:definition string:[attributes objectForKey:key] destinationDictionary:dest];
 	}
 
@@ -341,6 +345,7 @@ destinationDictionary:(NSMutableDictionary *)dest
 
 	id obj=nil;
 	if(format==StringFormat) obj=string;
+	else if(format==XADStringFormat) obj=[self XADStringWithString:string];
 	else if(format==DecimalFormat) obj=[NSNumber numberWithLongLong:strtoll([string UTF8String],NULL,10)];
 	else if(format==OctalFormat) obj=[NSNumber numberWithLongLong:strtoll([string UTF8String],NULL,8)];
 	else if(format==HexFormat)
@@ -358,12 +363,13 @@ destinationDictionary:(NSMutableDictionary *)dest
 				if(c>='A'&&c<='F') val=c-'A'+10;
 				if(c>='a'&&c<='f') val=c-'a'+10;
 
-				if(n&1) { byte|=val; [data appendByte:&byte]; }
+				if(n&1) { byte|=val; [data appendBytes:&byte length:1]; }
 				else byte=val<<4;
 
 				n++;
 			}
 		}
+		obj=data;
 	}
 	else if(format==DateFormat)
 	{
@@ -403,48 +409,51 @@ destinationDictionary:(NSMutableDictionary *)dest
 	}
 
 	return [self handleForEncodingStyle:[dict objectForKey:@"XAREncodingStyle"]
-	offset:[[dict objectForKey:XADDataOffsetKey] longLongValue]
-	length:[[dict objectForKey:XADDataLengthKey] longLongValue]
-	size:[[dict objectForKey:XADFileSizeKey] longLongValue]
-	checksum:checksumdata checksumStyle:checksumstyle];
+	offset:[dict objectForKey:XADDataOffsetKey] length:[dict objectForKey:XADDataLengthKey]
+	size:[dict objectForKey:XADFileSizeKey] checksum:checksumdata checksumStyle:checksumstyle];
 }
 
--(CSHandle *)handleForEncodingStyle:(NSString *)encodingstyle offset:(off_t)offset
-length:(off_t)length size:(off_t)size checksum:(NSData *)checksum checksumStyle:(NSString *)checksumstyle
+-(CSHandle *)handleForEncodingStyle:(NSString *)encodingstyle offset:(NSNumber *)offset
+length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum checksumStyle:(NSString *)checksumstyle
 {
-	CSHandle *handle=[[self handle] nonCopiedSubHandleFrom:offset+heapoffset length:length];
+	off_t sizeval=[size longLongValue];
 
-	// XAR incorrectly specifies an encoding style for 0-length entries
-	// without storing the compressed header for a 0-length stream.
-	if(size==0) return handle=[[[CSStreamHandle alloc] initWithName:nil length:0] autorelease];
-	else if(!encodingstyle||[encodingstyle length]==0); // no encoding style, copy
-	else if([encodingstyle isEqual:@"application/x-gzip"]) handle=[CSZlibHandle zlibHandleWithHandle:handle length:size];
-	else if([encodingstyle isEqual:@"application/x-bzip2"]) handle=[CSBzip2Handle bzip2HandleWithHandle:handle length:size];
-	else if([encodingstyle isEqual:@"application/x-lzma"])
+	CSHandle *handle;
+	if(offset)
 	{
-		int first=[handle readUInt8];
-		if(first==0xff)
+		handle=[[self handle] nonCopiedSubHandleFrom:[offset longLongValue]+heapoffset
+		length:[length longLongValue]];
+
+		if(!encodingstyle||[encodingstyle length]==0); // no encoding style, copy
+		else if([encodingstyle isEqual:@"application/x-gzip"]) handle=[CSZlibHandle zlibHandleWithHandle:handle length:sizeval];
+		else if([encodingstyle isEqual:@"application/x-bzip2"]) handle=[CSBzip2Handle bzip2HandleWithHandle:handle length:sizeval];
+		else if([encodingstyle isEqual:@"application/x-lzma"])
 		{
-			[handle seekToFileOffset:0];
-			XADLZMAParser *parser=[[[XADLZMAParser alloc] initWithHandle:handle name:nil] autorelease];
-			lzmahandle=nil;
-			[parser parse];
-			if(!lzmahandle) return nil;
-			handle=lzmahandle;
+			int first=[handle readUInt8];
+			if(first==0xff)
+			{
+				[handle seekToFileOffset:0];
+				XADLZMAParser *parser=[[[XADLZMAParser alloc] initWithHandle:handle name:nil] autorelease];
+				lzmahandle=nil;
+				[parser parse];
+				if(!lzmahandle) return nil;
+				handle=lzmahandle;
+			}
+			else
+			{
+				[handle seekToFileOffset:0];
+				NSData *props=[handle readDataOfLength:5];
+				uint64_t streamsize=[handle readUInt64LE];
+				handle=[[[XADLZMAHandle alloc] initWithHandle:handle length:streamsize propertyData:props] autorelease];
+			}
 		}
-		else
-		{
-			[handle seekToFileOffset:0];
-			NSData *props=[handle readDataOfLength:5];
-			uint64_t streamsize=[handle readUInt64LE];
-			handle=[[[XADLZMAHandle alloc] initWithHandle:handle length:streamsize propertyData:props] autorelease];
-		}
+		else return nil;
 	}
-	else return nil;
+	else handle=[[self handle] nonCopiedSubHandleOfLength:0]; // kludge for data-less entries
 
 	if(checksum&&checksumstyle)
 	{
-		CSHandle *digesthandle=[XADDigestHandle digestHandleWithHandle:handle length:size
+		CSHandle *digesthandle=[XADDigestHandle digestHandleWithHandle:handle length:sizeval
 		digestName:checksumstyle correctDigest:checksum];
 		if(digesthandle) return digesthandle;
 	}
@@ -454,7 +463,7 @@ length:(off_t)length size:(off_t)size checksum:(NSData *)checksum checksumStyle:
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
-	lzmahandle=[parser handleForDictionary:dict wantChecksum:NO];
+	lzmahandle=[parser handleForEntryWithDictionary:dict wantChecksum:NO];
 }
 
 

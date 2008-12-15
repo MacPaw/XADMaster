@@ -1,8 +1,9 @@
 #import "XADCRCSuffixHandle.h"
+#import "Checksums.h"
 
 @implementation XADCRCSuffixHandle
 
-+(XADCRCHandle *)IEEECRC32SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
++(XADCRCSuffixHandle *)IEEECRC32SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
 bigEndianCRC:(BOOL)bigendian conditioned:(BOOL)conditioned
 {
 	if(conditioned) return [[[self alloc] initWithHandle:handle CRCHandle:crchandle initialCRC:0xffffffff
@@ -11,7 +12,7 @@ bigEndianCRC:(BOOL)bigendian conditioned:(BOOL)conditioned
 	CRCSize:4 bigEndianCRC:bigendian CRCTable:XADCRCTable_edb88320] autorelease];
 }
 
-+(XADCRCHandle *)CCITTCRC16SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
++(XADCRCSuffixHandle *)CCITTCRC16SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
 bigEndianCRC:(BOOL)bigendian conditioned:(BOOL)conditioned
 {
 	// Evil trick: negating the big endian flag does the same thing as XADUnReverseCRC16()

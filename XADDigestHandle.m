@@ -1,4 +1,4 @@
-#import "XADCRCSuffixHandle.h"
+#import "XADDigestHandle.h"
 
 @implementation XADDigestHandle
 
@@ -14,11 +14,11 @@ correctDigest:(NSData *)correctdigest
 	return [[[self alloc] initWithHandle:handle length:length digestType:EVP_sha1() correctDigest:correctdigest] autorelease];
 }
 
-+(XADDigestHandle *)SHA256HandleWithHandle:(CSHandle *)handle length:(off_t)length
+/*+(XADDigestHandle *)SHA256HandleWithHandle:(CSHandle *)handle length:(off_t)length
 correctDigest:(NSData *)correctdigest
 {
-	return [[[self alloc] initWithHandle:handle length:length digestType:EVP_sha256() correctDigest:correctdigest] autorelease];
-}
+	return [[[self alloc] initWithHandle:handle length:length digestType:EVP_ssha256() correctDigest:correctdigest] autorelease];
+}*/
 
 +(XADDigestHandle *)digestHandleWithHandle:(CSHandle *)handle length:(off_t)length
 digestName:(NSString *)digestname correctDigest:(NSData *)correctdigest

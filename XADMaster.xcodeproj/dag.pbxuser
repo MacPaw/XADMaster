@@ -2182,6 +2182,70 @@
 			1BCD64180EF5F0C500D86C43 /* PBXTextBookmark */ = 1BCD64180EF5F0C500D86C43 /* PBXTextBookmark */;
 			1BCD64190EF5F0C500D86C43 /* PBXTextBookmark */ = 1BCD64190EF5F0C500D86C43 /* PBXTextBookmark */;
 			1BCD641B0EF5F0C500D86C43 /* PBXTextBookmark */ = 1BCD641B0EF5F0C500D86C43 /* PBXTextBookmark */;
+			1BCD641C0EF6C8E100D86C43 /* PBXTextBookmark */ = 1BCD641C0EF6C8E100D86C43 /* PBXTextBookmark */;
+			1BCD641D0EF6C9F800D86C43 /* PBXTextBookmark */ = 1BCD641D0EF6C9F800D86C43 /* PBXTextBookmark */;
+			1BCD641E0EF6C9F800D86C43 /* PBXTextBookmark */ = 1BCD641E0EF6C9F800D86C43 /* PBXTextBookmark */;
+			1BCD641F0EF6C9F800D86C43 /* PBXTextBookmark */ = 1BCD641F0EF6C9F800D86C43 /* PBXTextBookmark */;
+			1BCD64200EF6C9F800D86C43 /* PBXTextBookmark */ = 1BCD64200EF6C9F800D86C43 /* PBXTextBookmark */;
+			1BCD64210EF6C9F800D86C43 /* PBXTextBookmark */ = 1BCD64210EF6C9F800D86C43 /* PBXTextBookmark */;
+			1BCD64390EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64390EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD643A0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD643A0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD643B0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD643B0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD643C0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD643C0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD643D0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD643D0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD643E0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD643E0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD643F0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD643F0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64400EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64400EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64410EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64410EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64420EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64420EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64430EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64430EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64440EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64440EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64450EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64450EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64460EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64460EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64470EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64470EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64480EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64480EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64490EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD64490EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD644A0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD644A0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD644B0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD644B0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD644C0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD644C0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD644D0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD644D0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD644E0EF6CD1200D86C43 /* PBXTextBookmark */ = 1BCD644E0EF6CD1200D86C43 /* PBXTextBookmark */;
+			1BCD64500EF6CD3E00D86C43 /* PBXTextBookmark */ = 1BCD64500EF6CD3E00D86C43 /* PBXTextBookmark */;
+			1BCD64520EF6CD6C00D86C43 /* PBXTextBookmark */ = 1BCD64520EF6CD6C00D86C43 /* PBXTextBookmark */;
+			1BCD64540EF6CE2F00D86C43 /* PBXTextBookmark */ = 1BCD64540EF6CE2F00D86C43 /* PBXTextBookmark */;
+			1BCD64560EF6CE6100D86C43 /* PBXTextBookmark */ = 1BCD64560EF6CE6100D86C43 /* PBXTextBookmark */;
+			1BCD64580EF6CEBB00D86C43 /* PBXTextBookmark */ = 1BCD64580EF6CEBB00D86C43 /* PBXTextBookmark */;
+			1BCD645A0EF6CEF500D86C43 /* PBXTextBookmark */ = 1BCD645A0EF6CEF500D86C43 /* PBXTextBookmark */;
+			1BCD645C0EF6CF1D00D86C43 /* PBXTextBookmark */ = 1BCD645C0EF6CF1D00D86C43 /* PBXTextBookmark */;
+			1BCD645F0EF6CFA400D86C43 /* PBXTextBookmark */ = 1BCD645F0EF6CFA400D86C43 /* PBXTextBookmark */;
+			1BCD64610EF6CFC000D86C43 /* PBXTextBookmark */ = 1BCD64610EF6CFC000D86C43 /* PBXTextBookmark */;
+			1BCD64630EF6D00400D86C43 /* PBXTextBookmark */ = 1BCD64630EF6D00400D86C43 /* PBXTextBookmark */;
+			1BCD64640EF6D00400D86C43 /* PBXTextBookmark */ = 1BCD64640EF6D00400D86C43 /* PBXTextBookmark */;
+			1BCD64650EF6D00400D86C43 /* PBXTextBookmark */ = 1BCD64650EF6D00400D86C43 /* PBXTextBookmark */;
+			1BCD64660EF6D00500D86C43 /* PBXTextBookmark */ = 1BCD64660EF6D00500D86C43 /* PBXTextBookmark */;
+			1BCD64670EF6D00500D86C43 /* PBXTextBookmark */ = 1BCD64670EF6D00500D86C43 /* PBXTextBookmark */;
+			1BCD64680EF6D00500D86C43 /* PBXTextBookmark */ = 1BCD64680EF6D00500D86C43 /* PBXTextBookmark */;
+			1BCD646A0EF6D1CF00D86C43 /* PBXTextBookmark */ = 1BCD646A0EF6D1CF00D86C43 /* PBXTextBookmark */;
+			1BCD646B0EF6D1CF00D86C43 /* PBXTextBookmark */ = 1BCD646B0EF6D1CF00D86C43 /* PBXTextBookmark */;
+			1BCD646C0EF6D1CF00D86C43 /* PBXTextBookmark */ = 1BCD646C0EF6D1CF00D86C43 /* PBXTextBookmark */;
+			1BCD646D0EF6D1CF00D86C43 /* PBXTextBookmark */ = 1BCD646D0EF6D1CF00D86C43 /* PBXTextBookmark */;
+			1BCD646F0EF6D1F300D86C43 /* PBXTextBookmark */ = 1BCD646F0EF6D1F300D86C43 /* PBXTextBookmark */;
+			1BCD64700EF6ED6900D86C43 /* PBXTextBookmark */ = 1BCD64700EF6ED6900D86C43 /* PBXTextBookmark */;
+			1BCD64710EF6ED6900D86C43 /* PBXTextBookmark */ = 1BCD64710EF6ED6900D86C43 /* PBXTextBookmark */;
+			1BCD64720EF6ED6900D86C43 /* PBXTextBookmark */ = 1BCD64720EF6ED6900D86C43 /* PBXTextBookmark */;
+			1BCD64730EF6ED6900D86C43 /* PBXTextBookmark */ = 1BCD64730EF6ED6900D86C43 /* PBXTextBookmark */;
+			1BCD64770EF6EDC200D86C43 /* PBXTextBookmark */ = 1BCD64770EF6EDC200D86C43 /* PBXTextBookmark */;
+			1BCD64790EF6F13E00D86C43 /* PBXTextBookmark */ = 1BCD64790EF6F13E00D86C43 /* PBXTextBookmark */;
+			1BCD647A0EF6F13E00D86C43 /* PBXTextBookmark */ = 1BCD647A0EF6F13E00D86C43 /* PBXTextBookmark */;
+			1BCD647B0EF6F13E00D86C43 /* PBXTextBookmark */ = 1BCD647B0EF6F13E00D86C43 /* PBXTextBookmark */;
+			1BCD647C0EF6F13E00D86C43 /* PBXTextBookmark */ = 1BCD647C0EF6F13E00D86C43 /* PBXTextBookmark */;
+			1BCD647E0EF6F16500D86C43 /* PBXTextBookmark */ = 1BCD647E0EF6F16500D86C43 /* PBXTextBookmark */;
+			1BCD64800EF6F8A800D86C43 /* PBXTextBookmark */ = 1BCD64800EF6F8A800D86C43 /* PBXTextBookmark */;
+			1BCD64810EF6F8A800D86C43 /* PBXTextBookmark */ = 1BCD64810EF6F8A800D86C43 /* PBXTextBookmark */;
+			1BCD64820EF6F8A800D86C43 /* PBXTextBookmark */ = 1BCD64820EF6F8A800D86C43 /* PBXTextBookmark */;
+			1BCD64830EF6F8A800D86C43 /* PBXTextBookmark */ = 1BCD64830EF6F8A800D86C43 /* PBXTextBookmark */;
+			1BCD64840EF6F8A800D86C43 /* PBXTextBookmark */ = 1BCD64840EF6F8A800D86C43 /* PBXTextBookmark */;
+			1BCD64860EF6F8BB00D86C43 /* PBXTextBookmark */ = 1BCD64860EF6F8BB00D86C43 /* PBXTextBookmark */;
 			1BED5E940A60431800CA31C2 = 1BED5E940A60431800CA31C2 /* PBXTextBookmark */;
 			1BF19A690A9279FD00525C4E = 1BF19A690A9279FD00525C4E /* PBXTextBookmark */;
 		};
@@ -2596,9 +2660,9 @@
 	};
 	1B06D5A30DDA666C00D9C000 /* XADZipParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1068, 9880}}";
-			sepNavSelRange = "{1327, 0}";
-			sepNavVisRange = "{561, 1241}";
+			sepNavIntBoundsRect = "{{0, 0}, {1084, 10005}}";
+			sepNavSelRange = "{280, 0}";
+			sepNavVisRange = "{0, 511}";
 		};
 	};
 	1B06D5A60DDA667A00D9C000 /* XADRARParser.h */ = {
@@ -2610,9 +2674,9 @@
 	};
 	1B06D5A70DDA667A00D9C000 /* XADRARParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1116, 6289}}";
-			sepNavSelRange = "{9972, 0}";
-			sepNavVisRange = "{9163, 1041}";
+			sepNavIntBoundsRect = "{{0, 0}, {929, 6775}}";
+			sepNavSelRange = "{103, 0}";
+			sepNavVisRange = "{0, 568}";
 		};
 	};
 	1B06D5AA0DDA668500D9C000 /* XADStuffItParser.h */ = {
@@ -2624,9 +2688,9 @@
 	};
 	1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {857, 5092}}";
-			sepNavSelRange = "{54, 0}";
-			sepNavVisRange = "{0, 543}";
+			sepNavIntBoundsRect = "{{0, 0}, {1092, 4780}}";
+			sepNavSelRange = "{79, 0}";
+			sepNavVisRange = "{0, 546}";
 			sepNavWindowFrame = "{{76, 104}, {1038, 769}}";
 		};
 	};
@@ -2639,9 +2703,9 @@
 	};
 	1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {929, 17005}}";
-			sepNavSelRange = "{4833, 0}";
-			sepNavVisRange = "{4380, 725}";
+			sepNavIntBoundsRect = "{{0, 0}, {940, 16902}}";
+			sepNavSelRange = "{255, 0}";
+			sepNavVisRange = "{0, 450}";
 			sepNavWindowFrame = "{{130, 60}, {1038, 769}}";
 		};
 	};
@@ -2654,9 +2718,9 @@
 	};
 	1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {916, 4009}}";
-			sepNavSelRange = "{4179, 1461}";
-			sepNavVisRange = "{5068, 572}";
+			sepNavIntBoundsRect = "{{0, 0}, {929, 4069}}";
+			sepNavSelRange = "{101, 0}";
+			sepNavVisRange = "{0, 511}";
 		};
 	};
 	1B06D5B90DDA67E000D9C000 /* XADString.h */ = {
@@ -2708,7 +2772,7 @@
 		fRef = 1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */;
 		name = "XADBinHexArchive.m: 131";
 		rLen = 0;
-		rLoc = 4124;
+		rLoc = 4133;
 		rType = 0;
 		vrLen = 929;
 		vrLoc = 2915;
@@ -2718,7 +2782,7 @@
 		fRef = 1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */;
 		name = "XADGZipArchive.m: 118";
 		rLen = 97;
-		rLoc = 2900;
+		rLoc = 2909;
 		rType = 0;
 		vrLen = 923;
 		vrLoc = 2275;
@@ -3069,7 +3133,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 297";
 		rLen = 0;
-		rLoc = 9259;
+		rLoc = 9262;
 		rType = 0;
 		vrLen = 906;
 		vrLoc = 8021;
@@ -3139,7 +3203,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 63";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1330;
 		vrLoc = 0;
@@ -3149,7 +3213,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 53";
 		rLen = 0;
-		rLoc = 2099;
+		rLoc = 2144;
 		rType = 0;
 		vrLen = 1575;
 		vrLoc = 0;
@@ -3583,7 +3647,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 62";
 		rLen = 0;
-		rLoc = 2374;
+		rLoc = 2419;
 		rType = 0;
 		vrLen = 997;
 		vrLoc = 1506;
@@ -3593,7 +3657,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 62";
 		rLen = 0;
-		rLoc = 2374;
+		rLoc = 2419;
 		rType = 0;
 		vrLen = 997;
 		vrLoc = 1506;
@@ -3663,7 +3727,7 @@
 		fRef = 1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */;
 		name = "XADBinHexParser.m: 127";
 		rLen = 1461;
-		rLoc = 4179;
+		rLoc = 4188;
 		rType = 0;
 		vrLen = 572;
 		vrLoc = 5068;
@@ -3683,7 +3747,7 @@
 		fRef = 1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */;
 		name = "XADBinHexParser.m: 127";
 		rLen = 1461;
-		rLoc = 4179;
+		rLoc = 4188;
 		rType = 0;
 		vrLen = 572;
 		vrLoc = 5068;
@@ -3733,7 +3797,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 286";
 		rLen = 0;
-		rLoc = 9105;
+		rLoc = 9108;
 		rType = 0;
 		vrLen = 1613;
 		vrLoc = 6157;
@@ -3773,7 +3837,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 286";
 		rLen = 0;
-		rLoc = 9105;
+		rLoc = 9108;
 		rType = 0;
 		vrLen = 1613;
 		vrLoc = 6157;
@@ -4039,7 +4103,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 26";
 		rLen = 0;
-		rLoc = 2664;
+		rLoc = 2709;
 		rType = 0;
 		vrLen = 1204;
 		vrLoc = 0;
@@ -4296,9 +4360,9 @@
 	};
 	1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1076, 2223}}";
-			sepNavSelRange = "{15, 0}";
-			sepNavVisRange = "{0, 899}";
+			sepNavIntBoundsRect = "{{0, 0}, {1076, 2242}}";
+			sepNavSelRange = "{3254, 64}";
+			sepNavVisRange = "{2142, 1302}";
 		};
 	};
 	1B578C5A0DDCFFE0005B0F68 /* XADBzip2Parser.h */ = {
@@ -4434,16 +4498,16 @@
 	};
 	1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {828, 2394}}";
-			sepNavSelRange = "{731, 0}";
-			sepNavVisRange = "{34, 1230}";
+			sepNavIntBoundsRect = "{{0, 0}, {717, 2451}}";
+			sepNavSelRange = "{533, 0}";
+			sepNavVisRange = "{361, 1156}";
 		};
 	};
 	1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {740, 7144}}";
-			sepNavSelRange = "{1330, 0}";
-			sepNavVisRange = "{411, 1506}";
+			sepNavIntBoundsRect = "{{0, 0}, {717, 7201}}";
+			sepNavSelRange = "{1011, 0}";
+			sepNavVisRange = "{1280, 1210}";
 		};
 	};
 	1BBAB67A0EC2749B007FE6A2 /* XADTest2.m */ = {
@@ -4676,7 +4740,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 95";
 		rLen = 49;
-		rLoc = 3829;
+		rLoc = 3832;
 		rType = 0;
 		vrLen = 1448;
 		vrLoc = 2365;
@@ -4696,7 +4760,7 @@
 		fRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */;
 		name = "XADStuffItParser.m: 15";
 		rLen = 0;
-		rLoc = 316;
+		rLoc = 319;
 		rType = 0;
 		vrLen = 1000;
 		vrLoc = 0;
@@ -4706,7 +4770,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 141";
 		rLen = 0;
-		rLoc = 4905;
+		rLoc = 4908;
 		rType = 0;
 		vrLen = 1221;
 		vrLoc = 3535;
@@ -5577,9 +5641,9 @@
 	};
 	1BC88D780ED31ECD006B47FE /* XADCompactProParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {788, 3553}}";
-			sepNavSelRange = "{1133, 0}";
-			sepNavVisRange = "{266, 874}";
+			sepNavIntBoundsRect = "{{0, 0}, {988, 3374}}";
+			sepNavSelRange = "{149, 0}";
+			sepNavVisRange = "{0, 526}";
 		};
 	};
 	1BC88D7B0ED31ED9006B47FE /* XADDiskDoublerParser.h */ = {
@@ -5661,7 +5725,7 @@
 		fRef = 1BC88D780ED31ECD006B47FE /* XADCompactProParser.m */;
 		name = "XADCompactProParser.m: 3";
 		rLen = 41;
-		rLoc = 190;
+		rLoc = 193;
 		rType = 0;
 		vrLen = 117;
 		vrLoc = 0;
@@ -6067,7 +6131,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 4";
 		rLen = 0;
-		rLoc = 576;
+		rLoc = 579;
 		rType = 0;
 		vrLen = 105;
 		vrLoc = 0;
@@ -6607,7 +6671,7 @@
 		fRef = 1BC88D780ED31ECD006B47FE /* XADCompactProParser.m */;
 		name = "XADCompactProParser.m: 59";
 		rLen = 0;
-		rLoc = 1443;
+		rLoc = 1446;
 		rType = 0;
 		vrLen = 949;
 		vrLoc = 615;
@@ -7280,9 +7344,9 @@
 	};
 	1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1068, 3610}}";
-			sepNavSelRange = "{0, 5551}";
-			sepNavVisRange = "{4330, 1221}";
+			sepNavIntBoundsRect = "{{0, 0}, {1068, 3640}}";
+			sepNavSelRange = "{132, 0}";
+			sepNavVisRange = "{0, 473}";
 		};
 	};
 	1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */ = {
@@ -7317,7 +7381,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 111";
 		rLen = 0;
-		rLoc = 5070;
+		rLoc = 5073;
 		rType = 0;
 		vrLen = 1241;
 		vrLoc = 2262;
@@ -7438,7 +7502,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 72";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1311;
 		vrLoc = 1632;
@@ -7448,7 +7512,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 160";
 		rLen = 0;
-		rLoc = 7036;
+		rLoc = 7081;
 		rType = 0;
 		vrLen = 981;
 		vrLoc = 3886;
@@ -7478,7 +7542,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 72";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1311;
 		vrLoc = 1632;
@@ -7488,7 +7552,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 160";
 		rLen = 0;
-		rLoc = 7036;
+		rLoc = 7081;
 		rType = 0;
 		vrLen = 981;
 		vrLoc = 3886;
@@ -7516,7 +7580,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 95";
 		rLen = 49;
-		rLoc = 3829;
+		rLoc = 3832;
 		rType = 0;
 		vrLen = 419;
 		vrLoc = 2616;
@@ -7536,7 +7600,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 95";
 		rLen = 49;
-		rLoc = 3829;
+		rLoc = 3832;
 		rType = 0;
 		vrLen = 1397;
 		vrLoc = 2616;
@@ -7546,7 +7610,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 57";
 		rLen = 0;
-		rLoc = 1739;
+		rLoc = 1742;
 		rType = 0;
 		vrLen = 722;
 		vrLoc = 766;
@@ -7586,7 +7650,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 92";
 		rLen = 0;
-		rLoc = 3068;
+		rLoc = 3103;
 		rType = 0;
 		vrLen = 1373;
 		vrLoc = 2076;
@@ -7596,7 +7660,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 100";
 		rLen = 0;
-		rLoc = 3856;
+		rLoc = 3901;
 		rType = 0;
 		vrLen = 1444;
 		vrLoc = 3496;
@@ -7616,7 +7680,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 95";
 		rLen = 49;
-		rLoc = 3829;
+		rLoc = 3832;
 		rType = 0;
 		vrLen = 1397;
 		vrLoc = 2616;
@@ -7626,7 +7690,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 54";
 		rLen = 0;
-		rLoc = 1713;
+		rLoc = 1716;
 		rType = 0;
 		vrLen = 896;
 		vrLoc = 797;
@@ -7636,7 +7700,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 72";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1321;
 		vrLoc = 1892;
@@ -7646,7 +7710,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 171";
 		rLen = 20;
-		rLoc = 7249;
+		rLoc = 7294;
 		rType = 0;
 		vrLen = 954;
 		vrLoc = 4192;
@@ -7656,7 +7720,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 75";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1380;
 		vrLoc = 1848;
@@ -7666,7 +7730,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 63";
 		rLen = 0;
-		rLoc = 1906;
+		rLoc = 1909;
 		rType = 0;
 		vrLen = 709;
 		vrLoc = 766;
@@ -7676,7 +7740,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 79";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1367;
 		vrLoc = 2076;
@@ -7686,7 +7750,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 171";
 		rLen = 20;
-		rLoc = 7249;
+		rLoc = 7294;
 		rType = 0;
 		vrLen = 893;
 		vrLoc = 4192;
@@ -7696,7 +7760,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 79";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1397;
 		vrLoc = 2046;
@@ -7706,7 +7770,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 171";
 		rLen = 20;
-		rLoc = 7249;
+		rLoc = 7294;
 		rType = 0;
 		vrLen = 893;
 		vrLoc = 4192;
@@ -7716,7 +7780,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 57";
 		rLen = 0;
-		rLoc = 1739;
+		rLoc = 1742;
 		rType = 0;
 		vrLen = 722;
 		vrLoc = 766;
@@ -7726,7 +7790,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 97";
 		rLen = 0;
-		rLoc = 3228;
+		rLoc = 3263;
 		rType = 0;
 		vrLen = 1373;
 		vrLoc = 2076;
@@ -7746,7 +7810,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 92";
 		rLen = 0;
-		rLoc = 3068;
+		rLoc = 3103;
 		rType = 0;
 		vrLen = 1373;
 		vrLoc = 2076;
@@ -7756,7 +7820,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 100";
 		rLen = 0;
-		rLoc = 3856;
+		rLoc = 3901;
 		rType = 0;
 		vrLen = 1396;
 		vrLoc = 3544;
@@ -7786,7 +7850,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 100";
 		rLen = 0;
-		rLoc = 3856;
+		rLoc = 3901;
 		rType = 0;
 		vrLen = 1444;
 		vrLoc = 3496;
@@ -7796,7 +7860,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 92";
 		rLen = 0;
-		rLoc = 3068;
+		rLoc = 3103;
 		rType = 0;
 		vrLen = 1373;
 		vrLoc = 2076;
@@ -7806,7 +7870,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 54";
 		rLen = 0;
-		rLoc = 2088;
+		rLoc = 2133;
 		rType = 0;
 		vrLen = 1068;
 		vrLoc = 1347;
@@ -7816,7 +7880,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 99";
 		rLen = 0;
-		rLoc = 3848;
+		rLoc = 3893;
 		rType = 0;
 		vrLen = 999;
 		vrLoc = 2273;
@@ -7836,7 +7900,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 56";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 729;
 		vrLoc = 589;
@@ -7846,7 +7910,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 56";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 904;
 		vrLoc = 1221;
@@ -7856,7 +7920,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 105";
 		rLen = 48;
-		rLoc = 4479;
+		rLoc = 4524;
 		rType = 0;
 		vrLen = 816;
 		vrLoc = 3027;
@@ -7866,7 +7930,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 114";
 		rLen = 0;
-		rLoc = 5302;
+		rLoc = 5347;
 		rType = 0;
 		vrLen = 927;
 		vrLoc = 2933;
@@ -7876,7 +7940,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 97";
 		rLen = 101;
-		rLoc = 3226;
+		rLoc = 3261;
 		rType = 0;
 		vrLen = 1496;
 		vrLoc = 2076;
@@ -7886,7 +7950,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 343";
 		rLen = 0;
-		rLoc = 10399;
+		rLoc = 10444;
 		rType = 0;
 		vrLen = 1075;
 		vrLoc = 9041;
@@ -7906,7 +7970,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 56";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 729;
 		vrLoc = 589;
@@ -7916,7 +7980,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 343";
 		rLen = 0;
-		rLoc = 10399;
+		rLoc = 10444;
 		rType = 0;
 		vrLen = 1101;
 		vrLoc = 9014;
@@ -7926,7 +7990,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 91";
 		rLen = 0;
-		rLoc = 3067;
+		rLoc = 3102;
 		rType = 0;
 		vrLen = 1526;
 		vrLoc = 2046;
@@ -7936,7 +8000,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 105";
 		rLen = 48;
-		rLoc = 4479;
+		rLoc = 4524;
 		rType = 0;
 		vrLen = 873;
 		vrLoc = 3027;
@@ -7946,7 +8010,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 56";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 904;
 		vrLoc = 1221;
@@ -7956,7 +8020,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 123";
 		rLen = 0;
-		rLoc = 5228;
+		rLoc = 5273;
 		rType = 0;
 		vrLen = 1006;
 		vrLoc = 3115;
@@ -8006,7 +8070,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 68";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 951;
 		vrLoc = 932;
@@ -8016,7 +8080,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 114";
 		rLen = 0;
-		rLoc = 3698;
+		rLoc = 3733;
 		rType = 0;
 		vrLen = 1509;
 		vrLoc = 2204;
@@ -8026,7 +8090,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 374";
 		rLen = 0;
-		rLoc = 10807;
+		rLoc = 10852;
 		rType = 0;
 		vrLen = 1185;
 		vrLoc = 9524;
@@ -8046,7 +8110,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 134";
 		rLen = 0;
-		rLoc = 5360;
+		rLoc = 5405;
 		rType = 0;
 		vrLen = 1254;
 		vrLoc = 3595;
@@ -8056,7 +8120,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 114";
 		rLen = 86;
-		rLoc = 3682;
+		rLoc = 3717;
 		rType = 0;
 		vrLen = 1498;
 		vrLoc = 2204;
@@ -8066,7 +8130,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 153";
 		rLen = 0;
-		rLoc = 5358;
+		rLoc = 5403;
 		rType = 0;
 		vrLen = 833;
 		vrLoc = 3707;
@@ -8076,7 +8140,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 66";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1206;
 		vrLoc = 680;
@@ -8086,7 +8150,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 136";
 		rLen = 0;
-		rLoc = 4829;
+		rLoc = 4874;
 		rType = 0;
 		vrLen = 773;
 		vrLoc = 3767;
@@ -8126,7 +8190,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 135";
 		rLen = 0;
-		rLoc = 4792;
+		rLoc = 4837;
 		rType = 0;
 		vrLen = 1268;
 		vrLoc = 3839;
@@ -8146,7 +8210,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 52";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1202;
 		vrLoc = 761;
@@ -8166,7 +8230,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 76";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1237;
 		vrLoc = 1239;
@@ -8186,7 +8250,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 135";
 		rLen = 0;
-		rLoc = 4792;
+		rLoc = 4837;
 		rType = 0;
 		vrLen = 1209;
 		vrLoc = 3695;
@@ -8196,7 +8260,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 68";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 951;
 		vrLoc = 932;
@@ -8206,7 +8270,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 114";
 		rLen = 0;
-		rLoc = 3698;
+		rLoc = 3733;
 		rType = 0;
 		vrLen = 1509;
 		vrLoc = 2204;
@@ -8216,7 +8280,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 374";
 		rLen = 0;
-		rLoc = 10807;
+		rLoc = 10852;
 		rType = 0;
 		vrLen = 1185;
 		vrLoc = 9524;
@@ -8256,7 +8320,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 52";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1089;
 		vrLoc = 833;
@@ -8266,7 +8330,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 52";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1049;
 		vrLoc = 833;
@@ -8276,7 +8340,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 52";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1049;
 		vrLoc = 752;
@@ -8296,7 +8360,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 52";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1049;
 		vrLoc = 752;
@@ -8376,7 +8440,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 52";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1074;
 		vrLoc = 727;
@@ -8396,7 +8460,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 168";
 		rLen = 0;
-		rLoc = 4538;
+		rLoc = 4541;
 		rType = 0;
 		vrLen = 1378;
 		vrLoc = 4085;
@@ -8406,7 +8470,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 95";
 		rLen = 49;
-		rLoc = 3829;
+		rLoc = 3832;
 		rType = 0;
 		vrLen = 419;
 		vrLoc = 2616;
@@ -8416,7 +8480,7 @@
 		comments = "error: 'NSAutoReleasePool' undeclared (first use in this function)";
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		rLen = 0;
-		rLoc = 388;
+		rLoc = 389;
 		rType = 1;
 	};
 	1BCD5B750EEAD10E00D86C43 /* PBXTextBookmark */ = {
@@ -8424,7 +8488,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 95";
 		rLen = 49;
-		rLoc = 3829;
+		rLoc = 3832;
 		rType = 0;
 		vrLen = 419;
 		vrLoc = 2616;
@@ -8434,7 +8498,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 371";
 		rLen = 0;
-		rLoc = 10807;
+		rLoc = 10852;
 		rType = 0;
 		vrLen = 773;
 		vrLoc = 9936;
@@ -8464,7 +8528,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 163";
 		rLen = 0;
-		rLoc = 4267;
+		rLoc = 4270;
 		rType = 0;
 		vrLen = 1545;
 		vrLoc = 4006;
@@ -8474,7 +8538,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 235";
 		rLen = 0;
-		rLoc = 7246;
+		rLoc = 7291;
 		rType = 0;
 		vrLen = 1085;
 		vrLoc = 5961;
@@ -8484,7 +8548,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 73";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1343;
 		vrLoc = 1746;
@@ -8494,7 +8558,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 168";
 		rLen = 0;
-		rLoc = 4538;
+		rLoc = 4541;
 		rType = 0;
 		vrLen = 1378;
 		vrLoc = 4085;
@@ -8524,7 +8588,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 163";
 		rLen = 0;
-		rLoc = 4267;
+		rLoc = 4270;
 		rType = 0;
 		vrLen = 1545;
 		vrLoc = 4006;
@@ -8534,7 +8598,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 73";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1281;
 		vrLoc = 1808;
@@ -8544,7 +8608,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 235";
 		rLen = 0;
-		rLoc = 7246;
+		rLoc = 7291;
 		rType = 0;
 		vrLen = 1085;
 		vrLoc = 5961;
@@ -8554,7 +8618,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1337;
 		vrLoc = 1746;
@@ -8564,7 +8628,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1337;
 		vrLoc = 1746;
@@ -8584,7 +8648,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1337;
 		vrLoc = 1746;
@@ -8604,7 +8668,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 380";
 		rLen = 0;
-		rLoc = 10807;
+		rLoc = 10852;
 		rType = 0;
 		vrLen = 645;
 		vrLoc = 10043;
@@ -8634,7 +8698,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 62";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1018;
 		vrLoc = 934;
@@ -8654,7 +8718,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 62";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 1018;
 		vrLoc = 934;
@@ -8684,7 +8748,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 82";
 		rLen = 0;
-		rLoc = 1817;
+		rLoc = 1820;
 		rType = 0;
 		vrLen = 699;
 		vrLoc = 1630;
@@ -8694,7 +8758,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1266;
 		vrLoc = 1746;
@@ -8704,7 +8768,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 237";
 		rLen = 0;
-		rLoc = 7247;
+		rLoc = 7292;
 		rType = 0;
 		vrLen = 889;
 		vrLoc = 6556;
@@ -8714,7 +8778,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 82";
 		rLen = 0;
-		rLoc = 1832;
+		rLoc = 1835;
 		rType = 0;
 		vrLen = 699;
 		vrLoc = 1630;
@@ -8724,7 +8788,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 82";
 		rLen = 0;
-		rLoc = 1832;
+		rLoc = 1835;
 		rType = 0;
 		vrLen = 699;
 		vrLoc = 1630;
@@ -8734,7 +8798,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 237";
 		rLen = 0;
-		rLoc = 7247;
+		rLoc = 7292;
 		rType = 0;
 		vrLen = 1008;
 		vrLoc = 5961;
@@ -8744,7 +8808,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1266;
 		vrLoc = 1746;
@@ -8754,7 +8818,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 237";
 		rLen = 0;
-		rLoc = 7247;
+		rLoc = 7292;
 		rType = 0;
 		vrLen = 889;
 		vrLoc = 6556;
@@ -8764,7 +8828,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 157";
 		rLen = 0;
-		rLoc = 4292;
+		rLoc = 4295;
 		rType = 0;
 		vrLen = 1533;
 		vrLoc = 3501;
@@ -8774,7 +8838,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 50";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 735;
 		vrLoc = 794;
@@ -8784,7 +8848,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 237";
 		rLen = 0;
-		rLoc = 7247;
+		rLoc = 7292;
 		rType = 0;
 		vrLen = 889;
 		vrLoc = 6556;
@@ -8794,7 +8858,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 50";
 		rLen = 0;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 735;
 		vrLoc = 794;
@@ -8804,7 +8868,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 168";
 		rLen = 0;
-		rLoc = 4792;
+		rLoc = 4837;
 		rType = 0;
 		vrLen = 1285;
 		vrLoc = 4271;
@@ -8814,7 +8878,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 60";
 		rLen = 42;
-		rLoc = 1458;
+		rLoc = 1461;
 		rType = 0;
 		vrLen = 941;
 		vrLoc = 998;
@@ -8824,7 +8888,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 98";
 		rLen = 0;
-		rLoc = 3283;
+		rLoc = 3318;
 		rType = 0;
 		vrLen = 1418;
 		vrLoc = 2262;
@@ -8844,7 +8908,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 126";
 		rLen = 0;
-		rLoc = 4014;
+		rLoc = 4059;
 		rType = 0;
 		vrLen = 1109;
 		vrLoc = 3213;
@@ -8854,7 +8918,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 126";
 		rLen = 0;
-		rLoc = 4014;
+		rLoc = 4059;
 		rType = 0;
 		vrLen = 1109;
 		vrLoc = 3213;
@@ -8864,7 +8928,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 50";
 		rLen = 57;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 913;
 		vrLoc = 653;
@@ -8884,7 +8948,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 60";
 		rLen = 42;
-		rLoc = 1458;
+		rLoc = 1461;
 		rType = 0;
 		vrLen = 941;
 		vrLoc = 998;
@@ -8904,7 +8968,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1451;
 		vrLoc = 2262;
@@ -8924,7 +8988,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 98";
 		rLen = 0;
-		rLoc = 3283;
+		rLoc = 3318;
 		rType = 0;
 		vrLen = 1418;
 		vrLoc = 2262;
@@ -8944,7 +9008,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 146";
 		rLen = 0;
-		rLoc = 4739;
+		rLoc = 4784;
 		rType = 0;
 		vrLen = 897;
 		vrLoc = 5165;
@@ -8954,7 +9018,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 368";
 		rLen = 0;
-		rLoc = 10807;
+		rLoc = 10852;
 		rType = 0;
 		vrLen = 687;
 		vrLoc = 9736;
@@ -8982,7 +9046,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 368";
 		rLen = 0;
-		rLoc = 10807;
+		rLoc = 10852;
 		rType = 0;
 		vrLen = 687;
 		vrLoc = 9736;
@@ -9002,7 +9066,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 55";
 		rLen = 0;
-		rLoc = 1420;
+		rLoc = 1423;
 		rType = 0;
 		vrLen = 561;
 		vrLoc = 1088;
@@ -9012,7 +9076,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 180";
 		rLen = 0;
-		rLoc = 5358;
+		rLoc = 5403;
 		rType = 0;
 		vrLen = 1108;
 		vrLoc = 4735;
@@ -9052,7 +9116,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 50";
 		rLen = 543;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 942;
 		vrLoc = 970;
@@ -9062,7 +9126,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 113";
 		rLen = 0;
-		rLoc = 3878;
+		rLoc = 3881;
 		rType = 0;
 		vrLen = 1577;
 		vrLoc = 3180;
@@ -9080,7 +9144,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 180";
 		rLen = 0;
-		rLoc = 5358;
+		rLoc = 5403;
 		rType = 0;
 		vrLen = 1108;
 		vrLoc = 4735;
@@ -9120,7 +9184,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 50";
 		rLen = 543;
-		rLoc = 1091;
+		rLoc = 1094;
 		rType = 0;
 		vrLen = 942;
 		vrLoc = 970;
@@ -9130,7 +9194,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 100";
 		rLen = 0;
-		rLoc = 3004;
+		rLoc = 3007;
 		rType = 0;
 		vrLen = 887;
 		vrLoc = 2190;
@@ -9140,7 +9204,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 113";
 		rLen = 0;
-		rLoc = 3878;
+		rLoc = 3881;
 		rType = 0;
 		vrLen = 1577;
 		vrLoc = 3180;
@@ -9150,7 +9214,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 107";
 		rLen = 61;
-		rLoc = 3129;
+		rLoc = 3132;
 		rType = 0;
 		vrLen = 920;
 		vrLoc = 2204;
@@ -9170,7 +9234,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 62";
 		rLen = 0;
-		rLoc = 1542;
+		rLoc = 1545;
 		rType = 0;
 		vrLen = 996;
 		vrLoc = 934;
@@ -9180,7 +9244,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 32";
 		rLen = 0;
-		rLoc = 819;
+		rLoc = 822;
 		rType = 0;
 		vrLen = 1132;
 		vrLoc = 482;
@@ -9200,7 +9264,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 166";
 		rLen = 0;
-		rLoc = 5358;
+		rLoc = 5403;
 		rType = 0;
 		vrLen = 647;
 		vrLoc = 4735;
@@ -9210,7 +9274,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 102";
 		rLen = 0;
-		rLoc = 2910;
+		rLoc = 2913;
 		rType = 0;
 		vrLen = 1063;
 		vrLoc = 1993;
@@ -9220,7 +9284,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 102";
 		rLen = 0;
-		rLoc = 2872;
+		rLoc = 2875;
 		rType = 0;
 		vrLen = 1164;
 		vrLoc = 1892;
@@ -9240,7 +9304,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 62";
 		rLen = 0;
-		rLoc = 1542;
+		rLoc = 1545;
 		rType = 0;
 		vrLen = 996;
 		vrLoc = 934;
@@ -9250,7 +9314,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 31";
 		rLen = 0;
-		rLoc = 741;
+		rLoc = 744;
 		rType = 0;
 		vrLen = 1040;
 		vrLoc = 482;
@@ -9260,7 +9324,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 85";
 		rLen = 799;
-		rLoc = 2205;
+		rLoc = 2208;
 		rType = 0;
 		vrLen = 1063;
 		vrLoc = 1993;
@@ -9270,7 +9334,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 32";
 		rLen = 0;
-		rLoc = 819;
+		rLoc = 822;
 		rType = 0;
 		vrLen = 1132;
 		vrLoc = 482;
@@ -9290,7 +9354,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 102";
 		rLen = 0;
-		rLoc = 2910;
+		rLoc = 2913;
 		rType = 0;
 		vrLen = 1063;
 		vrLoc = 1993;
@@ -9300,7 +9364,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 166";
 		rLen = 0;
-		rLoc = 5358;
+		rLoc = 5403;
 		rType = 0;
 		vrLen = 647;
 		vrLoc = 4735;
@@ -9310,7 +9374,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 88";
 		rLen = 0;
-		rLoc = 2283;
+		rLoc = 2286;
 		rType = 0;
 		vrLen = 1197;
 		vrLoc = 1993;
@@ -9320,7 +9384,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 88";
 		rLen = 0;
-		rLoc = 2283;
+		rLoc = 2286;
 		rType = 0;
 		vrLen = 1197;
 		vrLoc = 1993;
@@ -9330,7 +9394,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 88";
 		rLen = 0;
-		rLoc = 2283;
+		rLoc = 2286;
 		rType = 0;
 		vrLen = 1197;
 		vrLoc = 1993;
@@ -9340,7 +9404,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 88";
 		rLen = 0;
-		rLoc = 2283;
+		rLoc = 2286;
 		rType = 0;
 		vrLen = 1197;
 		vrLoc = 1993;
@@ -9360,7 +9424,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 32";
 		rLen = 0;
-		rLoc = 819;
+		rLoc = 822;
 		rType = 0;
 		vrLen = 720;
 		vrLoc = 8604;
@@ -9380,7 +9444,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 88";
 		rLen = 0;
-		rLoc = 2283;
+		rLoc = 2286;
 		rType = 0;
 		vrLen = 838;
 		vrLoc = 9549;
@@ -9390,7 +9454,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 88";
 		rLen = 0;
-		rLoc = 2283;
+		rLoc = 2286;
 		rType = 0;
 		vrLen = 838;
 		vrLoc = 9549;
@@ -9410,7 +9474,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 32";
 		rLen = 0;
-		rLoc = 819;
+		rLoc = 822;
 		rType = 0;
 		vrLen = 720;
 		vrLoc = 8604;
@@ -9430,7 +9494,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 218";
 		rLen = 0;
-		rLoc = 5797;
+		rLoc = 5800;
 		rType = 0;
 		vrLen = 1165;
 		vrLoc = 7538;
@@ -9440,7 +9504,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 282";
 		rLen = 0;
-		rLoc = 8968;
+		rLoc = 8971;
 		rType = 0;
 		vrLen = 817;
 		vrLoc = 8370;
@@ -9450,7 +9514,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 325";
 		rLen = 0;
-		rLoc = 9973;
+		rLoc = 9976;
 		rType = 0;
 		vrLen = 986;
 		vrLoc = 9203;
@@ -9460,7 +9524,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 325";
 		rLen = 0;
-		rLoc = 9973;
+		rLoc = 9976;
 		rType = 0;
 		vrLen = 986;
 		vrLoc = 9203;
@@ -9470,7 +9534,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 145";
 		rLen = 0;
-		rLoc = 3793;
+		rLoc = 3796;
 		rType = 0;
 		vrLen = 805;
 		vrLoc = 3276;
@@ -9480,7 +9544,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 232";
 		rLen = 0;
-		rLoc = 6247;
+		rLoc = 6250;
 		rType = 0;
 		vrLen = 1586;
 		vrLoc = 5477;
@@ -9490,7 +9554,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 208";
 		rLen = 0;
-		rLoc = 5364;
+		rLoc = 5367;
 		rType = 0;
 		vrLen = 1294;
 		vrLoc = 5122;
@@ -9500,7 +9564,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 204";
 		rLen = 0;
-		rLoc = 5364;
+		rLoc = 5367;
 		rType = 0;
 		vrLen = 1281;
 		vrLoc = 5122;
@@ -9510,7 +9574,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 201";
 		rLen = 0;
-		rLoc = 5339;
+		rLoc = 5342;
 		rType = 0;
 		vrLen = 1302;
 		vrLoc = 5122;
@@ -9520,7 +9584,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 205";
 		rLen = 0;
-		rLoc = 5364;
+		rLoc = 5367;
 		rType = 0;
 		vrLen = 1316;
 		vrLoc = 5122;
@@ -9530,7 +9594,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 245";
 		rLen = 0;
-		rLoc = 7052;
+		rLoc = 7055;
 		rType = 0;
 		vrLen = 1316;
 		vrLoc = 5122;
@@ -9540,7 +9604,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 272";
 		rLen = 0;
-		rLoc = 8734;
+		rLoc = 8737;
 		rType = 0;
 		vrLen = 1011;
 		vrLoc = 4847;
@@ -9550,7 +9614,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 257";
 		rLen = 0;
-		rLoc = 8279;
+		rLoc = 8282;
 		rType = 0;
 		vrLen = 1847;
 		vrLoc = 6601;
@@ -9620,7 +9684,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 31";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1294;
 		vrLoc = 0;
@@ -9630,7 +9694,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 43";
 		rLen = 0;
-		rLoc = 1836;
+		rLoc = 1881;
 		rType = 0;
 		vrLen = 1496;
 		vrLoc = 360;
@@ -9650,7 +9714,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 267";
 		rLen = 0;
-		rLoc = 8654;
+		rLoc = 8657;
 		rType = 0;
 		vrLen = 1307;
 		vrLoc = 7430;
@@ -9660,7 +9724,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 265";
 		rLen = 0;
-		rLoc = 8427;
+		rLoc = 8430;
 		rType = 0;
 		vrLen = 1321;
 		vrLoc = 7489;
@@ -9780,7 +9844,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 267";
 		rLen = 0;
-		rLoc = 8654;
+		rLoc = 8657;
 		rType = 0;
 		vrLen = 1307;
 		vrLoc = 7430;
@@ -9790,7 +9854,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 31";
 		rLen = 0;
-		rLoc = 510;
+		rLoc = 545;
 		rType = 0;
 		vrLen = 1294;
 		vrLoc = 0;
@@ -9800,7 +9864,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 43";
 		rLen = 0;
-		rLoc = 1836;
+		rLoc = 1881;
 		rType = 0;
 		vrLen = 1496;
 		vrLoc = 360;
@@ -9820,7 +9884,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 267";
 		rLen = 0;
-		rLoc = 8654;
+		rLoc = 8657;
 		rType = 0;
 		vrLen = 1413;
 		vrLoc = 7324;
@@ -9844,7 +9908,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 55";
 		rLen = 0;
-		rLoc = 1420;
+		rLoc = 1423;
 		rType = 0;
 		vrLen = 561;
 		vrLoc = 1088;
@@ -9854,7 +9918,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 55";
 		rLen = 0;
-		rLoc = 1420;
+		rLoc = 1423;
 		rType = 0;
 		vrLen = 561;
 		vrLoc = 1088;
@@ -9864,7 +9928,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 111";
 		rLen = 61;
-		rLoc = 3129;
+		rLoc = 3132;
 		rType = 0;
 		vrLen = 737;
 		vrLoc = 2283;
@@ -9891,7 +9955,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 258";
 		rLen = 0;
-		rLoc = 8426;
+		rLoc = 8429;
 		rType = 0;
 		vrLen = 844;
 		vrLoc = 8236;
@@ -10011,7 +10075,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 258";
 		rLen = 0;
-		rLoc = 8426;
+		rLoc = 8429;
 		rType = 0;
 		vrLen = 844;
 		vrLoc = 8236;
@@ -10251,7 +10315,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 111";
 		rLen = 61;
-		rLoc = 3129;
+		rLoc = 3132;
 		rType = 0;
 		vrLen = 737;
 		vrLoc = 2283;
@@ -10301,7 +10365,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 111";
 		rLen = 61;
-		rLoc = 3129;
+		rLoc = 3132;
 		rType = 0;
 		vrLen = 737;
 		vrLoc = 2283;
@@ -10931,7 +10995,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 111";
 		rLen = 61;
-		rLoc = 3129;
+		rLoc = 3132;
 		rType = 0;
 		vrLen = 737;
 		vrLoc = 2283;
@@ -10979,7 +11043,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 111";
 		rLen = 61;
-		rLoc = 3129;
+		rLoc = 3132;
 		rType = 0;
 		vrLen = 737;
 		vrLoc = 2283;
@@ -11059,7 +11123,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 273";
 		rLen = 0;
-		rLoc = 8885;
+		rLoc = 8888;
 		rType = 0;
 		vrLen = 850;
 		vrLoc = 8229;
@@ -11099,7 +11163,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 273";
 		rLen = 0;
-		rLoc = 8885;
+		rLoc = 8888;
 		rType = 0;
 		vrLen = 850;
 		vrLoc = 8229;
@@ -11149,7 +11213,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 32";
 		rLen = 0;
-		rLoc = 819;
+		rLoc = 822;
 		rType = 0;
 		vrLen = 720;
 		vrLoc = 8604;
@@ -11179,7 +11243,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 403";
 		rLen = 0;
-		rLoc = 14343;
+		rLoc = 14346;
 		rType = 0;
 		vrLen = 1271;
 		vrLoc = 13387;
@@ -11189,7 +11253,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 403";
 		rLen = 0;
-		rLoc = 14343;
+		rLoc = 14346;
 		rType = 0;
 		vrLen = 1349;
 		vrLoc = 9384;
@@ -11209,7 +11273,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 403";
 		rLen = 0;
-		rLoc = 14343;
+		rLoc = 14346;
 		rType = 0;
 		vrLen = 1349;
 		vrLoc = 9384;
@@ -11269,7 +11333,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 66";
 		rLen = 0;
-		rLoc = 1649;
+		rLoc = 1652;
 		rType = 0;
 		vrLen = 1015;
 		vrLoc = 1817;
@@ -11279,7 +11343,7 @@
 		fRef = 1BC88D780ED31ECD006B47FE /* XADCompactProParser.m */;
 		name = "XADCompactProParser.m: 48";
 		rLen = 0;
-		rLoc = 1133;
+		rLoc = 1136;
 		rType = 0;
 		vrLen = 874;
 		vrLoc = 266;
@@ -11319,7 +11383,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 66";
 		rLen = 0;
-		rLoc = 1649;
+		rLoc = 1652;
 		rType = 0;
 		vrLen = 1015;
 		vrLoc = 1817;
@@ -11329,7 +11393,7 @@
 		fRef = 1BC88D780ED31ECD006B47FE /* XADCompactProParser.m */;
 		name = "XADCompactProParser.m: 48";
 		rLen = 0;
-		rLoc = 1133;
+		rLoc = 1136;
 		rType = 0;
 		vrLen = 874;
 		vrLoc = 266;
@@ -11517,7 +11581,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 273";
 		rLen = 0;
-		rLoc = 8885;
+		rLoc = 8888;
 		rType = 0;
 		vrLen = 850;
 		vrLoc = 8229;
@@ -11537,7 +11601,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 267";
 		rLen = 0;
-		rLoc = 8654;
+		rLoc = 8657;
 		rType = 0;
 		vrLen = 1055;
 		vrLoc = 7841;
@@ -11547,7 +11611,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 266";
 		rLen = 0;
-		rLoc = 8653;
+		rLoc = 8656;
 		rType = 0;
 		vrLen = 1055;
 		vrLoc = 7841;
@@ -11567,7 +11631,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 266";
 		rLen = 0;
-		rLoc = 8653;
+		rLoc = 8656;
 		rType = 0;
 		vrLen = 1055;
 		vrLoc = 7841;
@@ -11597,7 +11661,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 43";
 		rLen = 0;
-		rLoc = 1836;
+		rLoc = 1881;
 		rType = 0;
 		vrLen = 1496;
 		vrLoc = 360;
@@ -11617,7 +11681,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 151";
 		rLen = 0;
-		rLoc = 4792;
+		rLoc = 4837;
 		rType = 0;
 		vrLen = 1155;
 		vrLoc = 3988;
@@ -11627,7 +11691,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 152";
 		rLen = 0;
-		rLoc = 4888;
+		rLoc = 4933;
 		rType = 0;
 		vrLen = 1176;
 		vrLoc = 3988;
@@ -11637,7 +11701,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 142";
 		rLen = 0;
-		rLoc = 4570;
+		rLoc = 4615;
 		rType = 0;
 		vrLen = 1176;
 		vrLoc = 3988;
@@ -11657,7 +11721,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 142";
 		rLen = 0;
-		rLoc = 4570;
+		rLoc = 4615;
 		rType = 0;
 		vrLen = 1176;
 		vrLoc = 3988;
@@ -11677,7 +11741,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 311";
 		rLen = 0;
-		rLoc = 9759;
+		rLoc = 9762;
 		rType = 0;
 		vrLen = 1036;
 		vrLoc = 8896;
@@ -11687,7 +11751,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 311";
 		rLen = 0;
-		rLoc = 9755;
+		rLoc = 9758;
 		rType = 0;
 		vrLen = 953;
 		vrLoc = 3612;
@@ -11697,7 +11761,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 403";
 		rLen = 0;
-		rLoc = 14343;
+		rLoc = 14346;
 		rType = 0;
 		vrLen = 1349;
 		vrLoc = 9384;
@@ -11707,7 +11771,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 311";
 		rLen = 0;
-		rLoc = 9755;
+		rLoc = 9758;
 		rType = 0;
 		vrLen = 953;
 		vrLoc = 3612;
@@ -11717,7 +11781,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 403";
 		rLen = 0;
-		rLoc = 14343;
+		rLoc = 14346;
 		rType = 0;
 		vrLen = 1429;
 		vrLoc = 12966;
@@ -11727,7 +11791,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 403";
 		rLen = 1;
-		rLoc = 14341;
+		rLoc = 14344;
 		rType = 0;
 		vrLen = 1431;
 		vrLoc = 12966;
@@ -11737,7 +11801,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 445";
 		rLen = 0;
-		rLoc = 15744;
+		rLoc = 15747;
 		rType = 0;
 		vrLen = 1310;
 		vrLoc = 14738;
@@ -11747,7 +11811,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 445";
 		rLen = 0;
-		rLoc = 15744;
+		rLoc = 15747;
 		rType = 0;
 		vrLen = 1310;
 		vrLoc = 14738;
@@ -11776,7 +11840,7 @@
 		isa = PBXTextBookmark;
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 1";
-		rLen = 5551;
+		rLen = 5554;
 		rLoc = 0;
 		rType = 0;
 		vrLen = 1015;
@@ -11797,7 +11861,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 60";
 		rLen = 0;
-		rLoc = 2148;
+		rLoc = 2193;
 		rType = 0;
 		vrLen = 1019;
 		vrLoc = 1508;
@@ -11807,7 +11871,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 35";
 		rLen = 0;
-		rLoc = 1911;
+		rLoc = 1914;
 		rType = 0;
 		vrLen = 929;
 		vrLoc = 631;
@@ -11817,7 +11881,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 445";
 		rLen = 0;
-		rLoc = 15744;
+		rLoc = 15747;
 		rType = 0;
 		vrLen = 1310;
 		vrLoc = 14738;
@@ -11846,7 +11910,7 @@
 		isa = PBXTextBookmark;
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 1";
-		rLen = 5551;
+		rLen = 5554;
 		rLoc = 0;
 		rType = 0;
 		vrLen = 1015;
@@ -11857,7 +11921,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 35";
 		rLen = 0;
-		rLoc = 1911;
+		rLoc = 1914;
 		rType = 0;
 		vrLen = 929;
 		vrLoc = 631;
@@ -11877,7 +11941,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 60";
 		rLen = 0;
-		rLoc = 2148;
+		rLoc = 2193;
 		rType = 0;
 		vrLen = 1019;
 		vrLoc = 1508;
@@ -11887,7 +11951,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 35";
 		rLen = 0;
-		rLoc = 1922;
+		rLoc = 1925;
 		rType = 0;
 		vrLen = 929;
 		vrLoc = 631;
@@ -11897,7 +11961,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 35";
 		rLen = 0;
-		rLoc = 1922;
+		rLoc = 1925;
 		rType = 0;
 		vrLen = 800;
 		vrLoc = 760;
@@ -11907,7 +11971,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 22";
 		rLen = 15;
-		rLoc = 1155;
+		rLoc = 1158;
 		rType = 0;
 		vrLen = 987;
 		vrLoc = 0;
@@ -11947,7 +12011,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 48";
 		rLen = 0;
-		rLoc = 2195;
+		rLoc = 2198;
 		rType = 0;
 		vrLen = 929;
 		vrLoc = 631;
@@ -11957,7 +12021,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 48";
 		rLen = 0;
-		rLoc = 2195;
+		rLoc = 2198;
 		rType = 0;
 		vrLen = 908;
 		vrLoc = 652;
@@ -12087,7 +12151,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 50";
 		rLen = 0;
-		rLoc = 2580;
+		rLoc = 2583;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 572;
@@ -12097,7 +12161,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 50";
 		rLen = 0;
-		rLoc = 2576;
+		rLoc = 2579;
 		rType = 0;
 		vrLen = 979;
 		vrLoc = 572;
@@ -12107,7 +12171,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 48";
 		rLen = 0;
-		rLoc = 2200;
+		rLoc = 2203;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 572;
@@ -12117,7 +12181,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 47";
 		rLen = 2;
-		rLoc = 2155;
+		rLoc = 2158;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 572;
@@ -12147,7 +12211,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 47";
 		rLen = 2;
-		rLoc = 2155;
+		rLoc = 2158;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 572;
@@ -12225,7 +12289,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 9";
 		rLen = 31;
-		rLoc = 373;
+		rLoc = 376;
 		rType = 0;
 		vrLen = 389;
 		vrLoc = 0;
@@ -12282,7 +12346,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 47";
 		rLen = 2;
-		rLoc = 2155;
+		rLoc = 2158;
 		rType = 0;
 		vrLen = 974;
 		vrLoc = 572;
@@ -12302,7 +12366,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 51";
 		rLen = 0;
-		rLoc = 2609;
+		rLoc = 2612;
 		rType = 0;
 		vrLen = 900;
 		vrLoc = 652;
@@ -12312,7 +12376,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 50";
 		rLen = 0;
-		rLoc = 2239;
+		rLoc = 2242;
 		rType = 0;
 		vrLen = 955;
 		vrLoc = 631;
@@ -12322,7 +12386,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 9";
 		rLen = 31;
-		rLoc = 373;
+		rLoc = 376;
 		rType = 0;
 		vrLen = 389;
 		vrLoc = 0;
@@ -12342,7 +12406,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 9";
 		rLen = 31;
-		rLoc = 373;
+		rLoc = 376;
 		rType = 0;
 		vrLen = 389;
 		vrLoc = 0;
@@ -12382,7 +12446,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 25";
 		rLen = 0;
-		rLoc = 1190;
+		rLoc = 1193;
 		rType = 0;
 		vrLen = 939;
 		vrLoc = 667;
@@ -12392,7 +12456,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 50";
 		rLen = 0;
-		rLoc = 2239;
+		rLoc = 2242;
 		rType = 0;
 		vrLen = 831;
 		vrLoc = 760;
@@ -12412,7 +12476,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 25";
 		rLen = 0;
-		rLoc = 1190;
+		rLoc = 1193;
 		rType = 0;
 		vrLen = 831;
 		vrLoc = 775;
@@ -12442,7 +12506,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 51";
 		rLen = 0;
-		rLoc = 2224;
+		rLoc = 2227;
 		rType = 0;
 		vrLen = 824;
 		vrLoc = 775;
@@ -12505,7 +12569,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 51";
 		rLen = 0;
-		rLoc = 2224;
+		rLoc = 2227;
 		rType = 0;
 		vrLen = 824;
 		vrLoc = 775;
@@ -12529,7 +12593,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 51";
 		rLen = 0;
-		rLoc = 2224;
+		rLoc = 2227;
 		rType = 0;
 		vrLen = 824;
 		vrLoc = 775;
@@ -13029,7 +13093,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 493";
 		rLen = 0;
-		rLoc = 17496;
+		rLoc = 17499;
 		rType = 0;
 		vrLen = 1256;
 		vrLoc = 16309;
@@ -13063,7 +13127,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 488";
 		rLen = 0;
-		rLoc = 17383;
+		rLoc = 17386;
 		rType = 0;
 		vrLen = 1256;
 		vrLoc = 16309;
@@ -13093,7 +13157,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 149";
 		rLen = 0;
-		rLoc = 5418;
+		rLoc = 5421;
 		rType = 0;
 		vrLen = 1710;
 		vrLoc = 3942;
@@ -13133,7 +13197,7 @@
 		fRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */;
 		name = "XADStuffItParser.m: 27";
 		rLen = 38;
-		rLoc = 636;
+		rLoc = 639;
 		rType = 0;
 		vrLen = 468;
 		vrLoc = 403;
@@ -13143,7 +13207,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 9";
 		rLen = 31;
-		rLoc = 373;
+		rLoc = 376;
 		rType = 0;
 		vrLen = 389;
 		vrLoc = 0;
@@ -13197,7 +13261,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 9";
 		rLen = 31;
-		rLoc = 373;
+		rLoc = 376;
 		rType = 0;
 		vrLen = 389;
 		vrLoc = 0;
@@ -13217,7 +13281,7 @@
 		fRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */;
 		name = "XADStuffItParser.m: 27";
 		rLen = 38;
-		rLoc = 636;
+		rLoc = 639;
 		rType = 0;
 		vrLen = 468;
 		vrLoc = 403;
@@ -13237,7 +13301,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 9";
 		rLen = 31;
-		rLoc = 373;
+		rLoc = 376;
 		rType = 0;
 		vrLen = 389;
 		vrLoc = 0;
@@ -13451,7 +13515,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 497";
 		rLen = 0;
-		rLoc = 17496;
+		rLoc = 17499;
 		rType = 0;
 		vrLen = 1363;
 		vrLoc = 16348;
@@ -13461,7 +13525,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 493";
 		rLen = 0;
-		rLoc = 17389;
+		rLoc = 17392;
 		rType = 0;
 		vrLen = 1346;
 		vrLoc = 16351;
@@ -13481,7 +13545,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 493";
 		rLen = 0;
-		rLoc = 17389;
+		rLoc = 17392;
 		rType = 0;
 		vrLen = 1346;
 		vrLoc = 16351;
@@ -13501,7 +13565,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 497";
 		rLen = 0;
-		rLoc = 17496;
+		rLoc = 17499;
 		rType = 0;
 		vrLen = 1361;
 		vrLoc = 16351;
@@ -13531,7 +13595,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 497";
 		rLen = 0;
-		rLoc = 17496;
+		rLoc = 17499;
 		rType = 0;
 		vrLen = 1364;
 		vrLoc = 16348;
@@ -13631,7 +13695,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 495";
 		rLen = 0;
-		rLoc = 17496;
+		rLoc = 17499;
 		rType = 0;
 		vrLen = 1283;
 		vrLoc = 16348;
@@ -13661,7 +13725,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 495";
 		rLen = 0;
-		rLoc = 17496;
+		rLoc = 17499;
 		rType = 0;
 		vrLen = 1308;
 		vrLoc = 16348;
@@ -13759,7 +13823,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 495";
 		rLen = 0;
-		rLoc = 17496;
+		rLoc = 17499;
 		rType = 0;
 		vrLen = 1308;
 		vrLoc = 16348;
@@ -13769,7 +13833,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 51";
 		rLen = 0;
-		rLoc = 2224;
+		rLoc = 2227;
 		rType = 0;
 		vrLen = 932;
 		vrLoc = 667;
@@ -13779,7 +13843,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 495";
 		rLen = 0;
-		rLoc = 17496;
+		rLoc = 17499;
 		rType = 0;
 		vrLen = 1308;
 		vrLoc = 16348;
@@ -13789,7 +13853,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 5";
 		rLen = 0;
-		rLoc = 255;
+		rLoc = 280;
 		rType = 0;
 		vrLen = 984;
 		vrLoc = 0;
@@ -13816,7 +13880,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 20";
 		rLen = 0;
-		rLoc = 1026;
+		rLoc = 1029;
 		rType = 0;
 		vrLen = 984;
 		vrLoc = 0;
@@ -13826,7 +13890,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 63";
 		rLen = 0;
-		rLoc = 2567;
+		rLoc = 2570;
 		rType = 0;
 		vrLen = 867;
 		vrLoc = 1028;
@@ -13846,7 +13910,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 24";
 		rLen = 0;
-		rLoc = 571;
+		rLoc = 574;
 		rType = 0;
 		vrLen = 774;
 		vrLoc = 0;
@@ -13873,7 +13937,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 81";
 		rLen = 0;
-		rLoc = 3065;
+		rLoc = 3068;
 		rType = 0;
 		vrLen = 854;
 		vrLoc = 1749;
@@ -13893,7 +13957,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 105";
 		rLen = 0;
-		rLoc = 9318;
+		rLoc = 9321;
 		rType = 0;
 		vrLen = 799;
 		vrLoc = 2123;
@@ -13920,7 +13984,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 151";
 		rLen = 0;
-		rLoc = 10631;
+		rLoc = 10634;
 		rType = 0;
 		vrLen = 617;
 		vrLoc = 2652;
@@ -13947,7 +14011,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 114";
 		rLen = 0;
-		rLoc = 9528;
+		rLoc = 9531;
 		rType = 0;
 		vrLen = 957;
 		vrLoc = 2178;
@@ -13974,7 +14038,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 108";
 		rLen = 0;
-		rLoc = 9318;
+		rLoc = 9321;
 		rType = 0;
 		vrLen = 957;
 		vrLoc = 2178;
@@ -13994,7 +14058,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 141";
 		rLen = 0;
-		rLoc = 10282;
+		rLoc = 10285;
 		rType = 0;
 		vrLen = 851;
 		vrLoc = 2576;
@@ -14014,7 +14078,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 160";
 		rLen = 0;
-		rLoc = 10631;
+		rLoc = 10634;
 		rType = 0;
 		vrLen = 686;
 		vrLoc = 3000;
@@ -14034,7 +14098,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 182";
 		rLen = 0;
-		rLoc = 20022;
+		rLoc = 20025;
 		rType = 0;
 		vrLen = 742;
 		vrLoc = 3091;
@@ -14054,7 +14118,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 213";
 		rLen = 0;
-		rLoc = 11616;
+		rLoc = 11619;
 		rType = 0;
 		vrLen = 766;
 		vrLoc = 4560;
@@ -14074,7 +14138,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 224";
 		rLen = 0;
-		rLoc = 15167;
+		rLoc = 15170;
 		rType = 0;
 		vrLen = 709;
 		vrLoc = 4624;
@@ -14101,7 +14165,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 230";
 		rLen = 0;
-		rLoc = 13508;
+		rLoc = 13511;
 		rType = 0;
 		vrLen = 836;
 		vrLoc = 4624;
@@ -14121,7 +14185,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 305";
 		rLen = 0;
-		rLoc = 18289;
+		rLoc = 18292;
 		rType = 0;
 		vrLen = 716;
 		vrLoc = 6845;
@@ -14141,7 +14205,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 305";
 		rLen = 0;
-		rLoc = 18289;
+		rLoc = 18292;
 		rType = 0;
 		vrLen = 716;
 		vrLoc = 6845;
@@ -14171,7 +14235,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 305";
 		rLen = 0;
-		rLoc = 18289;
+		rLoc = 18292;
 		rType = 0;
 		vrLen = 752;
 		vrLoc = 6780;
@@ -14201,7 +14265,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 305";
 		rLen = 0;
-		rLoc = 18289;
+		rLoc = 18292;
 		rType = 0;
 		vrLen = 752;
 		vrLoc = 6780;
@@ -14241,7 +14305,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 306";
 		rLen = 0;
-		rLoc = 18289;
+		rLoc = 18292;
 		rType = 0;
 		vrLen = 751;
 		vrLoc = 6805;
@@ -14261,7 +14325,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 205";
 		rLen = 0;
-		rLoc = 11847;
+		rLoc = 11850;
 		rType = 0;
 		vrLen = 765;
 		vrLoc = 4530;
@@ -14281,7 +14345,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 273";
 		rLen = 0;
-		rLoc = 14131;
+		rLoc = 14134;
 		rType = 0;
 		vrLen = 1076;
 		vrLoc = 5479;
@@ -14329,7 +14393,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 204";
 		rLen = 0;
-		rLoc = 11810;
+		rLoc = 11813;
 		rType = 0;
 		vrLen = 600;
 		vrLoc = 4705;
@@ -14349,7 +14413,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 275";
 		rLen = 0;
-		rLoc = 14131;
+		rLoc = 14134;
 		rType = 0;
 		vrLen = 1125;
 		vrLoc = 5586;
@@ -14369,7 +14433,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 275";
 		rLen = 0;
-		rLoc = 14131;
+		rLoc = 14134;
 		rType = 0;
 		vrLen = 1076;
 		vrLoc = 5553;
@@ -14389,7 +14453,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 323";
 		rLen = 48;
-		rLoc = 15749;
+		rLoc = 15752;
 		rType = 0;
 		vrLen = 726;
 		vrLoc = 7782;
@@ -14416,7 +14480,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 307";
 		rLen = 0;
-		rLoc = 14918;
+		rLoc = 14921;
 		rType = 0;
 		vrLen = 767;
 		vrLoc = 7412;
@@ -14443,7 +14507,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 361";
 		rLen = 0;
-		rLoc = 17197;
+		rLoc = 17200;
 		rType = 0;
 		vrLen = 912;
 		vrLoc = 8484;
@@ -14463,7 +14527,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 361";
 		rLen = 0;
-		rLoc = 17197;
+		rLoc = 17200;
 		rType = 0;
 		vrLen = 912;
 		vrLoc = 8484;
@@ -14501,7 +14565,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 135";
 		rLen = 0;
-		rLoc = 10132;
+		rLoc = 10135;
 		rType = 0;
 		vrLen = 456;
 		vrLoc = 3053;
@@ -14531,7 +14595,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 361";
 		rLen = 0;
-		rLoc = 17197;
+		rLoc = 17200;
 		rType = 0;
 		vrLen = 920;
 		vrLoc = 8472;
@@ -14551,7 +14615,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 309";
 		rLen = 0;
-		rLoc = 15004;
+		rLoc = 15007;
 		rType = 0;
 		vrLen = 755;
 		vrLoc = 7426;
@@ -14571,7 +14635,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 325";
 		rLen = 0;
-		rLoc = 15203;
+		rLoc = 15206;
 		rType = 0;
 		vrLen = 823;
 		vrLoc = 7781;
@@ -14601,7 +14665,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 315";
 		rLen = 0;
-		rLoc = 15029;
+		rLoc = 15032;
 		rType = 0;
 		vrLen = 762;
 		vrLoc = 7946;
@@ -14611,7 +14675,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 315";
 		rLen = 0;
-		rLoc = 15029;
+		rLoc = 15032;
 		rType = 0;
 		vrLen = 846;
 		vrLoc = 7862;
@@ -14631,7 +14695,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 371";
 		rLen = 0;
-		rLoc = 16292;
+		rLoc = 16295;
 		rType = 0;
 		vrLen = 910;
 		vrLoc = 8903;
@@ -14651,7 +14715,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 193";
 		rLen = 0;
-		rLoc = 11575;
+		rLoc = 11578;
 		rType = 0;
 		vrLen = 952;
 		vrLoc = 4288;
@@ -14671,7 +14735,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 32";
 		rLen = 0;
-		rLoc = 1016;
+		rLoc = 1019;
 		rType = 0;
 		vrLen = 1090;
 		vrLoc = 273;
@@ -14691,7 +14755,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 394";
 		rLen = 0;
-		rLoc = 17085;
+		rLoc = 17088;
 		rType = 0;
 		vrLen = 1076;
 		vrLoc = 9625;
@@ -14711,7 +14775,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 408";
 		rLen = 0;
-		rLoc = 17136;
+		rLoc = 17139;
 		rType = 0;
 		vrLen = 1047;
 		vrLoc = 7187;
@@ -14731,7 +14795,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 404";
 		rLen = 0;
-		rLoc = 17136;
+		rLoc = 17139;
 		rType = 0;
 		vrLen = 1047;
 		vrLoc = 7187;
@@ -14759,7 +14823,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 103";
 		rLen = 0;
-		rLoc = 2901;
+		rLoc = 2904;
 		rType = 0;
 		vrLen = 397;
 		vrLoc = 2522;
@@ -14779,7 +14843,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 303";
 		rLen = 0;
-		rLoc = 14391;
+		rLoc = 14394;
 		rType = 0;
 		vrLen = 939;
 		vrLoc = 5175;
@@ -14799,7 +14863,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 446";
 		rLen = 0;
-		rLoc = 18938;
+		rLoc = 18941;
 		rType = 0;
 		vrLen = 905;
 		vrLoc = 11453;
@@ -14819,7 +14883,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 285";
 		rLen = 0;
-		rLoc = 14108;
+		rLoc = 14111;
 		rType = 0;
 		vrLen = 1036;
 		vrLoc = 6760;
@@ -14847,7 +14911,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 257";
 		rLen = 9;
-		rLoc = 13318;
+		rLoc = 13321;
 		rType = 0;
 		vrLen = 489;
 		vrLoc = 6295;
@@ -14887,7 +14951,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 426";
 		rLen = 0;
-		rLoc = 18383;
+		rLoc = 18386;
 		rType = 0;
 		vrLen = 858;
 		vrLoc = 11483;
@@ -14907,7 +14971,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 475";
 		rLen = 0;
-		rLoc = 23762;
+		rLoc = 23765;
 		rType = 0;
 		vrLen = 1047;
 		vrLoc = 12577;
@@ -14967,7 +15031,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 426";
 		rLen = 0;
-		rLoc = 18383;
+		rLoc = 18386;
 		rType = 0;
 		vrLen = 858;
 		vrLoc = 11483;
@@ -15025,7 +15089,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 257";
 		rLen = 0;
-		rLoc = 13325;
+		rLoc = 13328;
 		rType = 0;
 		vrLen = 1210;
 		vrLoc = 6053;
@@ -15045,7 +15109,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 431";
 		rLen = 7;
-		rLoc = 18615;
+		rLoc = 18618;
 		rType = 0;
 		vrLen = 1365;
 		vrLoc = 12299;
@@ -15055,7 +15119,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 297";
 		rLen = 12;
-		rLoc = 14548;
+		rLoc = 14551;
 		rType = 0;
 		vrLen = 1058;
 		vrLoc = 7092;
@@ -15085,7 +15149,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 225";
 		rLen = 0;
-		rLoc = 12146;
+		rLoc = 12149;
 		rType = 0;
 		vrLen = 972;
 		vrLoc = 5061;
@@ -15095,7 +15159,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 225";
 		rLen = 174;
-		rLoc = 12146;
+		rLoc = 12149;
 		rType = 0;
 		vrLen = 962;
 		vrLoc = 4993;
@@ -15115,7 +15179,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 225";
 		rLen = 0;
-		rLoc = 12146;
+		rLoc = 12149;
 		rType = 0;
 		vrLen = 972;
 		vrLoc = 5061;
@@ -15135,7 +15199,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 195";
 		rLen = 0;
-		rLoc = 11435;
+		rLoc = 11438;
 		rType = 0;
 		vrLen = 875;
 		vrLoc = 4258;
@@ -15163,7 +15227,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 91";
 		rLen = 47;
-		rLoc = 2673;
+		rLoc = 2676;
 		rType = 0;
 		vrLen = 250;
 		vrLoc = 2293;
@@ -15193,7 +15257,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 107";
 		rLen = 0;
-		rLoc = 3031;
+		rLoc = 3034;
 		rType = 0;
 		vrLen = 917;
 		vrLoc = 2369;
@@ -15203,7 +15267,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 107";
 		rLen = 0;
-		rLoc = 3031;
+		rLoc = 3034;
 		rType = 0;
 		vrLen = 941;
 		vrLoc = 2345;
@@ -15223,7 +15287,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 185";
 		rLen = 0;
-		rLoc = 11036;
+		rLoc = 11039;
 		rType = 0;
 		vrLen = 934;
 		vrLoc = 4517;
@@ -15243,7 +15307,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 91";
 		rLen = 47;
-		rLoc = 2673;
+		rLoc = 2676;
 		rType = 0;
 		vrLen = 250;
 		vrLoc = 2293;
@@ -15263,7 +15327,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 91";
 		rLen = 47;
-		rLoc = 2673;
+		rLoc = 2676;
 		rType = 0;
 		vrLen = 250;
 		vrLoc = 2293;
@@ -15283,7 +15347,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 254";
 		rLen = 0;
-		rLoc = 13148;
+		rLoc = 13151;
 		rType = 0;
 		vrLen = 1268;
 		vrLoc = 12119;
@@ -15303,7 +15367,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 254";
 		rLen = 0;
-		rLoc = 13148;
+		rLoc = 13151;
 		rType = 0;
 		vrLen = 1267;
 		vrLoc = 12119;
@@ -15323,7 +15387,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 254";
 		rLen = 0;
-		rLoc = 13148;
+		rLoc = 13151;
 		rType = 0;
 		vrLen = 1267;
 		vrLoc = 12119;
@@ -15343,7 +15407,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 254";
 		rLen = 0;
-		rLoc = 13148;
+		rLoc = 13151;
 		rType = 0;
 		vrLen = 1268;
 		vrLoc = 12119;
@@ -15363,7 +15427,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 91";
 		rLen = 47;
-		rLoc = 2673;
+		rLoc = 2676;
 		rType = 0;
 		vrLen = 334;
 		vrLoc = 2293;
@@ -15383,7 +15447,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 115";
 		rLen = 0;
-		rLoc = 3673;
+		rLoc = 3676;
 		rType = 0;
 		vrLen = 854;
 		vrLoc = 2461;
@@ -15403,7 +15467,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 113";
 		rLen = 0;
-		rLoc = 3161;
+		rLoc = 3164;
 		rType = 0;
 		vrLen = 860;
 		vrLoc = 2461;
@@ -15423,7 +15487,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 166";
 		rLen = 0;
-		rLoc = 9348;
+		rLoc = 9351;
 		rType = 0;
 		vrLen = 926;
 		vrLoc = 3710;
@@ -15443,7 +15507,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 166";
 		rLen = 0;
-		rLoc = 9348;
+		rLoc = 9351;
 		rType = 0;
 		vrLen = 926;
 		vrLoc = 3710;
@@ -15483,7 +15547,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 166";
 		rLen = 0;
-		rLoc = 9348;
+		rLoc = 9351;
 		rType = 0;
 		vrLen = 926;
 		vrLoc = 3710;
@@ -15503,7 +15567,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 136";
 		rLen = 0;
-		rLoc = 3581;
+		rLoc = 3584;
 		rType = 0;
 		vrLen = 678;
 		vrLoc = 3281;
@@ -15523,7 +15587,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 164";
 		rLen = 0;
-		rLoc = 6675;
+		rLoc = 6678;
 		rType = 0;
 		vrLen = 773;
 		vrLoc = 3590;
@@ -15543,7 +15607,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 163";
 		rLen = 0;
-		rLoc = 5448;
+		rLoc = 5451;
 		rType = 0;
 		vrLen = 571;
 		vrLoc = 3561;
@@ -15563,7 +15627,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 182";
 		rLen = 0;
-		rLoc = 6300;
+		rLoc = 6303;
 		rType = 0;
 		vrLen = 522;
 		vrLoc = 3868;
@@ -15593,7 +15657,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 480";
 		rLen = 0;
-		rLoc = 17982;
+		rLoc = 17985;
 		rType = 0;
 		vrLen = 846;
 		vrLoc = 11876;
@@ -15603,7 +15667,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 480";
 		rLen = 0;
-		rLoc = 17982;
+		rLoc = 17985;
 		rType = 0;
 		vrLen = 847;
 		vrLoc = 11876;
@@ -15623,7 +15687,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 222";
 		rLen = 0;
-		rLoc = 7524;
+		rLoc = 7527;
 		rType = 0;
 		vrLen = 1377;
 		vrLoc = 4278;
@@ -15653,7 +15717,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 221";
 		rLen = 0;
-		rLoc = 7428;
+		rLoc = 7431;
 		rType = 0;
 		vrLen = 1375;
 		vrLoc = 4280;
@@ -15663,7 +15727,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 221";
 		rLen = 0;
-		rLoc = 7428;
+		rLoc = 7431;
 		rType = 0;
 		vrLen = 1377;
 		vrLoc = 4278;
@@ -15683,7 +15747,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 221";
 		rLen = 0;
-		rLoc = 7428;
+		rLoc = 7431;
 		rType = 0;
 		vrLen = 1375;
 		vrLoc = 4280;
@@ -15713,7 +15777,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 202";
 		rLen = 93;
-		rLoc = 6720;
+		rLoc = 6723;
 		rType = 0;
 		vrLen = 938;
 		vrLoc = 4396;
@@ -15723,7 +15787,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 202";
 		rLen = 93;
-		rLoc = 6720;
+		rLoc = 6723;
 		rType = 0;
 		vrLen = 948;
 		vrLoc = 4386;
@@ -15743,7 +15807,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 232";
 		rLen = 0;
-		rLoc = 8007;
+		rLoc = 8010;
 		rType = 0;
 		vrLen = 1219;
 		vrLoc = 5108;
@@ -15791,7 +15855,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 7";
 		rLen = 0;
-		rLoc = 321;
+		rLoc = 324;
 		rType = 0;
 		vrLen = 1066;
 		vrLoc = 0;
@@ -15821,7 +15885,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 169";
 		rLen = 0;
-		rLoc = 5743;
+		rLoc = 5746;
 		rType = 0;
 		vrLen = 774;
 		vrLoc = 3660;
@@ -15841,7 +15905,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 170";
 		rLen = 0;
-		rLoc = 5752;
+		rLoc = 5755;
 		rType = 0;
 		vrLen = 775;
 		vrLoc = 3660;
@@ -15851,7 +15915,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 22";
 		rLen = 0;
-		rLoc = 813;
+		rLoc = 848;
 		rType = 0;
 		vrLen = 910;
 		vrLoc = 922;
@@ -15861,7 +15925,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 60";
 		rLen = 0;
-		rLoc = 2148;
+		rLoc = 2193;
 		rType = 0;
 		vrLen = 1083;
 		vrLoc = 1447;
@@ -15871,7 +15935,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 170";
 		rLen = 0;
-		rLoc = 5752;
+		rLoc = 5755;
 		rType = 0;
 		vrLen = 775;
 		vrLoc = 3660;
@@ -15881,7 +15945,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 22";
 		rLen = 0;
-		rLoc = 813;
+		rLoc = 848;
 		rType = 0;
 		vrLen = 910;
 		vrLoc = 922;
@@ -15921,7 +15985,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 22";
 		rLen = 0;
-		rLoc = 813;
+		rLoc = 848;
 		rType = 0;
 		vrLen = 866;
 		vrLoc = 922;
@@ -15941,7 +16005,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 22";
 		rLen = 0;
-		rLoc = 813;
+		rLoc = 848;
 		rType = 0;
 		vrLen = 866;
 		vrLoc = 922;
@@ -16019,7 +16083,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 92";
 		rLen = 0;
-		rLoc = 2676;
+		rLoc = 2679;
 		rType = 0;
 		vrLen = 393;
 		vrLoc = 2331;
@@ -16089,7 +16153,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 170";
 		rLen = 0;
-		rLoc = 5752;
+		rLoc = 5755;
 		rType = 0;
 		vrLen = 873;
 		vrLoc = 3657;
@@ -16109,7 +16173,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 259";
 		rLen = 0;
-		rLoc = 9656;
+		rLoc = 9659;
 		rType = 0;
 		vrLen = 1065;
 		vrLoc = 5974;
@@ -16129,7 +16193,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 267";
 		rLen = 0;
-		rLoc = 10028;
+		rLoc = 10031;
 		rType = 0;
 		vrLen = 1065;
 		vrLoc = 5974;
@@ -16149,7 +16213,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 271";
 		rLen = 0;
-		rLoc = 10132;
+		rLoc = 10135;
 		rType = 0;
 		vrLen = 1065;
 		vrLoc = 5974;
@@ -16169,7 +16233,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 520";
 		rLen = 0;
-		rLoc = 17081;
+		rLoc = 17084;
 		rType = 0;
 		vrLen = 1159;
 		vrLoc = 11737;
@@ -16189,7 +16253,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 497";
 		rLen = 0;
-		rLoc = 15726;
+		rLoc = 15729;
 		rType = 0;
 		vrLen = 990;
 		vrLoc = 12525;
@@ -16209,7 +16273,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 476";
 		rLen = 0;
-		rLoc = 15255;
+		rLoc = 15258;
 		rType = 0;
 		vrLen = 1117;
 		vrLoc = 12143;
@@ -16229,7 +16293,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 535";
 		rLen = 0;
-		rLoc = 17081;
+		rLoc = 17084;
 		rType = 0;
 		vrLen = 897;
 		vrLoc = 14054;
@@ -16249,7 +16313,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 147";
 		rLen = 0;
-		rLoc = 5103;
+		rLoc = 5106;
 		rType = 0;
 		vrLen = 661;
 		vrLoc = 3285;
@@ -16269,7 +16333,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 137";
 		rLen = 0;
-		rLoc = 3581;
+		rLoc = 3584;
 		rType = 0;
 		vrLen = 689;
 		vrLoc = 3133;
@@ -16289,7 +16353,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 137";
 		rLen = 0;
-		rLoc = 3581;
+		rLoc = 3584;
 		rType = 0;
 		vrLen = 1158;
 		vrLoc = 14795;
@@ -16309,7 +16373,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 137";
 		rLen = 0;
-		rLoc = 3581;
+		rLoc = 3584;
 		rType = 0;
 		vrLen = 1158;
 		vrLoc = 14795;
@@ -16329,7 +16393,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 137";
 		rLen = 0;
-		rLoc = 3581;
+		rLoc = 3584;
 		rType = 0;
 		vrLen = 1158;
 		vrLoc = 14795;
@@ -16389,7 +16453,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 137";
 		rLen = 0;
-		rLoc = 3581;
+		rLoc = 3584;
 		rType = 0;
 		vrLen = 1278;
 		vrLoc = 14782;
@@ -16409,7 +16473,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 137";
 		rLen = 0;
-		rLoc = 3581;
+		rLoc = 3584;
 		rType = 0;
 		vrLen = 782;
 		vrLoc = 3512;
@@ -16429,7 +16493,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 233";
 		rLen = 0;
-		rLoc = 7624;
+		rLoc = 7627;
 		rType = 0;
 		vrLen = 1293;
 		vrLoc = 5052;
@@ -16449,7 +16513,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 268";
 		rLen = 0;
-		rLoc = 8816;
+		rLoc = 8819;
 		rType = 0;
 		vrLen = 1057;
 		vrLoc = 6077;
@@ -16506,7 +16570,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 268";
 		rLen = 0;
-		rLoc = 8816;
+		rLoc = 8819;
 		rType = 0;
 		vrLen = 1057;
 		vrLoc = 6077;
@@ -16546,7 +16610,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 268";
 		rLen = 0;
-		rLoc = 8816;
+		rLoc = 8819;
 		rType = 0;
 		vrLen = 1057;
 		vrLoc = 6077;
@@ -16566,7 +16630,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 155";
 		rLen = 0;
-		rLoc = 5159;
+		rLoc = 5162;
 		rType = 0;
 		vrLen = 702;
 		vrLoc = 3243;
@@ -16586,7 +16650,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 212";
 		rLen = 0;
-		rLoc = 7033;
+		rLoc = 7036;
 		rType = 0;
 		vrLen = 1074;
 		vrLoc = 4742;
@@ -16626,7 +16690,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 253";
 		rLen = 0;
-		rLoc = 8409;
+		rLoc = 8412;
 		rType = 0;
 		vrLen = 1176;
 		vrLoc = 5817;
@@ -16636,7 +16700,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 253";
 		rLen = 0;
-		rLoc = 8409;
+		rLoc = 8412;
 		rType = 0;
 		vrLen = 1094;
 		vrLoc = 5900;
@@ -16656,7 +16720,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 253";
 		rLen = 0;
-		rLoc = 8409;
+		rLoc = 8412;
 		rType = 0;
 		vrLen = 1177;
 		vrLoc = 5817;
@@ -16676,7 +16740,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 253";
 		rLen = 0;
-		rLoc = 8409;
+		rLoc = 8412;
 		rType = 0;
 		vrLen = 1176;
 		vrLoc = 5817;
@@ -16696,7 +16760,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 246";
 		rLen = 0;
-		rLoc = 8010;
+		rLoc = 8013;
 		rType = 0;
 		vrLen = 1402;
 		vrLoc = 5257;
@@ -16716,7 +16780,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 286";
 		rLen = 0;
-		rLoc = 9314;
+		rLoc = 9317;
 		rType = 0;
 		vrLen = 1023;
 		vrLoc = 6771;
@@ -16736,7 +16800,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 282";
 		rLen = 0;
-		rLoc = 9314;
+		rLoc = 9317;
 		rType = 0;
 		vrLen = 1056;
 		vrLoc = 6771;
@@ -16756,7 +16820,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 282";
 		rLen = 0;
-		rLoc = 9314;
+		rLoc = 9317;
 		rType = 0;
 		vrLen = 1162;
 		vrLoc = 6771;
@@ -16786,7 +16850,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 21";
 		rLen = 0;
-		rLoc = 689;
+		rLoc = 724;
 		rType = 0;
 		vrLen = 1207;
 		vrLoc = 183;
@@ -16796,7 +16860,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 33";
 		rLen = 0;
-		rLoc = 1101;
+		rLoc = 1146;
 		rType = 0;
 		vrLen = 1445;
 		vrLoc = 419;
@@ -16806,7 +16870,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 179";
 		rLen = 0;
-		rLoc = 6386;
+		rLoc = 6389;
 		rType = 0;
 		vrLen = 1334;
 		vrLoc = 6049;
@@ -16816,7 +16880,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 251";
 		rLen = 0;
-		rLoc = 7696;
+		rLoc = 7699;
 		rType = 0;
 		vrLen = 2066;
 		vrLoc = 6143;
@@ -16826,7 +16890,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 282";
 		rLen = 0;
-		rLoc = 9314;
+		rLoc = 9317;
 		rType = 0;
 		vrLen = 1047;
 		vrLoc = 6781;
@@ -16836,7 +16900,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 282";
 		rLen = 0;
-		rLoc = 9314;
+		rLoc = 9317;
 		rType = 0;
 		vrLen = 1045;
 		vrLoc = 6771;
@@ -16846,7 +16910,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 22";
 		rLen = 46;
-		rLoc = 732;
+		rLoc = 767;
 		rType = 0;
 		vrLen = 1189;
 		vrLoc = 183;
@@ -16856,7 +16920,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 33";
 		rLen = 0;
-		rLoc = 1101;
+		rLoc = 1146;
 		rType = 0;
 		vrLen = 1388;
 		vrLoc = 419;
@@ -16866,7 +16930,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 282";
 		rLen = 0;
-		rLoc = 9314;
+		rLoc = 9317;
 		rType = 0;
 		vrLen = 1047;
 		vrLoc = 6781;
@@ -16886,7 +16950,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 191";
 		rLen = 0;
-		rLoc = 6908;
+		rLoc = 6911;
 		rType = 0;
 		vrLen = 1242;
 		vrLoc = 6049;
@@ -16896,7 +16960,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 21";
 		rLen = 0;
-		rLoc = 689;
+		rLoc = 724;
 		rType = 0;
 		vrLen = 1207;
 		vrLoc = 183;
@@ -16906,7 +16970,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 33";
 		rLen = 0;
-		rLoc = 1101;
+		rLoc = 1146;
 		rType = 0;
 		vrLen = 1445;
 		vrLoc = 419;
@@ -16916,7 +16980,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 179";
 		rLen = 0;
-		rLoc = 6386;
+		rLoc = 6389;
 		rType = 0;
 		vrLen = 1334;
 		vrLoc = 6049;
@@ -16926,7 +16990,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 251";
 		rLen = 0;
-		rLoc = 7696;
+		rLoc = 7699;
 		rType = 0;
 		vrLen = 2066;
 		vrLoc = 6143;
@@ -16936,7 +17000,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 282";
 		rLen = 0;
-		rLoc = 9315;
+		rLoc = 9318;
 		rType = 0;
 		vrLen = 1058;
 		vrLoc = 6781;
@@ -16956,7 +17020,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 205";
 		rLen = 0;
-		rLoc = 6629;
+		rLoc = 6632;
 		rType = 0;
 		vrLen = 895;
 		vrLoc = 4484;
@@ -16976,7 +17040,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 154";
 		rLen = 0;
-		rLoc = 5100;
+		rLoc = 5103;
 		rType = 0;
 		vrLen = 766;
 		vrLoc = 3184;
@@ -16996,7 +17060,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 145";
 		rLen = 0;
-		rLoc = 3681;
+		rLoc = 3684;
 		rType = 0;
 		vrLen = 823;
 		vrLoc = 3184;
@@ -17016,7 +17080,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 214";
 		rLen = 0;
-		rLoc = 6606;
+		rLoc = 6609;
 		rType = 0;
 		vrLen = 790;
 		vrLoc = 3219;
@@ -17036,7 +17100,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 159";
 		rLen = 0;
-		rLoc = 5103;
+		rLoc = 5106;
 		rType = 0;
 		vrLen = 933;
 		vrLoc = 3570;
@@ -17056,7 +17120,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 147";
 		rLen = 0;
-		rLoc = 3771;
+		rLoc = 3774;
 		rType = 0;
 		vrLen = 846;
 		vrLoc = 3108;
@@ -17076,7 +17140,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 92";
 		rLen = 0;
-		rLoc = 2676;
+		rLoc = 2679;
 		rType = 0;
 		vrLen = 448;
 		vrLoc = 2331;
@@ -17096,7 +17160,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 159";
 		rLen = 0;
-		rLoc = 5103;
+		rLoc = 5106;
 		rType = 0;
 		vrLen = 903;
 		vrLoc = 3477;
@@ -17116,7 +17180,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 155";
 		rLen = 0;
-		rLoc = 3888;
+		rLoc = 3891;
 		rType = 0;
 		vrLen = 904;
 		vrLoc = 3477;
@@ -17136,7 +17200,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 156";
 		rLen = 0;
-		rLoc = 3975;
+		rLoc = 3978;
 		rType = 0;
 		vrLen = 923;
 		vrLoc = 3567;
@@ -17156,7 +17220,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 168";
 		rLen = 0;
-		rLoc = 4384;
+		rLoc = 4387;
 		rType = 0;
 		vrLen = 1068;
 		vrLoc = 3567;
@@ -17176,7 +17240,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 169";
 		rLen = 0;
-		rLoc = 4638;
+		rLoc = 4641;
 		rType = 0;
 		vrLen = 1139;
 		vrLoc = 3567;
@@ -17196,7 +17260,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 164";
 		rLen = 0;
-		rLoc = 4144;
+		rLoc = 4147;
 		rType = 0;
 		vrLen = 1139;
 		vrLoc = 3567;
@@ -17236,7 +17300,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 90";
 		rLen = 0;
-		rLoc = 2627;
+		rLoc = 2630;
 		rType = 0;
 		vrLen = 1032;
 		vrLoc = 1944;
@@ -17246,7 +17310,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 90";
 		rLen = 0;
-		rLoc = 2627;
+		rLoc = 2630;
 		rType = 0;
 		vrLen = 1032;
 		vrLoc = 1944;
@@ -17276,7 +17340,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 632";
 		rLen = 0;
-		rLoc = 19659;
+		rLoc = 19662;
 		rType = 0;
 		vrLen = 1109;
 		vrLoc = 16936;
@@ -17296,7 +17360,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 62";
 		rLen = 78;
-		rLoc = 1778;
+		rLoc = 1813;
 		rType = 0;
 		vrLen = 862;
 		vrLoc = 1212;
@@ -17316,7 +17380,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 96";
 		rLen = 0;
-		rLoc = 2504;
+		rLoc = 2507;
 		rType = 0;
 		vrLen = 793;
 		vrLoc = 1944;
@@ -17326,7 +17390,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 632";
 		rLen = 0;
-		rLoc = 19659;
+		rLoc = 19662;
 		rType = 0;
 		vrLen = 1090;
 		vrLoc = 11032;
@@ -17346,7 +17410,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 85";
 		rLen = 0;
-		rLoc = 2254;
+		rLoc = 2257;
 		rType = 0;
 		vrLen = 993;
 		vrLoc = 1944;
@@ -17356,7 +17420,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 62";
 		rLen = 78;
-		rLoc = 1778;
+		rLoc = 1813;
 		rType = 0;
 		vrLen = 862;
 		vrLoc = 1212;
@@ -17376,7 +17440,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 96";
 		rLen = 0;
-		rLoc = 2504;
+		rLoc = 2507;
 		rType = 0;
 		vrLen = 901;
 		vrLoc = 1836;
@@ -17396,7 +17460,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 639";
 		rLen = 0;
-		rLoc = 18565;
+		rLoc = 18568;
 		rType = 0;
 		vrLen = 1240;
 		vrLoc = 17348;
@@ -17416,7 +17480,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 661";
 		rLen = 0;
-		rLoc = 19660;
+		rLoc = 19663;
 		rType = 0;
 		vrLen = 1402;
 		vrLoc = 17444;
@@ -17446,7 +17510,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 643";
 		rLen = 117;
-		rLoc = 18569;
+		rLoc = 18572;
 		rType = 0;
 		vrLen = 1127;
 		vrLoc = 17260;
@@ -17456,7 +17520,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 643";
 		rLen = 117;
-		rLoc = 18569;
+		rLoc = 18572;
 		rType = 0;
 		vrLen = 1191;
 		vrLoc = 17260;
@@ -17476,7 +17540,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 664";
 		rLen = 0;
-		rLoc = 19663;
+		rLoc = 19666;
 		rType = 0;
 		vrLen = 1515;
 		vrLoc = 17209;
@@ -17496,7 +17560,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 123";
 		rLen = 0;
-		rLoc = 3029;
+		rLoc = 3032;
 		rType = 0;
 		vrLen = 771;
 		vrLoc = 2777;
@@ -17516,7 +17580,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 219";
 		rLen = 0;
-		rLoc = 5897;
+		rLoc = 5900;
 		rType = 0;
 		vrLen = 1009;
 		vrLoc = 4720;
@@ -17536,7 +17600,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 220";
 		rLen = 0;
-		rLoc = 5897;
+		rLoc = 5900;
 		rType = 0;
 		vrLen = 982;
 		vrLoc = 4657;
@@ -17556,7 +17620,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 623";
 		rLen = 0;
-		rLoc = 16932;
+		rLoc = 16935;
 		rType = 0;
 		vrLen = 990;
 		vrLoc = 16489;
@@ -17576,7 +17640,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 428";
 		rLen = 0;
-		rLoc = 11648;
+		rLoc = 11651;
 		rType = 0;
 		vrLen = 1421;
 		vrLoc = 10596;
@@ -17596,7 +17660,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 656";
 		rLen = 0;
-		rLoc = 19203;
+		rLoc = 19206;
 		rType = 0;
 		vrLen = 1333;
 		vrLoc = 17376;
@@ -17616,7 +17680,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 656";
 		rLen = 0;
-		rLoc = 19203;
+		rLoc = 19206;
 		rType = 0;
 		vrLen = 1380;
 		vrLoc = 17378;
@@ -17636,7 +17700,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 540";
 		rLen = 0;
-		rLoc = 15105;
+		rLoc = 15108;
 		rType = 0;
 		vrLen = 1088;
 		vrLoc = 13927;
@@ -17656,7 +17720,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 540";
 		rLen = 0;
-		rLoc = 15105;
+		rLoc = 15108;
 		rType = 0;
 		vrLen = 1088;
 		vrLoc = 13927;
@@ -17716,7 +17780,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 540";
 		rLen = 0;
-		rLoc = 15105;
+		rLoc = 15108;
 		rType = 0;
 		vrLen = 1009;
 		vrLoc = 13927;
@@ -17736,7 +17800,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 348";
 		rLen = 0;
-		rLoc = 9652;
+		rLoc = 9655;
 		rType = 0;
 		vrLen = 1070;
 		vrLoc = 8843;
@@ -17756,7 +17820,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 651";
 		rLen = 0;
-		rLoc = 18467;
+		rLoc = 18470;
 		rType = 0;
 		vrLen = 1314;
 		vrLoc = 17122;
@@ -17776,7 +17840,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 180";
 		rLen = 0;
-		rLoc = 4149;
+		rLoc = 4152;
 		rType = 0;
 		vrLen = 1002;
 		vrLoc = 3731;
@@ -17796,7 +17860,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 181";
 		rLen = 0;
-		rLoc = 4335;
+		rLoc = 4338;
 		rType = 0;
 		vrLen = 1001;
 		vrLoc = 3731;
@@ -17816,7 +17880,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 162";
 		rLen = 0;
-		rLoc = 3685;
+		rLoc = 3688;
 		rType = 0;
 		vrLen = 1035;
 		vrLoc = 3447;
@@ -17836,7 +17900,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 658";
 		rLen = 0;
-		rLoc = 19009;
+		rLoc = 19012;
 		rType = 0;
 		vrLen = 1325;
 		vrLoc = 17394;
@@ -17856,7 +17920,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 372";
 		rLen = 0;
-		rLoc = 10341;
+		rLoc = 10344;
 		rType = 0;
 		vrLen = 818;
 		vrLoc = 9583;
@@ -17876,7 +17940,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 372";
 		rLen = 0;
-		rLoc = 10341;
+		rLoc = 10344;
 		rType = 0;
 		vrLen = 824;
 		vrLoc = 9583;
@@ -17896,7 +17960,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 717";
 		rLen = 0;
-		rLoc = 23702;
+		rLoc = 23705;
 		rType = 0;
 		vrLen = 1191;
 		vrLoc = 19442;
@@ -17916,7 +17980,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 717";
 		rLen = 0;
-		rLoc = 23702;
+		rLoc = 23705;
 		rType = 0;
 		vrLen = 1192;
 		vrLoc = 19442;
@@ -17946,7 +18010,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 665";
 		rLen = 0;
-		rLoc = 19200;
+		rLoc = 19203;
 		rType = 0;
 		vrLen = 1452;
 		vrLoc = 17458;
@@ -17956,7 +18020,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 665";
 		rLen = 0;
-		rLoc = 19200;
+		rLoc = 19203;
 		rType = 0;
 		vrLen = 1452;
 		vrLoc = 17458;
@@ -17976,7 +18040,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 662";
 		rLen = 0;
-		rLoc = 19036;
+		rLoc = 19039;
 		rType = 0;
 		vrLen = 1355;
 		vrLoc = 17594;
@@ -17996,7 +18060,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 665";
 		rLen = 0;
-		rLoc = 19091;
+		rLoc = 19094;
 		rType = 0;
 		vrLen = 1352;
 		vrLoc = 17594;
@@ -18016,7 +18080,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 719";
 		rLen = 0;
-		rLoc = 23702;
+		rLoc = 23705;
 		rType = 0;
 		vrLen = 1179;
 		vrLoc = 19474;
@@ -18036,7 +18100,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 719";
 		rLen = 0;
-		rLoc = 23702;
+		rLoc = 23705;
 		rType = 0;
 		vrLen = 1195;
 		vrLoc = 19474;
@@ -18066,7 +18130,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 412";
 		rLen = 0;
-		rLoc = 11234;
+		rLoc = 11237;
 		rType = 0;
 		vrLen = 1041;
 		vrLoc = 10393;
@@ -18086,7 +18150,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 448";
 		rLen = 174;
-		rLoc = 12146;
+		rLoc = 12149;
 		rType = 0;
 		vrLen = 969;
 		vrLoc = 11412;
@@ -18106,7 +18170,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 412";
 		rLen = 0;
-		rLoc = 11234;
+		rLoc = 11237;
 		rType = 0;
 		vrLen = 1041;
 		vrLoc = 10393;
@@ -18306,7 +18370,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 179";
 		rLen = 0;
-		rLoc = 6386;
+		rLoc = 6389;
 		rType = 0;
 		vrLen = 1323;
 		vrLoc = 6049;
@@ -18326,7 +18390,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 467";
 		rLen = 0;
-		rLoc = 16391;
+		rLoc = 16394;
 		rType = 0;
 		vrLen = 1430;
 		vrLoc = 15959;
@@ -18346,7 +18410,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 467";
 		rLen = 0;
-		rLoc = 16391;
+		rLoc = 16394;
 		rType = 0;
 		vrLen = 1251;
 		vrLoc = 15341;
@@ -18366,7 +18430,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 467";
 		rLen = 0;
-		rLoc = 16391;
+		rLoc = 16394;
 		rType = 0;
 		vrLen = 1251;
 		vrLoc = 15341;
@@ -18406,7 +18470,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 94";
 		rLen = 0;
-		rLoc = 2161;
+		rLoc = 2164;
 		rType = 0;
 		vrLen = 1081;
 		vrLoc = 4470;
@@ -18416,7 +18480,7 @@
 		fRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */;
 		name = "XADStuffItParser.m: 17";
 		rLen = 0;
-		rLoc = 402;
+		rLoc = 405;
 		rType = 0;
 		vrLen = 1909;
 		vrLoc = 8515;
@@ -18426,7 +18490,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 322";
 		rLen = 0;
-		rLoc = 9972;
+		rLoc = 9975;
 		rType = 0;
 		vrLen = 1027;
 		vrLoc = 9177;
@@ -18436,7 +18500,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 467";
 		rLen = 0;
-		rLoc = 16391;
+		rLoc = 16394;
 		rType = 0;
 		vrLen = 1178;
 		vrLoc = 15414;
@@ -18456,7 +18520,7 @@
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 94";
 		rLen = 0;
-		rLoc = 2161;
+		rLoc = 2164;
 		rType = 0;
 		vrLen = 1081;
 		vrLoc = 4470;
@@ -18466,7 +18530,7 @@
 		fRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */;
 		name = "XADStuffItParser.m: 17";
 		rLen = 0;
-		rLoc = 402;
+		rLoc = 405;
 		rType = 0;
 		vrLen = 1909;
 		vrLoc = 8515;
@@ -18476,7 +18540,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 322";
 		rLen = 0;
-		rLoc = 9972;
+		rLoc = 9975;
 		rType = 0;
 		vrLen = 1027;
 		vrLoc = 9177;
@@ -18486,7 +18550,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 467";
 		rLen = 0;
-		rLoc = 16391;
+		rLoc = 16394;
 		rType = 0;
 		vrLen = 1178;
 		vrLoc = 15414;
@@ -18496,7 +18560,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 696";
 		rLen = 0;
-		rLoc = 20121;
+		rLoc = 20124;
 		rType = 0;
 		vrLen = 1112;
 		vrLoc = 19095;
@@ -18516,7 +18580,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 675";
 		rLen = 0;
-		rLoc = 19461;
+		rLoc = 19464;
 		rType = 0;
 		vrLen = 1402;
 		vrLoc = 18143;
@@ -18556,7 +18620,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 772";
 		rLen = 0;
-		rLoc = 24008;
+		rLoc = 24011;
 		rType = 0;
 		vrLen = 884;
 		vrLoc = 22080;
@@ -18576,7 +18640,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 803";
 		rLen = 39;
-		rLoc = 26299;
+		rLoc = 26302;
 		rType = 0;
 		vrLen = 1004;
 		vrLoc = 22304;
@@ -18606,7 +18670,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 772";
 		rLen = 0;
-		rLoc = 24008;
+		rLoc = 24011;
 		rType = 0;
 		vrLen = 884;
 		vrLoc = 22080;
@@ -18654,7 +18718,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 615";
 		rLen = 0;
-		rLoc = 17197;
+		rLoc = 17200;
 		rType = 0;
 		vrLen = 516;
 		vrLoc = 16095;
@@ -18674,7 +18738,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 723";
 		rLen = 0;
-		rLoc = 22050;
+		rLoc = 22053;
 		rType = 0;
 		vrLen = 671;
 		vrLoc = 20019;
@@ -18704,7 +18768,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 772";
 		rLen = 0;
-		rLoc = 24008;
+		rLoc = 24011;
 		rType = 0;
 		vrLen = 884;
 		vrLoc = 22080;
@@ -18724,7 +18788,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 732";
 		rLen = 0;
-		rLoc = 22474;
+		rLoc = 22477;
 		rType = 0;
 		vrLen = 1425;
 		vrLoc = 19907;
@@ -18774,7 +18838,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 704";
 		rLen = 0;
-		rLoc = 20122;
+		rLoc = 20125;
 		rType = 0;
 		vrLen = 1544;
 		vrLoc = 19403;
@@ -18784,7 +18848,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 703";
 		rLen = 0;
-		rLoc = 20122;
+		rLoc = 20125;
 		rType = 0;
 		vrLen = 1572;
 		vrLoc = 19403;
@@ -18814,7 +18878,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 704";
 		rLen = 0;
-		rLoc = 20122;
+		rLoc = 20125;
 		rType = 0;
 		vrLen = 1544;
 		vrLoc = 19403;
@@ -18834,7 +18898,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 791";
 		rLen = 0;
-		rLoc = 24471;
+		rLoc = 24474;
 		rType = 0;
 		vrLen = 1020;
 		vrLoc = 22500;
@@ -18854,7 +18918,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 726";
 		rLen = 0;
-		rLoc = 22050;
+		rLoc = 22053;
 		rType = 0;
 		vrLen = 716;
 		vrLoc = 19740;
@@ -18874,7 +18938,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 793";
 		rLen = 0;
-		rLoc = 24545;
+		rLoc = 24548;
 		rType = 0;
 		vrLen = 1077;
 		vrLoc = 22673;
@@ -18904,7 +18968,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 791";
 		rLen = 0;
-		rLoc = 24470;
+		rLoc = 24473;
 		rType = 0;
 		vrLen = 1018;
 		vrLoc = 22586;
@@ -18914,7 +18978,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 791";
 		rLen = 0;
-		rLoc = 24470;
+		rLoc = 24473;
 		rType = 0;
 		vrLen = 1076;
 		vrLoc = 22586;
@@ -18934,7 +18998,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 794";
 		rLen = 0;
-		rLoc = 24545;
+		rLoc = 24548;
 		rType = 0;
 		vrLen = 1063;
 		vrLoc = 22637;
@@ -18954,7 +19018,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 793";
 		rLen = 0;
-		rLoc = 24608;
+		rLoc = 24611;
 		rType = 0;
 		vrLen = 1170;
 		vrLoc = 22553;
@@ -18974,7 +19038,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 189";
 		rLen = 0;
-		rLoc = 4602;
+		rLoc = 4605;
 		rType = 0;
 		vrLen = 1133;
 		vrLoc = 3960;
@@ -18994,7 +19058,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 801";
 		rLen = 0;
-		rLoc = 25015;
+		rLoc = 25018;
 		rType = 0;
 		vrLen = 1273;
 		vrLoc = 22708;
@@ -19014,7 +19078,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 801";
 		rLen = 0;
-		rLoc = 25015;
+		rLoc = 25018;
 		rType = 0;
 		vrLen = 1277;
 		vrLoc = 22708;
@@ -19034,7 +19098,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 801";
 		rLen = 0;
-		rLoc = 25015;
+		rLoc = 25018;
 		rType = 0;
 		vrLen = 1274;
 		vrLoc = 22708;
@@ -19054,7 +19118,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 800";
 		rLen = 0;
-		rLoc = 24831;
+		rLoc = 24834;
 		rType = 0;
 		vrLen = 1331;
 		vrLoc = 22934;
@@ -19121,7 +19185,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 807";
 		rLen = 0;
-		rLoc = 25220;
+		rLoc = 25223;
 		rType = 0;
 		vrLen = 1233;
 		vrLoc = 23808;
@@ -19171,7 +19235,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 807";
 		rLen = 0;
-		rLoc = 25220;
+		rLoc = 25223;
 		rType = 0;
 		vrLen = 1233;
 		vrLoc = 23808;
@@ -19295,7 +19359,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 807";
 		rLen = 0;
-		rLoc = 25220;
+		rLoc = 25223;
 		rType = 0;
 		vrLen = 1288;
 		vrLoc = 23748;
@@ -19325,7 +19389,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 807";
 		rLen = 0;
-		rLoc = 25220;
+		rLoc = 25223;
 		rType = 0;
 		vrLen = 1291;
 		vrLoc = 23748;
@@ -19355,7 +19419,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 164";
 		rLen = 0;
-		rLoc = 3674;
+		rLoc = 3677;
 		rType = 0;
 		vrLen = 1014;
 		vrLoc = 3551;
@@ -19375,7 +19439,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 163";
 		rLen = 0;
-		rLoc = 3673;
+		rLoc = 3676;
 		rType = 0;
 		vrLen = 1014;
 		vrLoc = 3551;
@@ -19395,7 +19459,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 163";
 		rLen = 0;
-		rLoc = 3673;
+		rLoc = 3676;
 		rType = 0;
 		vrLen = 1014;
 		vrLoc = 3551;
@@ -19415,7 +19479,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 167";
 		rLen = 0;
-		rLoc = 3685;
+		rLoc = 3688;
 		rType = 0;
 		vrLen = 928;
 		vrLoc = 3551;
@@ -19455,7 +19519,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 167";
 		rLen = 0;
-		rLoc = 3685;
+		rLoc = 3688;
 		rType = 0;
 		vrLen = 928;
 		vrLoc = 3551;
@@ -19465,7 +19529,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 167";
 		rLen = 0;
-		rLoc = 3685;
+		rLoc = 3688;
 		rType = 0;
 		vrLen = 928;
 		vrLoc = 3551;
@@ -19495,7 +19559,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 807";
 		rLen = 0;
-		rLoc = 25149;
+		rLoc = 25152;
 		rType = 0;
 		vrLen = 1347;
 		vrLoc = 22701;
@@ -19515,7 +19579,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 723";
 		rLen = 0;
-		rLoc = 20994;
+		rLoc = 20997;
 		rType = 0;
 		vrLen = 1756;
 		vrLoc = 19667;
@@ -19535,7 +19599,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 722";
 		rLen = 0;
-		rLoc = 20978;
+		rLoc = 20981;
 		rType = 0;
 		vrLen = 1768;
 		vrLoc = 19667;
@@ -19555,7 +19619,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 734";
 		rLen = 0;
-		rLoc = 21924;
+		rLoc = 21927;
 		rType = 0;
 		vrLen = 2099;
 		vrLoc = 20747;
@@ -19649,7 +19713,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 734";
 		rLen = 0;
-		rLoc = 21953;
+		rLoc = 21956;
 		rType = 0;
 		vrLen = 2453;
 		vrLoc = 19982;
@@ -19659,7 +19723,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 734";
 		rLen = 0;
-		rLoc = 21953;
+		rLoc = 21956;
 		rType = 0;
 		vrLen = 2453;
 		vrLoc = 19982;
@@ -19899,7 +19963,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 722";
 		rLen = 0;
-		rLoc = 20956;
+		rLoc = 20959;
 		rType = 0;
 		vrLen = 2462;
 		vrLoc = 19982;
@@ -20009,7 +20073,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 258";
 		rLen = 5;
-		rLoc = 6610;
+		rLoc = 6613;
 		rType = 0;
 		vrLen = 899;
 		vrLoc = 5819;
@@ -20029,7 +20093,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 258";
 		rLen = 5;
-		rLoc = 6610;
+		rLoc = 6613;
 		rType = 0;
 		vrLen = 910;
 		vrLoc = 5819;
@@ -20049,7 +20113,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 777";
 		rLen = 0;
-		rLoc = 23773;
+		rLoc = 23776;
 		rType = 0;
 		vrLen = 1203;
 		vrLoc = 22650;
@@ -20069,7 +20133,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 777";
 		rLen = 0;
-		rLoc = 23773;
+		rLoc = 23776;
 		rType = 0;
 		vrLen = 1203;
 		vrLoc = 22650;
@@ -20089,7 +20153,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 777";
 		rLen = 0;
-		rLoc = 23773;
+		rLoc = 23776;
 		rType = 0;
 		vrLen = 1203;
 		vrLoc = 22650;
@@ -20319,7 +20383,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 726";
 		rLen = 0;
-		rLoc = 21107;
+		rLoc = 21110;
 		rType = 0;
 		vrLen = 2294;
 		vrLoc = 19588;
@@ -20449,7 +20513,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 725";
 		rLen = 747;
-		rLoc = 20998;
+		rLoc = 21001;
 		rType = 0;
 		vrLen = 2482;
 		vrLoc = 19987;
@@ -20539,7 +20603,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 726";
 		rLen = 0;
-		rLoc = 21107;
+		rLoc = 21110;
 		rType = 0;
 		vrLen = 2294;
 		vrLoc = 19588;
@@ -20959,7 +21023,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 731";
 		rLen = 107;
-		rLoc = 21531;
+		rLoc = 21534;
 		rType = 0;
 		vrLen = 1053;
 		vrLoc = 20862;
@@ -20977,7 +21041,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 726";
 		rLen = 0;
-		rLoc = 21964;
+		rLoc = 21967;
 		rType = 0;
 		vrLen = 1024;
 		vrLoc = 20096;
@@ -21007,7 +21071,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 731";
 		rLen = 107;
-		rLoc = 21531;
+		rLoc = 21534;
 		rType = 0;
 		vrLen = 1053;
 		vrLoc = 20862;
@@ -21047,7 +21111,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 678";
 		rLen = 24;
-		rLoc = 19037;
+		rLoc = 19040;
 		rType = 0;
 		vrLen = 1465;
 		vrLoc = 18156;
@@ -21087,7 +21151,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 678";
 		rLen = 24;
-		rLoc = 19037;
+		rLoc = 19040;
 		rType = 0;
 		vrLen = 1465;
 		vrLoc = 18156;
@@ -21107,7 +21171,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 678";
 		rLen = 24;
-		rLoc = 19037;
+		rLoc = 19040;
 		rType = 0;
 		vrLen = 1374;
 		vrLoc = 18247;
@@ -21137,7 +21201,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 678";
 		rLen = 24;
-		rLoc = 19037;
+		rLoc = 19040;
 		rType = 0;
 		vrLen = 1374;
 		vrLoc = 18247;
@@ -21347,7 +21411,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 678";
 		rLen = 24;
-		rLoc = 19037;
+		rLoc = 19040;
 		rType = 0;
 		vrLen = 1374;
 		vrLoc = 18247;
@@ -21407,7 +21471,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 694";
 		rLen = 0;
-		rLoc = 19529;
+		rLoc = 19532;
 		rType = 0;
 		vrLen = 1446;
 		vrLoc = 18552;
@@ -21417,7 +21481,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 694";
 		rLen = 0;
-		rLoc = 19529;
+		rLoc = 19532;
 		rType = 0;
 		vrLen = 1436;
 		vrLoc = 18552;
@@ -21437,7 +21501,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 694";
 		rLen = 0;
-		rLoc = 19529;
+		rLoc = 19532;
 		rType = 0;
 		vrLen = 1436;
 		vrLoc = 18552;
@@ -21706,14 +21770,14 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {796, 710}}";
 			sepNavSelRange = "{340, 0}";
-			sepNavVisRange = "{0, 340}";
+			sepNavVisRange = "{0, 341}";
 		};
 	};
 	1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1108, 1197}}";
-			sepNavSelRange = "{1959, 0}";
-			sepNavVisRange = "{1370, 738}";
+			sepNavIntBoundsRect = "{{0, 0}, {929, 695}}";
+			sepNavSelRange = "{167, 0}";
+			sepNavVisRange = "{100, 461}";
 		};
 	};
 	1BCD62B90EF4723B00D86C43 /* PBXTextBookmark */ = {
@@ -21731,7 +21795,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 694";
 		rLen = 0;
-		rLoc = 19529;
+		rLoc = 19532;
 		rType = 0;
 		vrLen = 1436;
 		vrLoc = 18552;
@@ -21781,7 +21845,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 694";
 		rLen = 0;
-		rLoc = 19529;
+		rLoc = 19532;
 		rType = 0;
 		vrLen = 1436;
 		vrLoc = 18552;
@@ -21871,7 +21935,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 44";
 		rLen = 0;
-		rLoc = 1327;
+		rLoc = 1330;
 		rType = 0;
 		vrLen = 1241;
 		vrLoc = 561;
@@ -21881,7 +21945,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 49";
 		rLen = 0;
-		rLoc = 2161;
+		rLoc = 2162;
 		rType = 0;
 		vrLen = 1416;
 		vrLoc = 0;
@@ -21901,7 +21965,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 136";
 		rLen = 11;
-		rLoc = 4182;
+		rLoc = 4227;
 		rType = 0;
 		vrLen = 1227;
 		vrLoc = 3773;
@@ -21961,7 +22025,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 11";
 		rLen = 0;
-		rLoc = 566;
+		rLoc = 567;
 		rType = 0;
 		vrLen = 1261;
 		vrLoc = 0;
@@ -21971,7 +22035,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 467";
 		rLen = 0;
-		rLoc = 16391;
+		rLoc = 16394;
 		rType = 0;
 		vrLen = 1751;
 		vrLoc = 4132;
@@ -21981,7 +22045,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 136";
 		rLen = 11;
-		rLoc = 4182;
+		rLoc = 4227;
 		rType = 0;
 		vrLen = 1227;
 		vrLoc = 3773;
@@ -21991,7 +22055,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 44";
 		rLen = 0;
-		rLoc = 1327;
+		rLoc = 1330;
 		rType = 0;
 		vrLen = 1241;
 		vrLoc = 561;
@@ -22001,7 +22065,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 49";
 		rLen = 0;
-		rLoc = 2161;
+		rLoc = 2162;
 		rType = 0;
 		vrLen = 1416;
 		vrLoc = 0;
@@ -22051,7 +22115,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 83";
 		rLen = 0;
-		rLoc = 2242;
+		rLoc = 2245;
 		rType = 0;
 		vrLen = 1020;
 		vrLoc = 1417;
@@ -22071,7 +22135,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 83";
 		rLen = 0;
-		rLoc = 2242;
+		rLoc = 2245;
 		rType = 0;
 		vrLen = 1020;
 		vrLoc = 1417;
@@ -22091,7 +22155,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 77";
 		rLen = 0;
-		rLoc = 2025;
+		rLoc = 2028;
 		rType = 0;
 		vrLen = 1003;
 		vrLoc = 1417;
@@ -22101,7 +22165,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 192";
 		rLen = 0;
-		rLoc = 4691;
+		rLoc = 4694;
 		rType = 0;
 		vrLen = 1254;
 		vrLoc = 4058;
@@ -22127,7 +22191,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 198";
 		rLen = 0;
-		rLoc = 4918;
+		rLoc = 4921;
 		rType = 0;
 		vrLen = 1256;
 		vrLoc = 4058;
@@ -22147,7 +22211,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 87";
 		rLen = 0;
-		rLoc = 2413;
+		rLoc = 2448;
 		rType = 0;
 		vrLen = 1369;
 		vrLoc = 1973;
@@ -22157,7 +22221,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 234";
 		rLen = 0;
-		rLoc = 6501;
+		rLoc = 6546;
 		rType = 0;
 		vrLen = 1099;
 		vrLoc = 5953;
@@ -22167,7 +22231,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 196";
 		rLen = 8;
-		rLoc = 4923;
+		rLoc = 4926;
 		rType = 0;
 		vrLen = 1183;
 		vrLoc = 4058;
@@ -22193,7 +22257,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 198";
 		rLen = 0;
-		rLoc = 4918;
+		rLoc = 4921;
 		rType = 0;
 		vrLen = 1256;
 		vrLoc = 4058;
@@ -22203,7 +22267,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 27";
 		rLen = 0;
-		rLoc = 850;
+		rLoc = 885;
 		rType = 0;
 		vrLen = 1224;
 		vrLoc = 0;
@@ -22213,7 +22277,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 33";
 		rLen = 0;
-		rLoc = 1077;
+		rLoc = 1122;
 		rType = 0;
 		vrLen = 1456;
 		vrLoc = 473;
@@ -22243,7 +22307,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 282";
 		rLen = 0;
-		rLoc = 8161;
+		rLoc = 8206;
 		rType = 0;
 		vrLen = 979;
 		vrLoc = 7041;
@@ -22253,7 +22317,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 71;
-		rLoc = 1997;
+		rLoc = 2032;
 		rType = 0;
 		vrLen = 1338;
 		vrLoc = 1524;
@@ -22263,7 +22327,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 282";
 		rLen = 0;
-		rLoc = 8161;
+		rLoc = 8206;
 		rType = 0;
 		vrLen = 1181;
 		vrLoc = 3553;
@@ -22273,7 +22337,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 0;
-		rLoc = 2008;
+		rLoc = 2043;
 		rType = 0;
 		vrLen = 1288;
 		vrLoc = 1524;
@@ -22283,7 +22347,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 282";
 		rLen = 0;
-		rLoc = 8161;
+		rLoc = 8206;
 		rType = 0;
 		vrLen = 1108;
 		vrLoc = 3626;
@@ -22293,7 +22357,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 74";
 		rLen = 71;
-		rLoc = 1997;
+		rLoc = 2032;
 		rType = 0;
 		vrLen = 1288;
 		vrLoc = 1524;
@@ -22303,7 +22367,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 234";
 		rLen = 0;
-		rLoc = 6501;
+		rLoc = 6546;
 		rType = 0;
 		vrLen = 1101;
 		vrLoc = 5953;
@@ -22313,7 +22377,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 87";
 		rLen = 0;
-		rLoc = 2413;
+		rLoc = 2448;
 		rType = 0;
 		vrLen = 1369;
 		vrLoc = 1973;
@@ -22323,7 +22387,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 288";
 		rLen = 0;
-		rLoc = 7726;
+		rLoc = 7771;
 		rType = 0;
 		vrLen = 1112;
 		vrLoc = 7327;
@@ -22333,7 +22397,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 288";
 		rLen = 0;
-		rLoc = 7726;
+		rLoc = 7771;
 		rType = 0;
 		vrLen = 1112;
 		vrLoc = 7327;
@@ -22353,7 +22417,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 288";
 		rLen = 0;
-		rLoc = 7726;
+		rLoc = 7771;
 		rType = 0;
 		vrLen = 1112;
 		vrLoc = 7327;
@@ -22383,7 +22447,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 49";
 		rLen = 0;
-		rLoc = 2161;
+		rLoc = 2162;
 		rType = 0;
 		vrLen = 1416;
 		vrLoc = 0;
@@ -22403,7 +22467,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 50";
 		rLen = 0;
-		rLoc = 1801;
+		rLoc = 1802;
 		rType = 0;
 		vrLen = 1276;
 		vrLoc = 648;
@@ -22413,23 +22477,23 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 53";
 		rLen = 0;
-		rLoc = 1803;
+		rLoc = 1804;
 		rType = 0;
 		vrLen = 1462;
 		vrLoc = 648;
 	};
 	1BCD630C0EF487B500D86C43 /* XADXARParser.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {860, 817}}";
-			sepNavSelRange = "{84, 0}";
-			sepNavVisRange = "{0, 1614}";
+			sepNavIntBoundsRect = "{{0, 0}, {940, 874}}";
+			sepNavSelRange = "{1536, 0}";
+			sepNavVisRange = "{193, 1587}";
 		};
 	};
 	1BCD630D0EF487B500D86C43 /* XADXARParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {980, 8094}}";
-			sepNavSelRange = "{11462, 0}";
-			sepNavVisRange = "{10870, 1122}";
+			sepNavIntBoundsRect = "{{0, 0}, {1444, 9367}}";
+			sepNavSelRange = "{14265, 0}";
+			sepNavVisRange = "{13638, 1487}";
 		};
 	};
 	1BCD63140EF5765C00D86C43 /* PBXTextBookmark */ = {
@@ -22447,7 +22511,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 197";
 		rLen = 0;
-		rLoc = 4833;
+		rLoc = 4836;
 		rType = 0;
 		vrLen = 725;
 		vrLoc = 4380;
@@ -22457,7 +22521,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 54";
 		rLen = 0;
-		rLoc = 1959;
+		rLoc = 1960;
 		rType = 0;
 		vrLen = 738;
 		vrLoc = 1370;
@@ -22477,7 +22541,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 7";
 		rLen = 0;
-		rLoc = 546;
+		rLoc = 599;
 		rType = 0;
 		vrLen = 432;
 		vrLoc = 0;
@@ -22487,7 +22551,7 @@
 		comments = "error: 'XADXARParser' undeclared (first use in this function)";
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		rLen = 1;
-		rLoc = 65;
+		rLoc = 66;
 		rType = 1;
 	};
 	1BCD631A0EF5765C00D86C43 /* PBXTextBookmark */ = {
@@ -22505,7 +22569,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 43";
 		rLen = 0;
-		rLoc = 1973;
+		rLoc = 1974;
 		rType = 0;
 		vrLen = 555;
 		vrLoc = 1111;
@@ -22515,7 +22579,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 293";
 		rLen = 7;
-		rLoc = 7849;
+		rLoc = 7894;
 		rType = 0;
 		vrLen = 745;
 		vrLoc = 7693;
@@ -22525,7 +22589,7 @@
 		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
 		name = "XAD7ZipParser.m: 197";
 		rLen = 0;
-		rLoc = 4833;
+		rLoc = 4836;
 		rType = 0;
 		vrLen = 725;
 		vrLoc = 4380;
@@ -22535,7 +22599,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 54";
 		rLen = 0;
-		rLoc = 1959;
+		rLoc = 1960;
 		rType = 0;
 		vrLen = 738;
 		vrLoc = 1370;
@@ -22555,7 +22619,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 66";
 		rLen = 24;
-		rLoc = 2163;
+		rLoc = 2208;
 		rType = 0;
 		vrLen = 473;
 		vrLoc = 1933;
@@ -22565,7 +22629,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 7";
 		rLen = 0;
-		rLoc = 546;
+		rLoc = 599;
 		rType = 0;
 		vrLen = 432;
 		vrLoc = 0;
@@ -22575,7 +22639,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 66";
 		rLen = 24;
-		rLoc = 2163;
+		rLoc = 2208;
 		rType = 0;
 		vrLen = 515;
 		vrLoc = 1933;
@@ -22642,7 +22706,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 66";
 		rLen = 24;
-		rLoc = 2163;
+		rLoc = 2208;
 		rType = 0;
 		vrLen = 515;
 		vrLoc = 1933;
@@ -22662,7 +22726,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 34";
 		rLen = 0;
-		rLoc = 1217;
+		rLoc = 1218;
 		rType = 0;
 		vrLen = 1462;
 		vrLoc = 648;
@@ -22672,7 +22736,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 322";
 		rLen = 0;
-		rLoc = 9972;
+		rLoc = 9975;
 		rType = 0;
 		vrLen = 1041;
 		vrLoc = 9163;
@@ -22691,7 +22755,7 @@
 		isa = PBXTextBookmark;
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 1";
-		rLen = 5551;
+		rLen = 5554;
 		rLoc = 0;
 		rType = 0;
 		vrLen = 1221;
@@ -22702,7 +22766,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 87";
 		rLen = 0;
-		rLoc = 2413;
+		rLoc = 2448;
 		rType = 0;
 		vrLen = 1224;
 		vrLoc = 0;
@@ -22712,7 +22776,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 66";
 		rLen = 0;
-		rLoc = 2172;
+		rLoc = 2217;
 		rType = 0;
 		vrLen = 1132;
 		vrLoc = 1274;
@@ -22732,7 +22796,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 45";
 		rLen = 0;
-		rLoc = 12968;
+		rLoc = 13424;
 		rType = 0;
 		vrLen = 899;
 		vrLoc = 133;
@@ -22742,7 +22806,7 @@
 		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
 		name = "XADLZMAParser.m: 34";
 		rLen = 0;
-		rLoc = 1217;
+		rLoc = 1218;
 		rType = 0;
 		vrLen = 1462;
 		vrLoc = 648;
@@ -22752,7 +22816,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 322";
 		rLen = 0;
-		rLoc = 9972;
+		rLoc = 9975;
 		rType = 0;
 		vrLen = 1041;
 		vrLoc = 9163;
@@ -22791,7 +22855,7 @@
 		isa = PBXTextBookmark;
 		fRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */;
 		name = "XADALZipParser.m: 1";
-		rLen = 5551;
+		rLen = 5554;
 		rLoc = 0;
 		rType = 0;
 		vrLen = 1221;
@@ -22802,7 +22866,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 45";
 		rLen = 0;
-		rLoc = 12968;
+		rLoc = 13424;
 		rType = 0;
 		vrLen = 860;
 		vrLoc = 172;
@@ -22812,7 +22876,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 87";
 		rLen = 0;
-		rLoc = 2413;
+		rLoc = 2448;
 		rType = 0;
 		vrLen = 1224;
 		vrLoc = 0;
@@ -22822,7 +22886,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 66";
 		rLen = 0;
-		rLoc = 2172;
+		rLoc = 2217;
 		rType = 0;
 		vrLen = 1132;
 		vrLoc = 1274;
@@ -22842,7 +22906,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 43";
 		rLen = 0;
-		rLoc = 6549;
+		rLoc = 6909;
 		rType = 0;
 		vrLen = 1010;
 		vrLoc = 661;
@@ -22852,7 +22916,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 115";
 		rLen = 0;
-		rLoc = 9015;
+		rLoc = 9375;
 		rType = 0;
 		vrLen = 633;
 		vrLoc = 2054;
@@ -22862,7 +22926,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 33";
 		rLen = 11;
-		rLoc = 2023;
+		rLoc = 2082;
 		rType = 0;
 		vrLen = 953;
 		vrLoc = 337;
@@ -22872,7 +22936,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 76";
 		rLen = 169;
-		rLoc = 7247;
+		rLoc = 7607;
 		rType = 0;
 		vrLen = 841;
 		vrLoc = 1362;
@@ -22892,7 +22956,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 132";
 		rLen = 0;
-		rLoc = 9931;
+		rLoc = 10291;
 		rType = 0;
 		vrLen = 631;
 		vrLoc = 2388;
@@ -22902,7 +22966,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 122";
 		rLen = 0;
-		rLoc = 9258;
+		rLoc = 9618;
 		rType = 0;
 		vrLen = 570;
 		vrLoc = 2051;
@@ -22922,7 +22986,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 132";
 		rLen = 0;
-		rLoc = 9931;
+		rLoc = 10291;
 		rType = 0;
 		vrLen = 644;
 		vrLoc = 2388;
@@ -22942,7 +23006,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 132";
 		rLen = 0;
-		rLoc = 9931;
+		rLoc = 10291;
 		rType = 0;
 		vrLen = 631;
 		vrLoc = 2388;
@@ -22952,7 +23016,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 45";
 		rLen = 6;
-		rLoc = 2132;
+		rLoc = 2191;
 		rType = 0;
 		vrLen = 1111;
 		vrLoc = 379;
@@ -22962,7 +23026,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 47";
 		rLen = 0;
-		rLoc = 2479;
+		rLoc = 2537;
 		rType = 0;
 		vrLen = 1123;
 		vrLoc = 379;
@@ -22972,7 +23036,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 47";
 		rLen = 0;
-		rLoc = 2479;
+		rLoc = 2537;
 		rType = 0;
 		vrLen = 1123;
 		vrLoc = 379;
@@ -22982,7 +23046,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 44";
 		rLen = 0;
-		rLoc = 1554;
+		rLoc = 1607;
 		rType = 0;
 		vrLen = 1343;
 		vrLoc = 379;
@@ -22992,7 +23056,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 173";
 		rLen = 0;
-		rLoc = 10617;
+		rLoc = 10978;
 		rType = 0;
 		vrLen = 1110;
 		vrLoc = 3481;
@@ -23002,7 +23066,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 175";
 		rLen = 0;
-		rLoc = 10707;
+		rLoc = 11068;
 		rType = 0;
 		vrLen = 1003;
 		vrLoc = 4216;
@@ -23022,7 +23086,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 175";
 		rLen = 0;
-		rLoc = 10707;
+		rLoc = 11068;
 		rType = 0;
 		vrLen = 1003;
 		vrLoc = 4216;
@@ -23052,7 +23116,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 68";
 		rLen = 0;
-		rLoc = 6516;
+		rLoc = 6876;
 		rType = 0;
 		vrLen = 998;
 		vrLoc = 1519;
@@ -23062,7 +23126,7 @@
 		fRef = 1BCD630C0EF487B500D86C43 /* XADXARParser.h */;
 		name = "XADXARParser.h: 23";
 		rLen = 0;
-		rLoc = 1640;
+		rLoc = 1655;
 		rType = 0;
 		vrLen = 847;
 		vrLoc = 0;
@@ -23072,7 +23136,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 68";
 		rLen = 0;
-		rLoc = 6516;
+		rLoc = 6876;
 		rType = 0;
 		vrLen = 999;
 		vrLoc = 1518;
@@ -23092,7 +23156,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 49";
 		rLen = 75;
-		rLoc = 1774;
+		rLoc = 1827;
 		rType = 0;
 		vrLen = 1687;
 		vrLoc = 823;
@@ -23102,7 +23166,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 60";
 		rLen = 0;
-		rLoc = 2393;
+		rLoc = 2452;
 		rType = 0;
 		vrLen = 1844;
 		vrLoc = 823;
@@ -23112,7 +23176,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 101";
 		rLen = 0;
-		rLoc = 6817;
+		rLoc = 7177;
 		rType = 0;
 		vrLen = 946;
 		vrLoc = 2849;
@@ -23132,7 +23196,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 94";
 		rLen = 0;
-		rLoc = 6699;
+		rLoc = 7059;
 		rType = 0;
 		vrLen = 802;
 		vrLoc = 3145;
@@ -23142,7 +23206,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 94";
 		rLen = 0;
-		rLoc = 6699;
+		rLoc = 7059;
 		rType = 0;
 		vrLen = 807;
 		vrLoc = 3145;
@@ -23162,7 +23226,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 72";
 		rLen = 0;
-		rLoc = 3654;
+		rLoc = 3707;
 		rType = 0;
 		vrLen = 1287;
 		vrLoc = 2250;
@@ -23172,7 +23236,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 151";
 		rLen = 0;
-		rLoc = 8460;
+		rLoc = 8820;
 		rType = 0;
 		vrLen = 841;
 		vrLoc = 4460;
@@ -23192,7 +23256,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 151";
 		rLen = 0;
-		rLoc = 8460;
+		rLoc = 8820;
 		rType = 0;
 		vrLen = 841;
 		vrLoc = 4460;
@@ -23222,7 +23286,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 151";
 		rLen = 0;
-		rLoc = 8460;
+		rLoc = 8820;
 		rType = 0;
 		vrLen = 841;
 		vrLoc = 4460;
@@ -23242,7 +23306,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 145";
 		rLen = 0;
-		rLoc = 8374;
+		rLoc = 8734;
 		rType = 0;
 		vrLen = 1016;
 		vrLoc = 3969;
@@ -23252,7 +23316,7 @@
 		fRef = 1BCD630C0EF487B500D86C43 /* XADXARParser.h */;
 		name = "XADXARParser.h: 37";
 		rLen = 0;
-		rLoc = 1640;
+		rLoc = 1655;
 		rType = 0;
 		vrLen = 1372;
 		vrLoc = 0;
@@ -23262,7 +23326,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 240";
 		rLen = 0;
-		rLoc = 11514;
+		rLoc = 11948;
 		rType = 0;
 		vrLen = 841;
 		vrLoc = 6541;
@@ -23272,7 +23336,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 240";
 		rLen = 0;
-		rLoc = 11514;
+		rLoc = 11948;
 		rType = 0;
 		vrLen = 816;
 		vrLoc = 6566;
@@ -23282,7 +23346,7 @@
 		fRef = 1BCD630C0EF487B500D86C43 /* XADXARParser.h */;
 		name = "XADXARParser.h: 37";
 		rLen = 0;
-		rLoc = 1640;
+		rLoc = 1655;
 		rType = 0;
 		vrLen = 1372;
 		vrLoc = 0;
@@ -23292,7 +23356,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 184";
 		rLen = 0;
-		rLoc = 9258;
+		rLoc = 9618;
 		rType = 0;
 		vrLen = 1031;
 		vrLoc = 5130;
@@ -23302,7 +23366,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 44";
 		rLen = 0;
-		rLoc = 1184;
+		rLoc = 1237;
 		rType = 0;
 		vrLen = 2152;
 		vrLoc = 823;
@@ -23322,7 +23386,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 99";
 		rLen = 0;
-		rLoc = 6341;
+		rLoc = 6701;
 		rType = 0;
 		vrLen = 1045;
 		vrLoc = 3003;
@@ -23342,7 +23406,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 44";
 		rLen = 0;
-		rLoc = 1184;
+		rLoc = 1237;
 		rType = 0;
 		vrLen = 2152;
 		vrLoc = 823;
@@ -23372,7 +23436,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 322";
 		rLen = 0;
-		rLoc = 9972;
+		rLoc = 9975;
 		rType = 0;
 		vrLen = 1041;
 		vrLoc = 9163;
@@ -23392,7 +23456,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 322";
 		rLen = 0;
-		rLoc = 9972;
+		rLoc = 9975;
 		rType = 0;
 		vrLen = 1041;
 		vrLoc = 9163;
@@ -23402,7 +23466,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 44";
 		rLen = 0;
-		rLoc = 1184;
+		rLoc = 1237;
 		rType = 0;
 		vrLen = 903;
 		vrLoc = 5673;
@@ -23412,7 +23476,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 44";
 		rLen = 0;
-		rLoc = 1184;
+		rLoc = 1237;
 		rType = 0;
 		vrLen = 992;
 		vrLoc = 5339;
@@ -23422,7 +23486,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 66";
 		rLen = 24;
-		rLoc = 2163;
+		rLoc = 2208;
 		rType = 0;
 		vrLen = 515;
 		vrLoc = 1933;
@@ -23432,7 +23496,7 @@
 		comments = "warning: local declaration of 'files' hides instance variable";
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		rLen = 1;
-		rLoc = 157;
+		rLoc = 161;
 		rType = 1;
 	};
 	1BCD638C0EF5D43B00D86C43 /* PBXTextBookmark */ = {
@@ -23440,7 +23504,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 66";
 		rLen = 24;
-		rLoc = 2163;
+		rLoc = 2208;
 		rType = 0;
 		vrLen = 515;
 		vrLoc = 1933;
@@ -23450,7 +23514,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 106";
 		rLen = 0;
-		rLoc = 6209;
+		rLoc = 6569;
 		rType = 0;
 		vrLen = 627;
 		vrLoc = 3445;
@@ -23470,7 +23534,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 102";
 		rLen = 0;
-		rLoc = 5878;
+		rLoc = 5916;
 		rType = 0;
 		vrLen = 1122;
 		vrLoc = 3289;
@@ -23480,7 +23544,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 44";
 		rLen = 0;
-		rLoc = 1178;
+		rLoc = 1231;
 		rType = 0;
 		vrLen = 2135;
 		vrLoc = 843;
@@ -23490,7 +23554,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 100";
 		rLen = 0;
-		rLoc = 5718;
+		rLoc = 5749;
 		rType = 0;
 		vrLen = 1268;
 		vrLoc = 3065;
@@ -23500,7 +23564,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 85";
 		rLen = 0;
-		rLoc = 4031;
+		rLoc = 4087;
 		rType = 0;
 		vrLen = 1295;
 		vrLoc = 3065;
@@ -23510,7 +23574,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 139";
 		rLen = 0;
-		rLoc = 6871;
+		rLoc = 7231;
 		rType = 0;
 		vrLen = 1040;
 		vrLoc = 4585;
@@ -23520,7 +23584,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 139";
 		rLen = 0;
-		rLoc = 6885;
+		rLoc = 7245;
 		rType = 0;
 		vrLen = 1037;
 		vrLoc = 4585;
@@ -23530,7 +23594,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 108";
 		rLen = 0;
-		rLoc = 6209;
+		rLoc = 6569;
 		rType = 0;
 		vrLen = 733;
 		vrLoc = 3291;
@@ -23550,7 +23614,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 137";
 		rLen = 0;
-		rLoc = 6865;
+		rLoc = 7225;
 		rType = 0;
 		vrLen = 940;
 		vrLoc = 4391;
@@ -23560,7 +23624,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 59";
 		rLen = 0;
-		rLoc = 2242;
+		rLoc = 2301;
 		rType = 0;
 		vrLen = 1841;
 		vrLoc = 1522;
@@ -23570,7 +23634,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 106";
 		rLen = 0;
-		rLoc = 5718;
+		rLoc = 5749;
 		rType = 0;
 		vrLen = 1335;
 		vrLoc = 3033;
@@ -23580,7 +23644,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 55";
 		rLen = 0;
-		rLoc = 1933;
+		rLoc = 1989;
 		rType = 0;
 		vrLen = 2157;
 		vrLoc = 876;
@@ -23590,7 +23654,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 106";
 		rLen = 0;
-		rLoc = 5073;
+		rLoc = 5129;
 		rType = 0;
 		vrLen = 1350;
 		vrLoc = 3100;
@@ -23600,7 +23664,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 82";
 		rLen = 0;
-		rLoc = 3915;
+		rLoc = 3971;
 		rType = 0;
 		vrLen = 1778;
 		vrLoc = 1949;
@@ -23620,7 +23684,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 172";
 		rLen = 0;
-		rLoc = 7848;
+		rLoc = 8208;
 		rType = 0;
 		vrLen = 1095;
 		vrLoc = 5298;
@@ -23630,7 +23694,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 67";
 		rLen = 0;
-		rLoc = 2622;
+		rLoc = 2679;
 		rType = 0;
 		vrLen = 2131;
 		vrLoc = 871;
@@ -23650,7 +23714,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 172";
 		rLen = 0;
-		rLoc = 7848;
+		rLoc = 8208;
 		rType = 0;
 		vrLen = 1095;
 		vrLoc = 5298;
@@ -23670,7 +23734,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 232";
 		rLen = 0;
-		rLoc = 9560;
+		rLoc = 9920;
 		rType = 0;
 		vrLen = 962;
 		vrLoc = 6802;
@@ -23680,7 +23744,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 50";
 		rLen = 0;
-		rLoc = 1582;
+		rLoc = 1635;
 		rType = 0;
 		vrLen = 1741;
 		vrLoc = 661;
@@ -23690,7 +23754,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 87";
 		rLen = 0;
-		rLoc = 2413;
+		rLoc = 2448;
 		rType = 0;
 		vrLen = 1224;
 		vrLoc = 0;
@@ -23710,7 +23774,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 50";
 		rLen = 0;
-		rLoc = 1582;
+		rLoc = 1635;
 		rType = 0;
 		vrLen = 1741;
 		vrLoc = 661;
@@ -23720,7 +23784,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 87";
 		rLen = 0;
-		rLoc = 2413;
+		rLoc = 2448;
 		rType = 0;
 		vrLen = 1224;
 		vrLoc = 0;
@@ -23740,7 +23804,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 38";
 		rLen = 0;
-		rLoc = 1201;
+		rLoc = 1246;
 		rType = 0;
 		vrLen = 1506;
 		vrLoc = 411;
@@ -23750,7 +23814,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 39";
 		rLen = 0;
-		rLoc = 1330;
+		rLoc = 1375;
 		rType = 0;
 		vrLen = 1506;
 		vrLoc = 411;
@@ -23760,7 +23824,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 23";
 		rLen = 0;
-		rLoc = 731;
+		rLoc = 766;
 		rType = 0;
 		vrLen = 1230;
 		vrLoc = 34;
@@ -23780,7 +23844,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 184";
 		rLen = 0;
-		rLoc = 8002;
+		rLoc = 8362;
 		rType = 0;
 		vrLen = 1008;
 		vrLoc = 6025;
@@ -23790,7 +23854,7 @@
 		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
 		name = "XADArchiveParser.m: 39";
 		rLen = 0;
-		rLoc = 1330;
+		rLoc = 1375;
 		rType = 0;
 		vrLen = 1506;
 		vrLoc = 411;
@@ -23800,7 +23864,7 @@
 		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
 		name = "XADArchiveParser.h: 23";
 		rLen = 0;
-		rLoc = 731;
+		rLoc = 766;
 		rType = 0;
 		vrLen = 1230;
 		vrLoc = 34;
@@ -23810,7 +23874,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 184";
 		rLen = 0;
-		rLoc = 8002;
+		rLoc = 8362;
 		rType = 0;
 		vrLen = 1008;
 		vrLoc = 6025;
@@ -23830,7 +23894,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 77";
 		rLen = 0;
-		rLoc = 3170;
+		rLoc = 3225;
 		rType = 0;
 		vrLen = 2198;
 		vrLoc = 1491;
@@ -23840,7 +23904,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 93";
 		rLen = 0;
-		rLoc = 3918;
+		rLoc = 3974;
 		rType = 0;
 		vrLen = 1681;
 		vrLoc = 2500;
@@ -23850,7 +23914,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 113";
 		rLen = 0;
-		rLoc = 4672;
+		rLoc = 4728;
 		rType = 0;
 		vrLen = 1364;
 		vrLoc = 4197;
@@ -23860,7 +23924,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 115";
 		rLen = 0;
-		rLoc = 4740;
+		rLoc = 4796;
 		rType = 0;
 		vrLen = 1242;
 		vrLoc = 4197;
@@ -23870,7 +23934,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 74";
 		rLen = 0;
-		rLoc = 2996;
+		rLoc = 3052;
 		rType = 0;
 		vrLen = 2017;
 		vrLoc = 1774;
@@ -23880,7 +23944,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 137";
 		rLen = 0;
-		rLoc = 6149;
+		rLoc = 6375;
 		rType = 0;
 		vrLen = 1255;
 		vrLoc = 4486;
@@ -23890,7 +23954,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 137";
 		rLen = 0;
-		rLoc = 6108;
+		rLoc = 6334;
 		rType = 0;
 		vrLen = 1341;
 		vrLoc = 4548;
@@ -23900,7 +23964,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 371";
 		rLen = 189;
-		rLoc = 12105;
+		rLoc = 12561;
 		rType = 0;
 		vrLen = 1082;
 		vrLoc = 11090;
@@ -23920,7 +23984,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 371";
 		rLen = 189;
-		rLoc = 12105;
+		rLoc = 12561;
 		rType = 0;
 		vrLen = 1082;
 		vrLoc = 11090;
@@ -24000,7 +24064,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 374";
 		rLen = 0;
-		rLoc = 12409;
+		rLoc = 12865;
 		rType = 0;
 		vrLen = 1331;
 		vrLoc = 11319;
@@ -24020,7 +24084,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 374";
 		rLen = 0;
-		rLoc = 12409;
+		rLoc = 12865;
 		rType = 0;
 		vrLen = 1329;
 		vrLoc = 11321;
@@ -24040,7 +24104,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 374";
 		rLen = 0;
-		rLoc = 12336;
+		rLoc = 12792;
 		rType = 0;
 		vrLen = 1330;
 		vrLoc = 11319;
@@ -24050,7 +24114,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 96";
 		rLen = 0;
-		rLoc = 3823;
+		rLoc = 3876;
 		rType = 0;
 		vrLen = 1699;
 		vrLoc = 2514;
@@ -24070,7 +24134,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 96";
 		rLen = 0;
-		rLoc = 3823;
+		rLoc = 3876;
 		rType = 0;
 		vrLen = 1699;
 		vrLoc = 2514;
@@ -24080,7 +24144,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 96";
 		rLen = 0;
-		rLoc = 3823;
+		rLoc = 3876;
 		rType = 0;
 		vrLen = 1699;
 		vrLoc = 2514;
@@ -24100,7 +24164,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 43";
 		rLen = 0;
-		rLoc = 1049;
+		rLoc = 1102;
 		rType = 0;
 		vrLen = 1692;
 		vrLoc = 830;
@@ -24110,7 +24174,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 93";
 		rLen = 0;
-		rLoc = 3822;
+		rLoc = 3875;
 		rType = 0;
 		vrLen = 1943;
 		vrLoc = 2142;
@@ -24120,7 +24184,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 356";
 		rLen = 0;
-		rLoc = 11606;
+		rLoc = 12040;
 		rType = 0;
 		vrLen = 1377;
 		vrLoc = 11232;
@@ -24130,7 +24194,7 @@
 		comments = "warning: unused variable 'finderinfo'";
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		rLen = 1;
-		rLoc = 111;
+		rLoc = 112;
 		rType = 1;
 	};
 	1BCD64010EF5ED4600D86C43 /* PBXTextBookmark */ = {
@@ -24138,7 +24202,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 112";
 		rLen = 61;
-		rLoc = 4518;
+		rLoc = 4574;
 		rType = 0;
 		vrLen = 890;
 		vrLoc = 4192;
@@ -24158,7 +24222,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 356";
 		rLen = 0;
-		rLoc = 11606;
+		rLoc = 12040;
 		rType = 0;
 		vrLen = 1377;
 		vrLoc = 11232;
@@ -24168,7 +24232,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 143";
 		rLen = 0;
-		rLoc = 5717;
+		rLoc = 5748;
 		rType = 0;
 		vrLen = 1172;
 		vrLoc = 5045;
@@ -24178,7 +24242,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 131";
 		rLen = 0;
-		rLoc = 5181;
+		rLoc = 5237;
 		rType = 0;
 		vrLen = 1331;
 		vrLoc = 4580;
@@ -24188,7 +24252,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 131";
 		rLen = 0;
-		rLoc = 5181;
+		rLoc = 5237;
 		rType = 0;
 		vrLen = 1331;
 		vrLoc = 4580;
@@ -24198,7 +24262,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 131";
 		rLen = 0;
-		rLoc = 5181;
+		rLoc = 5237;
 		rType = 0;
 		vrLen = 1343;
 		vrLoc = 4580;
@@ -24208,7 +24272,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 376";
 		rLen = 0;
-		rLoc = 12334;
+		rLoc = 12790;
 		rType = 0;
 		vrLen = 1274;
 		vrLoc = 11565;
@@ -24218,7 +24282,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 83";
 		rLen = 0;
-		rLoc = 3547;
+		rLoc = 3601;
 		rType = 0;
 		vrLen = 1868;
 		vrLoc = 2216;
@@ -24228,7 +24292,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 380";
 		rLen = 0;
-		rLoc = 12508;
+		rLoc = 12964;
 		rType = 0;
 		vrLen = 1277;
 		vrLoc = 11540;
@@ -24238,7 +24302,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 379";
 		rLen = 0;
-		rLoc = 12472;
+		rLoc = 12928;
 		rType = 0;
 		vrLen = 1304;
 		vrLoc = 11540;
@@ -24264,7 +24328,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 341";
 		rLen = 7;
-		rLoc = 11224;
+		rLoc = 11585;
 		rType = 0;
 		vrLen = 1044;
 		vrLoc = 10870;
@@ -24274,7 +24338,7 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 341";
 		rLen = 7;
-		rLoc = 11224;
+		rLoc = 11585;
 		rType = 0;
 		vrLen = 1044;
 		vrLoc = 10870;
@@ -24300,10 +24364,706 @@
 		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
 		name = "XADXARParser.m: 348";
 		rLen = 0;
-		rLoc = 11462;
+		rLoc = 11896;
 		rType = 0;
 		vrLen = 1122;
 		vrLoc = 10870;
+	};
+	1BCD641C0EF6C8E100D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 466";
+		rLen = 0;
+		rLoc = 15954;
+		rType = 0;
+		vrLen = 1041;
+		vrLoc = 10864;
+	};
+	1BCD641D0EF6C9F800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 466";
+		rLen = 0;
+		rLoc = 15954;
+		rType = 0;
+		vrLen = 1041;
+		vrLoc = 10864;
+	};
+	1BCD641E0EF6C9F800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD62A90EF4722400D86C43 /* XADLZMAParser.h */;
+		name = "XADLZMAParser.h: 15";
+		rLen = 0;
+		rLoc = 340;
+		rType = 0;
+		vrLen = 341;
+		vrLoc = 0;
+	};
+	1BCD641F0EF6C9F800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 466";
+		rLen = 0;
+		rLoc = 15954;
+		rType = 0;
+		vrLen = 1041;
+		vrLoc = 10864;
+	};
+	1BCD64200EF6C9F800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD62A90EF4722400D86C43 /* XADLZMAParser.h */;
+		name = "XADLZMAParser.h: 15";
+		rLen = 0;
+		rLoc = 340;
+		rType = 0;
+		vrLen = 341;
+		vrLoc = 0;
+	};
+	1BCD64210EF6C9F800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
+		name = "XADLZMAParser.m: 35";
+		rLen = 0;
+		rLoc = 726;
+		rType = 0;
+		vrLen = 725;
+		vrLoc = 0;
+	};
+	1BCD64220EF6CA0400D86C43 /* XADLZMAAloneParser.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {796, 710}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 345}";
+		};
+	};
+	1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1108, 1558}}";
+			sepNavSelRange = "{700, 0}";
+			sepNavVisRange = "{0, 1154}";
+		};
+	};
+	1BCD64260EF6CA3F00D86C43 /* XADCRCSuffixHandle.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {929, 1311}}";
+			sepNavSelRange = "{53, 0}";
+			sepNavVisRange = "{0, 1043}";
+		};
+	};
+	1BCD64270EF6CA3F00D86C43 /* XADCRCSuffixHandle.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {929, 551}}";
+			sepNavSelRange = "{628, 88}";
+			sepNavVisRange = "{133, 726}";
+		};
+	};
+	1BCD64280EF6CA3F00D86C43 /* XADCRCHandle.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {804, 1121}}";
+			sepNavSelRange = "{46, 0}";
+			sepNavVisRange = "{0, 1736}";
+		};
+	};
+	1BCD64290EF6CA3F00D86C43 /* XADCRCHandle.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {740, 710}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 891}";
+		};
+	};
+	1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1044, 1482}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1266}";
+		};
+	};
+	1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {717, 710}}";
+			sepNavSelRange = "{516, 0}";
+			sepNavVisRange = "{0, 993}";
+		};
+	};
+	1BCD64390EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
+		name = "XADLZMAParser.m: 35";
+		rLen = 0;
+		rLoc = 726;
+		rType = 0;
+		vrLen = 725;
+		vrLoc = 0;
+	};
+	1BCD643A0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64270EF6CA3F00D86C43 /* XADCRCSuffixHandle.h */;
+		name = "XADCRCSuffixHandle.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 848;
+		vrLoc = 0;
+	};
+	1BCD643B0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64220EF6CA0400D86C43 /* XADLZMAAloneParser.h */;
+		name = "XADLZMAAloneParser.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 345;
+		vrLoc = 0;
+	};
+	1BCD643C0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */;
+		name = "XADLZMAAloneParser.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1108;
+		vrLoc = 0;
+	};
+	1BCD643D0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */;
+		name = "XADGzipParser.m: 108";
+		rLen = 64;
+		rLoc = 3254;
+		rType = 0;
+		vrLen = 1302;
+		vrLoc = 2142;
+	};
+	1BCD643E0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64290EF6CA3F00D86C43 /* XADCRCHandle.h */;
+		name = "XADCRCHandle.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 891;
+		vrLoc = 0;
+	};
+	1BCD643F0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64280EF6CA3F00D86C43 /* XADCRCHandle.m */;
+		name = "XADCRCHandle.m: 2";
+		rLen = 0;
+		rLoc = 46;
+		rType = 0;
+		vrLen = 1736;
+		vrLoc = 0;
+	};
+	1BCD64400EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */;
+		name = "XADDigestHandle.h: 20";
+		rLen = 0;
+		rLoc = 516;
+		rType = 0;
+		vrLen = 993;
+		vrLoc = 0;
+	};
+	1BCD64410EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */;
+		name = "XADDigestHandle.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1266;
+		vrLoc = 0;
+	};
+	1BCD64420EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD62AA0EF4722400D86C43 /* XADLZMAParser.m */;
+		name = "XADLZMAParser.m: 35";
+		rLen = 0;
+		rLoc = 726;
+		rType = 0;
+		vrLen = 725;
+		vrLoc = 0;
+	};
+	1BCD64430EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64290EF6CA3F00D86C43 /* XADCRCHandle.h */;
+		name = "XADCRCHandle.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 891;
+		vrLoc = 0;
+	};
+	1BCD64440EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64270EF6CA3F00D86C43 /* XADCRCSuffixHandle.h */;
+		name = "XADCRCSuffixHandle.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 848;
+		vrLoc = 0;
+	};
+	1BCD64450EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64290EF6CA3F00D86C43 /* XADCRCHandle.h */;
+		name = "XADCRCHandle.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 891;
+		vrLoc = 0;
+	};
+	1BCD64460EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64220EF6CA0400D86C43 /* XADLZMAAloneParser.h */;
+		name = "XADLZMAAloneParser.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 345;
+		vrLoc = 0;
+	};
+	1BCD64470EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */;
+		name = "XADLZMAAloneParser.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1108;
+		vrLoc = 0;
+	};
+	1BCD64480EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */;
+		name = "XADGzipParser.m: 108";
+		rLen = 64;
+		rLoc = 3254;
+		rType = 0;
+		vrLen = 1302;
+		vrLoc = 2142;
+	};
+	1BCD64490EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64290EF6CA3F00D86C43 /* XADCRCHandle.h */;
+		name = "XADCRCHandle.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 891;
+		vrLoc = 0;
+	};
+	1BCD644A0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64280EF6CA3F00D86C43 /* XADCRCHandle.m */;
+		name = "XADCRCHandle.m: 2";
+		rLen = 0;
+		rLoc = 46;
+		rType = 0;
+		vrLen = 1736;
+		vrLoc = 0;
+	};
+	1BCD644B0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */;
+		name = "XADDigestHandle.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1263;
+		vrLoc = 0;
+	};
+	1BCD644C0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */;
+		name = "XADDigestHandle.h: 20";
+		rLen = 0;
+		rLoc = 516;
+		rType = 0;
+		vrLen = 993;
+		vrLoc = 0;
+	};
+	1BCD644D0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */;
+		name = "XADDigestHandle.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1266;
+		vrLoc = 0;
+	};
+	1BCD644E0EF6CD1200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 367";
+		rLen = 0;
+		rLoc = 12328;
+		rType = 0;
+		vrLen = 1377;
+		vrLoc = 11470;
+	};
+	1BCD64500EF6CD3E00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 452";
+		rLen = 0;
+		rLoc = 15711;
+		rType = 0;
+		vrLen = 1061;
+		vrLoc = 14505;
+	};
+	1BCD64520EF6CD6C00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 86";
+		rLen = 0;
+		rLoc = 3657;
+		rType = 0;
+		vrLen = 2342;
+		vrLoc = 1113;
+	};
+	1BCD64540EF6CE2F00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 74";
+		rLen = 0;
+		rLoc = 2879;
+		rType = 0;
+		vrLen = 1937;
+		vrLoc = 2216;
+	};
+	1BCD64560EF6CE6100D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 319";
+		rLen = 0;
+		rLoc = 10782;
+		rType = 0;
+		vrLen = 1327;
+		vrLoc = 9927;
+	};
+	1BCD64580EF6CEBB00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 317";
+		rLen = 0;
+		rLoc = 10720;
+		rType = 0;
+		vrLen = 1231;
+		vrLoc = 9806;
+	};
+	1BCD645A0EF6CEF500D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 318";
+		rLen = 0;
+		rLoc = 10782;
+		rType = 0;
+		vrLen = 1238;
+		vrLoc = 10536;
+	};
+	1BCD645C0EF6CF1D00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 421";
+		rLen = 0;
+		rLoc = 14453;
+		rType = 0;
+		vrLen = 1731;
+		vrLoc = 13358;
+	};
+	1BCD645F0EF6CFA400D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 130";
+		rLen = 0;
+		rLoc = 5235;
+		rType = 0;
+		vrLen = 1516;
+		vrLoc = 4316;
+	};
+	1BCD64610EF6CFC000D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 420";
+		rLen = 0;
+		rLoc = 14454;
+		rType = 0;
+		vrLen = 1523;
+		vrLoc = 13235;
+	};
+	1BCD64630EF6D00400D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 144";
+		rLen = 0;
+		rLoc = 5779;
+		rType = 0;
+		vrLen = 1324;
+		vrLoc = 5316;
+	};
+	1BCD64640EF6D00400D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
+		name = "XADArchiveParser.h: 18";
+		rLen = 0;
+		rLoc = 533;
+		rType = 0;
+		vrLen = 1156;
+		vrLoc = 361;
+	};
+	1BCD64650EF6D00400D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
+		name = "XADArchiveParser.m: 39";
+		rLen = 0;
+		rLoc = 1375;
+		rType = 0;
+		vrLen = 1511;
+		vrLoc = 437;
+	};
+	1BCD64660EF6D00500D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 144";
+		rLen = 0;
+		rLoc = 5779;
+		rType = 0;
+		vrLen = 1324;
+		vrLoc = 5316;
+	};
+	1BCD64670EF6D00500D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */;
+		name = "XADArchiveParser.h: 18";
+		rLen = 0;
+		rLoc = 533;
+		rType = 0;
+		vrLen = 1156;
+		vrLoc = 361;
+	};
+	1BCD64680EF6D00500D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
+		name = "XADArchiveParser.m: 33";
+		rLen = 0;
+		rLoc = 1011;
+		rType = 0;
+		vrLen = 1514;
+		vrLoc = 437;
+	};
+	1BCD646A0EF6D1CF00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
+		name = "XADArchiveParser.m: 33";
+		rLen = 0;
+		rLoc = 1011;
+		rType = 0;
+		vrLen = 1210;
+		vrLoc = 1280;
+	};
+	1BCD646B0EF6D1CF00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 144";
+		rLen = 0;
+		rLoc = 5779;
+		rType = 0;
+		vrLen = 1324;
+		vrLoc = 5316;
+	};
+	1BCD646C0EF6D1CF00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
+		name = "XADArchiveParser.m: 33";
+		rLen = 0;
+		rLoc = 1011;
+		rType = 0;
+		vrLen = 1210;
+		vrLoc = 1280;
+	};
+	1BCD646D0EF6D1CF00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 158";
+		rLen = 0;
+		rLoc = 6413;
+		rType = 0;
+		vrLen = 1175;
+		vrLoc = 5716;
+	};
+	1BCD646F0EF6D1F300D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 159";
+		rLen = 0;
+		rLoc = 6490;
+		rType = 0;
+		vrLen = 1324;
+		vrLoc = 5488;
+	};
+	1BCD64700EF6ED6900D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 147";
+		rLen = 0;
+		rLoc = 5859;
+		rType = 0;
+		vrLen = 1324;
+		vrLoc = 5488;
+	};
+	1BCD64710EF6ED6900D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */;
+		name = "XADLZMAAloneParser.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1105;
+		vrLoc = 0;
+	};
+	1BCD64720EF6ED6900D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 147";
+		rLen = 0;
+		rLoc = 5859;
+		rType = 0;
+		vrLen = 1324;
+		vrLoc = 5488;
+	};
+	1BCD64730EF6ED6900D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */;
+		name = "XADLZMAAloneParser.m: 22";
+		rLen = 0;
+		rLoc = 596;
+		rType = 0;
+		vrLen = 1156;
+		vrLoc = 0;
+	};
+	1BCD64770EF6EDC200D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */;
+		name = "XADLZMAAloneParser.m: 20";
+		rLen = 0;
+		rLoc = 488;
+		rType = 0;
+		vrLen = 1154;
+		vrLoc = 0;
+	};
+	1BCD64790EF6F13E00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */;
+		name = "XADLZMAAloneParser.m: 26";
+		rLen = 0;
+		rLoc = 700;
+		rType = 0;
+		vrLen = 1154;
+		vrLoc = 0;
+	};
+	1BCD647A0EF6F13E00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 147";
+		rLen = 0;
+		rLoc = 5859;
+		rType = 0;
+		vrLen = 1324;
+		vrLoc = 5488;
+	};
+	1BCD647B0EF6F13E00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */;
+		name = "XADLZMAAloneParser.m: 26";
+		rLen = 0;
+		rLoc = 700;
+		rType = 0;
+		vrLen = 1154;
+		vrLoc = 0;
+	};
+	1BCD647C0EF6F13E00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 151";
+		rLen = 0;
+		rLoc = 6036;
+		rType = 0;
+		vrLen = 1400;
+		vrLoc = 5313;
+	};
+	1BCD647E0EF6F16500D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 98";
+		rLen = 0;
+		rLoc = 3951;
+		rType = 0;
+		vrLen = 1516;
+		vrLoc = 3696;
+	};
+	1BCD64800EF6F8A800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630C0EF487B500D86C43 /* XADXARParser.h */;
+		name = "XADXARParser.h: 40";
+		rLen = 0;
+		rLoc = 1536;
+		rType = 0;
+		vrLen = 1587;
+		vrLoc = 193;
+	};
+	1BCD64810EF6F8A800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 416";
+		rLen = 204;
+		rLoc = 14059;
+		rType = 0;
+		vrLen = 1438;
+		vrLoc = 13609;
+	};
+	1BCD64820EF6F8A800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 416";
+		rLen = 204;
+		rLoc = 14059;
+		rType = 0;
+		vrLen = 1438;
+		vrLoc = 13609;
+	};
+	1BCD64830EF6F8A800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630C0EF487B500D86C43 /* XADXARParser.h */;
+		name = "XADXARParser.h: 40";
+		rLen = 0;
+		rLoc = 1536;
+		rType = 0;
+		vrLen = 1587;
+		vrLoc = 193;
+	};
+	1BCD64840EF6F8A800D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 452";
+		rLen = 0;
+		rLoc = 15405;
+		rType = 0;
+		vrLen = 1385;
+		vrLoc = 14284;
+	};
+	1BCD64860EF6F8BB00D86C43 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */;
+		name = "XADXARParser.m: 419";
+		rLen = 0;
+		rLoc = 14265;
+		rType = 0;
+		vrLen = 1487;
+		vrLoc = 13638;
 	};
 	1BED5E940A60431800CA31C2 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

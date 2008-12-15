@@ -1,8 +1,8 @@
 #import "XADRARParser.h"
 #import "XADRARHandle.h"
 #import "XADRARAESHandle.h"
+#import "XADCRCHandle.h"
 #import "XADException.h"
-#import "Checksums.h"
 #import "NSDateXAD.h"
 
 #define RARFLAG_SKIP_IF_UNKNOWN 0x4000

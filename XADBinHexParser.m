@@ -1,7 +1,7 @@
 #import "XADBinHexParser.h"
 #import "XADException.h"
 #import "CSMemoryHandle.h"
-#import "Checksums.h"
+#import "XADCRCSuffixHandle.h"
 
 @implementation XADBinHexParser
 

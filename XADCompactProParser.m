@@ -2,7 +2,7 @@
 #import "XADCompactProRLEHandle.h"
 #import "XADCompactProLZHHandle.h"
 #import "XADException.h"
-#import "Checksums.h"
+#import "XADCRCHandle.h"
 #import "Paths.h"
 #import "NSDateXAD.h"
 

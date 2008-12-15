@@ -9,9 +9,9 @@
 	const uint32_t *table;
 }
 
-+(XADCRCHandle *)IEEECRC32SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
++(XADCRCSuffixHandle *)IEEECRC32SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
 bigEndianCRC:(BOOL)bigendian conditioned:(BOOL)conditioned;
-+(XADCRCHandle *)CCITTCRC16SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
++(XADCRCSuffixHandle *)CCITTCRC16SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle
 bigEndianCRC:(BOOL)bigendian conditioned:(BOOL)conditioned;
 
 -(id)initWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle initialCRC:(uint32_t)initialcrc

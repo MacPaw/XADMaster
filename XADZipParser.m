@@ -7,7 +7,7 @@
 #import "XADWinZipAESHandle.h"
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
-#import "Checksums.h"
+#import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
 

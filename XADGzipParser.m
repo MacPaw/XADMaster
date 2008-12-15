@@ -1,6 +1,6 @@
 #import "XADGzipParser.h"
 #import "CSZlibHandle.h"
-#import "Checksums.h"
+#import "XADCRCSuffixHandle.h"
 
 // TODO: implement SFX 
 

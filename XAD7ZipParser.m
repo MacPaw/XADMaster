@@ -6,9 +6,9 @@
 #import "XADZipShrinkHandle.h"
 #import "XADRARHandle.h"
 #import "XADCompressHandle.h"
+#import "XADCRCHandle.h"
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
-#import "Checksums.h"
 #import "NSDateXAD.h"
 
 static uint64_t ReadNumber(CSHandle *handle)

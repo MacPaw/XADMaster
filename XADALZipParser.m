@@ -2,8 +2,8 @@
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
 #import "XADDeflateHandle.h"
+#import "XADCRCHandle.h"
 #import "XADRegex.h"
-#import "Checksums.h"
 #import "NSDateXAD.h"
 
 static off_t ParseNumber(CSHandle *handle,int size)

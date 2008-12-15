@@ -5,14 +5,14 @@
 
 @implementation XADLZMAParser
 
-+(int)requiredHeaderSize { return 0; }
++(int)requiredHeaderSize { return 6; }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
-	if(length<) return NO;
+	if(length<6) return NO;
 
 	return bytes[0]==0xff&&bytes[1]=='L'&&bytes[2]=='Z'&&bytes[3]=='M'&&bytes[4]=='A'&&bytes[5]==0;
 }

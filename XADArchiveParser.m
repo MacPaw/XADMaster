@@ -30,6 +30,7 @@ NSString *XADCreationDateKey=@"XADCreationDate";
 NSString *XADFileTypeKey=@"XADFileType";
 NSString *XADFileCreatorKey=@"XADFileCreator";
 NSString *XADFinderFlagsKey=@"XADFinderFlags";
+NSString *XADFinderInfoKey=@"XADFinderInfo";
 NSString *XADPosixPermissionsKey=@"XADPosixPermissions";
 NSString *XADPosixUserKey=@"XADPosixUser";
 NSString *XADPosixGroupKey=@"XADGroupUser";

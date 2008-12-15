@@ -16,8 +16,8 @@
 correctDigest:(NSData *)correctdigest;
 +(XADDigestHandle *)SHA1HandleWithHandle:(CSHandle *)handle length:(off_t)length
 correctDigest:(NSData *)correctdigest;
-+(XADDigestHandle *)SHA256HandleWithHandle:(CSHandle *)handle length:(off_t)length
-correctDigest:(NSData *)correctdigest;
+//+(XADDigestHandle *)SHA256HandleWithHandle:(CSHandle *)handle length:(off_t)length
+//correctDigest:(NSData *)correctdigest;
 +(XADDigestHandle *)digestHandleWithHandle:(CSHandle *)handle length:(off_t)length
 digestName:(NSString *)digestname correctDigest:(NSData *)correctdigest;
 

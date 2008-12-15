@@ -36,8 +36,8 @@ destinationDictionary:(NSMutableDictionary *)dest;
 destinationDictionary:(NSMutableDictionary *)dest;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
--(CSHandle *)handleForEncodingStyle:(NSString *)encodingstyle offset:(off_t)offset
-length:(off_t)length size:(off_t)size checksum:(NSData *)checksum checksumStyle:(NSString *)checksumstyle;
+-(CSHandle *)handleForEncodingStyle:(NSString *)encodingstyle offset:(NSNumber *)offset
+length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum checksumStyle:(NSString *)checksumstyle;
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict;
 
 -(NSString *)formatName;

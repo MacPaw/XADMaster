@@ -167,6 +167,8 @@
 		1BCD642D0EF6CA3F00D86C43 /* XADCRCHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD64290EF6CA3F00D86C43 /* XADCRCHandle.h */; };
 		1BCD64330EF6CB5200D86C43 /* XADDigestHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */; };
 		1BCD64340EF6CB5200D86C43 /* XADDigestHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */; };
+		1BCD65520EF8164900D86C43 /* RARBug.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD65500EF8164900D86C43 /* RARBug.h */; };
+		1BCD65530EF8164900D86C43 /* RARBug.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD65510EF8164900D86C43 /* RARBug.c */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -467,6 +469,8 @@
 		1BCD64290EF6CA3F00D86C43 /* XADCRCHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCRCHandle.h; sourceTree = "<group>"; };
 		1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADDigestHandle.m; sourceTree = "<group>"; };
 		1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDigestHandle.h; sourceTree = "<group>"; };
+		1BCD65500EF8164900D86C43 /* RARBug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARBug.h; sourceTree = "<group>"; };
+		1BCD65510EF8164900D86C43 /* RARBug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RARBug.c; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMaster_Prefix.pch; sourceTree = "<group>"; };
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
@@ -841,6 +845,8 @@
 				1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */,
 				1BCD5C330EEC605400D86C43 /* RARUnpacker.h */,
 				1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */,
+				1BCD65500EF8164900D86C43 /* RARBug.h */,
+				1BCD65510EF8164900D86C43 /* RARBug.c */,
 				1BC89D020EDCC1D4006B47FE /* unrar */,
 			);
 			name = Rar;
@@ -1095,6 +1101,7 @@
 				1BCD642B0EF6CA3F00D86C43 /* XADCRCSuffixHandle.h in Headers */,
 				1BCD642D0EF6CA3F00D86C43 /* XADCRCHandle.h in Headers */,
 				1BCD64340EF6CB5200D86C43 /* XADDigestHandle.h in Headers */,
+				1BCD65520EF8164900D86C43 /* RARBug.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1333,6 +1340,7 @@
 				1BCD642A0EF6CA3F00D86C43 /* XADCRCSuffixHandle.m in Sources */,
 				1BCD642C0EF6CA3F00D86C43 /* XADCRCHandle.m in Sources */,
 				1BCD64330EF6CB5200D86C43 /* XADDigestHandle.m in Sources */,
+				1BCD65530EF8164900D86C43 /* RARBug.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

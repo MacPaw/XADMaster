@@ -482,14 +482,14 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 		}
 		else numoutstreams=numinstreams=1;
 
-		NSData *properties=nil;
-		if(flags&0x20) properties=[handle readDataOfLength:ReadNumber(handle)];
+		NSData *props=nil;
+		if(flags&0x20) props=[handle readDataOfLength:ReadNumber(handle)];
 
 		NSMutableDictionary *coder=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			coderid,@"ID",
 			[NSNumber numberWithInt:[instreams count]],@"FirstInStreamIndex",
 			[NSNumber numberWithInt:[outstreams count]],@"FirstOutStreamIndex",
-			properties,@"Properties",
+			props,@"Properties",
 		nil];
 
 		for(int j=0;j<numinstreams;j++) [instreams addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:

@@ -81,7 +81,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		blockstartpos+=blocklength;
 		blocklength=[self produceBlockAtOffset:streampos+n];
 
-		if(blocklength==0||!currblock) break;
+		if(blocklength<=0||!currblock) { [self endStream]; break; }
 
 		int count=imin(blocklength,num-n);
 		memcpy(buffer+n,currblock,count);

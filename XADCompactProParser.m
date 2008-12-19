@@ -32,7 +32,12 @@
 	/*uint32_t headcrc=*/[fh readUInt32BE];
 	int numentries=[fh readUInt16BE];
 	int commentlen=[fh readUInt8];
-	[fh skipBytes:commentlen];
+
+	if(commentlen)
+	{
+		NSData *comment=[fh readDataOfLength:commentlen];
+		[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
+	}
 
 	[self parseDirectoryWithNameData:nil numberOfEntries:numentries];
 

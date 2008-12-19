@@ -43,6 +43,7 @@
 
 		[parser setDelegate:[[TestDelegate new] autorelease]];
 		[parser parse];
+		NSLog(@"Archive properties: %@",[parser properties]);
 
 		NSLog(@"----------- Finished sub-archive %@ -----------",subname);
 //} @catch(id e) {
@@ -74,6 +75,7 @@ int main(int argc,char **argv)
 //		[parser setPassword:@"www.joomla.com.tr"];
 
 		[parser parse];
+		NSLog(@"Archive properties: %@",[parser properties]);
 
 		[pool release];
 	}

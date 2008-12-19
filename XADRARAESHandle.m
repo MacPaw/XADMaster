@@ -1,4 +1,5 @@
 #import "XADRARAESHandle.h"
+#import "RARBug.h"
 
 #import <openssl/sha.h>
 
@@ -34,12 +35,10 @@ salt:(NSData *)salt brokenHash:(BOOL)brokenhash
 	[super dealloc];
 }
 
--(void)calculateKeyForPassword:(NSString *)password salt:(NSData *)salt brokenHash:(BOOL)borkenhash
+-(void)calculateKeyForPassword:(NSString *)password salt:(NSData *)salt brokenHash:(BOOL)brokenhash
 {
-	const uint8_t *saltbytes=[salt bytes];
-
 	int length=[password length];
-	uint8_t passbuf[length*2];
+	uint8_t passbuf[length*2+8];
 	for(int i=0;i<length;i++)
 	{
 		int c=[password characterAtIndex:i];
@@ -47,16 +46,21 @@ salt:(NSData *)salt brokenHash:(BOOL)brokenhash
 		passbuf[2*i+1]=c>>8;
 	}
 
+	if(salt)
+	{
+		memcpy(passbuf+2*length,[salt bytes],8);
+		length+=4;
+	}
+
 	SHA_CTX sha;
 	SHA1_Init(&sha);
 
 	for(int i=0;i<0x40000;i++)
 	{
-		SHA1_Update(&sha,passbuf,length*2);
-		if(salt) SHA1_Update(&sha,saltbytes,8);
+		SHA1_Update_WithRARBug(&sha,passbuf,length*2,brokenhash);
 
 		uint8_t num[3]={i,i>>8,i>>16};
-		SHA1_Update(&sha,num,3);
+		SHA1_Update_WithRARBug(&sha,num,3,brokenhash);
 
 		if(i%0x4000==0)
 		{

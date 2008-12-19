@@ -50,6 +50,12 @@ void *NextRARBlock(RARUnpacker *self,int *length)
 	return self->blockbytes;
 }
 
+int IsRARFinished(RARUnpacker *self)
+{
+	Unpack *unpack=(Unpack *)self->unpack;
+	return unpack->IsFileExtracted();
+}
+
 }
 
 

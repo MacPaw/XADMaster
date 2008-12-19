@@ -16,7 +16,7 @@ salt:(NSData *)salt brokenHash:(BOOL)brokenhash;
 salt:(NSData *)salt  brokenHash:(BOOL)brokenhash;
 -(void)dealloc;
 
--(void)calculateKeyForPassword:(NSString *)password salt:(NSData *)salt brokenHash:(BOOL)borkenhash;
+-(void)calculateKeyForPassword:(NSString *)password salt:(NSData *)salt brokenHash:(BOOL)brokenhash;
 
 -(void)resetBlockStream;
 -(int)produceBlockAtOffset:(off_t)pos;

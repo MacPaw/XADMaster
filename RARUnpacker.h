@@ -25,7 +25,7 @@ RARUnpacker *AllocRARUnpacker(RARReadFunc readfunc,void *readparam1,void *readpa
 void FreeRARUnpacker(RARUnpacker *self);
 void StartRARUnpacker(RARUnpacker *self,off_t length,int method,int solid);
 void *NextRARBlock(RARUnpacker *self,int *length);
-
+int IsRARFinished(RARUnpacker *self);
 
 #ifdef __cplusplus
 }

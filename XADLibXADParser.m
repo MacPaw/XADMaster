@@ -252,7 +252,7 @@ static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgress
 	if(info->xfi_Comment)
 	[dict setObject:[self XADStringWithCString:info->xfi_Comment] forKey:XADCommentKey];
 
-//	if(archive->xai_Flags&XADAIF_FILECORRUPT) // TODO: set corrupted flag
+	if(archive->xai_Flags&XADAIF_FILECORRUPT) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 
 	return dict;
 }

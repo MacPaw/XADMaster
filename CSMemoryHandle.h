@@ -7,7 +7,7 @@
 }
 
 +(CSMemoryHandle *)memoryHandleForReadingData:(NSData *)data;
-+(CSMemoryHandle *)memoryHandleForReadingBuffer:(void *)buf length:(unsigned)len;
++(CSMemoryHandle *)memoryHandleForReadingBuffer:(const void *)buf length:(unsigned)len;
 +(CSMemoryHandle *)memoryHandleForReadingMappedFile:(NSString *)filename;
 +(CSMemoryHandle *)memoryHandleForWriting;
 

@@ -10,9 +10,9 @@
 	return [[[CSMemoryHandle alloc] initWithData:data] autorelease];
 }
 
-+(CSMemoryHandle *)memoryHandleForReadingBuffer:(void *)buf length:(unsigned)len
++(CSMemoryHandle *)memoryHandleForReadingBuffer:(const void *)buf length:(unsigned)len
 {
-	return [[[CSMemoryHandle alloc] initWithData:[NSData dataWithBytesNoCopy:buf length:len freeWhenDone:NO]] autorelease];
+	return [[[CSMemoryHandle alloc] initWithData:[NSData dataWithBytesNoCopy:(void *)buf length:len freeWhenDone:NO]] autorelease];
 }
 
 +(CSMemoryHandle *)memoryHandleForReadingMappedFile:(NSString *)filename

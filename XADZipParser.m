@@ -64,12 +64,15 @@
 	int centraloffset=[fh readUInt32LE];
 	int commentlength=[fh readUInt16LE];
 
-	// TODO: multi-archives
+	// TODO: more closely check multi-archives
 //	NSLog(@"disknumber:%d centraldirstartdisk:%d numentriesdisk:%d numentries:%d centralsize:%d centraloffset:%d",
 //	disknumber,centraldirstartdisk,numentriesdisk,numentries,centralsize,centraloffset);
 
-	off_t commentoffs=0;
-	if(commentlength) commentoffs=[fh offsetInFile];
+	if(commentlength)
+	{
+		NSData *comment=[fh readDataOfLength:commentlength];
+		[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
+	}
 
 	[fh seekToFileOffset:[self offsetForVolume:centraldirstartdisk offset:centraloffset]];
 
@@ -204,7 +207,7 @@
 			@try {
 				if(localextralength) [self parseZipExtraWithDictionary:dict length:localextralength];
 			} @catch(id e) {
-				//[self setCorrupted:YES]; // TODO: implement corruption flag
+				[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 				NSLog(@"Error parsing Zip extra fields: %@",e);
 			}
 
@@ -218,27 +221,9 @@
 			}
 			else prevdict=nil;
 		}
-		//else [self setCorrupted:YES]; // TODO: implement corruption flag
+		else [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 
 		[fh seekToFileOffset:next];
-	}
-
-	if(commentoffs)
-	{
-		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInt:0],@"ZipExtractVersion",
-			[NSNumber numberWithInt:0],@"ZipFlags",
-			[NSNumber numberWithInt:0],@"ZipCompressionMethod",
-			//[NSNumber numberWithUnsignedInt:crc],@"ZipCRC32",
-			[NSNumber numberWithUnsignedLong:commentlength],XADCompressedSizeKey,
-			[NSNumber numberWithUnsignedLong:commentlength],XADFileSizeKey,
-			[NSNumber numberWithLongLong:commentoffs],XADDataOffsetKey,
-			[NSNumber numberWithUnsignedLong:commentlength],XADDataLengthKey,
-			[self XADStringWithString:@"ZipComment.txt"],XADFileNameKey,
-		nil];
-		// TODO: no filename, metadata flag
-
-		[self addEntryWithDictionary:dict];
 	}
 }
 

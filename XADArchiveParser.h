@@ -24,6 +24,7 @@ extern NSString *XADPosixGroupNameKey;
 extern NSString *XADDOSFileAttributesKey;
 extern NSString *XADWindowsFileAttributesKey;
 extern NSString *XADIsEncryptedKey;
+extern NSString *XADIsCorruptedKey;
 extern NSString *XADIsDirectoryKey;
 extern NSString *XADIsLinkKey;
 extern NSString *XADIsResourceForkKey;
@@ -34,26 +35,31 @@ extern NSString *XADDataOffsetKey;
 extern NSString *XADDataLengthKey;
 extern NSString *XADCompressionNameKey;
 extern NSString *XADIsSolidKey;
+extern NSString *XADFirstSolidEntryKey;
+extern NSString *XADNextSolidEntryKey;
 
-// Internal use
+// Archive properties only
+extern NSString *XADArchiveNameKey;
+
+
+/*// Internal use
 extern NSString *XADResourceDataKey;
 extern NSString *XADDittoPropertiesKey;
 
 // Deprecated
 extern NSString *XADResourceForkData;
 extern NSString *XADFinderFlags;
+*/
 
 @interface XADArchiveParser:NSObject
 {
 	CSHandle *sourcehandle;
 	XADSkipHandle *skiphandle;
-	NSString *archivename;
 
 	id delegate;
 	NSString *password;
 
-	BOOL isencrypted;
-
+	NSMutableDictionary *properties;
 	XADStringSource *stringsource;
 }
 
@@ -65,14 +71,19 @@ extern NSString *XADFinderFlags;
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
 
+-(NSDictionary *)properties;
+-(NSString *)name;
+-(BOOL)isEncrypted;
+
 -(id)delegate;
 -(void)setDelegate:(id)newdelegate;
 
--(BOOL)isEncrypted;
--(void)setPassword:(NSString *)newpassword;
 -(NSString *)password;
+-(void)setPassword:(NSString *)newpassword;
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dictionary;
+
+
 
 // Internal functions
 
@@ -84,6 +95,8 @@ extern NSString *XADFinderFlags;
 -(NSArray *)volumes;
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
 
+-(void)setObject:(id)object forPropertyKey:(NSString *)key;
+
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary;
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary retainPosition:(BOOL)retainpos;
 
@@ -92,10 +105,9 @@ extern NSString *XADFinderFlags;
 -(XADString *)XADStringWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
 -(XADString *)XADStringWithBytes:(void *)bytes length:(int)length;
 -(XADString *)XADStringWithBytes:(void *)bytes length:(int)length encoding:(NSStringEncoding)encoding;
--(XADString *)XADStringWithCString:(void *)string;
--(XADString *)XADStringWithCString:(void *)string encoding:(NSStringEncoding)encoding;
+-(XADString *)XADStringWithCString:(const char *)string;
+-(XADString *)XADStringWithCString:(const char *)string encoding:(NSStringEncoding)encoding;
 
--(void)setEncrypted:(BOOL)encryptedflag;
 -(NSData *)encodedPassword;
 -(char *)encodedCStringPassword;
 

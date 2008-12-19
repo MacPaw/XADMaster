@@ -49,6 +49,11 @@ NSString *XADDataOffsetKey=@"XADDataOffset";
 NSString *XADDataLengthKey=@"XADDataLength";
 NSString *XADCompressionNameKey=@"XADCompressionName";
 NSString *XADIsSolidKey=@"XADIsSolid";
+NSString *XADFirstSolidEntryKey=@"XADFirstSolidEntry";
+NSString *XADNextSolidEntryKey=@"XADNextSolidEntry";
+
+NSString *XADArchiveNameKey=@"XADArchiveName";
+NSString *XADIsCorruptedKey=@"XADIsCorrupted";
 
 
 @implementation XADArchiveParser
@@ -191,12 +196,14 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	if(self=[super init])
 	{
 		sourcehandle=[handle retain];
-		archivename=[[name lastPathComponent] retain];
 
 		skiphandle=nil;
 		delegate=nil;
 		password=nil;
-		isencrypted=NO;
+
+		properties=[[NSMutableDictionary alloc] initWithObjectsAndKeys:
+			[self XADStringWithString:[name lastPathComponent]],XADArchiveNameKey,
+		nil];
 
 		stringsource=[XADStringSource new];
 	}
@@ -207,16 +214,30 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 {
 	[sourcehandle release];
 	[skiphandle release];
-	[archivename release];
 	[stringsource release];
+	[properties release];
 	[super dealloc];
 }
+
+
+
+-(NSDictionary *)properties { return properties; }
+
+-(NSString *)name { return [[properties objectForKey:XADArchiveNameKey] string]; }
+
+-(BOOL)isEncrypted
+{
+	NSNumber *isencrypted=[properties objectForKey:XADIsEncryptedKey];
+	return isencrypted&&[isencrypted boolValue];
+}
+
+
 
 -(id)delegate { return delegate; }
 
 -(void)setDelegate:(id)newdelegate { delegate=newdelegate; }
 
--(BOOL)isEncrypted { return isencrypted; }
+-(NSString *)password { return password; }
 
 -(void)setPassword:(NSString *)newpassword
 {
@@ -224,7 +245,7 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	password=[newpassword retain];
 }
 
--(NSString *)password { return password; }
+
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dictionary
 {
@@ -244,9 +265,6 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 
 
-
-
--(NSString *)name { return archivename; }
 
 -(CSHandle *)handle { return sourcehandle; }
 
@@ -289,6 +307,9 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 
 
+-(void)setObject:(id)object forPropertyKey:(NSString *)key { [properties setObject:object forKey:key]; }
+
+
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary
 {
@@ -298,9 +319,14 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary retainPosition:(BOOL)retainpos
 {
 	// If an encrypted file is added, set the global encryption flag
-	NSNumber *num=[dictionary objectForKey:XADIsEncryptedKey];
-	if(num&&[num boolValue]) [self setEncrypted:YES];
+	NSNumber *enc=[dictionary objectForKey:XADIsEncryptedKey];
+	if(enc&&[enc boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsEncryptedKey];
 
+	// Same for the corrupted flag
+	NSNumber *cor=[dictionary objectForKey:XADIsCorruptedKey];
+	if(cor&&[cor boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
+
+	// LinkDestination implies IsLink
 	XADString *linkdest=[dictionary objectForKey:XADLinkDestinationKey];
 	if(linkdest) [dictionary setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 
@@ -340,12 +366,12 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	[NSData dataWithBytes:bytes length:length] encoding:encoding] autorelease]];
 }
 
--(XADString *)XADStringWithCString:(const void *)string
+-(XADString *)XADStringWithCString:(const char *)string
 {
 	return [stringsource XADStringWithData:[NSData dataWithBytes:string length:strlen(string)]];
 }
 
--(XADString *)XADStringWithCString:(const void *)string encoding:(NSStringEncoding)encoding
+-(XADString *)XADStringWithCString:(const char *)string encoding:(NSStringEncoding)encoding
 {
 	return [XADString XADStringWithString:[[[NSString alloc] initWithData:
 	[NSData dataWithBytes:string length:strlen(string)] encoding:encoding] autorelease]];
@@ -362,11 +388,6 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	NSMutableData *data=[NSMutableData dataWithData:[self encodedPassword]];
 	[data increaseLengthBy:1];
 	return [data bytes];
-}
-
--(void)setEncrypted:(BOOL)encryptedflag
-{
-	isencrypted=encryptedflag;
 }
 
 

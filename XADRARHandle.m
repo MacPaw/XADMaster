@@ -30,20 +30,21 @@
 {
 	part=0;
 	[sourcehandle seekToFileOffset:p->parts[0].start];
+
 	StartRARUnpacker(unpacker,p->parts[0].length,method,0);
-	endofpart=NO;
+	bytesdone=0;
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	if(endofpart)
+	if(bytesdone>=p->parts[part].length)
 	{
 		// Try to go to the next block
 		if(++part<p->numparts)
 		{
 			[sourcehandle seekToFileOffset:p->parts[part].start];
 			StartRARUnpacker(unpacker,p->parts[part].length,method,1);
-			endofpart=NO;
+			bytesdone=0;
 		}
 		else return 0;
 	}
@@ -51,7 +52,7 @@
 	int length;
 	[self setBlockPointer:NextRARBlock(unpacker,&length)];
 
-	if(IsRARFinished(unpacker)) endofpart=YES;
+	bytesdone+=length;
 
 	return length;
 }

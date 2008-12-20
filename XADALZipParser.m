@@ -134,7 +134,7 @@ static void CalculateSillyTable(int *table,int param)
 			NSData *namedata=[fh readDataOfLength:namelen];
 			[dict setObject:[self XADStringWithData:namedata] forKey:XADFileNameKey];
 
-			[dict setObject:[NSNumber numberWithLongLong:[[self handle] offsetInFile]] forKey:XADDataOffsetKey];
+			[dict setObject:[NSNumber numberWithLongLong:[fh offsetInFile]] forKey:XADDataOffsetKey];
 
 			off_t pos=[fh offsetInFile];
 			[self addEntryWithDictionary:dict];

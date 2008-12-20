@@ -38,7 +38,7 @@
 
 -(off_t)fileSize
 {
-	return start-end;
+	return end-start;
 /*	off_t parentsize=[parent fileSize];
 	if(parentsize>end) return end-start;
 	else if(parentsize<start) return 0;

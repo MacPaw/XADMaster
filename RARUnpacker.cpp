@@ -1,4 +1,5 @@
 #include "RARUnpacker.h"
+#include "SystemSpecific.h"
 #include "unrar/rar.hpp"
 
 
@@ -16,6 +17,9 @@ RARUnpacker *AllocRARUnpacker(RARReadFunc readfunc,void *readparam1,void *readpa
 	self->io=(void *)io;
 	self->unpack=(void *)unpack;
 
+	self->blockbytes=NULL;
+	self->maxblocklength=0;
+
 	self->readfunc=readfunc;
 	self->readparam1=readparam1;
 	self->readparam2=readparam2;
@@ -27,6 +31,7 @@ void FreeRARUnpacker(RARUnpacker *self)
 {
 	delete (Unpack *)self->unpack;
 	delete (ComprDataIO *)self->io;
+	free(self->blockbytes);
 	free(self);
 }
 
@@ -43,7 +48,7 @@ void *NextRARBlock(RARUnpacker *self,int *length)
 {
 	Unpack *unpack=(Unpack *)self->unpack;
 
-	self->blocklength=-1;
+	self->blocklength=0;
 	unpack->DoUnpack(self->method,self->solid);
 	*length=self->blocklength;
 
@@ -74,8 +79,12 @@ void ComprDataIO::UnpWrite(byte *Addr,uint Count)
 	Unpack *unpack=(Unpack *)unpacker->unpack;
 	unpack->SetSuspended(true);
 
-	unpacker->blockbytes=Addr;
-	unpacker->blocklength=Count;
+	if(unpacker->blocklength+Count>unpacker->maxblocklength)
+	unpacker->blockbytes=reallocf(unpacker->blockbytes,unpacker->maxblocklength=unpacker->blocklength+Count);
+
+	memcpy(((unsigned char *)unpacker->blockbytes)+unpacker->blocklength,Addr,Count);
+
+	unpacker->blocklength+=Count;
 }
 
 

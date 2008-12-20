@@ -15,7 +15,7 @@ typedef struct RARUnpacker
 
 	int method,solid;
 	void *blockbytes;
-	int blocklength;
+	int blocklength,maxblocklength;
 
 	RARReadFunc readfunc;
 	void *readparam1,*readparam2;

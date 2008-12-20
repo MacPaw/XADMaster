@@ -12,7 +12,7 @@
 	RARUnpacker *unpacker;
 
 	int part;
-	BOOL endofpart;
+	off_t bytesdone;
 }
 
 -(id)initWithHandle:(CSHandle *)handle parts:(XADRARParts *)parts version:(int)version;

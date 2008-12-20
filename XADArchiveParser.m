@@ -270,9 +270,9 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 -(CSHandle *)handleAtDataOffsetForDictionary:(NSDictionary *)dict
 {
-	[sourcehandle seekToFileOffset:[[dict objectForKey:XADDataOffsetKey] longLongValue]];
-
 	CSHandle *handle=skiphandle?skiphandle:sourcehandle;
+
+	[handle seekToFileOffset:[[dict objectForKey:XADDataOffsetKey] longLongValue]];
 
 	NSNumber *length=[dict objectForKey:XADDataLengthKey];
 	if(length) return [handle nonCopiedSubHandleOfLength:[length longLongValue]];

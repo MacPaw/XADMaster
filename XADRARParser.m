@@ -152,32 +152,9 @@ static int TestSignature(const uint8_t *ptr)
 
 	RARBlock block=[self readArchiveHeader];
 
+	lastcompressed=lastnonsolid=nil;
+
 	while(block.start!=0) block=[self readFileHeaderWithBlock:block];
-}
-
--(RARBlock)readBlockHeader
-{
-	CSHandle *fh=[self handle];
-	RARBlock block;
-
-	block.start=[fh offsetInFile];
-
-	block.crc=[fh readUInt16LE];
-	block.type=[fh readUInt8];
-	block.flags=[fh readUInt16LE];
-	block.headersize=[fh readUInt16LE];
-	if(block.flags&RARFLAG_LONG_BLOCK) block.datasize=[fh readUInt32LE];
-	else block.datasize=0;
-
-NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
-
-	return block;
-}
-
--(void)skipBlock:(RARBlock)block
-{
-	//if(encryptedhandle) [encryptedhandle readAndDiscardBytes:blockstart+headersize-[handle offsetInFile]];
-	[[self handle] seekToFileOffset:block.start+block.headersize+block.datasize];
 }
 
 -(RARBlock)readArchiveHeader
@@ -244,8 +221,7 @@ NSLog(@"encryptver: %d",encryptversion);
 	CSHandle *fh=[self handle];
 	XADSkipHandle *skip=[self skipHandle];
 
-	off_t realstart=[fh offsetInFile]-7+block.headersize;
-	off_t skipstart=[skip offsetInFile]-7+block.headersize;
+	off_t skipstart=[skip offsetInFile]-11+block.headersize;
 	int flags=block.flags;
 
 	off_t size=[fh readUInt32LE];
@@ -265,6 +241,8 @@ NSLog(@"encryptver: %d",encryptversion);
 
 	NSData *namedata=[fh readDataOfLength:namelength];
 
+	// TODO: check crc?
+
 	off_t datasize=block.datasize;
 
 	off_t lastpos=block.start+block.headersize+block.datasize;
@@ -283,7 +261,9 @@ NSLog(@"encryptver: %d",encryptversion);
 			if(last) break;
 			else if(!(block.flags&LHD_SPLIT_BEFORE)) { partial=YES; break; }
 
-			[fh skipBytes:15];
+			[fh skipBytes:5];
+			crc=[fh readUInt32LE];
+			[fh skipBytes:6];
 			int namelength=[fh readUInt16LE];
 			[fh skipBytes:4];
 
@@ -306,9 +286,6 @@ NSLog(@"encryptver: %d",encryptversion);
 			datasize+=block.datasize;
 
 			[skip addSkipFrom:lastpos to:block.start+block.headersize];
-
-			// TODO: check crc?
-
 			lastpos=block.start+block.headersize+block.datasize;
 
 			if(!(block.flags&LHD_SPLIT_AFTER)) last=YES;
@@ -357,35 +334,41 @@ NSLog(@"encryptver: %d",encryptversion);
 	}
 	if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 
-NSMutableDictionary *lastnonsolid=nil,*lastcompressed=nil;
-
 	if(method==0x30)
 	{
-		[dict setObject:[NSNumber numberWithLongLong:realstart] forKey:XADDataOffsetKey];
+		[dict setObject:[NSNumber numberWithLongLong:skipstart] forKey:XADDataOffsetKey];
 		[dict setObject:[NSNumber numberWithLongLong:datasize] forKey:XADDataLengthKey];
 	}
 	else
 	{
-		XADRARParts *parts=[[XADRARParts new] autorelease];
+		XADRARParts *parts;
+
+		BOOL solid;
+		if(version<20) solid=(archiveflags&MHD_SOLID)&&lastcompressed;
+		else solid=(flags&LHD_SOLID)!=0;
+
+		if(solid)
+		{
+			if(!lastcompressed) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
+
+			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsSolidKey];
+			[dict setObject:[NSValue valueWithNonretainedObject:lastnonsolid] forKey:XADFirstSolidEntryKey];
+			[lastcompressed setObject:[NSValue valueWithNonretainedObject:dict] forKey:XADNextSolidEntryKey];
+
+			parts=[lastcompressed objectForKey:@"RARParts"];
+		}
+		else
+		{
+			lastnonsolid=dict;
+
+			parts=[[XADRARParts new] autorelease];
+		}
 
 		int part=[parts count];
 		[parts addPartFrom:skipstart compressedSize:datasize uncompressedSize:size];
 
 		[dict setObject:[NSNumber numberWithInt:part] forKey:@"RARPartIndex"];
 		[dict setObject:parts forKey:@"RARParts"];
-
-		BOOL solid;
-		if(version<15) solid=(archiveflags&MHD_SOLID)&&lastcompressed;
-		else solid=(flags&LHD_SOLID)!=0;
-
-		if(solid)
-		{
-			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsSolidKey];
-			[dict setObject:[NSValue valueWithNonretainedObject:lastnonsolid] forKey:XADFirstSolidEntryKey];
-			if(lastcompressed)
-			[lastcompressed setObject:[NSValue valueWithNonretainedObject:dict] forKey:XADNextSolidEntryKey];
-		}
-		else lastnonsolid=dict;
 
 		lastcompressed=dict;
 	}
@@ -487,6 +470,33 @@ NSLog(@"absurd name!");
 
 
 
+-(RARBlock)readBlockHeader
+{
+	CSHandle *fh=[self handle];
+	RARBlock block;
+
+	block.start=[fh offsetInFile];
+
+	block.crc=[fh readUInt16LE];
+	block.type=[fh readUInt8];
+	block.flags=[fh readUInt16LE];
+	block.headersize=[fh readUInt16LE];
+	if(block.flags&RARFLAG_LONG_BLOCK) block.datasize=[fh readUInt32LE];
+	else block.datasize=0;
+
+NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
+
+	return block;
+}
+
+-(void)skipBlock:(RARBlock)block
+{
+	//if(encryptedhandle) [encryptedhandle readAndDiscardBytes:blockstart+headersize-[handle offsetInFile]];
+	[[self handle] seekToFileOffset:block.start+block.headersize+block.datasize];
+}
+
+
+
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
@@ -512,6 +522,7 @@ NSLog(@"absurd name!");
 		}
 
 		int part=[[dict objectForKey:@"RARPartIndex"] intValue];
+
 		handle=[currhandle nonCopiedSubHandleFrom:[parts outputStartOffsetForPart:part]
 		length:[parts outputSizeForPart:part]];
 	}

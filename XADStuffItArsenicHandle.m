@@ -101,47 +101,6 @@ static int NextArithmeticBitString(ArithmeticDecoder *decoder,ArithmeticModel *m
 
 
 
-// MTF Decoder
-
-static void ResetMTFDecoder(MTFState *mtf)
-{
-	for(int i=0;i<256;i++) mtf->table[i]=i;
-}
-
-static int DecodeMTF(MTFState *mtf,int symbol)
-{
-	int res=mtf->table[symbol];
-	for(int i=symbol;i>0;i--) mtf->table[i]=mtf->table[i-1];
-	mtf->table[0]=res;
-	return res;
-}
-
-
-
-// Inverse BWT
-
-static void CalculateInverseBWT(int *transform,uint8_t *block,int blocklen)
-{
-	int counts[256]={0},cumulativecounts[256];
-
-	for(int i=0;i<blocklen;i++) counts[block[i]]++;
-
-	int total=0;
-	for(int i=0;i<256;i++)
-	{
-		cumulativecounts[i]=total;
-		total+=counts[i];
-		counts[i]=0;
-	}
-
-	for(int i=0;i<blocklen;i++)
-	{
-		transform[cumulativecounts[block[i]]+counts[block[i]]]=i;
-		counts[block[i]]++;
-	}
-}
-
-
 
 
 @implementation XADStuffItArsenicHandle
@@ -261,7 +220,7 @@ static void CalculateInverseBWT(int *transform,uint8_t *block,int blocklen)
 		retry:
 		if(bytecount>=numbytes)
 		{
-			if(endofblocks) CSByteStreamEOF();
+			if(endofblocks) CSByteStreamEOF(self);
 
 			[self readBlock];
 

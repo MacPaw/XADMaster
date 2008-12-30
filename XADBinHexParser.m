@@ -150,7 +150,7 @@ static uint8_t GetBits(XADBinHexHandle *self)
 	for(;;)
 	{
 		uint8_t byte=CSInputNextByte(self->input);
-		if(byte==':') CSByteStreamEOF();
+		if(byte==':') CSByteStreamEOF(self);
 		for(int bits=0;bits<64;bits++) if(byte==codes[bits]) return bits;
 	}
 }

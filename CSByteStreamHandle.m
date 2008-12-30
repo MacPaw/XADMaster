@@ -32,25 +32,23 @@ NSString *CSByteStreamEOFReachedException=@"CSByteStreamEOFReachedException";
 
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer
 {
-	int n=0;
+	bytesproduced=0;
 
-	@try
+	if(setjmp(eofenv)==0)
 	{
-		while(n<num)
+		while(bytesproduced<num)
 		{
-			uint8_t byte=bytestreamproducebyte_ptr(self,@selector(produceByteAtOffset:),streampos+n);
-			((uint8_t *)buffer)[n++]=byte;
+			uint8_t byte=bytestreamproducebyte_ptr(self,@selector(produceByteAtOffset:),streampos+bytesproduced);
+			((uint8_t *)buffer)[bytesproduced++]=byte;
 			if(endofstream) break;
 		}
 	}
-	@catch(id e)
+	else
 	{
-		if([e isKindOfClass:[NSException class]]
-		&&[e name]==CSByteStreamEOFReachedException) endofstream=YES;
-		else @throw e;
+		[self endStream];
 	}
 
-	return n;
+	return bytesproduced;
 }
 
 -(void)resetStream
@@ -62,6 +60,8 @@ NSString *CSByteStreamEOFReachedException=@"CSByteStreamEOFReachedException";
 -(void)resetByteStream {}
 
 -(uint8_t)produceByteAtOffset:(off_t)pos { return 0; }
+
+-(void)endByteStream { [self endStream]; }
 
 @end
 

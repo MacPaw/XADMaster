@@ -51,7 +51,7 @@
 		int val=nextliteral_ptr(self,@selector(nextLiteralOrOffset:andLength:),&offset,&length);
 
 		if(val>=0) return windowbuffer[pos&windowmask]=val;
-		else if(val==XADLZSSEnd) CSByteStreamEOF();
+		else if(val==XADLZSSEnd) CSByteStreamEOF(self);
 		else
 		{
 			matchlength=length;

@@ -1,4 +1,5 @@
 #import "CSByteStreamHandle.h"
+#import "BWT.h"
 
 typedef struct ArithmeticSymbol
 {
@@ -21,11 +22,6 @@ typedef struct ArithmeticDecoder
 	CSInputBuffer *input;
 	int range,code;
 } ArithmeticDecoder;
-
-typedef struct MTFState
-{
-	int table[256];
-} MTFState;
 
 
 

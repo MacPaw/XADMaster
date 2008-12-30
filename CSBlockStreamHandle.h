@@ -5,6 +5,7 @@
 	uint8_t *currblock;
 	off_t blockstartpos;
 	int blocklength;
+	bool endofblocks;
 }
 
 -(id)initWithName:(NSString *)descname length:(off_t)length;
@@ -20,5 +21,7 @@
 
 -(void)resetBlockStream;
 -(int)produceBlockAtOffset:(off_t)pos;
+
+-(void)endBlockStream;
 
 @end

@@ -53,6 +53,11 @@ off_t CSInputBufferOffset(CSInputBuffer *buf)
 	return [buf->parent offsetInFile]-buf->startoffs-buf->bufbytes+buf->currbyte;
 }
 
+off_t CSInputFileOffset(CSInputBuffer *buf)
+{
+	return [buf->parent offsetInFile]-buf->bufbytes+buf->currbyte;
+}
+
 
 
 void _CSInputFillBuffer(CSInputBuffer *buf)

@@ -58,6 +58,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 {
 	blockstartpos=0;
 	blocklength=0;
+	endofblocks=NO;
 	[self resetBlockStream];
 }
 
@@ -79,6 +80,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	while(n<num)
 	{
 		blockstartpos+=blocklength;
+		if(endofblocks) { [self endStream]; break; }
 		blocklength=[self produceBlockAtOffset:streampos+n];
 
 		if(blocklength<=0||!currblock) { [self endStream]; break; }
@@ -86,8 +88,6 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		int count=imin(blocklength,num-n);
 		memcpy(buffer+n,currblock,count);
 		n+=count;
-
-		if(endofstream) break;
 	}
 
 	return n;
@@ -96,5 +96,10 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 -(void)resetBlockStream { }
 
 -(int)produceBlockAtOffset:(off_t)pos { return 0; }
+
+-(void)endBlockStream
+{
+	endofblocks=YES;
+}
 
 @end

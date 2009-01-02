@@ -8,6 +8,7 @@
 #import "XADGzipParser.h"
 #import "XADBzip2Parser.h"
 #import "XADLZMAParser.h"
+#import "XADPPMdParser.h"
 #import "XADXARParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
@@ -72,6 +73,7 @@ static int maxheader=0;
 		[XADGzipParser class],
 		[XADBzip2Parser class],
 		[XADLZMAParser class],
+		[XADPPMdParser class],
 		[XADXARParser class],
 		[XADStuffItParser class],
 		[XADStuffIt5Parser class],

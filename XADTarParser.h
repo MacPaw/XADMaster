@@ -1,6 +1,8 @@
-#import "XADDittoParser.h"
+#import "XADArchiveParser.h"
 
-@interface XADTarParser:XADDittoParser
+// TODO later: Multivolume tar.
+
+@interface XADTarParser:XADArchiveParser
 {
 }
 

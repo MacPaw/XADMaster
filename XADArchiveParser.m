@@ -20,6 +20,7 @@
 #import "XADPowerPackerParser.h"
 #import "XADLZMAAloneParser.h"
 #import "XADLibXADParser.h"
+#import "XADTarParser.h"
 
 #include <dirent.h>
 
@@ -43,6 +44,7 @@ NSString *XADWindowsFileAttributesKey=@"XADWindowsFileAttributes";
 NSString *XADIsEncryptedKey=@"XADIsEncrypted";
 NSString *XADIsDirectoryKey=@"XADIsDirectory";
 NSString *XADIsLinkKey=@"XADIsLink";
+NSString *XADIsHardLinkKey=@"XADIsHardLink";
 NSString *XADIsResourceForkKey=@"XADIsResourceFork";
 NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 NSString *XADLinkDestinationKey=@"XADLinkDestination";
@@ -53,6 +55,11 @@ NSString *XADCompressionNameKey=@"XADCompressionName";
 NSString *XADIsSolidKey=@"XADIsSolid";
 NSString *XADFirstSolidEntryKey=@"XADFirstSolidEntry";
 NSString *XADNextSolidEntryKey=@"XADNextSolidEntry";
+NSString *XADIsCharacterDeviceKey=@"XADIsCharacterDevice";
+NSString *XADIsBlockDeviceKey=@"XADIsBlockDevice";
+NSString *XADDeviceMajorKey=@"XADDeviceMajor";
+NSString *XADDeviceMinorKey=@"XADDeviceMinor";
+NSString *XADIsFIFOKey=@"XADIsFIFO";
 
 NSString *XADArchiveNameKey=@"XADArchiveName";
 NSString *XADIsCorruptedKey=@"XADIsCorrupted";
@@ -85,6 +92,7 @@ static int maxheader=0;
 		[XADPowerPackerParser class],
 		[XADLZMAAloneParser class],
 		[XADLibXADParser class],
+		[XADTarParser class],
 	nil] retain];
 
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];

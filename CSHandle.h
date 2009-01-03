@@ -2,7 +2,7 @@
 #import <stdint.h>
 
 
-#define CSHandleMaxLength 0x7fffffffffffffff
+#define CSHandleMaxLength 0x7fffffffffffffffll
 
 extern NSString *CSOutOfMemoryException;
 extern NSString *CSEndOfFileException;

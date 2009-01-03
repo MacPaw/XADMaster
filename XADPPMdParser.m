@@ -1,6 +1,5 @@
 #import "XADPPMdParser.h"
-#import "XADPPMdVariantGHandle.h"
-#import "XADPPMdVariantIHandle.h"
+#import "XADPPMdHandles.h"
 #import "NSDateXAD.h"
 
 #import "XADCRCHandle.h"

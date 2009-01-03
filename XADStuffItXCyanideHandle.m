@@ -120,9 +120,10 @@ static int BumpFrequencyInModel(int index,RangeCoderModel *model,int maxtotal)
 	model->frequencies[last]++;
 	return last;
 }
+
 static int NextIndexFromRangeCoderWithModel(CarrylessRangeCoder *coder,RangeCoderModel *model)
 {
-	return NextSymbolFromCarrylessRangeCoder(coder,model->frequencies,model->num);
+	return NextSymbolFromRangeCoder(coder,model->frequencies,model->num);
 }
 
 static int DecodeSymbolForModel(RangeCoderModel *model,int index)
@@ -137,7 +138,7 @@ static int DecodeSymbolForModel(RangeCoderModel *model,int index)
 	static int markovgroups[27]={0,1,2,3,4,5,6,7,8,3,9,10,3,4,5,11,11,8,6,2,5,6,7,8,12,12,13};
 
 	CarrylessRangeCoder coder;
-	InitializeCarrylessRangeCoder(&coder,input);
+	InitializeRangeCoder(&coder,input);
 
 	uint32_t markovfreqs[14][3]={0};
 
@@ -170,7 +171,7 @@ static int DecodeSymbolForModel(RangeCoderModel *model,int index)
 
 		uint32_t freqs[3],meanings[3];
 		CalculateTernaryFrequencies(freqs,meanings,markovfreqs[markovindex]);
-		int symbol=NextSymbolFromCarrylessRangeCoder(&coder,freqs,3);
+		int symbol=NextSymbolFromRangeCoder(&coder,freqs,3);
 		int tresym=meanings[symbol];
 
 		if(tresym==0&&someflag==0&&markovindex==0)

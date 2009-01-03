@@ -23,7 +23,7 @@
 */
 	NSLog(@"Checksum: %@, Length: %d",[fh hasChecksum]?[fh isChecksumCorrect]?@"Correct":@"Incorrect":@"Unknown",[data length]);
 
-	NSLog(@"\n%@",[data subdataWithRange:NSMakeRange(0,[data length]<1024?[data length]:1024)]);
+	NSLog(@"\n%@",[data subdataWithRange:NSMakeRange(0,[data length]<256?[data length]:256)]);
 
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 	NSString *subname=[[dict objectForKey:XADFileNameKey] string];

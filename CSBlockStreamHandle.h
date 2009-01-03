@@ -5,7 +5,7 @@
 	uint8_t *currblock;
 	off_t blockstartpos;
 	int blocklength;
-	bool endofblocks;
+	BOOL endofblocks;
 }
 
 -(id)initWithName:(NSString *)descname length:(off_t)length;

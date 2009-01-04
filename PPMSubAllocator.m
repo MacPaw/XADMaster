@@ -3,125 +3,184 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct NODE NODE;
-
-void InsertNode(PPMSubAllocator *self,void *p,int indx) {
-    ((struct NODE *)p)->next=self->FreeList[indx].next;
-	self->FreeList[indx].next=(NODE*) p;
-}
-
-void* RemoveNode(PPMSubAllocator *self,int indx) {
-    NODE* RetVal=self->FreeList[indx].next;
-	self->FreeList[indx].next=RetVal->next;
-    return RetVal;
-}
-
-unsigned int I2B(PPMSubAllocator *self,int indx) { return UNIT_SIZE*self->Indx2Units[indx]; }
-
-void SplitBlock(PPMSubAllocator *self,void* pv,int OldIndx,int NewIndx)
+void InsertNode(PPMSubAllocator *self,void *p,int index)
 {
-    int i, UDiff=self->Indx2Units[OldIndx]-self->Indx2Units[NewIndx];
-    uint8_t* p=((uint8_t*) pv)+I2B(self,NewIndx);
-    if (self->Indx2Units[i=self->Units2Indx[UDiff-1]] != UDiff) {
-        InsertNode(self,p,--i);                  p += I2B(self,i);
-        UDiff -= self->Indx2Units[i];
+	((struct PPMAllocatorNode *)p)->next=self->FreeList[index].next;
+	self->FreeList[index].next=p;
+}
+
+void *RemoveNode(PPMSubAllocator *self,int index)
+{
+	struct PPMAllocatorNode *node=self->FreeList[index].next;
+	self->FreeList[index].next=node->next;
+	return node;
+}
+
+unsigned int I2B(PPMSubAllocator *self,int index) { return UNIT_SIZE*self->Index2Units[index]; }
+
+void SplitBlock(PPMSubAllocator *self,void *pv,int oldindex,int newindex)
+{
+	uint8_t *p=((uint8_t *)pv)+I2B(self,newindex);
+
+	int diff=self->Index2Units[oldindex]-self->Index2Units[newindex];
+	int i=self->Units2Index[diff-1];
+	if(self->Index2Units[i]!=diff)
+	{
+		InsertNode(self,p,i-1);
+		p+=I2B(self,i-1);
+        diff-=self->Index2Units[i-1];
     }
-    InsertNode(self,p,self->Units2Indx[UDiff-1]);
+
+    InsertNode(self,p,self->Units2Index[diff-1]);
 }
 
 uint32_t GetUsedMemory(PPMSubAllocator *self)
 {
-    uint32_t i, k, RetVal=self->SubAllocatorSize-(self->HiUnit-self->LoUnit);
-    for (k=i=0;i < N_INDEXES;i++, k=0) {
-        for (NODE* pn=self->FreeList+i;(pn=pn->next) != NULL;k++)
-                ;
-        RetVal -= UNIT_SIZE*self->Indx2Units[i]*k;
+	uint32_t size=self->SubAllocatorSize-(self->HighUnit-self->LowUnit);
+
+	for(int i=0;i<N_INDEXES;i++)
+	{
+		int k=0;
+		struct PPMAllocatorNode *node=&self->FreeList[i];
+		while(node=node->next) k++;
+
+		size-=UNIT_SIZE*self->Index2Units[i]*k;
     }
-    if ( self->LastBreath ) RetVal -= 128*128*UNIT_SIZE;
-    return (RetVal >> 2);
+
+    if(self->LastBreath) size-=128*128*UNIT_SIZE;
+
+	return size>>2;
 }
 
-void StopSubAllocator(PPMSubAllocator *self) {
-    if ( self->SubAllocatorSize ) {
-        self->SubAllocatorSize=0;
-		free(self->HeapStart);
-    }
-}
-BOOL StartSubAllocator(PPMSubAllocator *self,int SASize)
+
+
+BOOL StartSubAllocator(PPMSubAllocator *self,int size)
 {
-    uint32_t t=SASize;
-    if (self->SubAllocatorSize == t) return TRUE;
+    if(self->SubAllocatorSize==size) return YES;
+
     StopSubAllocator(self);
-    if ((self->HeapStart=malloc(t)) == NULL) return FALSE;
-    self->SubAllocatorSize=t;
-	return TRUE;
+
+	self->HeapStart=malloc(size);
+    if(!self->HeapStart) return NO;
+
+    self->SubAllocatorSize=size;
+	return YES;
 }
+
+void StopSubAllocator(PPMSubAllocator *self)
+{
+	if(self->SubAllocatorSize)
+	{
+		self->SubAllocatorSize=0;
+		free(self->HeapStart);
+	}
+}
+
 void InitSubAllocator(PPMSubAllocator *self)
 {
-    int i, k;
-    memset(self->FreeList,0,sizeof(self->FreeList));
-    self->HiUnit=(self->LoUnit=self->HeapStart)+UNIT_SIZE*(self->SubAllocatorSize/UNIT_SIZE);
-    self->LastBreath=self->LoUnit;                      self->LoUnit += 128*128*UNIT_SIZE;
-    for (i=0,k=1;i < N1     ;i++,k += 1)    self->Indx2Units[i]=k;
-    for (k++;i < N1+N2      ;i++,k += 2)    self->Indx2Units[i]=k;
-    for (k++;i < N1+N2+N3   ;i++,k += 3)    self->Indx2Units[i]=k;
-    for (k++;i < N1+N2+N3+N4;i++,k += 4)    self->Indx2Units[i]=k;
-    for (k=i=0;k < 128;k++) {
-        i += (self->Indx2Units[i] < k+1);         self->Units2Indx[k]=i;
+	memset(self->FreeList,0,sizeof(self->FreeList));
+
+	self->LowUnit=self->HeapStart;
+	self->HighUnit=self->HeapStart+UNIT_SIZE*(self->SubAllocatorSize/UNIT_SIZE);
+	self->LastBreath=self->LowUnit;
+	self->LowUnit+=128*128*UNIT_SIZE;
+
+	for(int i=0;i<N1;i++) self->Index2Units[i]=1+i;
+    for(int i=0;i<N2;i++) self->Index2Units[N1+i]=2+N1+i*2;
+    for(int i=0;i<N3;i++) self->Index2Units[N1+N2+i]=3+N1+2*N2+i*3;
+	for(int i=0;i<N4;i++) self->Index2Units[N1+N2+N3+i]=4+N1+2*N2+3*N3+i*4;
+
+	int i=0;
+    for(int k=0;k<128;k++)
+	{
+        if(self->Index2Units[i]<k+1) i++;
+		self->Units2Index[k]=i;
     }
 }
 
-void *AllocUnitsRare(PPMSubAllocator *self,int NU)
+void *AllocUnitsRare(PPMSubAllocator *self,int num)
 {
-    int i, indx=self->Units2Indx[NU-1];
-    if ( self->FreeList[indx].next ) return RemoveNode(self,indx);
-    void* RetVal=self->LoUnit;
-	self->LoUnit += I2B(self,indx);
-    if (self->LoUnit <= self->HiUnit)                   return RetVal;
-    if ( self->LastBreath ) {
-        for (i=0;i < 128;i++) {
-            InsertNode(self,self->LastBreath,N_INDEXES-1);
-            self->LastBreath += 128*UNIT_SIZE;
-        }
-        self->LastBreath=NULL;
-    }
-    self->LoUnit -= I2B(self,indx);
-	i=indx;
-    do {
-        if (++i == N_INDEXES)               return NULL;
-    } while ( !self->FreeList[i].next );
-    SplitBlock(self,RetVal=RemoveNode(self,i),i,indx);
-    return RetVal;
+	int index=self->Units2Index[num-1];
+	if(self->FreeList[index].next) return RemoveNode(self,index);
+
+	if(self->LowUnit<=self->HighUnit)
+	{
+		void *units=self->LowUnit;
+		self->LowUnit+=I2B(self,index);
+		return units;
+	}
+
+	if(self->LastBreath)
+	{
+		uint8_t *ptr=self->LastBreath;
+		for(int i=0;i<128;i++)
+		{
+			InsertNode(self,ptr,N_INDEXES-1);
+			ptr+=128*UNIT_SIZE;
+		}
+		self->LastBreath=NULL;
+	}
+
+	for(int i=index+1;i<N_INDEXES;i++)
+	{
+		if(self->FreeList[i].next)
+		{
+			void *units=RemoveNode(self,i);
+			SplitBlock(self,units,i,index);
+			return units;
+		}
+	}
+
+	return NULL;
 }
-void* AllocContext(PPMSubAllocator *self)
+
+void *AllocContext(PPMSubAllocator *self)
 {
-    if (self->HiUnit != self->LoUnit) return (self->HiUnit -= UNIT_SIZE);
+    if(self->HighUnit!=self->LowUnit)
+	{
+		self->HighUnit-=UNIT_SIZE;
+		return self->HighUnit;
+	}
+
     return AllocUnitsRare(self,1);
 }
-void* ExpandUnits(PPMSubAllocator *self,void* OldPtr,int OldNU)
+
+void *ExpandUnits(PPMSubAllocator *self,void *oldptr,int oldnum)
 {
-    int i0=self->Units2Indx[OldNU-1], i1=self->Units2Indx[OldNU-1+1];
-    if (i0 == i1)                           return OldPtr;
-    void* ptr=AllocUnitsRare(self,OldNU+1);
-    if ( ptr ) {
-        memcpy(ptr,OldPtr,I2B(self,i0));
-		InsertNode(self,OldPtr,i0);
-    }
-    return ptr;
+	int oldindex=self->Units2Index[oldnum-1];
+	int newindex=self->Units2Index[oldnum];
+	if(oldindex==newindex) return oldptr;
+
+	void *ptr=AllocUnitsRare(self,oldnum+1);
+	if(ptr)
+	{
+		memcpy(ptr,oldptr,I2B(self,oldindex));
+		InsertNode(self,oldptr,oldindex);
+	}
+	return ptr;
 }
-void* ShrinkUnits(PPMSubAllocator *self,void* OldPtr,int OldNU,int NewNU)
+
+void *ShrinkUnits(PPMSubAllocator *self,void *oldptr,int oldnum,int newnum)
 {
-    int i0=self->Units2Indx[OldNU-1], i1=self->Units2Indx[NewNU-1];
-    if (i0 == i1)                           return OldPtr;
-    if ( self->FreeList[i1].next ) {
-        void* ptr=RemoveNode(self,i1);
-		memcpy(ptr,OldPtr,I2B(self,i1));
-        InsertNode(self,OldPtr,i0);              return ptr;
-    } else {
-        SplitBlock(self,OldPtr,i0,i1);           return OldPtr;
+	int oldindex=self->Units2Index[oldnum-1];
+	int newindex=self->Units2Index[newnum-1];
+	if(oldindex==newindex) return oldptr;
+
+	if(self->FreeList[newindex].next)
+	{
+		void *ptr=RemoveNode(self,newindex);
+		memcpy(ptr,oldptr,I2B(self,newindex));
+		InsertNode(self,oldptr,oldindex);
+		return ptr;
+    }
+	else
+	{
+		SplitBlock(self,oldptr,oldindex,newindex);
+		return oldptr;
     }
 }
-void FreeUnits(PPMSubAllocator *self,void* ptr,int OldNU)
+
+void FreeUnits(PPMSubAllocator *self,void *ptr,int num)
 {
-    InsertNode(self,ptr,self->Units2Indx[OldNU-1]);
+	InsertNode(self,ptr,self->Units2Index[num-1]);
 }

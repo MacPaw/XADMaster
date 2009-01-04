@@ -282,15 +282,14 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>56</integer>
-									<integer>54</integer>
-									<integer>52</integer>
+									<integer>41</integer>
+									<integer>31</integer>
 									<integer>12</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 510}, {257, 729}}</string>
+							<string>{{0, 273}, {257, 729}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -327,7 +326,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>XADTarParser.m</string>
+								<string>PPMSubAllocator.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -335,11 +334,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>XADTarParser.m</string>
+										<string>PPMSubAllocator.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>1BB8C8C70F1029250074522A</string>
+										<string>1BB8C9120F104E2B0074522A</string>
 										<key>history</key>
 										<array>
 											<string>1B0DE3F80A3650C00009B697</string>
@@ -526,8 +525,6 @@
 											<string>1B880D260F0ABFF20061CCBE</string>
 											<string>1BB8C5570F0C5A520074522A</string>
 											<string>1BB8C55D0F0C5A520074522A</string>
-											<string>1BB8C66A0F0D1D8C0074522A</string>
-											<string>1BB8C66B0F0D1D8C0074522A</string>
 											<string>1BB8C6AA0F0D7CA40074522A</string>
 											<string>1BB8C7590F0DB9740074522A</string>
 											<string>1BB8C76A0F0EC0420074522A</string>
@@ -539,14 +536,16 @@
 											<string>1BB8C85D0F10061C0074522A</string>
 											<string>1BB8C8610F10061C0074522A</string>
 											<string>1BB8C8960F1013020074522A</string>
-											<string>1BB8C8A90F10140C0074522A</string>
 											<string>1BB8C8AE0F101B620074522A</string>
 											<string>1BB8C8AF0F101B620074522A</string>
 											<string>1BB8C8B00F101B620074522A</string>
 											<string>1BB8C8BC0F1027F80074522A</string>
 											<string>1BB8C8BF0F1028D00074522A</string>
 											<string>1BB8C8C00F1028D00074522A</string>
-											<string>1BB8C8C10F1028D00074522A</string>
+											<string>1BB8C8C90F102E030074522A</string>
+											<string>1BB8C8F10F1036D90074522A</string>
+											<string>1BB8C90C0F104DFD0074522A</string>
+											<string>1BB8C90D0F104DFD0074522A</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -977,6 +976,22 @@
 											<string>1BB8C8C20F1028D00074522A</string>
 											<string>1BB8C8C30F1028D00074522A</string>
 											<string>1BB8C8C40F1028D00074522A</string>
+											<string>1BB8C8CC0F102E030074522A</string>
+											<string>1BB8C8CD0F102E030074522A</string>
+											<string>1BB8C8CE0F102E030074522A</string>
+											<string>1BB8C8CF0F102E030074522A</string>
+											<string>1BB8C8D00F102E030074522A</string>
+											<string>1BB8C8D10F102E030074522A</string>
+											<string>1BB8C8D90F102EEA0074522A</string>
+											<string>1BB8C8DE0F102F230074522A</string>
+											<string>1BB8C8F40F1036DA0074522A</string>
+											<string>1BB8C8F50F1036DA0074522A</string>
+											<string>1BB8C8F60F1036DA0074522A</string>
+											<string>1BB8C8F70F1036DA0074522A</string>
+											<string>1BB8C8FB0F1040C90074522A</string>
+											<string>1BB8C8FC0F1040C90074522A</string>
+											<string>1BB8C90E0F104DFD0074522A</string>
+											<string>1BB8C90F0F104DFD0074522A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -1196,10 +1211,10 @@
 	<array>
 		<string>1BB8C5D70F0C5A520074522A</string>
 		<string>1BB8C5D80F0C5A520074522A</string>
+		<string>1B06D57B0DDA632000D9C000</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>1C78EAAD065D492600B07095</string>
-		<string>1B06D57B0DDA632000D9C000</string>
 		<string>/Users/dag/Code/The Unarchiver/XADMaster/XADMaster.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -1226,7 +1241,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>XADTarParser.m</string>
+								<string>PPMSubAllocator.m</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -1293,7 +1308,7 @@
 			<key>WindowToolGUID</key>
 			<string>1B06D57B0DDA632000D9C000</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>

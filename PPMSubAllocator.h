@@ -10,9 +10,9 @@
 typedef struct PPMSubAllocator
 {
 	long SubAllocatorSize;
-	uint8_t Indx2Units[N_INDEXES],Units2Indx[128];
-	uint8_t *HeapStart,*LoUnit,*HiUnit,*LastBreath;
-	struct NODE { struct NODE *next; } FreeList[N_INDEXES];
+	uint8_t Index2Units[N_INDEXES],Units2Index[128];
+	uint8_t *HeapStart,*LowUnit,*HighUnit,*LastBreath;
+	struct PPMAllocatorNode { struct PPMAllocatorNode *next; } FreeList[N_INDEXES];
 } PPMSubAllocator;
 
 BOOL StartSubAllocator(PPMSubAllocator *self,int SASize);
@@ -20,7 +20,18 @@ void StopSubAllocator(PPMSubAllocator *self);
 
 void InitSubAllocator(PPMSubAllocator *self);
 void *AllocContext(PPMSubAllocator *self);
-void *AllocUnitsRare(PPMSubAllocator *self,int NU); /* 1 unit == 12 bytes, NU <= 128 */
+void *AllocUnitsRare(PPMSubAllocator *self,int num); // 1 unit == 12 bytes, num <= 128
 void *ExpandUnits(PPMSubAllocator *self,void *ptr,int OldNU);
 void *ShrinkUnits(PPMSubAllocator *self,void *ptr,int OldNU,int NewNU);
 void FreeUnits(PPMSubAllocator *self,void *ptr,int OldNU);
+
+/*BOOL StartSubAllocator(PPMSubAllocator *self,int SASize);
+void StopSubAllocator(PPMSubAllocator *self);
+
+void InitSubAllocator(PPMSubAllocator *self);
+uint32_t AllocContext(PPMSubAllocator *self);
+uint32_t AllocUnitsRare(PPMSubAllocator *self,int NU); // 1 unit == 12 bytes, NU <= 128
+uint32_t ExpandUnits(PPMSubAllocator *self,uint32_t ptr,int OldNU);
+uint32_t ShrinkUnits(PPMSubAllocator *self,uint32_t ptr,int OldNU,int NewNU);
+void FreeUnits(PPMSubAllocator *self,uint32_t ptr,int OldNU);
+*/

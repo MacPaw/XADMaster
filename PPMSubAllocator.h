@@ -11,7 +11,7 @@ typedef struct PPMSubAllocator
 {
 	long SubAllocatorSize;
 	uint8_t Index2Units[N_INDEXES],Units2Index[128];
-	uint8_t *HeapStart,*LowUnit,*HighUnit,*LastBreath;
+	uint8_t *HeapStart,*PointerBase,*LowUnit,*HighUnit,*LastBreath;
 	struct PPMAllocatorNode { struct PPMAllocatorNode *next; } FreeList[N_INDEXES];
 } PPMSubAllocator;
 
@@ -19,19 +19,22 @@ BOOL StartSubAllocator(PPMSubAllocator *self,int SASize);
 void StopSubAllocator(PPMSubAllocator *self);
 
 void InitSubAllocator(PPMSubAllocator *self);
-void *AllocContext(PPMSubAllocator *self);
-void *AllocUnitsRare(PPMSubAllocator *self,int num);  // 1 unit == 12 bytes, NU <= 128
-void *ExpandUnits(PPMSubAllocator *self,void *oldptr,int oldnum);
-void *ShrinkUnits(PPMSubAllocator *self,void *oldptr,int oldnum,int newnum);
-void FreeUnits(PPMSubAllocator *self,void *ptr,int num);
-
-/*BOOL StartSubAllocator(PPMSubAllocator *self,int SASize);
-void StopSubAllocator(PPMSubAllocator *self);
-
-void InitSubAllocator(PPMSubAllocator *self);
 uint32_t AllocContext(PPMSubAllocator *self);
-uint32_t AllocUnitsRare(PPMSubAllocator *self,int NU); // 1 unit == 12 bytes, NU <= 128
-uint32_t ExpandUnits(PPMSubAllocator *self,uint32_t ptr,int OldNU);
-uint32_t ShrinkUnits(PPMSubAllocator *self,uint32_t ptr,int OldNU,int NewNU);
-void FreeUnits(PPMSubAllocator *self,uint32_t ptr,int OldNU);
-*/
+uint32_t AllocUnitsRare(PPMSubAllocator *self,int num);  // 1 unit == 12 bytes, NU <= 128
+uint32_t ExpandUnits(PPMSubAllocator *self,uint32_t oldoffs,int oldnum);
+uint32_t ShrinkUnits(PPMSubAllocator *self,uint32_t oldoffs,int oldnum,int newnum);
+void FreeUnits(PPMSubAllocator *self,uint32_t offs,int num);
+
+// TODO: Keep pointers as pointers on 32 bit, and offsets on 64 bit.
+
+static inline void *OffsetToPointer(PPMSubAllocator *self,uint32_t offset)
+{
+	if(!offset) return NULL;
+	return self->PointerBase+offset;
+}
+
+static inline uint32_t PointerToOffset(PPMSubAllocator *self,void *pointer)
+{
+	if(!pointer) return 0;
+	return ((uintptr_t)pointer)-(uintptr_t)self->PointerBase;
+}

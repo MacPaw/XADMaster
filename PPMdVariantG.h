@@ -9,13 +9,13 @@ typedef struct SEE2Context
 
 typedef struct PPMContext PPMContext;
 
-typedef struct PPMState { uint8_t Symbol,Freq; PPMContext *Successor; } __attribute__((__packed__)) PPMState;
+typedef struct PPMState { uint8_t Symbol,Freq; uint32_t Successor; } __attribute__((__packed__)) PPMState;
 
 struct PPMContext
 {
 	uint16_t NumStates,SummFreq;
-	PPMState *States;
-    PPMContext *Suffix;
+	uint32_t States;
+    uint32_t Suffix;
 } __attribute__((__packed__));
 
 typedef struct PPMdVariantGModel

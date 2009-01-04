@@ -20,10 +20,10 @@ void StopSubAllocator(PPMSubAllocator *self);
 
 void InitSubAllocator(PPMSubAllocator *self);
 void *AllocContext(PPMSubAllocator *self);
-void *AllocUnitsRare(PPMSubAllocator *self,int num); // 1 unit == 12 bytes, num <= 128
-void *ExpandUnits(PPMSubAllocator *self,void *ptr,int OldNU);
-void *ShrinkUnits(PPMSubAllocator *self,void *ptr,int OldNU,int NewNU);
-void FreeUnits(PPMSubAllocator *self,void *ptr,int OldNU);
+void *AllocUnitsRare(PPMSubAllocator *self,int num);  // 1 unit == 12 bytes, NU <= 128
+void *ExpandUnits(PPMSubAllocator *self,void *oldptr,int oldnum);
+void *ShrinkUnits(PPMSubAllocator *self,void *oldptr,int oldnum,int newnum);
+void FreeUnits(PPMSubAllocator *self,void *ptr,int num);
 
 /*BOOL StartSubAllocator(PPMSubAllocator *self,int SASize);
 void StopSubAllocator(PPMSubAllocator *self);

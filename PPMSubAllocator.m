@@ -98,6 +98,17 @@ void InitSubAllocator(PPMSubAllocator *self)
     }
 }
 
+void *AllocContext(PPMSubAllocator *self)
+{
+    if(self->HighUnit!=self->LowUnit)
+	{
+		self->HighUnit-=UNIT_SIZE;
+		return self->HighUnit;
+	}
+
+    return AllocUnitsRare(self,1);
+}
+
 void *AllocUnitsRare(PPMSubAllocator *self,int num)
 {
 	int index=self->Units2Index[num-1];
@@ -132,17 +143,6 @@ void *AllocUnitsRare(PPMSubAllocator *self,int num)
 	}
 
 	return NULL;
-}
-
-void *AllocContext(PPMSubAllocator *self)
-{
-    if(self->HighUnit!=self->LowUnit)
-	{
-		self->HighUnit-=UNIT_SIZE;
-		return self->HighUnit;
-	}
-
-    return AllocUnitsRare(self,1);
 }
 
 void *ExpandUnits(PPMSubAllocator *self,void *oldptr,int oldnum)

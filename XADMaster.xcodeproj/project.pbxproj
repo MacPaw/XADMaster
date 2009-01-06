@@ -70,7 +70,6 @@
 		1BB8C8570F0FFAB10074522A /* PPMdVariantG.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB8C8550F0FFAB10074522A /* PPMdVariantG.h */; };
 		1BB8C8580F0FFAB10074522A /* PPMdVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C8560F0FFAB10074522A /* PPMdVariantG.m */; };
 		1BB8C85B0F0FFB290074522A /* PPMdVariantH.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB8C8590F0FFB290074522A /* PPMdVariantH.h */; };
-		1BB8C85C0F0FFB290074522A /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
 		1BBAB6780EC26AA6007FE6A2 /* XADArchiveParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BBAB6790EC26AA6007FE6A2 /* XADArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */; };
 		1BBAB6850EC274A3007FE6A2 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
@@ -1436,7 +1435,6 @@
 				1B880D080F0AAB970061CCBE /* XADPPMdHandles.m in Sources */,
 				1BB8C5180F0C29F30074522A /* PPMSubAllocator.m in Sources */,
 				1BB8C8580F0FFAB10074522A /* PPMdVariantG.m in Sources */,
-				1BB8C85C0F0FFB290074522A /* PPMdVariantH.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

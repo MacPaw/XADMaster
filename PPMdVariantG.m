@@ -40,26 +40,30 @@ static void RescaleContext(PPMContext *self,PPMdVariantGModel *model);
 
 void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
 {
+	BOOL brimstone=NO;
+
 	if(input) InitializeRangeCoder(&self->coder,input);
 
 	InitSubAllocator(&self->alloc);
+
+	self->PrevSuccess=0;
+	self->OrderFall=1;
 
 	self->MaxContext=NewPPMContext(self);
 	self->MaxContext->Suffix=0;
 	self->MaxContext->NumStates=256;
 	self->MaxContext->SummFreq=257;
 	self->MaxContext->States=AllocUnitsRare(&self->alloc,256/2);
-	self->PrevSuccess=0;
 
 	PPMState *maxstates=ContextStates(self->MaxContext,self);
 	for(int i=0;i<256;i++)
 	{
 		maxstates[i].Symbol=i;
-		maxstates[i].Freq=1;
+		if(brimstone) maxstates[i].Freq=i<0x80?2:1;
+		else maxstates[i].Freq=1;
 		maxstates[i].Successor=0;
 	}
 
-	self->OrderFall=1;
 	PPMState *state=maxstates;
 	for(int i=1;;i++)
 	{
@@ -99,7 +103,7 @@ void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
 	for(int i=4+8+32;i<256;i++) self->NS2Indx[i]=4+4+8+((i-4-8-32)>>3);
 
 	memset(self->CharMask,0,sizeof(self->CharMask));
-	self->EscCount=self->PrintCount=1;
+	self->EscCount=1;
 }
 
 int NextPPMdVariantGByte(PPMdVariantGModel *self)
@@ -278,7 +282,6 @@ static void UpdateModel(PPMdVariantGModel *self)
 	RESTART_MODEL:
 	StartPPMdVariantGModel(self,NULL);
 	self->EscCount=0;
-	self->PrintCount=0xff;
 }
 
 static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMState *p1)

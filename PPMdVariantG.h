@@ -30,8 +30,7 @@ typedef struct PPMdVariantGModel
 	PPMState *FoundState; // found next state transition
 	int NumMasked,InitEsc,OrderFall,MaxOrder;
 	uint8_t CharMask[256],NS2Indx[256],NS2BSIndx[256];
-	uint8_t EscCount,PrintCount,PrevSuccess;
-	//int EscCount,PrintCount,PrevSuccess;
+	uint8_t EscCount,PrevSuccess;
 	uint16_t BinSumm[128][16]; // binary SEE-contexts
 } PPMdVariantGModel;
 

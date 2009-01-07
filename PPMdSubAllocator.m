@@ -1,28 +1,28 @@
-#import "PPMSubAllocator.h"
+#import "PPMdSubAllocator.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-static inline void *_OffsetToPointer(PPMSubAllocator *self,uint32_t offset) { return self->PointerBase+offset; }
+static inline void *_OffsetToPointer(PPMdSubAllocator *self,uint32_t offset) { return self->PointerBase+offset; }
 
-static inline uint32_t _PointerToOffset(PPMSubAllocator *self,void *pointer) { return (uintptr_t)pointer-(uintptr_t)self->PointerBase; }
+static inline uint32_t _PointerToOffset(PPMdSubAllocator *self,void *pointer) { return (uintptr_t)pointer-(uintptr_t)self->PointerBase; }
 
-void InsertNode(PPMSubAllocator *self,void *p,int index)
+void InsertNode(PPMdSubAllocator *self,void *p,int index)
 {
 	((struct PPMAllocatorNode *)p)->next=self->FreeList[index].next;
 	self->FreeList[index].next=p;
 }
 
-void *RemoveNode(PPMSubAllocator *self,int index)
+void *RemoveNode(PPMdSubAllocator *self,int index)
 {
 	struct PPMAllocatorNode *node=self->FreeList[index].next;
 	self->FreeList[index].next=node->next;
 	return node;
 }
 
-unsigned int I2B(PPMSubAllocator *self,int index) { return UNIT_SIZE*self->Index2Units[index]; }
+unsigned int I2B(PPMdSubAllocator *self,int index) { return UNIT_SIZE*self->Index2Units[index]; }
 
-void SplitBlock(PPMSubAllocator *self,void *pv,int oldindex,int newindex)
+void SplitBlock(PPMdSubAllocator *self,void *pv,int oldindex,int newindex)
 {
 	uint8_t *p=((uint8_t *)pv)+I2B(self,newindex);
 
@@ -38,7 +38,7 @@ void SplitBlock(PPMSubAllocator *self,void *pv,int oldindex,int newindex)
     InsertNode(self,p,self->Units2Index[diff-1]);
 }
 
-uint32_t GetUsedMemory(PPMSubAllocator *self)
+uint32_t GetUsedMemory(PPMdSubAllocator *self)
 {
 	uint32_t size=self->SubAllocatorSize-(self->HighUnit-self->LowUnit);
 
@@ -58,7 +58,7 @@ uint32_t GetUsedMemory(PPMSubAllocator *self)
 
 
 
-BOOL StartSubAllocator(PPMSubAllocator *self,int size)
+BOOL StartSubAllocator(PPMdSubAllocator *self,int size)
 {
     if(self->SubAllocatorSize==size) return YES;
 
@@ -72,7 +72,7 @@ BOOL StartSubAllocator(PPMSubAllocator *self,int size)
 	return YES;
 }
 
-void StopSubAllocator(PPMSubAllocator *self)
+void StopSubAllocator(PPMdSubAllocator *self)
 {
 	if(self->SubAllocatorSize)
 	{
@@ -81,7 +81,7 @@ void StopSubAllocator(PPMSubAllocator *self)
 	}
 }
 
-void InitSubAllocator(PPMSubAllocator *self)
+void InitSubAllocator(PPMdSubAllocator *self)
 {
 	memset(self->FreeList,0,sizeof(self->FreeList));
 
@@ -103,7 +103,7 @@ void InitSubAllocator(PPMSubAllocator *self)
     }
 }
 
-uint32_t AllocContext(PPMSubAllocator *self)
+uint32_t AllocContext(PPMdSubAllocator *self)
 {
     if(self->HighUnit!=self->LowUnit)
 	{
@@ -114,7 +114,7 @@ uint32_t AllocContext(PPMSubAllocator *self)
     return AllocUnitsRare(self,1);
 }
 
-uint32_t AllocUnitsRare(PPMSubAllocator *self,int num)
+uint32_t AllocUnitsRare(PPMdSubAllocator *self,int num)
 {
 	int index=self->Units2Index[num-1];
 	if(self->FreeList[index].next) return _PointerToOffset(self,RemoveNode(self,index));
@@ -150,7 +150,7 @@ uint32_t AllocUnitsRare(PPMSubAllocator *self,int num)
 	return 0;
 }
 
-uint32_t ExpandUnits(PPMSubAllocator *self,uint32_t oldoffs,int oldnum)
+uint32_t ExpandUnits(PPMdSubAllocator *self,uint32_t oldoffs,int oldnum)
 {
 	void *oldptr=_OffsetToPointer(self,oldoffs);
 	int oldindex=self->Units2Index[oldnum-1];
@@ -166,7 +166,7 @@ uint32_t ExpandUnits(PPMSubAllocator *self,uint32_t oldoffs,int oldnum)
 	return offs;
 }
 
-uint32_t ShrinkUnits(PPMSubAllocator *self,uint32_t oldoffs,int oldnum,int newnum)
+uint32_t ShrinkUnits(PPMdSubAllocator *self,uint32_t oldoffs,int oldnum,int newnum)
 {
 	void *oldptr=_OffsetToPointer(self,oldoffs);
 	int oldindex=self->Units2Index[oldnum-1];
@@ -187,7 +187,7 @@ uint32_t ShrinkUnits(PPMSubAllocator *self,uint32_t oldoffs,int oldnum,int newnu
     }
 }
 
-void FreeUnits(PPMSubAllocator *self,uint32_t offs,int num)
+void FreeUnits(PPMdSubAllocator *self,uint32_t offs,int num)
 {
 	InsertNode(self,_OffsetToPointer(self,offs),self->Units2Index[num-1]);
 }

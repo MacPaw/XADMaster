@@ -1,6 +1,6 @@
 #import "CSByteStreamHandle.h"
 #import "PPMdVariantG.h"
-//#import "PPMdVariantH.h"
+#import "PPMdVariantH.h"
 
 @interface XADPPMdVariantGHandle:CSByteStreamHandle
 {
@@ -18,6 +18,7 @@
 
 @interface XADPPMdVariantHHandle:CSByteStreamHandle
 {
+	PPMdVariantHModel model;
 }
 
 -(id)initWithHandle:(CSHandle *)handle maxOrder:(int)maxorder subAllocSize:(int)suballocsize;

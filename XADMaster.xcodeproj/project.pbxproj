@@ -22,6 +22,12 @@
 		1B06D5BB0DDA67E000D9C000 /* XADString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5B90DDA67E000D9C000 /* XADString.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B0DD5980A29091F0009B697 /* XADArchivePipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B0DD5960A29091F0009B697 /* XADArchivePipe.h */; };
 		1B2110720A4452C2005ED2AF /* XADRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2110700A4452C2005ED2AF /* XADRegex.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B2A408E0F13BDEB009B5B89 /* PPMdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */; };
+		1B2A408F0F13BDEB009B5B89 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
+		1B2A41600F13F458009B5B89 /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
+		1B2A42230F15237C009B5B89 /* PPMdSubAllocatorVariantG.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2A42210F15237C009B5B89 /* PPMdSubAllocatorVariantG.h */; };
+		1B2A42270F15238C009B5B89 /* PPMdSubAllocatorVariantH.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2A42250F15238C009B5B89 /* PPMdSubAllocatorVariantH.h */; };
+		1B2A42280F15238C009B5B89 /* PPMdSubAllocatorVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A42260F15238C009B5B89 /* PPMdSubAllocatorVariantH.m */; };
 		1B2F17E60EE8AF7B0000DAFF /* XADSkipHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F17E40EE8AF7B0000DAFF /* XADSkipHandle.h */; };
 		1B2F17EA0EE8B9490000DAFF /* SystemSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F17E80EE8B9490000DAFF /* SystemSpecific.h */; };
 		1B2F18400EE965880000DAFF /* XADPowerPackerParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F183E0EE965880000DAFF /* XADPowerPackerParser.h */; };
@@ -65,8 +71,8 @@
 		1B880D040F0AAB700061CCBE /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
 		1B880D070F0AAB970061CCBE /* XADPPMdHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B880D050F0AAB970061CCBE /* XADPPMdHandles.h */; };
 		1B880D080F0AAB970061CCBE /* XADPPMdHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */; };
-		1BB8C5170F0C29F30074522A /* PPMSubAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB8C5150F0C29F30074522A /* PPMSubAllocator.h */; };
-		1BB8C5180F0C29F30074522A /* PPMSubAllocator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C5160F0C29F30074522A /* PPMSubAllocator.m */; };
+		1BB8C5170F0C29F30074522A /* PPMdSubAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB8C5150F0C29F30074522A /* PPMdSubAllocator.h */; };
+		1BB8C5180F0C29F30074522A /* PPMdSubAllocator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C5160F0C29F30074522A /* PPMdSubAllocator.m */; };
 		1BB8C8570F0FFAB10074522A /* PPMdVariantG.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB8C8550F0FFAB10074522A /* PPMdVariantG.h */; };
 		1BB8C8580F0FFAB10074522A /* PPMdVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C8560F0FFAB10074522A /* PPMdVariantG.m */; };
 		1BB8C85B0F0FFB290074522A /* PPMdVariantH.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB8C8590F0FFB290074522A /* PPMdVariantH.h */; };
@@ -329,6 +335,11 @@
 		1B210D4D0A40E457005ED2AF /* xadIO.doc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = xadIO.doc; path = libxad_reject/amiga/source/clients/xadIO.doc; sourceTree = "<group>"; };
 		1B21106F0A4452C2005ED2AF /* XADRegex.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XADRegex.m; sourceTree = "<group>"; };
 		1B2110700A4452C2005ED2AF /* XADRegex.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XADRegex.h; sourceTree = "<group>"; };
+		1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdContext.h; sourceTree = "<group>"; };
+		1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdContext.m; sourceTree = "<group>"; };
+		1B2A42210F15237C009B5B89 /* PPMdSubAllocatorVariantG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdSubAllocatorVariantG.h; sourceTree = "<group>"; };
+		1B2A42250F15238C009B5B89 /* PPMdSubAllocatorVariantH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdSubAllocatorVariantH.h; sourceTree = "<group>"; };
+		1B2A42260F15238C009B5B89 /* PPMdSubAllocatorVariantH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdSubAllocatorVariantH.m; sourceTree = "<group>"; };
 		1B2F17E40EE8AF7B0000DAFF /* XADSkipHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSkipHandle.h; sourceTree = "<group>"; };
 		1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADSkipHandle.m; sourceTree = "<group>"; };
 		1B2F17E80EE8B9490000DAFF /* SystemSpecific.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSpecific.h; sourceTree = "<group>"; };
@@ -377,8 +388,8 @@
 		1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPPMdParser.m; sourceTree = "<group>"; };
 		1B880D050F0AAB970061CCBE /* XADPPMdHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPPMdHandles.h; sourceTree = "<group>"; };
 		1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPPMdHandles.m; sourceTree = "<group>"; };
-		1BB8C5150F0C29F30074522A /* PPMSubAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMSubAllocator.h; sourceTree = "<group>"; };
-		1BB8C5160F0C29F30074522A /* PPMSubAllocator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMSubAllocator.m; sourceTree = "<group>"; };
+		1BB8C5150F0C29F30074522A /* PPMdSubAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdSubAllocator.h; sourceTree = "<group>"; };
+		1BB8C5160F0C29F30074522A /* PPMdSubAllocator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdSubAllocator.m; sourceTree = "<group>"; };
 		1BB8C8550F0FFAB10074522A /* PPMdVariantG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdVariantG.h; sourceTree = "<group>"; };
 		1BB8C8560F0FFAB10074522A /* PPMdVariantG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdVariantG.m; sourceTree = "<group>"; };
 		1BB8C8590F0FFB290074522A /* PPMdVariantH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdVariantH.h; sourceTree = "<group>"; };
@@ -814,8 +825,13 @@
 				1BB8C8560F0FFAB10074522A /* PPMdVariantG.m */,
 				1BB8C8590F0FFB290074522A /* PPMdVariantH.h */,
 				1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */,
-				1BB8C5150F0C29F30074522A /* PPMSubAllocator.h */,
-				1BB8C5160F0C29F30074522A /* PPMSubAllocator.m */,
+				1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */,
+				1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */,
+				1BB8C5150F0C29F30074522A /* PPMdSubAllocator.h */,
+				1BB8C5160F0C29F30074522A /* PPMdSubAllocator.m */,
+				1B2A42210F15237C009B5B89 /* PPMdSubAllocatorVariantG.h */,
+				1B2A42250F15238C009B5B89 /* PPMdSubAllocatorVariantH.h */,
+				1B2A42260F15238C009B5B89 /* PPMdSubAllocatorVariantH.m */,
 			);
 			name = PPMd;
 			sourceTree = "<group>";
@@ -1184,9 +1200,12 @@
 				1B880C270F09A23B0061CCBE /* XADStuffItXBlockHandle.h in Headers */,
 				1B880D030F0AAB6F0061CCBE /* XADPPMdParser.h in Headers */,
 				1B880D070F0AAB970061CCBE /* XADPPMdHandles.h in Headers */,
-				1BB8C5170F0C29F30074522A /* PPMSubAllocator.h in Headers */,
+				1BB8C5170F0C29F30074522A /* PPMdSubAllocator.h in Headers */,
 				1BB8C8570F0FFAB10074522A /* PPMdVariantG.h in Headers */,
 				1BB8C85B0F0FFB290074522A /* PPMdVariantH.h in Headers */,
+				1B2A408E0F13BDEB009B5B89 /* PPMdContext.h in Headers */,
+				1B2A42230F15237C009B5B89 /* PPMdSubAllocatorVariantG.h in Headers */,
+				1B2A42270F15238C009B5B89 /* PPMdSubAllocatorVariantH.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1433,8 +1452,11 @@
 				1B880C280F09A23B0061CCBE /* XADStuffItXBlockHandle.m in Sources */,
 				1B880D040F0AAB700061CCBE /* XADPPMdParser.m in Sources */,
 				1B880D080F0AAB970061CCBE /* XADPPMdHandles.m in Sources */,
-				1BB8C5180F0C29F30074522A /* PPMSubAllocator.m in Sources */,
+				1BB8C5180F0C29F30074522A /* PPMdSubAllocator.m in Sources */,
 				1BB8C8580F0FFAB10074522A /* PPMdVariantG.m in Sources */,
+				1B2A408F0F13BDEB009B5B89 /* PPMdContext.m in Sources */,
+				1B2A41600F13F458009B5B89 /* PPMdVariantH.m in Sources */,
+				1B2A42280F15238C009B5B89 /* PPMdSubAllocatorVariantH.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

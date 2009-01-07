@@ -1,36 +1,13 @@
-#import "PPMSubAllocator.h"
-#import "CarrylessRangeCoder.h"
-
-typedef struct SEE2Context
-{ // SEE-contexts for PPM-contexts with masked symbols
-	uint16_t Summ;
-	uint8_t Shift,Count;
-}  __attribute__((__packed__)) SEE2Context;
-
-typedef struct PPMContext PPMContext;
-
-typedef struct PPMState { uint8_t Symbol,Freq; uint32_t Successor; } __attribute__((__packed__)) PPMState;
-
-struct PPMContext
-{
-	uint16_t NumStates,SummFreq;
-	uint32_t States;
-    uint32_t Suffix;
-} __attribute__((__packed__));
+#import "PPMdContext.h"
 
 typedef struct PPMdVariantGModel
 {
-	PPMSubAllocator alloc;
+	PPMdCoreModel core;
 
-	CarrylessRangeCoder coder;
-	struct { uint32_t LowCount,HighCount,scale; } SubRange;
-
+	PPMdContext *MinContext,*MedContext,*MaxContext;
+	int MaxOrder;
 	SEE2Context SEE2Cont[43][8],DummySEE2Cont;
-	PPMContext *MinContext,*MedContext,*MaxContext;
-	PPMState *FoundState; // found next state transition
-	int NumMasked,InitEsc,OrderFall,MaxOrder;
-	uint8_t CharMask[256],NS2Indx[256],NS2BSIndx[256];
-	uint8_t EscCount,PrevSuccess;
+	uint8_t NS2BSIndx[256],NS2Indx[256];
 	uint16_t BinSumm[128][16]; // binary SEE-contexts
 } PPMdVariantGModel;
 

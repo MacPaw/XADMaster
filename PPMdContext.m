@@ -9,11 +9,19 @@ SEE2Context MakeSEE2(int initval,int count)
 	return self;
 }
 
-unsigned int GetSEE2Mean(SEE2Context *self)
+unsigned int GetSEE2MeanMasked(SEE2Context *self)
 {
 	unsigned int retval=self->Summ>>self->Shift;
 	self->Summ-=retval;
 	retval&=0x03ff;
+	if(retval==0) return 1;
+	return retval;
+}
+
+unsigned int GetSEE2Mean(SEE2Context *self)
+{
+	unsigned int retval=self->Summ>>self->Shift;
+	self->Summ-=retval;
 	if(retval==0) return 1;
 	return retval;
 }
@@ -35,28 +43,28 @@ void UpdateSEE2(SEE2Context *self)
 
 
 PPMdContext *PPMdStateSuccessor(PPMdState *self,PPMdCoreModel *model)
-{ return OffsetToPointer(&model->alloc,self->Successor); }
+{ return OffsetToPointer(model->alloc,self->Successor); }
 
 void SetPPMdStateSuccessorPointer(PPMdState *self,PPMdContext *newsuccessor,PPMdCoreModel *model)
-{ self->Successor=PointerToOffset(&model->alloc,newsuccessor); }
+{ self->Successor=PointerToOffset(model->alloc,newsuccessor); }
 
 PPMdState *PPMdContextStates(PPMdContext *self,PPMdCoreModel *model)
-{ return OffsetToPointer(&model->alloc,self->States); }
+{ return OffsetToPointer(model->alloc,self->States); }
 
 void SetPPMdContextStatesPointer(PPMdContext *self, PPMdState *newstates,PPMdCoreModel *model)
-{ self->States=PointerToOffset(&model->alloc,newstates); }
+{ self->States=PointerToOffset(model->alloc,newstates); }
 
 PPMdContext *PPMdContextSuffix(PPMdContext *self,PPMdCoreModel *model)
-{ return OffsetToPointer(&model->alloc,self->Suffix); } 
+{ return OffsetToPointer(model->alloc,self->Suffix); } 
 
 void SetPPMdContextSuffixPointer(PPMdContext *self,PPMdContext *newsuffix,PPMdCoreModel *model)
-{ self->Suffix=PointerToOffset(&model->alloc,newsuffix); }
+{ self->Suffix=PointerToOffset(model->alloc,newsuffix); }
 
 PPMdState *PPMdContextOneState(PPMdContext *self) { return (PPMdState *)&self->SummFreq; }
 
 PPMdContext *NewPPMdContext(PPMdCoreModel *model)
 {
-	PPMdContext *context=OffsetToPointer(&model->alloc,AllocContext(&model->alloc));
+	PPMdContext *context=OffsetToPointer(model->alloc,AllocContext(model->alloc));
 	if(context)
 	{
 		context->NumStates=0;
@@ -67,7 +75,7 @@ PPMdContext *NewPPMdContext(PPMdCoreModel *model)
 
 PPMdContext *NewPPMdContextAsChildOf(PPMdCoreModel *model,PPMdContext *suffixcontext,PPMdState *suffixstate,PPMdState *firststate)
 {
-	PPMdContext *context=OffsetToPointer(&model->alloc,AllocContext(&model->alloc));
+	PPMdContext *context=OffsetToPointer(model->alloc,AllocContext(model->alloc));
 	if(context)
 	{
 		context->NumStates=1;
@@ -290,7 +298,7 @@ void RescalePPMdContext(PPMdContext *self,PPMdCoreModel *model)
 			}
 			while(escfreq>1);
 
-			FreeUnits(&model->alloc,self->States,(n+1)>>1);
+			FreeUnits(model->alloc,self->States,(n+1)>>1);
 			model->FoundState=PPMdContextOneState(self);
 			*model->FoundState=tmp;
 
@@ -298,7 +306,7 @@ void RescalePPMdContext(PPMdContext *self,PPMdCoreModel *model)
 		}
 
 		int n0=(n+1)>>1,n1=(self->NumStates+1)>>1;
-		if(n0!=n1) self->States=ShrinkUnits(&model->alloc,self->States,n0,n1);
+		if(n0!=n1) self->States=ShrinkUnits(model->alloc,self->States,n0,n1);
 	}
 
 	self->SummFreq+=(escfreq+1)>>1;

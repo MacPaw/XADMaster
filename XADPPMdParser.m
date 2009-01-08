@@ -102,8 +102,8 @@
 		case 'H':
 			return [XADCRCHandle IEEECRC32HandleWithHandle:
 			[[[XADPPMdVariantHHandle alloc] initWithHandle:handle maxOrder:maxorder subAllocSize:suballocsize<<20] autorelease]
-			length:20259 correctCRC:0xb4e8f7a1 conditioned:YES];
-//			length:13745624 correctCRC:0xc1c1c00a conditioned:YES];
+//			length:20259 correctCRC:0xb4e8f7a1 conditioned:YES];
+			length:13745624 correctCRC:0xc1c1c00a conditioned:YES];
 
 		default: return nil;
 	}

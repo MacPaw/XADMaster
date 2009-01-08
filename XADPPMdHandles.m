@@ -1,4 +1,6 @@
 #import "XADPPMdHandles.h"
+#import "PPMdSubAllocatorVariantG.h"
+#import "PPMdSubAllocatorVariantH.h"
 
 @implementation XADPPMdVariantGHandle
 
@@ -11,7 +13,7 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		StartSubAllocator(&model.core.alloc,suballocsize);
+		model.core.alloc=&CreateSubAllocatorVariantG(suballocsize)->core;
 		model.MaxOrder=maxorder;
 	}
 	return self;
@@ -19,7 +21,7 @@
 
 -(void)dealloc
 {
-	StopSubAllocator(&model.core.alloc);
+	FreeSubAllocatorVariantG((PPMdSubAllocatorVariantG *)model.core.alloc);
 	[super dealloc];
 }
 
@@ -46,7 +48,7 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		StartSubAllocator(&model.core.alloc,suballocsize);
+		model.core.alloc=&CreateSubAllocatorVariantH(suballocsize)->core;
 		model.MaxOrder=maxorder;
 	}
 	return self;
@@ -54,7 +56,7 @@
 
 -(void)dealloc
 {
-	StopSubAllocator(&model.core.alloc);
+	FreeSubAllocatorVariantH((PPMdSubAllocatorVariantH *)model.core.alloc);
 	[super dealloc];
 }
 
@@ -62,8 +64,13 @@
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
+/*if(pos==685)
+NSLog(@"er");*/
 	int byte=NextPPMdVariantHByte(&model);
 	if(byte<0) CSByteStreamEOF(self);
+/*if(pos%16==0) fprintf(stderr,"%08x  ",pos);
+fprintf(stderr,"%02x ",byte);
+if(pos%16==15) fprintf(stderr,"\n");*/
 	return byte;
 }
 

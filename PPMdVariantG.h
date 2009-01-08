@@ -1,5 +1,7 @@
 #import "PPMdContext.h"
 
+// PPMd Variant G. Used (slightly modified) by StuffIt X.
+
 typedef struct PPMdVariantGModel
 {
 	PPMdCoreModel core;

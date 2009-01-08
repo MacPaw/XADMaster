@@ -13,7 +13,7 @@ void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
 
 	if(input) InitializeRangeCoder(&self->core.coder,input);
 
-	InitSubAllocator(&self->core.alloc);
+	InitSubAllocator(self->core.alloc);
 
 	self->core.PrevSuccess=0;
 	self->core.OrderFall=1;
@@ -21,7 +21,7 @@ void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
 	self->MaxContext=NewPPMdContext(&self->core);
 	self->MaxContext->NumStates=256;
 	self->MaxContext->SummFreq=257;
-	self->MaxContext->States=AllocUnitsRare(&self->core.alloc,256/2);
+	self->MaxContext->States=AllocUnits(self->core.alloc,256/2);
 
 	PPMdState *maxstates=PPMdContextStates(self->MaxContext,&self->core);
 	for(int i=0;i<256;i++)
@@ -186,7 +186,7 @@ static void UpdateModel(PPMdVariantGModel *self)
 		{
 			if((currnum&1)==0)
 			{
-				currcontext->States=ExpandUnits(&self->core.alloc,currcontext->States,currnum>>1);
+				currcontext->States=ExpandUnits(self->core.alloc,currcontext->States,currnum>>1);
 				if(!currcontext->States) goto RESTART_MODEL;
 			}
 			if(4*currnum<=minnum&&currcontext->SummFreq<=8*currnum) currcontext->SummFreq+=2;
@@ -194,7 +194,7 @@ static void UpdateModel(PPMdVariantGModel *self)
 		}
 		else
 		{
-			PPMdState *states=OffsetToPointer(&self->core.alloc,AllocUnitsRare(&self->core.alloc,1));
+			PPMdState *states=OffsetToPointer(self->core.alloc,AllocUnits(self->core.alloc,1));
 			if(!states) goto RESTART_MODEL;
 			states[0]=*(PPMdContextOneState(currcontext));
 			SetPPMdContextStatesPointer(currcontext,states,&self->core);
@@ -350,7 +350,7 @@ static void DecodeSymbol2VariantG(PPMdContext *self,PPMdVariantGModel *model)
 			+(diff<PPMdContextSuffix(self,&model->core)->NumStates-self->NumStates?1:0)
 			+(self->SummFreq<11*self->NumStates?2:0)
 			+(model->core.NumMasked>diff?4:0)];
-		model->core.SubRange.scale=GetSEE2Mean(see);
+		model->core.SubRange.scale=GetSEE2MeanMasked(see);
 	}
 	else
 	{

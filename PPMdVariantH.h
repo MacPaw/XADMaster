@@ -1,8 +1,13 @@
 #import "PPMdContext.h"
+#import "PPMdSubAllocatorVariantH.h"
+
+// PPMd Variant H. Used by RAR.
 
 typedef struct PPMdVariantHModel
 {
 	PPMdCoreModel core;
+
+	PPMdSubAllocatorVariantH *alloc;
 
 	PPMdContext *MinContext,*MaxContext;
 	int MaxOrder,HiBitsFlag;

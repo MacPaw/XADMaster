@@ -30,7 +30,7 @@ struct PPMdContext
 
 typedef struct PPMdCoreModel
 {
-	PPMdSubAllocator alloc;
+	PPMdSubAllocator *alloc;
 
 	CarrylessRangeCoder coder;
 	struct { uint32_t LowCount,HighCount,scale; } SubRange;
@@ -42,6 +42,7 @@ typedef struct PPMdCoreModel
 } PPMdCoreModel;
 
 SEE2Context MakeSEE2(int initval,int count);
+unsigned int GetSEE2MeanMasked(SEE2Context *self);
 unsigned int GetSEE2Mean(SEE2Context *self);
 void UpdateSEE2(SEE2Context *self);
 

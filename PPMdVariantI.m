@@ -1,13 +1,13 @@
-#import "PPMdVariantH.h"
+#import "PPMdVariantI.h"
 
-static void UpdateModel(PPMdVariantHModel *self);
-static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState *p1);
+static void UpdateModel(PPMdVariantIModel *self);
+static PPMdContext *CreateSuccessors(PPMdVariantIModel *self,BOOL skip,PPMdState *p1);
 
-static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdVariantHModel *model);
-static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model);
-static void DecodeSymbol2VariantH(PPMdContext *self,PPMdVariantHModel *model);
+static void DecodeBinSymbolVariantI(PPMdContext *self,PPMdVariantIModel *model);
+static void DecodeSymbol1VariantI(PPMdContext *self,PPMdVariantIModel *model);
+static void DecodeSymbol2VariantI(PPMdContext *self,PPMdVariantIModel *model);
 
-static void RestartModel(PPMdVariantHModel *self)
+static void RestartModel(PPMdVariantIModel *self)
 {
     memset(self->core.CharMask,0,sizeof(self->core.CharMask));
 
@@ -44,11 +44,11 @@ static void RestartModel(PPMdVariantHModel *self)
 	self->SEE2Cont[i][k]=MakeSEE2(5*i+10,4);
 }
 
-void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int maxorder)
+void StartPPMdVariantIModel(PPMdVariantIModel *self,CSInputBuffer *input,int maxorder)
 {
 	InitializeRangeCoder(&self->core.coder,input);
 
-	self->alloc=(PPMdSubAllocatorVariantH *)self->core.alloc; // A bit ugly but there you go.
+	self->alloc=(PPMdSubAllocatorVariantI *)self->core.alloc; // A bit ugly but there you go.
 
 	self->core.EscCount=1;
 	self->MaxOrder=maxorder;
@@ -75,10 +75,10 @@ void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int max
 }
 
 
-int NextPPMdVariantHByte(PPMdVariantHModel *self)
+int NextPPMdVariantIByte(PPMdVariantIModel *self)
 {
-	if(self->MinContext->NumStates!=1) DecodeSymbol1VariantH(self->MinContext,self);
-	else DecodeBinSymbolVariantH(self->MinContext,self);
+	if(self->MinContext->NumStates!=1) DecodeSymbol1VariantI(self->MinContext,self);
+	else DecodeBinSymbolVariantI(self->MinContext,self);
 
 	RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
 
@@ -93,7 +93,7 @@ int NextPPMdVariantHByte(PPMdVariantHModel *self)
 		}
 		while(self->MinContext->NumStates==self->core.NumMasked);
 
-		DecodeSymbol2VariantH(self->MinContext,self);
+		DecodeSymbol2VariantI(self->MinContext,self);
 		RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
 	}
 
@@ -112,7 +112,7 @@ int NextPPMdVariantHByte(PPMdVariantHModel *self)
 	return byte;
 }
 
-static void UpdateModel(PPMdVariantHModel *self)
+static void UpdateModel(PPMdVariantIModel *self)
 {
 	PPMdState fs=*self->core.FoundState;
 	PPMdState *state=NULL;
@@ -246,11 +246,12 @@ static void UpdateModel(PPMdVariantHModel *self)
 	return;
 
 	RESTART_MODEL:
+	NSLog(@"restart");
 	RestartModel(self);
 	self->core.EscCount=0;
 }
 
-static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState *p1)
+static PPMdContext *CreateSuccessors(PPMdVariantIModel *self,BOOL skip,PPMdState *p1)
 {
 	PPMdContext *pc=self->MinContext,*UpBranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
 	PPMdState *p,*ps[MAX_O],**pps=ps;
@@ -323,20 +324,17 @@ static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState
 
 
 
-static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdVariantHModel *model)
+static void DecodeBinSymbolVariantI(PPMdContext *self,PPMdVariantIModel *model)
 {
 	PPMdState *rs=PPMdContextOneState(self);
 
-	model->HiBitsFlag=model->HB2Flag[model->core.FoundState->Symbol];
-
-	uint16_t *bs=&model->BinSumm[rs->Freq-1][
-	model->core.PrevSuccess+model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->NumStates-1]+
-	model->HiBitsFlag+2*model->HB2Flag[rs->Symbol]+((model->core.RunLength>>26)&0x20)];
+	uint8_t index=NS2BSIndx[PPMdContextSuffix(self,&model->core)->NumStates]+model->core.PrevSuccess+self->Flags;
+	uint16_t *bs=&BinSumm[model->QTable[rs->Freq-1]][index+((model->core.RunLength>>26)&0x20)];
 
 	PPMdDecodeBinSymbol(self,&model->core,bs);
 }
 
-static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model)
+static void DecodeSymbol1VariantI(PPMdContext *self,PPMdVariantIModel *model)
 {
 	int lastsym=PPMdDecodeSymbol1(self,&model->core);
 	if(lastsym>=0)
@@ -345,17 +343,26 @@ static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model)
 	}
 }
 
-static void DecodeSymbol2VariantH(PPMdContext *self,PPMdVariantHModel *model)
+static void DecodeSymbol2VariantI(PPMdContext *self,PPMdVariantIModel *model)
 {
 	int diff=self->NumStates-model->core.NumMasked;
 	SEE2Context *see;
-	if(self->NumStates!=256)
+
+	uint8_t *pb=(uint8_t *)PPMdContextStates(self);
+	unsigned int t=2*self->NumStates;
+	//PrefetchData(pb);
+	//PrefetchData(pb+t);
+	pb+=2*t;
+	//PrefetchData(pb);
+	//PrefetchData(pb+t);
+
+	if(self->NumStates!=255)
 	{
-		see=&model->SEE2Cont[model->NS2Indx[diff-1]][
-			+(diff<PPMdContextSuffix(self,&model->core)->NumStates-self->NumStates?1:0)
-			+(self->SummFreq<11*self->NumStates?2:0)
-			+(model->core.NumMasked>diff?4:0)
-			+model->HiBitsFlag];
+		int n=PPMdContextSuffix(self)->NumStates;
+ 		see=&model->SEE2Cont[QTable[self->NumStates+2]-3][
+			(self->SummFreq>11*(self->NumStates+1)?1:0)
+			+(2*self->NumStates<n+model->core.NumMasked?2:0)
+			+self->Flags];
 		model->core.SubRange.scale=GetSEE2Mean(see);
 	}
 	else
@@ -366,3 +373,4 @@ static void DecodeSymbol2VariantH(PPMdContext *self,PPMdVariantHModel *model)
 
 	PPMdDecodeSymbol2(self,&model->core,see);
 }
+

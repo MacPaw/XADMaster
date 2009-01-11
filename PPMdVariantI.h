@@ -1,20 +1,25 @@
 #import "PPMdContext.h"
-//#import "PPMdSubAllocatorVariantI.h"
+#import "PPMdSubAllocatorVariantI.h"
 
 // PPMd Variant I. Used by WinZip.
 
-typedef struct PPMdVariantHModel
+#define MRM_RESTART 0
+#define MRM_CUT_OFF 1
+#define MRM_FREEZE 2
+
+typedef struct PPMdVariantIModel
 {
 	PPMdCoreModel core;
 
-//	PPMdSubAllocatorVariantH *alloc;
+	PPMdSubAllocatorVariantI *alloc;
 
-/*	PPMdContext *MinContext,*MaxContext;
-	int MaxOrder,HiBitsFlag;
-	SEE2Context SEE2Cont[25][16],DummySEE2Cont;
-	uint8_t NS2BSIndx[256],HB2Flag[256],NS2Indx[256];
-	uint16_t BinSumm[128][64]; // binary SEE-contexts*/
-} PPMdVariantHModel;
+	uint8_t NS2BSIndx[256],QTable[260]; // constants
 
-/*void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int maxorder);
-int NextPPMdVariantHByte(PPMdVariantHModel *self);*/
+	PPMdContext *MaxContext;
+	int MaxOrder,MRMethod;
+	SEE2Context SEE2Cont[24][32],DummySEE2Cont;
+	uint16_t BinSumm[25][64]; // binary SEE-contexts
+} PPMdVariantIModel;
+
+void StartPPMdVariantIModel(PPMdVariantIModel *self,CSInputBuffer *input,int maxorder,int restoration);
+int NextPPMdVariantIByte(PPMdVariantIModel *self);

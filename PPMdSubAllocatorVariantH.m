@@ -13,7 +13,7 @@
 struct PPMdMemoryBlock
 {
 	uint16_t Stamp,NU;
-	struct PPMdMemoryBlock *next,*prev;
+	struct PPMdMemoryBlock *next,*prev; // 64-bit issues!
 } __attribute__((packed));
 
 static inline void InsertBlockAt(struct PPMdMemoryBlock *self,struct PPMdMemoryBlock *p)
@@ -38,11 +38,13 @@ static uint32_t GetUsedMemory(PPMdSubAllocatorVariantH *self);
 
 static void InitVariantH(PPMdSubAllocatorVariantH *self);
 static uint32_t AllocContextVariantH(PPMdSubAllocatorVariantH *self);
-static uint32_t _AllocUnits(PPMdSubAllocatorVariantH *self,int index);
 static uint32_t AllocUnitsVariantH(PPMdSubAllocatorVariantH *self,int num);
+static uint32_t _AllocUnits(PPMdSubAllocatorVariantH *self,int index);
 static uint32_t ExpandUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldoffs,int oldnum);
 static uint32_t ShrinkUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldoffs,int oldnum,int newnum);
 static void FreeUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t offs,int num);
+
+static inline void GlueFreeBlocks(PPMdSubAllocatorVariantH *self);
 
 static inline void *_OffsetToPointer(PPMdSubAllocatorVariantH *self,uint32_t offset) { return ((uint8_t *)self)+offset; }
 static inline uint32_t _PointerToOffset(PPMdSubAllocatorVariantH *self,void *pointer) { return ((uintptr_t)pointer)-(uintptr_t)self; }
@@ -110,6 +112,96 @@ static uint32_t AllocContextVariantH(PPMdSubAllocatorVariantH *self)
     return _AllocUnits(self,0);
 }
 
+static uint32_t AllocUnitsVariantH(PPMdSubAllocatorVariantH *self,int num)
+{
+	int index=self->Units2Index[num-1];
+
+	if(self->FreeList[index].next) return _PointerToOffset(self,RemoveNode(self,index));
+
+	void *units=self->LowUnit;
+	self->LowUnit+=I2B(self,index);
+	if(self->LowUnit<=self->HighUnit) return _PointerToOffset(self,units);
+
+	self->LowUnit-=I2B(self,index);
+
+	return _AllocUnits(self,index);
+}
+
+static uint32_t _AllocUnits(PPMdSubAllocatorVariantH *self,int index)
+{
+	if(self->GlueCount==0)
+	{
+		self->GlueCount=255;
+		GlueFreeBlocks(self);
+		if(self->FreeList[index].next) return _PointerToOffset(self,RemoveNode(self,index));
+	}
+
+	for(int i=index+1;i<N_INDEXES;i++)
+	{
+		if(self->FreeList[i].next)
+		{
+			void *units=RemoveNode(self,i);
+			SplitBlock(self,units,i,index);
+			return _PointerToOffset(self,units);
+		}
+	}
+
+	self->GlueCount--;
+
+	int i=I2B(self,index);
+	if(self->UnitsStart-self->pText>i)
+	{
+		self->UnitsStart-=i;
+		return _PointerToOffset(self,self->UnitsStart);
+	}
+
+	return 0;
+}
+
+static uint32_t ExpandUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldoffs,int oldnum)
+{
+	void *oldptr=_OffsetToPointer(self,oldoffs);
+	int oldindex=self->Units2Index[oldnum-1];
+	int newindex=self->Units2Index[oldnum];
+	if(oldindex==newindex) return oldoffs;
+
+	uint32_t offs=AllocUnitsVariantH(self,oldnum+1);
+	if(offs)
+	{
+		memcpy(_OffsetToPointer(self,offs),oldptr,oldnum*UNIT_SIZE);
+		InsertNode(self,oldptr,oldindex);
+	}
+	return offs;
+}
+
+static uint32_t ShrinkUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldoffs,int oldnum,int newnum)
+{
+	void *oldptr=_OffsetToPointer(self,oldoffs);
+	int oldindex=self->Units2Index[oldnum-1];
+	int newindex=self->Units2Index[newnum-1];
+	if(oldindex==newindex) return oldoffs;
+
+	if(self->FreeList[newindex].next)
+	{
+		void *ptr=RemoveNode(self,newindex);
+		memcpy(ptr,oldptr,newnum*UNIT_SIZE);
+		InsertNode(self,oldptr,oldindex);
+		return _PointerToOffset(self,ptr);
+	}
+	else
+	{
+		SplitBlock(self,oldptr,oldindex,newindex);
+		return oldoffs;
+    }
+}
+
+static void FreeUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t offs,int num)
+{
+	InsertNode(self,_OffsetToPointer(self,offs),self->Units2Index[num-1]);
+}
+
+
+
 static inline void GlueFreeBlocks(PPMdSubAllocatorVariantH *self)
 {
 	struct PPMdMemoryBlock s0;
@@ -165,95 +257,6 @@ static inline void GlueFreeBlocks(PPMdSubAllocatorVariantH *self)
 		InsertNode(self,p,i);
 	}
 }
-
-static uint32_t _AllocUnits(PPMdSubAllocatorVariantH *self,int index)
-{
-	if(self->GlueCount==0)
-	{
-		self->GlueCount=255;
-		GlueFreeBlocks(self);
-		if(self->FreeList[index].next) return _PointerToOffset(self,RemoveNode(self,index));
-	}
-
-	for(int i=index+1;i<N_INDEXES;i++)
-	{
-		if(self->FreeList[i].next)
-		{
-			void *units=RemoveNode(self,i);
-			SplitBlock(self,units,i,index);
-			return _PointerToOffset(self,units);
-		}
-	}
-
-	self->GlueCount--;
-
-	int i=I2B(self,index);
-	if(self->UnitsStart-self->pText>i)
-	{
-		self->UnitsStart-=i;
-		return _PointerToOffset(self,self->UnitsStart);
-	}
-
-	return 0;
-}
-
-static uint32_t AllocUnitsVariantH(PPMdSubAllocatorVariantH *self,int num)
-{
-	int index=self->Units2Index[num-1];
-
-	if(self->FreeList[index].next) return _PointerToOffset(self,RemoveNode(self,index));
-
-	void *units=self->LowUnit;
-	self->LowUnit+=I2B(self,index);
-	if(self->LowUnit<=self->HighUnit) return _PointerToOffset(self,units);
-
-	self->LowUnit-=I2B(self,index);
-
-	return _AllocUnits(self,index);
-}
-
-static uint32_t ExpandUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldoffs,int oldnum)
-{
-	void *oldptr=_OffsetToPointer(self,oldoffs);
-	int oldindex=self->Units2Index[oldnum-1];
-	int newindex=self->Units2Index[oldnum];
-	if(oldindex==newindex) return oldoffs;
-
-	uint32_t offs=AllocUnitsVariantH(self,oldnum+1);
-	if(offs)
-	{
-		memcpy(_OffsetToPointer(self,offs),oldptr,oldnum*UNIT_SIZE);
-		InsertNode(self,oldptr,oldindex);
-	}
-	return offs;
-}
-
-static uint32_t ShrinkUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldoffs,int oldnum,int newnum)
-{
-	void *oldptr=_OffsetToPointer(self,oldoffs);
-	int oldindex=self->Units2Index[oldnum-1];
-	int newindex=self->Units2Index[newnum-1];
-	if(oldindex==newindex) return oldoffs;
-
-	if(self->FreeList[newindex].next)
-	{
-		void *ptr=RemoveNode(self,newindex);
-		memcpy(ptr,oldptr,newnum*UNIT_SIZE);
-		InsertNode(self,oldptr,oldindex);
-		return _PointerToOffset(self,ptr);
-	}
-	else
-	{
-		SplitBlock(self,oldptr,oldindex,newindex);
-		return oldoffs;
-    }
-}
-
-static void FreeUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t offs,int num)
-{
-	InsertNode(self,_OffsetToPointer(self,offs),self->Units2Index[num-1]);
-}
-
 
 
 

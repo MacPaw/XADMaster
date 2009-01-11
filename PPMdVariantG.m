@@ -15,11 +15,13 @@ void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
 
 	InitSubAllocator(self->core.alloc);
 
+	self->core.RescalePPMdContext=RescalePPMdContext;
+
 	self->core.PrevSuccess=0;
 	self->core.OrderFall=1;
 
 	self->MaxContext=NewPPMdContext(&self->core);
-	self->MaxContext->NumStates=256;
+	self->MaxContext->LastStateIndex=255;
 	self->MaxContext->SummFreq=257;
 	self->MaxContext->States=AllocUnits(self->core.alloc,256/2);
 
@@ -43,7 +45,7 @@ void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
 		//state->Freq=1;
 	}
 
-	self->MaxContext->NumStates=0;
+	self->MaxContext->Flags=1;
 	self->MedContext=self->MinContext=PPMdContextSuffix(self->MaxContext,&self->core);
 
 	static const uint16_t InitBinEsc[16]=
@@ -77,7 +79,7 @@ void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
 
 int NextPPMdVariantGByte(PPMdVariantGModel *self)
 {
-	if(self->MinContext->NumStates!=1) DecodeSymbol1VariantG(self->MinContext,self);
+	if(self->MinContext->LastStateIndex!=0) DecodeSymbol1VariantG(self->MinContext,self);
 	else DecodeBinSymbolVariantG(self->MinContext,self);
 
 	RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
@@ -91,7 +93,7 @@ int NextPPMdVariantGByte(PPMdVariantGModel *self)
 			self->MinContext=PPMdContextSuffix(self->MinContext,&self->core);
 			if(!self->MinContext) return -1;
 		}
-		while(self->MinContext->NumStates==self->core.NumMasked);
+		while(self->MinContext->LastStateIndex==self->core.LastMaskIndex);
 
 		DecodeSymbol2VariantG(self->MinContext,self);
 		RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
@@ -99,8 +101,10 @@ int NextPPMdVariantGByte(PPMdVariantGModel *self)
 
 	uint8_t byte=self->core.FoundState->Symbol;
 
-	if(!self->core.OrderFall&&PPMdStateSuccessor(self->core.FoundState,&self->core)->NumStates)
-	self->MinContext=self->MedContext=PPMdStateSuccessor(self->core.FoundState,&self->core);
+	if(!self->core.OrderFall&&PPMdStateSuccessor(self->core.FoundState,&self->core)->Flags==0)
+	{
+		self->MinContext=self->MedContext=PPMdStateSuccessor(self->core.FoundState,&self->core);
+	}
 	else
 	{
 		UpdateModel(self);
@@ -122,7 +126,7 @@ static void UpdateModel(PPMdVariantGModel *self)
 	if(fs.Freq<MAX_FREQ/4&&self->MinContext->Suffix)
 	{
 		PPMdContext *context=PPMdContextSuffix(self->MinContext,&self->core);
-		if(context->NumStates!=1)
+		if(context->LastStateIndex!=0)
 		{
 			state=PPMdContextStates(context,&self->core);
 
@@ -167,21 +171,22 @@ static void UpdateModel(PPMdVariantGModel *self)
 	else
 	{
 		Successor=NewPPMdContext(&self->core);
+		Successor->Flags=1;
 		if(!Successor) goto RESTART_MODEL;
 	}
 
-	if(!self->MaxContext->NumStates)
+	if(self->MaxContext->Flags==1)
 	{
 		PPMdContextOneState(self->MaxContext)->Symbol=fs.Symbol;
 		SetPPMdStateSuccessorPointer(PPMdContextOneState(self->MaxContext),Successor,&self->core);
 	}
 
-	int minnum=self->MinContext->NumStates;
+	int minnum=self->MinContext->LastStateIndex+1;
 	int s0=self->MinContext->SummFreq-minnum-(fs.Freq-1);
 
 	for(PPMdContext *currcontext=self->MedContext;currcontext!=self->MinContext;currcontext=PPMdContextSuffix(currcontext,&self->core))
 	{
-		int currnum=currcontext->NumStates;
+		int currnum=currcontext->LastStateIndex+1;
 		if(currnum!=1)
 		{
 			if((currnum&1)==0)
@@ -230,12 +235,15 @@ static void UpdateModel(PPMdVariantGModel *self)
 		SetPPMdStateSuccessorPointer(new,Successor,&self->core);
 		new->Symbol=fs.Symbol;
 		new->Freq=freq;
-		currcontext->NumStates=currnum+1;
+		currcontext->LastStateIndex=currnum;
 	}
 
 	if(fs.Successor)
 	{
-		if(!PPMdStateSuccessor(&fs,&self->core)->NumStates&&!MakeRoot(self,SkipCount,state)) goto RESTART_MODEL;
+		if(PPMdStateSuccessor(&fs,&self->core)->Flags==1)
+		{
+			if(!MakeRoot(self,SkipCount,state)) goto RESTART_MODEL;
+		}
 		self->MinContext=PPMdStateSuccessor(self->core.FoundState,&self->core);
 	}
 	else
@@ -275,7 +283,7 @@ static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMdState *p
 	do
 	{
 		pc=PPMdContextSuffix(pc,&self->core);
-		if(pc->NumStates!=1)
+		if(pc->LastStateIndex!=0)
 		{
 			if((p=PPMdContextStates(pc,&self->core))->Symbol!=self->core.FoundState->Symbol)
 			{
@@ -297,13 +305,13 @@ static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMdState *p
 
 	NO_LOOP: 0;
 	PPMdState *UpState=PPMdContextOneState(UpBranch);
-	if(pc->NumStates!=1)
+	if(pc->LastStateIndex!=0)
 	{
 		unsigned int cf=UpState->Symbol;
 		p=PPMdContextStates(pc,&self->core);
 		while(p->Symbol!=cf) p++;
 
-		unsigned int s0=pc->SummFreq-pc->NumStates-(cf=p->Freq-1);
+		unsigned int s0=pc->SummFreq-pc->LastStateIndex-1-(cf=p->Freq-1);
 		UpState->Freq=1+((2*cf<=s0)?(5*cf>s0):((2*cf+3*s0-1)/(2*s0)));
 	}
 	else UpState->Freq=PPMdContextOneState(pc)->Freq;
@@ -316,7 +324,8 @@ static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMdState *p
 
 	if(!self->core.OrderFall)
 	{
-		UpBranch->NumStates=1;
+		UpBranch->LastStateIndex=0;
+		UpBranch->Flags=0;
 		SetPPMdContextSuffixPointer(UpBranch,pc,&self->core);
 	}
 
@@ -329,27 +338,27 @@ static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMdState *p
 static void DecodeBinSymbolVariantG(PPMdContext *self,PPMdVariantGModel *model)
 {
 	PPMdState *rs=PPMdContextOneState(self);
-	uint16_t *bs=&model->BinSumm[rs->Freq-1][model->core.PrevSuccess+model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->NumStates-1]];
+	uint16_t *bs=&model->BinSumm[rs->Freq-1][model->core.PrevSuccess+model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->LastStateIndex]];
 
-	PPMdDecodeBinSymbol(self,&model->core,bs);
+	PPMdDecodeBinSymbol(self,&model->core,bs,128);
 }
 
 static void DecodeSymbol1VariantG(PPMdContext *self,PPMdVariantGModel *model)
 {
-	PPMdDecodeSymbol1(self,&model->core);
+	PPMdDecodeSymbol1(self,&model->core,NO);
 }
 
 
 static void DecodeSymbol2VariantG(PPMdContext *self,PPMdVariantGModel *model)
 {
-	int diff=self->NumStates-model->core.NumMasked;
+	int diff=self->LastStateIndex-model->core.LastMaskIndex;
 	SEE2Context *see;
-	if(self->NumStates!=256)
+	if(self->LastStateIndex!=255)
 	{
 		see=&model->SEE2Cont[model->NS2Indx[diff-1]][
-			+(diff<PPMdContextSuffix(self,&model->core)->NumStates-self->NumStates?1:0)
-			+(self->SummFreq<11*self->NumStates?2:0)
-			+(model->core.NumMasked>diff?4:0)];
+			+(diff<PPMdContextSuffix(self,&model->core)->LastStateIndex-self->LastStateIndex?1:0)
+			+(self->SummFreq<11*(self->LastStateIndex+1)?2:0)
+			+(model->core.LastMaskIndex+1>diff?4:0)];
 		model->core.SubRange.scale=GetSEE2MeanMasked(see);
 	}
 	else

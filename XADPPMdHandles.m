@@ -1,6 +1,7 @@
 #import "XADPPMdHandles.h"
 #import "PPMdSubAllocatorVariantG.h"
 #import "PPMdSubAllocatorVariantH.h"
+#import "PPMdSubAllocatorVariantI.h"
 
 @implementation XADPPMdVariantGHandle
 
@@ -64,13 +65,46 @@
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
-/*if(pos==685)
-NSLog(@"er");*/
 	int byte=NextPPMdVariantHByte(&model);
 	if(byte<0) CSByteStreamEOF(self);
-/*if(pos%16==0) fprintf(stderr,"%08x  ",pos);
-fprintf(stderr,"%02x ",byte);
-if(pos%16==15) fprintf(stderr,"\n");*/
+	return byte;
+}
+
+@end
+
+
+
+
+@implementation XADPPMdVariantIHandle
+
+-(id)initWithHandle:(CSHandle *)handle maxOrder:(int)maxorder subAllocSize:(int)suballocsize modelRestorationMethod:(int)mrmethod
+{
+	return [self initWithHandle:handle length:CSHandleMaxLength maxOrder:maxorder subAllocSize:suballocsize modelRestorationMethod:mrmethod];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length maxOrder:(int)maxorder subAllocSize:(int)suballocsize modelRestorationMethod:(int)mrmethod
+{
+	if(self=[super initWithHandle:handle length:length])
+	{
+		model.core.alloc=&CreateSubAllocatorVariantI(suballocsize)->core;
+		model.MaxOrder=maxorder;
+		model.MRMethod=mrmethod;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	FreeSubAllocatorVariantI((PPMdSubAllocatorVariantI *)model.core.alloc);
+	[super dealloc];
+}
+
+-(void)resetByteStream { StartPPMdVariantIModel(&model,input,model.MaxOrder,model.MRMethod); }
+
+-(uint8_t)produceByteAtOffset:(off_t)pos
+{
+	int byte=NextPPMdVariantIByte(&model);
+	if(byte<0) CSByteStreamEOF(self);
 	return byte;
 }
 

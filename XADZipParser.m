@@ -3,6 +3,7 @@
 #import "XADZipShrinkHandle.h"
 #import "XADDeflateHandle.h"
 #import "XADLZMAHandle.h"
+#import "XADPPMdHandles.h"
 #import "XADZipCryptHandle.h"
 #import "XADWinZipAESHandle.h"
 #import "CSZlibHandle.h"
@@ -150,6 +151,7 @@
 				case 9: compressionname=@"Deflate64"; break;
 				case 12: compressionname=@"Bzip2"; break;
 				case 14: compressionname=@"LZMA"; break;
+				case 98: compressionname=@"PPMd"; break;
 			}
 			if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
 
@@ -479,6 +481,16 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			int len=[parent readUInt16LE];
 			NSData *props=[parent readDataOfLength:len];
 			return [[[XADLZMAHandle alloc] initWithHandle:parent length:size propertyData:props] autorelease];
+		}
+		break;
+		case 98:
+		{
+			uint16_t info=[parent readUInt16LE];
+			int maxorder=(info&0x0f)+1;
+			int suballocsize=(((info>>4)&0xff)+1)<<20;
+			int modelrestoration=info>>12;
+			return [[[XADPPMdVariantIHandle alloc] initWithHandle:parent length:size
+			maxOrder:maxorder subAllocSize:suballocsize modelRestorationMethod:modelrestoration] autorelease];
 		}
 		break;
 		default: return nil;

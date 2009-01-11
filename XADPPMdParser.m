@@ -54,6 +54,14 @@
 	int suballocsize=((info>>4)&0xff)+1;
 	int variant=(info>>12)+'A';
 
+	int modelrestoration;
+	if(variant>='I')
+	{
+		modelrestoration=namelen>>14;
+		namelen&=0x3fff;
+	}
+	else modelrestoration=-1;
+
 	NSData *filename=[fh readDataOfLength:namelen];
 
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -64,6 +72,9 @@
 		[NSNumber numberWithInt:variant],@"PPMdVariant",
 		[NSNumber numberWithInt:suballocsize],@"PPMdSubAllocSize",
 	nil];
+
+	if(modelrestoration>=0)
+	[dict setObject:[NSNumber numberWithInt:modelrestoration] forKey:@"PPMdModelRestoration"];
 
 	if(date&0xc000) // assume that the next highest bit is always set in unix dates and never in DOS (true until 2011)
 	{
@@ -103,6 +114,13 @@
 			return [XADCRCHandle IEEECRC32HandleWithHandle:
 			[[[XADPPMdVariantHHandle alloc] initWithHandle:handle maxOrder:maxorder subAllocSize:suballocsize<<20] autorelease]
 //			length:20259 correctCRC:0xb4e8f7a1 conditioned:YES];
+			length:13745624 correctCRC:0xc1c1c00a conditioned:YES];
+
+		case 'I':
+			return [XADCRCHandle IEEECRC32HandleWithHandle:
+			[[[XADPPMdVariantIHandle alloc] initWithHandle:handle maxOrder:maxorder subAllocSize:suballocsize<<20
+			modelRestorationMethod:[[dict objectForKey:@"PPMdModelRestoration"] intValue]] autorelease]
+//			length:8559 correctCRC:0xb193cc7d conditioned:YES];
 			length:13745624 correctCRC:0xc1c1c00a conditioned:YES];
 
 		default: return nil;

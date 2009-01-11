@@ -1,7 +1,9 @@
 #import "CarrylessRangeCoder.h"
 #import "PPMdSubAllocator.h"
 
+#define UP_FREQ 5
 #define MAX_O 16
+#define O_BOUND 9
 #define INT_BITS 7
 #define PERIOD_BITS 7
 #define TOT_BITS (INT_BITS+PERIOD_BITS)
@@ -23,12 +25,16 @@ typedef struct PPMdState { uint8_t Symbol,Freq; uint32_t Successor; } __attribut
 
 struct PPMdContext
 {
-	uint16_t NumStates,SummFreq;
+	uint8_t LastStateIndex,Flags;
+	uint16_t SummFreq;
 	uint32_t States;
     uint32_t Suffix;
 } __attribute__((__packed__));
 
-typedef struct PPMdCoreModel
+
+typedef struct PPMdCoreModel PPMdCoreModel;
+
+struct PPMdCoreModel
 {
 	PPMdSubAllocator *alloc;
 
@@ -36,10 +42,12 @@ typedef struct PPMdCoreModel
 	struct { uint32_t LowCount,HighCount,scale; } SubRange;
 
 	PPMdState *FoundState; // found next state transition
-	int NumMasked,OrderFall,InitEsc,RunLength,InitRL;
+	int OrderFall,InitEsc,RunLength,InitRL;
 	uint8_t CharMask[256];
-	uint8_t EscCount,PrevSuccess;
-} PPMdCoreModel;
+	uint8_t LastMaskIndex,EscCount,PrevSuccess;
+
+	void (*RescalePPMdContext)(PPMdContext *self,PPMdCoreModel *model);
+};
 
 SEE2Context MakeSEE2(int initval,int count);
 unsigned int GetSEE2MeanMasked(SEE2Context *self);
@@ -57,8 +65,8 @@ PPMdState *PPMdContextOneState(PPMdContext *self);
 PPMdContext *NewPPMdContext(PPMdCoreModel *model);
 PPMdContext *NewPPMdContextAsChildOf(PPMdCoreModel *model,PPMdContext *suffixcontext,PPMdState *suffixstate,PPMdState *firststate);
 
-void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs);
-int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model);
+void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int freqlimit);
+int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,BOOL greaterorequal);
 void UpdatePPMdContext1(PPMdContext *self,PPMdCoreModel *model,PPMdState *state);
 void PPMdDecodeSymbol2(PPMdContext *self,PPMdCoreModel *model,SEE2Context *see);
 void UpdatePPMdContext2(PPMdContext *self,PPMdCoreModel *model,PPMdState *state);

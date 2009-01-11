@@ -18,7 +18,7 @@ static void RestartModel(PPMdVariantHModel *self)
 	self->core.RunLength=self->core.InitRL=-((self->MaxOrder<12)?self->MaxOrder:12)-1;
 
 	self->MaxContext=self->MinContext=NewPPMdContext(&self->core); // AllocContext()
-	self->MaxContext->NumStates=256;
+	self->MaxContext->LastStateIndex=255;
 	self->MaxContext->SummFreq=257;
 	self->MaxContext->States=AllocUnits(self->core.alloc,256/2);
 
@@ -50,6 +50,8 @@ void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int max
 
 	self->alloc=(PPMdSubAllocatorVariantH *)self->core.alloc; // A bit ugly but there you go.
 
+	self->core.RescalePPMdContext=RescalePPMdContext;
+
 	self->core.EscCount=1;
 	self->MaxOrder=maxorder;
 
@@ -77,7 +79,7 @@ void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int max
 
 int NextPPMdVariantHByte(PPMdVariantHModel *self)
 {
-	if(self->MinContext->NumStates!=1) DecodeSymbol1VariantH(self->MinContext,self);
+	if(self->MinContext->LastStateIndex!=0) DecodeSymbol1VariantH(self->MinContext,self);
 	else DecodeBinSymbolVariantH(self->MinContext,self);
 
 	RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
@@ -91,7 +93,7 @@ int NextPPMdVariantHByte(PPMdVariantHModel *self)
 			self->MinContext=PPMdContextSuffix(self->MinContext,&self->core);
 			if(!self->MinContext) return -1;
 		}
-		while(self->MinContext->NumStates==self->core.NumMasked);
+		while(self->MinContext->LastStateIndex==self->core.LastMaskIndex);
 
 		DecodeSymbol2VariantH(self->MinContext,self);
 		RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
@@ -100,7 +102,9 @@ int NextPPMdVariantHByte(PPMdVariantHModel *self)
 	uint8_t byte=self->core.FoundState->Symbol;
 
 	if(!self->core.OrderFall&&(uint8_t *)PPMdStateSuccessor(self->core.FoundState,&self->core)>self->alloc->pText)
-	self->MinContext=self->MaxContext=PPMdStateSuccessor(self->core.FoundState,&self->core);
+	{
+		self->MinContext=self->MaxContext=PPMdStateSuccessor(self->core.FoundState,&self->core);
+	}
 	else
 	{
 		UpdateModel(self);
@@ -120,7 +124,7 @@ static void UpdateModel(PPMdVariantHModel *self)
 	if(fs.Freq<MAX_FREQ/4&&self->MinContext->Suffix)
 	{
 		PPMdContext *context=PPMdContextSuffix(self->MinContext,&self->core);
-		if(context->NumStates!=1)
+		if(context->LastStateIndex!=0)
 		{
 			state=PPMdContextStates(context,&self->core);
 
@@ -151,10 +155,10 @@ static void UpdateModel(PPMdVariantHModel *self)
 
 	if(self->core.OrderFall==0)
 	{
-        self->MinContext=self->MaxContext=CreateSuccessors(self,YES,state);
+		self->MinContext=self->MaxContext=CreateSuccessors(self,YES,state);
 		SetPPMdStateSuccessorPointer(self->core.FoundState,self->MinContext,&self->core);
-        if(!self->MinContext) goto RESTART_MODEL;
-        return;
+		if(!self->MinContext) goto RESTART_MODEL;
+		return;
 		/*if(!MakeRoot(self,2,NULL)) goto RESTART_MODEL;
 		self->MinContext=self->MedContext=PPMdStateSuccessor(&fs,&self->core);
 		return;*/
@@ -184,12 +188,12 @@ static void UpdateModel(PPMdVariantHModel *self)
 		SetPPMdStateSuccessorPointer(&fs,self->MinContext,&self->core);
     }
 
-	int minnum=self->MinContext->NumStates;
+	int minnum=self->MinContext->LastStateIndex+1;
 	int s0=self->MinContext->SummFreq-minnum-(fs.Freq-1);
 
 	for(PPMdContext *currcontext=self->MaxContext;currcontext!=self->MinContext;currcontext=PPMdContextSuffix(currcontext,&self->core))
 	{
-		int currnum=currcontext->NumStates;
+		int currnum=currcontext->LastStateIndex+1;
 		if(currnum!=1)
 		{
 			if((currnum&1)==0)
@@ -238,7 +242,7 @@ static void UpdateModel(PPMdVariantHModel *self)
 		SetPPMdStateSuccessorPointer(new,Successor,&self->core);
 		new->Symbol=fs.Symbol;
 		new->Freq=freq;
-		currcontext->NumStates=currnum+1;
+		currcontext->LastStateIndex=currnum;
 	}
 
 	self->MaxContext=self->MinContext=PPMdStateSuccessor(&fs,&self->core);
@@ -271,7 +275,7 @@ static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState
 	do
 	{
 		pc=PPMdContextSuffix(pc,&self->core);
-		if(pc->NumStates!=1)
+		if(pc->LastStateIndex!=0)
 		{
 			if((p=PPMdContextStates(pc,&self->core))->Symbol!=self->core.FoundState->Symbol)
 			{
@@ -299,13 +303,13 @@ static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState
 	UpState.Symbol=*(uint8_t *)UpBranch;
 	SetPPMdStateSuccessorPointer(&UpState,(PPMdContext *)(((uint8_t *)UpBranch)+1),&self->core);
 
-	if (pc->NumStates!=1)
+	if(pc->LastStateIndex!=0)
 	{
 		if((p=PPMdContextStates(pc,&self->core))->Symbol!=UpState.Symbol)
 		do { p++; } while(p->Symbol!=UpState.Symbol);
 
 		unsigned int cf=p->Freq-1;
-		unsigned int s0=pc->SummFreq-pc->NumStates-cf;
+		unsigned int s0=pc->SummFreq-pc->LastStateIndex-1-cf;
 		UpState.Freq=1+((2*cf<=s0)?(5*cf>s0):((2*cf+3*s0-1)/(2*s0)));
     }
 	else UpState.Freq=PPMdContextOneState(pc)->Freq;
@@ -330,15 +334,15 @@ static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdVariantHModel *model)
 	model->HiBitsFlag=model->HB2Flag[model->core.FoundState->Symbol];
 
 	uint16_t *bs=&model->BinSumm[rs->Freq-1][
-	model->core.PrevSuccess+model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->NumStates-1]+
+	model->core.PrevSuccess+model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->LastStateIndex]+
 	model->HiBitsFlag+2*model->HB2Flag[rs->Symbol]+((model->core.RunLength>>26)&0x20)];
 
-	PPMdDecodeBinSymbol(self,&model->core,bs);
+	PPMdDecodeBinSymbol(self,&model->core,bs,128);
 }
 
 static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model)
 {
-	int lastsym=PPMdDecodeSymbol1(self,&model->core);
+	int lastsym=PPMdDecodeSymbol1(self,&model->core,NO);
 	if(lastsym>=0)
 	{
 		model->HiBitsFlag=model->HB2Flag[lastsym];
@@ -347,14 +351,14 @@ static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model)
 
 static void DecodeSymbol2VariantH(PPMdContext *self,PPMdVariantHModel *model)
 {
-	int diff=self->NumStates-model->core.NumMasked;
+	int diff=self->LastStateIndex-model->core.LastMaskIndex;
 	SEE2Context *see;
-	if(self->NumStates!=256)
+	if(self->LastStateIndex!=255)
 	{
 		see=&model->SEE2Cont[model->NS2Indx[diff-1]][
-			+(diff<PPMdContextSuffix(self,&model->core)->NumStates-self->NumStates?1:0)
-			+(self->SummFreq<11*self->NumStates?2:0)
-			+(model->core.NumMasked>diff?4:0)
+			+(diff<PPMdContextSuffix(self,&model->core)->LastStateIndex-self->LastStateIndex?1:0)
+			+(self->SummFreq<11*(self->LastStateIndex+1)?2:0)
+			+(model->core.LastMaskIndex+1>diff?4:0)
 			+model->HiBitsFlag];
 		model->core.SubRange.scale=GetSEE2Mean(see);
 	}

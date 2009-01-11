@@ -67,7 +67,8 @@ PPMdContext *NewPPMdContext(PPMdCoreModel *model)
 	PPMdContext *context=OffsetToPointer(model->alloc,AllocContext(model->alloc));
 	if(context)
 	{
-		context->NumStates=0;
+		context->LastStateIndex=0;
+		context->Flags=0;
 		context->Suffix=0;
 	}
 	return context;
@@ -78,7 +79,8 @@ PPMdContext *NewPPMdContextAsChildOf(PPMdCoreModel *model,PPMdContext *suffixcon
 	PPMdContext *context=OffsetToPointer(model->alloc,AllocContext(model->alloc));
 	if(context)
 	{
-		context->NumStates=1;
+		context->LastStateIndex=0;
+		context->Flags=0;
 		SetPPMdContextSuffixPointer(context,suffixcontext,model);
 		SetPPMdStateSuccessorPointer(suffixstate,context,model);
 		*(PPMdContextOneState(context))=*firststate;
@@ -93,7 +95,7 @@ static const uint8_t ExpEscape[16]={ 25,14,9,7,5,5,4,4,4,3,3,3,2,2,2,2 };
 
 #define GET_MEAN(SUMM,SHIFT,ROUND) ((SUMM+(1<<(SHIFT-ROUND)))>>(SHIFT))
 
-void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs)
+void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int freqlimit)
 {
 	PPMdState *rs=PPMdContextOneState(self);
 	if(RangeCoderCurrentCountWithShift(&model->coder,TOT_BITS)<*bs)
@@ -104,7 +106,7 @@ void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs)
 		model->RunLength++;
 		model->FoundState=rs;
 
-		if(rs->Freq<128) rs->Freq++;
+		if(rs->Freq<freqlimit) rs->Freq++;
 		*bs+=INTERVAL-GET_MEAN(*bs,PERIOD_BITS,2);
 	}
 	else
@@ -113,7 +115,7 @@ void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs)
 		model->SubRange.HighCount=BIN_SCALE;
 		model->PrevSuccess=0;
 		model->FoundState=NULL;
-		model->NumMasked=1;
+		model->LastMaskIndex=0;
 		model->CharMask[rs->Symbol]=model->EscCount;
 
 		*bs-=GET_MEAN(*bs,PERIOD_BITS,2);
@@ -121,18 +123,19 @@ void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs)
 	}
 }
 
-int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model)
+int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,BOOL greaterorequal)
 {
 	model->SubRange.scale=self->SummFreq;
 
 	PPMdState *states=PPMdContextStates(self,model);
 	int firstcount=states[0].Freq;
 	int count=RangeCoderCurrentCount(&model->coder,model->SubRange.scale);
+	int adder=greaterorequal?1:0;
 
 	if(count<firstcount)
 	{
 		model->SubRange.HighCount=firstcount;
-		if(2*firstcount>model->SubRange.scale)
+		if(2*firstcount+adder>model->SubRange.scale)
 		{
 			model->PrevSuccess=1;
 			model->RunLength++;
@@ -143,7 +146,7 @@ int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model)
 		states[0].Freq=firstcount+4;
 		self->SummFreq+=4;
 
-		if(firstcount+4>MAX_FREQ) RescalePPMdContext(self,model);
+		if(firstcount+4>MAX_FREQ) model->RescalePPMdContext(self,model);
 		model->SubRange.LowCount=0;
 
 		return -1;
@@ -152,7 +155,7 @@ int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model)
 	int highcount=firstcount;
 	model->PrevSuccess=0;
 
-	for(int i=1;i<self->NumStates;i++)
+	for(int i=1;i<=self->LastStateIndex;i++)
 	{
 		highcount+=states[i].Freq;
 		if(highcount>count)
@@ -166,12 +169,13 @@ int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model)
 
 	int lastsym=model->FoundState->Symbol;
 
+	//if ( Suffix ) PrefetchData(Suffix);
 	model->SubRange.LowCount=highcount;
 	model->SubRange.HighCount=model->SubRange.scale;
-	model->NumMasked=self->NumStates;
+	model->LastMaskIndex=self->LastStateIndex;
 	model->FoundState=NULL;
 
-	for(int i=0;i<self->NumStates;i++) model->CharMask[states[i].Symbol]=model->EscCount;
+	for(int i=0;i<=self->LastStateIndex;i++) model->CharMask[states[i].Symbol]=model->EscCount;
 
 	return lastsym;
 }
@@ -185,7 +189,7 @@ void UpdatePPMdContext1(PPMdContext *self,PPMdCoreModel *model,PPMdState *state)
 	{
 		SWAP(state[0],state[-1]);
 		model->FoundState=&state[-1];
-		if(state[-1].Freq>MAX_FREQ) RescalePPMdContext(self,model);
+		if(state[-1].Freq>MAX_FREQ) model->RescalePPMdContext(self,model);
 	}
 	else
 	{
@@ -197,7 +201,7 @@ void UpdatePPMdContext1(PPMdContext *self,PPMdCoreModel *model,PPMdState *state)
 
 void PPMdDecodeSymbol2(PPMdContext *self,PPMdCoreModel *model,SEE2Context *see)
 {
-	int n=self->NumStates-model->NumMasked;
+	int n=self->LastStateIndex-model->LastMaskIndex;
 	PPMdState *ps[256];
 
 	int total=0;
@@ -227,7 +231,7 @@ void PPMdDecodeSymbol2(PPMdContext *self,PPMdCoreModel *model,SEE2Context *see)
 	{
 		model->SubRange.LowCount=total;
 		model->SubRange.HighCount=model->SubRange.scale;
-		model->NumMasked=self->NumStates;
+		model->LastMaskIndex=self->LastStateIndex;
 		see->Summ+=model->SubRange.scale;
 
 		for(int i=0;i<n;i++) model->CharMask[ps[i]->Symbol]=model->EscCount;
@@ -239,7 +243,7 @@ void UpdatePPMdContext2(PPMdContext *self,PPMdCoreModel *model,PPMdState *state)
 	model->FoundState=state;
 	state->Freq+=4;
 	self->SummFreq+=4;
-	if(state->Freq>MAX_FREQ) RescalePPMdContext(self,model);
+	if(state->Freq>MAX_FREQ) model->RescalePPMdContext(self,model);
 	model->EscCount++;
 	model->RunLength=model->InitRL;
 }
@@ -247,7 +251,7 @@ void UpdatePPMdContext2(PPMdContext *self,PPMdCoreModel *model,PPMdState *state)
 void RescalePPMdContext(PPMdContext *self,PPMdCoreModel *model)
 {
 	PPMdState *states=PPMdContextStates(self,model);
-	int n=self->NumStates;
+	int n=self->LastStateIndex+1;
 
 	// Bump frequency of found state
 	model->FoundState->Freq+=4;
@@ -287,8 +291,8 @@ void RescalePPMdContext(PPMdContext *self,PPMdCoreModel *model)
 
 		escfreq+=numzeros;
 
-		self->NumStates-=numzeros;
-		if(self->NumStates==1)
+		self->LastStateIndex-=numzeros;
+		if(self->LastStateIndex==0)
 		{
 			PPMdState tmp=states[0];
 			do
@@ -305,7 +309,7 @@ void RescalePPMdContext(PPMdContext *self,PPMdCoreModel *model)
 			return;
 		}
 
-		int n0=(n+1)>>1,n1=(self->NumStates+1)>>1;
+		int n0=(n+1)>>1,n1=(self->LastStateIndex+2)>>1;
 		if(n0!=n1) self->States=ShrinkUnits(model->alloc,self->States,n0,n1);
 	}
 

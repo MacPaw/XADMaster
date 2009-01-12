@@ -1,9 +1,7 @@
 #import "CarrylessRangeCoder.h"
 #import "PPMdSubAllocator.h"
 
-#define UP_FREQ 5
 #define MAX_O 16
-#define O_BOUND 9
 #define INT_BITS 7
 #define PERIOD_BITS 7
 #define TOT_BITS (INT_BITS+PERIOD_BITS)
@@ -28,7 +26,7 @@ struct PPMdContext
 	uint8_t LastStateIndex,Flags;
 	uint16_t SummFreq;
 	uint32_t States;
-    uint32_t Suffix;
+	uint32_t Suffix;
 } __attribute__((__packed__));
 
 

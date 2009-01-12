@@ -197,12 +197,12 @@ uint32_t GetUsedMemoryVariantI(PPMdSubAllocatorVariantI *self)
 void SpecialFreeUnitVariantI(PPMdSubAllocatorVariantI *self,uint32_t offs)
 {
 	void *ptr=_OffsetToPointer(self,offs);
-	if((uint8_t *)ptr!=self->UnitsStart) InsertBlockAfter(&self->BList[0],ptr,1);
-	else
+	if((uint8_t *)ptr==self->UnitsStart)
 	{
 		*(uint32_t *)ptr=0xffffffff;
 		self->UnitsStart+=UNIT_SIZE;
 	}
+	else InsertBlockAfter(&self->BList[0],ptr,1);
 }
 
 uint32_t MoveUnitsUpVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldoffs,int num)

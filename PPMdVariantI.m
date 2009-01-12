@@ -1,13 +1,18 @@
 #import "PPMdVariantI.h"
 
-static void UpdateModel(PPMdVariantIModel *self,PPMdContext *MinContext);
-static PPMdContext *CreateSuccessors(PPMdVariantIModel *self,BOOL skip,PPMdState *p1,PPMdContext *MinContext);
-static PPMdContext *ReduceOrder(PPMdVariantIModel *self,PPMdState *p,PPMdContext *pc);
-static void RestoreModel(PPMdVariantIModel *self,PPMdContext *pc1,PPMdContext *MinContext,PPMdContext *FSuccessor);
+#define UP_FREQ 5
+#define O_BOUND 9
 
-static void RefreshContext(PPMdContext *self,int OldNU,BOOL Scale,PPMdVariantIModel *model);
-static PPMdContext *CutOffContext(PPMdContext *self,int Order,PPMdVariantIModel *model);
-static PPMdContext *RemoveBinConts(PPMdContext *self,int Order,PPMdVariantIModel *model);
+static void RestartModel(PPMdVariantIModel *self);
+
+static void UpdateModel(PPMdVariantIModel *self,PPMdContext *mincontext);
+static PPMdContext *CreateSuccessors(PPMdVariantIModel *self,BOOL skip,PPMdState *p1,PPMdContext *mincontext);
+static PPMdContext *ReduceOrder(PPMdVariantIModel *self,PPMdState *state,PPMdContext *startcontext);
+static void RestoreModel(PPMdVariantIModel *self,PPMdContext *currcontext,PPMdContext *mincontext,PPMdContext *FSuccessor);
+
+static void ShrinkContext(PPMdContext *self,int newlastindex,BOOL scale,PPMdVariantIModel *model);
+static PPMdContext *CutOffContext(PPMdContext *self,int order,PPMdVariantIModel *model);
+static PPMdContext *RemoveBinConts(PPMdContext *self,int order,PPMdVariantIModel *model);
 
 static void DecodeBinSymbolVariantI(PPMdContext *self,PPMdVariantIModel *model);
 static void DecodeSymbol1VariantI(PPMdContext *self,PPMdVariantIModel *model);
@@ -19,12 +24,11 @@ static void RescalePPMdContextVariantI(PPMdContext *self,PPMdVariantIModel *mode
 
 void StartPPMdVariantIModel(PPMdVariantIModel *self,CSInputBuffer *input,int maxorder,int mrmethod)
 {
-    memset(self->core.CharMask,0,sizeof(self->core.CharMask));
-
-	if(input) InitializeRangeCoder(&self->core.coder,input);
+	InitializeRangeCoder(&self->core.coder,input);
 
 	if(maxorder<2) // TODO: solid mode
 	{
+		memset(self->core.CharMask,0,sizeof(self->core.CharMask));
 		self->core.OrderFall=self->MaxOrder;
 		for(PPMdContext *pc=self->MaxContext;pc->Suffix;pc=PPMdContextSuffix(pc,&self->core))
 		self->core.OrderFall--;
@@ -33,14 +37,41 @@ void StartPPMdVariantIModel(PPMdVariantIModel *self,CSInputBuffer *input,int max
 
 	self->alloc=(PPMdSubAllocatorVariantI *)self->core.alloc; // A bit ugly but there you go.
 
-	InitSubAllocator(self->core.alloc);
-
 	self->core.RescalePPMdContext=(void *)RescalePPMdContextVariantI;
 
-	self->MaxOrder=self->core.OrderFall=maxorder;
+	self->MaxOrder=maxorder;
 	self->MRMethod=mrmethod;
 	self->core.EscCount=1;
+
+	self->NS2BSIndx[0]=2*0;
+	self->NS2BSIndx[1]=2*1;
+	for(int i=2;i<11;i++) self->NS2BSIndx[i]=2*2;
+	for(int i=11;i<256;i++) self->NS2BSIndx[i]=2*3;
+
+	for(int i=0;i<UP_FREQ;i++) self->QTable[i]=i;
+	int m=UP_FREQ,k=1,step=1;
+	for(int i=UP_FREQ;i<260;i++)
+	{
+		self->QTable[i]=m;
+		if(!--k) { m++; step++; k=step; }
+	}
+
+	self->DummySEE2Cont.Summ=0xaf8f;
+	//self->DummySEE2Cont.Shift=0xac;
+	self->DummySEE2Cont.Count=0x84;
+	self->DummySEE2Cont.Shift=PERIOD_BITS;
+
+	RestartModel(self);
+}
+
+static void RestartModel(PPMdVariantIModel *self)
+{
+	InitSubAllocator(self->core.alloc);
+
+	memset(self->core.CharMask,0,sizeof(self->core.CharMask));
+
 	self->core.PrevSuccess=0;
+	self->core.OrderFall=self->MaxOrder;
 	self->core.RunLength=self->core.InitRL=-((self->MaxOrder<12)?self->MaxOrder:12)-1;
 
 	self->MaxContext=NewPPMdContext(&self->core);
@@ -56,27 +87,9 @@ void StartPPMdVariantIModel(PPMdVariantIModel *self,CSInputBuffer *input,int max
 		maxstates[i].Successor=0;
 	}
 
-	self->NS2BSIndx[0]=2*0; // this is constant
-	self->NS2BSIndx[1]=2*1;
-	for(int i=2;i<11;i++) self->NS2BSIndx[i]=2*2;
-	for(int i=11;i<256;i++) self->NS2BSIndx[i]=2*3;
-
-	for(int i=0;i<UP_FREQ;i++) self->QTable[i]=i; // also constant
-	int m,i,k,Step;
-	for (m=i=UP_FREQ, k=Step=1;i<260;i++)
-	{
-		self->QTable[i]=m;
-		if ( !--k ) { k = ++Step; m++; }
-    }
-
 	static const uint16_t InitBinEsc[8]={0x3cdd,0x1f3f,0x59bf,0x48f3,0x64a1,0x5abc,0x6632,0x6051};
 
-/*	for(int i=0;i<128;i++)
-	for(int k=0;k<8;k++)
-	for(int m=0;m<64;m+=8)
-	self->BinSumm[i][k+m]=BIN_SCALE-InitBinEsc[k]/(i+2);*/
-
-	i=0;
+	int i=0;
 	for(int m=0;m<25;m++)
 	{
 		while(self->QTable[i]==m) i++;
@@ -90,20 +103,16 @@ void StartPPMdVariantIModel(PPMdVariantIModel *self,CSInputBuffer *input,int max
 		while(self->QTable[i+3]==m+3) i++;
         for(int k=0;k<32;k++) self->SEE2Cont[m][k]=MakeSEE2(2*i+5,7);
     }
-
-	self->DummySEE2Cont.Summ=0xaf8f;
-	//self->DummySEE2Cont.Shift=0xac;
-	self->DummySEE2Cont.Count=0x84;
-	self->DummySEE2Cont.Shift=PERIOD_BITS;
 }
+
 
 
 int NextPPMdVariantIByte(PPMdVariantIModel *self)
 {
-	PPMdContext *MinContext=self->MaxContext;
+	PPMdContext *mincontext=self->MaxContext;
 
-	if(MinContext->LastStateIndex!=0) DecodeSymbol1VariantI(MinContext,self);
-	else DecodeBinSymbolVariantI(MinContext,self);
+	if(mincontext->LastStateIndex!=0) DecodeSymbol1VariantI(mincontext,self);
+	else DecodeBinSymbolVariantI(mincontext,self);
 
 	RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
 
@@ -113,12 +122,12 @@ int NextPPMdVariantIByte(PPMdVariantIModel *self)
 		do
 		{
 			self->core.OrderFall++;
-			MinContext=PPMdContextSuffix(MinContext,&self->core);
-			if(!MinContext) return -1;
+			mincontext=PPMdContextSuffix(mincontext,&self->core);
+			if(!mincontext) return -1;
 		}
-		while(MinContext->LastStateIndex==self->core.LastMaskIndex);
+		while(mincontext->LastStateIndex==self->core.LastMaskIndex);
 
-		DecodeSymbol2VariantI(MinContext,self);
+		DecodeSymbol2VariantI(mincontext,self);
 		RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
 	}
 
@@ -131,7 +140,7 @@ int NextPPMdVariantIByte(PPMdVariantIModel *self)
 	}
 	else
 	{
-		UpdateModel(self,MinContext);
+		UpdateModel(self,mincontext);
 		//PrefetchData(MaxContext)
 		if(self->core.EscCount==0) ClearPPMdModelMask(&self->core);
 	}
@@ -141,15 +150,17 @@ int NextPPMdVariantIByte(PPMdVariantIModel *self)
 	return byte;
 }
 
-static void UpdateModel(PPMdVariantIModel *self,PPMdContext *MinContext)
+
+
+static void UpdateModel(PPMdVariantIModel *self,PPMdContext *mincontext)
 {
 	PPMdState fs=*self->core.FoundState;
 	PPMdState *state=NULL;
 	PPMdContext *currcontext=self->MaxContext;
 
-	if(fs.Freq<MAX_FREQ/4&&MinContext->Suffix)
+	if(fs.Freq<MAX_FREQ/4&&mincontext->Suffix)
 	{
-		PPMdContext *context=PPMdContextSuffix(MinContext,&self->core);
+		PPMdContext *context=PPMdContextSuffix(mincontext,&self->core);
 		if(context->LastStateIndex!=0)
 		{
 			state=PPMdContextStates(context,&self->core);
@@ -181,7 +192,7 @@ static void UpdateModel(PPMdVariantIModel *self,PPMdContext *MinContext)
 
 	if(self->core.OrderFall==0&&fs.Successor)
 	{
-		PPMdContext *newsuccessor=CreateSuccessors(self,YES,state,MinContext);
+		PPMdContext *newsuccessor=CreateSuccessors(self,YES,state,mincontext);
 		SetPPMdStateSuccessorPointer(self->core.FoundState,newsuccessor,&self->core);
 		if(!newsuccessor) goto RESTART_MODEL;
 		self->MaxContext=newsuccessor;
@@ -197,12 +208,12 @@ static void UpdateModel(PPMdVariantIModel *self,PPMdContext *MinContext)
 	{
 		if((uint8_t *)PPMdStateSuccessor(&fs,&self->core)<self->alloc->UnitsStart)
 		{
-			SetPPMdStateSuccessorPointer(&fs,CreateSuccessors(self,NO,state,MinContext),&self->core);
+			SetPPMdStateSuccessorPointer(&fs,CreateSuccessors(self,NO,state,mincontext),&self->core);
 		}
 	}
 	else
 	{
-		SetPPMdStateSuccessorPointer(&fs,ReduceOrder(self,state,MinContext),&self->core);
+		SetPPMdStateSuccessorPointer(&fs,ReduceOrder(self,state,mincontext),&self->core);
 	}
 
 	if(!fs.Successor) goto RESTART_MODEL;
@@ -210,7 +221,7 @@ static void UpdateModel(PPMdVariantIModel *self,PPMdContext *MinContext)
 	if(--self->core.OrderFall==0)
 	{
 		Successor=PPMdStateSuccessor(&fs,&self->core);
-		if(self->MaxContext!=MinContext) self->alloc->pText--;
+		if(self->MaxContext!=mincontext) self->alloc->pText--;
 	}
 	else if(self->MRMethod>MRM_FREEZE)
 	{
@@ -219,11 +230,11 @@ static void UpdateModel(PPMdVariantIModel *self,PPMdContext *MinContext)
 		self->core.OrderFall=0;
 	}
 
-	int minnum=MinContext->LastStateIndex+1;
-	int s0=MinContext->SummFreq-minnum-(fs.Freq-1);
+	int minnum=mincontext->LastStateIndex+1;
+	int s0=mincontext->SummFreq-minnum-(fs.Freq-1);
 	uint8_t flag=fs.Symbol>=0x40?8:0;
 
-	for(;currcontext!=MinContext;currcontext=PPMdContextSuffix(currcontext,&self->core))
+	for(;currcontext!=mincontext;currcontext=PPMdContextSuffix(currcontext,&self->core))
 	{
 		int currnum=currcontext->LastStateIndex+1;
 		if(currnum!=1)
@@ -283,192 +294,256 @@ static void UpdateModel(PPMdVariantIModel *self,PPMdContext *MinContext)
 	return;
 
 	RESTART_MODEL:
-	RestoreModel(self,currcontext,MinContext,PPMdStateSuccessor(&fs,&self->core));
+	RestoreModel(self,currcontext,mincontext,PPMdStateSuccessor(&fs,&self->core));
 }
 
-static PPMdContext *CreateSuccessors(PPMdVariantIModel *self,BOOL skip,PPMdState *p,PPMdContext *pc)
+static PPMdContext *CreateSuccessors(PPMdVariantIModel *self,BOOL skip,PPMdState *state,PPMdContext *context)
 {
-	PPMdContext ct,*UpBranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
-	PPMdState *ps[MAX_O],**pps=ps;
-	unsigned int cf,s0;
-	uint8_t tmp,sym=self->core.FoundState->Symbol;
- 
+	PPMdContext *upbranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
+	PPMdState *statelist[MAX_O];
+	uint8_t sym=self->core.FoundState->Symbol;
+	int n=0;
+
 	if(!skip)
 	{
-		*pps++=self->core.FoundState;
-		if(!pc->Suffix) goto NO_LOOP;
+		statelist[n++]=self->core.FoundState;
+		if(!context->Suffix) goto skip;
 	}
 
-	if(p)
+	if(state)
 	{
-		pc=PPMdContextSuffix(pc,&self->core);
-		goto LOOP_ENTRY;
+		context=PPMdContextSuffix(context,&self->core);
+		if(PPMdStateSuccessor(state,&self->core)!=upbranch)
+		{
+			context=PPMdStateSuccessor(state,&self->core);
+			goto skip;
+		}
+		statelist[n++]=state;
+		if(!context->Suffix) goto skip;
 	}
 
 	do
 	{
-		pc=PPMdContextSuffix(pc,&self->core);
-		if(pc->LastStateIndex!=0)
+		context=PPMdContextSuffix(context,&self->core);
+		if(context->LastStateIndex!=0)
 		{
-			if((p=PPMdContextStates(pc,&self->core))->Symbol!=sym)
-			do { tmp=p[1].Symbol; p++; } while(tmp!=sym);
+			state=PPMdContextStates(context,&self->core);
+			while(state->Symbol!=sym) state++;
 
-			tmp=(p->Freq<MAX_FREQ-9);
-			p->Freq+=tmp;
-			pc->SummFreq+=tmp;
+			if(state->Freq<MAX_FREQ-9)
+			{
+				state->Freq++;
+				context->SummFreq++;
+			}
 		}
 		else
 		{
-			p=PPMdContextOneState(pc);
-			p->Freq+=(!PPMdContextSuffix(pc,&self->core)->LastStateIndex&(p->Freq<24));
+			state=PPMdContextOneState(context);
+			state->Freq+=(!PPMdContextSuffix(context,&self->core)->LastStateIndex&(state->Freq<24));
 		}
 
-		LOOP_ENTRY:
-		if(PPMdStateSuccessor(p,&self->core)!=UpBranch)
+		if(PPMdStateSuccessor(state,&self->core)!=upbranch)
 		{
-			pc=PPMdStateSuccessor(p,&self->core);
+			context=PPMdStateSuccessor(state,&self->core);
 			break;
 		}
-		*pps++=p;
+		statelist[n++]=state;
 	}
-	while(pc->Suffix);
+	while(context->Suffix);
 
-	NO_LOOP: 0;
+	skip:
 
-	if(pps==ps) return pc;
+	if(n==0) return context;
+
+	PPMdContext ct;
+	uint8_t newsym=*(uint8_t *)upbranch;
 
 	ct.LastStateIndex=0;
-	ct.Flags=0x10*(sym>=0x40);
-	PPMdContextOneState(&ct)->Symbol=sym=*(uint8_t *)UpBranch;
-	SetPPMdStateSuccessorPointer(PPMdContextOneState(&ct),(PPMdContext *)(((uint8_t *)UpBranch)+1),&self->core);
-	ct.Flags|=0x08*(sym>=0x40);
+	ct.Flags=0;
+	if(sym>=0x40) ct.Flags|=0x10;
+	if(newsym>=0x40) ct.Flags|=0x08;
 
-	if(pc->LastStateIndex)
+	PPMdState *onestate=PPMdContextOneState(&ct);
+	onestate->Symbol=newsym;
+	SetPPMdStateSuccessorPointer(onestate,(PPMdContext *)(((uint8_t *)upbranch)+1),&self->core);
+
+	if(context->LastStateIndex!=0)
 	{
-		if((p=PPMdContextStates(pc,&self->core))->Symbol!=sym)
-		do { tmp=p[1].Symbol; p++; } while(tmp!=sym);
+		state=PPMdContextStates(context,&self->core);
+		while(state->Symbol!=newsym) state++;
 
-		s0=pc->SummFreq-pc->LastStateIndex-(cf=p->Freq-1);
-		PPMdContextOneState(&ct)->Freq=1+((2*cf<=s0)?(5*cf>s0):((cf+2*s0-3)/s0));
+		int cf=state->Freq-1;
+		int s0=context->SummFreq-context->LastStateIndex-cf;
+
+		if(2*cf<=s0)
+		{
+			if(5*cf>s0) onestate->Freq=2;
+			else onestate->Freq=1;
+		}
+		else onestate->Freq=1+((cf+2*s0-3)/s0);
 	}
-	else PPMdContextOneState(&ct)->Freq=PPMdContextOneState(pc)->Freq;
+	else onestate->Freq=PPMdContextOneState(context)->Freq;
 
-	do
+	for(int i=n-1;i>=0;i--)
 	{
-		PPMdContext *pc1=(PPMdContext *)OffsetToPointer(self->core.alloc,AllocContext(self->core.alloc));
-		if(!pc1) return NULL;
-		((uint32_t *)pc1)[0]=((uint32_t *)&ct)[0];
-		((uint32_t *)pc1)[1]=((uint32_t *)&ct)[1];
-		SetPPMdContextSuffixPointer(pc1,pc,&self->core);
-		SetPPMdStateSuccessorPointer(*--pps,pc=pc1,&self->core);
-	}
-	while(pps!=ps);
+		PPMdContext *newcontext=(PPMdContext *)OffsetToPointer(self->core.alloc,AllocContext(self->core.alloc));
+		if(!newcontext) return NULL;
 
-	return pc;
+		memcpy(newcontext,&ct,8);
+		SetPPMdContextSuffixPointer(newcontext,context,&self->core);
+		SetPPMdStateSuccessorPointer(statelist[i],newcontext,&self->core);
+
+		context=newcontext;
+	}
+
+	return context;
 }
 
-static PPMdContext *ReduceOrder(PPMdVariantIModel *self,PPMdState *p,PPMdContext *pc)
+static PPMdContext *ReduceOrder(PPMdVariantIModel *self,PPMdState *state,PPMdContext *startcontext)
 {
-	PPMdState *p1,*ps[MAX_O],**pps=ps;
-	PPMdContext *pc1=pc,*UpBranch=(PPMdContext *)self->alloc->pText;
-	uint8_t tmp,sym=self->core.FoundState->Symbol;
-    *pps++=self->core.FoundState;
-	SetPPMdStateSuccessorPointer(self->core.FoundState,UpBranch,&self->core);
+	PPMdState *statelist[MAX_O];
+	PPMdContext *context=startcontext,*upbranch=(PPMdContext *)self->alloc->pText;
+	uint8_t sym=self->core.FoundState->Symbol;
+
+	int n=0;
+
+	statelist[n++]=self->core.FoundState;
 	self->core.OrderFall++;
 
-    if(p)
+    if(state)
     {
-		pc=PPMdContextSuffix(pc,&self->core);
-		goto LOOP_ENTRY;
+		context=PPMdContextSuffix(context,&self->core);
+		if(state->Successor) goto skip;
+		statelist[n++]=state;
+		self->core.OrderFall++;
 	}
 
 	for(;;)
 	{
-		if(!pc->Suffix)
+		if(!context->Suffix)
 		{
 			if(self->MRMethod>MRM_FREEZE)
 			{
-FROZEN:
-				do SetPPMdStateSuccessorPointer(*--pps,pc,&self->core);
-				while (pps!=ps);
+				for(int i=0;i<n;i++) SetPPMdStateSuccessorPointer(statelist[i],context,&self->core);
 				self->alloc->pText=self->alloc->HeapStart+1;
 				self->core.OrderFall=1;
 			}
-			return pc;
+			else
+			{
+				for(int i=0;i<n;i++) SetPPMdStateSuccessorPointer(statelist[i],upbranch,&self->core);
+			}
+			return context;
 		}
-        pc=PPMdContextSuffix(pc,&self->core);
 
-		if(pc->LastStateIndex)
+        context=PPMdContextSuffix(context,&self->core);
+
+		if(context->LastStateIndex)
 		{
-			if((p=PPMdContextStates(pc,&self->core))->Symbol!=sym)
-			do { tmp=p[1].Symbol;   p++; } while (tmp !=sym);
+			state=PPMdContextStates(context,&self->core);
+			while(state->Symbol!=sym) state++;
 
-			tmp=2*(p->Freq < MAX_FREQ-9);
-			p->Freq += tmp;
-			pc->SummFreq += tmp;
+			if(state->Freq<MAX_FREQ-9)
+			{
+				state->Freq+=2;
+				context->SummFreq+=2;
+			}
 		}
 		else
 		{
-			p=PPMdContextOneState(pc);
-			p->Freq += (p->Freq < 32);
+			state=PPMdContextOneState(context);
+			if(state->Freq<32) state->Freq++;
 		}
-LOOP_ENTRY:
-		if(p->Successor) break;
-		*pps++ = p;
-		SetPPMdStateSuccessorPointer(p,UpBranch,&self->core);
+
+		if(state->Successor) break;
+
+		statelist[n++]=state;
 		self->core.OrderFall++;
 	}
+	skip:
+
 	if(self->MRMethod>MRM_FREEZE)
 	{
-		pc=PPMdStateSuccessor(p,&self->core);
-		goto FROZEN;
+		PPMdContext *successor=PPMdStateSuccessor(state,&self->core);
+		for(int i=0;i<n;i++) SetPPMdStateSuccessorPointer(statelist[i],successor,&self->core);
+
+		self->alloc->pText=self->alloc->HeapStart+1;
+		self->core.OrderFall=1;
+
+		return successor;
 	}
-	else if (PPMdStateSuccessor(p,&self->core) <= UpBranch)
+	else
 	{
-		p1=self->core.FoundState;
-		self->core.FoundState=p;
-        SetPPMdStateSuccessorPointer(p,CreateSuccessors(self,NO,NULL,pc),&self->core);
-		self->core.FoundState=p1;
+		for(int i=0;i<n;i++) SetPPMdStateSuccessorPointer(statelist[i],upbranch,&self->core);
 	}
-	if(self->core.OrderFall==1&&pc1==self->MaxContext)
+
+	if(PPMdStateSuccessor(state,&self->core)<=upbranch)
 	{
-		SetPPMdStateSuccessorPointer(self->core.FoundState,PPMdStateSuccessor(p,&self->core),&self->core);
+		PPMdState *tmp=self->core.FoundState;
+		self->core.FoundState=state;
+        SetPPMdStateSuccessorPointer(state,CreateSuccessors(self,NO,NULL,context),&self->core);
+		self->core.FoundState=tmp;
+	}
+
+	if(self->core.OrderFall==1&&startcontext==self->MaxContext)
+	{
+		self->core.FoundState->Successor=state->Successor;
 		self->alloc->pText--;
 	}
 
-	return PPMdStateSuccessor(p,&self->core);
+	return PPMdStateSuccessor(state,&self->core);
 }
 
-
-static void RestoreModel(PPMdVariantIModel *self,PPMdContext *pc1,PPMdContext *MinContext,PPMdContext *FSuccessor)
+static void RestoreModel(PPMdVariantIModel *self,PPMdContext *currcontext,PPMdContext *mincontext,PPMdContext *FSuccessor)
 {
-	PPMdContext *pc;
-	PPMdState *p;
+	self->alloc->pText=self->alloc->HeapStart;
 
-	for(pc=self->MaxContext,self->alloc->pText=self->alloc->HeapStart;pc!=pc1;pc=PPMdContextSuffix(pc,&self->core))
-	if(--(pc->LastStateIndex)==0)
+	PPMdContext *context=self->MaxContext;
+	while(context!=currcontext)
 	{
-		pc->Flags=(pc->Flags&0x10)+0x08*(PPMdContextStates(pc,&self->core)[0].Symbol>=0x40);
-		p=PPMdContextStates(pc,&self->core);
-		*(PPMdContextOneState(pc))=*p;
-		SpecialFreeUnitVariantI(self->alloc,PointerToOffset(self->core.alloc,p));
-		PPMdContextOneState(pc)->Freq=(PPMdContextOneState(pc)->Freq+11)>>3;
-	}
-	else RefreshContext(pc,(pc->LastStateIndex+3)>>1,NO,self);
+		if(context->LastStateIndex==1)
+		{
+			PPMdState state=*(PPMdContextStates(context,&self->core));
+			SpecialFreeUnitVariantI(self->alloc,context->States);
 
-	for(;pc!=MinContext;pc=PPMdContextSuffix(pc,&self->core))
-	if(!pc->LastStateIndex) PPMdContextOneState(pc)->Freq-=PPMdContextOneState(pc)->Freq>>1;
-	else if((pc->SummFreq+=4)>128+4*pc->LastStateIndex) RefreshContext(pc,(pc->LastStateIndex+2)>>1,YES,self);
+			state.Freq=(state.Freq+11)>>3;
+			*(PPMdContextOneState(context))=state;
+
+			context->LastStateIndex=0;
+			context->Flags&=0x10;
+			if(state.Symbol>=0x40) context->Flags+=0x08;
+		}
+		else
+		{
+			ShrinkContext(context,context->LastStateIndex-1,NO,self);
+		}
+
+		context=PPMdContextSuffix(context,&self->core);
+	}
+
+	while(context!=mincontext)
+	{
+		if(!context->LastStateIndex)
+		{
+			PPMdContextOneState(context)->Freq=(PPMdContextOneState(context)->Freq+1)>>1;
+		}
+		else
+		{
+			context->SummFreq+=4;
+			if(context->SummFreq>128+4*context->LastStateIndex)
+			ShrinkContext(context,context->LastStateIndex,YES,self);
+		}
+
+		context=PPMdContextSuffix(context,&self->core);
+	}
 
 	if(self->MRMethod>MRM_FREEZE)
 	{
 		self->MaxContext=FSuccessor;
-		self->alloc->GlueCount+=!(self->alloc->BList[1].Stamp&1);
+		if(!(self->alloc->BList[1].Stamp&1)) self->alloc->GlueCount++;
 	}
 	else if(self->MRMethod==MRM_FREEZE)
 	{
-		while(self->MaxContext->Suffix)
-		self->MaxContext=PPMdContextSuffix(self->MaxContext,&self->core);
+		while(self->MaxContext->Suffix) self->MaxContext=PPMdContextSuffix(self->MaxContext,&self->core);
 
 		RemoveBinConts(self->MaxContext,0,self);
 		self->MRMethod=self->MRMethod+1;
@@ -477,7 +552,7 @@ static void RestoreModel(PPMdVariantIModel *self,PPMdContext *pc1,PPMdContext *M
 	}
 	else if(self->MRMethod==MRM_RESTART||GetUsedMemoryVariantI(self->alloc)<(self->alloc->SubAllocatorSize>>1))
 	{
-		StartPPMdVariantIModel(self,NULL,self->MaxOrder,self->MRMethod);
+		RestartModel(self);
 		self->core.EscCount=0;
 	}
 	else
@@ -496,137 +571,151 @@ static void RestoreModel(PPMdVariantIModel *self,PPMdContext *pc1,PPMdContext *M
 
 
 
-
-// TODO: rescale!
-
-static void RefreshContext(PPMdContext *self,int OldNU,BOOL Scale,PPMdVariantIModel *model)
+static void ShrinkContext(PPMdContext *self,int newlastindex,BOOL scale,PPMdVariantIModel *model)
 {
-	int i=self->LastStateIndex,EscFreq;
+	self->States=ShrinkUnits(model->core.alloc,self->States,(self->LastStateIndex+2)>>1,(newlastindex+2)>>1);
+	self->LastStateIndex=newlastindex;
 
-	self->States=ShrinkUnits(model->core.alloc,self->States,OldNU,(i+2)>>1);
-	PPMdState *p=PPMdContextStates(self,&model->core);
+	if(scale) self->Flags&=0x14;
+	else self->Flags&=0x10;
 
-	self->Flags=(self->Flags&(0x10+0x04*Scale))+0x08*(p->Symbol>=0x40);
-	EscFreq=self->SummFreq-p->Freq;
+	PPMdState *states=PPMdContextStates(self,&model->core);
+	int escfreq=self->SummFreq;
+	self->SummFreq=0;
 
-	self->SummFreq=(p->Freq=(p->Freq+Scale)>>Scale);
-
-	do
+	for(int i=0;i<=self->LastStateIndex;i++)
 	{
-		EscFreq-=(++p)->Freq;
-		self->SummFreq+=(p->Freq=(p->Freq+Scale)>>Scale);
-		self->Flags|=0x08*(p->Symbol>=0x40);
+		escfreq-=states[i].Freq;
+		if(scale) states[i].Freq=(states[i].Freq+1)>>1;
+		self->SummFreq+=states[i].Freq;
+		if(states[i].Symbol>=0x40) self->Flags|=0x08;
 	}
-	while(--i);
 
-	self->SummFreq+=(EscFreq=(EscFreq+Scale)>>Scale);
+	if(scale) escfreq=(escfreq+1)>>1;
+
+	self->SummFreq+=escfreq;
 }
 
-static PPMdContext *CutOffContext(PPMdContext *self,int Order,PPMdVariantIModel *model)
+static PPMdContext *CutOffContext(PPMdContext *self,int order,PPMdVariantIModel *model)
 {
-	int i,tmp;
-	PPMdState *p;
-
-	if(!self->LastStateIndex)
+	if(self->LastStateIndex==0)
 	{
-		if((uint8_t *)PPMdStateSuccessor(p=PPMdContextOneState(self),&model->core)>=model->alloc->UnitsStart)
+		PPMdState *onestate=PPMdContextOneState(self);
+		if((uint8_t *)PPMdStateSuccessor(onestate,&model->core)>=model->alloc->UnitsStart)
 		{
-			if(Order<model->MaxOrder)
+			if(order<model->MaxOrder)
 			{
 				//PrefetchData(p->Successor);
-				SetPPMdStateSuccessorPointer(p,
-				CutOffContext(PPMdStateSuccessor(p,&model->core),Order+1,model),
+				SetPPMdStateSuccessorPointer(onestate,
+				CutOffContext(PPMdStateSuccessor(onestate,&model->core),order+1,model),
 				&model->core);
 			}
-            else p->Successor=0;
+            else onestate->Successor=0;
 
-			if(!p->Successor&&Order>O_BOUND) goto REMOVE;
+			if(!onestate->Successor&&order>O_BOUND)
+			{
+				SpecialFreeUnitVariantI(model->alloc,PointerToOffset(model->core.alloc,self));
+				return NULL;
+			}
 
 			return self;
         }
 		else
 		{
-REMOVE:
 			SpecialFreeUnitVariantI(model->alloc,PointerToOffset(model->core.alloc,self));
 			return NULL;
 		}
 	}
 	//PrefetchData(self->States);
 
-	self->States=MoveUnitsUpVariantI(model->alloc,self->States,tmp=(self->LastStateIndex+2)>>1);
+	int oldnum=(self->LastStateIndex+2)>>1;
+	self->States=MoveUnitsUpVariantI(model->alloc,self->States,oldnum);
 
-	for(p=PPMdContextStates(self,&model->core)+(i=self->LastStateIndex);p>=PPMdContextStates(self,&model->core);p--)
-	if((uint8_t *)PPMdStateSuccessor(p,&model->core)<model->alloc->UnitsStart)
+	int n=self->LastStateIndex;
+	PPMdState *states=PPMdContextStates(self,&model->core);
+	for(int i=n;i>=0;i--)
 	{
-		p->Successor=0;
-		SWAP(*p,PPMdContextStates(self,&model->core)[i]);
-		i--;
-	}
-	else if(Order<model->MaxOrder)
-	{
-		//PrefetchData(p->Successor);
-		SetPPMdStateSuccessorPointer(p,
-		CutOffContext(PPMdStateSuccessor(p,&model->core),Order+1,model),
-		&model->core);
-	}
-	else p->Successor=0;
-
-	if(i!=self->LastStateIndex&&Order)
-	{
-		self->LastStateIndex=i;
-		p=PPMdContextStates(self,&model->core);
-
-		if(i<0)
+		if((uint8_t *)PPMdStateSuccessor(&states[i],&model->core)<model->alloc->UnitsStart)
 		{
-			FreeUnits(model->core.alloc,PointerToOffset(model->core.alloc,p),tmp);
-			goto REMOVE;
+			states[i].Successor=0;
+			SWAP(states[i],states[n]);
+			n--;
 		}
-        else if(i==0)
+		else if(order<model->MaxOrder)
 		{
-			self->Flags=(self->Flags&0x10)+0x08*(p->Symbol>=0x40);
-			*(PPMdContextOneState(self))=*p;
-			FreeUnits(model->core.alloc,PointerToOffset(model->core.alloc,p),tmp);
-			PPMdContextOneState(self)->Freq=(PPMdContextOneState(self)->Freq+11)>>3;
+			//PrefetchData(state->Successor);
+			SetPPMdStateSuccessorPointer(&states[i],
+			CutOffContext(PPMdStateSuccessor(&states[i],&model->core),order+1,model),
+			&model->core);
 		}
-		else RefreshContext(self,tmp,self->SummFreq>16*i,model);
+		else states[i].Successor=0;
+	}
+
+	if(n!=self->LastStateIndex&&order)
+	{
+		if(n<0)
+		{
+			FreeUnits(model->core.alloc,self->States,oldnum);
+			SpecialFreeUnitVariantI(model->alloc,PointerToOffset(model->core.alloc,self));
+			return NULL;
+		}
+        else if(n==0)
+		{
+			PPMdState state=*(PPMdContextStates(self,&model->core));
+			FreeUnits(model->core.alloc,self->States,oldnum);
+
+			state.Freq=(state.Freq+11)>>3;
+			*(PPMdContextOneState(self))=state;
+
+			self->LastStateIndex=0;
+			self->Flags&=0x10;
+			if(state.Symbol>=0x40) self->Flags+=0x08;
+		}
+		else ShrinkContext(self,n,self->SummFreq>16*n,model);
 	}
 	return self;
 }
 
-static PPMdContext *RemoveBinConts(PPMdContext *self,int Order,PPMdVariantIModel *model)
+static PPMdContext *RemoveBinConts(PPMdContext *self,int order,PPMdVariantIModel *model)
 {
-	PPMdState *p;
-
-	if(!self->LastStateIndex)
+	if(self->LastStateIndex==0)
 	{
-		p=PPMdContextOneState(self);
-		if((uint8_t *)PPMdStateSuccessor(p,&model->core)>=model->alloc->UnitsStart&&Order<model->MaxOrder)
+		PPMdState *state=PPMdContextOneState(self);
+		if((uint8_t *)PPMdStateSuccessor(state,&model->core)>=model->alloc->UnitsStart&&order<model->MaxOrder)
 		{
-			//PrefetchData(p->Successor);
-			SetPPMdStateSuccessorPointer(p,
-			RemoveBinConts(PPMdStateSuccessor(p,&model->core),Order+1,model),
+			//PrefetchData(onestate->Successor);
+			SetPPMdStateSuccessorPointer(state,
+			RemoveBinConts(PPMdStateSuccessor(state,&model->core),order+1,model),
 			&model->core);
 		}
-        else p->Successor=0;
+		else state->Successor=0;
 
-		if(!p->Successor&&(!PPMdContextSuffix(self,&model->core)->LastStateIndex
-		||PPMdContextSuffix(self,&model->core)->Flags==0xff))
+		if(!state->Successor)
 		{
-			FreeUnits(model->core.alloc,PointerToOffset(model->core.alloc,self),1);
-			return NULL;
-        }
-		else return self;
+			PPMdContext *suffix=PPMdContextSuffix(self,&model->core);
+			if(suffix->LastStateIndex==0||suffix->Flags==0xff)
+			{
+				FreeUnits(model->core.alloc,PointerToOffset(model->core.alloc,self),1);
+				return NULL;
+			}
+		}
+
+		return self;
     }
 	//PrefetchData(self->States);
-	for(p=PPMdContextStates(self,&model->core)+self->LastStateIndex;p>=PPMdContextStates(self,&model->core);p--)
-	if((uint8_t *)PPMdStateSuccessor(p,&model->core)>=model->alloc->UnitsStart&&Order<model->MaxOrder)
+
+	PPMdState *states=PPMdContextStates(self,&model->core);
+	for(int i=self->LastStateIndex;i>=0;i--)
 	{
-		//PrefetchData(p->Successor);
-		SetPPMdStateSuccessorPointer(p,
-		RemoveBinConts(PPMdStateSuccessor(p,&model->core),Order+1,model),
-		&model->core);
+		if((uint8_t *)PPMdStateSuccessor(&states[i],&model->core)>=model->alloc->UnitsStart&&order<model->MaxOrder)
+		{
+			//PrefetchData(states[i].Successor);
+			SetPPMdStateSuccessorPointer(&states[i],
+			RemoveBinConts(PPMdStateSuccessor(&states[i],&model->core),order+1,model),
+			&model->core);
+		}
+		else states[i].Successor=0;
 	}
-	else p->Successor=0;
 
 	return self;
 }
@@ -741,12 +830,11 @@ static void RescalePPMdContextVariantI(PPMdContext *self,PPMdVariantIModel *mode
 
 		self->States=ShrinkUnits(model->core.alloc,self->States,(n+1)>>1,(self->LastStateIndex+2)>>1);
 
-		PPMdState *p=PPMdContextStates(self,&model->core);
+		PPMdState *states=PPMdContextStates(self,&model->core);
 		self->Flags&=~0x08;
-		int i=self->LastStateIndex;
-		self->Flags|=0x08*(p->Symbol>=0x40);
-        do self->Flags|=0x08*((++p)->Symbol>=0x40);
-		while (--i);
+
+		for(int i=0;i<=self->LastStateIndex;i++)
+		if(states[i].Symbol>=0x40) self->Flags|=0x08;
 	}
 
 	self->SummFreq+=(escfreq+1)>>1;

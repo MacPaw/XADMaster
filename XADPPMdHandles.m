@@ -26,7 +26,7 @@
 	[super dealloc];
 }
 
--(void)resetByteStream { StartPPMdVariantGModel(&model,input); }
+-(void)resetByteStream { StartPPMdVariantGModel(&model,input,model.MaxOrder); }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {

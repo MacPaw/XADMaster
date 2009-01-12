@@ -1,7 +1,7 @@
 #import "PPMdContext.h"
 #import "PPMdSubAllocatorVariantH.h"
 
-// PPMd Variant H. Used by RAR.
+// PPMd Variant H. Used by RAR and 7-Zip.
 
 typedef struct PPMdVariantHModel
 {

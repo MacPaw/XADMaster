@@ -13,5 +13,5 @@ typedef struct PPMdVariantGModel
 	uint16_t BinSumm[128][16]; // binary SEE-contexts
 } PPMdVariantGModel;
 
-void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input);
+void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input,int maxorder);
 int NextPPMdVariantGByte(PPMdVariantGModel *self);

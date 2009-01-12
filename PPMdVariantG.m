@@ -1,21 +1,44 @@
 #import "PPMdVariantG.h"
 
+static void RestartModel(PPMdVariantGModel *self);
+
 static void UpdateModel(PPMdVariantGModel *self);
-static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMdState *p1);
+static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMdState *state);
 
 static void DecodeBinSymbolVariantG(PPMdContext *self,PPMdVariantGModel *model);
 static void DecodeSymbol1VariantG(PPMdContext *self,PPMdVariantGModel *model);
 static void DecodeSymbol2VariantG(PPMdContext *self,PPMdVariantGModel *model);
 
-void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
+void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input,int maxorder)
+{
+	InitializeRangeCoder(&self->core.coder,input);
+
+	self->core.RescalePPMdContext=RescalePPMdContext;
+
+	self->MaxOrder=maxorder;
+	self->core.EscCount=1;
+
+	for(int i=0;i<6;i++) self->NS2BSIndx[i]=2*i;
+	for(int i=6;i<50;i++) self->NS2BSIndx[i]=12;
+	for(int i=50;i<256;i++) self->NS2BSIndx[i]=14;
+
+	for(int i=0;i<4;i++) self->NS2Indx[i]=i;
+	for(int i=4;i<4+8;i++) self->NS2Indx[i]=4+((i-4)>>1);
+	for(int i=4+8;i<4+8+32;i++) self->NS2Indx[i]=4+4+((i-4-8)>>2);
+	for(int i=4+8+32;i<256;i++) self->NS2Indx[i]=4+4+8+((i-4-8-32)>>3);
+
+	self->DummySEE2Cont.Shift=PERIOD_BITS;
+
+	RestartModel(self);
+}
+
+static void RestartModel(PPMdVariantGModel *self)
 {
 	BOOL brimstone=NO;
 
-	if(input) InitializeRangeCoder(&self->core.coder,input);
-
 	InitSubAllocator(self->core.alloc);
 
-	self->core.RescalePPMdContext=RescalePPMdContext;
+	memset(self->core.CharMask,0,sizeof(self->core.CharMask));
 
 	self->core.PrevSuccess=0;
 	self->core.OrderFall=1;
@@ -58,24 +81,12 @@ void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input)
 	for(int k=0;k<16;k++)
 	self->BinSumm[i][k]=BIN_SCALE-InitBinEsc[k]/(i+2);
 
-	for(int i=0;i<6;i++) self->NS2BSIndx[i]=2*i;
-	for(int i=6;i<50;i++) self->NS2BSIndx[i]=12;
-	for(int i=50;i<256;i++) self->NS2BSIndx[i]=14;
-
 	for(int i=0;i<43;i++)
 	for(int k=0;k<8;k++)
 	self->SEE2Cont[i][k]=MakeSEE2(4*i+10,3);
-
-	self->DummySEE2Cont.Shift=PERIOD_BITS;
-
-	for(int i=0;i<4;i++) self->NS2Indx[i]=i;
-	for(int i=4;i<4+8;i++) self->NS2Indx[i]=4+((i-4)>>1);
-	for(int i=4+8;i<4+8+32;i++) self->NS2Indx[i]=4+4+((i-4-8)>>2);
-	for(int i=4+8+32;i<256;i++) self->NS2Indx[i]=4+4+8+((i-4-8-32)>>3);
-
-	memset(self->core.CharMask,0,sizeof(self->core.CharMask));
-	self->core.EscCount=1;
 }
+
+
 
 int NextPPMdVariantGByte(PPMdVariantGModel *self)
 {
@@ -257,79 +268,87 @@ static void UpdateModel(PPMdVariantGModel *self)
 	return;
 
 	RESTART_MODEL:
-	StartPPMdVariantGModel(self,NULL);
+	RestartModel(self);
 	self->core.EscCount=0;
 }
 
-static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMdState *p1)
+static BOOL MakeRoot(PPMdVariantGModel *self,unsigned int SkipCount,PPMdState *state)
 {
-	PPMdContext *pc=self->MinContext,*UpBranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
-	PPMdState *p,*ps[MAX_O],**pps=ps;
+	PPMdContext *context=self->MinContext,*upbranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
+	PPMdState *statelist[MAX_O];
+	int n=0;
 
 	if(SkipCount==0)
 	{
-		*pps++=self->core.FoundState;
-		if(!pc->Suffix) goto NO_LOOP;
+		statelist[n++]=self->core.FoundState;
+		if(!context->Suffix) goto skip;
 	}
-	else if(SkipCount==2) pc=PPMdContextSuffix(pc,&self->core);
+	else if(SkipCount==2) context=PPMdContextSuffix(context,&self->core);
 
-	if(p1)
+	if(state)
 	{
-		p=p1;
-		pc=PPMdContextSuffix(pc,&self->core);
-		goto LOOP_ENTRY;
+		context=PPMdContextSuffix(context,&self->core);
+		if(PPMdStateSuccessor(state,&self->core)!=upbranch)
+		{
+			context=PPMdStateSuccessor(state,&self->core);
+			goto skip;
+		}
+		statelist[n++]=state;
+		if(!context->Suffix) goto skip;
 	}
 
 	do
 	{
-		pc=PPMdContextSuffix(pc,&self->core);
-		if(pc->LastStateIndex!=0)
+		context=PPMdContextSuffix(context,&self->core);
+		if(context->LastStateIndex!=0)
 		{
-			if((p=PPMdContextStates(pc,&self->core))->Symbol!=self->core.FoundState->Symbol)
-			{
-				do p++;
-				while(p->Symbol!=self->core.FoundState->Symbol);
-			}
+			state=PPMdContextStates(context,&self->core);
+			while(state->Symbol!=self->core.FoundState->Symbol) state++;
 		}
-		else p=PPMdContextOneState(pc);
+		else state=PPMdContextOneState(context);
 
-		LOOP_ENTRY:
-		if(PPMdStateSuccessor(p,&self->core)!=UpBranch)
+		if(PPMdStateSuccessor(state,&self->core)!=upbranch)
 		{
-			pc=PPMdStateSuccessor(p,&self->core);
+			context=PPMdStateSuccessor(state,&self->core);
 			break;
 		}
-		*pps++=p;
+		statelist[n++]=state;
 	}
-	while(pc->Suffix);
+	while(context->Suffix);
 
-	NO_LOOP: 0;
-	PPMdState *UpState=PPMdContextOneState(UpBranch);
-	if(pc->LastStateIndex!=0)
+	skip: 0;
+	PPMdState *upstate=PPMdContextOneState(upbranch);
+	if(context->LastStateIndex!=0)
 	{
-		unsigned int cf=UpState->Symbol;
-		p=PPMdContextStates(pc,&self->core);
-		while(p->Symbol!=cf) p++;
+		state=PPMdContextStates(context,&self->core);
+		while(state->Symbol!=upstate->Symbol) state++;
 
-		unsigned int s0=pc->SummFreq-pc->LastStateIndex-1-(cf=p->Freq-1);
-		UpState->Freq=1+((2*cf<=s0)?(5*cf>s0):((2*cf+3*s0-1)/(2*s0)));
+		int cf=state->Freq-1;
+		int s0=context->SummFreq-context->LastStateIndex-1-cf;
+
+		if(2*cf<=s0)
+		{
+			if(5*cf>s0) upstate->Freq=2;
+			else upstate->Freq=1;
+		}
+		else upstate->Freq=1+((2*cf+3*s0-1)/(2*s0));
 	}
-	else UpState->Freq=PPMdContextOneState(pc)->Freq;
+	else upstate->Freq=PPMdContextOneState(context)->Freq;
 
-	while(--pps>=ps)
+	for(int i=n-1;i>=0;i--)
 	{
-		pc=NewPPMdContextAsChildOf(&self->core,pc,*pps,UpState);
-		if(!pc) return FALSE;
+		context=NewPPMdContextAsChildOf(&self->core,context,statelist[i],upstate);
+		if(!context) return NO;
 	}
 
 	if(!self->core.OrderFall)
 	{
-		UpBranch->LastStateIndex=0;
-		UpBranch->Flags=0;
-		SetPPMdContextSuffixPointer(UpBranch,pc,&self->core);
+		upbranch->LastStateIndex=0;
+		upbranch->Flags=0;
+		SetPPMdContextSuffixPointer(upbranch,context,&self->core);
 	}
 
-	return TRUE;
+	return YES;
 }
 
 
@@ -347,7 +366,6 @@ static void DecodeSymbol1VariantG(PPMdContext *self,PPMdVariantGModel *model)
 {
 	PPMdDecodeSymbol1(self,&model->core,NO);
 }
-
 
 static void DecodeSymbol2VariantG(PPMdContext *self,PPMdVariantGModel *model)
 {

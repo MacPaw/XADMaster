@@ -1,17 +1,51 @@
 #import "PPMdVariantH.h"
 
+static void RestartModel(PPMdVariantHModel *self);
+
 static void UpdateModel(PPMdVariantHModel *self);
-static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState *p1);
+static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState *state);
 
 static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdVariantHModel *model);
 static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model);
 static void DecodeSymbol2VariantH(PPMdContext *self,PPMdVariantHModel *model);
 
+void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int maxorder)
+{
+	InitializeRangeCoder(&self->core.coder,input);
+
+	self->alloc=(PPMdSubAllocatorVariantH *)self->core.alloc; // A bit ugly but there you go.
+
+	self->core.RescalePPMdContext=RescalePPMdContext;
+
+	self->MaxOrder=maxorder;
+	self->core.EscCount=1;
+
+	self->NS2BSIndx[0]=2*0;
+	self->NS2BSIndx[1]=2*1;
+	for(int i=2;i<11;i++) self->NS2BSIndx[i]=2*2;
+	for(int i=11;i<256;i++) self->NS2BSIndx[i]=2*3;
+
+	for(int i=0;i<3;i++) self->NS2Indx[i]=i;
+	int m=3,k=1,step=1;
+	for(int i=3;i<256;i++)
+	{
+		self->NS2Indx[i]=m;
+		if(!--k) { m++; step++; k=step; }
+	}
+
+	memset(self->HB2Flag,0,0x40);
+	memset(self->HB2Flag+0x40,0x08,0x100-0x40);
+
+	self->DummySEE2Cont.Shift=PERIOD_BITS;
+
+	RestartModel(self);
+}
+
 static void RestartModel(PPMdVariantHModel *self)
 {
-    memset(self->core.CharMask,0,sizeof(self->core.CharMask));
-
 	InitSubAllocator(self->core.alloc);
+
+	memset(self->core.CharMask,0,sizeof(self->core.CharMask));
 
 	self->core.PrevSuccess=0;
 	self->core.OrderFall=self->MaxOrder;
@@ -44,37 +78,6 @@ static void RestartModel(PPMdVariantHModel *self)
 	self->SEE2Cont[i][k]=MakeSEE2(5*i+10,4);
 }
 
-void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int maxorder)
-{
-	InitializeRangeCoder(&self->core.coder,input);
-
-	self->alloc=(PPMdSubAllocatorVariantH *)self->core.alloc; // A bit ugly but there you go.
-
-	self->core.RescalePPMdContext=RescalePPMdContext;
-
-	self->core.EscCount=1;
-	self->MaxOrder=maxorder;
-
-	RestartModel(self);
-
-	self->NS2BSIndx[0]=2*0;
-	self->NS2BSIndx[1]=2*1;
-	for(int i=2;i<11;i++) self->NS2BSIndx[i]=2*2;
-	for(int i=11;i<256;i++) self->NS2BSIndx[i]=2*3;
-
-	for(int i=0;i<3;i++) self->NS2Indx[i]=i;
-	int m=3,k=1,step=1;
-	for(int i=3;i<256;i++)
-	{
-		self->NS2Indx[i]=m;
-		if(!--k) { m++; step++; k=step; }
-	}
-
-	memset(self->HB2Flag,0,0x40);
-	memset(self->HB2Flag+0x40,0x08,0x100-0x40);
-
-	self->DummySEE2Cont.Shift=PERIOD_BITS;
-}
 
 
 int NextPPMdVariantHByte(PPMdVariantHModel *self)
@@ -115,6 +118,8 @@ int NextPPMdVariantHByte(PPMdVariantHModel *self)
 
 	return byte;
 }
+
+
 
 static void UpdateModel(PPMdVariantHModel *self)
 {
@@ -159,9 +164,6 @@ static void UpdateModel(PPMdVariantHModel *self)
 		SetPPMdStateSuccessorPointer(self->core.FoundState,self->MinContext,&self->core);
 		if(!self->MinContext) goto RESTART_MODEL;
 		return;
-		/*if(!MakeRoot(self,2,NULL)) goto RESTART_MODEL;
-		self->MinContext=self->MedContext=PPMdStateSuccessor(&fs,&self->core);
-		return;*/
 	}
 
 	*self->alloc->pText++=fs.Symbol;
@@ -254,74 +256,82 @@ static void UpdateModel(PPMdVariantHModel *self)
 	self->core.EscCount=0;
 }
 
-static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState *p1)
+static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState *state)
 {
-	PPMdContext *pc=self->MinContext,*UpBranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
-	PPMdState *p,*ps[MAX_O],**pps=ps;
+	PPMdContext *context=self->MinContext,*upbranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
+	PPMdState *statelist[MAX_O];
+	int n=0;
 
 	if(!skip)
 	{
-		*pps++=self->core.FoundState;
-		if(!pc->Suffix) goto NO_LOOP;
+		statelist[n++]=self->core.FoundState;
+		if(!context->Suffix) goto skip;
 	}
 
-	if(p1)
+	if(state)
 	{
-		p=p1;
-		pc=PPMdContextSuffix(pc,&self->core);
-		goto LOOP_ENTRY;
+		context=PPMdContextSuffix(context,&self->core);
+		if(PPMdStateSuccessor(state,&self->core)!=upbranch)
+		{
+			context=PPMdStateSuccessor(state,&self->core);
+			goto skip;
+		}
+		statelist[n++]=state;
+		if(!context->Suffix) goto skip;
 	}
 
 	do
 	{
-		pc=PPMdContextSuffix(pc,&self->core);
-		if(pc->LastStateIndex!=0)
+		context=PPMdContextSuffix(context,&self->core);
+		if(context->LastStateIndex!=0)
 		{
-			if((p=PPMdContextStates(pc,&self->core))->Symbol!=self->core.FoundState->Symbol)
-			{
-				do p++;
-				while(p->Symbol!=self->core.FoundState->Symbol);
-			}
+			state=PPMdContextStates(context,&self->core);
+			while(state->Symbol!=self->core.FoundState->Symbol) state++;
 		}
-		else p=PPMdContextOneState(pc);
+		else state=PPMdContextOneState(context);
 
-		LOOP_ENTRY:
-		if(PPMdStateSuccessor(p,&self->core)!=UpBranch)
+		if(PPMdStateSuccessor(state,&self->core)!=upbranch)
 		{
-			pc=PPMdStateSuccessor(p,&self->core);
+			context=PPMdStateSuccessor(state,&self->core);
 			break;
 		}
-		*pps++=p;
+		statelist[n++]=state;
 	}
-	while(pc->Suffix);
+	while(context->Suffix);
 
-	NO_LOOP: 0;
+	skip:
 
-	PPMdState UpState;
-	if(pps==ps) return pc;
+	if(n==0) return context;
 
-	UpState.Symbol=*(uint8_t *)UpBranch;
-	SetPPMdStateSuccessorPointer(&UpState,(PPMdContext *)(((uint8_t *)UpBranch)+1),&self->core);
+	PPMdState upstate;
 
-	if(pc->LastStateIndex!=0)
+	upstate.Symbol=*(uint8_t *)upbranch;
+	SetPPMdStateSuccessorPointer(&upstate,(PPMdContext *)(((uint8_t *)upbranch)+1),&self->core);
+
+	if(context->LastStateIndex!=0)
 	{
-		if((p=PPMdContextStates(pc,&self->core))->Symbol!=UpState.Symbol)
-		do { p++; } while(p->Symbol!=UpState.Symbol);
+		state=PPMdContextStates(context,&self->core);
+		while(state->Symbol!=upstate.Symbol) state++;
 
-		unsigned int cf=p->Freq-1;
-		unsigned int s0=pc->SummFreq-pc->LastStateIndex-1-cf;
-		UpState.Freq=1+((2*cf<=s0)?(5*cf>s0):((2*cf+3*s0-1)/(2*s0)));
+		int cf=state->Freq-1;
+		int s0=context->SummFreq-context->LastStateIndex-1-cf;
+
+		if(2*cf<=s0)
+		{
+			if(5*cf>s0) upstate.Freq=2;
+			else upstate.Freq=1;
+		}
+		else upstate.Freq=1+((2*cf+3*s0-1)/(2*s0));
     }
-	else UpState.Freq=PPMdContextOneState(pc)->Freq;
+	else upstate.Freq=PPMdContextOneState(context)->Freq;
 
-	do
+	for(int i=n-1;i>=0;i--)
 	{
-		pc=NewPPMdContextAsChildOf(&self->core,pc,*--pps,&UpState);
-		if(!pc) return NULL;
+		context=NewPPMdContextAsChildOf(&self->core,context,statelist[i],&upstate);
+		if(!context) return NULL;
 	}
-	while(pps!=ps);
 
-    return pc;
+    return context;
 }
 
 

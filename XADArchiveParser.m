@@ -213,11 +213,11 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 		delegate=nil;
 		password=nil;
 
+		stringsource=[XADStringSource new];
+
 		properties=[[NSMutableDictionary alloc] initWithObjectsAndKeys:
 			[self XADStringWithString:[name lastPathComponent]],XADArchiveNameKey,
 		nil];
-
-		stringsource=[XADStringSource new];
 	}
 	return self;
 }

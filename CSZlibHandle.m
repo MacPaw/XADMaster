@@ -82,6 +82,7 @@
 -(void)resetStream
 {
 	[parent seekToFileOffset:startoffs];
+	zs.avail_in=0;
 	inflateReset(&zs);
 }
 

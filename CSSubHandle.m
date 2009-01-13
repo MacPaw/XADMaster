@@ -66,7 +66,7 @@
 {
 	@try
 	{
-		[self seekToFileOffset:end];
+		[parent seekToFileOffset:end];
 	}
 	@catch(NSException *e)
 	{

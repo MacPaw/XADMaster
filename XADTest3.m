@@ -111,11 +111,11 @@ int main(int argc,char **argv)
 		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:2] autorelease]];
 		[parser setPassword:@"test"];
 
-		@try {
+		//@try {
 			[parser parse];
-		} @catch(id e) {
-			printf("*** Exception: %s\n",[[e description] UTF8String]);
-		}
+		//} @catch(id e) {
+		//	printf("*** Exception: %s\n",[[e description] UTF8String]);
+		//}
 
 		[pool release];
 	}

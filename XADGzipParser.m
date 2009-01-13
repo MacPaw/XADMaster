@@ -82,6 +82,7 @@
 	else
 	{
 		NSString *name=[self name];
+NSLog(@"what %@",name);
 		NSString *extension=[[name pathExtension] lowercaseString];
 		NSString *contentname;
 		if([extension isEqual:@"tgz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"tar"];
@@ -102,6 +103,7 @@
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dictionary];
 	CSZlibHandle *zh=[CSZlibHandle deflateHandleWithHandle:handle];
 
+	// TODO: somehow make checksumming work even though there are a million broken gzip files out there
 	if(checksum)
 	{
 		[zh setSeekBackAtEOF:YES]; // enable seeking back after zlib reads too much data at the end

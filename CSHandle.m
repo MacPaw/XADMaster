@@ -248,10 +248,10 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	uint8_t buf[16384];
 	while(skipped<num)
 	{
-		off_t numbytes=num>sizeof(buf)?sizeof(buf):num;
+		int numbytes=num-skipped>sizeof(buf)?sizeof(buf):num-skipped;
 		int actual=[self readAtMost:numbytes toBuffer:buf];
 		skipped+=actual;
-		if(actual!=numbytes) break;
+		if(actual==0) break;
 	}
 	return skipped;
 }

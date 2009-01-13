@@ -149,10 +149,10 @@ NSData *currentGlobalHeader;
 	unsigned int gid = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(116,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:gid] forKey:XADPosixGroupKey];
 
-	unsigned long size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
-	[dict setObject:[NSNumber numberWithLong:size] forKey:XADFileSizeKey];
-	[dict setObject:[NSNumber numberWithLong:(size+(512-size%512))] forKey:XADCompressedSizeKey];
-	[dict setObject:[NSNumber numberWithLong:size] forKey:XADDataLengthKey];
+	off_t size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
+	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
+	[dict setObject:[NSNumber numberWithLongLong:(size+(512-size%512))] forKey:XADCompressedSizeKey];
+	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADDataLengthKey];
 
 	unsigned long mtime = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(136,12) buffer:header];
 	[dict setObject:[NSDate dateWithTimeIntervalSince1970:mtime] forKey:XADLastModificationDateKey];
@@ -411,7 +411,7 @@ NSData *currentGlobalHeader;
 -(void)addTarEntryWithDictionaryAndSeek:(NSMutableDictionary *)dict
 {
 	CSHandle *handle = [self handle];
-	long size = [[dict objectForKey:XADDataLengthKey] longValue];
+	off_t size = [[dict objectForKey:XADDataLengthKey] longLongValue];
 	off_t offset = [handle offsetInFile];
 	[dict setObject:[NSNumber numberWithLong:offset] forKey:XADDataOffsetKey];
 	[self addEntryWithDictionary:dict];

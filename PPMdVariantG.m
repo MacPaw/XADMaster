@@ -34,7 +34,7 @@ void StartPPMdVariantGModel(PPMdVariantGModel *self,CSInputBuffer *input,int max
 
 static void RestartModel(PPMdVariantGModel *self)
 {
-	BOOL brimstone=NO;
+	BOOL brimstone=YES;
 
 	InitSubAllocator(self->core.alloc);
 
@@ -45,7 +45,8 @@ static void RestartModel(PPMdVariantGModel *self)
 
 	self->MaxContext=NewPPMdContext(&self->core);
 	self->MaxContext->LastStateIndex=255;
-	self->MaxContext->SummFreq=257;
+	if(brimstone) self->MaxContext->SummFreq=385;
+	else self->MaxContext->SummFreq=257;
 	self->MaxContext->States=AllocUnits(self->core.alloc,256/2);
 
 	PPMdState *maxstates=PPMdContextStates(self->MaxContext,&self->core);
@@ -123,7 +124,7 @@ int NextPPMdVariantGByte(PPMdVariantGModel *self)
 	}
 
 	NormalizeRangeCoderWithBottom(&self->core.coder,1<<15);
-
+NSLog(@"%02x",byte);
 	return byte;
 }
 

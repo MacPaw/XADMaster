@@ -61,7 +61,9 @@ extern NSString *CSNotSupportedException;
 -(uint32_t)readID;
 
 -(uint32_t)readBits:(int)bits;
+-(uint32_t)readBitsLE:(int)bits;
 -(int32_t)readSignedBits:(int)bits;
+-(int32_t)readSignedBitsLE:(int)bits;
 -(void)flushReadBits;
 
 -(NSData *)readLine;

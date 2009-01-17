@@ -117,10 +117,10 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 
 -(uint32_t)readBits:(int)bits
 {
-	int res=0;
+	int res=0,done=0;
 
 	if([self offsetInFile]!=bitoffs) readbitsleft=0;
-	while(bits)
+	while(done<bits)
 	{
 		if(!readbitsleft)
 		{
@@ -129,11 +129,35 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 			readbitsleft=8;
 		}
 
-		int num=bits;
+		int num=bits-done;
 		if(num>readbitsleft) num=readbitsleft;
-		res=(res<<num)| ((readbyte>>(readbitsleft-num))&((1<<num)-1));
+		res=(res<<num)|((readbyte>>(readbitsleft-num))&((1<<num)-1));
 
-		bits-=num;
+		done+=num;
+		readbitsleft-=num;
+	}
+	return res;
+}
+
+-(uint32_t)readBitsLE:(int)bits
+{
+	int res=0,done=0;
+
+	if([self offsetInFile]!=bitoffs) readbitsleft=0;
+	while(done<bits)
+	{
+		if(!readbitsleft)
+		{
+			readbyte=[self readUInt8];
+			bitoffs=[self offsetInFile];
+			readbitsleft=8;
+		}
+
+		int num=bits-done;
+		if(num>readbitsleft) num=readbitsleft;
+		res=res|(((readbyte>>(8-readbitsleft))&((1<<num)-1))<<done);
+
+		done+=num;
 		readbitsleft-=num;
 	}
 	return res;
@@ -143,6 +167,12 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 {
 	uint32_t res=[self readBits:bits];
 //	return res|((res&(1<<(bits-1)))*0xffffffff);
+	return -(res&(1<<(bits-1)))|res;
+}
+
+-(int32_t)readSignedBitsLE:(int)bits
+{
+	uint32_t res=[self readBitsLE:bits];
 	return -(res&(1<<(bits-1)))|res;
 }
 

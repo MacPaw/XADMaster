@@ -83,7 +83,7 @@ PPMdContext *NewPPMdContextAsChildOf(PPMdCoreModel *model,PPMdContext *suffixcon
 		context->Flags=0;
 		SetPPMdContextSuffixPointer(context,suffixcontext,model);
 		SetPPMdStateSuccessorPointer(suffixstate,context,model);
-		*(PPMdContextOneState(context))=*firststate;
+		if(firststate) *(PPMdContextOneState(context))=*firststate;
 	}
 	return context;
 }

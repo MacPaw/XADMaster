@@ -196,21 +196,3 @@ static void SplitBlock(PPMdSubAllocatorVariantG *self,void *pv,int oldindex,int 
 
     InsertNode(self,p,self->Units2Index[diff-1]);
 }
-
-static uint32_t GetUsedMemory(PPMdSubAllocatorVariantG *self)
-{
-	uint32_t size=self->SubAllocatorSize-(self->HighUnit-self->LowUnit);
-
-	for(int i=0;i<N_INDEXES;i++)
-	{
-		int k=0;
-		struct PPMAllocatorNodeVariantG *node=&self->FreeList[i];
-		while(node=node->next) k++;
-
-		size-=UNIT_SIZE*self->Index2Units[i]*k;
-    }
-
-    if(self->LastBreath) size-=128*128*UNIT_SIZE;
-
-	return size>>2;
-}

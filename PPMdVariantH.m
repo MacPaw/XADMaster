@@ -1,19 +1,21 @@
 #import "PPMdVariantH.h"
 
-static void RestartModel(PPMdVariantHModel *self);
+static void RestartModel(PPMdModelVariantH *self);
 
-static void UpdateModel(PPMdVariantHModel *self);
-static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState *state);
+static void UpdateModel(PPMdModelVariantH *self);
+static PPMdContext *CreateSuccessors(PPMdModelVariantH *self,BOOL skip,PPMdState *state);
 
-static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdVariantHModel *model);
-static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model);
-static void DecodeSymbol2VariantH(PPMdContext *self,PPMdVariantHModel *model);
+static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdModelVariantH *model);
+static void DecodeSymbol1VariantH(PPMdContext *self,PPMdModelVariantH *model);
+static void DecodeSymbol2VariantH(PPMdContext *self,PPMdModelVariantH *model);
 
-void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int maxorder)
+void StartPPMdModelVariantH(PPMdModelVariantH *self,CSInputBuffer *input,
+PPMdSubAllocatorVariantH *alloc,int maxorder)
 {
 	InitializeRangeCoder(&self->core.coder,input);
 
-	self->alloc=(PPMdSubAllocatorVariantH *)self->core.alloc; // A bit ugly but there you go.
+	self->alloc=alloc;
+	self->core.alloc=&alloc->core;
 
 	self->core.RescalePPMdContext=RescalePPMdContext;
 
@@ -41,7 +43,7 @@ void StartPPMdVariantHModel(PPMdVariantHModel *self,CSInputBuffer *input,int max
 	RestartModel(self);
 }
 
-static void RestartModel(PPMdVariantHModel *self)
+static void RestartModel(PPMdModelVariantH *self)
 {
 	InitSubAllocator(self->core.alloc);
 
@@ -80,7 +82,7 @@ static void RestartModel(PPMdVariantHModel *self)
 
 
 
-int NextPPMdVariantHByte(PPMdVariantHModel *self)
+int NextPPMdVariantHByte(PPMdModelVariantH *self)
 {
 	if(self->MinContext->LastStateIndex!=0) DecodeSymbol1VariantH(self->MinContext,self);
 	else DecodeBinSymbolVariantH(self->MinContext,self);
@@ -121,7 +123,7 @@ int NextPPMdVariantHByte(PPMdVariantHModel *self)
 
 
 
-static void UpdateModel(PPMdVariantHModel *self)
+static void UpdateModel(PPMdModelVariantH *self)
 {
 	PPMdState fs=*self->core.FoundState;
 	PPMdState *state=NULL;
@@ -256,7 +258,7 @@ static void UpdateModel(PPMdVariantHModel *self)
 	self->core.EscCount=0;
 }
 
-static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState *state)
+static PPMdContext *CreateSuccessors(PPMdModelVariantH *self,BOOL skip,PPMdState *state)
 {
 	PPMdContext *context=self->MinContext,*upbranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
 	PPMdState *statelist[MAX_O];
@@ -337,7 +339,7 @@ static PPMdContext *CreateSuccessors(PPMdVariantHModel *self,BOOL skip,PPMdState
 
 
 
-static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdVariantHModel *model)
+static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdModelVariantH *model)
 {
 	PPMdState *rs=PPMdContextOneState(self);
 
@@ -350,7 +352,7 @@ static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdVariantHModel *model)
 	PPMdDecodeBinSymbol(self,&model->core,bs,128);
 }
 
-static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model)
+static void DecodeSymbol1VariantH(PPMdContext *self,PPMdModelVariantH *model)
 {
 	int lastsym=PPMdDecodeSymbol1(self,&model->core,NO);
 	if(lastsym>=0)
@@ -359,7 +361,7 @@ static void DecodeSymbol1VariantH(PPMdContext *self,PPMdVariantHModel *model)
 	}
 }
 
-static void DecodeSymbol2VariantH(PPMdContext *self,PPMdVariantHModel *model)
+static void DecodeSymbol2VariantH(PPMdContext *self,PPMdModelVariantH *model)
 {
 	int diff=self->LastStateIndex-model->core.LastMaskIndex;
 	SEE2Context *see;

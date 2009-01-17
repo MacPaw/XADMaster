@@ -7,7 +7,7 @@
 #define MRM_CUT_OFF 1
 #define MRM_FREEZE 2
 
-typedef struct PPMdVariantIModel
+typedef struct PPMdModelVariantI
 {
 	PPMdCoreModel core;
 
@@ -19,7 +19,8 @@ typedef struct PPMdVariantIModel
 	int MaxOrder,MRMethod;
 	SEE2Context SEE2Cont[24][32],DummySEE2Cont;
 	uint16_t BinSumm[25][64]; // binary SEE-contexts
-} PPMdVariantIModel;
+} PPMdModelVariantI;
 
-void StartPPMdVariantIModel(PPMdVariantIModel *self,CSInputBuffer *input,int maxorder,int restoration);
-int NextPPMdVariantIByte(PPMdVariantIModel *self);
+void StartPPMdModelVariantI(PPMdModelVariantI *self,CSInputBuffer *input,
+PPMdSubAllocatorVariantI *alloc,int maxorder,int restoration);
+int NextPPMdVariantIByte(PPMdModelVariantI *self);

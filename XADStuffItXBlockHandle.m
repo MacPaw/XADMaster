@@ -1,6 +1,6 @@
 #import "XADStuffItXBlockHandle.h"
-
-// TODO: figure out actual block structure instead of hardcoding to 65536
+#import "StuffItXUtilities.h"
+#import "SystemSpecific.h"
 
 @implementation XADStuffItXBlockHandle
 
@@ -10,12 +10,14 @@
 	{
 		parent=[handle retain];
 		startoffs=[parent offsetInFile];
+		buffer=NULL;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
+	free(buffer);
 	[parent release];
 	[super dealloc];
 }
@@ -23,17 +25,17 @@
 -(void)resetBlockStream
 {
 	[parent seekToFileOffset:startoffs];
-	[self setBlockPointer:buffer];
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	int something1=[parent readUInt8];
-	int something2=[parent readUInt8];
-	int something3=[parent readUInt8];
-	if(something1!=5) [self endBlockStream];
+	int size=ReadSitxP2(parent);
+	if(!size) return -1;
 
-	return [parent readAtMost:65536 toBuffer:buffer];
+	buffer=reallocf(buffer,size);
+	[self setBlockPointer:buffer];
+
+	return [parent readAtMost:size toBuffer:buffer];
 }
 
 @end

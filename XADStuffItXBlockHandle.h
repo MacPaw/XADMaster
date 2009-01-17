@@ -4,7 +4,7 @@
 {
 	CSHandle *parent;
 	off_t startoffs;
-	uint8_t buffer[65536];
+	uint8_t *buffer;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;

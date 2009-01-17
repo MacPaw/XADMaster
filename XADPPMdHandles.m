@@ -1,7 +1,7 @@
 #import "XADPPMdHandles.h"
-#import "PPMdSubAllocatorVariantG.h"
-#import "PPMdSubAllocatorVariantH.h"
-#import "PPMdSubAllocatorVariantI.h"
+
+
+
 
 @implementation XADPPMdVariantGHandle
 
@@ -14,19 +14,19 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		model.core.alloc=&CreateSubAllocatorVariantG(suballocsize)->core;
-		model.MaxOrder=maxorder;
+		alloc=CreateSubAllocatorVariantG(suballocsize);
+		max=maxorder;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	FreeSubAllocatorVariantG((PPMdSubAllocatorVariantG *)model.core.alloc);
+	FreeSubAllocatorVariantG(alloc);
 	[super dealloc];
 }
 
--(void)resetByteStream { StartPPMdVariantGModel(&model,input,model.MaxOrder); }
+-(void)resetByteStream { StartPPMdModelVariantG(&model,input,&alloc->core,max,NO); }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
@@ -36,6 +36,8 @@
 }
 
 @end
+
+
 
 
 @implementation XADPPMdVariantHHandle
@@ -49,19 +51,19 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		model.core.alloc=&CreateSubAllocatorVariantH(suballocsize)->core;
-		model.MaxOrder=maxorder;
+		alloc=CreateSubAllocatorVariantH(suballocsize);
+		max=maxorder;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	FreeSubAllocatorVariantH((PPMdSubAllocatorVariantH *)model.core.alloc);
+	FreeSubAllocatorVariantH(alloc);
 	[super dealloc];
 }
 
--(void)resetByteStream { StartPPMdVariantHModel(&model,input,model.MaxOrder); }
+-(void)resetByteStream { StartPPMdModelVariantH(&model,input,alloc,max); }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
@@ -86,24 +88,61 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		model.core.alloc=&CreateSubAllocatorVariantI(suballocsize)->core;
-		model.MaxOrder=maxorder;
-		model.MRMethod=mrmethod;
+		alloc=CreateSubAllocatorVariantI(suballocsize);
+		max=maxorder;
+		method=mrmethod;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	FreeSubAllocatorVariantI((PPMdSubAllocatorVariantI *)model.core.alloc);
+	FreeSubAllocatorVariantI(alloc);
 	[super dealloc];
 }
 
--(void)resetByteStream { StartPPMdVariantIModel(&model,input,model.MaxOrder,model.MRMethod); }
+-(void)resetByteStream { StartPPMdModelVariantI(&model,input,alloc,max,method); }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	int byte=NextPPMdVariantIByte(&model);
+	if(byte<0) CSByteStreamEOF(self);
+	return byte;
+}
+
+@end
+
+
+
+
+@implementation XADStuffItXBrimstoneHandle
+
+-(id)initWithHandle:(CSHandle *)handle maxOrder:(int)maxorder subAllocSize:(int)suballocsize
+{
+	return [self initWithHandle:handle length:CSHandleMaxLength maxOrder:maxorder subAllocSize:suballocsize];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length maxOrder:(int)maxorder subAllocSize:(int)suballocsize
+{
+	if(self=[super initWithHandle:handle length:length])
+	{
+		alloc=CreateSubAllocatorBrimstone(suballocsize);
+		max=maxorder;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	FreeSubAllocatorBrimstone(alloc);
+	[super dealloc];
+}
+
+-(void)resetByteStream { StartPPMdModelVariantG(&model,input,&alloc->core,max,YES); }
+
+-(uint8_t)produceByteAtOffset:(off_t)pos
+{
+	int byte=NextPPMdVariantGByte(&model);
 	if(byte<0) CSByteStreamEOF(self);
 	return byte;
 }

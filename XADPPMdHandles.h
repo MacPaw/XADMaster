@@ -2,10 +2,16 @@
 #import "PPMdVariantG.h"
 #import "PPMdVariantH.h"
 #import "PPMdVariantI.h"
+#import "PPMdSubAllocatorVariantG.h"
+#import "PPMdSubAllocatorVariantH.h"
+#import "PPMdSubAllocatorVariantI.h"
+#import "PPMdSubAllocatorBrimstone.h"
 
 @interface XADPPMdVariantGHandle:CSByteStreamHandle
 {
-	PPMdVariantGModel model;
+	PPMdModelVariantG model;
+	PPMdSubAllocatorVariantG *alloc;
+	int max;
 }
 
 -(id)initWithHandle:(CSHandle *)handle maxOrder:(int)maxorder subAllocSize:(int)suballocsize;
@@ -19,7 +25,9 @@
 
 @interface XADPPMdVariantHHandle:CSByteStreamHandle
 {
-	PPMdVariantHModel model;
+	PPMdModelVariantH model;
+	PPMdSubAllocatorVariantH *alloc;
+	int max;
 }
 
 -(id)initWithHandle:(CSHandle *)handle maxOrder:(int)maxorder subAllocSize:(int)suballocsize;
@@ -33,7 +41,25 @@
 
 @interface XADPPMdVariantIHandle:CSByteStreamHandle
 {
-	PPMdVariantIModel model;
+	PPMdModelVariantI model;
+	PPMdSubAllocatorVariantI *alloc;
+	int max,method;
+}
+
+-(id)initWithHandle:(CSHandle *)handle maxOrder:(int)maxorder subAllocSize:(int)suballocsize modelRestorationMethod:(int)mrmethod;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length maxOrder:(int)maxorder subAllocSize:(int)suballocsize modelRestorationMethod:(int)mrmethod;
+-(void)dealloc;
+
+-(void)resetByteStream;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
+
+@end
+
+@interface XADStuffItXBrimstoneHandle:CSByteStreamHandle
+{
+	PPMdModelVariantG model;
+	PPMdSubAllocatorBrimstone *alloc;
+	int max;
 }
 
 -(id)initWithHandle:(CSHandle *)handle maxOrder:(int)maxorder subAllocSize:(int)suballocsize modelRestorationMethod:(int)mrmethod;

@@ -3,8 +3,166 @@
 #import "XADPPMdHandles.h"
 #import "XADStuffItXCyanideHandle.h"
 //#import "XADStuffItXDarkhorseHandle.h"
+#import "XADDeflateHandle.h"
+#import "CSZlibHandle.h"
 #import "XADCRCHandle.h"
+#import "NSDateXAD.h"
 #import "StuffItXUtilities.h"
+
+typedef struct StuffItXElement
+{
+	int something,type;
+	int64_t attribs[9];
+	int64_t alglist[4];
+	off_t dataoffset;
+	uint32_t datacrc;
+} StuffItXElement;
+
+static void ReadElement(CSHandle *fh,StuffItXElement *element);
+static void ScanElementData(CSHandle *fh,StuffItXElement *element);
+static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wantchecksum);
+static void DumpElement(StuffItXElement *element);
+
+static void ReadElement(CSHandle *fh,StuffItXElement *element)
+{
+	for(int i=0;i<9;i++) element->attribs[i]=-1;
+	for(int i=0;i<4;i++) element->alglist[i]=-1;
+
+	element->something=[fh readBitsLE:1];
+	element->type=ReadSitxP2(fh);
+
+	for(;;)
+	{
+		int type=ReadSitxP2(fh);
+		if(type==0) break;
+		uint64_t value=ReadSitxP2(fh);
+		if(type<=9) element->attribs[type-1]=value;
+		else NSLog(@"attrib type too big: %d",type);
+	}
+
+	for(;;)
+	{
+		int type=ReadSitxP2(fh);
+		if(type==0) break;
+		uint64_t value=ReadSitxP2(fh);
+		if(type<=4) element->alglist[type-1]=value;
+		else NSLog(@"alglist type too big: %d",type);
+		if(type==4) NSLog(@"4 extra: %qu",ReadSitxP2(fh));
+	}
+
+	element->dataoffset=[fh offsetInFile];
+}
+
+
+
+static void ScanElementData(CSHandle *fh,StuffItXElement *element)
+{
+	[fh seekToFileOffset:element->dataoffset];
+	[fh flushReadBits];
+
+	for(;;)
+	{
+		uint64_t len=ReadSitxP2(fh);
+		if(!len) break;
+		[fh skipBytes:len];
+	}
+
+	[fh flushReadBits];
+	uint64_t len=ReadSitxP2(fh);
+
+	if(len==0) return;
+	else if(len==4)
+	{
+		element->datacrc=[fh readUInt32BE];
+		len=ReadSitxP2(fh);
+	}
+
+	while(len)
+	{
+		[fh skipBytes:len];
+		len=ReadSitxP2(fh);
+	}
+}
+
+
+
+static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wantchecksum)
+{
+	[fh seekToFileOffset:element->dataoffset];
+	[fh flushReadBits];
+
+	CSHandle *handle=[[[XADStuffItXBlockHandle alloc] initWithHandle:fh] autorelease];
+
+	switch(element->alglist[0])
+	{
+		case -1: break; // no compression
+
+		case 0: // Brimstone/PPMd
+		{
+			int allocsize=1<<[handle readUInt8];
+			int order=[handle readUInt8];
+			handle=[[[XADStuffItXBrimstoneHandle alloc] initWithHandle:handle
+			length:element->attribs[4] maxOrder:order subAllocSize:allocsize] autorelease];
+		}
+		break;
+
+		case 1: // Cyanide
+			handle=[[[XADStuffItXCyanideHandle alloc] initWithHandle:handle
+			length:element->attribs[4]] autorelease];
+		break;
+
+		case 3: // Deflate?
+		{
+			int windowsize=[handle readUInt8];
+			if(windowsize!=15) return nil; // alternate sizes are not supported, as no files have been found that use them
+			handle=[[[XADDeflateHandle alloc] initWithHandle:handle
+			length:element->attribs[4] deflate64:NO sitx15:YES] autorelease];
+		}
+		break;
+
+		default:
+			return nil;
+	}
+
+	if(wantchecksum&&element->alglist[1]==0)
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle
+	length:element->attribs[4] correctCRC:element->datacrc conditioned:YES];
+
+	return handle;
+}
+
+
+
+static void DumpElement(StuffItXElement *element)
+{
+	NSString *name;
+	switch(element->type)
+	{
+		case 0: name=@"end"; break;
+		case 1: name=@"data"; break;
+		case 2: name=@"file"; break;
+		case 3: name=@"fork"; break;
+		case 4: name=@"directory"; break;
+		case 5: name=@"catalog"; break;
+		case 6: name=@"clue"; break;
+		case 7: name=@"root"; break;
+		case 8: name=@"boundary"; break;
+		case 9: name=@"?"; break;
+		case 10: name=@"receipt"; break;
+		case 11: name=@"index"; break;
+		case 12: name=@"locator"; break;
+		case 13: name=@"id"; break;
+		case 14: name=@"link"; break;
+		case 15: name=@"segment_index"; break;
+	}
+
+	NSLog(@"(%d) %d: %@",element->something,element->type,name);
+
+	for(int i=0;i<9;i++) if(element->attribs[i]>=0) NSLog(@"       attrib %d: %qu",i,element->attribs[i]);
+	for(int i=0;i<4;i++) if(element->alglist[i]>=0) NSLog(@"       alglist %d: %qu",i,element->alglist[i]);
+}
+
+
 
 @implementation XADStuffItXParser
 
@@ -21,126 +179,203 @@
 	&&bytes[5]=='I'&&bytes[6]=='t'&&(bytes[7]=='!'||bytes[7]=='?');
 }
 
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+{
+	if(self=[super initWithHandle:handle name:name])
+	{
+		currstream=nil;
+		currstreamhandle=nil;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[currstream release];
+	[currstreamhandle release];
+	[super dealloc];
+}
+
 -(void)parse
 {
 	CSHandle *fh=[self handle];
 
 	[fh skipBytes:10];
 
+	NSMutableArray *entries=[NSMutableArray array];
+	NSMutableDictionary *entrydict=[NSMutableDictionary dictionary];
+	NSMutableDictionary *streams=[NSMutableDictionary dictionary];
+	NSMutableSet *forkedset=[NSMutableSet set];
+
 	for(;;)
 	{
-		int something=[fh readBitsLE:1];
-		int element=ReadSitxP2(fh);
-		NSLog(@"start element: %d %d",something,element);
-		uint64_t head[9];
+		StuffItXElement element;
+		ReadElement(fh,&element);
+		//DumpElement(&element);
 
-		for(;;)
-		{
-			int type=ReadSitxP2(fh);
-			if(type==0) break;
-			uint64_t value=ReadSitxP2(fh);
-			if(type<9) head[type]=value;
-
-			NSLog(@"attrib: %d %qu",type,value);
-		}
-
-		for(;;)
-		{
-			int type=ReadSitxP2(fh);
-			if(type==0) break;
-			if(type==4)
-			{
-				uint64_t value1=ReadSitxP2(fh);
-				uint64_t value2=ReadSitxP2(fh);
-				NSLog(@"alglist: %d %qu %qu",type,value1,value2);
-			}
-			else
-			{
-				uint64_t value=ReadSitxP2(fh);
-				NSLog(@"alglist: %d %qu",type,value);
-			}
-		}
-
-		switch(element)
+		switch(element.type)
 		{
 			case 0: // end
-				NSLog(@"end");
-				goto out;
+				return;
 			break;
 
 			case 1: // data
 			{
-				NSLog(@"data");
+				ScanElementData(fh,&element);
+				off_t pos=[fh offsetInFile];
 
-				[fh flushReadBits];
-				XADStuffItXBlockHandle *bh=[[[XADStuffItXBlockHandle alloc] initWithHandle:fh] autorelease];
-				int allocsize=1<<[bh readUInt8];
-				int order=[bh readUInt8];
-				NSLog(@"%d %d",order,allocsize);
-				XADStuffItXBrimstoneHandle *ph=[[[XADStuffItXBrimstoneHandle alloc] initWithHandle:bh
-				maxOrder:order subAllocSize:allocsize] autorelease];
-				NSData *data=[ph remainingFileContents];
-				NSLog(@"%d %@",[data length],[data subdataWithRange:NSMakeRange(0,1383)]);
-/*				for(;;)
+				// Send out all the entries without data streams first
+				if(forkedset)
 				{
-					uint64_t len=ReadSitxP2(fh);
-					if(!len) break;
-					[fh skipBytes:len];
-				}*/
-				[fh flushReadBits];
-				for(;;)
-				{
-					uint64_t len=ReadSitxP2(fh);
-					if(!len) break;
-					[fh skipBytes:len];
+					NSEnumerator *enumerator=[entries objectEnumerator];
+					NSMutableDictionary *entry;
+					while(entry=[enumerator nextObject])
+					{
+						if(![forkedset containsObject:[entry objectForKey:@"StuffItXID"]])
+						{
+							[entry setObject:[NSNumber numberWithLongLong:0] forKey:XADFileSizeKey];
+							[entry setObject:[NSNumber numberWithLongLong:0] forKey:XADCompressedSizeKey];
+							[self addEntryWithDictionary:entry];
+						}
+					}
+					forkedset=nil;
 				}
+
+				off_t compsize=pos-element.dataoffset;
+				off_t uncompsize=element.attribs[4];
+
+				NSMutableDictionary *stream=[streams objectForKey:[NSNumber numberWithLongLong:element.attribs[0]]];
+				[stream setObject:[NSValue valueWithBytes:&element objCType:@encode(StuffItXElement)] forKey:@"Element"];
+				[stream setObject:[NSNumber numberWithLongLong:compsize] forKey:@"CompressedSize"];
+				[stream setObject:[NSNumber numberWithLongLong:uncompsize] forKey:@"UncompressedSize"];
+
+				NSMutableArray *forks=[stream objectForKey:@"Forks"];
+				[stream removeObjectForKey:@"Forks"];
+
+				NSMutableDictionary *first=nil,*prev=nil;
+
+				NSEnumerator *enumerator=[forks objectEnumerator];
+				NSMutableDictionary *fork;
+				while(fork=[enumerator nextObject])
+				{
+					NSMutableDictionary *entry=[entrydict objectForKey:[fork objectForKey:@"Entry"]];
+					NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
+
+					[dict setObject:stream forKey:@"StuffItXStream"];
+					[dict setObject:[fork objectForKey:@"Offset"] forKey:@"StuffItXStreamOffset"];
+
+					NSNumber *length=[fork objectForKey:@"Length"];
+					[dict setObject:length forKey:XADFileSizeKey];
+					[dict setObject:[NSNumber numberWithLongLong:[length longLongValue]*compsize/uncompsize] forKey:XADCompressedSizeKey];
+
+					if([[fork objectForKey:@"Type"] intValue]==1)
+					[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
+
+					NSString *compname=nil;
+					switch(element.alglist[0])
+					{
+						case 0: compname=@"Brimstone/PPMd"; break;
+						case 1: compname=@"Cyanide"; break;
+						case 2: compname=@"Darkhorse"; break;
+						case 3: compname=@"Deflate"; break;
+						//case 4: compname=@"Darkhorse?"; break;
+						//case 5: compname=@""; break;
+						case 6: compname=@"Iron"; break;
+						//case 7: compname=@""; break;
+						default: compname=[NSString stringWithFormat:@"Method %d",element.alglist[0]]; break;
+					}
+					[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
+
+					if(first) [dict setObject:[NSValue valueWithNonretainedObject:first] forKey:XADFirstSolidEntryKey];
+					[prev setObject:[NSValue valueWithNonretainedObject:dict] forKey:XADNextSolidEntryKey];
+
+					[self addEntryWithDictionary:dict];
+
+					if(!first) first=dict;
+					prev=dict;
+				}
+
+				[fh seekToFileOffset:pos];
 			}
 			break;
 
 			case 2: // file
-				NSLog(@"file");
+			{
+				NSNumber *num=[NSNumber numberWithLongLong:element.attribs[0]];
+				NSDictionary *file=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+					num,@"StuffItXID",
+					[NSNumber numberWithLongLong:element.attribs[1]],@"StuffItXParent",
+				nil];
+				[entries addObject:file];
+				[entrydict setObject:file forKey:num];
+			}
 			break;
 
 			case 3: // fork
 			{
-				uint64_t something=ReadSitxP2(fh);
-				NSLog(@"fork: %qu",something);
+				uint64_t type=ReadSitxP2(fh);
+
+				NSNumber *entrynum=[NSNumber numberWithLongLong:element.attribs[1]];
+				NSNumber *streamnum=[NSNumber numberWithLongLong:element.attribs[2]];
+
+				[forkedset addObject:entrynum];
+
+				NSMutableArray *forks;
+				off_t offs;
+				NSMutableDictionary *stream=[streams objectForKey:streamnum];
+				if(stream)
+				{
+					forks=[stream objectForKey:@"Forks"];
+					NSMutableDictionary *last=[forks lastObject];
+					offs=[[last objectForKey:@"Offset"] longLongValue]+[[last objectForKey:@"Length"] longLongValue];
+				}
+				else
+				{
+					forks=[NSMutableArray array];
+					offs=0;
+					stream=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+						forks,@"Forks",
+					nil];
+					[streams setObject:stream forKey:streamnum];
+				}
+
+				[forks addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+					entrynum,@"Entry",
+					[NSNumber numberWithInt:type],@"Type",
+					[NSNumber numberWithLongLong:offs],@"Offset",
+					[NSNumber numberWithLongLong:element.attribs[4]],@"Length",
+				nil]];
 			}
 			break;
 
 			case 4: // directory
-				NSLog(@"directory");
+			{
+				NSNumber *num=[NSNumber numberWithLongLong:element.attribs[0]];
+				NSDictionary *dir=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+					num,@"StuffItXID",
+					[NSNumber numberWithLongLong:element.attribs[1]],@"StuffItXParent",
+					[NSNumber numberWithBool:YES],XADIsDirectoryKey,
+				nil];
+				[entries addObject:dir];
+				[entrydict setObject:dir forKey:num];
+			}
 			break;
 
 			case 5: // catalog
 			{
-				NSLog(@"catalog");
-				[fh flushReadBits];
-/*				XADStuffItXBlockHandle *bh=[[[XADStuffItXBlockHandle alloc] initWithHandle:fh] autorelease];
-				int allocsize=1<<[bh readUInt8];
-				int order=[bh readUInt8];
-				NSLog(@"%d %d",order,allocsize);
-				XADStuffItXBrimstoneHandle *ph=[[[XADStuffItXBrimstoneHandle alloc] initWithHandle:bh
-				maxOrder:order subAllocSize:allocsize] autorelease];
-				NSLog(@"%@",[ph remainingFileContents]);*/
-				for(;;)
-				{
-					uint64_t len=ReadSitxP2(fh);
-					if(!len) break;
-					[fh skipBytes:len];
-				}
-				[fh flushReadBits];
-				for(;;)
-				{
-					uint64_t len=ReadSitxP2(fh);
-					if(!len) break;
-					[fh skipBytes:len];
-				}
+				ScanElementData(fh,&element);
+				off_t pos=[fh offsetInFile];
+
+				CSHandle *ch=HandleForElement(fh,&element,NO);
+				if(!ch) [XADException raiseNotSupportedException];
+				[self parseCatalogWithHandle:ch entryArray:entries entryDictionary:entrydict];
+
+				[fh seekToFileOffset:pos];
 			}
 			break;
 
 			case 6: // clue
-				[fh skipBytes:head[5]];
+				[fh skipBytes:element.attribs[4]];
 			break;
 
 			case 7: // root
@@ -151,18 +386,16 @@
 			break;
 
 			case 8: // boundary
-				NSLog(@"boundary");
 			break;
 
 			case 9: // ?
-				NSLog(@"?");
 			break;
 
 			// case 10: // receipt
 			// break;
 
-			// case 11: // index
-			// break;
+			//case 11: // index
+			//break;
 
 			// case 12: // locator
 			// break;
@@ -177,60 +410,148 @@
 			// break;
 
 			default:
-				if(element>10)
-				{
-					[fh flushReadBits];
-					for(;;)
-					{
-						uint64_t len=ReadSitxP2(fh);
-						if(!len) break;
-						[fh skipBytes:len];
-					}
-					[fh flushReadBits];
-					for(;;)
-					{
-						uint64_t len=ReadSitxP2(fh);
-						if(!len) break;
-						[fh skipBytes:len];
-					}
-				}
-				else 
-				{
-					NSLog(@"unknown element");
-					goto out;
-				}
+				if(element.type>10) ScanElementData(fh,&element);
+				else [XADException raiseNotSupportedException];
 			break;
 		}
 
 		[fh flushReadBits];
-		NSLog(@"%qu",[fh offsetInFile]);
 	}
-	out:0;
+}
 
-	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADStringWithString:@"Test"],XADFileNameKey,
-		[self XADStringWithString:@"Cyanide"],XADCompressionNameKey,
-		[NSNumber numberWithUnsignedInt:0xc0288c62],@"StuffItXCRC32",
-	nil];
+-(void)parseCatalogWithHandle:(CSHandle *)fh entryArray:(NSArray *)entries entryDictionary:(NSDictionary *)dict
+{
+	NSEnumerator *enumerator=[entries objectEnumerator];
+	NSMutableDictionary *entry;
+	while(entry=[enumerator nextObject])
+	{
+		for(;;)
+		{
+			int key=ReadSitxP2(fh);
+			if(!key) break;
 
-	[self addEntryWithDictionary:dict];
+			switch(key)
+			{
+				case 1: // filename
+				{
+					NSData *filename=ReadSitxString(fh);
+
+					NSData *fullname;
+					NSDictionary *parent=[dict objectForKey:[entry objectForKey:@"StuffItXParent"]];
+					if(parent)
+					{
+						NSMutableData *data=[NSMutableData dataWithData:[parent objectForKey:@"StuffItXNameData"]];
+						[data appendBytes:"/" length:1];
+						[data appendData:filename];
+						fullname=data;
+					}
+					else fullname=filename;
+
+					[entry setObject:[self XADStringWithData:fullname] forKey:XADFileNameKey];
+					if([entry objectForKey:XADIsDirectoryKey]) [entry setObject:fullname forKey:@"StuffItXNameData"];
+				}
+				break;
+
+				case 2: // modification time
+					[entry setObject:[NSDate XADDateWithTimeIntervalSince1601:(double)ReadSitxUInt64(fh)/10000000]
+					forKey:XADLastModificationDateKey];
+				break;
+
+				case 3:
+					NSLog(@"3: %x",ReadSitxUInt32(fh));
+				break;
+
+				case 4: // finder info?
+				case 5: // ?
+					[entry setObject:ReadSitxData(fh,32) forKey:XADFinderInfoKey];
+				break;
+
+				case 6:
+				{
+					int hasowner=[fh readBitsLE:8];
+					[entry setObject:[NSNumber numberWithUnsignedInt:ReadSitxUInt32(fh)] forKey:XADPosixPermissionsKey];
+					if(hasowner)
+					{
+						[entry setObject:[NSNumber numberWithUnsignedInt:ReadSitxUInt32(fh)] forKey:XADPosixUserKey];
+						[entry setObject:[NSNumber numberWithUnsignedInt:ReadSitxUInt32(fh)] forKey:XADPosixGroupKey];
+					}
+				}
+				break;
+
+				case 7:
+				{
+					int val=ReadSitxP2(fh);
+					NSLog(@"7: %d",val);
+				}
+				break;
+
+				case 8: // creation time
+					[entry setObject:[NSDate XADDateWithTimeIntervalSince1601:(double)ReadSitxUInt64(fh)/10000000]
+					forKey:XADCreationDateKey];
+				break;
+
+				case 9:
+				{
+					NSData *data=ReadSitxString(fh);
+					if(data&&[data length])
+					[entry setObject:[self XADStringWithData:data] forKey:XADCommentKey];
+				}
+				break;
+
+				case 10:
+				{
+					int num=ReadSitxP2(fh);
+					for(int i=0;i<num;i++)
+					NSLog(@"10: %@",[self XADStringWithData:ReadSitxString(fh)]);
+				}
+				break;
+
+				case 11:
+					NSLog(@"11: %@",[self XADStringWithData:ReadSitxString(fh)]);
+				break;
+
+				case 12:
+					NSLog(@"12: %@",[self XADStringWithData:ReadSitxString(fh)]);
+				break;
+
+				default:
+					NSLog(@"unknown tag");
+					[XADException raiseNotSupportedException];
+				break;
+			}
+		}
+		[fh flushReadBits];
+	}
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	CSHandle *handle=[self handle];
-	[handle seekToFileOffset:133];
+	NSMutableDictionary *stream=[dict objectForKey:@"StuffItXStream"];
 
-	handle=[[[XADStuffItXBlockHandle alloc] initWithHandle:handle] autorelease];
+	if(stream!=currstream)
+	{
+		NSValue *value=[stream objectForKey:@"Element"];
+		if(!value) return nil;
 
-	handle=[[[XADStuffItXCyanideHandle alloc] initWithHandle:handle] autorelease];
+		StuffItXElement element;
+		[value getValue:&element];
 
-	if(checksum) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:387633
-	correctCRC:[[dict objectForKey:@"StuffItXCRC32"] unsignedIntValue] conditioned:YES];
+		[currstream release];
+		currstream=[stream retain];
+		[currstreamhandle release];
+		currstreamhandle=[HandleForElement([self handle],&element,YES) retain];
+	}
 
-	return handle;
+	if(!currstreamhandle) return nil;
+
+	off_t start=[[dict objectForKey:@"StuffItXStreamOffset"] longLongValue];
+	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
+	return [currstreamhandle nonCopiedSubHandleFrom:start length:size];
 }
 
 -(NSString *)formatName { return @"StuffIt X"; }
 
 @end
+
+
+

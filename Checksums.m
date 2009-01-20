@@ -9,6 +9,21 @@
 
 @end
 
+@implementation CSSubHandle (Checksums)
+
+-(BOOL)hasChecksum
+{
+	off_t length;
+	@try { length=[parent fileSize]; }
+	@catch(id e) { return NO; }
+
+	return end==length&&[parent hasChecksum];
+}
+
+-(BOOL)isChecksumCorrect { return [parent isChecksumCorrect]; }
+
+@end
+
 
 uint16_t XADCRC16Reverse(uint16_t prevcrc,uint8_t byte,const uint16_t *table)
 {

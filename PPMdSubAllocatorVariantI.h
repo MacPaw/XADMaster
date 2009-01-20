@@ -3,7 +3,7 @@
 typedef struct PPMdMemoryBlockVariantI
 {
 	uint32_t Stamp;
-	struct PPMdMemoryBlockVariantI *next; // 64-bit issues!
+	uint32_t next;
 	uint32_t NU;
 } __attribute__((packed)) PPMdMemoryBlockVariantI;
 

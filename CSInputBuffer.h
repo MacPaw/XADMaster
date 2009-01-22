@@ -59,6 +59,12 @@ static inline int CSInputNextByte(CSInputBuffer *buf)
 	return byte;
 }
 
+static inline BOOL CSInputAtEOF(CSInputBuffer *buf)
+{
+	_CSInputCheckAndFillBuffer(buf);
+	return buf->currbyte>=buf->bufbytes;
+}
+
 #define CSInputNextValueImpl(type,name,conv) \
 static inline type name(CSInputBuffer *buf) \
 { \

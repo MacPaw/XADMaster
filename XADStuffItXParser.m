@@ -3,6 +3,7 @@
 #import "XADPPMdHandles.h"
 #import "XADStuffItXCyanideHandle.h"
 //#import "XADStuffItXDarkhorseHandle.h"
+#import "XADStuffItXEnglishHandle.h"
 #import "XADDeflateHandle.h"
 #import "CSZlibHandle.h"
 #import "XADCRCHandle.h"
@@ -93,6 +94,10 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 
 	CSHandle *handle=[[[XADStuffItXBlockHandle alloc] initWithHandle:fh] autorelease];
 
+	off_t length;
+	if(element->alglist[2]==0) length=CSHandleMaxLength;
+	else length=element->attribs[4];
+
 	switch(element->alglist[0])
 	{
 		case -1: break; // no compression
@@ -102,13 +107,12 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			int allocsize=1<<[handle readUInt8];
 			int order=[handle readUInt8];
 			handle=[[[XADStuffItXBrimstoneHandle alloc] initWithHandle:handle
-			length:element->attribs[4] maxOrder:order subAllocSize:allocsize] autorelease];
+			length:length maxOrder:order subAllocSize:allocsize] autorelease];
 		}
 		break;
 
 		case 1: // Cyanide
-			handle=[[[XADStuffItXCyanideHandle alloc] initWithHandle:handle
-			length:element->attribs[4]] autorelease];
+			handle=[[[XADStuffItXCyanideHandle alloc] initWithHandle:handle length:length] autorelease];
 		break;
 
 		case 3: // Deflate?
@@ -116,13 +120,16 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			int windowsize=[handle readUInt8];
 			if(windowsize!=15) return nil; // alternate sizes are not supported, as no files have been found that use them
 			handle=[[[XADDeflateHandle alloc] initWithHandle:handle
-			length:element->attribs[4] deflate64:NO sitx15:YES] autorelease];
+			length:length deflate64:NO sitx15:YES] autorelease];
 		}
 		break;
 
 		default:
 			return nil;
 	}
+
+	if(element->alglist[2]==0)
+	handle=[[[XADStuffItXEnglishHandle alloc] initWithHandle:handle length:element->attribs[4]] autorelease];
 
 	if(wantchecksum&&element->alglist[1]==0)
 	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle

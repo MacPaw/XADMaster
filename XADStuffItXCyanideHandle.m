@@ -30,8 +30,6 @@
 	int something=CSInputNextByte(input);
 }
 
-void cyanide_decompressor_m1ff2(uint8_t *block,unsigned long blocksize);
-
 -(int)produceBlockAtOffset:(off_t)pos
 {
 	int marker=CSInputNextByte(input);

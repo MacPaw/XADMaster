@@ -5,6 +5,7 @@
 //#import "XADStuffItXDarkhorseHandle.h"
 #import "XADStuffItXEnglishHandle.h"
 #import "XADDeflateHandle.h"
+#import "XADRC4Handle.h"
 #import "CSZlibHandle.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
@@ -121,6 +122,14 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			if(windowsize!=15) return nil; // alternate sizes are not supported, as no files have been found that use them
 			handle=[[[XADDeflateHandle alloc] initWithHandle:handle
 			length:length deflate64:NO sitx15:YES] autorelease];
+		}
+		break;
+
+		case 5: // No compression, obscured by RC4
+		{
+			[handle skipBytes:2];
+			NSData *key=[handle readDataOfLength:1];
+			handle=[[[XADRC4Handle alloc] initWithHandle:handle key:key] autorelease];
 		}
 		break;
 
@@ -286,7 +295,7 @@ static void DumpElement(StuffItXElement *element)
 						case 2: compname=@"Darkhorse"; break;
 						case 3: compname=@"Deflate"; break;
 						//case 4: compname=@"Darkhorse?"; break;
-						//case 5: compname=@""; break;
+						case 5: compname=@"None"; break;
 						case 6: compname=@"Iron"; break;
 						//case 7: compname=@""; break;
 						default: compname=[NSString stringWithFormat:@"Method %d",element.alglist[0]]; break;

@@ -110,7 +110,7 @@ void DecodeM1FFNBlock(uint8_t *block,int blocklen,int order)
 {
 	MTFState mtf;
 	ResetMTFDecoder(&mtf);
-	int lasthead=order;
+	int lasthead=order-1;
 
 	for(int i=0;i<blocklen;i++)
 	{

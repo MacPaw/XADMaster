@@ -44,7 +44,7 @@
 	[self readBlockHeader];
 }
 
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length
+-(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos
 {
 	if(storedblock)
 	{
@@ -52,7 +52,7 @@
 		{
 			if(lastblock) return XADLZSSEnd;
 			[self readBlockHeader];
-			return [self nextLiteralOrOffset:offset andLength:length];
+			return [self nextLiteralOrOffset:offset andLength:length atPosition:pos];
 		}
 		storedcount--;
 		return CSInputNextByte(input);
@@ -66,7 +66,7 @@
 		{
 			if(lastblock) return XADLZSSEnd;
 			[self readBlockHeader];
-			return [self nextLiteralOrOffset:offset andLength:length];
+			return [self nextLiteralOrOffset:offset andLength:length atPosition:pos];
 		}
 		else if(literal<265) *length=literal-254;
 		else if(literal<285)

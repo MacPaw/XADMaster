@@ -55,7 +55,7 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 	return [[XADPrefixCode alloc] initWithLengths:codelengths numberOfSymbols:size maximumLength:16 shortestCodeIsZeros:NO];
 }
 
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length
+-(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos
 {
 	if(CSInputNextBitLE(input))
 	{

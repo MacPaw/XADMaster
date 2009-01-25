@@ -6,8 +6,8 @@
 {
 	if(self=[super initWithHandle:handle])
 	{
-		nextliteral_ptr=(int (*)(id,SEL,int *,int *))
-		[self methodForSelector:@selector(nextLiteralOrOffset:andLength:)];
+		nextliteral_ptr=(int (*)(id,SEL,int *,int *,off_t))
+		[self methodForSelector:@selector(nextLiteralOrOffset:andLength:atPosition:)];
 
 		windowbuffer=malloc(windowsize);
 		windowmask=windowsize-1; // Assumes windows are always power-of-two sized!
@@ -19,8 +19,8 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		nextliteral_ptr=(int (*)(id,SEL,int *,int *))
-		[self methodForSelector:@selector(nextLiteralOrOffset:andLength:)];
+		nextliteral_ptr=(int (*)(id,SEL,int *,int *,off_t))
+		[self methodForSelector:@selector(nextLiteralOrOffset:andLength:atPosition:)];
 
 		windowbuffer=malloc(windowsize);
 		windowmask=windowsize-1; // Assumes windows are always power-of-two sized!
@@ -48,7 +48,7 @@
 	if(!matchlength)
 	{
 		int offset,length;
-		int val=nextliteral_ptr(self,@selector(nextLiteralOrOffset:andLength:),&offset,&length);
+		int val=nextliteral_ptr(self,@selector(nextLiteralOrOffset:andLength:atPosition:),&offset,&length,pos);
 
 		if(val>=0) return windowbuffer[pos&windowmask]=val;
 		else if(val==XADLZSSEnd) CSByteStreamEOF(self);
@@ -66,6 +66,6 @@
 
 -(void)resetLZSSHandle {}
 
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length { return XADLZSSEnd; }
+-(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos { return XADLZSSEnd; }
 
 @end

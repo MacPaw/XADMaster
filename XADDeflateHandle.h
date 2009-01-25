@@ -21,7 +21,7 @@
 -(void)setMetaTableOrder:(const int *)order;
 
 -(void)resetLZSSHandle;
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length;
+-(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos;
 
 -(void)readBlockHeader;
 -(XADPrefixCode *)allocAndParseMetaCodeOfSize:(int)size;

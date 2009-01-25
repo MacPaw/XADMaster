@@ -92,7 +92,7 @@ static const int MetaCodeLengths[37];
 	return [[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:numcodes maximumLength:32 shortestCodeIsZeros:YES];
 }
 
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length
+-(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos
 {
 	int val=CSInputNextSymbolUsingCodeLE(input,currcode);
 

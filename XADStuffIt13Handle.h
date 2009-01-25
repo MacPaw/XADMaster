@@ -12,6 +12,6 @@
 
 -(void)resetLZSSHandle;
 -(XADPrefixCode *)allocAndParseCodeOfSize:(int)numcodes metaCode:(XADPrefixCode *)metacode;
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length;
+-(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos;
 
 @end

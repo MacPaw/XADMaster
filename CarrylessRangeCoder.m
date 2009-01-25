@@ -38,7 +38,42 @@ int NextSymbolFromRangeCoder(CarrylessRangeCoder *self,uint32_t *freqtable,int n
 	return n;
 }
 
-int NextSymbolFromRangeCoderCumulative(CarrylessRangeCoder *self,uint32_t *cumulativetable,int stride)
+int NextBitFromRangeCoderWithoutLow(CarrylessRangeCoder *self)
+{
+	self->range>>=1;
+
+	int bit=self->code/self->range;
+	if(bit!=0) self->code-=self->range;
+
+	//NormalizeRangeCoder(self);
+	NormalizeRangeCoder(self);
+
+	return bit;
+}
+
+int NextWeightedBitFromRangeCoderWithoutLow(CarrylessRangeCoder *self,int weight,int shift)
+{
+	uint32_t threshold=(self->range>>shift)*weight;
+
+	int bit;
+	if(self->code<threshold) // <= ?
+	{
+		bit=0;
+		self->range=threshold;
+	}
+	else
+	{
+		bit=1;
+		self->range-=threshold;
+		self->code-=threshold;
+	}
+
+	NormalizeRangeCoder(self);
+
+	return bit;
+}
+
+/*int NextSymbolFromRangeCoderCumulative(CarrylessRangeCoder *self,uint32_t *cumulativetable,int stride)
 {
 	uint32_t totalfreq=*cumulativetable;
 	cumulativetable=(uint32_t *)((uint8_t *)cumulativetable+stride);
@@ -63,7 +98,7 @@ int NextSymbolFromRangeCoderCumulative(CarrylessRangeCoder *self,uint32_t *cumul
 	NormalizeRangeCoder(self);
 
 	return n-1;
-}
+}*/
 
 void NormalizeRangeCoder(CarrylessRangeCoder *self)
 {
@@ -71,12 +106,9 @@ void NormalizeRangeCoder(CarrylessRangeCoder *self)
 	{
 		if( (self->low^(self->low+self->range))>=0x1000000 )
 		{
-//NSLog(@"a");
 			if(self->range>=0x10000) break;
 			else self->range=-self->low&0xffff;
-//NSLog(@"b");
 		}
-//NSLog(@"loop %x %x %x",self->low,self->code,self->range);
 
 		self->code=(self->code<<8) | CSInputNextByte(self->input);
 		self->range<<=8;

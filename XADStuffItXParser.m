@@ -2,7 +2,7 @@
 #import "XADStuffItXBlockHandle.h"
 #import "XADPPMdHandles.h"
 #import "XADStuffItXCyanideHandle.h"
-//#import "XADStuffItXDarkhorseHandle.h"
+#import "XADStuffItXDarkhorseHandle.h"
 #import "XADStuffItXEnglishHandle.h"
 #import "XADDeflateHandle.h"
 #import "XADRC4Handle.h"
@@ -116,7 +116,16 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			handle=[[[XADStuffItXCyanideHandle alloc] initWithHandle:handle length:length] autorelease];
 		break;
 
-		case 3: // Deflate?
+		case 2: // Darkhorse
+		{
+			int windowsize=[handle readUInt8];
+			[handle skipBytes:1]; // Bug in Darkhorse, apparently?
+			handle=[[[XADStuffItXDarkhorseHandle alloc] initWithHandle:handle
+			length:length windowSize:1<<windowsize] autorelease];
+		}
+		break;
+
+		case 3: // Modified Deflate
 		{
 			int windowsize=[handle readUInt8];
 			if(windowsize!=15) return nil; // alternate sizes are not supported, as no files have been found that use them

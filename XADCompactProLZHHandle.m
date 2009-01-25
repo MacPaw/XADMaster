@@ -27,7 +27,7 @@
 	blockstart=0;
 }
 
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length
+-(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos
 {
 	@try
 	{

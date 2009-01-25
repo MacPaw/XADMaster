@@ -46,6 +46,8 @@
 		1B3E2BC80F280760003EEF98 /* sitx_english.dat in Resources */ = {isa = PBXBuildFile; fileRef = 1B3E2BC70F280760003EEF98 /* sitx_english.dat */; };
 		1B3E2BF30F28D715003EEF98 /* XADRC4Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E2BF10F28D715003EEF98 /* XADRC4Handle.h */; };
 		1B3E2BF40F28D715003EEF98 /* XADRC4Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2BF20F28D715003EEF98 /* XADRC4Handle.m */; };
+		1B3E2C3A0F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E2C380F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h */; };
+		1B3E2C3B0F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */; };
 		1B3FAB000EC3859F006D2F06 /* CSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAB010EC3859F006D2F06 /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */; };
 		1B3FAB020EC3859F006D2F06 /* CSSubHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */; settings = {ATTRIBUTES = (); }; };
@@ -371,6 +373,8 @@
 		1B3E2BC70F280760003EEF98 /* sitx_english.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = sitx_english.dat; sourceTree = "<group>"; };
 		1B3E2BF10F28D715003EEF98 /* XADRC4Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRC4Handle.h; sourceTree = "<group>"; };
 		1B3E2BF20F28D715003EEF98 /* XADRC4Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRC4Handle.m; sourceTree = "<group>"; };
+		1B3E2C380F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXDarkhorseHandle.h; sourceTree = "<group>"; };
+		1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXDarkhorseHandle.m; sourceTree = "<group>"; };
 		1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSHandle.h; sourceTree = "<group>"; };
 		1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHandle.m; sourceTree = "<group>"; };
 		1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSubHandle.h; sourceTree = "<group>"; };
@@ -1118,6 +1122,8 @@
 				1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */,
 				1BC9A7060F007A910094C7B5 /* XADStuffItXCyanideHandle.h */,
 				1BC9A7070F007A910094C7B5 /* XADStuffItXCyanideHandle.m */,
+				1B3E2C380F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h */,
+				1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */,
 				1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */,
 				1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */,
 				1B2A4A160F1D7E58009B5B89 /* StuffItXUtilities.h */,
@@ -1251,6 +1257,7 @@
 				1B2A4B030F20F994009B5B89 /* PPMdSubAllocatorBrimstone.h in Headers */,
 				1B3E2B550F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h in Headers */,
 				1B3E2BF30F28D715003EEF98 /* XADRC4Handle.h in Headers */,
+				1B3E2C3A0F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1509,6 +1516,7 @@
 				1B2A4B040F20F994009B5B89 /* PPMdSubAllocatorBrimstone.m in Sources */,
 				1B3E2B560F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m in Sources */,
 				1B3E2BF40F28D715003EEF98 /* XADRC4Handle.m in Sources */,
+				1B3E2C3B0F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

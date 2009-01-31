@@ -46,17 +46,14 @@ void CalculateInverseBWT(int *transform,uint8_t *block,int blocklen)
 	free(tmp);
 }*/
 
-void UnsortBWTStuffItX(uint8_t *block,int blocklen,int firstindex)
+void UnsortBWTStuffItX(uint8_t *dest,int blocklen,int firstindex,uint8_t *src,uint32_t *transform)
 {
-	int *transform=malloc(blocklen*sizeof(int));
-	uint8_t *tmp=malloc(blocklen);
-
 	int counts[256]={0};
 
 	for(int i=0;i<blocklen;i++)
 	{
-		transform[i]=counts[block[i]];
-		counts[block[i]]++;
+		transform[i]=counts[src[i]];
+		counts[src[i]]++;
 	}
 
 	int total=0;
@@ -70,15 +67,9 @@ void UnsortBWTStuffItX(uint8_t *block,int blocklen,int firstindex)
 	int index=firstindex;
 	for(int i=blocklen-1;i>=0;i--)
 	{
-		tmp[i]=block[index];
-		index=transform[index]+counts[block[index]];
+		dest[i]=src[index];
+		index=transform[index]+counts[src[index]];
 	}
-	
-
-	memcpy(block,tmp,blocklen);
-
-	free(transform);
-	free(tmp);
 }
 
 

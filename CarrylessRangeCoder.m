@@ -9,15 +9,6 @@ void InitializeRangeCoder(CarrylessRangeCoder *self,CSInputBuffer *input)
 	for(int i=0;i<4;i++) self->code=(self->code<<8)|CSInputNextByte(input);
 }
 
-void InitializeRangeCoderWithTopAndBottom(CarrylessRangeCoder *self,CSInputBuffer *input,uint32_t top,uint32_t bottom)
-{
-	self->input=input;
-	self->low=0;
-	self->code=0;
-	self->range=0xffffffff;
-	for(int i=0;i<4;i++) self->code=(self->code<<8)|CSInputNextByte(input);
-}
-
 int NextSymbolFromRangeCoder(CarrylessRangeCoder *self,uint32_t *freqtable,int numfreq)
 {
 	uint32_t totalfreq=0;
@@ -38,6 +29,29 @@ int NextSymbolFromRangeCoder(CarrylessRangeCoder *self,uint32_t *freqtable,int n
 	return n;
 }
 
+
+
+
+int NextSymbolFromRangeCoderWithoutLow(CarrylessRangeCoder *self,uint32_t *freqtable,int numfreq)
+{
+	uint32_t totalfreq=0;
+	for(int i=0;i<numfreq;i++) totalfreq+=freqtable[i];
+
+	self->range/=totalfreq;
+	uint32_t tmp=self->code/self->range;
+
+	uint32_t cumulativefreq=0;
+	uint32_t n=0;
+	while(n<numfreq-1&&cumulativefreq+freqtable[n]<=tmp) cumulativefreq+=freqtable[n++];
+
+	self->code-=self->range*cumulativefreq;
+	self->range*=freqtable[n];
+
+	NormalizeRangeCoder(self);
+
+	return n;
+}
+
 int NextBitFromRangeCoderWithoutLow(CarrylessRangeCoder *self)
 {
 	self->range>>=1;
@@ -45,7 +59,6 @@ int NextBitFromRangeCoderWithoutLow(CarrylessRangeCoder *self)
 	int bit=self->code/self->range;
 	if(bit!=0) self->code-=self->range;
 
-	//NormalizeRangeCoder(self);
 	NormalizeRangeCoder(self);
 
 	return bit;
@@ -73,32 +86,29 @@ int NextWeightedBitFromRangeCoderWithoutLow(CarrylessRangeCoder *self,int weight
 	return bit;
 }
 
-/*int NextSymbolFromRangeCoderCumulative(CarrylessRangeCoder *self,uint32_t *cumulativetable,int stride)
+int NextWeightedBitFromRangeCoderWithoutLow2(CarrylessRangeCoder *self,int weight,int size)
 {
-	uint32_t totalfreq=*cumulativetable;
-	cumulativetable=(uint32_t *)((uint8_t *)cumulativetable+stride);
+	self->range/=size;
+	uint32_t val=self->code/self->range;
 
-	self->range/=totalfreq;
-	uint32_t tmp=(self->code-self->low)/self->range;
-
-	uint32_t n=0,curr;
-	do
+	int bit;
+	if(val<weight) // <= ?
 	{
-		curr=*cumulativetable;
-		cumulativetable=(uint32_t *)((uint8_t *)cumulativetable+stride);
-		n++;
-	} while(tmp<curr);
-
-	cumulativetable=(uint32_t *)((uint8_t *)cumulativetable-2*stride);
-	uint32_t prev=*cumulativetable;
-
-	self->low+=self->range*curr;
-	self->range*=prev-curr;
+		bit=0;
+		self->range*=weight;
+	}
+	else
+	{
+		bit=1;
+		self->code-=self->range*weight;
+		self->range*=(size-weight);
+	}
 
 	NormalizeRangeCoder(self);
 
-	return n-1;
-}*/
+	return bit;
+}
+
 
 void NormalizeRangeCoder(CarrylessRangeCoder *self)
 {
@@ -150,3 +160,32 @@ void RemoveRangeCoderSubRange(CarrylessRangeCoder *self,uint32_t lowcount,uint32
     self->low+=self->range*lowcount;
     self->range*=highcount-lowcount;
 }
+
+
+
+/*int NextSymbolFromRangeCoderCumulative(CarrylessRangeCoder *self,uint32_t *cumulativetable,int stride)
+{
+	uint32_t totalfreq=*cumulativetable;
+	cumulativetable=(uint32_t *)((uint8_t *)cumulativetable+stride);
+
+	self->range/=totalfreq;
+	uint32_t tmp=(self->code-self->low)/self->range;
+
+	uint32_t n=0,curr;
+	do
+	{
+		curr=*cumulativetable;
+		cumulativetable=(uint32_t *)((uint8_t *)cumulativetable+stride);
+		n++;
+	} while(tmp<curr);
+
+	cumulativetable=(uint32_t *)((uint8_t *)cumulativetable-2*stride);
+	uint32_t prev=*cumulativetable;
+
+	self->low+=self->range*curr;
+	self->range*=prev-curr;
+
+	NormalizeRangeCoder(self);
+
+	return n-1;
+}*/

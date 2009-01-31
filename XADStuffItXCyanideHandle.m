@@ -6,8 +6,6 @@
 
 
 
-#import "Checksums.h"
-
 @implementation XADStuffItXCyanideHandle
 
 -(id)initWithHandle:(CSHandle *)handle
@@ -27,7 +25,7 @@
 
 -(void)resetBlockStream
 {
-	int something=CSInputNextByte(input);
+	/*int something=*/CSInputNextByte(input);
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
@@ -40,12 +38,14 @@
 	uint32_t firstindex=CSInputNextUInt32BE(input);
 	int numsymbols=CSInputNextByte(input);
 
-	block=reallocf(block,blocksize);
+	block=reallocf(block,blocksize*6);
+	sorted=block+blocksize;
+	table=(uint32_t *)(block+2*blocksize);
+
 	[self readTernaryCodedBlock:blocksize numberOfSymbols:numsymbols];
 
-	DecodeM1FFNBlock(block,blocksize,2);
-	// TODO: clean up memory usage
-	UnsortBWTStuffItX(block,blocksize,firstindex);
+	DecodeM1FFNBlock(sorted,blocksize,2);
+	UnsortBWTStuffItX(block,blocksize,firstindex,sorted,table);
 
 	[self setBlockPointer:block];
 	return blocksize;
@@ -160,7 +160,6 @@ static int DecodeSymbolForModel(RangeCoderModel *model,int index)
 
 	int prev=0,prev2=0,prev3=0;
 	int someflag=1;
-	uint8_t *blockptr=block;
 
 	for(int i=0;i<blocksize;i++)
 	{
@@ -180,7 +179,7 @@ static int DecodeSymbolForModel(RangeCoderModel *model,int index)
 			markovfreqs[markovindex][2]>>=1;
 			markovfreqs[markovindex][0]+=3;
 
-			*blockptr++=0;
+			sorted[i]=0;
 		}
 		else
 		{
@@ -200,7 +199,7 @@ static int DecodeSymbolForModel(RangeCoderModel *model,int index)
 			}
 			markovfreqs[markovindex][tresym]+=2;
 
-			if(tresym<=1) *blockptr++=tresym;
+			if(tresym<=1) sorted[i]=tresym;
 			else
 			{
 				int highbitindex=NextIndexFromRangeCoderWithModel(&coder,&highbitmodel);
@@ -208,7 +207,7 @@ static int DecodeSymbolForModel(RangeCoderModel *model,int index)
 				int newindex=BumpFrequencyInModel(highbitindex,&highbitmodel,0x100);
 				BumpFrequencyInModel(newindex,&highbitmodel,0x10000);
 
-				if(highbit==0) *blockptr++=2;
+				if(highbit==0) sorted[i]=2;
 				else
 				{
 					RangeCoderModel *lowbitsmodel=&lowbitsmodels[highbit-1];
@@ -220,7 +219,7 @@ static int DecodeSymbolForModel(RangeCoderModel *model,int index)
 					if(max>0x4000) max=0x4000;
 					BumpFrequencyInModel(lowbitsindex,lowbitsmodel,max);
 
-					*blockptr++=(1<<highbit)+lowbits+1;
+					sorted[i]=(1<<highbit)+lowbits+1;
 				}
 			}
 		}

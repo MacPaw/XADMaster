@@ -26,7 +26,7 @@ void CSInputBufferFree(CSInputBuffer *buf)
 
 void CSInputRestart(CSInputBuffer *buf)
 {
-	CSInputSeekToOffset(buf,buf->startoffs);
+	CSInputSeekToFileOffset(buf,buf->startoffs);
 }
 
 void CSInputFlush(CSInputBuffer *buf)
@@ -35,11 +35,16 @@ void CSInputFlush(CSInputBuffer *buf)
 	buf->currbit=0;
 }
 
-void CSInputSeekToOffset(CSInputBuffer *buf,off_t offset)
+void CSInputSeekToFileOffset(CSInputBuffer *buf,off_t offset)
 {
 	[buf->parent seekToFileOffset:offset];
 	buf->eof=NO;
 	CSInputFlush(buf);
+}
+
+void CSInputSeekToBufferOffset(CSInputBuffer *buf,off_t offset)
+{
+	CSInputSeekToFileOffset(buf,offset+buf->startoffs);
 }
 
 void CSInputSetStartOffset(CSInputBuffer *buf,off_t offset)

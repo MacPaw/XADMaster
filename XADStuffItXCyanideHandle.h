@@ -2,7 +2,8 @@
 
 @interface XADStuffItXCyanideHandle:CSBlockStreamHandle
 {
-	uint8_t *block;
+	uint8_t *block,*sorted;
+	uint32_t *table;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;

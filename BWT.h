@@ -4,9 +4,8 @@
 #include <stdint.h>
 
 void CalculateInverseBWT(int *transform,uint8_t *block,int blocklen);
-void UnsortBWT(uint8_t *block,int blocklen,int firstindex);
 
-void UnsortBWTStuffItX(uint8_t *block,int blocklen,int firstindex);
+void UnsortBWTStuffItX(uint8_t *dest,int blocklen,int firstindex,uint8_t *src,uint32_t *transform);
 
 typedef struct MTFState
 {

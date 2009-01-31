@@ -16,7 +16,8 @@ void CSInputBufferFree(CSInputBuffer *buf);
 
 void CSInputRestart(CSInputBuffer *buf);
 void CSInputFlush(CSInputBuffer *buf);
-void CSInputSeekToOffset(CSInputBuffer *buf,off_t offset);
+void CSInputSeekToFileOffset(CSInputBuffer *buf,off_t offset);
+void CSInputSeekToBufferOffset(CSInputBuffer *buf,off_t offset);
 void CSInputSetStartOffset(CSInputBuffer *buf,off_t offset);
 
 off_t CSInputBufferOffset(CSInputBuffer *buf);

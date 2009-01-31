@@ -3,6 +3,7 @@
 #import "XADPPMdHandles.h"
 #import "XADStuffItXCyanideHandle.h"
 #import "XADStuffItXDarkhorseHandle.h"
+#import "XADStuffItXIronHandle.h"
 #import "XADStuffItXEnglishHandle.h"
 #import "XADDeflateHandle.h"
 #import "XADRC4Handle.h"
@@ -140,6 +141,10 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			NSData *key=[handle readDataOfLength:1];
 			handle=[[[XADRC4Handle alloc] initWithHandle:handle key:key] autorelease];
 		}
+		break;
+
+		case 6: // Iron
+			handle=[[[XADStuffItXIronHandle alloc] initWithHandle:handle length:length] autorelease];
 		break;
 
 		default:
@@ -307,7 +312,7 @@ static void DumpElement(StuffItXElement *element)
 						case 5: compname=@"None"; break;
 						case 6: compname=@"Iron"; break;
 						//case 7: compname=@""; break;
-						default: compname=[NSString stringWithFormat:@"Method %d",element.alglist[0]]; break;
+						default: compname=[NSString stringWithFormat:@"Method %d",(int)element.alglist[0]]; break;
 					}
 					[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
 

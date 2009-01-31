@@ -7,9 +7,14 @@ typedef struct CarrylessRangeCoder
 } CarrylessRangeCoder;
 
 void InitializeRangeCoder(CarrylessRangeCoder *self,CSInputBuffer *input);
+
 int NextSymbolFromRangeCoder(CarrylessRangeCoder *self,uint32_t *freqtable,int numfreq);
+
+int NextSymbolFromRangeCoderWithoutLow(CarrylessRangeCoder *self,uint32_t *freqtable,int numfreq);
 int NextBitFromRangeCoderWithoutLow(CarrylessRangeCoder *self);
-int NextWeightedBitFromRangeCoderWithoutLow(CarrylessRangeCoder *self,int something,int shift);
+int NextWeightedBitFromRangeCoderWithoutLow(CarrylessRangeCoder *self,int weight,int shift);
+int NextWeightedBitFromRangeCoderWithoutLow2(CarrylessRangeCoder *self,int weight,int size);
+
 void NormalizeRangeCoder(CarrylessRangeCoder *self);
 void NormalizeRangeCoderWithBottom(CarrylessRangeCoder *self,uint32_t bottom);
 

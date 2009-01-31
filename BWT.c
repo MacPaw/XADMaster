@@ -5,7 +5,7 @@
 
 // Inverse BWT
 
-void CalculateInverseBWT(int *transform,uint8_t *block,int blocklen)
+void CalculateInverseBWT(uint32_t *transform,uint8_t *block,int blocklen)
 {
 	int counts[256]={0},cumulativecounts[256];
 	
@@ -26,27 +26,111 @@ void CalculateInverseBWT(int *transform,uint8_t *block,int blocklen)
 	}
 }
 
-/*void UnsortBWT(uint8_t *block,int blocklen,int firstindex)
+void UnsortBWT(uint8_t *dest,uint8_t *src,int blocklen,int firstindex,uint32_t *transform)
 {
-	int *transform=malloc(blocklen*sizeof(int));
-	uint8_t *tmp=malloc(blocklen);
-
-	CalculateInverseBWT(transform,block,blocklen);
+	CalculateInverseBWT(transform,src,blocklen);
 
 	int transformindex=firstindex;
 	for(int i=0;i<blocklen;i++)
 	{
 		transformindex=transform[transformindex];
-		tmp[i]=block[transformindex];
+		dest[i]=src[transformindex];
+	}
+}
+
+void UnsortST4(uint8_t *dest,uint8_t *src,int blocklen,int firstindex,uint32_t *transform)
+{
+	int counts[256];
+	int array2[256*256];
+
+	for(int i=0;i<256;i++) counts[i]=0;
+	for(int i=0;i<256*256;i++) array2[i]=0;
+
+	for(int i=0;i<blocklen;i++) counts[src[i]]++;
+
+	int total=0;
+	for(int i=0;i<256;i++)
+	{
+		int count=counts[i];
+		counts[i]=total;
+
+		for(int j=0;j<count;j++) array2[(src[total+j]<<8)|i]++;
+
+		total+=count;
 	}
 
-	memcpy(block,tmp,blocklen);
+	uint8_t *bitvec=dest;
+	memset(bitvec,0,(blocklen+7)/8);
 
-	free(transform);
-	free(tmp);
-}*/
+	int array3[256];
+	for(int i=0;i<256;i++) array3[i]=-1;
 
-void UnsortBWTStuffItX(uint8_t *dest,int blocklen,int firstindex,uint8_t *src,uint32_t *transform)
+	uint32_t counts2[256];
+	memcpy(counts2,counts,sizeof(counts));
+
+	total=0;
+	for(int i=0;i<0x10000;i++)
+	{
+		int count=array2[i];
+
+		for(int j=0;j<count;j++)
+		{
+			int byte=src[total+j];
+			if(array3[byte]!=total)
+			{
+				array3[byte]=total;
+				int x=counts[byte];
+				bitvec[x>>3]|=1<<(x&7);
+			}
+			counts[byte]++;
+		}
+
+		total+=count;
+	}
+
+	for(int i=0;i<256;i++) array3[i]=0;
+
+	int index=0;
+	for(int i=0;i<blocklen;i++)
+	{
+		if(bitvec[i/8]&(1<<(i&7))) index=i;
+
+		int byte=src[i];
+		if(index<array3[byte])
+		{
+			transform[i]=(array3[byte]-1)|0x800000;
+		}
+		else
+		{
+			transform[i]=counts2[byte];
+			array3[byte]=i+1;
+		}
+		counts2[byte]++;
+		transform[i]|=byte<<24;
+	}
+
+	index=firstindex;
+	uint32_t tval=transform[firstindex];
+
+	for(int i=0;i<blocklen;i++)
+	{
+		if(tval&0x800000)
+		{
+			index=transform[tval&0x7fffff]&0x7fffff;
+			transform[tval&0x7fffff]++;
+		}
+		else
+		{
+			transform[index]++;
+			index=tval&0x7fffff;
+		}
+
+		tval=transform[index];
+		dest[i]=tval>>24;
+	}
+}
+
+/*void UnsortBWTStuffItX(uint8_t *dest,int blocklen,int firstindex,uint8_t *src,uint32_t *transform)
 {
 	int counts[256]={0};
 
@@ -70,7 +154,7 @@ void UnsortBWTStuffItX(uint8_t *dest,int blocklen,int firstindex,uint8_t *src,ui
 		dest[i]=src[index];
 		index=transform[index]+counts[src[index]];
 	}
-}
+}*/
 
 
 

@@ -45,7 +45,7 @@
 	[self readTernaryCodedBlock:blocksize numberOfSymbols:numsymbols];
 
 	DecodeM1FFNBlock(sorted,blocksize,2);
-	UnsortBWTStuffItX(block,blocksize,firstindex,sorted,table);
+	UnsortBWT(block,sorted,blocksize,firstindex,table);
 
 	[self setBlockPointer:block];
 	return blocksize;

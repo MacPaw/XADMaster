@@ -36,7 +36,7 @@ typedef struct ArithmeticDecoder
 	BOOL endofblocks;
 
 	int numbytes,bytecount,transformindex;
-	int *transform;
+	uint32_t *transform;
 
 	int randomized,randcount,randindex;
 

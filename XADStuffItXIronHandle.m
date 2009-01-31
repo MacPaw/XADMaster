@@ -73,19 +73,12 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 
 	if(CSInputNextBitLE(input)==1) return -1;
 
-	// TODO: maybe avoid copying memory?
 	int blocksize=CSInputNextSitxP2(input);
-	if(st4transform)
-	{
-		block=reallocf(block,blocksize*2);
-		sorted=block+blocksize;
-	}
-	else
-	{
-		block=reallocf(block,blocksize*6);
-		sorted=block+blocksize;
-		table=(uint32_t *)(block+2*blocksize);
-	}
+
+	// TODO: maybe avoid copying memory?
+	block=reallocf(block,blocksize*6);
+	sorted=block+blocksize;
+	table=(uint32_t *)(block+2*blocksize);
 
 	if(CSInputNextBitLE(input)==0) // compressed
 	{
@@ -97,18 +90,16 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 
 		if(st4transform)
 		{
-[XADException raiseUnknownException];
-			//UnsortST4StuffItX(block,blocksize,firstindex,sorted);
+			UnsortST4(block,sorted,blocksize,firstindex,table);
 		}
 		else
 		{
-			UnsortBWTStuffItX(block,blocksize,firstindex,sorted,table);
+			UnsortBWT(block,sorted,blocksize,firstindex,table);
 		}
 	}
 	else // uncompressed
 	{
-[XADException raiseUnknownException];
-CSInputSkipToByteBoundary(input);
+		CSInputSkipToByteBoundary(input); // necessary?
 		for(int i=0;i<blocksize;i++) block[i]=CSInputNextByte(input);
 	}
 

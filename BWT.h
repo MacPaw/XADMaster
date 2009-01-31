@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 
-void CalculateInverseBWT(int *transform,uint8_t *block,int blocklen);
+void CalculateInverseBWT(uint32_t *transform,uint8_t *block,int blocklen);
+void UnsortBWT(uint8_t *dest,uint8_t *src,int blocklen,int firstindex,uint32_t *transformbuf);
 
-void UnsortBWTStuffItX(uint8_t *dest,int blocklen,int firstindex,uint8_t *src,uint32_t *transform);
+void UnsortST4(uint8_t *dest,uint8_t *src,int blocklen,int firstindex,uint32_t *transformbuf);
 
 typedef struct MTFState
 {

@@ -118,7 +118,6 @@ int NextPPMdVariantIByte(PPMdModelVariantI *self)
 
 	while(!self->core.FoundState)
 	{
-		NormalizeRangeCoder(&self->core.coder);
 		do
 		{
 			self->core.OrderFall++;
@@ -143,8 +142,6 @@ int NextPPMdVariantIByte(PPMdModelVariantI *self)
 		//PrefetchData(MaxContext)
 		if(self->core.EscCount==0) ClearPPMdModelMask(&self->core);
 	}
-
-	NormalizeRangeCoder(&self->core.coder);
 
 	return byte;
 }

@@ -10,7 +10,6 @@ typedef struct CarrylessRangeCoder
 void InitializeRangeCoder(CarrylessRangeCoder *self,CSInputBuffer *input,BOOL uselow,int bottom);
 
 uint32_t RangeCoderCurrentCount(CarrylessRangeCoder *self,uint32_t scale);
-uint32_t RangeCoderCurrentCountWithShift(CarrylessRangeCoder *self,int shift);
 void RemoveRangeCoderSubRange(CarrylessRangeCoder *self,uint32_t lowcount,uint32_t highcount);
 
 int NextSymbolFromRangeCoder(CarrylessRangeCoder *self,uint32_t *freqtable,int numfreq);

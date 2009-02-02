@@ -675,8 +675,13 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
+	NSNumber *isempty=[dict objectForKey:@"7zIsEmptyFile"];
+	if(isempty&&[isempty boolValue]) return [XADCRCHandle IEEECRC32HandleWithHandle:
+	[[self handle] nonCopiedSubHandleOfLength:0] length:0 correctCRC:0 conditioned:NO];
+
 	NSNumber *index=[dict objectForKey:@"7zSubStreamIndex"];
 	if(!index) return nil;
+
 	return [self handleForStreams:mainstreams substreamIndex:[index intValue] wantChecksum:checksum];
 }
 

@@ -96,7 +96,6 @@ int NextPPMdVariantHByte(PPMdModelVariantH *self)
 
 	while(!self->core.FoundState)
 	{
-		NormalizeRangeCoder(&self->core.coder);
 		do
 		{
 			self->core.OrderFall++;
@@ -119,8 +118,6 @@ int NextPPMdVariantHByte(PPMdModelVariantH *self)
 		UpdateModel(self);
 		if(self->core.EscCount==0) ClearPPMdModelMask(&self->core);
 	}
-
-	NormalizeRangeCoder(&self->core.coder);
 
 	return byte;
 }

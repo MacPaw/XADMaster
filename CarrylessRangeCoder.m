@@ -20,18 +20,14 @@ uint32_t RangeCoderCurrentCount(CarrylessRangeCoder *self,uint32_t scale)
 	return (self->code-self->low)/self->range;
 }
 
-uint32_t RangeCoderCurrentCountWithShift(CarrylessRangeCoder *self,int shift)
-{
-	self->range>>=shift;
-	return (self->code-self->low)/self->range;
-}
-
 void RemoveRangeCoderSubRange(CarrylessRangeCoder *self,uint32_t lowcount,uint32_t highcount)
 {
 	if(self->uselow) self->low+=self->range*lowcount;
 	else self->code-=self->range*lowcount;
 
 	self->range*=highcount-lowcount;
+
+	NormalizeRangeCoder(self);
 }
 
 
@@ -47,7 +43,6 @@ int NextSymbolFromRangeCoder(CarrylessRangeCoder *self,uint32_t *freqtable,int n
 	while(n<numfreq-1&&cumulativefreq+freqtable[n]<=tmp) cumulativefreq+=freqtable[n++];
 
 	RemoveRangeCoderSubRange(self,cumulativefreq,cumulativefreq+freqtable[n]);
-	NormalizeRangeCoder(self);
 
 	return n;
 }
@@ -58,8 +53,6 @@ int NextBitFromRangeCoder(CarrylessRangeCoder *self)
 
 	if(bit==0) RemoveRangeCoderSubRange(self,0,1);
 	else RemoveRangeCoderSubRange(self,1,2);
-
-	NormalizeRangeCoder(self);
 
 	return bit;
 }
@@ -79,8 +72,6 @@ int NextWeightedBitFromRangeCoder(CarrylessRangeCoder *self,int weight,int size)
 		bit=1;
 		RemoveRangeCoderSubRange(self,weight,size);
 	}
-
-	NormalizeRangeCoder(self);
 
 	return bit;
 }

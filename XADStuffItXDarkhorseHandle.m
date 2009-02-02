@@ -3,7 +3,7 @@
 
 static int NextBitWithWeight(CarrylessRangeCoder *coder,uint32_t *weight)
 {
-	int bit=NextWeightedBitFromRangeCoderWithoutLow(coder,*weight,12);
+	int bit=NextWeightedBitFromRangeCoder2(coder,*weight,12);
 	if(bit==0) *weight+=(0x1000-*weight)>>5;
 	else *weight-=*weight>>5;
 	return bit;
@@ -49,7 +49,8 @@ static int NextBitWithWeight(CarrylessRangeCoder *coder,uint32_t *weight)
 
 	for(int i=0;i<4;i++) distancetable[i]=0;
 
-	InitializeRangeCoder(&coder,input);
+	CSInputSkipBytes(input,1);
+	InitializeRangeCoder(&coder,input,NO,0);
 }
 
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos
@@ -171,7 +172,7 @@ static int NextBitWithWeight(CarrylessRangeCoder *coder,uint32_t *weight)
 	{
 		int numbits=bitlengthtable[sym];
 		int val=0;
-		for(int i=numbits-1;i>=4;i--) val|=NextBitFromRangeCoderWithoutLow(&coder)<<i;
+		for(int i=numbits-1;i>=4;i--) val|=NextBitFromRangeCoder(&coder)<<i;
 		return val+offsettable[sym]+[self readSymbolWithWeights:distlowbitweights numberOfBits:4];
 	}
 }

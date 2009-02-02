@@ -201,7 +201,7 @@
 		case 5: compressionname=@"LZAH"; break;
 		case 6: compressionname=@"Fixed Huffman"; break;
 		case 8: compressionname=@"MW"; break;
-		case 13: compressionname=@"LZH"; break;
+		case 13: compressionname=@"LZ+Huffman"; break;
 		case 14: compressionname=@"Installer"; break;
 		case 15: compressionname=@"Arsenic"; break;
 	}

@@ -136,7 +136,7 @@ static int DecodeSymbolForModel(RangeCoderModel *model,int index)
 	static int markovgroups[27]={0,1,2,3,4,5,6,7,8,3,9,10,3,4,5,11,11,8,6,2,5,6,7,8,12,12,13};
 
 	CarrylessRangeCoder coder;
-	InitializeRangeCoder(&coder,input);
+	InitializeRangeCoder(&coder,input,YES,0x10000);
 
 	uint32_t markovfreqs[14][3]={0};
 

@@ -120,7 +120,6 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 		case 2: // Darkhorse
 		{
 			int windowsize=[handle readUInt8];
-			[handle skipBytes:1]; // Bug in Darkhorse, apparently?
 			handle=[[[XADStuffItXDarkhorseHandle alloc] initWithHandle:handle
 			length:length windowSize:1<<windowsize] autorelease];
 		}

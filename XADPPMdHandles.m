@@ -63,7 +63,7 @@
 	[super dealloc];
 }
 
--(void)resetByteStream { StartPPMdModelVariantH(&model,input,alloc,max); }
+-(void)resetByteStream { StartPPMdModelVariantH(&model,input,alloc,max,NO); }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
@@ -146,5 +146,13 @@
 	if(byte<0) CSByteStreamEOF(self);
 	return byte;
 }
+
+@end
+
+
+
+@implementation XAD7ZipPPMdHandle
+
+-(void)resetByteStream { StartPPMdModelVariantH(&model,input,alloc,max,YES); }
 
 @end

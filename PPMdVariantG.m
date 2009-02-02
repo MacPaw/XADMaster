@@ -14,7 +14,8 @@ static int NumberOfStates(PPMdContext *self) { return self->Flags?0:self->LastSt
 void StartPPMdModelVariantG(PPMdModelVariantG *self,CSInputBuffer *input,
 PPMdSubAllocator *alloc,int maxorder,BOOL brimstone)
 {
-	InitializeRangeCoder(&self->core.coder,input);
+	if(brimstone) InitializeRangeCoder(&self->core.coder,input,YES,0x10000);
+	else InitializeRangeCoder(&self->core.coder,input,YES,0x8000);
 
 	self->core.alloc=alloc;
 
@@ -101,12 +102,10 @@ int NextPPMdVariantGByte(PPMdModelVariantG *self)
 	if(NumberOfStates(self->MinContext)!=1) DecodeSymbol1VariantG(self->MinContext,self);
 	else DecodeBinSymbolVariantG(self->MinContext,self);
 
-	RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
-
 	while(!self->core.FoundState)
 	{
-		if(self->Brimstone) NormalizeRangeCoderWithBottom(&self->core.coder,1<<16);
-		else NormalizeRangeCoderWithBottom(&self->core.coder,1<<15);
+		NormalizeRangeCoder(&self->core.coder);
+
 		do
 		{
 			self->core.OrderFall++;
@@ -116,7 +115,6 @@ int NextPPMdVariantGByte(PPMdModelVariantG *self)
 		while(self->MinContext->LastStateIndex==self->core.LastMaskIndex);
 
 		DecodeSymbol2VariantG(self->MinContext,self);
-		RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
 	}
 
 	uint8_t byte=self->core.FoundState->Symbol;
@@ -131,8 +129,7 @@ int NextPPMdVariantGByte(PPMdModelVariantG *self)
 		if(self->core.EscCount==0) ClearPPMdModelMask(&self->core);
 	}
 
-	if(self->Brimstone) NormalizeRangeCoderWithBottom(&self->core.coder,1<<16);
-	else NormalizeRangeCoderWithBottom(&self->core.coder,1<<15);
+	NormalizeRangeCoder(&self->core.coder);
 	return byte;
 }
 
@@ -368,7 +365,7 @@ static void DecodeBinSymbolVariantG(PPMdContext *self,PPMdModelVariantG *model)
 	PPMdState *rs=PPMdContextOneState(self);
 	uint16_t *bs=&model->BinSumm[rs->Freq-1][model->core.PrevSuccess+model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->LastStateIndex]];
 
-	PPMdDecodeBinSymbol(self,&model->core,bs,128);
+	PPMdDecodeBinSymbol(self,&model->core,bs,128,NO);
 }
 
 static void DecodeSymbol1VariantG(PPMdContext *self,PPMdModelVariantG *model)
@@ -386,11 +383,11 @@ static void DecodeSymbol2VariantG(PPMdContext *self,PPMdModelVariantG *model)
 			+(diff<PPMdContextSuffix(self,&model->core)->LastStateIndex-self->LastStateIndex?1:0)
 			+(self->SummFreq<11*NumberOfStates(self)?2:0)
 			+(model->core.LastMaskIndex+1>diff?4:0)];
-		model->core.SubRange.scale=GetSEE2MeanMasked(see);
+		model->core.scale=GetSEE2MeanMasked(see);
 	}
 	else
 	{
-		model->core.SubRange.scale=1;
+		model->core.scale=1;
 		see=&model->DummySEE2Cont;
 	}
 

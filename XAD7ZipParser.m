@@ -3,6 +3,7 @@
 #import "XAD7ZipBranchHandles.h"
 #import "XAD7ZipBCJ2Handle.h"
 #import "XADDeflateHandle.h"
+#import "XADPPMdHandles.h"
 #import "XADZipShrinkHandle.h"
 #import "XADRARHandle.h"
 #import "XADCompressHandle.h"
@@ -170,21 +171,29 @@ static void FindAttribute(CSHandle *handle,int attribute)
 
 		if([file objectForKey:@"7zIsEmptyStream"])
 		{
-			if([file objectForKey:@"7zIsEmptyFile"]) 
-			[file setObject:[NSNumber numberWithInt:0] forKey:XADFileSizeKey];
+			if([file objectForKey:@"7zIsEmptyFile"])
+			{
+				[file setObject:[NSNumber numberWithInt:0] forKey:XADFileSizeKey];
+				[file setObject:[NSNumber numberWithInt:0] forKey:XADCompressedSizeKey];
+			}
 			else
-			[file setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+			{
+				[file setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+			}
 		}
 		else
 		{
 			NSDictionary *substream=[substreams objectAtIndex:currsubstream];
+			NSNumber *sizeobj=[substream objectForKey:@"Size"];
 			int folderindex=[[substream objectForKey:@"FolderIndex"] intValue];
-			
+			NSDictionary *folder=[[mainstreams objectForKey:@"Folders"] objectAtIndex:folderindex];
+			off_t compsize=(double)[self compressedSizeForFolder:folder]*[sizeobj doubleValue]
+			/(double)[self unCompressedSizeForFolder:folder];
+
+			[file setObject:sizeobj forKey:XADFileSizeKey];
+			[file setObject:[NSNumber numberWithLongLong:compsize] forKey:XADCompressedSizeKey];
+			[file setObject:[self XADStringWithString:[self compressorNameForFolder:folder]] forKey:XADCompressionNameKey];
 			[file setObject:[NSNumber numberWithInt:currsubstream] forKey:@"7zSubStreamIndex"];
-			[file setObject:[substream objectForKey:@"Size"] forKey:XADFileSizeKey];
-			[file setObject:[self XADStringWithString:[self compressorNameForFolder:
-			[[mainstreams objectForKey:@"Folders"] objectAtIndex:folderindex]]]
-			forKey:XADCompressionNameKey];
 
 			currsubstream++;
 		}
@@ -728,14 +737,21 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 			return [[[XAD7ZipBCJ2Handle alloc] initWithHandle:inhandle callHandle:inhandle1
 			jumpHandle:inhandle2 rangeHandle:inhandle3 length:size] autorelease];
 		}
-		case 0x03030205: return [[[XAD7ZipPPCHandle alloc] initWithHandle:inhandle length:size] autorelease];;
-		//case 0x03030301: return [[[XAD7ZipAlphaHandle alloc] initWithHandle:inhandle length:size] autorelease];;
-		case 0x03030401: return [[[XAD7ZipIA64Handle alloc] initWithHandle:inhandle length:size] autorelease];;
-		case 0x03030501: return [[[XAD7ZipARMHandle alloc] initWithHandle:inhandle length:size] autorelease];;
-		//case 0x03030605: return [[[XAD7ZipM68kHandle alloc] initWithHandle:inhandle length:size] autorelease];;
-		case 0x03030701: return [[[XAD7ZipThumbHandle alloc] initWithHandle:inhandle length:size] autorelease];;
-		case 0x03030805: return [[[XAD7ZipSPARCHandle alloc] initWithHandle:inhandle length:size] autorelease];;
-		//case 0x03040100: return @"PPMD";
+		case 0x03030205: return [[[XAD7ZipPPCHandle alloc] initWithHandle:inhandle length:size] autorelease];
+		//case 0x03030301: return [[[XAD7ZipAlphaHandle alloc] initWithHandle:inhandle length:size] autorelease];
+		case 0x03030401: return [[[XAD7ZipIA64Handle alloc] initWithHandle:inhandle length:size] autorelease];
+		case 0x03030501: return [[[XAD7ZipARMHandle alloc] initWithHandle:inhandle length:size] autorelease];
+		//case 0x03030605: return [[[XAD7ZipM68kHandle alloc] initWithHandle:inhandle length:size] autorelease];
+		case 0x03030701: return [[[XAD7ZipThumbHandle alloc] initWithHandle:inhandle length:size] autorelease];
+		case 0x03030805: return [[[XAD7ZipSPARCHandle alloc] initWithHandle:inhandle length:size] autorelease];
+		case 0x03040100:
+		{
+			if([props length]<5) return nil;
+			int maxorder=((uint8_t *)[props bytes])[0];
+			int suballocsize=CSUInt32LE((uint8_t *)[props bytes]+1);
+			return [[[XAD7ZipPPMdHandle alloc] initWithHandle:inhandle length:size
+			maxOrder:maxorder subAllocSize:suballocsize] autorelease];
+		}
 		case 0x04010000: return inhandle;
 		case 0x04010100: return [[[XADZipShrinkHandle alloc] initWithHandle:inhandle length:size] autorelease];
 		//case 0x04010600: return @"Implode";
@@ -808,6 +824,27 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 		case 4: return (idbytes[0]<<24)|(idbytes[1]<<16)|(idbytes[2]<<8)|idbytes[3];
 		default: return -1;
 	}
+}
+
+-(off_t)compressedSizeForFolder:(NSDictionary *)folder
+{
+	off_t totalsize=0;
+	NSEnumerator *enumerator=[[folder objectForKey:@"InStreams"] objectEnumerator];
+	NSDictionary *instream;
+	while(instream=[enumerator nextObject])
+	{
+		NSDictionary *packedstream=[instream objectForKey:@"PackedStream"];
+		if(packedstream) totalsize+=[[packedstream objectForKey:@"Size"] longLongValue];
+	}
+
+	return totalsize;
+}
+
+-(off_t)unCompressedSizeForFolder:(NSDictionary *)folder
+{
+	int finalindex=[[folder objectForKey:@"FinalOutStreamIndex"] intValue];
+	NSDictionary *stream=[[folder objectForKey:@"OutStreams"] objectAtIndex:finalindex];
+	return [[stream objectForKey:@"Size"] longLongValue];
 }
 
 -(NSString *)compressorNameForFolder:(NSDictionary *)folder

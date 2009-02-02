@@ -42,6 +42,8 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 -(CSHandle *)inHandleForFolder:(NSDictionary *)folder index:(int)index;
 
 -(int)IDForCoder:(NSDictionary *)coder;
+-(off_t)compressedSizeForFolder:(NSDictionary *)folder;
+-(off_t)unCompressedSizeForFolder:(NSDictionary *)folder;
 -(NSString *)compressorNameForFolder:(NSDictionary *)folder;
 -(NSString *)compressorNameForFolder:(NSDictionary *)folder index:(int)index;
 -(NSString *)compressorNameForCoder:(NSDictionary *)coder;

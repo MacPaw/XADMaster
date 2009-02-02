@@ -25,7 +25,7 @@ static void RescalePPMdContextVariantI(PPMdContext *self,PPMdModelVariantI *mode
 void StartPPMdModelVariantI(PPMdModelVariantI *self,CSInputBuffer *input,
 PPMdSubAllocatorVariantI *alloc,int maxorder,int restoration)
 {
-	InitializeRangeCoder(&self->core.coder,input);
+	InitializeRangeCoder(&self->core.coder,input,YES,0x8000);
 
 	if(maxorder<2) // TODO: solid mode
 	{
@@ -116,11 +116,9 @@ int NextPPMdVariantIByte(PPMdModelVariantI *self)
 	if(mincontext->LastStateIndex!=0) DecodeSymbol1VariantI(mincontext,self);
 	else DecodeBinSymbolVariantI(mincontext,self);
 
-	RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
-
 	while(!self->core.FoundState)
 	{
-		NormalizeRangeCoderWithBottom(&self->core.coder,1<<15);
+		NormalizeRangeCoder(&self->core.coder);
 		do
 		{
 			self->core.OrderFall++;
@@ -130,7 +128,6 @@ int NextPPMdVariantIByte(PPMdModelVariantI *self)
 		while(mincontext->LastStateIndex==self->core.LastMaskIndex);
 
 		DecodeSymbol2VariantI(mincontext,self);
-		RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
 	}
 
 	uint8_t byte=self->core.FoundState->Symbol;
@@ -147,7 +144,7 @@ int NextPPMdVariantIByte(PPMdModelVariantI *self)
 		if(self->core.EscCount==0) ClearPPMdModelMask(&self->core);
 	}
 
-	NormalizeRangeCoderWithBottom(&self->core.coder,1<<15);
+	NormalizeRangeCoder(&self->core.coder);
 
 	return byte;
 }
@@ -733,7 +730,7 @@ static void DecodeBinSymbolVariantI(PPMdContext *self,PPMdModelVariantI *model)
 	uint8_t index=model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->LastStateIndex]+model->core.PrevSuccess+self->Flags;
 	uint16_t *bs=&model->BinSumm[model->QTable[rs->Freq-1]][index+((model->core.RunLength>>26)&0x20)];
 
-	PPMdDecodeBinSymbol(self,&model->core,bs,196);
+	PPMdDecodeBinSymbol(self,&model->core,bs,196,NO);
 }
 
 static void DecodeSymbol1VariantI(PPMdContext *self,PPMdModelVariantI *model)
@@ -759,11 +756,11 @@ static void DecodeSymbol2VariantI(PPMdContext *self,PPMdModelVariantI *model)
 			(self->SummFreq>11*(self->LastStateIndex+1)?1:0)
 			+(2*self->LastStateIndex<n+model->core.LastMaskIndex?2:0)
 			+self->Flags];
-		model->core.SubRange.scale=GetSEE2Mean(see);
+		model->core.scale=GetSEE2Mean(see);
 	}
 	else
 	{
-		model->core.SubRange.scale=1;
+		model->core.scale=1;
 		see=&model->DummySEE2Cont;
 	}
 

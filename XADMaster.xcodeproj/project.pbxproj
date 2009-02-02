@@ -50,6 +50,8 @@
 		1B3E2C3B0F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */; };
 		1B3E2DF80F2CBE28003EEF98 /* XADStuffItXIronHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E2DF60F2CBE28003EEF98 /* XADStuffItXIronHandle.h */; };
 		1B3E2DF90F2CBE28003EEF98 /* XADStuffItXIronHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2DF70F2CBE28003EEF98 /* XADStuffItXIronHandle.m */; };
+		1B3E30D80F354174003EEF98 /* XADStuffItXBlendHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E30D60F354174003EEF98 /* XADStuffItXBlendHandle.h */; };
+		1B3E30D90F354174003EEF98 /* XADStuffItXBlendHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E30D70F354174003EEF98 /* XADStuffItXBlendHandle.m */; };
 		1B3FAB000EC3859F006D2F06 /* CSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAB010EC3859F006D2F06 /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */; };
 		1B3FAB020EC3859F006D2F06 /* CSSubHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */; settings = {ATTRIBUTES = (); }; };
@@ -379,6 +381,8 @@
 		1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXDarkhorseHandle.m; sourceTree = "<group>"; };
 		1B3E2DF60F2CBE28003EEF98 /* XADStuffItXIronHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXIronHandle.h; sourceTree = "<group>"; };
 		1B3E2DF70F2CBE28003EEF98 /* XADStuffItXIronHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXIronHandle.m; sourceTree = "<group>"; };
+		1B3E30D60F354174003EEF98 /* XADStuffItXBlendHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXBlendHandle.h; sourceTree = "<group>"; };
+		1B3E30D70F354174003EEF98 /* XADStuffItXBlendHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXBlendHandle.m; sourceTree = "<group>"; };
 		1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSHandle.h; sourceTree = "<group>"; };
 		1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHandle.m; sourceTree = "<group>"; };
 		1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSubHandle.h; sourceTree = "<group>"; };
@@ -1130,6 +1134,8 @@
 				1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */,
 				1B3E2DF60F2CBE28003EEF98 /* XADStuffItXIronHandle.h */,
 				1B3E2DF70F2CBE28003EEF98 /* XADStuffItXIronHandle.m */,
+				1B3E30D60F354174003EEF98 /* XADStuffItXBlendHandle.h */,
+				1B3E30D70F354174003EEF98 /* XADStuffItXBlendHandle.m */,
 				1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */,
 				1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */,
 				1B2A4A160F1D7E58009B5B89 /* StuffItXUtilities.h */,
@@ -1265,6 +1271,7 @@
 				1B3E2BF30F28D715003EEF98 /* XADRC4Handle.h in Headers */,
 				1B3E2C3A0F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h in Headers */,
 				1B3E2DF80F2CBE28003EEF98 /* XADStuffItXIronHandle.h in Headers */,
+				1B3E30D80F354174003EEF98 /* XADStuffItXBlendHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1525,6 +1532,7 @@
 				1B3E2BF40F28D715003EEF98 /* XADRC4Handle.m in Sources */,
 				1B3E2C3B0F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m in Sources */,
 				1B3E2DF90F2CBE28003EEF98 /* XADStuffItXIronHandle.m in Sources */,
+				1B3E30D90F354174003EEF98 /* XADStuffItXBlendHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

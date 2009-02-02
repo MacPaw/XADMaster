@@ -9,7 +9,7 @@
 
 static int NextBitWithWeight(CarrylessRangeCoder *coder,uint32_t *weight,int shift)
 {
-	int bit=NextWeightedBitFromRangeCoderWithoutLow2(coder,*weight,0x1000);
+	int bit=NextWeightedBitFromRangeCoder(coder,*weight,0x1000);
 	if(bit==0) *weight+=(0x1000-*weight)>>shift;
 	else *weight-=*weight>>shift;
 	return bit;
@@ -17,7 +17,7 @@ static int NextBitWithWeight(CarrylessRangeCoder *coder,uint32_t *weight,int shi
 
 static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1,int shift1,uint32_t *weight2,int shift2)
 {
-	int bit=NextWeightedBitFromRangeCoderWithoutLow2(coder,(*weight1+*weight2)/2,0x1000);
+	int bit=NextWeightedBitFromRangeCoder(coder,(*weight1+*weight2)/2,0x1000);
 	if(bit==0)
 	{
 		*weight1+=(0x1000-*weight1)>>shift1;
@@ -176,7 +176,7 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 	CarrylessRangeCoder coder;
 
 	CSInputSkipBytes(input,1);
-	InitializeRangeCoder(&coder,input);
+	InitializeRangeCoder(&coder,input,NO,0);
 
 	int valuehistory=0,lengthhistory=0,lastbits=0,lastbyte=0;
 
@@ -188,7 +188,7 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 		uint32_t frequencies[4];
 		for(int j=0;j<4;j++) frequencies[j]=freqs1[j]+freqs2[j]+freqs3[j];
 
-		int symbol=NextSymbolFromRangeCoderWithoutLow(&coder,frequencies,4);
+		int symbol=NextSymbolFromRangeCoder(&coder,frequencies,4);
 
 		freqs1[symbol]+=2;
 		freqs2[symbol]+=2;

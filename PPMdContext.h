@@ -37,7 +37,7 @@ struct PPMdCoreModel
 	PPMdSubAllocator *alloc;
 
 	CarrylessRangeCoder coder;
-	struct { uint32_t LowCount,HighCount,scale; } SubRange;
+	uint32_t scale;
 
 	PPMdState *FoundState; // found next state transition
 	int OrderFall,InitEsc,RunLength,InitRL;
@@ -63,7 +63,7 @@ PPMdState *PPMdContextOneState(PPMdContext *self);
 PPMdContext *NewPPMdContext(PPMdCoreModel *model);
 PPMdContext *NewPPMdContextAsChildOf(PPMdCoreModel *model,PPMdContext *suffixcontext,PPMdState *suffixstate,PPMdState *firststate);
 
-void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int freqlimit);
+void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int freqlimit,BOOL altnextbit);
 int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,BOOL greaterorequal);
 void UpdatePPMdContext1(PPMdContext *self,PPMdCoreModel *model,PPMdState *state);
 void PPMdDecodeSymbol2(PPMdContext *self,PPMdCoreModel *model,SEE2Context *see);

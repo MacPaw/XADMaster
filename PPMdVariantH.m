@@ -10,9 +10,14 @@ static void DecodeSymbol1VariantH(PPMdContext *self,PPMdModelVariantH *model);
 static void DecodeSymbol2VariantH(PPMdContext *self,PPMdModelVariantH *model);
 
 void StartPPMdModelVariantH(PPMdModelVariantH *self,CSInputBuffer *input,
-PPMdSubAllocatorVariantH *alloc,int maxorder)
+PPMdSubAllocatorVariantH *alloc,int maxorder,BOOL sevenzip)
 {
-	InitializeRangeCoder(&self->core.coder,input);
+	if(sevenzip)
+	{
+		CSInputSkipBytes(input,1);
+		InitializeRangeCoder(&self->core.coder,input,NO,0);
+	}
+	else InitializeRangeCoder(&self->core.coder,input,YES,0x8000);
 
 	self->alloc=alloc;
 	self->core.alloc=&alloc->core;
@@ -20,6 +25,7 @@ PPMdSubAllocatorVariantH *alloc,int maxorder)
 	self->core.RescalePPMdContext=RescalePPMdContext;
 
 	self->MaxOrder=maxorder;
+	self->SevenZip=sevenzip;
 	self->core.EscCount=1;
 
 	self->NS2BSIndx[0]=2*0;
@@ -84,14 +90,13 @@ static void RestartModel(PPMdModelVariantH *self)
 
 int NextPPMdVariantHByte(PPMdModelVariantH *self)
 {
+//NSLog(@"%x %x",self->core.coder.range,self->core.coder.code);
 	if(self->MinContext->LastStateIndex!=0) DecodeSymbol1VariantH(self->MinContext,self);
 	else DecodeBinSymbolVariantH(self->MinContext,self);
 
-	RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
-
 	while(!self->core.FoundState)
 	{
-		NormalizeRangeCoderWithBottom(&self->core.coder,1<<15);
+		NormalizeRangeCoder(&self->core.coder);
 		do
 		{
 			self->core.OrderFall++;
@@ -101,7 +106,6 @@ int NextPPMdVariantHByte(PPMdModelVariantH *self)
 		while(self->MinContext->LastStateIndex==self->core.LastMaskIndex);
 
 		DecodeSymbol2VariantH(self->MinContext,self);
-		RemoveRangeCoderSubRange(&self->core.coder,self->core.SubRange.LowCount,self->core.SubRange.HighCount);
 	}
 
 	uint8_t byte=self->core.FoundState->Symbol;
@@ -116,7 +120,7 @@ int NextPPMdVariantHByte(PPMdModelVariantH *self)
 		if(self->core.EscCount==0) ClearPPMdModelMask(&self->core);
 	}
 
-	NormalizeRangeCoderWithBottom(&self->core.coder,1<<15);
+	NormalizeRangeCoder(&self->core.coder);
 
 	return byte;
 }
@@ -349,7 +353,7 @@ static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdModelVariantH *model)
 	model->core.PrevSuccess+model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->LastStateIndex]+
 	model->HiBitsFlag+2*model->HB2Flag[rs->Symbol]+((model->core.RunLength>>26)&0x20)];
 
-	PPMdDecodeBinSymbol(self,&model->core,bs,128);
+	PPMdDecodeBinSymbol(self,&model->core,bs,128,model->SevenZip);
 }
 
 static void DecodeSymbol1VariantH(PPMdContext *self,PPMdModelVariantH *model)
@@ -372,11 +376,11 @@ static void DecodeSymbol2VariantH(PPMdContext *self,PPMdModelVariantH *model)
 			+(self->SummFreq<11*(self->LastStateIndex+1)?2:0)
 			+(model->core.LastMaskIndex+1>diff?4:0)
 			+model->HiBitsFlag];
-		model->core.SubRange.scale=GetSEE2Mean(see);
+		model->core.scale=GetSEE2Mean(see);
 	}
 	else
 	{
-		model->core.SubRange.scale=1;
+		model->core.scale=1;
 		see=&model->DummySEE2Cont;
 	}
 

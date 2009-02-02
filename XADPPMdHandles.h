@@ -70,3 +70,11 @@
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end
+
+@interface XAD7ZipPPMdHandle:XADPPMdVariantHHandle
+{
+}
+
+-(void)resetByteStream;
+
+@end

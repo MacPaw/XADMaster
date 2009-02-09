@@ -21,33 +21,33 @@ static inline int Branch(XADPrefixCode *self,int node,int bit) { return NodePoin
 static inline BOOL IsOpenBranch(XADPrefixCode *self,int node,int bit) { return NodePointer(self,node)[bit]<0; }
 static inline void SetBranch(XADPrefixCode *self,int node,int bit,int nextnode) { NodePointer(self,node)[bit]=nextnode; }
 
-static inline int Leaf(XADPrefixCode *self,int node) { return NodePointer(self,node)[0]; }
+static inline int LeafValue(XADPrefixCode *self,int node) { return NodePointer(self,node)[0]; }
 static inline BOOL IsLeafNode(XADPrefixCode *self,int node) { return NodePointer(self,node)[0]==NodePointer(self,node)[1]; }
-static inline void SetLeaf(XADPrefixCode *self,int node,int value) { NodePointer(self,node)[0]=NodePointer(self,node)[1]=value; }
+static inline void SetLeafValue(XADPrefixCode *self,int node,int value) { NodePointer(self,node)[0]=NodePointer(self,node)[1]=value; }
 
 
 int CSInputNextSymbolUsingCode(CSInputBuffer *buf,XADPrefixCode *code)
 {
 	int node=0;
-	for(;;)
+	while(!IsLeafNode(code,node))
 	{
 		int bit=CSInputNextBit(buf);
 		if(IsOpenBranch(code,node,bit)) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
 		node=Branch(code,node,bit);
-		if(IsLeafNode(code,node)) return Leaf(code,node);
 	}
+	return LeafValue(code,node);
 }
 
 int CSInputNextSymbolUsingCodeLE(CSInputBuffer *buf,XADPrefixCode *code)
 {
 	int node=0;
-	for(;;)
+	while(!IsLeafNode(code,node))
 	{
 		int bit=CSInputNextBitLE(buf);
 		if(IsOpenBranch(code,node,bit)) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
 		node=Branch(code,node,bit);
-		if(IsLeafNode(code,node)) return Leaf(code,node);
 	}
+	return LeafValue(code,node);
 }
 
 
@@ -90,6 +90,9 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 {
 	if(self=[self init])
 	{
+//NSLog(@"--------");
+//for(int i=0;i<numsymbols;i++) NSLog(@"%d",lengths[i]);
+
 		@try
 		{
 			int code=0,symbolsleft=numsymbols;
@@ -132,6 +135,8 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 {
 	if(isstatic) [NSException raise:NSGenericException format:@"Attempted to add codes to a static prefix tree"];
 
+//NSLog(@"%d -> %x %d",value,code,length);
+
 	repeatpos=length-1-repeatpos;
 	if(repeatpos==0||(repeatpos>=0&&(((code>>repeatpos-1)&3)==0||((code>>repeatpos-1)&3)==3)))
 	[NSException raise:NSInvalidArgumentException format:@"Invalid repeat position"];
@@ -166,7 +171,7 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 	}
 
 	if(!IsEmptyNode(self,lastnode)) [NSException raise:NSInvalidArgumentException format:@"Prefix found"];
-	SetLeaf(self,lastnode,value);
+	SetLeafValue(self,lastnode,value);
 }
 
 static uint32_t Reverse32(uint32_t val)
@@ -223,7 +228,7 @@ static uint32_t ReverseN(uint32_t val,int length)
 
 -(void)makeLeafWithValue:(int)value
 {
-	SetLeaf(self,currnode,value);
+	SetLeafValue(self,currnode,value);
 	[self _popNode];
 }
 

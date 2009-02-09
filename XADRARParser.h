@@ -7,6 +7,7 @@ typedef struct RARBlock
 	int headersize;
 	off_t datasize;
 	off_t start;
+	CSHandle *fh;
 } RARBlock;
 
 @interface XADRARParser:XADArchiveParser

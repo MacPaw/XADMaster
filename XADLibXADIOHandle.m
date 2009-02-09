@@ -110,7 +110,7 @@ static xadUINT8 xadIOGetFunc(struct xadInOut *io);
 {
 	unpacked=YES;
 	xadUINT32 err=[self unpackData];
-	[(NSMutableData *)data appendBytes:io.xio_OutBuffer length:io.xio_OutBufferPos];
+	[(NSMutableData *)backingdata appendBytes:io.xio_OutBuffer length:io.xio_OutBufferPos];
 
 	if(err) [XADException raiseExceptionWithXADError:err];
 }
@@ -138,7 +138,7 @@ static xadUINT8 xadIOGetFunc(struct xadInOut *io);
 	io.xio_OutSize=outlen;
 
 	io.inputhandle=parent;
-	io.outputdata=(NSMutableData *)data;
+	io.outputdata=(NSMutableData *)backingdata;
 
 	return &io;
 }

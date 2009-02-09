@@ -1,14 +1,20 @@
 #import "XADArchiveParser.h"
-#import "xadmaster.h"
+#import "CSMemoryHandle.h"
+#import "libxad/include/functions.h"
 
 @interface XADLibXADParser:XADArchiveParser
 {
 //	XADArchivePipe *pipe;
 //	XADError lasterror;
 
-	struct xadMasterBase *xmb;
-	struct xadArchiveInfo *archive;
+	struct xadArchiveInfoP *archive;
 	struct Hook inhook,progresshook;
+
+	struct XADInHookData
+	{
+		CSHandle *fh;
+		const char *name;
+	} indata;
 
 	BOOL addonbuild;
 	int numadded;
@@ -22,14 +28,25 @@
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
 
--(char *)encodedName;
-
 -(void)parse;
 -(void)newEntryCallback:(struct xadProgressInfo *)proginfo;
 -(NSMutableDictionary *)dictionaryForFileInfo:(struct xadFileInfo *)info;
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)properties wantChecksum:(BOOL)checksum;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 
 -(NSString *)formatName;
+
+@end
+
+
+
+@interface XADLibXADMemoryHandle:CSMemoryHandle
+{
+	BOOL success;
+}
+
+-(id)initWithData:(NSData *)data successfullyExtracted:(BOOL)wassuccess;
+-(BOOL)hasChecksum;
+-(BOOL)isChecksumCorrect;
 
 @end

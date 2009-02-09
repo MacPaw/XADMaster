@@ -1,7 +1,7 @@
 #import "CarrylessRangeCoder.h"
 #import "PPMdSubAllocator.h"
 
-#define MAX_O 16
+#define MAX_O 255
 #define INT_BITS 7
 #define PERIOD_BITS 7
 #define TOT_BITS (INT_BITS+PERIOD_BITS)

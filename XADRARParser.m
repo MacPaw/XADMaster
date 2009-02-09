@@ -128,9 +128,6 @@ static int TestSignature(const uint8_t *ptr)
 -(void)parse
 {
 	CSHandle *handle=[self handle];
-	XADRARAESHandle *encryptedhandle=nil;
-
-//	NSMutableDictionary *lastcompressed=nil,*lastnonsolid=nil;
 
 	uint8_t buf[7];
 	[handle readBytes:7 toBuffer:buf];	
@@ -154,7 +151,12 @@ static int TestSignature(const uint8_t *ptr)
 
 	lastcompressed=lastnonsolid=nil;
 
-	while(block.start!=0) block=[self readFileHeaderWithBlock:block];
+	while(block.start!=0)
+	{
+		//NSAutoreleasePool *pool=[NSAutoreleasePool new];
+		block=[self readFileHeaderWithBlock:block];
+		//[pool release];
+	}
 }
 
 -(RARBlock)readArchiveHeader
@@ -187,21 +189,6 @@ NSLog(@"encryptver: %d",encryptversion);
 				[self readCommentBlock:commentblock];
 				//[self skipBlock:commentblock];
 			}
-
-			if(block.flags&MHD_PASSWORD)
-			{
-				// Salt is stored at the start of the next block for some reason
-				[fh seekToFileOffset:block.start+block.headersize+block.datasize];
-				NSData *salt=[fh readDataOfLength:8];
-
-				// TODO: check for password
-
-				//encryptedhandle=[[[XADRARAESHandle alloc] initWithHandle:fh
-				//password:[self password] salt:salt brokenHash:encryptversion<36] autorelease];
-
-				// Kludge position so the next seek goes to the right place
-				//blockstart+=8;
-			}
 		}
 		else if(block.type==0x7a) // newsub header
 		{
@@ -218,7 +205,7 @@ NSLog(@"encryptver: %d",encryptversion);
 {
 	if(block.flags&LHD_SPLIT_BEFORE) return [self findNextFileHeaderAfterBlock:block];
 
-	CSHandle *fh=[self handle];
+	CSHandle *fh=block.fh;
 	XADSkipHandle *skip=[self skipHandle];
 
 	off_t skipstart=[skip offsetInFile]-11+block.headersize;
@@ -256,6 +243,8 @@ NSLog(@"encryptver: %d",encryptversion);
 		@try { block=[self readBlockHeader]; }
 		@catch(id e) { block=ZeroBlock; break; }
 
+		fh=block.fh;
+
 		if(block.type==0x74) // file header
 		{
 			if(last) break;
@@ -277,7 +266,7 @@ NSLog(@"encryptver: %d",encryptversion);
 
 			if(![namedata isEqual:currnamedata])
 			{ // Name doesn't match, skip back to header and give up.
-				[fh seekToFileOffset:block.start];
+				[fh seekToFileOffset:block.start-(archiveflags&MHD_PASSWORD?8:0)];
 				block=[self readBlockHeader];
 				partial=YES;
 				break;
@@ -392,7 +381,7 @@ NSLog(@"encryptver: %d",encryptversion);
 
 -(void)readCommentBlock:(RARBlock)block
 {
-	CSHandle *fh=[self handle];
+	CSHandle *fh=block.fh;
 
 	int commentsize=[fh readUInt16LE];
 	int version=[fh readUInt8];
@@ -473,16 +462,29 @@ NSLog(@"absurd name!");
 -(RARBlock)readBlockHeader
 {
 	CSHandle *fh=[self handle];
+
+	if(archiveflags&MHD_PASSWORD)
+	{
+		NSData *salt=[fh readDataOfLength:8];
+
+		// TODO: check for password
+
+		fh=[[[XADRARAESHandle alloc] initWithHandle:fh
+		password:[self password] salt:salt brokenHash:encryptversion<36] autorelease];
+	}
+
 	RARBlock block;
 
-	block.start=[fh offsetInFile];
-
+	block.fh=fh;
+	block.start=[[self handle] offsetInFile];
 	block.crc=[fh readUInt16LE];
 	block.type=[fh readUInt8];
 	block.flags=[fh readUInt16LE];
 	block.headersize=[fh readUInt16LE];
 	if(block.flags&RARFLAG_LONG_BLOCK) block.datasize=[fh readUInt32LE];
 	else block.datasize=0;
+
+	//if(archiveflags&MHD_PASSWORD) block.headersize+=8;
 
 NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
 

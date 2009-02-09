@@ -344,7 +344,7 @@ static BOOL MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *s
 		if(!context) return NO;
 	}
 
-	if(!self->core.OrderFall)
+	if(self->core.OrderFall==0)
 	{
 		upbranch->LastStateIndex=0;
 		upbranch->Flags=0;

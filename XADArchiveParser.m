@@ -17,6 +17,7 @@
 #import "XADCompactProParser.h"
 #import "XADCompressParser.h"
 #import "XADALZipParser.h"
+#import "XADLHAParser.h"
 #import "XADPowerPackerParser.h"
 #import "XADLZMAAloneParser.h"
 #import "XADLibXADParser.h"
@@ -72,7 +73,10 @@ static int maxheader=0;
 
 +(void)initialize
 {
-	if(parserclasses) return;
+	static BOOL hasinitialized=NO;
+	if(hasinitialized) return;
+	hasinitialized=YES;
+
 	parserclasses=[[NSMutableArray arrayWithObjects:
 		[XADZipParser class],
 		[XADRARParser class],
@@ -89,6 +93,7 @@ static int maxheader=0;
 		[XADCompactProParser class],
 		[XADCompressParser class],
 		[XADALZipParser class],
+		[XADLHAParser class],
 		[XADPowerPackerParser class],
 		[XADLZMAAloneParser class],
 		[XADLibXADParser class],
@@ -411,7 +416,7 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 -(void)parse {}
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum { return nil; }
--(NSString *)formatName { return nil; }
+-(NSString *)formatName { return nil; } // TODO: combine names for nested archives
 
 @end
 

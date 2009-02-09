@@ -2,8 +2,8 @@
 
 @interface CSMemoryHandle:CSHandle
 {
-	NSData *data;
-	off_t pos;
+	NSData *backingdata;
+	off_t memorypos;
 }
 
 +(CSMemoryHandle *)memoryHandleForReadingData:(NSData *)data;

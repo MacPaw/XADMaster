@@ -109,7 +109,7 @@ int NextPPMdVariantHByte(PPMdModelVariantH *self)
 
 	uint8_t byte=self->core.FoundState->Symbol;
 
-	if(!self->core.OrderFall&&(uint8_t *)PPMdStateSuccessor(self->core.FoundState,&self->core)>self->alloc->pText)
+	if(self->core.OrderFall==0&&(uint8_t *)PPMdStateSuccessor(self->core.FoundState,&self->core)>self->alloc->pText)
 	{
 		self->MinContext=self->MaxContext=PPMdStateSuccessor(self->core.FoundState,&self->core);
 	}

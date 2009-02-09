@@ -72,7 +72,6 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/RPM.c"
 #include "clients/StuffIt.c" // TODO: implement all and remove
 #include "clients/SuperDuper3.c"
-#include "clients/Tar.c"
 #include "clients/xDisk.c"
 #include "clients/xMash.c"
 #include "clients/Zoom.c"

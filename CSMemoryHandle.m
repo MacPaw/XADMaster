@@ -26,12 +26,12 @@
 }
 
 
--(id)initWithData:(NSData *)dataobj
+-(id)initWithData:(NSData *)data
 {
-	if(self=[super initWithName:[NSString stringWithFormat:@"%@ at 0x%x",[dataobj class],(int)dataobj]])
+	if(self=[super initWithName:[NSString stringWithFormat:@"%@ at 0x%x",[data class],(int)data]])
 	{
-		pos=0;
-		data=[dataobj retain];
+		memorypos=0;
+		backingdata=[data retain];
 	}
 	return self;
 }
@@ -40,15 +40,15 @@
 {
 	if(self=[super initAsCopyOf:other])
 	{
-		pos=other->pos;
-		data=[other->data retain];
+		memorypos=other->memorypos;
+		backingdata=[other->backingdata retain];
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[data release];
+	[backingdata release];
 	[super dealloc];
 }
 
@@ -56,22 +56,22 @@
 
 
 
--(off_t)fileSize { return [data length]; }
+-(off_t)fileSize { return [backingdata length]; }
 
--(off_t)offsetInFile { return pos; }
+-(off_t)offsetInFile { return memorypos; }
 
--(BOOL)atEndOfFile { return pos==[data length]; }
+-(BOOL)atEndOfFile { return memorypos==[backingdata length]; }
 
 
 
 -(void)seekToFileOffset:(off_t)offs
 {
 	if(offs<0) [self _raiseNotSupported:_cmd];
-	if(offs>[data length]) [self _raiseEOF];
-	pos=offs;
+	if(offs>[backingdata length]) [self _raiseEOF];
+	memorypos=offs;
 }
 
--(void)seekToEndOfFile { pos=[data length]; }
+-(void)seekToEndOfFile { memorypos=[backingdata length]; }
 
 //-(void)pushBackByte:(int)byte {}
 
@@ -79,49 +79,49 @@
 {
 	if(!num) return 0;
 
-	unsigned int len=[data length];
-	if(pos==len) return 0;
-	if(pos+num>len) num=len-pos;
-	memcpy(buffer,(uint8_t *)[data bytes]+pos,num);
-	pos+=num;
+	unsigned int len=[backingdata length];
+	if(memorypos==len) return 0;
+	if(memorypos+num>len) num=len-memorypos;
+	memcpy(buffer,(uint8_t *)[backingdata bytes]+memorypos,num);
+	memorypos+=num;
 	return num;
 }
 
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer
 {
-	if(![data isKindOfClass:[NSMutableData class]]) [self _raiseNotSupported:_cmd];
-	NSMutableData *mdata=(NSMutableData *)data;
+	if(![backingdata isKindOfClass:[NSMutableData class]]) [self _raiseNotSupported:_cmd];
+	NSMutableData *mbackingdata=(NSMutableData *)backingdata;
 
-	if(pos+num>[mdata length]) [mdata setLength:pos+num];
-	memcpy((uint8_t *)[mdata mutableBytes]+pos,buffer,num);
-	pos+=num;
+	if(memorypos+num>[mbackingdata length]) [mbackingdata setLength:memorypos+num];
+	memcpy((uint8_t *)[mbackingdata mutableBytes]+memorypos,buffer,num);
+	memorypos+=num;
 }
 
 
--(NSData *)fileContents { return data; }
+-(NSData *)fileContents { return backingdata; }
 
 -(NSData *)remainingFileContents
 {
-	if(pos==0) return data;
+	if(memorypos==0) return backingdata;
 	else return [super remainingFileContents];
 }
 
 -(NSData *)readDataOfLength:(int)length
 {
-	unsigned int totallen=[data length];
-	if(pos+length>totallen) [self _raiseEOF];
-	NSData *subdata=[data subdataWithRange:NSMakeRange(pos,length)];
-	pos+=length;
-	return subdata;
+	unsigned int totallen=[backingdata length];
+	if(memorypos+length>totallen) [self _raiseEOF];
+	NSData *subbackingdata=[backingdata subdataWithRange:NSMakeRange(memorypos,length)];
+	memorypos+=length;
+	return subbackingdata;
 }
 
 -(NSData *)readDataOfLengthAtMost:(int)length;
 {
-	unsigned int totallen=[data length];
-	if(pos+length>totallen) length=totallen-pos;
-	NSData *subdata=[data subdataWithRange:NSMakeRange(pos,length)];
-	pos+=length;
-	return subdata;
+	unsigned int totallen=[backingdata length];
+	if(memorypos+length>totallen) length=totallen-memorypos;
+	NSData *subbackingdata=[backingdata subdataWithRange:NSMakeRange(memorypos,length)];
+	memorypos+=length;
+	return subbackingdata;
 }
 
 -(NSData *)copyDataOfLength:(int)length { return [[self readDataOfLength:length] retain]; }
@@ -131,12 +131,12 @@
 
 
 
--(NSData *)data { return data; }
+-(NSData *)data { return backingdata; }
 
 -(NSMutableData *)mutableData
 {
-	if(![data isKindOfClass:[NSMutableData class]]) [self _raiseNotSupported:_cmd];
-	return (NSMutableData *)data;
+	if(![backingdata isKindOfClass:[NSMutableData class]]) [self _raiseNotSupported:_cmd];
+	return (NSMutableData *)backingdata;
 }
 
 @end

@@ -216,6 +216,7 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 }
 
 
+
 -(NSData *)fileContents
 {
 	[self seekToFileOffset:0];

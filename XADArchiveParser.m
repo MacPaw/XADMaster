@@ -20,8 +20,9 @@
 #import "XADLHAParser.h"
 #import "XADPowerPackerParser.h"
 #import "XADLZMAAloneParser.h"
-#import "XADLibXADParser.h"
 #import "XADTarParser.h"
+#import "XADCpioParser.h"
+#import "XADLibXADParser.h"
 
 #include <dirent.h>
 
@@ -42,25 +43,27 @@ NSString *XADPosixUserNameKey=@"XADPosixUserName";
 NSString *XADPosixGroupNameKey=@"XADGroupUserName";
 NSString *XADDOSFileAttributesKey=@"XADDOSFileAttributes";
 NSString *XADWindowsFileAttributesKey=@"XADWindowsFileAttributes";
+
 NSString *XADIsEncryptedKey=@"XADIsEncrypted";
 NSString *XADIsDirectoryKey=@"XADIsDirectory";
+NSString *XADIsResourceForkKey=@"XADIsResourceFork";
 NSString *XADIsLinkKey=@"XADIsLink";
 NSString *XADIsHardLinkKey=@"XADIsHardLink";
-NSString *XADIsResourceForkKey=@"XADIsResourceFork";
-NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 NSString *XADLinkDestinationKey=@"XADLinkDestination";
-NSString *XADCommentKey=@"XADComment";
-NSString *XADDataOffsetKey=@"XADDataOffset";
-NSString *XADDataLengthKey=@"XADDataLength";
-NSString *XADCompressionNameKey=@"XADCompressionName";
-NSString *XADIsSolidKey=@"XADIsSolid";
-NSString *XADFirstSolidEntryKey=@"XADFirstSolidEntry";
-NSString *XADNextSolidEntryKey=@"XADNextSolidEntry";
 NSString *XADIsCharacterDeviceKey=@"XADIsCharacterDevice";
 NSString *XADIsBlockDeviceKey=@"XADIsBlockDevice";
 NSString *XADDeviceMajorKey=@"XADDeviceMajor";
 NSString *XADDeviceMinorKey=@"XADDeviceMinor";
 NSString *XADIsFIFOKey=@"XADIsFIFO";
+
+NSString *XADCommentKey=@"XADComment";
+NSString *XADDataOffsetKey=@"XADDataOffset";
+NSString *XADDataLengthKey=@"XADDataLength";
+NSString *XADCompressionNameKey=@"XADCompressionName";
+
+NSString *XADIsSolidKey=@"XADIsSolid";
+NSString *XADFirstSolidEntryKey=@"XADFirstSolidEntry";
+NSString *XADNextSolidEntryKey=@"XADNextSolidEntry";
 
 NSString *XADArchiveNameKey=@"XADArchiveName";
 NSString *XADIsCorruptedKey=@"XADIsCorrupted";
@@ -96,8 +99,9 @@ static int maxheader=0;
 		[XADLHAParser class],
 		[XADPowerPackerParser class],
 		[XADLZMAAloneParser class],
-		[XADLibXADParser class],
+		[XADCpioParser class],
 		[XADTarParser class],
+		[XADLibXADParser class],
 	nil] retain];
 
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];

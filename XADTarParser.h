@@ -4,6 +4,7 @@
 
 @interface XADTarParser:XADArchiveParser
 {
+	NSData *currentGlobalHeader;
 }
 
 +(int)requiredHeaderSize;

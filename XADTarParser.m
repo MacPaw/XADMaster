@@ -9,8 +9,6 @@
 
 @implementation XADTarParser
 
-NSData *currentGlobalHeader;
-
 +(int)requiredHeaderSize { return 512; }
 
 +(int)getTarType:(NSData *)header
@@ -423,7 +421,7 @@ NSData *currentGlobalHeader;
 -(void)parse
 {
 	// Reset global current header for posix.2001;
-	currentGlobalHeader = [NSData dataWithBytes:"" length:0];
+	currentGlobalHeader = [NSData data];
 	
 	CSHandle *handle = [self handle];
 

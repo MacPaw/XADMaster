@@ -68,7 +68,7 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 -(BOOL)isChecksumCorrect
 {
 	if([parent hasChecksum]&&![parent isChecksumCorrect]) return NO;
-	return [super atEndOfFile]&&crc==compcrc;
+	return crc==compcrc;
 }
 
 @end

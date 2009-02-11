@@ -53,7 +53,6 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/Ace.c"
 #include "clients/AMPK.c"
 #include "clients/CAB.c"
-#include "clients/Cpio.c"
 #include "clients/CrunchDisk.c"
 #include "clients/DCS.c"
 #include "clients/DiskDoubler.c"

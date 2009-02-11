@@ -213,6 +213,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	xadERROR err=xadFileUnArc(xmb,archive,
 		XAD_ENTRYNUMBER,info->xfi_EntryNumber,
 		XAD_OUTHOOK,(xadSize)(uintptr_t)&outhook,
+		XAD_INHOOK,(xadSize)(uintptr_t)&inhook,
 		pass?XAD_PASSWORD:TAG_IGNORE,pass,
 	TAG_DONE);
 

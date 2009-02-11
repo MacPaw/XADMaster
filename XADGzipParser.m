@@ -82,11 +82,11 @@
 	else
 	{
 		NSString *name=[self name];
-NSLog(@"what %@",name);
 		NSString *extension=[[name pathExtension] lowercaseString];
 		NSString *contentname;
 		if([extension isEqual:@"tgz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"tar"];
 		else if([extension isEqual:@"adz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"adf"];
+		else if([extension isEqual:@"cpgz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"cpio"];
 		else contentname=[name stringByDeletingPathExtension];
 
 		[dict setObject:[self XADStringWithString:contentname] forKey:XADFileNameKey];

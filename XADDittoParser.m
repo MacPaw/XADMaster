@@ -1,5 +1,7 @@
 #import "XADDittoParser.h"
 
+NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
+
 @implementation XADDittoParser
 -(void)addEntryWithDictionary:(NSDictionary *)dictionary
 {

@@ -1,5 +1,7 @@
 #import "XADArchiveParser.h"
 
+extern NSString *XADIsMacBinaryKey;
+
 @interface XADDittoParser:XADArchiveParser
 {
 }

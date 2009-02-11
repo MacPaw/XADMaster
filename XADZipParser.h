@@ -1,4 +1,5 @@
 #import "XADArchiveParser.h"
+#import "XADDittoParser.h"
 
 @interface XADZipParser:XADArchiveParser
 {

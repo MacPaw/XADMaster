@@ -23,29 +23,31 @@ extern NSString *XADPosixUserNameKey;
 extern NSString *XADPosixGroupNameKey;
 extern NSString *XADDOSFileAttributesKey;
 extern NSString *XADWindowsFileAttributesKey;
+
 extern NSString *XADIsEncryptedKey;
-extern NSString *XADIsCorruptedKey;
 extern NSString *XADIsDirectoryKey;
+extern NSString *XADIsResourceForkKey;
 extern NSString *XADIsLinkKey;
 extern NSString *XADIsHardLinkKey;
-extern NSString *XADIsResourceForkKey;
-extern NSString *XADIsMacBinaryKey;
 extern NSString *XADLinkDestinationKey;
-extern NSString *XADCommentKey;
-extern NSString *XADDataOffsetKey;
-extern NSString *XADDataLengthKey;
-extern NSString *XADCompressionNameKey;
-extern NSString *XADIsSolidKey;
-extern NSString *XADFirstSolidEntryKey;
-extern NSString *XADNextSolidEntryKey;
 extern NSString *XADIsCharacterDeviceKey;
 extern NSString *XADIsBlockDeviceKey;
 extern NSString *XADDeviceMajorKey;
 extern NSString *XADDeviceMinorKey;
 extern NSString *XADIsFIFOKey;
 
+extern NSString *XADCommentKey;
+extern NSString *XADDataOffsetKey;
+extern NSString *XADDataLengthKey;
+extern NSString *XADCompressionNameKey;
+
+extern NSString *XADIsSolidKey;
+extern NSString *XADFirstSolidEntryKey;
+extern NSString *XADNextSolidEntryKey;
+
 // Archive properties only
 extern NSString *XADArchiveNameKey;
+extern NSString *XADIsCorruptedKey;
 
 
 /*// Internal use

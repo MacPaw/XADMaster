@@ -9,19 +9,34 @@ NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 	if(self=[super initWithHandle:handle name:name])
 	{
 		dittohandle=nil;
+		dittoregex=[[XADRegex alloc] initWithPattern:@"(^__MACOSX/|^)((.*/)\\._|\\._)([^/]+)$" options:0];
 	}
 	return self;
 }
 
+-(void)dealloc
+{
+	[dittoregex release];
+	[super dealloc];
+}
+
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
 {
-	if([self isDittoResourceFork:dict])
+	NSString *name=[[dict objectForKey:XADFileNameKey] string];
+	NSNumber *isdir=[dict objectForKey:XADIsDirectoryKey];
+
+	if(isdir&&[isdir boolValue])
+	if([name hasPrefix:@"__MACOSX/"]) return; // Discard directories used for ditto forks
+
+	NSString *dittoname=[self nameForDittoFork:name];
+	if(dittoname)
 	{
 		dittohandle=[self rawHandleForEntryWithDictionary:dict wantChecksum:YES];
 
 		NSMutableDictionary *doubledict=[self parseAppleDoubleWithHandle:dittohandle template:dict];
 		if(doubledict)
 		{
+			[doubledict setObject:[self XADStringWithString:dittoname] forKey:XADFileNameKey];
 			[doubledict setObject:dict forKey:@"MacOriginalDictionary"];
 
 			[super addEntryWithDictionary:doubledict retainPosition:retainpos];
@@ -48,11 +63,14 @@ NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 	else return [self rawHandleForEntryWithDictionary:dict wantChecksum:checksum];
 }
 
--(BOOL)isDittoResourceFork:(NSMutableDictionary *)dict
+-(NSString *)nameForDittoFork:(NSString *)name
 {
-	NSString *name=[[dict objectForKey:XADFileNameKey] string];
-	if(!name) return NO;
-	return [name isEqual:@"__MACOSX"]||[name hasPrefix:@"__MACOSX/"]||[[name lastPathComponent] hasPrefix:@"._"];
+	if(!name) return nil;
+
+	NSArray *matches=[dittoregex capturedSubstringsOfString:name];
+	if(!matches) return nil; 
+
+	return [[matches objectAtIndex:3] stringByAppendingString:[matches objectAtIndex:4]];
 }
 
 /*

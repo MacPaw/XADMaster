@@ -85,8 +85,8 @@
 		1B3FABA80EC52532006D2F06 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA70EC52532006D2F06 /* libz.dylib */; };
 		1B3FAC5D0EC5255A006D2F06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
 		1B3FACE10EC52632006D2F06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
-		1B3FAD670EC5D4E8006D2F06 /* XADDittoParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAD650EC5D4E8006D2F06 /* XADDittoParser.h */; };
-		1B3FAD680EC5D4E8006D2F06 /* XADDittoParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD660EC5D4E8006D2F06 /* XADDittoParser.m */; };
+		1B3FAD670EC5D4E8006D2F06 /* XADMacArchiveParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAD650EC5D4E8006D2F06 /* XADMacArchiveParser.h */; };
+		1B3FAD680EC5D4E8006D2F06 /* XADMacArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */; };
 		1B3FAD800EC6826E006D2F06 /* NSDateXAD.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAD7E0EC6826E006D2F06 /* NSDateXAD.h */; };
 		1B3FAD810EC6826E006D2F06 /* NSDateXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */; };
 		1B578C340DDBC8BF005B0F68 /* XADException.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B578C320DDBC8BF005B0F68 /* XADException.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -422,8 +422,8 @@
 		1B3FABA20EC52505006D2F06 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		1B3FABA70EC52532006D2F06 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
 		1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		1B3FAD650EC5D4E8006D2F06 /* XADDittoParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDittoParser.h; sourceTree = "<group>"; };
-		1B3FAD660EC5D4E8006D2F06 /* XADDittoParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADDittoParser.m; sourceTree = "<group>"; };
+		1B3FAD650EC5D4E8006D2F06 /* XADMacArchiveParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMacArchiveParser.h; sourceTree = "<group>"; };
+		1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADMacArchiveParser.m; sourceTree = "<group>"; };
 		1B3FAD7E0EC6826E006D2F06 /* NSDateXAD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDateXAD.h; sourceTree = "<group>"; };
 		1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDateXAD.m; sourceTree = "<group>"; };
 		1B578C320DDBC8BF005B0F68 /* XADException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADException.h; sourceTree = "<group>"; };
@@ -805,8 +805,8 @@
 			children = (
 				1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */,
 				1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */,
-				1B3FAD650EC5D4E8006D2F06 /* XADDittoParser.h */,
-				1B3FAD660EC5D4E8006D2F06 /* XADDittoParser.m */,
+				1B3FAD650EC5D4E8006D2F06 /* XADMacArchiveParser.h */,
+				1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */,
 				1BC885C60ECD11A9006B47FE /* Zip */,
 				1BC88B750ED0E399006B47FE /* Rar */,
 				1BC88B760ED0E3A2006B47FE /* 7-Zip */,
@@ -1236,7 +1236,7 @@
 				1B3FAB0C0EC3859F006D2F06 /* CSBlockStreamHandle.h in Headers */,
 				1B3FAB0E0EC3859F006D2F06 /* CSByteStreamHandle.h in Headers */,
 				1B3FAB100EC3859F006D2F06 /* CSZlibHandle.h in Headers */,
-				1B3FAD670EC5D4E8006D2F06 /* XADDittoParser.h in Headers */,
+				1B3FAD670EC5D4E8006D2F06 /* XADMacArchiveParser.h in Headers */,
 				1B3FAD800EC6826E006D2F06 /* NSDateXAD.h in Headers */,
 				1BC884810ECCCE41006B47FE /* XADZipImplodeHandle.h in Headers */,
 				1BC884850ECCCE69006B47FE /* XADZipShrinkHandle.h in Headers */,
@@ -1489,7 +1489,7 @@
 				1B3FAB0F0EC3859F006D2F06 /* CSByteStreamHandle.m in Sources */,
 				1B3FAB110EC3859F006D2F06 /* CSZlibHandle.m in Sources */,
 				1B3FAB2C0EC3D5E7006D2F06 /* XADException.m in Sources */,
-				1B3FAD680EC5D4E8006D2F06 /* XADDittoParser.m in Sources */,
+				1B3FAD680EC5D4E8006D2F06 /* XADMacArchiveParser.m in Sources */,
 				1B3FAD810EC6826E006D2F06 /* NSDateXAD.m in Sources */,
 				1BC882B20ECA4D67006B47FE /* XADZipParser.m in Sources */,
 				1BC884820ECCCE41006B47FE /* XADZipImplodeHandle.m in Sources */,

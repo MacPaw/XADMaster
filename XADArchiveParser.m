@@ -45,6 +45,7 @@ NSString *XADDOSFileAttributesKey=@"XADDOSFileAttributes";
 NSString *XADWindowsFileAttributesKey=@"XADWindowsFileAttributes";
 
 NSString *XADIsEncryptedKey=@"XADIsEncrypted";
+NSString *XADIsCorruptedKey=@"XADIsCorrupted";
 NSString *XADIsDirectoryKey=@"XADIsDirectory";
 NSString *XADIsResourceForkKey=@"XADIsResourceFork";
 NSString *XADIsLinkKey=@"XADIsLink";
@@ -66,7 +67,6 @@ NSString *XADFirstSolidEntryKey=@"XADFirstSolidEntry";
 NSString *XADNextSolidEntryKey=@"XADNextSolidEntry";
 
 NSString *XADArchiveNameKey=@"XADArchiveName";
-NSString *XADIsCorruptedKey=@"XADIsCorrupted";
 
 
 @implementation XADArchiveParser
@@ -268,15 +268,15 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 
 
--(XADString *)linkDestinationForDictionary:(NSDictionary *)dictionary
+-(XADString *)linkDestinationForDictionary:(NSDictionary *)dict
 {
-	NSNumber *islink=[dictionary objectForKey:XADIsLinkKey];
+	NSNumber *islink=[dict objectForKey:XADIsLinkKey];
 	if(!islink||![islink boolValue]) return nil;
 
-	XADString *linkdest=[dictionary objectForKey:XADLinkDestinationKey];
+	XADString *linkdest=[dict objectForKey:XADLinkDestinationKey];
 	if(linkdest) return linkdest;
 
-	CSHandle *handle=[self handleForEntryWithDictionary:dictionary wantChecksum:YES];
+	CSHandle *handle=[self handleForEntryWithDictionary:dict wantChecksum:YES];
 	NSData *linkdata=[handle remainingFileContents];
 	if([handle hasChecksum]&&![handle isChecksumCorrect]) return nil; // TODO: do something else here?
 
@@ -332,32 +332,46 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict
 {
-	[self addEntryWithDictionary:dictionary retainPosition:NO];
+	[self addEntryWithDictionary:dict retainPosition:NO];
 }
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary retainPosition:(BOOL)retainpos
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
 {
 	// If an encrypted file is added, set the global encryption flag
-	NSNumber *enc=[dictionary objectForKey:XADIsEncryptedKey];
+	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
 	if(enc&&[enc boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsEncryptedKey];
 
 	// Same for the corrupted flag
-	NSNumber *cor=[dictionary objectForKey:XADIsCorruptedKey];
+	NSNumber *cor=[dict objectForKey:XADIsCorruptedKey];
 	if(cor&&[cor boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 
 	// LinkDestination implies IsLink
-	XADString *linkdest=[dictionary objectForKey:XADLinkDestinationKey];
-	if(linkdest) [dictionary setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
+	XADString *linkdest=[dict objectForKey:XADLinkDestinationKey];
+	if(linkdest) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
+
+	// Extract type, creator and finderflags from finderinfo
+	NSData *finderinfo=[dict objectForKey:XADFinderInfoKey];
+	if(finderinfo&&[finderinfo length]>=10)
+	{
+		const uint8_t *bytes=[finderinfo bytes];
+		uint32_t type=CSUInt32BE(bytes+0);
+		uint32_t creator=CSUInt32BE(bytes+4);
+		int flags=CSUInt16BE(bytes+8);
+
+		if(type) [dict setObject:[NSNumber numberWithUnsignedInt:type] forKey:XADFileTypeKey];
+		if(creator) [dict setObject:[NSNumber numberWithUnsignedInt:type] forKey:XADFileCreatorKey];
+		[dict setObject:[NSNumber numberWithInt:flags] forKey:XADFinderFlagsKey];
+	}
 
 	if(retainpos)
 	{
 		off_t pos=[sourcehandle offsetInFile];
-		[delegate archiveParser:self foundEntryWithDictionary:dictionary];
+		[delegate archiveParser:self foundEntryWithDictionary:dict];
 		[sourcehandle seekToFileOffset:pos];
 	}
-	else [delegate archiveParser:self foundEntryWithDictionary:dictionary];
+	else [delegate archiveParser:self foundEntryWithDictionary:dict];
 }
 
 
@@ -419,7 +433,7 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 +(BOOL)isFirstVolume:(NSString *)filename { return NO; }
 
 -(void)parse {}
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum { return nil; }
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum { return nil; }
 -(NSString *)formatName { return nil; } // TODO: combine names for nested archives
 
 @end

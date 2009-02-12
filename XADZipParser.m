@@ -213,15 +213,21 @@
 				NSLog(@"Error parsing Zip extra fields: %@",e);
 			}
 
-			if(prevdict) [self addEntryWithDictionary:prevdict];
-			[self addEntryWithDictionary:dict];
+			if(prevdict)
+			{
+				[self addEntryWithDictionary:prevdict];
+				prevdict=nil;
+			}
 
 			if(uncompsize==0&&!([dict objectForKey:XADIsDirectoryKey]&&[[dict objectForKey:XADIsDirectoryKey] boolValue]))
 			{
 				prevdict=dict; // this entry could be a directory, save it for testing against the next entry
 				prevname=namedata;
 			}
-			else prevdict=nil;
+			else
+			{
+				[self addEntryWithDictionary:dict];
+			}
 		}
 		else [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 
@@ -401,7 +407,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	[fh seekToFileOffset:end];
 }
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
+-(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	CSHandle *fh=[self handleAtDataOffsetForDictionary:dict];
 

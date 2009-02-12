@@ -25,6 +25,7 @@ extern NSString *XADDOSFileAttributesKey;
 extern NSString *XADWindowsFileAttributesKey;
 
 extern NSString *XADIsEncryptedKey;
+extern NSString *XADIsCorruptedKey;
 extern NSString *XADIsDirectoryKey;
 extern NSString *XADIsResourceForkKey;
 extern NSString *XADIsLinkKey;
@@ -47,7 +48,6 @@ extern NSString *XADNextSolidEntryKey;
 
 // Archive properties only
 extern NSString *XADArchiveNameKey;
-extern NSString *XADIsCorruptedKey;
 
 
 /*// Internal use
@@ -89,7 +89,7 @@ extern NSString *XADFinderFlags;
 -(NSString *)password;
 -(void)setPassword:(NSString *)newpassword;
 
--(XADString *)linkDestinationForDictionary:(NSDictionary *)dictionary;
+-(XADString *)linkDestinationForDictionary:(NSDictionary *)dict;
 
 
 
@@ -105,8 +105,8 @@ extern NSString *XADFinderFlags;
 
 -(void)setObject:(id)object forPropertyKey:(NSString *)key;
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary;
--(void)addEntryWithDictionary:(NSMutableDictionary *)dictionary retainPosition:(BOOL)retainpos;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos;
 
 -(XADString *)XADStringWithString:(NSString *)string;
 -(XADString *)XADStringWithData:(NSData *)data;
@@ -128,7 +128,7 @@ extern NSString *XADFinderFlags;
 +(BOOL)isFirstVolume:(NSString *)filename;
 
 -(void)parse;
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;
 
 @end

@@ -1,7 +1,6 @@
-#import "XADArchiveParser.h"
-#import "XADDittoParser.h"
+#import "XADMacArchiveParser.h"
 
-@interface XADZipParser:XADArchiveParser
+@interface XADZipParser:XADMacArchiveParser
 {
 }
 
@@ -16,7 +15,7 @@
 //-(void)findNoSeekMarkerForDictionary:(NSMutableDictionary *)dict;
 -(void)parseZipExtraWithDictionary:(NSMutableDictionary *)dict length:(int)length;
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
+-(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(CSHandle *)decompressionHandleWithHandle:(CSHandle *)parent method:(int)method flags:(int)flags size:(off_t)size;
 
 -(NSString *)formatName;

@@ -467,7 +467,7 @@
 	}
 }
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
+-(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	return( [self handleAtDataOffsetForDictionary:dict] );
 }

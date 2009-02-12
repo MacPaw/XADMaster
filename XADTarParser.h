@@ -1,8 +1,8 @@
-#import "XADArchiveParser.h"
+#import "XADMacArchiveParser.h"
 
 // TODO later: Multivolume tar.
 
-@interface XADTarParser:XADArchiveParser
+@interface XADTarParser:XADMacArchiveParser
 {
 	NSData *currentGlobalHeader;
 }
@@ -11,7 +11,7 @@
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
 -(void)parse;
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
+-(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;
 
 @end

@@ -2,10 +2,11 @@
 #import "XADRegex.h"
 
 extern NSString *XADIsMacBinaryKey;
+extern NSString *XADDisableMacForkExpansionKey;
 
 @interface XADMacArchiveParser:XADArchiveParser
 {
-	CSHandle *dittohandle;
+	CSHandle *currhandle;
 	XADRegex *dittoregex;
 }
 
@@ -13,10 +14,12 @@ extern NSString *XADIsMacBinaryKey;
 -(void)dealloc;
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos;
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict checkForMacBinary:(BOOL)checkbin;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos checkForMacBinary:(BOOL)checkbin;
+-(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name;
+-(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name checkContents:(BOOL)check;
 
--(NSString *)nameForDittoFork:(NSString *)dict;
--(NSMutableDictionary *)parseAppleDoubleWithHandle:(CSHandle *)fh template:(NSDictionary *)template;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 

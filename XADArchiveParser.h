@@ -111,8 +111,8 @@ extern NSString *XADFinderFlags;
 -(XADString *)XADStringWithString:(NSString *)string;
 -(XADString *)XADStringWithData:(NSData *)data;
 -(XADString *)XADStringWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
--(XADString *)XADStringWithBytes:(void *)bytes length:(int)length;
--(XADString *)XADStringWithBytes:(void *)bytes length:(int)length encoding:(NSStringEncoding)encoding;
+-(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length;
+-(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding;
 -(XADString *)XADStringWithCString:(const char *)string;
 -(XADString *)XADStringWithCString:(const char *)string encoding:(NSStringEncoding)encoding;
 

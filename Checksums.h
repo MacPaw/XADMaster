@@ -17,7 +17,7 @@
 @end
 
 uint32_t XADCRC(uint32_t prevcrc,uint8_t byte,const uint32_t *table);
-uint32_t XADCalculateCRC(uint32_t prevcrc,uint8_t *buffer,int length,const uint32_t *table);
+uint32_t XADCalculateCRC(uint32_t prevcrc,const uint8_t *buffer,int length,const uint32_t *table);
 
 int XADUnReverseCRC16(int val);
 

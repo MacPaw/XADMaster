@@ -215,7 +215,7 @@
 
 			if(prevdict)
 			{
-				[self addEntryWithDictionary:prevdict];
+				[self addEntryWithDictionary:prevdict checkForMacBinary:NO];
 				prevdict=nil;
 			}
 
@@ -226,7 +226,7 @@
 			}
 			else
 			{
-				[self addEntryWithDictionary:dict];
+				[self addEntryWithDictionary:dict checkForMacBinary:YES];
 			}
 		}
 		else [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];

@@ -62,6 +62,8 @@
 		1B3E35DA0F3F9B17003EEF98 /* XADLArcHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E35D80F3F9B17003EEF98 /* XADLArcHandles.m */; };
 		1B3E377F0F422D2F003EEF98 /* NumberParsing.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E377D0F422D2F003EEF98 /* NumberParsing.h */; };
 		1B3E37800F422D2F003EEF98 /* NumberParsing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E377E0F422D2F003EEF98 /* NumberParsing.m */; };
+		1B3E39F40F45F62F003EEF98 /* XADChecksumHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E39F20F45F62F003EEF98 /* XADChecksumHandle.h */; };
+		1B3E39F50F45F62F003EEF98 /* XADChecksumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E39F30F45F62F003EEF98 /* XADChecksumHandle.m */; };
 		1B3FAB000EC3859F006D2F06 /* CSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAB010EC3859F006D2F06 /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */; };
 		1B3FAB020EC3859F006D2F06 /* CSSubHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */; settings = {ATTRIBUTES = (); }; };
@@ -401,6 +403,8 @@
 		1B3E35D80F3F9B17003EEF98 /* XADLArcHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLArcHandles.m; sourceTree = "<group>"; };
 		1B3E377D0F422D2F003EEF98 /* NumberParsing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberParsing.h; sourceTree = "<group>"; };
 		1B3E377E0F422D2F003EEF98 /* NumberParsing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NumberParsing.m; sourceTree = "<group>"; };
+		1B3E39F20F45F62F003EEF98 /* XADChecksumHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADChecksumHandle.h; sourceTree = "<group>"; };
+		1B3E39F30F45F62F003EEF98 /* XADChecksumHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADChecksumHandle.m; sourceTree = "<group>"; };
 		1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSHandle.h; sourceTree = "<group>"; };
 		1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHandle.m; sourceTree = "<group>"; };
 		1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSubHandle.h; sourceTree = "<group>"; };
@@ -884,6 +888,15 @@
 			name = XADTest;
 			sourceTree = "<group>";
 		};
+		1B7E88FD0F45B5DF005B1246 /* DiskDoubler */ = {
+			isa = PBXGroup;
+			children = (
+				1BC88D7B0ED31ED9006B47FE /* XADDiskDoublerParser.h */,
+				1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */,
+			);
+			name = DiskDoubler;
+			sourceTree = "<group>";
+		};
 		1B880CFE0F0AAB360061CCBE /* PPMd */ = {
 			isa = PBXGroup;
 			children = (
@@ -972,6 +985,8 @@
 				1BCD64280EF6CA3F00D86C43 /* XADCRCHandle.m */,
 				1BCD64270EF6CA3F00D86C43 /* XADCRCSuffixHandle.h */,
 				1BCD64260EF6CA3F00D86C43 /* XADCRCSuffixHandle.m */,
+				1B3E39F20F45F62F003EEF98 /* XADChecksumHandle.h */,
+				1B3E39F30F45F62F003EEF98 /* XADChecksumHandle.m */,
 				1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */,
 				1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */,
 				1B3E2BF10F28D715003EEF98 /* XADRC4Handle.h */,
@@ -1048,12 +1063,11 @@
 				1BC88BEF0ED1D8F6006B47FE /* StuffIt */,
 				1BC9A7000F007A1E0094C7B5 /* StuffItX */,
 				1BC898E90EDA120C006B47FE /* Compact Pro */,
+				1B7E88FD0F45B5DF005B1246 /* DiskDoubler */,
 				1B06D5B20DDA669C00D9C000 /* XADBinHexParser.h */,
 				1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */,
 				1BC88D730ED31EC3006B47FE /* XADMacBinaryParser.h */,
 				1BC88D740ED31EC3006B47FE /* XADMacBinaryParser.m */,
-				1BC88D7B0ED31ED9006B47FE /* XADDiskDoublerParser.h */,
-				1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */,
 			);
 			name = Mac;
 			sourceTree = "<group>";
@@ -1311,6 +1325,7 @@
 				1B3E35D50F3F96CF003EEF98 /* XADLHADynamicHandle.h in Headers */,
 				1B3E35D90F3F9B17003EEF98 /* XADLArcHandles.h in Headers */,
 				1B3E377F0F422D2F003EEF98 /* NumberParsing.h in Headers */,
+				1B3E39F40F45F62F003EEF98 /* XADChecksumHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1577,6 +1592,7 @@
 				1B3E35D60F3F96CF003EEF98 /* XADLHADynamicHandle.m in Sources */,
 				1B3E35DA0F3F9B17003EEF98 /* XADLArcHandles.m in Sources */,
 				1B3E37800F422D2F003EEF98 /* NumberParsing.m in Sources */,
+				1B3E39F50F45F62F003EEF98 /* XADChecksumHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

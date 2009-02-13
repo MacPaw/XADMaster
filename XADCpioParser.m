@@ -1,4 +1,5 @@
 #import "XADCpioParser.h"
+#import "XADChecksumHandle.h"
 #import "NumberParsing.h"
 
 
@@ -187,8 +188,9 @@
 	if(checksum)
 	{
 		NSNumber *check=[dict objectForKey:@"CpioChecksum"];
-		if(check) handle=[[[XADCpioChecksumHandle alloc] initWithHandle:handle
-		length:[[dict objectForKey:XADDataLengthKey] longLongValue] correctChecksum:[check intValue]] autorelease];
+		if(check) handle=[[[XADChecksumHandle alloc] initWithHandle:handle
+		length:[[dict objectForKey:XADDataLengthKey] longLongValue]
+		correctChecksum:[check intValue] mask:0xffffffff] autorelease];
 	}
 
 	return handle;
@@ -198,48 +200,4 @@
 
 @end
 
-
-
-@implementation XADCpioChecksumHandle
-
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length correctChecksum:(int)correct
-{
-	if(self=[super initWithName:[handle name] length:length])
-	{
-		parent=[handle retain];
-		correctchecksum=correct;
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[parent release];
-	[super dealloc];
-}
-
--(void)resetStream
-{
-	[parent seekToFileOffset:0];
-	checksum=0;
-}
-
--(int)streamAtMost:(int)num toBuffer:(void *)buffer
-{
-	int actual=[parent readAtMost:num toBuffer:buffer];
-
-	uint8_t *bytes=buffer;
-	for(int i=0;i<actual;i++) checksum+=bytes[i];
-
-	return actual;
-}
-
--(BOOL)hasChecksum { return YES; }
-
--(BOOL)isChecksumCorrect
-{
-	return checksum==correctchecksum;
-}
-
-@end
 

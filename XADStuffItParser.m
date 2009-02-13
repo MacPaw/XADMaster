@@ -196,7 +196,7 @@
 	{
 		case 0: compressionname=@"None"; break;
 		case 1: compressionname=@"RLE"; break;
-		case 2: compressionname=@"LZC"; break;
+		case 2: compressionname=@"Compress"; break;
 		case 3: compressionname=@"Huffman"; break;
 		case 5: compressionname=@"LZAH"; break;
 		case 6: compressionname=@"Fixed Huffman"; break;

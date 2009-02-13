@@ -15,6 +15,7 @@
 #import "XADStuffItXParser.h"
 #import "XADBinHexParser.h"
 #import "XADCompactProParser.h"
+#import "XADDiskDoublerParser.h"
 #import "XADCompressParser.h"
 #import "XADALZipParser.h"
 #import "XADLHAParser.h"
@@ -94,6 +95,7 @@ static int maxheader=0;
 		[XADStuffItXParser class],
 		[XADBinHexParser class],
 		[XADCompactProParser class],
+		[XADDiskDoublerParser class],
 		[XADCompressParser class],
 		[XADALZipParser class],
 		[XADLHAParser class],

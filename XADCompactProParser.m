@@ -15,6 +15,7 @@
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
+	// TODO: better filetype detector!
 	return length>=8&&bytes[0]==1&&[[[name pathExtension] lowercaseString] isEqual:@"cpt"];
 }
 

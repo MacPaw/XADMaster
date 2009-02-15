@@ -8,8 +8,7 @@
 #import "XADGzipParser.h"
 #import "XADBzip2Parser.h"
 #import "XADLZMAParser.h"
-#import "XADPPMdParser.h"
-#import "XADXARParser.h"
+#import "XADTarParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
 #import "XADStuffItXParser.h"
@@ -18,13 +17,14 @@
 #import "XADCompactProParser.h"
 #import "XADDiskDoublerParser.h"
 #import "XADPackItParser.h"
+#import "XADPPMdParser.h"
+#import "XADXARParser.h"
 #import "XADCompressParser.h"
 #import "XADRPMParser.h"
 #import "XADALZipParser.h"
 #import "XADLHAParser.h"
 #import "XADPowerPackerParser.h"
 #import "XADLZMAAloneParser.h"
-#import "XADTarParser.h"
 #import "XADCpioParser.h"
 #import "XADLibXADParser.h"
 
@@ -86,14 +86,16 @@ static int maxheader=0;
 	hasinitialized=YES;
 
 	parserclasses=[[NSMutableArray arrayWithObjects:
+		// Common formats
 		[XADZipParser class],
 		[XADRARParser class],
 		[XAD7ZipParser class],
 		[XADGzipParser class],
 		[XADBzip2Parser class],
 		[XADLZMAParser class],
-		[XADPPMdParser class],
-		[XADXARParser class],
+		[XADTarParser class],
+
+		// Mac formats
 		[XADStuffItParser class],
 		[XADStuffIt5Parser class],
 		[XADStuffIt5ExeParser class],
@@ -103,14 +105,27 @@ static int maxheader=0;
 		[XADCompactProParser class],
 		[XADDiskDoublerParser class],
 		[XADPackItParser class],
+
+		// Less common formats
+		[XADPPMdParser class],
+		[XADXARParser class],
 		[XADCompressParser class],
 		[XADRPMParser class],
 		[XADALZipParser class],
 		[XADLHAParser class],
 		[XADPowerPackerParser class],
+
+		// Detectors that require lots of work
+		[XADZipSFXParser class],
+		[XADWinZipSFXParser class],
+		[XADEmbeddedRARParser class],
+		[XADGzipSFXParser class],
+
+		// Over-eager detectors
 		[XADLZMAAloneParser class],
 		[XADCpioParser class],
-		[XADTarParser class],
+
+		// LibXAD
 		[XADLibXADParser class],
 	nil] retain];
 

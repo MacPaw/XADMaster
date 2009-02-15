@@ -52,6 +52,7 @@
 	[[[dict objectForKey:XADFileNameKey] string] matchedByPattern:@"\\.sea$" options:REG_ICASE])
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
 
+	// TODO: Better detection of embedded archives. Also applies to BinHex!
 //	if([[dict objectForKey:XADFileTypeKey] unsignedIntValue]=='APPL')...
 }
 

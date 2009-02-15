@@ -70,7 +70,7 @@ static int TestSignature(const uint8_t *ptr)
 
 +(int)requiredHeaderSize
 {
-	return 0x40000;
+	return 7;
 }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
@@ -80,7 +80,7 @@ static int TestSignature(const uint8_t *ptr)
 
 	if(length<7) return NO; // TODO: fix to use correct min size
 
-	for(int i=0;i<=length-7;i++) if(TestSignature(bytes+i)) return YES;
+	if(TestSignature(bytes)) return YES;
 
 	return NO;
 }
@@ -132,15 +132,7 @@ static int TestSignature(const uint8_t *ptr)
 	uint8_t buf[7];
 	[handle readBytes:7 toBuffer:buf];	
 
-	int sigtype;
-	while(!(sigtype=TestSignature(buf)))
-	{
-		buf[0]=buf[1]; buf[1]=buf[2]; buf[2]=buf[3];
-		buf[3]=buf[4]; buf[4]=buf[5]; buf[5]=buf[6];
-		buf[6]=[handle readUInt8];
-	}
-
-	if(sigtype==RAR_OLDSIGNATURE)
+	if(TestSignature(buf)==RAR_OLDSIGNATURE)
 	{
 		[XADException raiseNotSupportedException];
 		// [fh skipBytes:-3];
@@ -538,6 +530,51 @@ NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,bloc
 -(NSString *)formatName
 {
 	return @"RAR";
+}
+
+@end
+
+
+@implementation XADEmbeddedRARParser
+
++(int)requiredHeaderSize
+{
+	return 0x40000;
+}
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
+{
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+
+	if(length<7) return NO; // TODO: fix to use correct min size
+
+	for(int i=0;i<=length-7;i++) if(TestSignature(bytes+i)) return YES;
+
+	return NO;
+}
+
+-(void)parse
+{
+	CSHandle *fh=[self handle];
+
+	uint8_t buf[7];
+	[fh readBytes:sizeof(buf) toBuffer:buf];	
+
+	int sigtype;
+	while(!(sigtype=TestSignature(buf)))
+	{
+		memmove(buf,buf+1,sizeof(buf)-1);
+		buf[sizeof(buf)-1]=[fh readUInt8];
+	}
+
+	[fh skipBytes:-sizeof(buf)];
+	[super parse];
+}
+
+-(NSString *)formatName
+{
+	return @"RAR (Embedded)";
 }
 
 @end

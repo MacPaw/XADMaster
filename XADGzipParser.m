@@ -2,7 +2,7 @@
 #import "CSZlibHandle.h"
 #import "XADCRCSuffixHandle.h"
 
-// TODO: implement SFX 
+
 
 @implementation XADGzipParser
 
@@ -127,3 +127,52 @@
 -(NSString *)formatName { return @"Gzip"; }
 
 @end
+
+
+
+@implementation XADGzipSFXParser
+
++(int)requiredHeaderSize { return 5000; }
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
+{
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+
+	if(length<5) return NO;
+	if(length>5000) length=5000;
+
+	if(bytes[0]!='#'||bytes[1]!='!') return NO;
+
+	for(int i=2;i<length-3;i++)
+	{
+		if(bytes[i]==0x1f&&(bytes[i+1]==0x8b||bytes[i+1]==0x9e)&&bytes[i+2]==8) return YES;
+    }
+
+	return NO;
+}
+
+-(void)parse
+{
+	CSHandle *fh=[self handle];
+	uint8_t buf[5000-2];
+	[fh skipBytes:2];
+	[fh readBytes:sizeof(buf) toBuffer:buf];
+
+	for(int i=0;i<5000-5;i++)
+	{
+		if(buf[i]==0x1f&&(buf[i+1]==0x8b||buf[i+1]==0x9e)&&buf[i+2]==8)
+		{
+			[fh seekToFileOffset:i+2];
+			[super parse];
+			return;
+		}
+	}
+}
+
+-(NSString *)formatName { return @"Gzip (Self-extracting)"; }
+
+@end
+
+
+

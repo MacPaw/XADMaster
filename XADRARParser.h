@@ -42,3 +42,16 @@ typedef struct RARBlock
 -(NSString *)formatName;
 
 @end
+
+
+@interface XADEmbeddedRARParser:XADRARParser
+{
+}
+
++(int)requiredHeaderSize;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
+
+-(void)parse;
+-(NSString *)formatName;
+
+@end

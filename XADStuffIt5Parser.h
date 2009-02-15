@@ -11,7 +11,7 @@
 
 @end
 
-@interface XADStuffIt5ExeParser:XADStuffItParser
+@interface XADStuffIt5ExeParser:XADStuffIt5Parser
 {
 }
 

@@ -104,7 +104,8 @@
 		int err=inflate(&zs,0);
 		if(err==Z_STREAM_END)
 		{
-			if(seekback) [parent skipBytes:-zs.avail_in];
+			if(seekback) [parent skipBytes:-(off_t)zs.avail_in];
+			[self endStream];
 			break;
 		}
 		else if(err!=Z_OK) [self _raiseZlib];

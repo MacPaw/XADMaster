@@ -28,6 +28,7 @@ extern NSString *XADIsEncryptedKey;
 extern NSString *XADIsCorruptedKey;
 extern NSString *XADIsDirectoryKey;
 extern NSString *XADIsResourceForkKey;
+extern NSString *XADIsArchiveKey;
 extern NSString *XADIsLinkKey;
 extern NSString *XADIsHardLinkKey;
 extern NSString *XADLinkDestinationKey;

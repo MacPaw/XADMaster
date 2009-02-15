@@ -78,9 +78,8 @@ NSString *EscapeString(NSString *str)
 
 	printf(")\n");
 
-	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
-	NSString *ext=[[name pathExtension] lowercaseString];
-	if(([ext isEqual:@"sit"]||[ext isEqual:@"cpt"]||[ext isEqual:@"tar"])&&!(rsrc&&[rsrc boolValue]))
+	NSNumber *arch=[dict objectForKey:XADIsArchiveKey];
+	if(arch&&[arch boolValue])
 	{
 		[fh seekToFileOffset:0];
 

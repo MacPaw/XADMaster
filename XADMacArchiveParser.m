@@ -40,6 +40,9 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	NSNumber *disable=[properties objectForKey:XADDisableMacForkExpansionKey];
 	if(disable&&[disable boolValue])
 	{
+		NSNumber *isbin=[dict objectForKey:XADIsMacBinaryKey];
+		if(isbin&&[isbin boolValue]) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+
 		[super addEntryWithDictionary:dict retainPosition:retainpos];
 		return;
 	}

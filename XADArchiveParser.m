@@ -16,7 +16,9 @@
 #import "XADBinHexParser.h"
 #import "XADCompactProParser.h"
 #import "XADDiskDoublerParser.h"
+#import "XADPackItParser.h"
 #import "XADCompressParser.h"
+#import "XADRPMParser.h"
 #import "XADALZipParser.h"
 #import "XADLHAParser.h"
 #import "XADPowerPackerParser.h"
@@ -49,6 +51,7 @@ NSString *XADIsEncryptedKey=@"XADIsEncrypted";
 NSString *XADIsCorruptedKey=@"XADIsCorrupted";
 NSString *XADIsDirectoryKey=@"XADIsDirectory";
 NSString *XADIsResourceForkKey=@"XADIsResourceFork";
+NSString *XADIsArchiveKey=@"XADIsArchive";
 NSString *XADIsLinkKey=@"XADIsLink";
 NSString *XADIsHardLinkKey=@"XADIsHardLink";
 NSString *XADLinkDestinationKey=@"XADLinkDestination";
@@ -92,11 +95,14 @@ static int maxheader=0;
 		[XADXARParser class],
 		[XADStuffItParser class],
 		[XADStuffIt5Parser class],
+		[XADStuffIt5ExeParser class],
 		[XADStuffItXParser class],
 		[XADBinHexParser class],
 		[XADCompactProParser class],
 		[XADDiskDoublerParser class],
+		[XADPackItParser class],
 		[XADCompressParser class],
+		[XADRPMParser class],
 		[XADALZipParser class],
 		[XADLHAParser class],
 		[XADPowerPackerParser class],

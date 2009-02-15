@@ -4,8 +4,20 @@
 {
 }
 
++(int)requiredHeaderSize;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 -(void)parse;
 -(NSString *)formatName;
+
+@end
+
+@interface XADStuffIt5ExeParser:XADStuffItParser
+{
+}
+
++(int)requiredHeaderSize;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
+-(void)parse;
 
 @end
 

@@ -55,7 +55,7 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/CAB.c"
 #include "clients/CrunchDisk.c"
 #include "clients/DCS.c"
-#include "clients/DiskDoubler.c"
+//#include "clients/DiskDoubler.c"
 #include "clients/DMS.c"
 #include "clients/FS_Amiga.c"
 #include "clients/FS_FAT.c"
@@ -68,8 +68,6 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/MXM-SimpleArc.c"
 #include "clients/PackDev.c"
 #include "clients/PackDisk.c"
-#include "clients/RPM.c"
-#include "clients/StuffIt.c" // TODO: implement all and remove
 #include "clients/SuperDuper3.c"
 #include "clients/xDisk.c"
 #include "clients/xMash.c"

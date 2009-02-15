@@ -24,32 +24,6 @@
 	NSLog(@"Checksum: %@, Length: %d",[fh hasChecksum]?[fh isChecksumCorrect]?@"Correct":@"Incorrect":@"Unknown",[data length]);
 
 	NSLog(@"\n%@",[data subdataWithRange:NSMakeRange(0,[data length]<256?[data length]:256)]);
-
-	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
-	NSString *subname=[[dict objectForKey:XADFileNameKey] string];
-	NSString *ext=[[subname pathExtension] lowercaseString];
-	if(([ext isEqual:@"sit"]||[ext isEqual:@"cpt"])&&!(rsrc&&[rsrc boolValue]))
-	{
-		NSMutableString *name=[NSMutableString stringWithString:[[dict objectForKey:XADFileNameKey] string]];
-		[name replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[name length])];
-		[data writeToFile:name atomically:YES];
-
-		[fh seekToFileOffset:0];
-
-//@try {
-		XADArchiveParser *parser=[XADArchiveParser archiveParserForHandle:fh name:subname];
-
-		NSLog(@"----------- Parsing sub-archive %@ -----------",subname);
-
-		[parser setDelegate:[[TestDelegate new] autorelease]];
-		[parser parse];
-		NSLog(@"Archive properties: %@",[parser properties]);
-
-		NSLog(@"----------- Finished sub-archive %@ -----------",subname);
-//} @catch(id e) {
-//	NSLog(@"Failed to parse sub archive %@ due to exception: %@",subname,e);
-//}
-	}
 }
 
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser

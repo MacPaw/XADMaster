@@ -3,8 +3,6 @@
 #import "Paths.h"
 #import "NSDateXAD.h"
 
-// TODO: StuffIt 5 exe
-
 @implementation XADStuffIt5Parser
 
 +(int)requiredHeaderSize { return 100; }
@@ -101,15 +99,16 @@
 -(void)parse
 {
 	CSHandle *fh=[self handle];
+	off_t base=[fh offsetInFile];
 
 	[fh skipBytes:84];
 	uint32_t totalsize=[fh readUInt32BE];
 	uint32_t firstoffs=[fh readUInt32BE];
-	[fh seekToFileOffset:firstoffs];
+	[fh seekToFileOffset:firstoffs+base];
 
 	NSMutableDictionary *directories=[NSMutableDictionary dictionary];
 
-	while([fh offsetInFile]+48<=totalsize)
+	while([fh offsetInFile]+48<=totalsize+base)
 	{
 		off_t offs=[fh offsetInFile];
 
@@ -281,3 +280,25 @@
 
 
 
+@implementation XADStuffIt5ExeParser
+
++(int)requiredHeaderSize { return 8192; }
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
+{
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+
+	if(length<4104) return NO;
+
+	if(bytes[0]=='M'&&bytes[1]=='Z'&&CSUInt32BE(bytes+4100)==0x4203e853) return YES;
+	return NO;
+}
+
+-(void)parse
+{
+	[[self handle] skipBytes:0x1a000];
+	[super parse];
+}
+
+@end

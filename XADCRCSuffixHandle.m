@@ -75,7 +75,7 @@ CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)cr
 		crcparent=nil;
 	}
 
-	return crc==(compcrc^initcrc);
+	return (crc^initcrc)==compcrc;
 }
 
 @end

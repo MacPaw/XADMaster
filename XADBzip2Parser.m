@@ -37,6 +37,9 @@
 		[self XADStringWithString:@"Bzip2"],XADCompressionNameKey,
 	nil];
 
+	if([name matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
+	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+
 	@try {
 		off_t filesize=[[self handle] fileSize];
 		[dict setObject:[NSNumber numberWithUnsignedLongLong:filesize] forKey:XADCompressedSizeKey];

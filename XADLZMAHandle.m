@@ -67,7 +67,11 @@ static ISzAlloc allocator={Alloc,Free};
 			if(!bufbytes) [parent _raiseEOF];
 			bufoffs=0;
 		}
-		else if(status==LZMA_STATUS_FINISHED_WITH_MARK) { [self endStream]; break; }
+		else if(status==LZMA_STATUS_FINISHED_WITH_MARK)
+		{
+			[self endStream];
+			break;
+		}
 	}
 
 	return total;

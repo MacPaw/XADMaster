@@ -56,7 +56,11 @@
 		}
 
 		int err=BZ2_bzDecompress(&bzs);
-		if(err==BZ_STREAM_END) break;
+		if(err==BZ_STREAM_END)
+		{
+			[self endStream];
+			break;
+		}
 		else if(err!=BZ_OK) [self _raiseBzip2:err];
 	}
 

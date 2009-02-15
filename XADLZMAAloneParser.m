@@ -48,6 +48,9 @@
 		props,@"LZMAProperties",
 	nil];
 
+	if([name matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
+	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+
 	uint64_t size=[handle readUInt64LE];
 	if(size!=0xffffffffffffffff)
 	[dict setObject:[NSNumber numberWithUnsignedLongLong:size] forKey:XADFileSizeKey];

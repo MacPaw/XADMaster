@@ -78,7 +78,15 @@
 		[NSNumber numberWithUnsignedInt:os],@"GzipOS",
 	nil];
 
-	if(filename) [dict setObject:[self XADStringWithData:filename] forKey:XADFileNameKey];
+	if(filename)
+	{
+		[dict setObject:[self XADStringWithData:filename] forKey:XADFileNameKey];
+
+		NSString *stringname=[[NSString alloc] initWithData:filename encoding:NSISOLatin1StringEncoding];
+		if([stringname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
+		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+		[stringname release];
+	}
 	else
 	{
 		NSString *name=[self name];
@@ -89,8 +97,11 @@
 		else if([extension isEqual:@"cpgz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"cpio"];
 		else contentname=[name stringByDeletingPathExtension];
 
-		[dict setObject:[self XADStringWithString:contentname] forKey:XADFileNameKey];
 		// TODO: set no filename flag
+		[dict setObject:[self XADStringWithString:contentname] forKey:XADFileNameKey];
+
+		if([contentname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
+		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
 	}
 
 	if(comment) [dict setObject:[self XADStringWithData:comment] forKey:XADCommentKey];

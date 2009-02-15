@@ -73,6 +73,16 @@
 
 	NSData *namedata=[fh readDataOfLength:namelen];
 
+	BOOL isarc=NO;
+	if(namelen>4)
+	{
+		const uint8_t *name=[namedata bytes];
+		const uint8_t *ext=name+namelen-4;
+		if(memcmp(ext,".sit",4)==0) isarc=YES;
+		else if(memcmp(ext,".cpt",4)==0) isarc=YES;
+		else if(memcmp(ext,".sea",4)==0) isarc=YES;
+	}
+
 	[fh skipBytes:1];
 	uint32_t type=[fh readUInt32BE];
 	uint32_t creator=[fh readUInt32BE];
@@ -89,6 +99,7 @@
 		[NSNumber numberWithUnsignedInt:creator],XADFileCreatorKey,
 		[NSNumber numberWithUnsignedShort:flags],XADFinderFlagsKey,
 		[NSNumber numberWithLongLong:start],XADDataOffsetKey,
+		[NSNumber numberWithBool:isarc],XADIsArchiveKey,
 		[NSNumber numberWithUnsignedInt:22+namelen],@"BinHexDataOffset",
 	nil]];
 

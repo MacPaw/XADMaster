@@ -22,5 +22,6 @@ extern NSString *XADDisableMacForkExpansionKey;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
+-(void)inspectEntryDictionary:(NSMutableDictionary *)dict;
 
 @end

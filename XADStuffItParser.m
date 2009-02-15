@@ -63,6 +63,7 @@
 -(void)parse
 {
 	CSHandle *fh=[self handle];
+	off_t base=[fh offsetInFile];
 
 	/*uint32_t signature=*/[fh readID];
 	/*int numfiles=*/[fh readUInt16BE];
@@ -74,7 +75,7 @@
 
 	NSMutableDictionary *currdir=nil;
 
-	while([fh offsetInFile]+SIT_FILEHDRSIZE<=totalsize)
+	while([fh offsetInFile]+SIT_FILEHDRSIZE<=totalsize+base)
 	{
 		uint8_t header[SIT_FILEHDRSIZE];
 		[fh readBytes:112 toBuffer:header];
@@ -90,7 +91,7 @@
 
 			int namelen=header[SITFH_FNAMESIZE];
 			if(namelen>63) namelen=63;
-			NSData *pathdata=XADBuildMacPathWithBuffer([currdir objectForKey:@"StuffItPathData"],(char *)header+SITFH_FNAME,namelen);
+			NSData *pathdata=XADBuildMacPathWithBuffer([currdir objectForKey:@"StuffItPathData"],header+SITFH_FNAME,namelen);
 			XADString *path=[self XADStringWithData:pathdata]; // TODO: encoding:NSMacOS...?
 
 			off_t start=[fh offsetInFile];
@@ -227,11 +228,9 @@
 		case 5: handle=[[[XADStuffItLZAHHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
 		//case 6:  fixed huffman
 		case 8: handle=[[[XADStuffItMWHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
-		case 13: if(!getenv("XAD_OLD")) handle=[[[XADStuffIt13Handle alloc] initWithHandle:fh length:size] autorelease];
-		else handle=[[[XADStuffItOld13Handle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
+		case 13: handle=[[[XADStuffIt13Handle alloc] initWithHandle:fh length:size] autorelease]; break;
 		case 14: handle=[[[XADStuffIt14Handle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
-		case 15: if(!getenv("XAD_OLD")) handle=[[[XADStuffItArsenicHandle alloc] initWithHandle:fh length:size] autorelease];
-		else handle=[[[XADStuffItOldArsenicHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
+		case 15: handle=[[[XADStuffItArsenicHandle alloc] initWithHandle:fh length:size] autorelease]; break;
 
 		default: return nil;
 	}
@@ -250,6 +249,3 @@
 -(NSString *)formatName { return @"StuffIt"; }
 
 @end
-
-
-

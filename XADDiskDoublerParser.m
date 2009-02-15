@@ -5,6 +5,7 @@
 #import "XADCRCHandle.h"
 #import "XADChecksumHandle.h"
 #import "NSDateXAD.h"
+#import "Paths.h"
 
 @implementation XADDiskDoublerParser
 
@@ -90,17 +91,11 @@
 
 		while(dirlevel<[pathstack count]) [pathstack removeLastObject];
 
-		NSMutableData *namedata;
-		if(dirlevel==0)
-		{
-			namedata=[NSMutableData dataWithBytes:namebuf length:namelen];
-		}
-		else
-		{
-			namedata=[NSMutableData dataWithData:[[pathstack lastObject] objectForKey:@"DiskDoublerNameData"]];
-			[namedata appendBytes:"/" length:1];
-			[namedata appendBytes:namebuf length:namelen];
-		}
+		NSData *parent;
+		if(dirlevel==0) parent=nil;
+		else parent=[[pathstack lastObject] objectForKey:@"DiskDoublerNameData"];
+
+		NSData *namedata=XADBuildMacPathWithBuffer(parent,namebuf,namelen);
 
 		XADString *name=[self XADStringWithData:namedata];
 

@@ -101,7 +101,7 @@ static uint64_t ParseInt(const uint8_t *buffer,int size,int type,int offset)
 		for(int i=0;i<headentries;i++)
 		{
 			uint32_t tag=CSUInt32BE(entries+i*16+0);
-			uint32_t type=CSUInt32BE(entries+i*16+4);
+			//uint32_t type=CSUInt32BE(entries+i*16+4);
 			uint32_t offset=CSUInt32BE(entries+i*16+8);
 			//uint32_t count=CSUInt32BE(entries+i*16+12);
 

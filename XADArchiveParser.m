@@ -14,6 +14,7 @@
 #import "XADStuffIt5Parser.h"
 #import "XADStuffItXParser.h"
 #import "XADBinHexParser.h"
+#import "XADMacBinaryParser.h"
 #import "XADCompactProParser.h"
 #import "XADDiskDoublerParser.h"
 #import "XADPackItParser.h"
@@ -98,6 +99,7 @@ static int maxheader=0;
 		[XADStuffIt5ExeParser class],
 		[XADStuffItXParser class],
 		[XADBinHexParser class],
+		[XADMacBinaryParser class],
 		[XADCompactProParser class],
 		[XADDiskDoublerParser class],
 		[XADPackItParser class],
@@ -121,7 +123,7 @@ static int maxheader=0;
 	}
 }
 
-+(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name
++(Class)archiveParserClassForHandle:(CSHandle *)handle name:(NSString *)name
 {
 	NSData *header=[handle readDataOfLengthAtMost:maxheader];
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
@@ -133,11 +135,17 @@ static int maxheader=0;
 			if([parserclass recognizeFileWithHandle:handle firstBytes:header name:name])
 			{
 				[handle seekToFileOffset:0];
-				return [[[parserclass alloc] initWithHandle:handle name:name] autorelease];
+				return parserclass;
 			}
 		} @catch(id e) {} // ignore parsers that throw errors on recognition or init
 	}
 	return nil;
+}
+
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name
+{
+	Class parserclass=[self archiveParserClassForHandle:handle name:name];
+	return [[[parserclass alloc] initWithHandle:handle name:name] autorelease];
 }
 
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename
@@ -162,7 +170,6 @@ static int maxheader=0;
 		@catch(id e) { }
 	}
 
-	trysingle:
 	@try {
 		handle=[CSFileHandle fileHandleForReadingAtPath:filename];
 	} @catch(id e) { return nil; }

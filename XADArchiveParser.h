@@ -73,6 +73,7 @@ extern NSString *XADFinderFlags;
 }
 
 +(void)initialize;
++(Class)archiveParserClassForHandle:(CSHandle *)handle name:(NSString *)name;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename;
 +(NSArray *)volumesForFilename:(NSString *)name;

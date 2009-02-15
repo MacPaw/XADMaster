@@ -1,5 +1,6 @@
 #import "XADMacArchiveParser.h"
 #import "NSDateXAD.h"
+#import "Paths.h"
 
 NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
@@ -134,6 +135,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	[newdict removeObjectForKey:XADDataOffsetKey];
 
 	currhandle=fh;
+	[self inspectEntryDictionary:newdict];
 	[super addEntryWithDictionary:newdict retainPosition:NO];
 	currhandle=nil;
 
@@ -142,14 +144,13 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 -(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name checkContents:(BOOL)check
 {
-	if(!name) return NO;
-
 	NSNumber *isbinobj=[dict objectForKey:XADIsMacBinaryKey];
 	BOOL isbin=isbinobj?[isbinobj boolValue]:NO;
 
 	if(!isbin)
 	{
 		if(!check) return NO;
+		if(!name) return NO;
 		if(![name hasSuffix:@".bin"]) return NO;
 	}
 
@@ -159,20 +160,21 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	if([header length]!=128) return NO;
 
 	const uint8_t *bytes=[header bytes];
-
-	// Only accept MacBinary III files
-	if(CSUInt32BE(bytes+102)!='mBIN') return NO;
-	if(XADCalculateCRC(0,bytes,124,XADCRCReverseTable_1021)!=XADUnReverseCRC16(CSUInt16BE(bytes+124))) return NO;
-	if(bytes[1]>63) return NO;
+	if(!isbin)
+	{
+		// Only detect MacBinary III files
+		if(CSUInt32BE(bytes+102)!='mBIN') return NO;
+		if(XADCalculateCRC(0,bytes,124,XADCRCReverseTable_1021)!=XADUnReverseCRC16(CSUInt16BE(bytes+124))) return NO;
+		if(bytes[1]>63) return NO;
+	}
 
 	uint32_t datasize=CSUInt32BE(bytes+83);
 	uint32_t rsrcsize=CSUInt32BE(bytes+87);
 	int extsize=CSUInt16BE(bytes+120);
-	off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 
 	NSMutableDictionary *template=[NSMutableDictionary dictionaryWithDictionary:dict];
 	[template setObject:dict forKey:@"MacOriginalDictionary"];
-	[template setObject:[self XADStringWithBytes:bytes+2 length:bytes[1]] forKey:XADFileNameKey];
+	[template setObject:[self XADStringWithData:XADBuildMacPathWithBuffer(nil,bytes+2,bytes[1])] forKey:XADFileNameKey];
 	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+65)] forKey:XADFileTypeKey];
 	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+69)] forKey:XADFileCreatorKey];
 	[template setObject:[NSNumber numberWithInt:bytes[73]+(bytes[101]<<8)] forKey:XADFinderFlagsKey];
@@ -181,6 +183,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	[template setObject:[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(bytes+95)] forKey:XADLastModificationDateKey];
 	[template removeObjectForKey:XADDataLengthKey];
 	[template removeObjectForKey:XADDataOffsetKey];
+	[template removeObjectForKey:XADIsMacBinaryKey];
 
 	currhandle=fh;
 
@@ -191,8 +194,9 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		[newdict setObject:[NSNumber numberWithUnsignedInt:128+BlockSize(extsize)] forKey:@"MacDataOffset"];
 		[newdict setObject:[NSNumber numberWithUnsignedInt:datasize] forKey:@"MacDataLength"];
 		[newdict setObject:[NSNumber numberWithUnsignedInt:datasize] forKey:XADFileSizeKey];
-		[newdict setObject:[NSNumber numberWithUnsignedInt:compsize*(datasize+1)/(datasize+rsrcsize+2)] forKey:XADCompressedSizeKey];
+		[newdict setObject:[NSNumber numberWithUnsignedInt:BlockSize(datasize)] forKey:XADCompressedSizeKey];
 
+		[self inspectEntryDictionary:newdict];
 		[super addEntryWithDictionary:newdict retainPosition:NO];
 	}
 
@@ -202,9 +206,10 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		[newdict setObject:[NSNumber numberWithUnsignedInt:128+BlockSize(extsize)+BlockSize(datasize)] forKey:@"MacDataOffset"];
 		[newdict setObject:[NSNumber numberWithUnsignedInt:rsrcsize] forKey:@"MacDataLength"];
 		[newdict setObject:[NSNumber numberWithUnsignedInt:rsrcsize] forKey:XADFileSizeKey];
-		[newdict setObject:[NSNumber numberWithUnsignedInt:compsize*(rsrcsize+1)/(datasize+rsrcsize+2)] forKey:XADCompressedSizeKey];
+		[newdict setObject:[NSNumber numberWithUnsignedInt:BlockSize(rsrcsize)] forKey:XADCompressedSizeKey];
 		[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
 
+		[self inspectEntryDictionary:newdict];
 		[super addEntryWithDictionary:newdict retainPosition:NO];
 	}
 
@@ -238,6 +243,10 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	return nil;
+}
+
+-(void)inspectEntryDictionary:(NSMutableDictionary *)dict
+{
 }
 
 @end

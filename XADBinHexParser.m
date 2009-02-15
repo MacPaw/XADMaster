@@ -2,6 +2,7 @@
 #import "XADException.h"
 #import "CSMemoryHandle.h"
 #import "XADCRCSuffixHandle.h"
+#import "Paths.h"
 
 @implementation XADBinHexParser
 
@@ -71,7 +72,7 @@
 	uint8_t namelen=[fh readUInt8];
 	if(namelen>63) [XADException raiseIllegalDataException];
 
-	NSData *namedata=[fh readDataOfLength:namelen];
+	NSData *namedata=XADBuildMacPathWithData(nil,[fh readDataOfLength:namelen]);
 
 	BOOL isarc=NO;
 	if(namelen>4)
@@ -81,6 +82,11 @@
 		if(memcmp(ext,".sit",4)==0) isarc=YES;
 		else if(memcmp(ext,".cpt",4)==0) isarc=YES;
 		else if(memcmp(ext,".sea",4)==0) isarc=YES;
+	}
+
+	if(!isarc)
+	{
+		if([[self name] matchedByPattern:@"\\.sea(\\.|$)" options:REG_ICASE]) isarc=YES;
 	}
 
 	[fh skipBytes:1];

@@ -18,7 +18,7 @@
 
 	if(bytes[0]!=0) return NO;
 	if(bytes[74]!=0) return NO;
-	if(XADCalculateCRC(0,bytes,124,XADCRCTable_a001)==CSUInt16BE(bytes+124)) return YES; // MacBinary II
+	if(XADCalculateCRC(0,bytes,124,XADCRCReverseTable_1021)==XADUnReverseCRC16(CSUInt16BE(bytes+124))) return YES; // MacBinary II
 
 	if(bytes[82]!=0) return NO;
 	for(int i=101;i<=125;i++) if(bytes[i]!=0) return NO;
@@ -41,6 +41,18 @@
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	return [self handle];
+}
+
+-(void)inspectEntryDictionary:(NSMutableDictionary *)dict
+{
+	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
+	if(rsrc&&[rsrc boolValue]) return;
+
+	if([[self name] matchedByPattern:@"\\.sea(\\.|$)" options:REG_ICASE]||
+	[[[dict objectForKey:XADFileNameKey] string] matchedByPattern:@"\\.sea$" options:REG_ICASE])
+	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+
+//	if([[dict objectForKey:XADFileTypeKey] unsignedIntValue]=='APPL')...
 }
 
 -(NSString *)formatName

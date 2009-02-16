@@ -2,6 +2,8 @@
 
 extern NSString *XADInvalidPrefixCodeException;
 
+typedef struct XADCodeTableEntry XADCodeTableEntry;
+
 @interface XADPrefixCode:NSObject
 {
 	int (*tree)[2];
@@ -10,6 +12,8 @@ extern NSString *XADInvalidPrefixCodeException;
 
 	int currnode;
 	NSMutableArray *stack;
+
+	XADCodeTableEntry *tables[9];
 }
 
 +(XADPrefixCode *)prefixCode;

@@ -15,8 +15,61 @@
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
-	// TODO: better filetype detector!
-	return length>=8&&bytes[0]==1&&[[[name pathExtension] lowercaseString] isEqual:@"cpt"];
+	if(length<8) return NO;
+	if(bytes[0]!=1) return NO;
+
+	uint32_t offset=CSUInt32BE(bytes+4);
+
+	off_t filesize;
+	@try
+	{
+		filesize=[handle fileSize];
+	}
+	@catch(id e)
+	{
+		return [name matchedByPattern:@"\\.(cpt|sea)" options:REG_ICASE];
+	}
+
+	if(offset+7>filesize) return NO;
+
+	@try
+	{
+		[handle seekToFileOffset:offset];
+		uint32_t correctcrc=[handle readUInt32BE];
+
+		uint8_t buf[256];
+		uint32_t crc=0xffffffff;
+
+		[handle readBytes:3 toBuffer:buf];
+		crc=XADCalculateCRC(crc,buf,3,XADCRCTable_edb88320);
+
+		int numentries=CSUInt16BE(buf);
+		int commentsize=buf[2];
+
+		[handle readBytes:commentsize toBuffer:buf];
+		crc=XADCalculateCRC(crc,buf,commentsize,XADCRCTable_edb88320);
+
+		for(int i=0;i<numentries;i++)
+		{
+			int namelen=[handle readUInt8];
+			crc=XADCRC(crc,namelen,XADCRCTable_edb88320);
+
+			[handle readBytes:namelen&0x7f toBuffer:buf];
+			crc=XADCalculateCRC(crc,buf,namelen&0x7f,XADCRCTable_edb88320);
+
+			int metadatasize;
+			if(namelen&0x80) metadatasize=2;
+			else metadatasize=45;
+
+			[handle readBytes:metadatasize toBuffer:buf];
+			crc=XADCalculateCRC(crc,buf,metadatasize,XADCRCTable_edb88320);
+		}
+
+		if(crc==correctcrc) return YES;
+	}
+	@catch(id e) {}
+
+	return NO;
 }
 
 -(void)parse
@@ -40,12 +93,19 @@
 		[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
 	}
 
-	[self parseDirectoryWithNameData:nil numberOfEntries:numentries];
+	NSMutableArray *entries=[NSMutableArray array];
 
-	// TODO: handle comment
+	// Since the recognizer has already verified that the metadata is intact, reading
+	// should be safe, so to avoid stream resets, we just collect entries into an array
+	// and send all of them out at once.
+	[self parseDirectoryWithNameData:nil numberOfEntries:numentries entryArray:entries];
+
+	NSEnumerator *enumerator=[entries objectEnumerator];
+	NSMutableDictionary *dict;
+	while(dict=[enumerator nextObject]) [self addEntryWithDictionary:dict];
 }
 
--(void)parseDirectoryWithNameData:(NSData *)parentdata numberOfEntries:(int)numentries
+-(void)parseDirectoryWithNameData:(NSData *)parentdata numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries
 {
 	CSHandle *fh=[self handle];
 
@@ -57,18 +117,18 @@
 
 		if(namelen&0x80)
 		{
-			int entries=[fh readUInt16BE];
+			int numdirentries=[fh readUInt16BE];
 
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				[self XADStringWithData:pathdata],XADFileNameKey,
 				[NSNumber numberWithBool:YES],XADIsDirectoryKey,
 			nil];
 
-			[self addEntryWithDictionary:dict retainPosition:YES];
+			[entries addObject:dict];
 
-			[self parseDirectoryWithNameData:namedata numberOfEntries:entries];
+			[self parseDirectoryWithNameData:namedata numberOfEntries:numdirentries entryArray:entries];
 
-			numentries-=entries+1;
+			numentries-=numdirentries+1;
 		}
 		else
 		{
@@ -85,8 +145,6 @@
 			uint32_t datalength=[fh readUInt32BE];
 			uint32_t resourcecomplen=[fh readUInt32BE];
 			uint32_t datacomplen=[fh readUInt32BE];
-
-			off_t next=[fh offsetInFile];
 
 			if(resourcelength)
 			{
@@ -114,7 +172,7 @@
 					[NSNumber numberWithUnsignedInt:volume],@"CompactProVolume",
 				nil];
 
-				[self addEntryWithDictionary:dict];
+				[entries addObject:dict];
 			}
 
 			if(datalength||resourcelength==0)
@@ -142,10 +200,9 @@
 					[NSNumber numberWithUnsignedInt:volume],@"CompactProVolume",
 				nil];
 
-				[self addEntryWithDictionary:dict];
+				[entries addObject:dict];
 			}
 
-			[fh seekToFileOffset:next];
 			numentries--;
 		}
 	}

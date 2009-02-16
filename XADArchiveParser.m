@@ -102,7 +102,6 @@ static int maxheader=0;
 		[XADStuffItXParser class],
 		[XADBinHexParser class],
 		[XADMacBinaryParser class],
-		[XADCompactProParser class],
 		[XADDiskDoublerParser class],
 		[XADPackItParser class],
 
@@ -120,6 +119,7 @@ static int maxheader=0;
 		[XADWinZipSFXParser class],
 		[XADEmbeddedRARParser class],
 		[XADGzipSFXParser class],
+		[XADCompactProParser class],
 
 		// Over-eager detectors
 		[XADLZMAAloneParser class],

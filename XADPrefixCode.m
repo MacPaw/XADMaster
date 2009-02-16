@@ -71,6 +71,8 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 		numentries=1;
 		isstatic=NO;
 		stack=nil;
+
+		for(int i=0;i<sizeof(tables)/sizeof(tables[0]);i++) tables[i]=NULL;
 	}
 	return self;
 }
@@ -81,6 +83,8 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 	{
 		tree=statictable;
 		isstatic=YES;
+
+		for(int i=0;i<sizeof(tables)/sizeof(tables[0]);i++) tables[i]=NULL;
 	}
 	return self;
 }

@@ -89,19 +89,6 @@
 	}
 	for(int i=numbytes*2;i<size;i++) codelengths[i]=0;
 
-/*	XADPrefixTree *code=[XADPrefixTree prefixTree];
-
-	int code=0;
-
-	for(int length=15;length>=1;length--)
-	for(int n=size-1;n>=0;n--)
-	{
-		if(codelength[n]!=length) continue;
-		// Instead of reversing to get a low-bit-first code, we shift and use high-bit-first.
-		[code addValue:n forCodeWithHighBitFirst:(code^0xffff)>>16-length length:length];
-		code+=1<<16-length;
-	}*/
-
 	return [[XADPrefixCode alloc] initWithLengths:codelengths numberOfSymbols:size maximumLength:15 shortestCodeIsZeros:YES];
 }
 

@@ -262,6 +262,23 @@
 		}
 		break;
 
+		case 8:
+		{
+			int sub=0;
+			for(int i=0;i<16;i++) sub+=[handle readUInt8];
+
+			if(sub==0) handle=[[[XADCompactProLZHHandle alloc] initWithHandle:handle blockSize:0xfff0] autorelease];
+			handle=[[[XADCompactProRLEHandle alloc] initWithHandle:handle length:size] autorelease];
+
+			if(checksum)
+			{
+				handle=[XADCRCHandle IBMCRC16HandleWithHandle:handle length:size
+				correctCRC:[[dict objectForKey:@"DiskDoublerCRC"] intValue]
+				conditioned:NO];
+			}
+		}
+		break;
+
 		default: return nil;
 	}
 

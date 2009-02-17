@@ -26,11 +26,11 @@
 		XADUnReverseCRC16(CSUInt16BE(bytes+82))) return YES;
 	}
 
-	if(length>=124)
+	if(length>=78)
 	{
 		if(CSUInt32BE(bytes)=='DDAR')
-		if(XADCalculateCRC(0,bytes,122,XADCRCReverseTable_1021)==
-		XADUnReverseCRC16(CSUInt16BE(bytes+122))) return YES;
+		if(XADCalculateCRC(0,bytes,76,XADCRCReverseTable_1021)==
+		XADUnReverseCRC16(CSUInt16BE(bytes+76))) return YES;
 	}
 
 	if(length>=62)
@@ -55,7 +55,124 @@
 
 -(void)parseArchive
 {
-	NSLog(@"archive");
+	CSHandle *fh=[self handle];
+	[fh skipBytes:74];
+
+	NSMutableArray *pathstack=[NSMutableArray array];
+
+	for(;;)
+	{
+		uint32_t magic;
+		@try { magic=[fh readID]; }
+		@catch(id e) { break; }
+		if(magic!='DDAR') [XADException raiseIllegalDataException];
+
+		[fh skipBytes:4];
+
+		int namelen=[fh readUInt8];
+		if(namelen>63) namelen=63;
+		uint8_t namebuf[63];
+		[fh readBytes:63 toBuffer:namebuf];
+
+		int isdir=[fh readUInt8];
+		int enddir=[fh readUInt8];
+		uint32_t datasize=[fh readUInt32BE];
+		uint32_t rsrcsize=[fh readUInt32BE];
+		uint32_t creation=[fh readUInt32BE];
+		uint32_t modification=[fh readUInt32BE];
+		uint32_t type=[fh readUInt32BE];
+		uint32_t creator=[fh readUInt32BE];
+		int finderflags=[fh readUInt16BE];
+		[fh skipBytes:18];
+		int datacrc=[fh readUInt16BE];
+		int rsrccrc=[fh readUInt16BE];
+		[fh skipBytes:2];
+
+		NSData *parent;
+		if([pathstack count]) parent=[[pathstack lastObject] objectForKey:@"DiskDoublerNameData"];
+		else parent=nil;
+
+		NSData *namedata=XADBuildMacPathWithBuffer(parent,namebuf,namelen);
+		XADString *name=[self XADStringWithData:namedata];
+
+		off_t start=[fh offsetInFile];
+		uint32_t totalsize=0;
+
+		if(enddir)
+		{
+			[pathstack removeLastObject];
+		}
+		else if(isdir)
+		{
+			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+				name,XADFileNameKey,
+				namedata,@"DiskDoublerNameData",
+				[NSDate XADDateWithTimeIntervalSince1904:creation],XADCreationDateKey,
+				[NSDate XADDateWithTimeIntervalSince1904:modification],XADLastModificationDateKey,
+				[NSNumber numberWithInt:finderflags],XADFinderFlagsKey, // TODO: is this valid?
+				[NSNumber numberWithBool:YES],XADIsDirectoryKey,
+			nil];
+
+			[self addEntryWithDictionary:dict];
+			[pathstack addObject:dict];
+		}
+		else if(finderflags&0x20)
+		{
+			if(datasize||!rsrcsize)
+			{
+				[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+					name,XADFileNameKey,
+					[NSNumber numberWithUnsignedInt:datasize],XADFileSizeKey,
+					[NSNumber numberWithUnsignedInt:datasize],XADCompressedSizeKey,
+					[NSDate XADDateWithTimeIntervalSince1904:modification],XADLastModificationDateKey,
+					[NSDate XADDateWithTimeIntervalSince1904:creation],XADCreationDateKey,
+					[NSNumber numberWithUnsignedInt:type],XADFileTypeKey,
+					[NSNumber numberWithUnsignedInt:creator],XADFileCreatorKey,
+					[NSNumber numberWithInt:finderflags],XADFinderFlagsKey,
+					[self XADStringWithString:[self nameForMethod:0]],XADCompressionNameKey,
+
+					[NSNumber numberWithLongLong:start],XADDataOffsetKey,
+					[NSNumber numberWithUnsignedInt:datasize],XADDataLengthKey,
+					[NSNumber numberWithInt:0],@"DiskDoublerMethod",
+					[NSNumber numberWithInt:datacrc],@"DiskDoublerCRC",
+					[NSNumber numberWithInt:0],@"DiskDoublerDeltaType",
+				nil]];
+			}
+
+			if(rsrcsize)
+			{
+				[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+					name,XADFileNameKey,
+					[NSNumber numberWithUnsignedInt:rsrcsize],XADFileSizeKey,
+					[NSNumber numberWithUnsignedInt:rsrcsize],XADCompressedSizeKey,
+					[NSDate XADDateWithTimeIntervalSince1904:modification],XADLastModificationDateKey,
+					[NSDate XADDateWithTimeIntervalSince1904:creation],XADCreationDateKey,
+					[NSNumber numberWithUnsignedInt:type],XADFileTypeKey,
+					[NSNumber numberWithUnsignedInt:creator],XADFileCreatorKey,
+					[NSNumber numberWithInt:finderflags],XADFinderFlagsKey,
+					[self XADStringWithString:[self nameForMethod:0]],XADCompressionNameKey,
+					[NSNumber numberWithBool:YES],XADIsResourceForkKey,
+
+					[NSNumber numberWithLongLong:start+datasize],XADDataOffsetKey,
+					[NSNumber numberWithUnsignedInt:rsrcsize],XADDataLengthKey,
+					[NSNumber numberWithInt:0],@"DiskDoublerMethod",
+					[NSNumber numberWithInt:rsrccrc],@"DiskDoublerCRC",
+					[NSNumber numberWithInt:0],@"DiskDoublerDeltaType",
+				nil]];
+			}
+
+			totalsize=datasize+rsrcsize;
+		}
+		else
+		{
+			uint32_t filemagic=[fh readID];
+			if(filemagic!=0xabcd0054) [XADException raiseIllegalDataException];
+
+			totalsize=[self parseFileHeaderWithHandle:fh name:name]+84*2;
+		}
+
+		[fh seekToFileOffset:start+totalsize];
+	}
 }
 
 -(void)parseArchive2
@@ -96,7 +213,6 @@
 		else parent=[[pathstack lastObject] objectForKey:@"DiskDoublerNameData"];
 
 		NSData *namedata=XADBuildMacPathWithBuffer(parent,namebuf,namelen);
-
 		XADString *name=[self XADStringWithData:namedata];
 
 		if(entrytype&0x8000)
@@ -132,7 +248,7 @@
 	}
 }
 
--(void)parseFileHeaderWithHandle:(CSHandle *)fh name:(XADString *)name
+-(uint32_t)parseFileHeaderWithHandle:(CSHandle *)fh name:(XADString *)name
 {
 	uint32_t datasize=[fh readUInt32BE];
 	uint32_t datacompsize=[fh readUInt32BE];
@@ -209,6 +325,8 @@
 			[NSNumber numberWithInt:info2],@"DiskDoublerInfo2",
 		nil]];
 	}
+
+	return datacompsize+rsrccompsize;
 }
 
 -(NSString *)nameForMethod:(int)method

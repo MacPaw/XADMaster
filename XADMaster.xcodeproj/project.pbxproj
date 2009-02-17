@@ -286,7 +286,6 @@
 		1B06D4F80DDA623800D9C000 /* CAB.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CAB.c; sourceTree = "<group>"; };
 		1B06D4FA0DDA623800D9C000 /* CrunchDisk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CrunchDisk.c; sourceTree = "<group>"; };
 		1B06D4FB0DDA623800D9C000 /* DCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DCS.c; sourceTree = "<group>"; };
-		1B06D4FC0DDA623800D9C000 /* DiskDoubler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DiskDoubler.c; sourceTree = "<group>"; };
 		1B06D4FD0DDA623800D9C000 /* DMS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DMS.c; sourceTree = "<group>"; };
 		1B06D4FE0DDA623800D9C000 /* FS_Amiga.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FS_Amiga.c; sourceTree = "<group>"; };
 		1B06D4FF0DDA623800D9C000 /* FS_FAT.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FS_FAT.c; sourceTree = "<group>"; };
@@ -756,7 +755,6 @@
 				1B06D4F80DDA623800D9C000 /* CAB.c */,
 				1B06D4FA0DDA623800D9C000 /* CrunchDisk.c */,
 				1B06D4FB0DDA623800D9C000 /* DCS.c */,
-				1B06D4FC0DDA623800D9C000 /* DiskDoubler.c */,
 				1B06D4FD0DDA623800D9C000 /* DMS.c */,
 				1B06D4FE0DDA623800D9C000 /* FS_Amiga.c */,
 				1B06D4FF0DDA623800D9C000 /* FS_FAT.c */,

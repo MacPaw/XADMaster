@@ -11,7 +11,7 @@
 -(void)parse;
 -(void)parseArchive;
 -(void)parseArchive2;
--(void)parseFileHeaderWithHandle:(CSHandle *)fh name:(XADString *)name;
+-(uint32_t)parseFileHeaderWithHandle:(CSHandle *)fh name:(XADString *)name;
 
 -(NSString *)nameForMethod:(int)method;
 

@@ -19,9 +19,9 @@
 	if(length<98) return NO;
 
 	if(bytes[0]=='P'&&bytes[1]=='M'&&bytes[2]=='a')
-	if(bytes[3]=='g'||bytes[3]=='4')
-	if(XADCalculateCRC(0,bytes+4,92,XADCRCReverseTable_1021)==
-	XADUnReverseCRC16(CSUInt16BE(bytes+96))) return YES;
+	if(bytes[3]=='g'||(bytes[3]>='1'||bytes[3]<='6')) return YES;
+//	if(XADCalculateCRC(0,bytes+4,92,XADCRCReverseTable_1021)==
+//	XADUnReverseCRC16(CSUInt16BE(bytes+96))) return YES;
 
 	return NO;
 }
@@ -45,16 +45,28 @@
 
 -(void)parse
 {
-	CSHandle *fh=[self handle];
+	CSHandle *handle=[self handle];
 
 	for(;;)
 	{
-		uint32_t magic=[fh readID];
+		uint32_t magic=[handle readID];
+NSLog(@"%x",magic);
 		if(magic=='PEnd') break;
 
 		BOOL comp;
-		if(magic=='PMag') comp=NO;
-		else if(magic=='PMa4') comp=YES;
+		CSHandle *fh;
+		XADStuffItHuffmanHandle *hh=nil;
+
+		if(magic=='PMag')
+		{
+			comp=NO;
+			fh=handle;
+		}
+		else if(magic=='PMa4')
+		{
+			comp=YES;
+			fh=hh=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle] autorelease];
+		}
 		else [XADException raiseIllegalDataException];
 
 		int namelen=[fh readUInt8];
@@ -79,6 +91,8 @@
 		uint32_t datacompsize,rsrccompsize;
 		off_t end;
 
+		start=[fh offsetInFile];
+
 		if(!comp)
 		{
 			[fh skipBytes:datasize+rsrcsize];
@@ -96,9 +110,6 @@
 		}
 		else
 		{
-			XADStuffItHuffmanHandle *hh=[[[XADStuffItHuffmanHandle alloc]
-			initWithHandle:fh length:datasize+rsrcsize] autorelease];
-
 			[hh skipBytes:datasize];
 			datacompsize=CSInputBufferOffset(hh->input);
 

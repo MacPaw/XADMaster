@@ -3,29 +3,30 @@
 #import "CSMultiHandle.h"
 
 #import "XADZipParser.h"
+#import "XADZipSFXParsers.h"
 #import "XADRARParser.h"
 #import "XAD7ZipParser.h"
-#import "XADGzipParser.h"
-#import "XADBzip2Parser.h"
-#import "XADLZMAParser.h"
-#import "XADTarParser.h"
+#import "XADPPMdParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
 #import "XADStuffItXParser.h"
-#import "XADBinHexParser.h"
-#import "XADMacBinaryParser.h"
 #import "XADCompactProParser.h"
 #import "XADDiskDoublerParser.h"
+#import "XADBinHexParser.h"
+#import "XADMacBinaryParser.h"
 #import "XADPackItParser.h"
-#import "XADPPMdParser.h"
-#import "XADXARParser.h"
+#import "XADGzipParser.h"
+#import "XADBzip2Parser.h"
+#import "XADLZMAAloneParser.h"
+#import "XADLZMAParser.h"
 #import "XADCompressParser.h"
+#import "XADTarParser.h"
+#import "XADCpioParser.h"
+#import "XADXARParser.h"
 #import "XADRPMParser.h"
-#import "XADALZipParser.h"
 #import "XADLHAParser.h"
 #import "XADPowerPackerParser.h"
-#import "XADLZMAAloneParser.h"
-#import "XADCpioParser.h"
+#import "XADALZipParser.h"
 #import "XADLibXADParser.h"
 
 #include <dirent.h>
@@ -115,8 +116,9 @@ static int maxheader=0;
 		[XADPowerPackerParser class],
 
 		// Detectors that require lots of work
-		[XADZipSFXParser class],
 		[XADWinZipSFXParser class],
+		[XADZipItSEAParser class],
+		[XADZipSFXParser class],
 		[XADEmbeddedRARParser class],
 		[XADGzipSFXParser class],
 		[XADCompactProParser class],

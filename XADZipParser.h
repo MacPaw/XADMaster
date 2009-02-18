@@ -21,19 +21,3 @@
 -(NSString *)formatName;
 
 @end
-
-@interface XADZipSFXParser:XADZipParser
-{
-}
-+(int)requiredHeaderSize;
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
--(NSString *)formatName;
-@end
-
-@interface XADWinZipSFXParser:XADZipParser
-{
-}
-+(int)requiredHeaderSize;
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
--(NSString *)formatName;
-@end

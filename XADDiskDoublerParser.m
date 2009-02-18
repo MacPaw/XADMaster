@@ -2,6 +2,7 @@
 #import "XADCompressHandle.h"
 #import "XADCompactProRLEHandle.h"
 #import "XADCompactProLZHHandle.h"
+#import "XADStuffItHuffmanHandle.h"
 #import "XADCRCHandle.h"
 #import "XADChecksumHandle.h"
 #import "NSDateXAD.h"
@@ -378,6 +379,17 @@
 				mask:0xffff] autorelease];
 			}
 		}
+		break;
+
+		case 4: // Untested!
+			handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:size] autorelease];
+
+			if(checksum)
+			{
+				handle=[XADCRCHandle IBMCRC16HandleWithHandle:handle length:size
+				correctCRC:[[dict objectForKey:@"DiskDoublerCRC"] intValue]
+				conditioned:NO];
+			}
 		break;
 
 		case 8:

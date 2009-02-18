@@ -1,6 +1,6 @@
-#import "XADArchiveParser.h"
+#import "XADMacArchiveParser.h"
 
-@interface XADLHAParser:XADArchiveParser
+@interface XADLHAParser:XADMacArchiveParser
 {
 }
 
@@ -10,7 +10,7 @@
 -(void)parse;
 -(void)parseExtendedForDictionary:(NSMutableDictionary *)dict size:(int)size;
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
+-(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;
 
 @end

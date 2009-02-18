@@ -65,6 +65,7 @@
 		nil];
 
 		uint32_t headersize;
+		int os;
 
 		if(level==0||level==1)
 		{
@@ -81,7 +82,7 @@
 
 			if(level==1)
 			{
-				int os=[fh readUInt8];
+				os=[fh readUInt8];
 				[dict setObject:[NSNumber numberWithInt:os] forKey:@"LHAOS"];
 
 				for(;;)
@@ -104,7 +105,7 @@
 			int crc=[fh readUInt16LE];
 			[dict setObject:[NSNumber numberWithInt:crc] forKey:@"LHACRC16"];
 
-			int os=[fh readUInt8];
+			os=[fh readUInt8];
 			[dict setObject:[NSNumber numberWithInt:os] forKey:@"LHAOS"];
 
 			for(;;)
@@ -123,7 +124,7 @@
 			int crc=[fh readUInt16LE];
 			[dict setObject:[NSNumber numberWithInt:crc] forKey:@"LHACRC16"];
 
-			int os=[fh readUInt8];
+			os=[fh readUInt8];
 			[dict setObject:[NSNumber numberWithInt:os] forKey:@"LHAOS"];
 
 			headersize=[fh readUInt32LE];
@@ -162,6 +163,8 @@
 
 			[dict setObject:[self XADStringWithBytes:namebuf length:size] forKey:XADFileNameKey];
 		}
+
+		if(os=='m') [dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
 
 		[self addEntryWithDictionary:dict];
 
@@ -256,7 +259,7 @@
 }
 
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
+-(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];

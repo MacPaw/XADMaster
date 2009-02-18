@@ -3,9 +3,33 @@
 #import "Paths.h"
 
 NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
+NSString *XADMightBeMacBinaryKey=@"XADMightBeMacBinary";
 NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 @implementation XADMacArchiveParser
+
++(int)macBinaryVersionForHeader:(NSData *)header
+{
+	if([header length]<128) return NO;
+
+	const uint8_t *bytes=[header bytes];
+
+	if(CSUInt32BE(bytes+102)=='mBIN') return 3; // MacBinary III
+
+	if(bytes[0]!=0) return 0;
+	if(bytes[74]!=0) return 0;
+	if(XADCalculateCRC(0,bytes,124,XADCRCReverseTable_1021)==
+	XADUnReverseCRC16(CSUInt16BE(bytes+124))) return 2; // MacBinary II
+
+	if(bytes[82]!=0) return 0;
+	for(int i=101;i<=125;i++) if(bytes[i]!=0) return 0;
+	if(bytes[1]==0||bytes[1]>63) return 0;
+	for(int i=0;i<bytes[1];i++) if(bytes[i+2]==0) return 0;
+	if(CSUInt32BE(bytes+83)>0x7fffff) return 0;
+	if(CSUInt32BE(bytes+87)>0x7fffff) return 0;
+
+	return 1; // MacBinary I
+}
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 {
@@ -24,16 +48,6 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 }
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
-{
-	[self addEntryWithDictionary:dict retainPosition:retainpos checkForMacBinary:NO];
-}
-
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict checkForMacBinary:(BOOL)checkbin
-{
-	[self addEntryWithDictionary:dict retainPosition:NO checkForMacBinary:checkbin];
-}
-
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos checkForMacBinary:(BOOL)checkbin
 {
 	if(retainpos) [XADException raiseNotSupportedException];
 
@@ -63,7 +77,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	if([self parseAppleDoubleWithDictionary:dict name:name]) return;
 
 	// Check for MacBinary files
-	if([self parseMacBinaryWithDictionary:dict name:name checkContents:checkbin]) return;
+	if([self parseMacBinaryWithDictionary:dict name:name]) return;
 
 	// Nothing else worked, it's a normal file
 	[super addEntryWithDictionary:dict retainPosition:retainpos];
@@ -142,31 +156,27 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	return YES;
 }
 
--(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name checkContents:(BOOL)check
+-(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name
 {
 	NSNumber *isbinobj=[dict objectForKey:XADIsMacBinaryKey];
 	BOOL isbin=isbinobj?[isbinobj boolValue]:NO;
 
-	if(!isbin)
-	{
-		if(!check) return NO;
-		if(!name) return NO;
-		if(![name hasSuffix:@".bin"]) return NO;
-	}
+	NSNumber *checkobj=[dict objectForKey:XADMightBeMacBinaryKey];
+	BOOL check=checkobj?[checkobj boolValue]:NO;
+
+	if(!isbin&&!check) return NO;
 
 	CSHandle *fh=[self rawHandleForEntryWithDictionary:dict wantChecksum:YES];
 
 	NSData *header=[fh readDataOfLengthAtMost:128];
 	if([header length]!=128) return NO;
 
-	const uint8_t *bytes=[header bytes];
 	if(!isbin)
 	{
-		// Only detect MacBinary III files
-		if(CSUInt32BE(bytes+102)!='mBIN') return NO;
-		if(XADCalculateCRC(0,bytes,124,XADCRCReverseTable_1021)!=XADUnReverseCRC16(CSUInt16BE(bytes+124))) return NO;
-		if(bytes[1]>63) return NO;
+		if([XADMacArchiveParser macBinaryVersionForHeader:header]==0) return NO;
 	}
+
+	const uint8_t *bytes=[header bytes];
 
 	uint32_t datasize=CSUInt32BE(bytes+83);
 	uint32_t rsrcsize=CSUInt32BE(bytes+87);
@@ -184,6 +194,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	[template removeObjectForKey:XADDataLengthKey];
 	[template removeObjectForKey:XADDataOffsetKey];
 	[template removeObjectForKey:XADIsMacBinaryKey];
+	[template removeObjectForKey:XADMightBeMacBinaryKey];
 
 	currhandle=fh;
 

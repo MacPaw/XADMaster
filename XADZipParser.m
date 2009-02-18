@@ -164,19 +164,26 @@
 				if(((char *)[namedata bytes])[localnamelength-1]=='/'&&uncompsize==0)
 				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 
+				const uint8_t *namebytes=[namedata bytes];
+				int namelength=[namedata length];
+
 				if(prevdict) // the previous entry was suspected of being a directory
 				{
-					const char *prevstr=[prevname bytes];
-					const char *currstr=[namedata bytes];
+					const char *prevbytes=[prevname bytes];
 					int prevlength=[prevname length];
-					int currlength=[namedata length];
-					if(prevlength<currlength)
+					if(prevlength<namelength)
 					{
 						int i=0;
-						while(currstr[i]&&prevstr[i]==currstr[i]) i++;
-						if(!prevstr[i]&&currstr[i]=='/')
+						while(namebytes[i]&&prevbytes[i]==namebytes[i]) i++;
+						if(!prevbytes[i]&&namebytes[i]=='/')
 						[prevdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 					}
+				}
+
+				if(namelength>4)
+				{
+					if(memcmp(namebytes+namelength-4,".bin",4)==0)
+					[dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
 				}
 			}
 			else
@@ -215,7 +222,7 @@
 
 			if(prevdict)
 			{
-				[self addEntryWithDictionary:prevdict checkForMacBinary:NO];
+				[self addEntryWithDictionary:prevdict];
 				prevdict=nil;
 			}
 
@@ -226,7 +233,7 @@
 			}
 			else
 			{
-				[self addEntryWithDictionary:dict checkForMacBinary:YES];
+				[self addEntryWithDictionary:dict];
 			}
 		}
 		else [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];

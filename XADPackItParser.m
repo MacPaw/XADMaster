@@ -8,7 +8,7 @@
 
 +(int)requiredHeaderSize
 {
-	return 98;
+	return 4;
 }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
@@ -16,12 +16,10 @@
 	int length=[data length];
 	const uint8_t *bytes=[data bytes];
 
-	if(length<98) return NO;
+	if(length<4) return NO;
 
 	if(bytes[0]=='P'&&bytes[1]=='M'&&bytes[2]=='a')
-	if(bytes[3]=='g'||(bytes[3]>='1'||bytes[3]<='6')) return YES;
-//	if(XADCalculateCRC(0,bytes+4,92,XADCRCReverseTable_1021)==
-//	XADUnReverseCRC16(CSUInt16BE(bytes+96))) return YES;
+	if(bytes[3]=='g'||bytes[3]=='4'||bytes[3]=='5'||bytes[3]=='6') return YES;
 
 	return NO;
 }
@@ -50,22 +48,40 @@
 	for(;;)
 	{
 		uint32_t magic=[handle readID];
-NSLog(@"%x",magic);
 		if(magic=='PEnd') break;
+
+		off_t start=[handle offsetInFile];
 
 		BOOL comp;
 		CSHandle *fh;
-		XADStuffItHuffmanHandle *hh=nil;
+		CSInputBuffer *input=NULL;
+		NSMutableDictionary *datadesc;
 
 		if(magic=='PMag')
 		{
 			comp=NO;
 			fh=handle;
 		}
-		else if(magic=='PMa4')
+		else if(magic=='PMa4'||magic=='PMa5'||magic=='PMa6')
 		{
 			comp=YES;
-			fh=hh=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle] autorelease];
+
+			CSHandle *src;
+			if(magic=='PMa4') src=handle;
+			else if(magic=='PMa5')
+			{
+				src=[[[XADPackItXORHandle alloc] initWithHandle:handle
+				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+			}
+			else if(magic=='PMa6')
+			{
+				src=[[[XADPackItDESHandle alloc] initWithHandle:handle
+				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+			}
+
+			XADStuffItHuffmanHandle *hh=[[[XADStuffItHuffmanHandle alloc] initWithHandle:src] autorelease];
+			input=hh->input;
+			fh=hh;
 		}
 		else [XADException raiseIllegalDataException];
 
@@ -85,13 +101,8 @@ NSLog(@"%x",magic);
 		uint32_t creation=[fh readUInt32BE];
 		/*int headcrc=*/[fh readUInt16BE];
 
-		off_t start=[fh offsetInFile];
-
-		NSMutableDictionary *datadesc;
 		uint32_t datacompsize,rsrccompsize;
 		off_t end;
-
-		start=[fh offsetInFile];
 
 		if(!comp)
 		{
@@ -100,31 +111,45 @@ NSLog(@"%x",magic);
 
 			datacompsize=datasize;
 			rsrccompsize=rsrcsize;
-			end=start+datacompsize+rsrccompsize+2;
+			end=start+94+datacompsize+rsrccompsize+2;
 
 			datadesc=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-				[NSNumber numberWithLongLong:start],@"Offset",
+				[NSNumber numberWithLongLong:start+94],@"Offset",
 				[NSNumber numberWithLongLong:datasize+rsrcsize],@"Length",
 				[NSNumber numberWithInt:crc],@"CRC",
 			nil];
 		}
 		else
 		{
-			[hh skipBytes:datasize];
-			datacompsize=CSInputBufferOffset(hh->input);
+			[fh skipBytes:datasize];
+			datacompsize=CSInputBufferOffset(input)-94;
 
-			[hh skipBytes:rsrcsize];
-			rsrccompsize=CSInputBufferOffset(hh->input)-datacompsize;
+			[fh skipBytes:rsrcsize];
+			rsrccompsize=CSInputBufferOffset(input)-datacompsize-94;
 
-			int crc=[hh readUInt16BE];
-			CSInputSkipToByteBoundary(hh->input);
-			end=CSInputFileOffset(hh->input);
+			int crc=[fh readUInt16BE];
+
+			CSInputSkipToByteBoundary(input);
+
+			int crypto;
+			if(magic=='PMa4')
+			{
+				end=start+CSInputBufferOffset(input);
+				crypto=0;
+			}
+			else
+			{
+				end=start+((CSInputBufferOffset(input)+7)&~7);
+				if(magic=='PMa5') crypto=1;
+				else crypto=2;
+			}
 
 			datadesc=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithLongLong:start],@"Offset",
 				[NSNumber numberWithLongLong:end-start],@"Length",
-				[NSNumber numberWithLongLong:datasize+rsrcsize],@"UncompressedLength",
+				[NSNumber numberWithLongLong:datasize+rsrcsize+94],@"UncompressedLength",
 				[NSNumber numberWithInt:crc],@"CRC",
+				[NSNumber numberWithInt:crypto],@"Crypto",
 			nil];
 		}
 
@@ -167,7 +192,7 @@ NSLog(@"%x",magic);
 			nil]];
 		}
 
-		[fh seekToFileOffset:end];
+		[handle seekToFileOffset:end];
 	}
 }
 
@@ -181,8 +206,26 @@ NSLog(@"%x",magic);
 		off_t len=[[desc objectForKey:@"Length"] longLongValue];
 		CSHandle *handle=[[self handle] nonCopiedSubHandleFrom:offs length:len];
 
-		NSNumber *uncomplen=[desc objectForKey:@"UncompressedLength"];
-		if(uncomplen) handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:[uncomplen longLongValue]] autorelease];
+		NSNumber *uncomplennum=[desc objectForKey:@"UncompressedLength"];
+		if(uncomplennum)
+		{
+			off_t uncomplen=[uncomplennum longLongValue];
+			int crypto=[[desc objectForKey:@"Crypto"] longLongValue];
+
+			if(crypto==1)
+			{
+				handle=[[[XADPackItXORHandle alloc] initWithHandle:handle length:len
+				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+			}
+			else if(crypto==2)
+			{
+				handle=[[[XADPackItDESHandle alloc] initWithHandle:handle length:len
+				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+			}
+
+			handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:uncomplen] autorelease];
+			handle=[handle nonCopiedSubHandleFrom:94 length:uncomplen-94];
+		}
 
 		handle=[XADCRCHandle CCITTCRC16HandleWithHandle:handle length:[handle fileSize]
 		correctCRC:[[desc objectForKey:@"CRC"] intValue] conditioned:NO];
@@ -203,6 +246,106 @@ NSLog(@"%x",magic);
 -(NSString *)formatName
 {
 	return @"PackIt";
+}
+
+@end
+
+
+
+@implementation XADPackItXORHandle
+
+-(id)initWithHandle:(CSHandle *)handle password:(NSData *)passdata
+{
+	return [self initWithHandle:handle length:CSHandleMaxLength password:passdata];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata
+{
+	if(self=[super initWithHandle:handle length:length])
+	{
+		const uint8_t *passbytes=[passdata bytes];
+		int passlen=[passdata length];
+
+		uint8_t passbuf[8];
+
+		memset(passbuf,0,8);
+		memcpy(passbuf,passbytes,passlen<8?passlen:8);
+
+		static const int keytr1[56]=
+		{
+			57,49,41,33,25,17, 9, 1,58,50,42,34,26,18,10, 2,59,51,43,35,27,19,11,03,60,52,44,36,
+			63,55,47,39,31,23,15, 7,62,54,46,38,30,22,14, 6,61,53,45,37,29,21,13, 5,28,20,12, 4
+		};
+
+		memset(key,0,8);
+		for(int i=0;i<56;i++)
+		{
+			int bitindex=keytr1[i]-1;
+			key[i/8]|=((passbuf[bitindex/8]<<(bitindex%8))&0x80)>>(i%8);
+		}
+
+		[self setBlockPointer:block];
+	}
+	return self;
+}
+
+
+-(int)produceBlockAtOffset:(off_t)pos
+{
+	memset(block,0,8);
+
+	for(int i=0;i<8;i++)
+	{
+		if(CSInputAtEOF(input)) { [self endBlockStream]; break; }
+		block[i]=CSInputNextByte(input)^key[(pos+i)%7];
+	}
+
+	return 8;
+}
+
+@end
+
+
+
+@implementation XADPackItDESHandle
+
+-(id)initWithHandle:(CSHandle *)handle password:(NSData *)passdata
+{
+	return [self initWithHandle:handle length:CSHandleMaxLength password:passdata];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata
+{
+	if(self=[super initWithHandle:handle length:length])
+	{
+		const uint8_t *passbytes=[passdata bytes];
+		int passlen=[passdata length];
+
+		DES_cblock key;
+		memset(key,0,8);
+		memcpy(key,passbytes,passlen<8?passlen:8);
+
+		DES_set_key_unchecked(&key,&schedule);
+
+		[self setBlockPointer:outblock];
+	}
+	return self;
+}
+
+
+-(int)produceBlockAtOffset:(off_t)pos
+{
+	memset(inblock,0,8);
+
+	for(int i=0;i<8;i++)
+	{
+		if(CSInputAtEOF(input)) { [self endBlockStream]; break; }
+		inblock[i]=CSInputNextByte(input);
+	}
+
+	DES_ecb_encrypt(&inblock,&outblock,&schedule,0);
+
+	return 8;
 }
 
 @end

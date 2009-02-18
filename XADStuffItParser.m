@@ -10,6 +10,7 @@
 #import "XADStuffIt13Handle.h"
 #import "XADStuffItOldHandles.h"
 #import "XADCompressHandle.h"
+#import "XADLHADynamicHandle.h"
 
 // TODO: implement final bits of libxad's Stuffit.c
 
@@ -225,7 +226,9 @@
 		case 1: handle=[[[XADStuffItRLEHandle alloc] initWithHandle:fh length:size] autorelease]; break;
 		case 2: handle=[[[XADCompressHandle alloc] initWithHandle:fh length:size flags:0x8e] autorelease]; break;
 		case 3: handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:fh length:size] autorelease]; break;
-		case 5: handle=[[[XADStuffItLZAHHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
+		//case 5: handle=[[[XADStuffItLZAHHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
+		case 5: handle=[[[XADLHADynamicHandle alloc] initWithHandle:fh length:size] autorelease]; break;
+		// TODO: Figure out if the initialization of the window differs between LHArc and StuffIt
 		//case 6:  fixed huffman
 		case 8: handle=[[[XADStuffItMWHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
 		case 13: handle=[[[XADStuffIt13Handle alloc] initWithHandle:fh length:size] autorelease]; break;

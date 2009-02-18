@@ -49,7 +49,7 @@
 	if(rsrc&&[rsrc boolValue]) return;
 
 	if([[self name] matchedByPattern:@"\\.sea(\\.|$)" options:REG_ICASE]||
-	[[[dict objectForKey:XADFileNameKey] string] matchedByPattern:@"\\.sea$" options:REG_ICASE])
+	[[[dict objectForKey:XADFileNameKey] string] matchedByPattern:@"\\.(sea|sit|cpt)$" options:REG_ICASE])
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
 
 	// TODO: Better detection of embedded archives. Also applies to BinHex!

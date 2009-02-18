@@ -1,4 +1,7 @@
 #import "XADArchiveParser.h"
+#import "CSBlockStreamHandle.h"
+
+#import <openssl/des.h>
 
 @interface XADPackItParser:XADArchiveParser
 {
@@ -12,5 +15,30 @@
 -(void)parse;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;
+
+@end
+
+@interface XADPackItXORHandle:CSBlockStreamHandle
+{
+	uint8_t key[8],block[8];
+}
+
+-(id)initWithHandle:(CSHandle *)handle password:(NSData *)passdata;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata;
+
+-(int)produceBlockAtOffset:(off_t)pos;
+
+@end
+
+@interface XADPackItDESHandle:CSBlockStreamHandle
+{
+	DES_cblock inblock,outblock;
+	DES_key_schedule schedule;
+}
+
+-(id)initWithHandle:(CSHandle *)handle password:(NSData *)passdata;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata;
+
+-(int)produceBlockAtOffset:(off_t)pos;
 
 @end

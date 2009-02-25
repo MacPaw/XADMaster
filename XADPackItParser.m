@@ -24,23 +24,6 @@
 	return NO;
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
-{
-	if(self=[super initWithHandle:handle name:name])
-	{
-		currdesc=nil;
-		currhandle=nil;
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[currdesc release];
-	[currhandle release];
-	[super dealloc];
-}
-
 -(void)parse
 {
 	CSHandle *handle=[self handle];
@@ -166,9 +149,9 @@
 				[NSDate XADDateWithTimeIntervalSince1904:creation],XADCreationDateKey,
 				[self XADStringWithString:comp?@"Huffman":@"None"],XADCompressionNameKey,
 
-				datadesc,@"PackItDataDescriptor",
-				[NSNumber numberWithUnsignedInt:0],@"PackItDataOffset",
-				[NSNumber numberWithUnsignedInt:datasize],@"PackItDataLength",
+				datadesc,XADSolidObjectKey,
+				[NSNumber numberWithUnsignedInt:0],XADSolidOffsetKey,
+				[NSNumber numberWithUnsignedInt:datasize],XADSolidLengthKey,
 			nil]];
 		}
 
@@ -186,9 +169,9 @@
 				[self XADStringWithString:comp?@"Huffman":@"None"],XADCompressionNameKey,
 				[NSNumber numberWithBool:YES],XADIsResourceForkKey,
 
-				datadesc,@"PackItDataDescriptor",
-				[NSNumber numberWithUnsignedInt:datasize],@"PackItDataOffset",
-				[NSNumber numberWithUnsignedInt:rsrcsize],@"PackItDataLength",
+				datadesc,XADSolidObjectKey,
+				[NSNumber numberWithUnsignedInt:datasize],XADSolidOffsetKey,
+				[NSNumber numberWithUnsignedInt:rsrcsize],XADSolidLengthKey,
 			nil]];
 		}
 
@@ -198,49 +181,43 @@
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	NSMutableDictionary *desc=[dict objectForKey:@"PackItDataDescriptor"];
+	return [self subHandleFromSolidStreamForEntryWithDictionary:dict];
+}
 
-	if(desc!=currdesc)
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
+{
+	off_t offs=[[obj objectForKey:@"Offset"] longLongValue];
+	off_t len=[[obj objectForKey:@"Length"] longLongValue];
+	CSHandle *handle=[[self handle] nonCopiedSubHandleFrom:offs length:len];
+
+	NSNumber *uncomplennum=[obj objectForKey:@"UncompressedLength"];
+	if(uncomplennum)
 	{
-		off_t offs=[[desc objectForKey:@"Offset"] longLongValue];
-		off_t len=[[desc objectForKey:@"Length"] longLongValue];
-		CSHandle *handle=[[self handle] nonCopiedSubHandleFrom:offs length:len];
+		off_t uncomplen=[uncomplennum longLongValue];
+		int crypto=[[obj objectForKey:@"Crypto"] longLongValue];
 
-		NSNumber *uncomplennum=[desc objectForKey:@"UncompressedLength"];
-		if(uncomplennum)
+		if(crypto==1)
 		{
-			off_t uncomplen=[uncomplennum longLongValue];
-			int crypto=[[desc objectForKey:@"Crypto"] longLongValue];
-
-			if(crypto==1)
-			{
-				handle=[[[XADPackItXORHandle alloc] initWithHandle:handle length:len
-				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
-			}
-			else if(crypto==2)
-			{
-				handle=[[[XADPackItDESHandle alloc] initWithHandle:handle length:len
-				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
-			}
-
-			handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:uncomplen] autorelease];
-			handle=[handle nonCopiedSubHandleFrom:94 length:uncomplen-94];
+			handle=[[[XADPackItXORHandle alloc] initWithHandle:handle length:len
+			password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+		}
+		else if(crypto==2)
+		{
+			handle=[[[XADPackItDESHandle alloc] initWithHandle:handle length:len
+			password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
 		}
 
-		handle=[XADCRCHandle CCITTCRC16HandleWithHandle:handle length:[handle fileSize]
-		correctCRC:[[desc objectForKey:@"CRC"] intValue] conditioned:NO];
-
-		[currdesc release];
-		currdesc=[desc retain];
-		[currhandle release];
-		currhandle=[handle retain];
+		handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:uncomplen] autorelease];
+		handle=[handle nonCopiedSubHandleFrom:94 length:uncomplen-94];
 	}
 
-	if(!currhandle) return nil;
+	if(checksum)
+	{
+		handle=[XADCRCHandle CCITTCRC16HandleWithHandle:handle length:[handle fileSize]
+		correctCRC:[[obj objectForKey:@"CRC"] intValue] conditioned:NO];
+	}
 
-	off_t offs=[[dict objectForKey:@"PackItDataOffset"] longLongValue];
-	off_t len=[[dict objectForKey:@"PackItDataLength"] longLongValue];
-	return [currhandle nonCopiedSubHandleFrom:offs length:len];
+	return handle;
 }
 
 -(NSString *)formatName

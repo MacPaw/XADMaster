@@ -208,23 +208,6 @@ static void DumpElement(StuffItXElement *element)
 	&&bytes[5]=='I'&&bytes[6]=='t'&&(bytes[7]=='!'||bytes[7]=='?');
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
-{
-	if(self=[super initWithHandle:handle name:name])
-	{
-		currstream=nil;
-		currstreamhandle=nil;
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[currstream release];
-	[currstreamhandle release];
-	[super dealloc];
-}
-
 -(void)parse
 {
 	CSHandle *fh=[self handle];
@@ -233,7 +216,7 @@ static void DumpElement(StuffItXElement *element)
 
 	NSMutableArray *entries=[NSMutableArray array];
 	NSMutableDictionary *entrydict=[NSMutableDictionary dictionary];
-	NSMutableDictionary *streams=[NSMutableDictionary dictionary];
+	NSMutableDictionary *streamforks=[NSMutableDictionary dictionary];
 	NSMutableSet *forkedset=[NSMutableSet set];
 
 	for(;;)
@@ -273,15 +256,8 @@ static void DumpElement(StuffItXElement *element)
 				off_t compsize=pos-element.dataoffset;
 				off_t uncompsize=element.attribs[4];
 
-				NSMutableDictionary *stream=[streams objectForKey:[NSNumber numberWithLongLong:element.attribs[0]]];
-				[stream setObject:[NSValue valueWithBytes:&element objCType:@encode(StuffItXElement)] forKey:@"Element"];
-				[stream setObject:[NSNumber numberWithLongLong:compsize] forKey:@"CompressedSize"];
-				[stream setObject:[NSNumber numberWithLongLong:uncompsize] forKey:@"UncompressedSize"];
-
-				NSMutableArray *forks=[stream objectForKey:@"Forks"];
-				[stream removeObjectForKey:@"Forks"];
-
-				NSMutableDictionary *first=nil,*prev=nil;
+				NSMutableArray *forks=[streamforks objectForKey:[NSNumber numberWithLongLong:element.attribs[0]]];
+				NSValue *elementval=[NSValue valueWithBytes:&element objCType:@encode(StuffItXElement)];
 
 				NSEnumerator *enumerator=[forks objectEnumerator];
 				NSMutableDictionary *fork;
@@ -290,11 +266,12 @@ static void DumpElement(StuffItXElement *element)
 					NSMutableDictionary *entry=[entrydict objectForKey:[fork objectForKey:@"Entry"]];
 					NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
 
-					[dict setObject:stream forKey:@"StuffItXStream"];
-					[dict setObject:[fork objectForKey:@"Offset"] forKey:@"StuffItXStreamOffset"];
+					[dict setObject:elementval forKey:XADSolidObjectKey];
+					[dict setObject:[fork objectForKey:@"Offset"] forKey:XADSolidOffsetKey];
 
 					NSNumber *length=[fork objectForKey:@"Length"];
 					[dict setObject:length forKey:XADFileSizeKey];
+					[dict setObject:length forKey:XADSolidLengthKey];
 					[dict setObject:[NSNumber numberWithLongLong:[length longLongValue]*compsize/uncompsize] forKey:XADCompressedSizeKey];
 
 					if([[fork objectForKey:@"Type"] intValue]==1)
@@ -315,13 +292,7 @@ static void DumpElement(StuffItXElement *element)
 					}
 					[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
 
-					if(first) [dict setObject:[NSValue valueWithNonretainedObject:first] forKey:XADFirstSolidEntryKey];
-					[prev setObject:[NSValue valueWithNonretainedObject:dict] forKey:XADNextSolidEntryKey];
-
 					[self addEntryWithDictionary:dict];
-
-					if(!first) first=dict;
-					prev=dict;
 				}
 
 				[fh seekToFileOffset:pos];
@@ -349,12 +320,10 @@ static void DumpElement(StuffItXElement *element)
 
 				[forkedset addObject:entrynum];
 
-				NSMutableArray *forks;
 				off_t offs;
-				NSMutableDictionary *stream=[streams objectForKey:streamnum];
-				if(stream)
+				NSMutableArray *forks=[streamforks objectForKey:streamnum];
+				if(forks)
 				{
-					forks=[stream objectForKey:@"Forks"];
 					NSMutableDictionary *last=[forks lastObject];
 					offs=[[last objectForKey:@"Offset"] longLongValue]+[[last objectForKey:@"Length"] longLongValue];
 				}
@@ -362,10 +331,7 @@ static void DumpElement(StuffItXElement *element)
 				{
 					forks=[NSMutableArray array];
 					offs=0;
-					stream=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-						forks,@"Forks",
-					nil];
-					[streams setObject:stream forKey:streamnum];
+					[streamforks setObject:forks forKey:streamnum];
 				}
 
 				[forks addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -555,27 +521,15 @@ static void DumpElement(StuffItXElement *element)
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	NSMutableDictionary *stream=[dict objectForKey:@"StuffItXStream"];
+	return [self subHandleFromSolidStreamForEntryWithDictionary:dict];
+}
 
-	if(stream!=currstream)
-	{
-		NSValue *value=[stream objectForKey:@"Element"];
-		if(!value) return nil;
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
+{
+	StuffItXElement element;
+	[obj getValue:&element];
 
-		StuffItXElement element;
-		[value getValue:&element];
-
-		[currstream release];
-		currstream=[stream retain];
-		[currstreamhandle release];
-		currstreamhandle=[HandleForElement([self handle],&element,YES) retain];
-	}
-
-	if(!currstreamhandle) return nil;
-
-	off_t start=[[dict objectForKey:@"StuffItXStreamOffset"] longLongValue];
-	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
-	return [currstreamhandle nonCopiedSubHandleFrom:start length:size];
+	return HandleForElement([self handle],&element,checksum);
 }
 
 -(NSString *)formatName { return @"StuffIt X"; }

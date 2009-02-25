@@ -46,6 +46,9 @@ extern NSString *XADCompressionNameKey;
 extern NSString *XADIsSolidKey;
 extern NSString *XADFirstSolidEntryKey;
 extern NSString *XADNextSolidEntryKey;
+extern NSString *XADSolidObjectKey;
+extern NSString *XADSolidOffsetKey;
+extern NSString *XADSolidLengthKey;
 
 // Archive properties only
 extern NSString *XADArchiveNameKey;
@@ -70,6 +73,11 @@ extern NSString *XADFinderFlags;
 
 	NSMutableDictionary *properties;
 	XADStringSource *stringsource;
+
+	id parsersolidobj;
+	NSMutableDictionary *firstsoliddict,*prevsoliddict;
+	id currsolidobj;
+	CSHandle *currsolidhandle;
 }
 
 +(void)initialize;
@@ -132,6 +140,11 @@ extern NSString *XADFinderFlags;
 -(void)parse;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;
+
+// Solid archive helpers:
+
+-(CSHandle *)subHandleFromSolidStreamForEntryWithDictionary:(NSDictionary *)dict;
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
 
 @end
 

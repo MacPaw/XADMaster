@@ -14,19 +14,13 @@ typedef struct RARBlock
 {
 	int archiveflags,encryptversion;
 
-	NSMutableDictionary *lastnonsolid,*lastcompressed;
-
-	XADRARHandle *currhandle;
-	XADRARParts *currparts;
+	NSMutableDictionary *lastcompressed;
 }
 
 +(int)requiredHeaderSize;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 +(XADRegex *)volumeRegexForFilename:(NSString *)filename;
 +(BOOL)isFirstVolume:(NSString *)filename;
-
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
--(void)dealloc;
 
 -(void)parse;
 -(RARBlock)readArchiveHeader;
@@ -39,6 +33,7 @@ typedef struct RARBlock
 -(void)skipBlock:(RARBlock)block;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;
 
 @end

@@ -27,6 +27,7 @@
 #import "XADLHAParser.h"
 #import "XADPowerPackerParser.h"
 #import "XADALZipParser.h"
+#import "XADNSISParser.h"
 #import "XADLibXADParser.h"
 
 #include <dirent.h>
@@ -71,6 +72,9 @@ NSString *XADCompressionNameKey=@"XADCompressionName";
 NSString *XADIsSolidKey=@"XADIsSolid";
 NSString *XADFirstSolidEntryKey=@"XADFirstSolidEntry";
 NSString *XADNextSolidEntryKey=@"XADNextSolidEntry";
+NSString *XADSolidObjectKey=@"XADSolidObject";
+NSString *XADSolidOffsetKey=@"XADSolidOffset";
+NSString *XADSolidLengthKey=@"XADSolidLength";
 
 NSString *XADArchiveNameKey=@"XADArchiveName";
 
@@ -120,6 +124,7 @@ static int maxheader=0;
 		[XADZipItSEAParser class],
 		[XADZipSFXParser class],
 		[XADEmbeddedRARParser class],
+		[XADNSISParser class],
 		[XADGzipSFXParser class],
 		[XADCompactProParser class],
 
@@ -259,6 +264,12 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 		properties=[[NSMutableDictionary alloc] initWithObjectsAndKeys:
 			[self XADStringWithString:[name lastPathComponent]],XADArchiveNameKey,
 		nil];
+
+		currsolidobj=nil;
+		currsolidhandle=nil;
+
+		parsersolidobj=nil;
+		firstsoliddict=prevsoliddict=nil;
 	}
 	return self;
 }
@@ -269,6 +280,10 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	[skiphandle release];
 	[stringsource release];
 	[properties release];
+	[currsolidobj release];
+	[currsolidhandle release];
+	[firstsoliddict release];
+	[prevsoliddict release];
 	[super dealloc];
 }
 
@@ -397,6 +412,37 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 		[dict setObject:[NSNumber numberWithInt:flags] forKey:XADFinderFlagsKey];
 	}
 
+	// Handle solidness - set FirstSolid, NextSolid and IsSolid depending on SolidObject.
+	id solidobj=[dict objectForKey:XADSolidObjectKey];
+	if(solidobj)
+	{
+		if(solidobj==parsersolidobj)
+		{
+			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsSolidKey];
+			[dict setObject:[NSValue valueWithNonretainedObject:firstsoliddict] forKey:XADFirstSolidEntryKey];
+			[prevsoliddict setObject:[NSValue valueWithNonretainedObject:dict] forKey:XADNextSolidEntryKey];
+
+			[prevsoliddict release];
+			prevsoliddict=[dict retain];
+		}
+		else
+		{
+			parsersolidobj=solidobj;
+
+			[firstsoliddict release];
+			[prevsoliddict release];
+			firstsoliddict=prevsoliddict=[[dict retain] retain];
+		}
+	}
+	else if(parsersolidobj)
+	{
+		parsersolidobj=nil;
+		[firstsoliddict release];
+		firstsoliddict=nil;
+		[prevsoliddict release];
+		prevsoliddict=nil;
+	}
+
 	if(retainpos)
 	{
 		off_t pos=[sourcehandle offsetInFile];
@@ -467,6 +513,30 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 -(void)parse {}
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum { return nil; }
 -(NSString *)formatName { return nil; } // TODO: combine names for nested archives
+
+
+
+-(CSHandle *)subHandleFromSolidStreamForEntryWithDictionary:(NSDictionary *)dict
+{
+	id solidobj=[dict objectForKey:XADSolidObjectKey];
+
+	if(solidobj!=currsolidobj)
+	{
+		[currsolidobj release];
+		currsolidobj=[solidobj retain];
+		[currsolidhandle release];
+		currsolidhandle=[[self handleForSolidStreamWithObject:solidobj wantChecksum:YES] retain];
+	}
+
+	if(!currsolidhandle) return nil;
+
+	off_t start=[[dict objectForKey:XADSolidOffsetKey] longLongValue];
+	off_t size=[[dict objectForKey:XADSolidLengthKey] longLongValue];
+	return [currsolidhandle nonCopiedSubHandleFrom:start length:size];
+}
+
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum { return nil; }
+
 
 @end
 

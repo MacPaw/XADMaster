@@ -3,13 +3,12 @@
 
 @implementation XADRARHandle
 
--(id)initWithHandle:(CSHandle *)handle parts:(XADRARParts *)parts version:(int)version
+-(id)initWithHandle:(CSHandle *)handle stream:(XADRARStream *)stream
 {
 	if(self=[super initWithName:[handle name]])
 	{
 		sourcehandle=[handle retain];
-		p=[parts retain];
-		method=version;
+		s=[stream retain];
 
 		unpacker=AllocRARUnpacker(
 		(RARReadFunc)[self methodForSelector:@selector(provideInput:buffer:)],
@@ -22,28 +21,28 @@
 {
 	FreeRARUnpacker(unpacker);
 	[sourcehandle release];
-	[p release];
+	[s release];
 	[super dealloc];
 }
 
 -(void)resetBlockStream
 {
 	part=0;
-	[sourcehandle seekToFileOffset:p->parts[0].start];
+	[sourcehandle seekToFileOffset:s->parts[0].start];
 
-	StartRARUnpacker(unpacker,p->parts[0].length,method,0);
+	StartRARUnpacker(unpacker,s->parts[0].length,s->method,0);
 	bytesdone=0;
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	if(bytesdone>=p->parts[part].length)
+	if(bytesdone>=s->parts[part].length)
 	{
 		// Try to go to the next block
-		if(++part<p->numparts)
+		if(++part<s->numparts)
 		{
-			[sourcehandle seekToFileOffset:p->parts[part].start];
-			StartRARUnpacker(unpacker,p->parts[part].length,method,1);
+			[sourcehandle seekToFileOffset:s->parts[part].start];
+			StartRARUnpacker(unpacker,s->parts[part].length,s->method,1);
 			bytesdone=0;
 		}
 		else return 0;
@@ -60,7 +59,7 @@
 -(int)provideInput:(int)length buffer:(void *)buffer
 {
 	off_t pos=[sourcehandle offsetInFile];
-	off_t end=p->parts[part].end;
+	off_t end=s->parts[part].end;
 	if(pos+length>end) length=end-pos;
 	if(length<0) return 0;
 
@@ -71,19 +70,20 @@
 
 
 
-@implementation XADRARParts
+@implementation XADRARStream
 
-+(XADRARParts *)partWithStart:(off_t)start compressedSize:(off_t)compsize uncompressedSize:(off_t)size
++(XADRARStream *)streamWithVersion:(int)version start:(off_t)start compressedSize:(off_t)compsize uncompressedSize:(off_t)size
 {
-	XADRARParts *part=[[self new] autorelease];
-	[part addPartFrom:start compressedSize:compsize uncompressedSize:size];
-	return part;
+	XADRARStream *stream=[[[self alloc] initWithVersion:version] autorelease];
+	[stream addPartFrom:start compressedSize:compsize uncompressedSize:size];
+	return stream;
 }
 
--(id)init
+-(id)initWithVersion:(int)version
 {
 	if(self=[super init])
 	{
+		method=version;
 		numparts=0;
 		parts=NULL;
 	}
@@ -106,20 +106,9 @@
 	numparts++;
 }
 
--(int)count { return numparts; }
-
--(off_t)outputStartOffsetForPart:(int)part
-{
-	off_t start=0;
-	for(int i=0;i<part;i++) start+=parts[i].length;
-	return start;
-}
-
--(off_t)outputSizeForPart:(int)part { return parts[part].length; }
-
 -(NSString *)description
 {
-	return [NSString stringWithFormat:@"<XADRARParts with %d %@>",numparts,numparts==1?@"entry":@"entries"];
+	return [NSString stringWithFormat:@"<XADRARParts with %d %@, version %d>",numparts,numparts==1?@"entry":@"entries",method];
 }
 
 @end

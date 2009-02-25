@@ -107,24 +107,6 @@ static int TestSignature(const uint8_t *ptr)
 
 
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
-{
-	if(self=[super initWithHandle:handle name:name])
-	{
-		currhandle=nil;
-		currparts=nil;
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[currhandle release];
-	[currparts release];
-	[super dealloc];
-}
-
-
 -(void)parse
 {
 	CSHandle *handle=[self handle];
@@ -141,7 +123,7 @@ static int TestSignature(const uint8_t *ptr)
 
 	RARBlock block=[self readArchiveHeader];
 
-	lastcompressed=lastnonsolid=nil;
+	lastcompressed=nil;
 
 	while(block.start!=0)
 	{
@@ -322,34 +304,35 @@ NSLog(@"encryptver: %d",encryptversion);
 	}
 	else
 	{
-		XADRARParts *parts;
+		XADRARStream *stream;
 
 		BOOL solid;
 		if(version<20) solid=(archiveflags&MHD_SOLID)&&lastcompressed;
 		else solid=(flags&LHD_SOLID)!=0;
 
+		if(solid&&!lastcompressed)
+		{
+			[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
+			return block;
+		}
+
 		if(solid)
 		{
-			if(!lastcompressed) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
-
-			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsSolidKey];
-			[dict setObject:[NSValue valueWithNonretainedObject:lastnonsolid] forKey:XADFirstSolidEntryKey];
-			[lastcompressed setObject:[NSValue valueWithNonretainedObject:dict] forKey:XADNextSolidEntryKey];
-
-			parts=[lastcompressed objectForKey:@"RARParts"];
+			stream=[lastcompressed objectForKey:XADSolidObjectKey];
+			NSNumber *lastoffs=[lastcompressed objectForKey:XADSolidOffsetKey];
+			NSNumber *lastlen=[lastcompressed objectForKey:XADSolidLengthKey];
+			off_t newoffs=[lastoffs longLongValue]+[lastlen longLongValue];
+			[dict setObject:[NSNumber numberWithLongLong:newoffs] forKey:XADSolidOffsetKey];
 		}
 		else
 		{
-			lastnonsolid=dict;
-
-			parts=[[XADRARParts new] autorelease];
+			stream=[[[XADRARStream alloc] initWithVersion:version] autorelease];
+			[dict setObject:[NSNumber numberWithLongLong:0] forKey:XADSolidOffsetKey];
 		}
 
-		int part=[parts count];
-		[parts addPartFrom:skipstart compressedSize:datasize uncompressedSize:size];
-
-		[dict setObject:[NSNumber numberWithInt:part] forKey:@"RARPartIndex"];
-		[dict setObject:parts forKey:@"RARParts"];
+		[stream addPartFrom:skipstart compressedSize:datasize uncompressedSize:size];
+		[dict setObject:stream forKey:XADSolidObjectKey];
+		[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADSolidLengthKey];
 
 		lastcompressed=dict;
 	}
@@ -381,8 +364,8 @@ NSLog(@"encryptver: %d",encryptversion);
 	/*int crc=*/[fh readUInt16LE];
 
 	XADRARHandle *handle=[[[XADRARHandle alloc] initWithHandle:fh
-	parts:[XADRARParts partWithStart:[fh offsetInFile] compressedSize:block.headersize-13
-	uncompressedSize:commentsize] version:version] autorelease];
+	stream:[XADRARStream streamWithVersion:version start:[fh offsetInFile] compressedSize:block.headersize-13
+	uncompressedSize:commentsize]] autorelease];
 
 	NSData *comment=[handle readDataOfLength:commentsize];
 	[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
@@ -503,28 +486,18 @@ NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,bloc
 	}
 	else
 	{
-		XADRARParts *parts=[dict objectForKey:@"RARParts"];
-
-		if(currparts!=parts)
-		{
-			[currhandle release];
-			[currparts release];
-
-			currhandle=[[XADRARHandle alloc] initWithHandle:[self skipHandle] parts:parts
-			version:[[dict objectForKey:@"RARCompressionVersion"] intValue]];
-			currparts=[parts retain];
-		}
-
-		int part=[[dict objectForKey:@"RARPartIndex"] intValue];
-
-		handle=[currhandle nonCopiedSubHandleFrom:[parts outputStartOffsetForPart:part]
-		length:[parts outputSizeForPart:part]];
+		handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
 	}
 
 	if(checksum) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
 	correctCRC:[[dict objectForKey:@"RARCRC32"] unsignedIntValue] conditioned:YES];
 
 	return handle;
+}
+
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
+{
+	return [[[XADRARHandle alloc] initWithHandle:[self skipHandle] stream:obj] autorelease];
 }
 
 -(NSString *)formatName

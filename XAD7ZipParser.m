@@ -87,8 +87,6 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	if(self=[super initWithHandle:handle name:name])
 	{
 		mainstreams=nil;
-		currfolder=nil;
-		currfolderhandle=nil;
 	}
 	return self;
 }
@@ -96,8 +94,6 @@ static void FindAttribute(CSHandle *handle,int attribute)
 -(void)dealloc
 {
 	[mainstreams release];
-	[currfolder release];
-	[currfolderhandle release];
 	[super dealloc];
 }
 
@@ -121,7 +117,9 @@ static void FindAttribute(CSHandle *handle,int attribute)
 		else if(type==23) // EncodedHeader
 		{
 			NSDictionary *streams=[self parseStreamsForHandle:fh];
-			fh=[self handleForStreams:streams substreamIndex:0 wantChecksum:NO];
+			//NSDictionary *substream=[[streams objectForKey:@"SubStreams"] objectAtIndex:0];
+			//int folderindex=[[dict objectForKey:@"FolderIndex"] intValue];
+			fh=[self handleForStreams:streams folderIndex:0];
 		}
 		else [XADException raiseIllegalDataException];
 	}
@@ -161,8 +159,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 
 	end: 0;
 
-	NSArray *substreams=[mainstreams objectForKey:@"SubStreams"];
-	int currsubstream=0;
+	NSEnumerator *substreamenumerator=[[mainstreams objectForKey:@"SubStreams"] objectEnumerator];
 
 	int numfiles=[files count];
 	for(int i=0;i<numfiles;i++)
@@ -183,7 +180,8 @@ static void FindAttribute(CSHandle *handle,int attribute)
 		}
 		else
 		{
-			NSDictionary *substream=[substreams objectAtIndex:currsubstream];
+			NSDictionary *substream=[substreamenumerator nextObject];
+
 			NSNumber *sizeobj=[substream objectForKey:@"Size"];
 			int folderindex=[[substream objectForKey:@"FolderIndex"] intValue];
 			NSDictionary *folder=[[mainstreams objectForKey:@"Folders"] objectAtIndex:folderindex];
@@ -191,11 +189,13 @@ static void FindAttribute(CSHandle *handle,int attribute)
 			/(double)[self unCompressedSizeForFolder:folder];
 
 			[file setObject:sizeobj forKey:XADFileSizeKey];
+			[file setObject:sizeobj forKey:XADSolidLengthKey];
 			[file setObject:[NSNumber numberWithLongLong:compsize] forKey:XADCompressedSizeKey];
+			[file setObject:[substream objectForKey:@"StartOffset"] forKey:XADSolidOffsetKey];
 			[file setObject:[self XADStringWithString:[self compressorNameForFolder:folder]] forKey:XADCompressionNameKey];
-			[file setObject:[NSNumber numberWithInt:currsubstream] forKey:@"7zSubStreamIndex"];
+			[file setObject:[substream objectForKey:@"CRC"] forKey:@"7zCRC32"];
 
-			currsubstream++;
+			[file setObject:[substream objectForKey:@"FolderIndex"] forKey:XADSolidObjectKey];
 		}
 
 		// UNIX permissions kludge
@@ -679,40 +679,29 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 	if(isempty&&[isempty boolValue]) return [XADCRCHandle IEEECRC32HandleWithHandle:
 	[[self handle] nonCopiedSubHandleOfLength:0] length:0 correctCRC:0 conditioned:NO];
 
-	NSNumber *index=[dict objectForKey:@"7zSubStreamIndex"];
-	if(!index) return nil;
-
-	return [self handleForStreams:mainstreams substreamIndex:[index intValue] wantChecksum:checksum];
-}
-
--(CSHandle *)handleForStreams:(NSDictionary *)streams substreamIndex:(int)substreamindex wantChecksum:(BOOL)checksum
-{
-	NSDictionary *substream=[[streams objectForKey:@"SubStreams"] objectAtIndex:substreamindex];
-	int folderindex=[[substream objectForKey:@"FolderIndex"] intValue];
-	NSDictionary *folder=[[streams objectForKey:@"Folders"] objectAtIndex:folderindex];
-	int finalindex=[[folder objectForKey:@"FinalOutStreamIndex"] intValue];
-
-	if(folder!=currfolder)
-	{
-		[currfolder release];
-		currfolder=[folder retain];
-		[currfolderhandle release];
-		currfolderhandle=[[self outHandleForFolder:folder index:finalindex] retain];
-	}
-
-	uint64_t start=[[substream objectForKey:@"StartOffset"] unsignedLongLongValue];
-	uint64_t size=[[substream objectForKey:@"Size"] unsignedLongLongValue];
-	CSHandle *handle=[currfolderhandle nonCopiedSubHandleFrom:start length:size];
-	if(!handle) return nil;
+	CSHandle *handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
 
 	if(checksum)
 	{
-		NSNumber *crc=[substream objectForKey:@"CRC"];
+		NSNumber *crc=[dict objectForKey:@"7zCRC32"];
 		if(crc) return [XADCRCHandle IEEECRC32HandleWithHandle:handle
-		length:size correctCRC:[crc unsignedLongValue] conditioned:YES];
+		length:[handle fileSize] correctCRC:[crc unsignedLongValue] conditioned:YES];
 	}
 
 	return handle;
+}
+
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
+{
+	return [self handleForStreams:mainstreams folderIndex:[obj intValue]];
+}
+
+-(CSHandle *)handleForStreams:(NSDictionary *)streams folderIndex:(int)folderindex
+{
+	NSDictionary *folder=[[streams objectForKey:@"Folders"] objectAtIndex:folderindex];
+	int finalindex=[[folder objectForKey:@"FinalOutStreamIndex"] intValue];
+
+	return [self outHandleForFolder:folder index:finalindex];
 }
 
 -(CSHandle *)outHandleForFolder:(NSDictionary *)folder index:(int)index

@@ -1,12 +1,12 @@
 #import "CSBlockStreamHandle.h"
 #import "RARUnpacker.h"
 
-@class XADRARParts;
+@class XADRARStream;
 
 @interface XADRARHandle:CSBlockStreamHandle
 {
 	CSHandle *sourcehandle;
-	XADRARParts *p;
+	XADRARStream *s;
 	int method;
 
 	RARUnpacker *unpacker;
@@ -15,7 +15,7 @@
 	off_t bytesdone;
 }
 
--(id)initWithHandle:(CSHandle *)handle parts:(XADRARParts *)parts version:(int)version;
+-(id)initWithHandle:(CSHandle *)handle stream:(XADRARStream *)stream;
 -(void)dealloc;
 
 -(void)resetBlockStream;
@@ -25,22 +25,21 @@
 
 @end
 
-@interface XADRARParts:NSObject
+@interface XADRARStream:NSObject
 {
 	@public
+	int method;
 	int numparts;
 	struct { off_t start,end,length; } *parts;
 }
 
-+(XADRARParts *)partWithStart:(off_t)start compressedSize:(off_t)compsize uncompressedSize:(off_t)size;
++(XADRARStream *)streamWithVersion:(int)version start:(off_t)start compressedSize:(off_t)compsize uncompressedSize:(off_t)size;
 
--(id)init;
+-(id)initWithVersion:(int)version;
 -(void)dealloc;
 
 -(void)addPartFrom:(off_t)fileoffset compressedSize:(off_t)compsize uncompressedSize:(off_t)size;
 
--(int)count;
--(off_t)outputStartOffsetForPart:(int)part;
--(off_t)outputSizeForPart:(int)part;
+-(NSString *)description;
 
 @end

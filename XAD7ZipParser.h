@@ -36,7 +36,8 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 -(NSArray *)collectAllSubStreamsFromFolders:(NSArray *)folders;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
--(CSHandle *)handleForStreams:(NSDictionary *)streams substreamIndex:(int)substreamindex wantChecksum:(BOOL)checksum;
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
+-(CSHandle *)handleForStreams:(NSDictionary *)streams folderIndex:(int)folderindex;
 -(CSHandle *)outHandleForFolder:(NSDictionary *)folder index:(int)index;
 -(CSHandle *)inHandleForFolder:(NSDictionary *)folder coder:(NSDictionary *)coder index:(int)index;
 -(CSHandle *)inHandleForFolder:(NSDictionary *)folder index:(int)index;

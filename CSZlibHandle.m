@@ -2,6 +2,9 @@
 
 
 
+NSString *CSZlibException=@"CSZlibException";
+
+
 
 @implementation CSZlibHandle
 
@@ -116,7 +119,7 @@
 
 -(void)_raiseZlib
 {
-	[NSException raise:@"CSZlibException"
+	[NSException raise:CSZlibException
 	format:@"Zlib error while attepting to read from \"%@\": %s.",name,zs.msg];
 }
 

@@ -2,7 +2,7 @@
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
 #import "XADLZMAHandle.h"
-#import "XADDigesthandle.h"
+#import "XADDigestHandle.h"
 #import "XADLZMAParser.h"
 #import "XADRegex.h"
 

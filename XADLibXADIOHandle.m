@@ -1,6 +1,7 @@
 #import "XADLibXADIOHandle.h"
 #import "XADException.h"
 #import "Checksums.h"
+#import "CRC.h"
 
 static xadUINT8 xadIOPutFunc(struct xadInOut *io, xadUINT8 data);
 static xadUINT8 xadIOGetFunc(struct xadInOut *io);

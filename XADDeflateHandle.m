@@ -5,20 +5,15 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [self initWithHandle:handle length:length deflate64:NO sitx15:NO];
+	return [self initWithHandle:handle length:length variant:XADNormalDeflateVariant];
 }
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length deflate64:(BOOL)deflate64mode
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length variant:(int)deflatevariant
 {
-	return [self initWithHandle:handle length:length deflate64:deflate64mode sitx15:NO];
-}
-
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length deflate64:(BOOL)deflate64mode sitx15:(BOOL)sitxmode
-{
-	if(self=[super initWithHandle:handle length:length windowSize:deflate64mode?65536:32768])
+	if(self=[super initWithHandle:handle length:length
+	windowSize:deflatevariant==XADDeflate64DeflateVariant?65536:32768])
 	{
-		deflate64=deflate64mode;
-		sitx=sitxmode;
+		variant=deflatevariant;
 		literalcode=distancecode=nil;
 		fixedliteralcode=fixeddistancecode=nil;
 
@@ -77,7 +72,7 @@
 		}
 		else // literal==285
 		{
-			if(deflate64) *length=3+CSInputNextBitStringLE(input,16);
+			if(variant==XADDeflate64DeflateVariant) *length=3+CSInputNextBitStringLE(input,16);
 			else *length=258;
 		}
 
@@ -106,13 +101,18 @@
 	lastblock=CSInputNextBitLE(input);
 
 	int type=CSInputNextBitStringLE(input,2);
+
 	switch(type)
 	{
 		case 0: // stored
 		{
 			CSInputSkipToByteBoundary(input);
+
 			int count=CSInputNextUInt16LE(input);
+
+			if(variant!=XADNSISDeflateVariant)
 			if(count!=(CSInputNextUInt16LE(input)^0xffff)) [XADException raiseDecrunchException];
+
 			storedcount=count;
 			storedblock=YES;
 		}
@@ -127,11 +127,10 @@
 		case 2: // dynamic huffman
 		{
 			int numliterals=CSInputNextBitStringLE(input,5)+257;
-			int numdistances=CSInputNextBitStringLE(input,sitx?6:5)+1;
+			int numdistances=CSInputNextBitStringLE(input,variant==XADStuffItXDeflateVariant?6:5)+1;
 			int nummetas=CSInputNextBitStringLE(input,4)+4;
 
 			XADPrefixCode *metacode=[self allocAndParseMetaCodeOfSize:nummetas]; // BUG: might leak if the following throw an exception!
-
 			int total=numliterals+numdistances;
 			int lengths[total];
 			for(int i=0;i<total;)

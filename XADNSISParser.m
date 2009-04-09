@@ -1,12 +1,16 @@
 #import "XADNSISParser.h"
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
+#import "CSMemoryHandle.h"
 #import "XADLZMAHandle.h"
+#import "XADDeflateHandle.h"
+#import "XAD7ZipBranchHandles.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
 
-static const uint8_t NSISSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x73,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
+static const uint8_t NSISOldSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x53,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
+static const uint8_t NSISNewSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x73,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
 
 @implementation XADNSISParser
 
@@ -19,10 +23,27 @@ static const uint8_t NSISSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,
 
 	for(int offs=0;offs<length+4+16;offs+=512)
 	{
-		if(memcmp(bytes+offs+4,NSISSignature,16)==0) return YES;
+		if(memcmp(bytes+offs+4,NSISOldSignature,16)==0) return YES;
+		if(memcmp(bytes+offs+4,NSISNewSignature,16)==0) return YES;
 	}
 	return NO;
 }
+
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
+{
+	if(self=[super initWithHandle:handle name:name])
+	{
+		solidhandle=nil;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[solidhandle release];
+	[super dealloc];
+}
+
 
 -(void)parse
 {
@@ -33,40 +54,134 @@ static const uint8_t NSISSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,
 	{
 		uint8_t buf[16];
 		[fh readBytes:16 toBuffer:buf];
-		if(memcmp(buf,NSISSignature,16)==0) break;
+		if(memcmp(buf,NSISOldSignature,16)==0) { [self parseOldFormatWithHandle:fh]; return; }
+		if(memcmp(buf,NSISNewSignature,16)==0) { [self parseNewFormatWithHandle:fh]; return; }
 		[fh skipBytes:512-16];
 	}
+}
 
+-(void)parseOldFormatWithHandle:(CSHandle *)fh
+{
 	uint32_t headerlength=[fh readUInt32LE];
 	uint32_t archivelength=[fh readUInt32LE];
-//	uint32_t compressedheaderlength=[fh readUInt32LE];
+	uint32_t somethinglength=[fh readUInt32LE];
+	uint32_t somethinglength2=[fh readUInt32LE];
 
-/*	if(compressedheaderlength==headerlength)
+	fh=[CSZlibHandle zlibHandleWithHandle:fh length:headerlength];
+
+	NSData *data=[fh readDataOfLength:256];
+NSLog(@"old: %d %d %d %d %@",headerlength,archivelength,somethinglength,somethinglength2&0x7fffffff,data);
+
+}
+
+static BOOL IsLZMA(uint8_t *sig) { return sig[0]==0x5d&&sig[1]==0x00&&sig[2]==0x00&&sig[5]==0x00; }
+
+static CSHandle *AutodetectedHandleForSignature(CSHandle *handle,uint8_t *sig,off_t length)
+{
+	if(IsLZMA(sig))
 	{
-		// uncomp
+		[handle skipBytes:5];
+		return [[[XADLZMAHandle alloc] initWithHandle:handle length:length
+		propertyData:[NSData dataWithBytes:sig length:5]] autorelease];
 	}
-	else if(islzma)
+	else if(IsLZMA(sig+1))
 	{
+		[handle skipBytes:6];
+
+		CSHandle *handle=[[[XADLZMAHandle alloc] initWithHandle:handle length:length
+		propertyData:[NSData dataWithBytes:sig+1 length:5]] autorelease];
+
+		switch(sig[0])
+		{
+			case 0: return handle;
+			case 1: return [[[XAD7ZipBCJHandle alloc] initWithHandle:handle length:length] autorelease];
+			default: [XADException raiseNotSupportedException]; return nil;
+		}
 	}
-	else if(islzma+4)
+	else if(sig[0]==0x78&&sig[1]==0xda)
 	{
-	}
-	else if(compressedheaderlength&0x80000000)
-	{
-		// deflate
+		[handle skipBytes:2];
+NSLog(@"what");
+		return [CSZlibHandle deflateHandleWithHandle:handle length:length];
 	}
 	else
 	{
-		// solid deflate
-	}*/
+//		fh=[[[XADDeflateHandle alloc] initWithHandle:fh length:headerlength variant:XADNSISDeflateVariant] autorelease];
+NSLog(@"what2");
+		return [CSZlibHandle deflateHandleWithHandle:handle length:length];
+	}
+}
 
-	int flag=[fh readUInt8];
-	NSData *data=[fh readDataOfLength:5];
-NSLog(@"%@",data);
+-(void)parseNewFormatWithHandle:(CSHandle *)fh
+{
+	uint32_t headerlength=[fh readUInt32LE];
+	uint32_t archivelength=[fh readUInt32LE];
 
-	XADLZMAHandle *lh=[[[XADLZMAHandle alloc] initWithHandle:fh propertyData:data] autorelease];
+	uint8_t sig[11];
+	[fh readBytes:sizeof(sig) toBuffer:sig];
 
-	NSLog(@"NSIS %@",[lh readDataOfLength:256]);
+	uint32_t compressedheaderfield=CSUInt32LE(sig);
+	uint32_t compressedheaderlength=compressedheaderfield&0x7fffffff;
+	BOOL headercompressedflag=compressedheaderfield&0x80000000?YES:NO;
+
+	NSData *headerdata;
+	if(compressedheaderfield==headerlength)
+	{
+		// Uncompressed header
+		[fh skipBytes:-7];
+		headerdata=[fh readDataOfLength:headerlength];
+	}
+	else if(headercompressedflag&&compressedheaderlength<headerlength&&compressedheaderlength>32)
+	{
+		[fh skipBytes:-7];
+		CSHandle *handle=AutodetectedHandleForSignature(fh,sig+4,headerlength);
+		headerdata=[handle readDataOfLength:headerlength];
+	}
+	else
+	{
+		[fh skipBytes:-11];
+		solidhandle=[AutodetectedHandleForSignature(fh,sig,CSHandleMaxLength) retain];
+		if([solidhandle readInt32LE]!=headerlength) [XADException raiseIllegalDataException];
+		headerdata=[solidhandle readDataOfLength:headerlength];
+	}
+
+	[self parseSectionsWithHandle:[CSMemoryHandle memoryHandleForReadingData:headerdata]];
+}
+
+-(void)parseSectionsWithHandle:(CSHandle *)fh
+{
+	flags=[fh readUInt32LE];
+
+	pages.offset=[fh readUInt32LE];
+	pages.num=[fh readUInt32LE];
+	sections.offset=[fh readUInt32LE];
+	sections.num=[fh readUInt32LE];
+	entries.offset=[fh readUInt32LE];
+	entries.num=[fh readUInt32LE];
+	strings.offset=[fh readUInt32LE];
+	strings.num=[fh readUInt32LE];
+	langtables.offset=[fh readUInt32LE];
+	langtables.num=[fh readUInt32LE];
+	ctlcolours.offset=[fh readUInt32LE];
+	ctlcolours.num=[fh readUInt32LE];
+	// font?
+	data.offset=[fh readUInt32LE];
+	data.num=[fh readUInt32LE];
+
+	[fh seekToFileOffset:entries.offset];
+	[self parseEntriesWithHandle:fh];
+}
+
+-(void)parseEntriesWithHandle:(CSHandle *)fh
+{
+	for(int i=0;i<entries.num;i++)
+	{
+		int type=[fh readUInt32LE];
+		uint32_t args[6];
+		for(int i=0;i<sizeof(args)/sizeof(args[0]);i++) args[i]=[fh readUInt32LE];
+
+		NSLog(@"%d: %d %d %d %d %d %d",type,args[0],args[1],args[2],args[3],args[4],args[5]);
+	}
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum

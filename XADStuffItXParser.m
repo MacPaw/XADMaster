@@ -130,7 +130,7 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			int windowsize=[handle readUInt8];
 			if(windowsize!=15) return nil; // alternate sizes are not supported, as no files have been found that use them
 			handle=[[[XADDeflateHandle alloc] initWithHandle:handle
-			length:length deflate64:NO sitx15:YES] autorelease];
+			length:length variant:XADStuffItXDeflateVariant] autorelease];
 		}
 		break;
 
@@ -210,6 +210,8 @@ static void DumpElement(StuffItXElement *element)
 
 -(void)parse
 {
+	[self setIsMacArchive:YES];
+
 	CSHandle *fh=[self handle];
 
 	[fh skipBytes:10];

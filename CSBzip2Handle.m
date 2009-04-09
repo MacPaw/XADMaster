@@ -1,5 +1,7 @@
 #import "CSBzip2Handle.h"
 
+NSString *CSBzip2Exception=@"CSBzip2Exception";
+
 @implementation CSBzip2Handle
 
 +(CSBzip2Handle *)bzip2HandleWithHandle:(CSHandle *)handle
@@ -69,7 +71,7 @@
 
 -(void)_raiseBzip2:(int)error
 {
-	[NSException raise:@"CSBzip2Exception"
+	[NSException raise:CSBzip2Exception
 	format:@"Bzlib error while attepting to read from \"%@\": %d.",name,error];
 }
 

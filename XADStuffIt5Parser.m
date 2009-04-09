@@ -98,6 +98,8 @@
 
 -(void)parse
 {
+	[self setIsMacArchive:YES];
+
 	CSHandle *fh=[self handle];
 	off_t base=[fh offsetInFile];
 

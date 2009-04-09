@@ -3,6 +3,11 @@
 #include <sys/stat.h>
 
 
+
+NSString *CSFileErrorException=@"CSFileErrorException";
+
+
+
 #if defined(__MINGW__)||defined(__COCOTRON__)
 #define FTELL(fh) ftell(fh)
 #else
@@ -144,8 +149,9 @@
 -(void)_raiseError
 {
 	if(feof(fh)) [self _raiseEOF];
-	else [NSException raise:@"CSFileErrorException"
-	format:@"Error while attempting to read file \"%@\": %s.",name,strerror(ferror(fh))];
+	else [[[[NSException alloc] initWithName:CSFileErrorException
+	reason:[NSString stringWithFormat:@"Error while attempting to read file \"%@\": %s.",name,strerror(errno)]
+	userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errno] forKey:@"ErrNo"]] autorelease] raise];
 }
 
 -(void)_setMultiMode

@@ -1,9 +1,14 @@
 #import "XADLZSSHandle.h"
 #import "XADPrefixCode.h"
 
+#define XADNormalDeflateVariant 0
+#define XADDeflate64DeflateVariant 1
+#define XADStuffItXDeflateVariant 2
+#define XADNSISDeflateVariant 3
+
 @interface XADDeflateHandle:XADLZSSHandle
 {
-	BOOL deflate64,sitx;
+	int variant;
 
 	XADPrefixCode *literalcode,*distancecode;
 	XADPrefixCode *fixedliteralcode,*fixeddistancecode;
@@ -14,8 +19,7 @@
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length deflate64:(BOOL)deflate64mode;
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length deflate64:(BOOL)deflate64mode sitx15:(BOOL)sitxmode;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length variant:(int)deflatevariant;
 -(void)dealloc;
 
 -(void)setMetaTableOrder:(const int *)order;

@@ -20,9 +20,13 @@
 -(const char *)cString;
 
 -(BOOL)encodingIsKnown;
+-(NSStringEncoding)encoding;
 -(float)confidence;
+-(NSData *)data;
 
--(NSString *)description;
+-(BOOL)isEqual:(XADString *)other;
+-(unsigned)hash;
+-(id)copyWithZone:(NSZone *)zone;
 
 @end
 
@@ -32,6 +36,7 @@
 {
 	UniversalDetector *detector;
 	NSStringEncoding fixedencoding;
+	BOOL mac;
 }
 
 -(id)init;
@@ -46,5 +51,6 @@
 
 -(void)setFixedEncoding:(NSStringEncoding)encoding;
 -(BOOL)hasFixedEncoding;
+-(void)setPrefersMacEncodings:(BOOL)prefermac;
 
 @end

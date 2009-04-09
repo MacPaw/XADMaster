@@ -2,6 +2,8 @@
 
 #import <stdio.h>
 
+extern NSString *CSFileErrorException;
+
 @interface CSFileHandle:CSHandle
 {
 	FILE *fh;

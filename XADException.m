@@ -1,5 +1,6 @@
 #import "XADException.h"
 
+NSString *XADExceptionName=@"XADException";
 
 @implementation XADException
 
@@ -13,7 +14,10 @@
 
 +(void)raiseExceptionWithXADError:(XADError)errnum
 {
-	[NSException raise:@"XADException" format:@"%@",[self describeXADError:errnum]];
+//	[NSException raise:@"XADException" format:@"%@",[self describeXADError:errnum]];
+	[[[[NSException alloc] initWithName:XADExceptionName reason:[self describeXADError:errnum]
+	userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errnum]
+	forKey:@"XADError"]] autorelease] raise];
 }
 
 +(NSString *)describeXADError:(XADError)error
@@ -49,5 +53,7 @@
 	}
 	return nil;
 }
+
+-(XADError)error { return error; }
 
 @end

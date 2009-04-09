@@ -750,7 +750,7 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 		case 0x04010100: return [[[XADZipShrinkHandle alloc] initWithHandle:inhandle length:size] autorelease];
 		//case 0x04010600: return @"Implode";
 		case 0x04010800: return [CSZlibHandle deflateHandleWithHandle:inhandle length:size];
-		case 0x04010900: return [[[XADDeflateHandle alloc] initWithHandle:inhandle length:size deflate64:YES] autorelease];
+		case 0x04010900: return [[[XADDeflateHandle alloc] initWithHandle:inhandle length:size variant:XADDeflate64DeflateVariant] autorelease];
 		case 0x04011200:
 		case 0x04020200: return [CSBzip2Handle bzip2HandleWithHandle:inhandle length:size];
 		//case 0x04030100: return @"RAR v1.5";

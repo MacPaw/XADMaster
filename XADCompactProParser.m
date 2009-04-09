@@ -74,6 +74,8 @@
 
 -(void)parse
 {
+	[self setIsMacArchive:YES];
+
 	CSHandle *fh=[self handle];
 
 	/*int marker=*/[fh readUInt8];

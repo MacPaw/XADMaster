@@ -1,6 +1,7 @@
 #import "XADMacArchiveParser.h"
 #import "NSDateXAD.h"
 #import "Paths.h"
+#import "CRC.h"
 
 NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
 NSString *XADMightBeMacBinaryKey=@"XADMightBeMacBinary";

@@ -29,6 +29,8 @@ typedef int XADError;
 #define XADShortBufferError      0x0018 /* buffer was too short */
 #define XADEncodingError         0x0019 /* text encoding was defective */
 
+extern NSString *XADExceptionName;
+
 @interface XADException:NSObject
 {
 	XADError error;
@@ -44,5 +46,7 @@ typedef int XADError;
 +(void)raiseExceptionWithXADError:(XADError)errnum;
 
 +(NSString *)describeXADError:(XADError)errnum;
+
+-(XADError)error;
 
 @end

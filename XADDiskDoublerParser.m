@@ -46,6 +46,8 @@
 
 -(void)parse
 {
+	[self setIsMacArchive:YES];
+
 	CSHandle *fh=[self handle];
 	uint32_t magic=[fh readID];
 

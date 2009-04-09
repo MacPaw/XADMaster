@@ -1,6 +1,4 @@
 #import "XADCRCHandle.h"
-#import "Checksums.h"
-
 
 @implementation XADCRCHandle
 

@@ -52,16 +52,8 @@ extern NSString *XADSolidLengthKey;
 
 // Archive properties only
 extern NSString *XADArchiveNameKey;
+extern NSString *XADVolumesKey;
 
-
-/*// Internal use
-extern NSString *XADResourceDataKey;
-extern NSString *XADDittoPropertiesKey;
-
-// Deprecated
-extern NSString *XADResourceForkData;
-extern NSString *XADFinderFlags;
-*/
 
 @interface XADArchiveParser:NSObject
 {
@@ -86,11 +78,15 @@ extern NSString *XADFinderFlags;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename;
 +(NSArray *)volumesForFilename:(NSString *)name;
 
+-(id)_initWithHandle:(CSHandle *)handle;
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name volumes:(NSArray *)volumes;
 -(void)dealloc;
 
 -(NSDictionary *)properties;
 -(NSString *)name;
+-(NSString *)filename;
+-(NSArray *)allFilenames;
 -(BOOL)isEncrypted;
 
 -(id)delegate;
@@ -98,6 +94,8 @@ extern NSString *XADFinderFlags;
 
 -(NSString *)password;
 -(void)setPassword:(NSString *)newpassword;
+
+-(XADStringSource *)stringSource;
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict;
 
@@ -114,6 +112,7 @@ extern NSString *XADFinderFlags;
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
 
 -(void)setObject:(id)object forPropertyKey:(NSString *)key;
+-(void)setIsMacArchive:(BOOL)ismac;
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict;
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos;

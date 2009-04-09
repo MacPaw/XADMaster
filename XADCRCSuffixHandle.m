@@ -1,5 +1,4 @@
 #import "XADCRCSuffixHandle.h"
-#import "Checksums.h"
 
 @implementation XADCRCSuffixHandle
 

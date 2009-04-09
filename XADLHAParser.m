@@ -144,6 +144,12 @@
 
 		if(memcmp(method,"-lhd-",5)==0) [dict setValue:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 
+		if(os=='m')
+		{
+			[self setIsMacArchive:YES];
+			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
+		}
+
 		NSData *filenamedata=[dict objectForKey:@"LHAExtFileNameData"];
 		if(!filenamedata) filenamedata=[dict objectForKey:@"LHAHeaderFileNameData"];
 		NSData *directorydata=[dict objectForKey:@"LHAExtDirectoryData"];
@@ -163,8 +169,6 @@
 
 			[dict setObject:[self XADStringWithBytes:namebuf length:size] forKey:XADFileNameKey];
 		}
-
-		if(os=='m') [dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
 
 		[self addEntryWithDictionary:dict];
 

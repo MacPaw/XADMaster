@@ -1,9 +1,10 @@
 #import <Foundation/Foundation.h>
 
-#import "CSHandle.h"
+#import "XADArchiveParser.h"
 #import "XADException.h"
 
 typedef int XADAction;
+//typedef off_t xadSize; // deprecated
 
 #define XADAbortAction 0
 #define XADRetryAction 1
@@ -11,31 +12,29 @@ typedef int XADAction;
 #define XADOverwriteAction 3
 #define XADRenameAction 4
 
+extern NSString *XADResourceDataKey;
+extern NSString *XADResourceForkData;
+extern NSString *XADFinderFlags;
 
 
 @class UniversalDetector;
 
 @interface XADArchive:NSObject
 {
-	CSHandle *inputhandle;
-	NSString *filename;
-	NSArray *volumes;
-
-	BOOL encrypted,solid;
+	XADArchiveParser *parser;
 
 	id delegate;
-	NSString *password;
 	NSTimeInterval update_interval;
-
 	XADError lasterror;
 
-//	NSMutableDictionary *dittoforks;
-//	NSMutableArray *writeperms;
+	NSMutableArray *entries;
+	NSMutableDictionary *namedict;
+	NSMutableArray *writeperms;
 
-/*	int currentry;
-	xadSize extractsize,totalsize;
-	NSString *immediatedestination;
-	BOOL immediatefailed;*/
+//	int currentry;
+	off_t extractsize,totalsize;
+//	NSString *immediatedestination;
+//	BOOL immediatefailed;
 }
 
 +(XADArchive *)archiveForFile:(NSString *)filename;
@@ -44,8 +43,6 @@ typedef int XADAction;
 +(NSArray *)volumesForFile:(NSString *)filename;
 
 
-
-// Constructors implemented directly by XADArchive through -initWithFile:handle:
 
 -(id)init;
 -(id)initWithFile:(NSString *)file;
@@ -59,22 +56,16 @@ typedef int XADAction;
      immediateExtractionTo:(NSString *)destination error:(XADError *)error;
 -(void)dealloc;
 
-
-
-// XADArchive methods
+-(void)_parseWithErrorPointer:(XADError *)error;
 
 -(NSString *)filename;
 -(NSArray *)allFilenames;
-
+-(NSString *)formatName;
 -(BOOL)isEncrypted;
 -(BOOL)isSolid;
 -(BOOL)isCorrupted;
-
 -(int)numberOfEntries;
--(NSDictionary *)propertiesForEntry:(int)n;
-
 -(BOOL)immediateExtractionFailed;
-
 -(NSString *)commonTopDirectory;
 
 -(void)setDelegate:(id)delegate;
@@ -95,7 +86,9 @@ typedef int XADAction;
 
 
 
-// Data access methods implemented by XADArchive through the subclass methods
+-(NSDictionary *)dataForkParserDictionaryForEntry:(int)n;
+-(NSDictionary *)resourceForkParserDictionaryForEntry:(int)n;
+-(NSDictionary *)freshestParserDictionaryForEntry:(int)n;
 
 -(NSString *)nameOfEntry:(int)n;
 -(BOOL)entryHasSize:(int)n;
@@ -108,26 +101,30 @@ typedef int XADAction;
 -(NSDictionary *)attributesOfEntry:(int)n;
 -(NSDictionary *)attributesOfEntry:(int)n withResourceFork:(BOOL)resfork;
 -(CSHandle *)handleForEntry:(int)n;
+-(CSHandle *)handleForEntry:(int)n error:(XADError *)error;
 -(CSHandle *)resourceHandleForEntry:(int)n;
+-(CSHandle *)resourceHandleForEntry:(int)n error:(XADError *)error;
 -(NSData *)contentsOfEntry:(int)n;
--(NSData *)resourceContentsOfEntry:(int)n;
+//-(NSData *)resourceContentsOfEntry:(int)n;
+
+-(XADError)_parseException:(id)exception;
 
 -(BOOL)extractTo:(NSString *)destination;
 -(BOOL)extractTo:(NSString *)destination subArchives:(BOOL)sub;
--(BOOL)extractEntries:(NSIndexSet *)entries to:(NSString *)destination;
--(BOOL)extractEntries:(NSIndexSet *)entries to:(NSString *)destination subArchives:(BOOL)sub;
+-(BOOL)extractEntries:(NSIndexSet *)entryset to:(NSString *)destination;
+-(BOOL)extractEntries:(NSIndexSet *)entryset to:(NSString *)destination subArchives:(BOOL)sub;
 -(BOOL)extractEntry:(int)n to:(NSString *)destination;
 -(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override;
 -(BOOL)extractArchiveEntry:(int)n to:(NSString *)destination;
--(void)fixWritePermissions;
 
 -(BOOL)_extractEntry:(int)n as:(NSString *)destfile;
 -(BOOL)_extractFileEntry:(int)n as:(NSString *)destfile;
 -(BOOL)_extractDirectoryEntry:(int)n as:(NSString *)destfile;
 -(BOOL)_extractLinkEntry:(int)n as:(NSString *)destfile;
--(xadERROR)_extractFileInfo:(struct xadFileInfo *)info tags:(xadTAGPTR)tags reportProgress:(BOOL)report;
 -(BOOL)_ensureDirectoryExists:(NSString *)directory;
--(BOOL)_changeAllAttributes:(NSDictionary *)attrs atPath:(NSString *)path overrideWritePermissions:(BOOL)override;
+-(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path overrideWritePermissions:(BOOL)override;
+
+-(void)fixWritePermissions;
 
 @end
 
@@ -135,8 +132,8 @@ typedef int XADAction;
 
 @interface NSObject (XADArchiveDelegate)
 
--(NSStringEncoding)archive:(XADArchive *)archive encodingForName:(const char *)bytes guess:(NSStringEncoding)guess confidence:(float)confidence;
--(XADAction)archive:(XADArchive *)archive nameDecodingDidFailForEntry:(int)n bytes:(const char *)bytes;
+-(NSStringEncoding)archive:(XADArchive *)archive encodingForData:(NSData *)data guess:(NSStringEncoding)guess confidence:(float)confidence;
+-(XADAction)archive:(XADArchive *)archive nameDecodingDidFailForEntry:(int)n data:(NSData *)data;
 
 -(BOOL)archiveExtractionShouldStop:(XADArchive *)archive;
 -(BOOL)archive:(XADArchive *)archive shouldCreateDirectory:(NSString *)directory;
@@ -145,21 +142,34 @@ typedef int XADAction;
 -(XADAction)archive:(XADArchive *)archive creatingDirectoryDidFailForEntry:(int)n;
 
 -(void)archive:(XADArchive *)archive extractionOfEntryWillStart:(int)n;
--(void)archive:(XADArchive *)archive extractionProgressForEntry:(int)n bytes:(xadSize)bytes of:(xadSize)total;
+-(void)archive:(XADArchive *)archive extractionProgressForEntry:(int)n bytes:(off_t)bytes of:(off_t)total;
 -(void)archive:(XADArchive *)archive extractionOfEntryDidSucceed:(int)n;
 -(XADAction)archive:(XADArchive *)archive extractionOfEntryDidFail:(int)n error:(XADError)error;
 -(XADAction)archive:(XADArchive *)archive extractionOfResourceForkForEntryDidFail:(int)n error:(XADError)error;
 
--(void)archive:(XADArchive *)archive extractionProgressBytes:(xadSize)bytes of:(xadSize)total;
+-(void)archive:(XADArchive *)archive extractionProgressBytes:(off_t)bytes of:(off_t)total;
 -(void)archive:(XADArchive *)archive extractionProgressFiles:(int)files of:(int)total;
+
+// Deprecated
+-(NSStringEncoding)archive:(XADArchive *)archive encodingForName:(const char *)bytes guess:(NSStringEncoding)guess confidence:(float)confidence;
+-(XADAction)archive:(XADArchive *)archive nameDecodingDidFailForEntry:(int)n bytes:(const char *)bytes;
 
 @end
 
 
 #ifndef XAD_NO_DEPRECATED
 
+#define XADAbort XADAbortAction
+#define XADRetry XADRetryAction
+#define XADSkip XADSkipAction
+#define XADOverwrite XADOverwriteAction
+#define XADRename XADRenameAction
+
+typedef XADError xadERROR;
+typedef off_t xadSize;
+
 #define XADERR_NO XADNoError
-#define XADNoError
+#if 0
 #define XADUnknownError          0x0001 /* unknown error */
 #define XADInputError            0x0002 /* input data buffers border exceeded */
 #define XADOutputError           0x0003 /* output data buffers border exceeded */
@@ -185,6 +195,7 @@ typedef int XADAction;
 #define XADFileDirectoryError    0x0017 /* name of file exists as directory */
 #define XADShortBufferError      0x0018 /* buffer was too short */
 #define XADEncodingError         0x0019 /* text encoding was defective */
+#endif
 
 #define XADAbort XADAbortAction
 #define XADRetry XADRetryAction

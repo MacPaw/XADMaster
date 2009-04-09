@@ -77,6 +77,7 @@ NSString *XADSolidOffsetKey=@"XADSolidOffset";
 NSString *XADSolidLengthKey=@"XADSolidLength";
 
 NSString *XADArchiveNameKey=@"XADArchiveName";
+NSString *XADVolumesKey=@"XADVolumes";
 
 
 @implementation XADArchiveParser
@@ -186,8 +187,9 @@ static int maxheader=0;
 			while(volume=[enumerator nextObject])
 			[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
 
-			return [self archiveParserForHandle:[CSMultiHandle multiHandleWithHandleArray:handles]
-			name:[volumes objectAtIndex:0]];
+			Class parserclass=[self archiveParserClassForHandle:handle name:filename];
+			return [[[parserclass alloc] initWithHandle:[CSMultiHandle multiHandleWithHandleArray:handles]
+			name:filename volumes:[volumes objectAtIndex:0]] autorelease];
 		}
 		@catch(id e) { }
 	}
@@ -249,7 +251,7 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)_initWithHandle:(CSHandle *)handle
 {
 	if(self=[super init])
 	{
@@ -261,15 +263,33 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 		stringsource=[XADStringSource new];
 
-		properties=[[NSMutableDictionary alloc] initWithObjectsAndKeys:
-			[self XADStringWithString:[name lastPathComponent]],XADArchiveNameKey,
-		nil];
+		properties=[[NSMutableDictionary alloc] init];
 
 		currsolidobj=nil;
 		currsolidhandle=nil;
 
 		parsersolidobj=nil;
 		firstsoliddict=prevsoliddict=nil;
+	}
+	return self;
+}
+
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+{
+	if(self=[self _initWithHandle:handle])
+	{
+		[self setObject:[name lastPathComponent] forPropertyKey:XADArchiveNameKey];
+		[self setObject:[NSArray arrayWithObject:name] forPropertyKey:XADVolumesKey];
+	}
+	return self;
+}
+
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name volumes:(NSArray *)volumes
+{
+	if(self=[self _initWithHandle:handle])
+	{
+		[self setObject:[name lastPathComponent] forPropertyKey:XADArchiveNameKey];
+		[self setObject:volumes forPropertyKey:XADVolumesKey];
 	}
 	return self;
 }
@@ -291,13 +311,18 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 -(NSDictionary *)properties { return properties; }
 
--(NSString *)name { return [[properties objectForKey:XADArchiveNameKey] string]; }
+-(NSString *)name { return [properties objectForKey:XADArchiveNameKey]; }
+
+-(NSString *)filename { return [[properties objectForKey:XADVolumesKey] objectAtIndex:0]; }
+
+-(NSArray *)allFilenames { return [properties objectForKey:XADVolumesKey]; }
 
 -(BOOL)isEncrypted
 {
 	NSNumber *isencrypted=[properties objectForKey:XADIsEncryptedKey];
 	return isencrypted&&[isencrypted boolValue];
 }
+
 
 
 
@@ -312,6 +337,8 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	[password autorelease];
 	password=[newpassword retain];
 }
+
+-(XADStringSource *)stringSource { return stringsource; }
 
 
 
@@ -376,6 +403,8 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 
 -(void)setObject:(id)object forPropertyKey:(NSString *)key { [properties setObject:object forKey:key]; }
+
+-(void)setIsMacArchive:(BOOL)ismac { [stringsource setPrefersMacEncodings:ismac]; }
 
 
 

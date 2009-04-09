@@ -2,6 +2,8 @@
 
 #include <zlib.h>
 
+extern NSString *CSZlibException;
+
 @interface CSZlibHandle:CSStreamHandle
 {
 	CSHandle *parent;

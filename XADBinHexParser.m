@@ -51,6 +51,8 @@
 
 -(void)parse
 {
+	[self setIsMacArchive:YES];
+
 	CSHandle *handle=[self handle];
 
 	uint8_t buffer[40];

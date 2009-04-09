@@ -11,6 +11,8 @@
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
+#import <sys/stat.h>
+
 
 @implementation XADZipParser
 
@@ -22,8 +24,10 @@
 	int length=[data length];
 
 	if(length<8) return NO;
-	if(bytes[0]=='P'&&bytes[1]=='K'&&((bytes[2]==3&&bytes[3]==4)||(bytes[2]==5&&bytes[3]==6)
-	||(bytes[4]=='P'&&bytes[5]=='K'&&bytes[6]==3&&bytes[7]==4))) return YES;
+
+	if(bytes[0]=='P'&&bytes[1]=='K'&&bytes[2]==3&&bytes[3]==4) return YES;
+	if(bytes[0]=='P'&&bytes[1]=='K'&&bytes[2]==5&&bytes[3]==6) return YES;
+	if(bytes[4]=='P'&&bytes[5]=='K'&&bytes[6]==3&&bytes[7]==4) return YES;
 
 	return NO;
 }
@@ -167,7 +171,9 @@
 				const uint8_t *namebytes=[namedata bytes];
 				int namelength=[namedata length];
 
-				if(prevdict) // the previous entry was suspected of being a directory
+				// If the previous entry was suspected of being a directory, check if the new
+				// entry is a file inside it and set the directory flag for the previous one.
+				if(prevdict)
 				{
 					const char *prevbytes=[prevname bytes];
 					int prevlength=[prevname length];
@@ -180,10 +186,24 @@
 					}
 				}
 
-				if(namelength>4)
+				// Check for possible MacBinary files
+ 				if(namelength>4)
 				{
 					if(memcmp(namebytes+namelength-4,".bin",4)==0)
 					[dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
+				}
+
+				// Kludge to make executables in bad Mac OS X app bundles
+				// without permission information executable.
+ 				if(namelength>22&&system!=3)
+				{
+					for(int i=1;i<namelength-21;i++)
+					if(memcmp(namebytes+i,".app/Contents/MacOS/",20)==0)
+					{
+						mode_t mask=umask(0); umask(mask);
+						[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
+						break;
+					}
 				}
 			}
 			else
@@ -405,7 +425,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		else
 		{
 			//NSLog(@"unknown extension: %x %d %@",extid,size,[fh readDataOfLength:size]);
-			[fh skipBytes:-size];
+			[fh skipBytes:size];
 		}
 
 		[fh seekToFileOffset:next];
@@ -486,7 +506,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
 		case 8: return [CSZlibHandle deflateHandleWithHandle:parent length:size];
 		//case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
-		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size deflate64:YES] autorelease];
+		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size variant:XADDeflate64DeflateVariant] autorelease];
 		case 12: return [CSBzip2Handle bzip2HandleWithHandle:parent length:size];
 		case 14:
 		{

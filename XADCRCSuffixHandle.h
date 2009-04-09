@@ -1,4 +1,6 @@
 #import "CSStreamHandle.h"
+#import "Checksums.h"
+#import "CRC.h"
 
 @interface XADCRCSuffixHandle:CSStreamHandle
 {

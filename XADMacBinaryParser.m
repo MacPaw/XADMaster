@@ -14,6 +14,8 @@
 
 -(void)parse
 {
+	[self setIsMacArchive:YES];
+
 	[properties removeObjectForKey:XADDisableMacForkExpansionKey];
 	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithBool:YES],XADIsMacBinaryKey,

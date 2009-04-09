@@ -6,13 +6,19 @@
 #define XAD_NO_DEPRECATED
 
 #import "XADArchive.h"
-#import "XADRegex.h"
+#import "CSMemoryHandle.h"
+#import "CSHandle.h"
+#import "CSFileHandle.h"
+#import "CSZlibHandle.h"
+#import "CSBzip2Handle.h"
+#import "Progress.h"
 
-#import <UniversalDetector/UniversalDetector.h>
+#import <sys/stat.h>
 
 
 
-
+NSString *XADResourceDataKey=@"XADResourceData";
+NSString *XADFinderFlags=@"XADFinderFlags";
 
 
 
@@ -41,136 +47,27 @@
 	return archive;
 }
 
-static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
-{
-	BOOL israr1=[[str1 lowercaseString] hasSuffix:@".rar"];
-	BOOL israr2=[[str2 lowercaseString] hasSuffix:@".rar"];
-
-	if(israr1&&!israr2) return NSOrderedAscending;
-	else if(!israr1&&israr2) return NSOrderedDescending;
-	else return [str1 compare:str2 options:NSCaseInsensitiveSearch|NSNumericSearch];
-}
-
 +(NSArray *)volumesForFile:(NSString *)filename
 {
-	NSString *namepart=[filename lastPathComponent];
-	NSString *dirpart=[filename stringByDeletingLastPathComponent];
-	NSArray *matches;
-	NSString *pattern;
-
-	if(matches=[namepart substringsCapturedByPattern:@"^(.*)\\.part[0-9]+\\.rar$" options:REG_ICASE])
-	{
-		pattern=[NSString stringWithFormat:@"^%@\\.part[0-9]+\\.rar$",[[matches objectAtIndex:1] escapedPattern]];
-	}
-	else if(matches=[namepart substringsCapturedByPattern:@"^(.*)\\.(rar|r[0-9]{2}|s[0-9]{2})$" options:REG_ICASE])
-	{
-		pattern=[NSString stringWithFormat:@"^%@\\.(rar|r[0-9]{2}|s[0-9]{2})$",[[matches objectAtIndex:1] escapedPattern]];
-	}
-	else if(matches=[namepart substringsCapturedByPattern:@"^(.*)\\.[0-9]+$"])
-	{
-		pattern=[NSString stringWithFormat:@"^%@\\.[0-9]+$",[[matches objectAtIndex:1] escapedPattern]];
-	}
-	else return nil;
-
-	XADRegex *regex=[XADRegex regexWithPattern:pattern options:REG_ICASE];
-	NSMutableArray *files=[NSMutableArray array];
-
-	DIR *dir=opendir([dirpart fileSystemRepresentation]);
-
-	struct dirent *ent;
-	while(ent=readdir(dir))
-	{
-		NSString *entname=[NSString stringWithUTF8String:ent->d_name];
-		if([regex matchesString:entname]) [files addObject:
-		[dirpart stringByAppendingPathComponent:entname]];
-	}
-
-	if([files count]<=1) return nil;
-
-	return [files sortedArrayUsingFunction:XADVolumeSort context:NULL];
+	return [XADArchiveParser volumesForFilename:(NSString *)filename];
 }
 
 
 
 
--(id)initWithFile:(NSString *)name handle:(CSHandle *)handle
+-(id)init
 {
 	if(self=[super init])
 	{
-		inputhandle=[handle retain];
-		filename=[filename retain];
-
-		volumes=nil;
+		parser=nil;
 		delegate=nil;
-		password=nil;
-
-		encrypted=NO;
-		solid=NO;
-
 		lasterror=XADNoError;
-	}
-	return self;
-}
 
--(void)dealloc
-{
-	[inputhandle release];
-	[filename release];
-	[volumes release];
-	[password release];
-//	[dittoforks release];
-//	[writeperms release];
-
-	[super dealloc];
-}
-
-
-/*-(id)init
-{
-	if(self=[super init])
-	{
-		filename=nil;
-		volumes=nil;
-		memdata=nil;
-		parentarchive=nil;
-		pipe=nil;
-
-		delegate=nil;
-		name_encoding=0;
-		password=nil;
-		update_interval=0.1;
-		update_time=0;
-
-		xmb=NULL;
-		archive=NULL;
-		progresshook.h_Entry=XADProgressFunc;
-		progresshook.h_Data=(void *)self;
-
-		fileinfos=[[NSMutableArray array] retain];
-		dittoforks=[[NSMutableDictionary dictionary] retain];
+		entries=[[NSMutableArray array] retain];
+		namedict=[[NSMutableDictionary dictionary] retain];
 		writeperms=[[NSMutableArray array] retain];
-
-		extractsize=totalsize=0;
-		currentry=0;
-		immediatedestination=nil;
-		immediatefailed=NO;
-
-		detector=nil;
-		detected_encoding=NSWindowsCP1252StringEncoding;
-		detector_confidence=0;
-
-		lasterror=XADERR_OK;
-
-		if(xmb=xadOpenLibrary(12))
-		{
-			if(archive=xadAllocObjectA(xmb,XADOBJ_ARCHIVEINFO,NULL))
-			{
-				return self;
-			}
-		}
-		[self release];
-	}
-	return nil;
+ 	}
+	return self;
 }
 
 -(id)initWithFile:(NSString *)file { return [self initWithFile:file delegate:nil error:NULL]; }
@@ -181,51 +78,23 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 {
 	if(self=[self init])
 	{
-		volumes=[[XADArchive volumesForFile:file] retain];
+		delegate=del;
 
-		[self setDelegate:del];
-
-		if(volumes)
+		parser=[XADArchiveParser archiveParserForPath:file];
+		if(parser)
 		{
-			filename=[[volumes objectAtIndex:0] retain];
-
-			int n=[volumes count];
-			struct xadSplitFile split[n];
-
-			for(int i=0;i<n;i++)
-			{
-				if(i!=n-1) split[i].xsf_Next=&split[i+1];
-				else split[i].xsf_Next=NULL;
-
-				split[i].xsf_Type=XAD_INFILENAME;
-				split[i].xsf_Data=(xadPTRINT)[[volumes objectAtIndex:i] fileSystemRepresentation];
-				split[i].xsf_Size=0;
-			}
-
-			struct TagItem tags[]={
-				XAD_INSPLITTED,(xadPTRINT)split,
-			TAG_DONE};
-
-			if([self _finishInit:tags error:error]) return self;
+			[self _parseWithErrorPointer:error];
+			return self;
 		}
-		else
-		{
-			filename=[file retain];
-
-			const char *fsname=[file fileSystemRepresentation];
-			struct TagItem tags[]={
-				XAD_INFILENAME,(xadPTRINT)fsname,
-			TAG_DONE};
-
-			if([self _finishInit:tags error:error]) return self;
-		}
+		else if(error) *error=XADDataFormatError;
 
 		[self release];
 	}
-	else if(error) *error=XADERR_NOMEMORY;
 
 	return nil;
 }
+
+
 
 -(id)initWithData:(NSData *)data { return [self initWithData:data error:NULL]; }
 
@@ -233,50 +102,127 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 {
 	if(self=[self init])
 	{
-		memdata=[data retain];
+		delegate=nil;
 
-		struct TagItem tags[]={
-			XAD_INMEMORY,(xadPTRINT)[data bytes],
-			XAD_INSIZE,[data length],
-		TAG_DONE};
-
-		if([self _finishInit:tags error:error]) return self;
+		parser=[XADArchiveParser archiveParserForHandle:[CSMemoryHandle memoryHandleForReadingData:data] name:@""];
+		if(!parser)
+		{
+			[self _parseWithErrorPointer:error];
+			return self;
+		}
+		else if(error) *error=XADDataFormatError;
 
 		[self release];
 	}
-	else if(error) *error=XADERR_NOMEMORY;
-
 	return nil;
 }
+
+
 
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n { return [self initWithArchive:otherarchive entry:n error:NULL]; }
 
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n error:(XADError *)error
 {
-	if(error) *error=XADERR_NOMEMORY;
-
 	if(self=[self init])
 	{
-		parentarchive=[otherarchive retain];
-		filename=[[otherarchive nameOfEntry:n] retain];
+		delegate=nil;
+		parser=nil;
 
-		if(pipe=[[XADArchivePipe alloc] initWithArchive:otherarchive entry:n bufferSize:1024*1024])
+		CSHandle *handle=[otherarchive handleForEntry:n error:error];
+		if(handle)
 		{
-			struct TagItem tags[]={
-				XAD_INHOOK,(xadPTRINT)[pipe inHook],
-			TAG_DONE};
-
-			if([self _finishInit:tags error:error]) return self;
+			parser=[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]];
+			if(parser)
+			{
+				[self _parseWithErrorPointer:error];
+				return self;
+			}
+			else if(error) *error=XADDataFormatError;
 		}
-		else if(error) *error=XADERR_NOMEMORY;
 
 		[self release];
 	}
-	else if(error) *error=XADERR_NOMEMORY;
 
 	return nil;
 }
 
+-(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
+     immediateExtractionTo:(NSString *)destination error:(XADError *)error
+{
+}
+
+-(void)dealloc
+{
+	[parser release];
+	[entries release];
+	[namedict release];
+	[writeperms release];
+
+	[super dealloc];
+}
+
+
+
+-(void)_parseWithErrorPointer:(XADError *)error
+{
+	[parser setDelegate:self];
+
+	@try { [parser parse]; }
+	@catch(id e)
+	{
+		lasterror=[self _parseException:e];
+		if(error) *error=lasterror;
+	}
+}
+
+-(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
+{
+	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+	BOOL isres=resnum&&[resnum boolValue];
+
+	XADString *name=[dict objectForKey:XADFileNameKey];
+
+	NSNumber *index=[namedict objectForKey:name];
+	if(index) // Try to update an existing entry
+	{
+		NSMutableDictionary *entry=[entries objectAtIndex:[index intValue]];
+		if(isres)
+		{
+			if(![entry objectForKey:@"ResourceFork"])
+			{
+				[entry setObject:dict forKey:@"ResourceFork"];
+				return;
+			}
+		}
+		else
+		{
+			if(![entry objectForKey:@"DataFork"])
+			{
+				[entry setObject:dict forKey:@"DataFork"];
+				return;
+			}
+		}
+	}
+
+	// Create a new entry instead
+
+	if(isres) [entries addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		dict,@"ResourceFork",
+		[NSNumber numberWithBool:YES],@"ResourceForkFirst",
+	nil]];
+	else [entries addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		dict,@"DataFork",
+	nil]];
+
+	[namedict setObject:[NSNumber numberWithInt:[entries count]] forKey:name];
+}
+
+-(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser
+{
+	return NO; // TODO: actually figure out how to use this
+}
+
+/*
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
      immediateExtractionTo:(NSString *)destination error:(XADError *)error
 {
@@ -437,26 +383,29 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 */
 
 
--(NSString *)filename { return filename; }
+-(NSString *)filename
+{
+	return [parser filename];
+}
 
 -(NSArray *)allFilenames
 {
-	if(volumes) return volumes;
-	else return [NSArray arrayWithObject:filename];
+	return [parser allFilenames];
 }
 
--(BOOL)isEncrypted { return encrypted; }
+-(NSString *)formatName
+{
+	/*if(parentarchive) return [NSString stringWithFormat:@"%@ in %@",[parser formatName],[parentarchive formatName]];
+	else*/ return [parser formatName];
+}
 
--(BOOL)isSolid { return solid; }
+-(BOOL)isEncrypted { return NO; } // TODO
+
+-(BOOL)isSolid { return NO; } // TODO
 
 -(BOOL)isCorrupted { return NO; } // TODO
 
 -(int)numberOfEntries { return [entries count]; }
-
--(NSDictionary *)propertiesForEntry:(int)n
-{
-	return [entries objectAtIndex:n];
-}
 
 -(BOOL)immediateExtractionFailed { return NO; } // TODO
 
@@ -487,19 +436,15 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 
 
 
--(NSString *)password { return password; }
+-(NSString *)password { return [parser password]; }
 
--(void)setPassword:(NSString *)newpassword
-{
-	[password autorelease];
-	password=[newpassword retain];
-}
+-(void)setPassword:(NSString *)newpassword { [parser setPassword:newpassword]; }
 
 
 
--(NSStringEncoding)nameEncoding { return [stringsource encoding]; }
+-(NSStringEncoding)nameEncoding { return [[parser stringSource] encoding]; }
 
--(void)setNameEncoding:(NSStringEncoding)encoding { [stringsource setFixedEncoding:encoding]; }
+-(void)setNameEncoding:(NSStringEncoding)encoding { [[parser stringSource] setFixedEncoding:encoding]; }
 
 
 
@@ -508,71 +453,70 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 
 -(void)clearLastError { lasterror=XADNoError; }
 
--(NSString *)describeLastError { return [self describeError:lasterror]; }
+-(NSString *)describeLastError { return [XADException describeXADError:lasterror]; }
 
--(NSString *)describeError:(XADError)error
-{
-	switch(error)
-	{
-		case XADNoError:			return nil;
-		case XADUnknownError:		return @"Unknown error";
-		case XADInputError:			return @"Input data buffers border exceeded";
-		case XADOutputError:		return @"Output data buffers border exceeded";
-		case XADBadParametersError:	return @"Function called with illegal parameters";
-		case XADOutOfMemoryError:	return @"Not enough memory available";
-		case XADIllegalDataError:	return @"Data is corrupted";
-		case XADNotSupportedError:	return @"Command is not supported";
-		case XADResourceError:		return @"Required resource missing";
-		case XADDecrunchError:		return @"Error on decrunching";
-		case XADFiletypeError:		return @"Unknown file type";
-		case XADOpenFileError:		return @"Opening file failed";
-		case XADSkipError:			return @"File, disk has been skipped";
-		case XADBreakError:			return @"User break in progress hook";
-		case XADFileExistsError:	return @"File already exists";
-		case XADPasswordError:		return @"Missing or wrong password";
-		case XADMakeDirectoryError:	return @"Could not create directory";
-		case XADChecksumError:		return @"Wrong checksum";
-		case XADVerifyError:		return @"Verify failed (disk hook)";
-		case XADGeometryError:		return @"Wrong drive geometry";
-		case XADDataFormatError:	return @"Unknown data format";
-		case XADEmptyError:			return @"Source contains no files";
-		case XADFileSystemError:	return @"Unknown filesystem";
-		case XADFileDirectoryError:	return @"Name of file exists as directory";
-		case XADShortBufferError:	return @"Buffer was too short";
-		case XADEncodingError:		return @"Text encoding was defective";
-	}
-	return nil;
-}
+-(NSString *)describeError:(XADError)error { return [XADException describeXADError:error]; }
 
 
 
 -(NSString *)description
 {
-	return [NSString stringWithFormat:@"XADArchive: %@ (%@, %d entries)",filename,[self formatName],[self numberOfEntries]];
+	return [NSString stringWithFormat:@"XADArchive: %@ (%@, %d entries)",[self filename],[self formatName],[self numberOfEntries]];
 }
 
 
 
+-(NSDictionary *)dataForkParserDictionaryForEntry:(int)n
+{
+	return [[entries objectAtIndex:n] objectForKey:@"DataFork"];
+}
+
+-(NSDictionary *)resourceForkParserDictionaryForEntry:(int)n
+{
+	return [[entries objectAtIndex:n] objectForKey:@"ResourceFork"];
+}
+
+-(NSDictionary *)freshestParserDictionaryForEntry:(int)n
+{
+	NSDictionary *entry=[entries objectAtIndex:n];
+	if([entry objectForKey:@"ResourceForkFirst"])
+	{
+		NSDictionary *dict=[entry objectForKey:@"DataFork"];
+		if(!dict) return [entry objectForKey:@"ResourceFork"];
+		else return dict;
+	}
+	else
+	{
+		NSDictionary *dict=[entry objectForKey:@"ResourceFork"];
+		if(!dict) return [entry objectForKey:@"DataFork"];
+		else return dict;
+	}
+}
+
 -(NSString *)nameOfEntry:(int)n
 {
-	XADString *xadname=[[entries objectAtIndex:n] objectForKey:XADFileNameKey];
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	if(!dict) dict=[self resourceForkParserDictionaryForEntry:n];
+	XADString *xadname=[dict objectForKey:XADFileNameKey];
+	if(!xadname) return nil;
+
 	NSString *originalname;
 
-	if(![originalname encodingIsKnown]&&delegate)
+	if(![xadname encodingIsKnown]&&delegate)
 	{
-		// TODO: Deprecate encodingForName: and replace it with encodingForData: ?
 		NSStringEncoding encoding=[delegate archive:self encodingForName:[xadname cString]
-		guess:[stringsource encoding] confidence:[stringsource confidence]];
-		originalname=[xadname stringWithEncoding:encoding]
+		guess:[xadname encoding] confidence:[xadname confidence]];
+		originalname=[xadname stringWithEncoding:encoding];
 	}
 	else originalname=[xadname string];
 
+	if(!originalname) return nil;
+
 	// Create a mutable string
 	NSMutableString *mutablename=[NSMutableString stringWithString:originalname];
-//	if(!mutablename) return nil;
 
 	// Changes backslashes to forward slashes
-	NSString *separator=[[[NSString alloc] initWithBytes:"\\" length:1 encoding:[stringsource encoding]] autorelease];
+	NSString *separator=[[[NSString alloc] initWithBytes:"\\" length:1 encoding:[xadname encoding]] autorelease];
 	[mutablename replaceOccurrencesOfString:separator withString:@"/" options:0 range:NSMakeRange(0,[mutablename length])];
 
 	// Clean up path
@@ -610,27 +554,24 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 
 	NSString *name=[NSString pathWithComponents:components];
 
-	// Strip any possible .rsrc extenstion off resource forks
-	// TODO: resource forks
-/*	if([self _entryIsLonelyResourceFork:n])
-	{
-		NSString *ext=[name pathExtension];
-		if(ext&&[ext isEqual:@"rsrc"]) name=[name stringByDeletingPathExtension];
-	}*/
-
 	return name;
 }
 
 -(BOOL)entryHasSize:(int)n
 {
-	return [entries objectForKey:XADFileSizeKey]?YES:NO;
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	return [dict objectForKey:XADFileSizeKey]?YES:NO;
 }
 
 -(int)sizeOfEntry:(int)n
 {
-	// TODO: handle files without size, &c
-	// FIXME: returns 32-bit values. can't change this due to backwards compat, so what to do?
-	return [[entries objectForKey:XADFileSizeKey] intValue];
+	// TODO: figure out exactly how this should work
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	if(!dict) return 0; // Special case for resource forks without data forks
+	NSNumber *size=[dict objectForKey:XADFileSizeKey];
+	if(!size) return 0x7fffffff;
+
+	return [size intValue];
 
 /*	struct xadFileInfo *info=[self xadFileInfoForEntry:n];
 	if([self _entryIsLonelyResourceFork:n]) return 0; // Special case for resource forks without data forks
@@ -640,144 +581,212 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 
 -(BOOL)entryIsDirectory:(int)n
 {
-	NSNumber *num=[[entries objectAtIndex:n] objectForKey:XADIsDirectoryKey];
-	if(num) return [num booleanValue];
-	return NO;
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	NSNumber *isdir=[dict objectForKey:XADIsDirectoryKey];
+
+	return isdir&&[isdir boolValue];
 }
 
 -(BOOL)entryIsLink:(int)n
 {
-	if([[entries objectAtIndex:n] objectForKey:XADLinkDestinationKey]) return YES;
-	return NO;
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	NSNumber *islink=[dict objectForKey:XADIsLinkKey];
+
+	return islink&&[islink boolValue];
 }
 
 -(BOOL)entryIsEncrypted:(int)n
 {
-	NSNumber *num=[[entries objectAtIndex:n] objectForKey:XADIsEncryptedKey];
-	if(num) return [num booleanValue];
-	return NO;
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	NSNumber *isenc=[dict objectForKey:XADIsEncryptedKey];
+
+	return isenc&&[isenc boolValue];
 }
 
 -(BOOL)entryIsArchive:(int)n
 {
-	if([self numberOfEntries]==1)
-	{
-		NSString *ext=[[[self nameOfEntry:0] pathExtension] lowercaseString];
-		if(
-			[ext isEqual:@"tar"]||
-			[ext isEqual:@"sit"]||
-			[ext isEqual:@"sea"]||
-			[ext isEqual:@"pax"]||
-			[ext isEqual:@"cpio"]
-		) return YES;
-	}
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	NSNumber *isarc=[dict objectForKey:XADIsArchiveKey];
 
-	NSNumber *macbin=[[self propertiesForEntry:n] objectForKey:XADIsMacBinaryKey];
-	if(macbin&&[macbin boolValue]) return YES;
-
-	return NO;
+	return isarc&&[isarc boolValue];
 }
 
 -(BOOL)entryHasResourceFork:(int)n
 {
-	NSNumber *num=[[entries objectAtIndex:n] objectForKey:XADResourceSizeKey];
-	if(num) return [num intValue]!=0;
-	return NO;
+	NSDictionary *resdict=[self resourceForkParserDictionaryForEntry:n];
+	if(!resdict) return NO;
+	NSNumber *num=[resdict objectForKey:XADFileSizeKey];
+	if(!num) return NO;
+
+	return [num intValue]!=0;
 }
 
 -(NSDictionary *)attributesOfEntry:(int)n { return [self attributesOfEntry:n withResourceFork:NO]; }
 
 -(NSDictionary *)attributesOfEntry:(int)n withResourceFork:(BOOL)resfork
 {
-	NSDictionary *props=[self propertiesForEntry:n];
+	NSDictionary *dict=[self freshestParserDictionaryForEntry:n];
 	NSMutableDictionary *attrs=[NSMutableDictionary dictionary];
 
-	NSDate *date=[props objectForKey:XADFileDateKey];
-	if(date)
+	NSDate *creation=[dict objectForKey:XADCreationDateKey];
+	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
+	if(creation&&modification)
 	{
-		[attrs setObject:date forKey:NSFileCreationDate];
-		[attrs setObject:date forKey:NSFileModificationDate];
+		[attrs setObject:creation forKey:NSFileCreationDate];
+		[attrs setObject:modification forKey:NSFileModificationDate];
+	}
+	else if(modification)
+	{
+		[attrs setObject:modification forKey:NSFileCreationDate];
+		[attrs setObject:modification forKey:NSFileModificationDate];
+	}
+	else if(creation)
+	{
+		[attrs setObject:creation forKey:NSFileCreationDate];
+		[attrs setObject:creation forKey:NSFileModificationDate];
 	}
 
-	NSNumber *type=[props objectForKey:XADFileTypeKey];
+	NSNumber *type=[dict objectForKey:XADFileTypeKey];
 	if(type) [attrs setObject:type forKey:NSFileHFSTypeCode];
 
-	NSNumber *creator=[props objectForKey:XADFileCreatorKey];
+	NSNumber *creator=[dict objectForKey:XADFileCreatorKey];
 	if(creator) [attrs setObject:creator forKey:NSFileHFSCreatorCode];
 
-	NSNumber *flags=[props objectForKey:XADFinderFlagsKey];
+	NSNumber *flags=[dict objectForKey:XADFinderFlagsKey];
 	if(flags) [attrs setObject:flags forKey:XADFinderFlagsKey];
 
-	NSNumber *perm=[props objectForKey:XADFilePosixPermissionsKey];
+	NSNumber *perm=[dict objectForKey:XADPosixPermissionsKey];
 	if(perm) [attrs setObject:perm forKey:NSFilePosixPermissions];
-	else if([[self nameOfEntry:n] rangeOfString:@".app/Contents/MacOS/"].location!=NSNotFound)
-	{
-		// Kludge to make executables in bad app bundles without permission information executable.
-		mode_t mask=umask(0); umask(mask);
-		[attrs setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:NSFilePosixPermissions];
-	}
 
-	XADString *user=[props objectForKey:XADFilePosixUserKey];
+	XADString *user=[dict objectForKey:XADPosixUserKey];
 	if(user)
 	{
 		NSString *username=[user string];
 		if(username) [attrs setObject:username forKey:NSFileOwnerAccountName];
 	}
 
-	XADString *group=[props objectForKey:XADFilePosixGroupKey];
-	if(info->xfi_GroupName)
+	XADString *group=[dict objectForKey:XADPosixGroupKey];
+	if(group)
 	{
 		NSString *groupname=[group string];
 		if(groupname) [attrs setObject:groupname forKey:NSFileGroupOwnerAccountName];
 	}
 
-	if(resfork&&[self entryHasResourceFork:n])
+	if(resfork)
 	{
-		NSData *forkdata;
-		while(!(forkdata=[self resourceContentsOfEntry:n]))
+		NSDictionary *resdict=[self resourceForkParserDictionaryForEntry:n];
+		if(resdict)
 		{
-			if(delegate)
+			for(;;)
 			{
-				XADAction action=[delegate archive:self extractionOfResourceForkForEntryDidFail:n error:lasterror];
-				if(action==XADSkip) break;
-				else if(action!=XADRetry) return nil;
+				@try
+				{
+					CSHandle *handle=[parser handleForEntryWithDictionary:resdict wantChecksum:YES];
+					if(!handle) [XADException raiseDecrunchException];
+					NSData *forkdata=[handle remainingFileContents];
+					if([handle hasChecksum]&&![handle isChecksumCorrect]) [XADException raiseChecksumException];
+
+					[attrs setObject:forkdata forKey:XADResourceDataKey];
+					break;
+				}
+				@catch(id e)
+				{
+					lasterror=[self _parseException:e];
+					XADAction action=[delegate archive:self extractionOfResourceForkForEntryDidFail:n error:lasterror];
+					if(action==XADSkipAction) break;
+					else if(action!=XADRetryAction) return nil;
+				}
 			}
-			else return nil;
 		}
-
-		if(forkdata) [attrs setObject:forkdata forKey:XADResourceDataKey];
 	}
-
-	NSDictionary *resprops=[props objectForKey:XADDittoPropertiesKey];
-	if(resprops) [self _parseDittoResourceFork:resprops intoAttributes:attrs];
 
 	return [NSDictionary dictionaryWithDictionary:attrs];
 }
 
--(NSData *)contentsOfEntry:(int)n
+-(CSHandle *)handleForEntry:(int)n
 {
-	@try {
-		CSHandle *handle=[self handleForEntry:n];
-		NSData *data=[handle remainingFileContents];
-		return data; // returns nil if handle is nil
-	} @catch id e {
-		// TODO
-		lasterror=[self parseException:e];
-		return nil;
-	}
+	return [self handleForEntry:n error:NULL];
 }
 
--(NSData *)resourceContentsOfEntry:(int)n
+-(CSHandle *)handleForEntry:(int)n error:(XADError *)error
 {
-	@try {
-		CSHandle *handle=[self resourceHandleForEntry:n];
-		NSData *data=[handle remainingFileContents];
-		return data; // returns nil if handle is nil
-	} @catch id e {
-		// TODO
-		lasterror=[self parseException:e];
-		return nil;
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	if(!dict) return [CSMemoryHandle memoryHandleForReadingData:[NSData data]]; // Special case for files with only a resource fork
+
+	@try
+	{ return [parser handleForEntryWithDictionary:dict wantChecksum:YES]; }
+	@catch(id e)
+	{
+		lasterror=[self _parseException:e];
+		if(error) *error=lasterror;
 	}
+	return nil;
+}
+
+-(CSHandle *)resourceHandleForEntry:(int)n
+{
+	return [self resourceHandleForEntry:n error:NULL];
+}
+
+-(CSHandle *)resourceHandleForEntry:(int)n error:(XADError *)error
+{
+	NSDictionary *resdict=[self resourceForkParserDictionaryForEntry:n];
+	if(!resdict) return nil;
+
+	@try
+	{ return [parser handleForEntryWithDictionary:resdict wantChecksum:YES]; }
+	@catch(id e)
+	{
+		lasterror=[self _parseException:e];
+		if(error) *error=lasterror;
+	}
+	return nil;
+}
+
+-(NSData *)contentsOfEntry:(int)n
+{
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	if(!dict) return [NSData data]; // Special case for files with only a resource fork
+
+	@try
+	{
+		CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
+		if(!handle) [XADException raiseDecrunchException];
+		NSData *data=[handle remainingFileContents];
+		if([handle hasChecksum]&&![handle isChecksumCorrect]) [XADException raiseChecksumException];
+
+		return data;
+	}
+	@catch(id e)
+	{
+		lasterror=[self _parseException:e];
+	}
+	return nil;
+}
+
+-(XADError)_parseException:(id)exception
+{
+	if([exception isKindOfClass:[NSException class]])
+	{
+		NSException *e=exception;
+		NSString *name=[e name];
+		if([name isEqual:XADExceptionName])
+		{
+			return [[[e userInfo] objectForKey:@"XADError"] intValue];
+		}
+		else if([name isEqual:CSFileErrorException])
+		{
+			return XADUnknownError; // TODO: use ErrNo in userInfo to figure out better error
+		}
+		else if([name isEqual:CSOutOfMemoryException]) return XADOutOfMemoryError;
+		else if([name isEqual:CSEndOfFileException]) return XADInputError;
+		else if([name isEqual:CSNotImplementedException]) return XADNotSupportedError;
+		else if([name isEqual:CSNotSupportedException]) return XADNotSupportedError;
+		else if([name isEqual:CSZlibException]) return XADDecrunchError;
+		else if([name isEqual:CSBzip2Exception]) return XADDecrunchError;
+	}
+
+	return XADUnknownError;
 }
 
 
@@ -794,24 +803,24 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 	return [self extractEntries:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,[self numberOfEntries])] to:destination subArchives:sub];
 }
 
--(BOOL)extractEntries:(NSIndexSet *)entries to:(NSString *)destination
+-(BOOL)extractEntries:(NSIndexSet *)entryset to:(NSString *)destination
 {
-	return [self extractEntries:entries to:destination subArchives:NO];
+	return [self extractEntries:entryset to:destination subArchives:NO];
 }
 
--(BOOL)extractEntries:(NSIndexSet *)entries to:(NSString *)destination subArchives:(BOOL)sub
+-(BOOL)extractEntries:(NSIndexSet *)entryset to:(NSString *)destination subArchives:(BOOL)sub
 {
 	extractsize=0;
 	totalsize=0;
 
-	for(int i=[entries firstIndex];i!=NSNotFound;i=[entries indexGreaterThanIndex:i])
+	for(int i=[entryset firstIndex];i!=NSNotFound;i=[entryset indexGreaterThanIndex:i])
 	totalsize+=[self sizeOfEntry:i];
 
-	int numentries=[entries count];
+	int numentries=[entryset count];
 	[delegate archive:self extractionProgressFiles:0 of:numentries];
 	[delegate archive:self extractionProgressBytes:0 of:totalsize];
 
-	for(int i=[entries firstIndex];i!=NSNotFound;i=[entries indexGreaterThanIndex:i])
+	for(int i=[entryset firstIndex];i!=NSNotFound;i=[entryset indexGreaterThanIndex:i])
 	{
 		BOOL res;
 
@@ -848,9 +857,10 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 	{
 		if(delegate)
 		{
-			XADAction action=[delegate archive:self nameDecodingDidFailForEntry:n bytes:[self _undecodedNameOfEntry:n]];
-			if(action==XADSkip) return YES;
-			else if(action!=XADRetry)
+			XADAction action=[delegate archive:self nameDecodingDidFailForEntry:n
+			data:[[[self dataForkParserDictionaryForEntry:n] objectForKey:XADFileNameKey] data]];
+			if(action==XADSkipAction) return YES;
+			else if(action!=XADRetryAction)
 			{
 				lasterror=XADBreakError;
 				return NO;
@@ -865,7 +875,6 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 
 	if(![name length]) return YES; // Silently ignore unnamed files (or more likely, directories).
 
-	NSDictionary *attrs=[self attributesOfEntry:n withResourceFork:YES];
 	NSString *destfile=[destination stringByAppendingPathComponent:name];
 
 	while(![self _extractEntry:n as:destfile])
@@ -881,8 +890,7 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 		else return NO;
 	}
 
-	if(!attrs) return NO;
-	[self _changeAllAttributes:attrs atPath:destfile overrideWritePermissions:override&&[self entryIsDirectory:n]];
+	if(![self _changeAllAttributesForEntry:(int)n atPath:destfile overrideWritePermissions:override&&[self entryIsDirectory:n]]) return NO;
 
 	[delegate archive:self extractionOfEntryDidSucceed:n];
 
@@ -914,26 +922,6 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *dummy)
 	return res;
 }
 
--(void)fixWritePermissions
-{
-	NSEnumerator *enumerator=[writeperms reverseObjectEnumerator];
-	for(;;)
-	{
-		NSString *path=[enumerator nextObject];
-		NSNumber *permissions=[enumerator nextObject];
-		if(!path||!permissions) break;
-
-		FSRef ref;
-		FSCatalogInfo info;
-		if(FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation],&ref,NULL)!=noErr) continue;
-		if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod,&info,NULL,NULL,NULL)!=noErr) continue;
-
-		FSPermissionInfo *pinfo=(FSPermissionInfo *)&info.permissions;
-		pinfo->mode=[permissions unsignedShortValue];
-
-		FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod,&info);
-	}
-}
 
 
 
@@ -1002,54 +990,56 @@ static double XADGetTime()
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
-	//int fh=open([destfile fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
+	int fh=open([destfile fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
+	if(!fh)
+	{
+		lasterror=XADOpenFileError;
+		[pool release];
+		return NO;
+	}
+
 	@try
 	{
-		CSHandle *desthandle=[CSFileHandle fileHandleForWritingAtPath:destfile];
 		CSHandle *srchandle=[self handleForEntry:n];
 
-		off_t total=0;
+		off_t size=[self sizeOfEntry:n]; // TODO: use proper size!
+		BOOL hassize=[self entryHasSize:n];
+
+		off_t done=0;
 		double updatetime=0;
 		uint8_t buf[65536];
 
 		for(;;)
 		{
 			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
-			[desthandle writeBytes:actual fromBuffer:buf];
-			total+=actual;
+			if(write(fh,buf,actual)!=actual)
+			{
+				lasterror=XADOutputError;
+				[pool release];
+				return NO;
+			}
+
+			done+=actual;
 
 			double currtime=XADGetTime();
-
 			if(currtime-updatetime>update_interval)
 			{
 				updatetime=currtime;
-// TODO:
-				off_t progress,filesize;
-				if(![self entryHasSize:n])
-				{
-					progress=archive->xai_InPos-info->xpi_FileInfo->xfi_DataPos;
-					filesize=info->xpi_FileInfo->xfi_CrunchSize;
-				}
-				else
-				{
-					progress=info->xpi_CurrentSize;
-					filesize=info->xpi_FileInfo->xfi_Size;
-				}
 
-				[delegate archive:self extractionProgressForEntry:n bytes:progress of:filesize];
+				off_t progress;
+				if(hassize) progress=done;
+				else progress=size*[srchandle estimatedProgress];
+
+				[delegate archive:self extractionProgressForEntry:n bytes:progress of:size];
 				if(totalsize)
 				[delegate archive:self extractionProgressBytes:extractsize+progress of:totalsize];
-				*/
 			}
 			if(actual!=sizeof(buf)) break;
 		}
 	}
-	@catch id e
+	@catch(id e)
 	{
-		// TODO
-		[self _handleException:e defaultError:XADOpenFileError];
-		//lasterror=err;
-
+		lasterror=[self _parseException:e];
 		[pool release];
 		return NO;
 	}
@@ -1065,12 +1055,18 @@ static double XADGetTime()
 
 -(BOOL)_extractLinkEntry:(int)n as:(NSString *)destfile
 {
-	XADString *link=[[entries objectAtIndex:n] objectForKey:XADLinkDestinationKey];
-	XADError err=XADERR_OK;
-// TODO:
-...
-	char *clink=info->xfi_LinkName;
-	NSString *link=[[[NSString alloc] initWithBytes:clink length:strlen(clink) encoding:[self encodingForString:clink]] autorelease];
+	XADString *xadlink=[parser linkDestinationForDictionary:[self dataForkParserDictionaryForEntry:n]];
+	NSString *link;
+	if(![xadlink encodingIsKnown]&&delegate)
+	{
+		// TODO: should there be a better way to deal with encodings?
+		NSStringEncoding encoding=[delegate archive:self encodingForName:[xadlink cString]
+		guess:[xadlink encoding] confidence:[xadlink confidence]];
+		link=[xadlink stringWithEncoding:encoding];
+	}
+	else link=[xadlink string];
+
+	XADError err=XADNoError;
 
 	if(link)
 	{
@@ -1083,9 +1079,9 @@ static double XADGetTime()
 		struct stat st;
 		const char *deststr=[destfile fileSystemRepresentation];
 		if(lstat(deststr,&st)==0) unlink(deststr);
-		if(symlink([link fileSystemRepresentation],deststr)!=0) err=XADERR_OUTPUT;
+		if(symlink([link fileSystemRepresentation],deststr)!=0) err=XADOutputError;
 	}
-	else err=XADERR_BADPARAMS;
+	else err=XADBadParametersError;
 
 	if(err)
 	{
@@ -1103,7 +1099,7 @@ static double XADGetTime()
 	if(lstat([directory fileSystemRepresentation],&st)==0)
 	{
 		if((st.st_mode&S_IFMT)==S_IFDIR) return YES;
-		else lasterror=XADERR_MAKEDIR;
+		else lasterror=XADMakeDirectoryError;
 	}
 	else
 	{
@@ -1112,9 +1108,9 @@ static double XADGetTime()
 			if(!delegate||[delegate archive:self shouldCreateDirectory:directory])
 			{
 				if(mkdir([directory fileSystemRepresentation],0777)==0) return YES;
-				else lasterror=XADERR_MAKEDIR;
+				else lasterror=XADMakeDirectoryError;
 			}
-			else lasterror=XADERR_BREAK;
+			else lasterror=XADBreakError;
 		}
 	}
 
@@ -1140,25 +1136,37 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 	return utc;
 }
 
--(BOOL)_changeAllAttributes:(NSDictionary *)attrs atPath:(NSString *)path overrideWritePermissions:(BOOL)override
+-(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path overrideWritePermissions:(BOOL)override
 {
-	BOOL res=YES;
+	CSHandle *rsrchandle=[self resourceHandleForEntry:n];
+	if(rsrchandle) @try
+	{
+		NSData *data=[rsrchandle remainingFileContents];
+		if([rsrchandle hasChecksum]&&![rsrchandle isChecksumCorrect]) [XADException raiseChecksumException];
 
-	NSData *rsrcfork=[attrs objectForKey:XADResourceForkData];
-	if(rsrcfork) res=[rsrcfork writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO]&&res;
+		// TODO: use xattrs?
+		if(![data writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO]) return NO;
+	}
+	@catch(id e)
+	{
+		lasterror=[self _parseException:e];
+		return NO;
+	}
+
+	NSDictionary *dict=[self freshestParserDictionaryForEntry:n];
 
 	FSRef ref;
 	FSCatalogInfo info;
 	if(FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation],&ref,NULL)!=noErr) return NO;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod,&info,NULL,NULL,NULL)!=noErr) return NO;
+	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info,NULL,NULL,NULL)!=noErr) return NO;
 
-	NSNumber *permissions=[attrs objectForKey:NSFilePosixPermissions];
+	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
 	FSPermissionInfo *pinfo=(FSPermissionInfo *)&info.permissions;
 	if(permissions)
 	{
 		pinfo->mode=[permissions unsignedShortValue];
 
-		if(override&&!(pinfo->mode&0700))
+		if(override)
 		{
 			pinfo->mode|=0700;
 			[writeperms addObject:permissions];
@@ -1166,24 +1174,48 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 		}
 	}
 
-	NSDate *creation=[attrs objectForKey:NSFileCreationDate];
-	NSDate *modification=[attrs objectForKey:NSFileModificationDate];
+	NSDate *creation=[dict objectForKey:XADCreationDateKey];
+	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
+	NSDate *access=[dict objectForKey:XADLastAccessDateKey];
 
 	if(creation) info.createDate=NSDateToUTCDateTime(creation);
 	if(modification) info.contentModDate=NSDateToUTCDateTime(modification);
+	if(access) info.accessDate=NSDateToUTCDateTime(access);
 
-	NSNumber *type=[attrs objectForKey:NSFileHFSTypeCode];
-	NSNumber *creator=[attrs objectForKey:NSFileHFSCreatorCode];
-	NSNumber *finderflags=[attrs objectForKey:XADFinderFlags];
+	// TODO: Handle FinderInfo structure
+	NSNumber *type=[dict objectForKey:XADFileTypeKey];
+	NSNumber *creator=[dict objectForKey:XADFileCreatorKey];
+	NSNumber *finderflags=[dict objectForKey:XADFinderFlagsKey];
 	FileInfo *finfo=(FileInfo *)&info.finderInfo;
 
 	if(type) finfo->fileType=[type unsignedLongValue];
 	if(creator) finfo->fileCreator=[creator unsignedLongValue];
 	if(finderflags) finfo->finderFlags=[finderflags unsignedShortValue];
 
-	if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod,&info)!=noErr) return NO;
+	if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info)!=noErr) return NO;
 
-	return res;
+	return YES;
+}
+
+-(void)fixWritePermissions
+{
+	NSEnumerator *enumerator=[writeperms reverseObjectEnumerator];
+	for(;;)
+	{
+		NSString *path=[enumerator nextObject];
+		NSNumber *permissions=[enumerator nextObject];
+		if(!path||!permissions) break;
+
+		FSRef ref;
+		FSCatalogInfo info;
+		if(FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation],&ref,NULL)!=noErr) continue;
+		if(FSGetCatalogInfo(&ref,kFSCatInfoPermissions,&info,NULL,NULL,NULL)!=noErr) continue;
+
+		FSPermissionInfo *pinfo=(FSPermissionInfo *)&info.permissions;
+		pinfo->mode=[permissions unsignedShortValue];
+
+		FSSetCatalogInfo(&ref,kFSCatInfoPermissions,&info);
+	}
 }
 
 
@@ -1224,7 +1256,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 -(void)archive:(XADArchive *)arc extractionOfEntryWillStart:(int)n
 { [delegate archive:arc extractionOfEntryWillStart:n]; }
 
--(void)archive:(XADArchive *)arc extractionProgressForEntry:(int)n bytes:(xadSize)bytes of:(xadSize)total
+-(void)archive:(XADArchive *)arc extractionProgressForEntry:(int)n bytes:(off_t)bytes of:(off_t)total
 { [delegate archive:arc extractionProgressForEntry:n bytes:bytes of:total]; }
 
 -(void)archive:(XADArchive *)arc extractionOfEntryDidSucceed:(int)n
@@ -1249,23 +1281,42 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 
 @implementation NSObject (XADArchiveDelegate)
 
--(NSStringEncoding)archive:(XADArchive *)archive encodingForName:(const char *)bytes guess:(NSStringEncoding)guess confidence:(float)confidence { return guess; }
--(XADAction)archive:(XADArchive *)archive nameDecodingDidFailForEntry:(int)n bytes:(const char *)bytes { return XADAbort; }
+-(NSStringEncoding)archive:(XADArchive *)archive encodingForData:(NSData *)data guess:(NSStringEncoding)guess confidence:(float)confidence
+{
+	// Default implementation calls old method
+	NSMutableData *terminateddata=[[NSMutableData alloc] dataWithData:data];
+	NSStringEncoding enc=[self archive:archive encodingForName:[terminateddata bytes] guess:guess confidence:confidence];
+	[terminateddata release];
+	return enc;
+}
+
+-(XADAction)archive:(XADArchive *)archive nameDecodingDidFailForEntry:(int)n data:(NSData *)data
+{
+	// Default implementation calls old method
+	NSMutableData *terminateddata=[[NSMutableData alloc] dataWithData:data];
+	XADAction action=[self archive:archive nameDecodingDidFailForEntry:n bytes:[terminateddata bytes]];
+	[terminateddata release];
+	return action;
+}
 
 -(BOOL)archiveExtractionShouldStop:(XADArchive *)archive { return NO; }
 -(BOOL)archive:(XADArchive *)archive shouldCreateDirectory:(NSString *)directory { return YES; }
--(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithFile:(NSString *)file newFilename:(NSString **)newname { return XADOverwrite; }
--(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithDirectory:(NSString *)file newFilename:(NSString **)newname { return XADSkip; }
--(XADAction)archive:(XADArchive *)archive creatingDirectoryDidFailForEntry:(int)n { return XADAbort; }
+-(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithFile:(NSString *)file newFilename:(NSString **)newname { return XADOverwriteAction; }
+-(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithDirectory:(NSString *)file newFilename:(NSString **)newname { return XADSkipAction; }
+-(XADAction)archive:(XADArchive *)archive creatingDirectoryDidFailForEntry:(int)n { return XADAbortAction; }
 
 -(void)archive:(XADArchive *)archive extractionOfEntryWillStart:(int)n {}
--(void)archive:(XADArchive *)archive extractionProgressForEntry:(int)n bytes:(xadSize)bytes of:(xadSize)total {}
+-(void)archive:(XADArchive *)archive extractionProgressForEntry:(int)n bytes:(off_t)bytes of:(off_t)total {}
 -(void)archive:(XADArchive *)archive extractionOfEntryDidSucceed:(int)n {}
--(XADAction)archive:(XADArchive *)archive extractionOfEntryDidFail:(int)n error:(XADError)error { return XADAbort; }
--(XADAction)archive:(XADArchive *)archive extractionOfResourceForkForEntryDidFail:(int)n error:(XADError)error { return XADAbort; }
+-(XADAction)archive:(XADArchive *)archive extractionOfEntryDidFail:(int)n error:(XADError)error { return XADAbortAction; }
+-(XADAction)archive:(XADArchive *)archive extractionOfResourceForkForEntryDidFail:(int)n error:(XADError)error { return XADAbortAction; }
 
--(void)archive:(XADArchive *)archive extractionProgressBytes:(xadSize)bytes of:(xadSize)total {}
+-(void)archive:(XADArchive *)archive extractionProgressBytes:(off_t)bytes of:(off_t)total {}
 -(void)archive:(XADArchive *)archive extractionProgressFiles:(int)files of:(int)total {}
+
+// Deprecated
+-(NSStringEncoding)archive:(XADArchive *)archive encodingForName:(const char *)bytes guess:(NSStringEncoding)guess confidence:(float)confidence { return guess; }
+-(XADAction)archive:(XADArchive *)archive nameDecodingDidFailForEntry:(int)n bytes:(const char *)bytes { return XADAbortAction; }
 
 @end
 

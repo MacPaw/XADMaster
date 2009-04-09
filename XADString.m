@@ -69,11 +69,19 @@
 	return NO;
 }
 
+-(NSStringEncoding)encoding
+{
+	if(string) return NSUTF8StringEncoding; // TODO: what should this really return?
+	return [source encoding];
+}
+
 -(float)confidence
 {
 	if(string) return 1;
 	return [source confidence];
 }
+
+-(NSData *)data { return data; }
 
 -(NSString *)description
 {
@@ -81,6 +89,31 @@
 	NSString *str=[self string];
 	if(str) return str;
 	else return [data description];
+}
+
+-(BOOL)isEqual:(XADString *)other
+{
+	if([other isKindOfClass:[NSString class]]) return [[self string] isEqual:other];
+	else if([other isKindOfClass:[self class]])
+	{
+		if(string) return [string isEqual:[other string]];
+		else if(other->string) return [other->string isEqual:[self string]];
+		else if(source==other->source||[source encoding]==[other->source encoding]) return [data isEqual:other->data];
+		else return [[self string] isEqual:[other string]];
+	}
+	else return NO;
+}
+
+-(unsigned)hash
+{
+	if(string) return [string hash];
+	else return [data hash];
+}
+
+-(id)copyWithZone:(NSZone *)zone
+{
+	if(string) return [[XADString allocWithZone:zone] initWithString:string];
+	else return [[XADString allocWithZone:zone] initWithData:data source:source];
 }
 
 @end
@@ -95,6 +128,7 @@
 	{
 		detector=[UniversalDetector new]; // can return nil if UniversalDetector is not found
 		fixedencoding=0;
+		mac=NO;
 	}
 	return self;
 }
@@ -130,16 +164,14 @@
 	NSStringEncoding encoding=[detector encoding];
 	if(!encoding) return NSWindowsCP1252StringEncoding;
 
-	// TODO:
-/*		// Kludge to use Mac encodings instead of the similar Windows encodings for Mac archives
-		if(info->xfi_Flags&(XADFIF_MACDATA|XADFIF_MACRESOURCE))
-		{
-			NSStringEncoding macjapanese=CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
-			if(encoding==NSShiftJISStringEncoding) encoding=macjapanese;
-			//else if(encoding!=NSUTF8StringEncoding&&encoding!=macjapanese) encoding=NSMacOSRomanStringEncoding;
-		}
-*/
-
+	// Kludge to use Mac encodings instead of the similar Windows encodings for Mac archives
+	// TODO: improve
+	if(mac)
+	{
+		NSStringEncoding macjapanese=CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
+		if(encoding==NSShiftJISStringEncoding) encoding=macjapanese;
+		//else if(encoding!=NSUTF8StringEncoding&&encoding!=macjapanese) encoding=NSMacOSRomanStringEncoding;
+	}
 
 	return encoding;
 }
@@ -166,6 +198,11 @@
 -(BOOL)hasFixedEncoding
 {
 	return fixedencoding!=0;
+}
+
+-(void)setPrefersMacEncodings:(BOOL)prefermac
+{
+	mac=prefermac;
 }
 
 @end

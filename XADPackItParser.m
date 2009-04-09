@@ -26,6 +26,8 @@
 
 -(void)parse
 {
+	[self setIsMacArchive:YES];
+
 	CSHandle *handle=[self handle];
 
 	for(;;)

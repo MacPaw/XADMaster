@@ -80,7 +80,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{
 		delegate=del;
 
-		parser=[XADArchiveParser archiveParserForPath:file];
+		parser=[[XADArchiveParser archiveParserForPath:file] retain];
 		if(parser)
 		{
 			[self _parseWithErrorPointer:error];
@@ -104,7 +104,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{
 		delegate=nil;
 
-		parser=[XADArchiveParser archiveParserForHandle:[CSMemoryHandle memoryHandleForReadingData:data] name:@""];
+		parser=[[XADArchiveParser archiveParserForHandle:[CSMemoryHandle memoryHandleForReadingData:data] name:@""] retain];
 		if(!parser)
 		{
 			[self _parseWithErrorPointer:error];
@@ -131,7 +131,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		CSHandle *handle=[otherarchive handleForEntry:n error:error];
 		if(handle)
 		{
-			parser=[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]];
+			parser=[[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]] retain];
 			if(parser)
 			{
 				[self _parseWithErrorPointer:error];

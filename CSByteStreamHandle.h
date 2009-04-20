@@ -2,6 +2,8 @@
 
 #import <setjmp.h>
 
+#define CSByteStreamHandle XADByteStreamHandle
+
 @interface CSByteStreamHandle:CSStreamHandle
 {
 	uint8_t (*bytestreamproducebyte_ptr)(id,SEL,off_t);

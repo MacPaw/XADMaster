@@ -2,6 +2,8 @@
 
 #include <zlib.h>
 
+#define CSZlibHandle XADZlibHandle
+
 extern NSString *CSZlibException;
 
 @interface CSZlibHandle:CSStreamHandle

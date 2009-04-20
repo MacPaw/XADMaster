@@ -259,7 +259,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(BOOL)_finishInit:(xadTAGPTR)tags error:(XADError *)error
 {
-	struct TagItem alltags[]={ XAD_PROGRESSHOOK,(xadUINT32)&progresshook,TAG_MORE,(xadUINT32)tags,TAG_DONE };
+	struct TagItem alltags[]={ XAD_PROGRESSHOOK,(uint32_t)&progresshook,TAG_MORE,(uint32_t)tags,TAG_DONE };
 
 	int err=xadGetInfoA(xmb,archive,alltags);
 	if(!err&&archive->xai_DiskInfo)
@@ -288,7 +288,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	return YES;
 }
 
--(xadUINT32)_newEntryCallback:(struct xadProgressInfo *)proginfo
+-(uint32_t)_newEntryCallback:(struct xadProgressInfo *)proginfo
 {
 	struct xadFileInfo *info=proginfo->xpi_FileInfo;
 
@@ -1229,6 +1229,76 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 }
 */
 
+//
+// Deprecated
+//
+
+// Ugly hack to support old versions of Xee.
+-(void *)xadFileInfoForEntry:(int)n
+{
+	struct xadFileInfo
+	{
+		void *xfi_Next;
+		uint32_t xfi_EntryNumber;/* number of entry */
+		char *xfi_EntryInfo;  /* additional archiver text */
+		void *xfi_PrivateInfo;/* client private, see XAD_OBJPRIVINFOSIZE */
+		uint32_t xfi_Flags;      /* see XADFIF_xxx defines */
+		char *xfi_FileName;   /* see XAD_OBJNAMESIZE tag */
+		char *xfi_Comment;    /* see XAD_OBJCOMMENTSIZE tag */
+		uint32_t xfi_Protection; /* AmigaOS3 bits (including multiuser) */
+		uint32_t xfi_OwnerUID;   /* user ID */
+		uint32_t xfi_OwnerGID;   /* group ID */
+		char *xfi_UserName;   /* user name */
+		char *xfi_GroupName;  /* group name */
+		uint64_t xfi_Size;       /* size of this file */
+		uint64_t xfi_GroupCrSize;/* crunched size of group */
+		uint64_t xfi_CrunchSize; /* crunched size */
+		char *xfi_LinkName;   /* name and path of link */
+		struct xadDate {
+			uint32_t xd_Micros;  /* values 0 to 999999     */
+			int32_t xd_Year;    /* values 1 to 2147483648 */
+			uint8_t xd_Month;   /* values 1 to 12         */
+			uint8_t xd_WeekDay; /* values 1 to 7          */
+			uint8_t xd_Day;     /* values 1 to 31         */
+			uint8_t xd_Hour;    /* values 0 to 23         */
+			uint8_t xd_Minute;  /* values 0 to 59         */
+			uint8_t xd_Second;  /* values 0 to 59         */
+		} xfi_Date;
+		uint16_t xfi_Generation; /* File Generation [0...0xFFFF] (V3) */
+		uint64_t xfi_DataPos;    /* crunched data position (V3) */
+		void *xfi_MacFork;    /* pointer to 2nd fork for Mac (V7) */
+		uint16_t xfi_UnixProtect;/* protection bits for Unix (V11) */
+		uint8_t xfi_DosProtect; /* protection bits for MS-DOS (V11) */
+		uint8_t xfi_FileType;   /* XADFILETYPE to define type of exe files (V11) */
+		void *xfi_Special;    /* pointer to special data (V11) */
+	};
+
+	NSDictionary *dict=[self freshestParserDictionaryForEntry:n];
+	NSDate *mod=[dict objectForKey:XADLastModificationDateKey];
+	NSNumber *size=[dict objectForKey:XADFileSizeKey];
+
+	NSMutableData *data=[NSMutableData dataWithLength:sizeof(struct xadFileInfo)];
+	struct xadFileInfo *fi=[data mutableBytes];
+
+	if(mod)
+	{
+		NSCalendarDate *cal=[mod dateWithCalendarFormat:nil timeZone:[NSTimeZone defaultTimeZone]];
+		fi->xfi_Date.xd_Year=[cal yearOfCommonEra];
+		fi->xfi_Date.xd_Month=[cal monthOfYear];
+		fi->xfi_Date.xd_Day=[cal dayOfMonth];
+		fi->xfi_Date.xd_Hour=[cal hourOfDay];
+		fi->xfi_Date.xd_Minute=[cal minuteOfHour];
+		fi->xfi_Date.xd_Second=[cal secondOfMinute];
+	}
+	else fi->xfi_Flags|=1<<6;
+
+	if(size) fi->xfi_Size=[size longLongValue];
+	else fi->xfi_Size=0;
+
+	return fi;
+}
+
+
 
 
 // TODO
@@ -1268,7 +1338,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 -(XADAction)archive:(XADArchive *)arc extractionOfResourceForkForEntryDidFail:(int)n error:(XADError)error
 { return [delegate archive:arc extractionOfResourceForkForEntryDidFail:n error:error]; }
 
-//-(void)archive:(XADArchive *)arc extractionProgressBytes:(xadSize)bytes of:(xadSize)total
+//-(void)archive:(XADArchive *)arc extractionProgressBytes:(uint64_t)bytes of:(uint64_t)total
 //{}
 
 //-(void)archive:(XADArchive *)arc extractionProgressFiles:(int)files of:(int)total;

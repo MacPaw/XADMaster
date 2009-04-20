@@ -1,5 +1,7 @@
 #import "CSStreamHandle.h"
 
+#define CSBlockStreamHandle XADBlockStreamHandle
+
 @interface CSBlockStreamHandle:CSStreamHandle
 {
 	uint8_t *currblock;

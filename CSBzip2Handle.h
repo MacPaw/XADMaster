@@ -2,6 +2,8 @@
 
 #include <bzlib.h>
 
+#define CSBzip2Handle XADBzip2Handle
+
 extern NSString *CSBzip2Exception;
 
 @interface CSBzip2Handle:CSStreamHandle

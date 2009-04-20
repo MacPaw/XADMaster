@@ -1,5 +1,7 @@
 #import "CSHandle.h"
 
+#define CSSubHandle XADSubHandle
+
 @interface CSSubHandle:CSHandle
 {
 	CSHandle *parent;

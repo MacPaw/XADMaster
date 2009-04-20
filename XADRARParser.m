@@ -378,7 +378,7 @@ NSLog(@"encryptver: %d",encryptversion);
 		int length=[data length];
 		const uint8_t *bytes=[data bytes];
 
-		int n;
+		int n=0;
 		while(n<length&&bytes[n]) n++;
 
 		if(n==length) return [self XADStringWithData:data encoding:NSUTF8StringEncoding];

@@ -126,6 +126,10 @@ extern NSString *XADFinderFlags;
 
 -(void)fixWritePermissions;
 
+// Deprecated
+
+-(void *)xadFileInfoForEntry:(int)n;
+
 @end
 
 

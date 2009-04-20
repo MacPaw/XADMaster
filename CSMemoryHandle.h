@@ -1,5 +1,7 @@
 #import "CSHandle.h"
 
+#define CSMemoryHandle XADMemoryHandle
+
 @interface CSMemoryHandle:CSHandle
 {
 	NSData *backingdata;

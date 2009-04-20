@@ -1,5 +1,7 @@
 #import "CSHandle.h"
 
+#define CSMultiHandle XADMultiHandle
+
 @interface CSMultiHandle:CSHandle
 {
 	NSArray *handles;

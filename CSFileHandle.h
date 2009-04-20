@@ -2,6 +2,8 @@
 
 #import <stdio.h>
 
+#define CSFileHandle XADFileHandle
+
 extern NSString *CSFileErrorException;
 
 @interface CSFileHandle:CSHandle

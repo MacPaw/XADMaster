@@ -1,6 +1,8 @@
 #import "CSHandle.h"
 #import "CSInputBuffer.h"
 
+#define CSStreamHandle XADStreamHandle
+
 @interface CSStreamHandle:CSHandle
 {
 	off_t streampos,streamlength;

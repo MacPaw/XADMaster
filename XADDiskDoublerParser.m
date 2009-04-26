@@ -63,7 +63,7 @@
 
 	NSMutableArray *pathstack=[NSMutableArray array];
 
-	for(;;)
+	while([self shouldKeepParsing])
 	{
 		uint32_t magic;
 		@try { magic=[fh readID]; }
@@ -185,7 +185,7 @@
 
 	NSMutableArray *pathstack=[NSMutableArray array];
 
-	for(;;)
+	while([self shouldKeepParsing])
 	{
 		off_t start=[fh offsetInFile];
 

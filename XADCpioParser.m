@@ -26,7 +26,7 @@
 {
 	CSHandle *fh=[self handle];
 
-	for(;;)
+	while([self shouldKeepParsing])
 	{
 		uint8_t magic[2];
 		[fh readBytes:2 toBuffer:magic];

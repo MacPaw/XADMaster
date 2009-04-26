@@ -103,7 +103,8 @@ extern NSString *XADVolumesKey;
 
 // Internal functions
 
--(NSString *)name;
+-(BOOL)shouldKeepParsing;
+
 -(CSHandle *)handle;
 -(CSHandle *)handleAtDataOffsetForDictionary:(NSDictionary *)dict;
 -(XADSkipHandle *)skipHandle;

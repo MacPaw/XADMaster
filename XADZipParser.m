@@ -83,6 +83,8 @@
 
 	for(int i=0;i<numentries;i++)
 	{
+		if(![self shouldKeepParsing]) break;
+
 		uint32_t centralid=[fh readID];
 		if(centralid!=0x504b0102) [XADException raiseIllegalDataException]; // could try recovering here
 

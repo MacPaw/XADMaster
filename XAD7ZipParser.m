@@ -164,6 +164,8 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	int numfiles=[files count];
 	for(int i=0;i<numfiles;i++)
 	{
+		if(![self shouldKeepParsing]) break;
+
 		NSMutableDictionary *file=[files objectAtIndex:i];
 
 		if([file objectForKey:@"7zIsEmptyStream"])

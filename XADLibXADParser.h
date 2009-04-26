@@ -29,7 +29,7 @@
 -(void)dealloc;
 
 -(void)parse;
--(void)newEntryCallback:(struct xadProgressInfo *)proginfo;
+-(BOOL)newEntryCallback:(struct xadProgressInfo *)proginfo;
 -(NSMutableDictionary *)dictionaryForFileInfo:(struct xadFileInfo *)info;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;

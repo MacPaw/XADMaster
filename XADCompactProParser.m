@@ -107,12 +107,14 @@
 	while(dict=[enumerator nextObject]) [self addEntryWithDictionary:dict];
 }
 
--(void)parseDirectoryWithNameData:(NSData *)parentdata numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries
+-(BOOL)parseDirectoryWithNameData:(NSData *)parentdata numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries
 {
 	CSHandle *fh=[self handle];
 
 	while(numentries)
 	{
+		if(![self shouldKeepParsing]) return NO;
+
 		int namelen=[fh readUInt8];
 		NSData *namedata=[fh readDataOfLength:namelen&0x7f];
 		NSData *pathdata=XADBuildMacPathWithData(parentdata,namedata);
@@ -128,7 +130,7 @@
 
 			[entries addObject:dict];
 
-			[self parseDirectoryWithNameData:namedata numberOfEntries:numdirentries entryArray:entries];
+			if(![self parseDirectoryWithNameData:namedata numberOfEntries:numdirentries entryArray:entries]) return NO;
 
 			numentries-=numdirentries+1;
 		}
@@ -208,6 +210,7 @@
 			numentries--;
 		}
 	}
+	return YES;
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum

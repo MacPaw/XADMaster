@@ -33,8 +33,9 @@ extern NSString *XADFinderFlags;
 
 //	int currentry;
 	off_t extractsize,totalsize;
-//	NSString *immediatedestination;
-//	BOOL immediatefailed;
+	NSString *immediatedestination;
+	BOOL immediatefailed;
+	XADArchive *parentarchive;
 }
 
 +(XADArchive *)archiveForFile:(NSString *)filename;
@@ -67,6 +68,7 @@ extern NSString *XADFinderFlags;
 -(int)numberOfEntries;
 -(BOOL)immediateExtractionFailed;
 -(NSString *)commonTopDirectory;
+-(NSString *)comment;
 
 -(void)setDelegate:(id)delegate;
 -(id)delegate;
@@ -98,6 +100,7 @@ extern NSString *XADFinderFlags;
 -(BOOL)entryIsEncrypted:(int)n;
 -(BOOL)entryIsArchive:(int)n;
 -(BOOL)entryHasResourceFork:(int)n;
+-(NSString *)commentForEntry:(int)n;
 -(NSDictionary *)attributesOfEntry:(int)n;
 -(NSDictionary *)attributesOfEntry:(int)n withResourceFork:(BOOL)resfork;
 -(CSHandle *)handleForEntry:(int)n;
@@ -115,6 +118,7 @@ extern NSString *XADFinderFlags;
 -(BOOL)extractEntries:(NSIndexSet *)entryset to:(NSString *)destination subArchives:(BOOL)sub;
 -(BOOL)extractEntry:(int)n to:(NSString *)destination;
 -(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override;
+-(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override resourceFork:(BOOL)resfork;
 -(BOOL)extractArchiveEntry:(int)n to:(NSString *)destination;
 
 -(BOOL)_extractEntry:(int)n as:(NSString *)destfile;
@@ -122,7 +126,7 @@ extern NSString *XADFinderFlags;
 -(BOOL)_extractDirectoryEntry:(int)n as:(NSString *)destfile;
 -(BOOL)_extractLinkEntry:(int)n as:(NSString *)destfile;
 -(BOOL)_ensureDirectoryExists:(NSString *)directory;
--(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path overrideWritePermissions:(BOOL)override;
+-(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path resourceFork:(BOOL)resfork overrideWritePermissions:(BOOL)override;
 
 -(void)fixWritePermissions;
 

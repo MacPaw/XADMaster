@@ -138,7 +138,7 @@
 	name[100] = '\000';
 	[dict setObject:[self XADStringWithCString:name] forKey:XADFileNameKey];
 	
-	unsigned int mode = [XADTarParser readNumberInRangeFromBuffer:NSMakeRange(100,8) buffer:header];
+	unsigned int mode = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(100,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:mode] forKey:XADPosixPermissionsKey];
 
 	unsigned int uid = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(108,8) buffer:header];
@@ -430,7 +430,7 @@
 	int tarFormat = [XADTarParser getTarType:header];
 
 	BOOL isArchiverOver = NO;
-	while( !isArchiverOver )
+	while( !isArchiverOver && [self shouldKeepParsing])
 	{
 		NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 

@@ -221,7 +221,7 @@ static void DumpElement(StuffItXElement *element)
 	NSMutableDictionary *streamforks=[NSMutableDictionary dictionary];
 	NSMutableSet *forkedset=[NSMutableSet set];
 
-	for(;;)
+	while([self shouldKeepParsing])
 	{
 		StuffItXElement element;
 		ReadElement(fh,&element);
@@ -265,6 +265,8 @@ static void DumpElement(StuffItXElement *element)
 				NSMutableDictionary *fork;
 				while(fork=[enumerator nextObject])
 				{
+					if(![self shouldKeepParsing]) return;
+
 					NSMutableDictionary *entry=[entrydict objectForKey:[fork objectForKey:@"Entry"]];
 					NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
 

@@ -44,9 +44,9 @@ NSString *XADFinderFlagsKey=@"XADFinderFlags";
 NSString *XADFinderInfoKey=@"XADFinderInfo";
 NSString *XADPosixPermissionsKey=@"XADPosixPermissions";
 NSString *XADPosixUserKey=@"XADPosixUser";
-NSString *XADPosixGroupKey=@"XADGroupUser";
+NSString *XADPosixGroupKey=@"XADPosixGroup";
 NSString *XADPosixUserNameKey=@"XADPosixUserName";
-NSString *XADPosixGroupNameKey=@"XADGroupUserName";
+NSString *XADPosixGroupNameKey=@"XADPosixGroupName";
 NSString *XADDOSFileAttributesKey=@"XADDOSFileAttributes";
 NSString *XADWindowsFileAttributesKey=@"XADWindowsFileAttributes";
 
@@ -358,6 +358,13 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 }
 
 
+
+
+-(BOOL)shouldKeepParsing
+{
+	if(!delegate) return YES;
+	return ![delegate archiveParsingShouldStop:self];
+}
 
 
 

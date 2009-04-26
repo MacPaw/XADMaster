@@ -36,7 +36,7 @@
 {
 	CSHandle *fh=[self handle];
 
-	for(;;)
+	while([self shouldKeepParsing])
 	{
 		off_t start=[fh offsetInFile];
 

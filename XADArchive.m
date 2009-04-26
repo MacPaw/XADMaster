@@ -62,9 +62,12 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		parser=nil;
 		delegate=nil;
 		lasterror=XADNoError;
+		immediatedestination=nil;
+		immediatefailed=NO;
+		parentarchive=nil;
 
 		entries=[[NSMutableArray array] retain];
-		namedict=[[NSMutableDictionary dictionary] retain];
+		namedict=nil;
 		writeperms=[[NSMutableArray array] retain];
  	}
 	return self;
@@ -102,8 +105,6 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 {
 	if(self=[self init])
 	{
-		delegate=nil;
-
 		parser=[[XADArchiveParser archiveParserForHandle:[CSMemoryHandle memoryHandleForReadingData:data] name:@""] retain];
 		if(!parser)
 		{
@@ -125,8 +126,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 {
 	if(self=[self init])
 	{
-		delegate=nil;
-		parser=nil;
+		parentarchive=[otherarchive retain];
 
 		CSHandle *handle=[otherarchive handleForEntry:n error:error];
 		if(handle)
@@ -149,7 +149,33 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
      immediateExtractionTo:(NSString *)destination error:(XADError *)error
 {
+	if(self=[self init])
+	{
+		parentarchive=[otherarchive retain];
+		immediatedestination=destination;
+		[self setDelegate:otherarchive];
+
+		CSHandle *handle=[otherarchive handleForEntry:n error:error];
+		if(handle)
+		{
+			parser=[[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]] retain];
+			if(parser)
+			{
+				[self _parseWithErrorPointer:error];
+
+				[self fixWritePermissions];
+				immediatedestination=nil;
+				return self;
+			}
+			else if(error) *error=XADDataFormatError;
+		}
+
+		[self release];
+	}
+
+	return nil;
 }
+
 
 -(void)dealloc
 {
@@ -157,6 +183,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	[entries release];
 	[namedict release];
 	[writeperms release];
+	[parentarchive release];
 
 	[super dealloc];
 }
@@ -167,16 +194,25 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 {
 	[parser setDelegate:self];
 
+	namedict=[[NSMutableDictionary dictionary] retain];
+
 	@try { [parser parse]; }
 	@catch(id e)
 	{
 		lasterror=[self _parseException:e];
 		if(error) *error=lasterror;
 	}
+
+	if(immediatefailed&&error) *error=lasterror;
+
+	[namedict release];
+	namedict=nil;
 }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
+	if(immediatefailed) return; // ignore anything after a failure
+
 	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
 	BOOL isres=resnum&&[resnum boolValue];
 
@@ -185,20 +221,39 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	NSNumber *index=[namedict objectForKey:name];
 	if(index) // Try to update an existing entry
 	{
-		NSMutableDictionary *entry=[entries objectAtIndex:[index intValue]];
-		if(isres)
+		int n=[index intValue];
+		NSMutableDictionary *entry=[entries objectAtIndex:n];
+		if(isres) // Adding a resource fork to an earlier data fork
 		{
 			if(![entry objectForKey:@"ResourceFork"])
 			{
 				[entry setObject:dict forKey:@"ResourceFork"];
+
+				if(immediatedestination)
+				{
+					NSString *name=[self nameOfEntry:n];
+					if(name)
+					if(![self _changeAllAttributesForEntry:n
+					atPath:[immediatedestination stringByAppendingPathComponent:name]
+					resourceFork:YES overrideWritePermissions:[self entryIsDirectory:n]])
+					immediatefailed=YES;
+				}
+
 				return;
 			}
 		}
-		else
+		else // Adding a data fork to an earlier resource fork
 		{
 			if(![entry objectForKey:@"DataFork"])
 			{
 				[entry setObject:dict forKey:@"DataFork"];
+
+				if(immediatedestination)
+				{
+					if(![self extractEntry:n to:immediatedestination
+					overrideWritePermissions:YES resourceFork:NO]) immediatefailed=YES;
+				}
+
 				return;
 			}
 		}
@@ -215,172 +270,19 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	nil]];
 
 	[namedict setObject:[NSNumber numberWithInt:[entries count]] forKey:name];
+
+	if(immediatedestination)
+	{
+		if(![self extractEntry:[entries count]-1 to:immediatedestination
+		overrideWritePermissions:YES]) immediatefailed=YES;
+	}
 }
 
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser
 {
-	return NO; // TODO: actually figure out how to use this
+	return immediatefailed;
 }
 
-/*
--(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
-     immediateExtractionTo:(NSString *)destination error:(XADError *)error
-{
-	if(self=[self init])
-	{
-		parentarchive=[otherarchive retain];
-		filename=[[otherarchive nameOfEntry:n] retain];
-		immediatedestination=destination;
-
-		[self setDelegate:otherarchive];
-
-		if(pipe=[[XADArchivePipe alloc] initWithArchive:otherarchive entry:n bufferSize:1024*1024])
-		{
-			struct TagItem tags[]={
-				XAD_INHOOK,(xadPTRINT)[pipe inHook],
-				[otherarchive entryHasSize:n]?TAG_IGNORE:XAD_CLIENT,XADCID_TAR,
-			TAG_DONE};
-
-			if([self _finishInit:tags error:error])
-			{
-				[self fixWritePermissions];
-				immediatedestination=nil;
-				return self;
-			}
-		}
-		else if(error) *error=XADERR_NOMEMORY;
-
-		[self release];
-	}
-	else if(error) *error=XADERR_NOMEMORY;
-
-	return nil;
-}
-
--(BOOL)_finishInit:(xadTAGPTR)tags error:(XADError *)error
-{
-	struct TagItem alltags[]={ XAD_PROGRESSHOOK,(uint32_t)&progresshook,TAG_MORE,(uint32_t)tags,TAG_DONE };
-
-	int err=xadGetInfoA(xmb,archive,alltags);
-	if(!err&&archive->xai_DiskInfo)
-	{
-		xadFreeInfo(xmb,archive);
-		err=xadGetDiskInfo(xmb,archive,
-			XAD_INDISKARCHIVE,alltags,
-		TAG_DONE);
-	}
-	else if(err==XADERR_FILETYPE) err=xadGetDiskInfoA(xmb,archive,tags);
-
-	if(err)
-	{
-		if(error) *error=err;
-		return NO;
-	}
-
-	if(![fileinfos count])
-	{
-		if(error) *error=XADERR_DATAFORMAT;
-		return NO;
-	}
-
-	if(error) *error=XADERR_OK;
-
-	return YES;
-}
-
--(uint32_t)_newEntryCallback:(struct xadProgressInfo *)proginfo
-{
-	struct xadFileInfo *info=proginfo->xpi_FileInfo;
-
-	// Feed filename to the character set detector
-	[self _runDetectorOn:info->xfi_FileName];
-
-	// Skip normal resource forks (except lonely ones)
-	if((info->xfi_Flags&XADFIF_MACRESOURCE)&&info->xfi_MacFork)
-	{
-		// Was this file already extracted without attributes?
-		int n=[self _entryIndexOfFileInfo:info->xfi_MacFork];
-		if(n!=NSNotFound)
-		{
-			NSDictionary *attrs=[self attributesOfEntry:n withResourceFork:YES];
-			if(attrs) [self _changeAllAttributes:attrs atPath:[immediatedestination stringByAppendingPathComponent:[self nameOfEntry:n]] overrideWritePermissions:YES];
-		}
-		return XADPIF_OK;
-	}
-
-	// Resource forks in ditto archives
-	if([self _canHaveDittoResourceForks]&&[self _fileInfoIsDittoResourceFork:info])
-	{
-//		detected_encoding=NSUTF8StringEncoding;
-//		detector_confidence=1;
-
-		NSString *dataname=[self _nameOfDataForkForDittoResourceFork:info];
-		if(dataname)
-		{
-			[dittoforks setObject:[NSValue valueWithPointer:info] forKey:dataname];
-
-			// Doing immediate extraction?
-			if(immediatedestination)
-			{
-				// Was this file already extracted without attributes?
-				int n=[self _entryIndexOfName:dataname];
-				if(n!=NSNotFound)
-				{
-					NSDictionary *attrs=[self attributesOfEntry:n withResourceFork:YES];
-					if(attrs) [self _changeAllAttributes:attrs atPath:[immediatedestination stringByAppendingPathComponent:dataname] overrideWritePermissions:YES];
-				}
-			}
-		}
-
-		return XADPIF_OK;
-	}
-
-	int newindex=[fileinfos count];
-
-	// Check if a resource fork for this file was already erroneously added to the list
-	if((info->xfi_Flags&XADFIF_MACDATA)&&info->xfi_MacFork)
-	{
-		int len=strlen(info->xfi_FileName);
-		for(int i=newindex-1;i>=0;i--)
-		{
-			struct xadFileInfo *other=[[fileinfos objectAtIndex:i] pointerValue];
-			int otherlen=strlen(other->xfi_FileName);
-
-			if(strncmp(info->xfi_FileName,other->xfi_FileName,len)==0)
-			if(otherlen==len||(otherlen==len+5&&strcmp(other->xfi_FileName+len,".rsrc")==0))
-			{
-				newindex=i;
-				[fileinfos replaceObjectAtIndex:newindex withObject:[NSValue valueWithPointer:info]];
-				goto skip;
-			}
-		}
-		// Not found, add entry to the list normally
-		[fileinfos addObject:[NSValue valueWithPointer:info]];
-	}
-	else
-	{
-		// Add entry to the list
-		[fileinfos addObject:[NSValue valueWithPointer:info]];
-	}
-	skip:
-
-	// Extract the file immediately if requested
-	if(immediatedestination)
-	{
-		if(info->xfi_Flags&(XADFIF_EXTRACTONBUILD|XADFIF_DIRECTORY|XADFIF_LINK))
-		{
-			if(![self extractEntry:newindex to:immediatedestination overrideWritePermissions:YES])
-			{
-				immediatefailed=YES;
-				return 0;
-			}
-		}
-		else lasterror=XADERR_NOTSUPPORTED;
-	}
-
-	return XADPIF_OK;
-}
-*/
 
 
 -(NSString *)filename
@@ -395,19 +297,24 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(NSString *)formatName
 {
-	/*if(parentarchive) return [NSString stringWithFormat:@"%@ in %@",[parser formatName],[parentarchive formatName]];
-	else*/ return [parser formatName];
+	if(parentarchive) return [NSString stringWithFormat:@"%@ in %@",[parser formatName],[parentarchive formatName]];
+	else return [parser formatName];
 }
 
--(BOOL)isEncrypted { return NO; } // TODO
+-(BOOL)isEncrypted { return [parser isEncrypted]; }
 
 -(BOOL)isSolid { return NO; } // TODO
 
--(BOOL)isCorrupted { return NO; } // TODO
+-(BOOL)isCorrupted
+{
+	NSNumber *iscorrupted=[[parser properties] objectForKey:XADIsCorruptedKey];
+	if(!iscorrupted) return NO;
+	return [iscorrupted boolValue];
+}
 
 -(int)numberOfEntries { return [entries count]; }
 
--(BOOL)immediateExtractionFailed { return NO; } // TODO
+-(BOOL)immediateExtractionFailed { return immediatefailed; }
 
 -(NSString *)commonTopDirectory
 {
@@ -426,6 +333,11 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	if(![[self nameOfEntry:i] hasPrefix:dirprefix]) return nil;
 
 	return directory;
+}
+
+-(NSString *)comment
+{
+	return [[parser properties] objectForKey:XADCommentKey];
 }
 
 
@@ -621,6 +533,12 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	return [num intValue]!=0;
 }
 
+-(NSString *)commentForEntry:(int)n
+{
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n]; // TODO: freshest or data?
+	return [dict objectForKey:XADCommentKey];
+}
+
 -(NSDictionary *)attributesOfEntry:(int)n { return [self attributesOfEntry:n withResourceFork:NO]; }
 
 -(NSDictionary *)attributesOfEntry:(int)n withResourceFork:(BOOL)resfork
@@ -658,14 +576,14 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	NSNumber *perm=[dict objectForKey:XADPosixPermissionsKey];
 	if(perm) [attrs setObject:perm forKey:NSFilePosixPermissions];
 
-	XADString *user=[dict objectForKey:XADPosixUserKey];
+	XADString *user=[dict objectForKey:XADPosixUserNameKey];
 	if(user)
 	{
 		NSString *username=[user string];
 		if(username) [attrs setObject:username forKey:NSFileOwnerAccountName];
 	}
 
-	XADString *group=[dict objectForKey:XADPosixGroupKey];
+	XADString *group=[dict objectForKey:XADPosixGroupNameKey];
 	if(group)
 	{
 		NSString *groupname=[group string];
@@ -845,9 +763,13 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	return YES;
 }
 
--(BOOL)extractEntry:(int)n to:(NSString *)destination { return [self extractEntry:n to:destination overrideWritePermissions:NO]; }
+-(BOOL)extractEntry:(int)n to:(NSString *)destination
+{ return [self extractEntry:n to:destination overrideWritePermissions:NO resourceFork:YES]; }
 
 -(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override
+{ return [self extractEntry:n to:destination overrideWritePermissions:override resourceFork:YES]; }
+
+-(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override resourceFork:(BOOL)resfork
 {
 	[delegate archive:self extractionOfEntryWillStart:n];
 
@@ -890,7 +812,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		else return NO;
 	}
 
-	if(![self _changeAllAttributesForEntry:(int)n atPath:destfile overrideWritePermissions:override&&[self entryIsDirectory:n]]) return NO;
+	if(![self _changeAllAttributesForEntry:n atPath:destfile resourceFork:resfork overrideWritePermissions:override&&[self entryIsDirectory:n]]) return NO;
 
 	[delegate archive:self extractionOfEntryDidSucceed:n];
 
@@ -1136,21 +1058,24 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 	return utc;
 }
 
--(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path overrideWritePermissions:(BOOL)override
+-(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path resourceFork:(BOOL)resfork overrideWritePermissions:(BOOL)override
 {
-	CSHandle *rsrchandle=[self resourceHandleForEntry:n];
-	if(rsrchandle) @try
+	if(resfork)
 	{
-		NSData *data=[rsrchandle remainingFileContents];
-		if([rsrchandle hasChecksum]&&![rsrchandle isChecksumCorrect]) [XADException raiseChecksumException];
+		CSHandle *rsrchandle=[self resourceHandleForEntry:n];
+		if(rsrchandle) @try
+		{
+			NSData *data=[rsrchandle remainingFileContents];
+			if([rsrchandle hasChecksum]&&![rsrchandle isChecksumCorrect]) [XADException raiseChecksumException];
 
-		// TODO: use xattrs?
-		if(![data writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO]) return NO;
-	}
-	@catch(id e)
-	{
-		lasterror=[self _parseException:e];
-		return NO;
+			// TODO: use xattrs?
+			if(![data writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO]) return NO;
+		}
+		@catch(id e)
+		{
+			lasterror=[self _parseException:e];
+			return NO;
+		}
 	}
 
 	NSDictionary *dict=[self freshestParserDictionaryForEntry:n];
@@ -1216,6 +1141,8 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 
 		FSSetCatalogInfo(&ref,kFSCatInfoPermissions,&info);
 	}
+
+	[writeperms removeAllObjects];
 }
 
 
@@ -1301,12 +1228,11 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 
 
 
-// TODO
--(NSStringEncoding)archive:(XADArchive *)arc encodingForName:(const char *)bytes guess:(NSStringEncoding)guess confidence:(float)confidence
-{ return  [self encodingForString:bytes]; }
+-(NSStringEncoding)archive:(XADArchive *)archive encodingForData:(NSData *)data guess:(NSStringEncoding)guess confidence:(float)confidence
+{ return [delegate archive:archive encodingForData:data guess:guess confidence:confidence]; }
 
--(XADAction)archive:(XADArchive *)arc nameDecodingDidFailForEntry:(int)n bytes:(const char *)bytes
-{ return [delegate archive:arc nameDecodingDidFailForEntry:n bytes:bytes]; }
+-(XADAction)archive:(XADArchive *)archive nameDecodingDidFailForEntry:(int)n data:(NSData *)data
+{ return [delegate archive:archive nameDecodingDidFailForEntry:n data:data]; }
 
 -(BOOL)archiveExtractionShouldStop:(XADArchive *)arc
 { return [delegate archiveExtractionShouldStop:arc]; }

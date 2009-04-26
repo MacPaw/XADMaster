@@ -8,7 +8,7 @@
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
 -(void)parse;
--(void)parseDirectoryWithNameData:(NSData *)parentdata numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries;
+-(BOOL)parseDirectoryWithNameData:(NSData *)parentdata numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;
 

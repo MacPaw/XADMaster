@@ -78,7 +78,7 @@
 
 	NSMutableDictionary *currdir=nil;
 
-	while([fh offsetInFile]+SIT_FILEHDRSIZE<=totalsize+base)
+	while([fh offsetInFile]+SIT_FILEHDRSIZE<=totalsize+base && [self shouldKeepParsing])
 	{
 		uint8_t header[SIT_FILEHDRSIZE];
 		[fh readBytes:112 toBuffer:header];

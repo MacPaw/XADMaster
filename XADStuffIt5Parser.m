@@ -110,7 +110,7 @@
 
 	NSMutableDictionary *directories=[NSMutableDictionary dictionary];
 
-	while([fh offsetInFile]+48<=totalsize+base)
+	while([fh offsetInFile]+48<=totalsize+base && [self shouldKeepParsing])
 	{
 		off_t offs=[fh offsetInFile];
 

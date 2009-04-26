@@ -210,7 +210,7 @@ NSLog(@"encryptver: %d",encryptversion);
 	BOOL last=(block.flags&LHD_SPLIT_AFTER)?NO:YES;
 	BOOL partial=NO;
 
-	for(;;)
+	while([self shouldKeepParsing])
 	{
 		[self skipBlock:block];
 
@@ -382,7 +382,7 @@ NSLog(@"encryptver: %d",encryptversion);
 		while(n<length&&bytes[n]) n++;
 
 		if(n==length) return [self XADStringWithData:data encoding:NSUTF8StringEncoding];
-NSLog(@"absurd name!");
+
 		int num=length-n-1;
 		if(num<=1) return [self XADStringWithCString:(const char *)bytes];
 

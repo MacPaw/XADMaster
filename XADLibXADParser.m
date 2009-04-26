@@ -112,7 +112,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
 		for(int i=0;i<numadded&&info;i++) info=info->xfi_Next;
 
-		while(info)
+		while(info&&[self shouldKeepParsing])
 		{
 			[self addEntryWithDictionary:[self dictionaryForFileInfo:info]];
 			info=info->xfi_Next;
@@ -120,7 +120,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	}
 }
 
--(void)newEntryCallback:(struct xadProgressInfo *)proginfo
+-(BOOL)newEntryCallback:(struct xadProgressInfo *)proginfo
 {
 	struct xadFileInfo *info=proginfo->xpi_FileInfo;
 	if(addonbuild)
@@ -136,6 +136,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 			numadded++;
 		}
 	}
+	return [self shouldKeepParsing];
 }
 
 -(NSMutableDictionary *)dictionaryForFileInfo:(struct xadFileInfo *)info
@@ -299,7 +300,7 @@ static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgress
 			return XADPIF_OK;
 
 		case XADPMODE_NEWENTRY:
-			[parser newEntryCallback:info];
+			if(![parser newEntryCallback:info]) return 0;
 			return XADPIF_OK;
 
 		case XADPMODE_END:

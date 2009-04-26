@@ -103,7 +103,11 @@ static const NSString *DateFormat=@"Date";
 
 	NSEnumerator *enumerator=[files objectEnumerator];
 	NSMutableDictionary *file;
-	while(file=[enumerator nextObject]) [self finishFile:file parentPath:nil];
+	while(file=[enumerator nextObject])
+	{
+		if(![self shouldKeepParsing]) break;
+		[self finishFile:file parentPath:nil];
+	}
 }
 
 -(void)finishFile:(NSMutableDictionary *)file parentPath:(NSString *)parentpath

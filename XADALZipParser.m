@@ -80,7 +80,7 @@ static void CalculateSillyTable(int *table,int param)
 
 	[fh skipBytes:8];
 
-	for(;;)
+	while([self shouldKeepParsing])
 	{
 		uint32_t signature=[fh readID];
 

@@ -20,15 +20,8 @@
 
 	uint32_t offset=CSUInt32BE(bytes+4);
 
-	off_t filesize;
-	@try
-	{
-		filesize=[handle fileSize];
-	}
-	@catch(id e)
-	{
-		return [name matchedByPattern:@"\\.(cpt|sea)" options:REG_ICASE];
-	}
+	off_t filesize=[handle fileSize];
+	if(filesize==CSHandleMaxLength) return [name matchedByPattern:@"\\.(cpt|sea)" options:REG_ICASE];
 
 	if(offset+7>filesize) return NO;
 

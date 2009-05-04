@@ -64,6 +64,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		lasterror=XADNoError;
 		immediatedestination=nil;
 		immediatefailed=NO;
+		immediatesize=0;
 		parentarchive=nil;
 
 		entries=[[NSMutableArray array] retain];
@@ -153,7 +154,9 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{
 		parentarchive=[otherarchive retain];
 		immediatedestination=destination;
-		[self setDelegate:otherarchive];
+		delegate=otherarchive;
+
+		immediatesize=[otherarchive representativeSizeOfEntry:n];
 
 		CSHandle *handle=[otherarchive handleForEntry:n error:error];
 		if(handle)
@@ -475,20 +478,32 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	return [dict objectForKey:XADFileSizeKey]?YES:NO;
 }
 
--(int)sizeOfEntry:(int)n
+-(off_t)uncompressedSizeOfEntry:(int)n
 {
-	// TODO: figure out exactly how this should work
 	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
 	if(!dict) return 0; // Special case for resource forks without data forks
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
-	if(!size) return 0x7fffffff;
+	if(!size) return CSHandleMaxLength;
+	return [size longLongValue];
+}
 
-	return [size intValue];
+-(off_t)compressedSizeOfEntry:(int)n
+{
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	if(!dict) return 0; // Special case for resource forks without data forks
+	NSNumber *size=[dict objectForKey:XADCompressedSizeKey];
+	if(!size) return CSHandleMaxLength;
+	return [size longLongValue];
+}
 
-/*	struct xadFileInfo *info=[self xadFileInfoForEntry:n];
-	if([self _entryIsLonelyResourceFork:n]) return 0; // Special case for resource forks without data forks
-	if(info->xfi_Flags&XADFIF_NOUNCRUNCHSIZE) return info->xfi_CrunchSize; // Return crunched size for files lacking an uncrunched size
-	return info->xfi_Size;*/
+-(off_t)representativeSizeOfEntry:(int)n
+{
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	if(!dict) return 0; // Special case for resource forks without data forks
+	NSNumber *size=[dict objectForKey:XADFileSizeKey];
+	if(!size) size=[dict objectForKey:XADCompressedSizeKey];
+	if(!size) return 1000;
+	return [size longLongValue];
 }
 
 -(BOOL)entryIsDirectory:(int)n
@@ -732,7 +747,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	totalsize=0;
 
 	for(int i=[entryset firstIndex];i!=NSNotFound;i=[entryset indexGreaterThanIndex:i])
-	totalsize+=[self sizeOfEntry:i];
+	totalsize+=[self representativeSizeOfEntry:i];
 
 	int numentries=[entryset count];
 	[delegate archive:self extractionProgressFiles:0 of:numentries];
@@ -799,7 +814,9 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 	NSString *destfile=[destination stringByAppendingPathComponent:name];
 
-	while(![self _extractEntry:n as:destfile])
+	while(![self _extractEntry:n as:destfile]
+	||![self _changeAllAttributesForEntry:n atPath:destfile resourceFork:resfork
+	overrideWritePermissions:override&&[self entryIsDirectory:n]])
 	{
 		if(lasterror==XADBreakError) return NO;
 		else if(delegate)
@@ -811,8 +828,6 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		}
 		else return NO;
 	}
-
-	if(![self _changeAllAttributesForEntry:n atPath:destfile resourceFork:resfork overrideWritePermissions:override&&[self entryIsDirectory:n]]) return NO;
 
 	[delegate archive:self extractionOfEntryDidSucceed:n];
 
@@ -913,7 +928,7 @@ static double XADGetTime()
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
 	int fh=open([destfile fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
-	if(!fh)
+	if(fh==-1)
 	{
 		lasterror=XADOpenFileError;
 		[pool release];
@@ -923,8 +938,14 @@ static double XADGetTime()
 	@try
 	{
 		CSHandle *srchandle=[self handleForEntry:n];
+		if(!srchandle)
+		{
+			close(fh);
+			[pool release];
+			return NO;
+		}
 
-		off_t size=[self sizeOfEntry:n]; // TODO: use proper size!
+		off_t size=[self representativeSizeOfEntry:n];
 		BOOL hassize=[self entryHasSize:n];
 
 		off_t done=0;
@@ -937,6 +958,7 @@ static double XADGetTime()
 			if(write(fh,buf,actual)!=actual)
 			{
 				lasterror=XADOutputError;
+				close(fh);
 				[pool release];
 				return NO;
 			}
@@ -953,19 +975,31 @@ static double XADGetTime()
 				else progress=size*[srchandle estimatedProgress];
 
 				[delegate archive:self extractionProgressForEntry:n bytes:progress of:size];
+
 				if(totalsize)
-				[delegate archive:self extractionProgressBytes:extractsize+progress of:totalsize];
+				{
+					[delegate archive:self extractionProgressBytes:extractsize+progress of:totalsize];
+				}
+				else if(immediatedestination)
+				{
+					double progress=[[parser handle] estimatedProgress];
+					[delegate archive:self extractionProgressBytes:progress*(double)immediatesize of:immediatesize];
+				}
 			}
 			if(actual!=sizeof(buf)) break;
 		}
+
+		if(hassize&&done!=size) [srchandle _raiseEOF]; // kind of hacky
 	}
 	@catch(id e)
 	{
 		lasterror=[self _parseException:e];
+		close(fh);
 		[pool release];
 		return NO;
 	}
 
+	close(fh);
 	[pool release];
 	return YES;
 }
@@ -1082,7 +1116,8 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 
 	FSRef ref;
 	FSCatalogInfo info;
-	if(FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation],&ref,NULL)!=noErr) return NO;
+	if(FSPathMakeRefWithOptions((const UInt8 *)[path fileSystemRepresentation],
+	kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
 	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info,NULL,NULL,NULL)!=noErr) return NO;
 
 	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
@@ -1159,6 +1194,15 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 //
 // Deprecated
 //
+
+-(int)sizeOfEntry:(int)n // deprecated and broken
+{
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	if(!dict) return 0; // Special case for resource forks without data forks
+	NSNumber *size=[dict objectForKey:XADFileSizeKey];
+	if(!size) return 0x7fffffff;
+	return [size intValue];
+}
 
 // Ugly hack to support old versions of Xee.
 -(void *)xadFileInfoForEntry:(int)n
@@ -1264,12 +1308,11 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 -(XADAction)archive:(XADArchive *)arc extractionOfResourceForkForEntryDidFail:(int)n error:(XADError)error
 { return [delegate archive:arc extractionOfResourceForkForEntryDidFail:n error:error]; }
 
-//-(void)archive:(XADArchive *)arc extractionProgressBytes:(uint64_t)bytes of:(uint64_t)total
-//{}
+-(void)archive:(XADArchive *)arc extractionProgressBytes:(off_t)bytes of:(off_t)total
+{ [delegate archive:arc extractionProgressBytes:bytes of:total]; }
 
 //-(void)archive:(XADArchive *)arc extractionProgressFiles:(int)files of:(int)total;
 //{}
-
 
 @end
 

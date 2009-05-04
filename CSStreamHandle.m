@@ -66,11 +66,7 @@
 
 
 
--(off_t)fileSize
-{
-	if(streamlength!=CSHandleMaxLength) return streamlength;
-	else return [super fileSize];
-}
+-(off_t)fileSize { return streamlength; }
 
 -(off_t)offsetInFile { return streampos; }
 

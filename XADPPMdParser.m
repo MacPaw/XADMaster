@@ -87,10 +87,9 @@
 		[dict setObject:[NSNumber numberWithInt:attrib] forKey:XADWindowsFileAttributesKey];
 	}
 
-	@try {
-		off_t filesize=[fh fileSize];
-		[dict setObject:[NSNumber numberWithUnsignedLongLong:filesize-16-namelen] forKey:XADCompressedSizeKey];
-	} @catch(id e) { }
+	off_t filesize=[fh fileSize];
+	if(filesize!=CSHandleMaxLength)
+	[dict setObject:[NSNumber numberWithUnsignedLongLong:filesize-16-namelen] forKey:XADCompressedSizeKey];
 
 	[self addEntryWithDictionary:dict];
 }

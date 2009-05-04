@@ -159,14 +159,14 @@ static uint64_t ParseInt(const uint8_t *buffer,int size,int type,int offset)
 		[NSNumber numberWithBool:YES],XADIsArchiveKey,
 	nil];
 
-	@try
+	off_t filesize=[fh fileSize];
+	if(filesize!=CSHandleMaxLength)
 	{
-		off_t length=[fh fileSize]-[fh offsetInFile];
+		off_t length=filesize-[fh offsetInFile];
 		[dict setObject:[NSNumber numberWithLongLong:length] forKey:XADFileSizeKey];
 		[dict setObject:[NSNumber numberWithLongLong:length] forKey:XADCompressedSizeKey];
 		[dict setObject:[NSNumber numberWithLongLong:length] forKey:XADDataLengthKey];
 	}
-	@catch(id e) {}
 
 	[self addEntryWithDictionary:dict];
 }

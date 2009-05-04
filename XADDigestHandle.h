@@ -1,5 +1,6 @@
 #import "CSStreamHandle.h"
 #import "Checksums.h"
+#import "Progress.h"
 
 #include <openssl/evp.h>
 

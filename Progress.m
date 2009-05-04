@@ -5,13 +5,9 @@
 
 -(double)estimatedProgress
 {
-	@try
-	{
-		off_t size=[self fileSize];
-		return (double)[self offsetInFile]/(double)size;
-	}
-	@catch(id e) {}
-	return 0;
+	off_t size=[self fileSize];
+	if(size==CSHandleMaxLength) return 0;
+	return (double)[self offsetInFile]/(double)size;
 }
 
 @end

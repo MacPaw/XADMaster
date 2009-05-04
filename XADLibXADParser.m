@@ -274,10 +274,12 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 			return XADERR_OK;
 
 		case XADHC_FULLSIZE:
-			@try {
-				param->xhp_CommandData=[fh fileSize];
-			} @catch(id e) { return XADERR_NOTSUPPORTED; }
+		{
+			off_t filesize=[fh fileSize];
+			if(filesize==CSHandleMaxLength) return XADERR_NOTSUPPORTED;
+			param->xhp_CommandData=filesize;
 			return XADERR_OK;
+		}
 
 		case XADHC_FREE:
 			free(archive->xai_MultiVolume);

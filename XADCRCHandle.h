@@ -1,5 +1,6 @@
 #import "CSStreamHandle.h"
 #import "Checksums.h"
+#import "Progress.h"
 #import "CRC.h"
 
 @interface XADCRCHandle:CSStreamHandle

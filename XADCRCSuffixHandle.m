@@ -77,6 +77,8 @@ CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)cr
 	return (crc^initcrc)==compcrc;
 }
 
+-(double)estimatedProgress { return [parent estimatedProgress]; }
+
 @end
 
 

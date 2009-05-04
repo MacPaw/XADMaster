@@ -21,14 +21,23 @@
 	[fh skipBytes:2];
 	int flags=[fh readUInt8];
 
-	[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
-		[self XADStringWithString:[[self name] stringByDeletingPathExtension]],XADFileNameKey,
-// TODO: fix fileSize call
-		[NSNumber numberWithLongLong:[[self handle] fileSize]-3],XADCompressedSizeKey,
+	NSString *name=[[self name] stringByDeletingPathExtension];
+
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		[self XADStringWithString:name],XADFileNameKey,
 		[self XADStringWithString:@"Compress"],XADCompressionNameKey,
 		[NSNumber numberWithLongLong:3],XADDataOffsetKey,
 		[NSNumber numberWithInt:flags],@"CompressFlags",
-	nil]];
+	nil];
+
+	if([name matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
+	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+
+	off_t size=[[self handle] fileSize];
+	if(size!=CSHandleMaxLength)
+	[dict setObject:[NSNumber numberWithLongLong:size-3] forKey:XADCompressedSizeKey];
+
+	[self addEntryWithDictionary:dict];
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum

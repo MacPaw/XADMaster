@@ -89,6 +89,8 @@ digestType:(const EVP_MD *)digesttype correctDigest:(NSData *)correctdigest
 	return memcmp([digest bytes],buf,length)==0;
 }
 
+-(double)estimatedProgress { return [parent estimatedProgress]; }
+
 @end
 
 

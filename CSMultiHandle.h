@@ -2,6 +2,8 @@
 
 #define CSMultiHandle XADMultiHandle
 
+extern NSString *CSSizeOfSegmentUnknownException;
+
 @interface CSMultiHandle:CSHandle
 {
 	NSArray *handles;
@@ -24,5 +26,7 @@
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
+
+-(void)_raiseSizeUnknownForSegment:(int)i;
 
 @end

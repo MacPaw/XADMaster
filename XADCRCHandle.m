@@ -69,5 +69,7 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 	return crc==compcrc;
 }
 
+-(double)estimatedProgress { return [parent estimatedProgress]; }
+
 @end
 

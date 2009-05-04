@@ -44,6 +44,8 @@
 		int symbol;
 		for(;;)
 		{
+			if(CSInputAtEOF(input)) CSByteStreamEOF(self);
+
 			symbol=CSInputNextBitStringLE(input,symbolsize);
 			symbolcounter++;
 			if(symbol==256&&blockmode)

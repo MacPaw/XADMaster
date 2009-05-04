@@ -50,7 +50,8 @@ NSString *CSNotSupportedException=@"CSNotSupportedException";
 
 
 
--(off_t)fileSize { [self _raiseNotImplemented:_cmd]; return 0; }
+//-(off_t)fileSize { [self _raiseNotImplemented:_cmd]; return 0; }
+-(off_t)fileSize { return CSHandleMaxLength; }
 
 -(off_t)offsetInFile { [self _raiseNotImplemented:_cmd]; return 0; }
 

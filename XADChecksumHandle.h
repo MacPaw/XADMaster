@@ -1,5 +1,6 @@
 #import "CSStreamHandle.h";
 #import "Checksums.h"
+#import "Progress.h"
 
 @interface XADChecksumHandle:CSStreamHandle
 {

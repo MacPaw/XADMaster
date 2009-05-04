@@ -13,9 +13,8 @@
 
 -(BOOL)hasChecksum
 {
-	off_t length;
-	@try { length=[parent fileSize]; }
-	@catch(id e) { return NO; }
+	off_t length=[parent fileSize];
+	if(length==CSHandleMaxLength) return NO;
 
 	return end==length&&[parent hasChecksum];
 }

@@ -66,17 +66,19 @@
 
 	[handle seekToEndOfFile];
 	[handle skipBytes:-4];
-	uint32_t size=[handle readUInt32LE];
+	off_t size=[handle readUInt32LE];
+	off_t compsize=[handle offsetInFile]-datapos-8;
 
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[NSNumber numberWithUnsignedInt:size],XADFileSizeKey,
-		[NSNumber numberWithUnsignedLongLong:[handle offsetInFile]-datapos-8],XADCompressedSizeKey,
-		[NSNumber numberWithUnsignedLongLong:datapos],XADDataOffsetKey,
+		[NSNumber numberWithLongLong:compsize],XADCompressedSizeKey,
+		[NSNumber numberWithLongLong:datapos],XADDataOffsetKey,
 		[NSDate dateWithTimeIntervalSince1970:time],XADLastModificationDateKey,
 		[self XADStringWithString:@"Deflate"],XADCompressionNameKey,
 		[NSNumber numberWithUnsignedInt:extraflags],@"GzipExtraFlags",
 		[NSNumber numberWithUnsignedInt:os],@"GzipOS",
 	nil];
+
+	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
 
 	if(filename)
 	{

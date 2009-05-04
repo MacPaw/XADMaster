@@ -55,10 +55,9 @@
 	if(size!=0xffffffffffffffff)
 	[dict setObject:[NSNumber numberWithUnsignedLongLong:size] forKey:XADFileSizeKey];
 
-	@try {
-		off_t filesize=[[self handle] fileSize];
-		[dict setObject:[NSNumber numberWithUnsignedLongLong:filesize-13] forKey:XADCompressedSizeKey];
-	} @catch(id e) { }
+	off_t filesize=[[self handle] fileSize];
+	if(filesize!=CSHandleMaxLength)
+	[dict setObject:[NSNumber numberWithUnsignedLongLong:filesize-13] forKey:XADCompressedSizeKey];
 
 	[self addEntryWithDictionary:dict];
 }

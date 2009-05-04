@@ -42,5 +42,7 @@
 	return (checksum&summask)==(correctchecksum&summask);
 }
 
+-(double)estimatedProgress { return [parent estimatedProgress]; }
+
 @end
 

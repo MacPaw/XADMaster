@@ -35,6 +35,7 @@ extern NSString *XADFinderFlags;
 	off_t extractsize,totalsize;
 	NSString *immediatedestination;
 	BOOL immediatefailed;
+	off_t immediatesize;
 	XADArchive *parentarchive;
 }
 
@@ -94,7 +95,9 @@ extern NSString *XADFinderFlags;
 
 -(NSString *)nameOfEntry:(int)n;
 -(BOOL)entryHasSize:(int)n;
--(int)sizeOfEntry:(int)n;
+-(off_t)uncompressedSizeOfEntry:(int)n;
+-(off_t)compressedSizeOfEntry:(int)n;
+-(off_t)representativeSizeOfEntry:(int)n;
 -(BOOL)entryIsDirectory:(int)n;
 -(BOOL)entryIsLink:(int)n;
 -(BOOL)entryIsEncrypted:(int)n;
@@ -132,6 +135,7 @@ extern NSString *XADFinderFlags;
 
 // Deprecated
 
+-(int)sizeOfEntry:(int)n;
 -(void *)xadFileInfoForEntry:(int)n;
 
 @end

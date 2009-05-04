@@ -166,6 +166,13 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 			{
 				[self _parseWithErrorPointer:error];
 
+				if(!immediatefailed)
+				if([handle hasChecksum]&&[handle atEndOfFile]&&![handle isChecksumCorrect])
+				{
+					lasterror=XADChecksumError;
+					immediatefailed=YES;
+				}
+
 				[self fixWritePermissions];
 				immediatedestination=nil;
 				return self;
@@ -989,7 +996,8 @@ static double XADGetTime()
 			if(actual!=sizeof(buf)) break;
 		}
 
-		if(hassize&&done!=size) [srchandle _raiseEOF]; // kind of hacky
+		if(hassize&&done!=size) [XADException raiseDecrunchException]; // kind of hacky
+		if([srchandle hasChecksum]&&![srchandle isChecksumCorrect]) [XADException raiseChecksumException];
 	}
 	@catch(id e)
 	{

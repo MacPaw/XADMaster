@@ -31,7 +31,6 @@ extern NSString *XADFinderFlags;
 	NSMutableDictionary *namedict;
 	NSMutableArray *writeperms;
 
-//	int currentry;
 	off_t extractsize,totalsize;
 	NSString *immediatedestination;
 	BOOL immediatefailed;
@@ -91,7 +90,7 @@ extern NSString *XADFinderFlags;
 
 -(NSDictionary *)dataForkParserDictionaryForEntry:(int)n;
 -(NSDictionary *)resourceForkParserDictionaryForEntry:(int)n;
--(NSDictionary *)freshestParserDictionaryForEntry:(int)n;
+-(NSDictionary *)combinedParserDictionaryForEntry:(int)n;
 
 -(NSString *)nameOfEntry:(int)n;
 -(BOOL)entryHasSize:(int)n;

@@ -1,8 +1,3 @@
-/*#include <unistd.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <fcntl.h>*/
-
 #define XAD_NO_DEPRECATED
 
 #import "XADArchive.h"
@@ -279,7 +274,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		dict,@"DataFork",
 	nil]];
 
-	[namedict setObject:[NSNumber numberWithInt:[entries count]] forKey:name];
+	[namedict setObject:[NSNumber numberWithInt:[entries count]-1] forKey:name];
 
 	if(immediatedestination)
 	{
@@ -313,7 +308,12 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(BOOL)isEncrypted { return [parser isEncrypted]; }
 
--(BOOL)isSolid { return NO; } // TODO
+-(BOOL)isSolid
+{
+	NSNumber *issolid=[[parser properties] objectForKey:XADIsSolidKey];
+	if(!issolid) return NO;
+	return [issolid boolValue];
+}
 
 -(BOOL)isCorrupted
 {
@@ -398,21 +398,26 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	return [[entries objectAtIndex:n] objectForKey:@"ResourceFork"];
 }
 
--(NSDictionary *)freshestParserDictionaryForEntry:(int)n
+-(NSDictionary *)combinedParserDictionaryForEntry:(int)n
 {
 	NSDictionary *entry=[entries objectAtIndex:n];
+	NSDictionary *older,*newer;
 	if([entry objectForKey:@"ResourceForkFirst"])
 	{
-		NSDictionary *dict=[entry objectForKey:@"DataFork"];
-		if(!dict) return [entry objectForKey:@"ResourceFork"];
-		else return dict;
+		older=[entry objectForKey:@"ResourceFork"];
+		newer=[entry objectForKey:@"DataFork"];
 	}
 	else
 	{
-		NSDictionary *dict=[entry objectForKey:@"ResourceFork"];
-		if(!dict) return [entry objectForKey:@"DataFork"];
-		else return dict;
+		older=[entry objectForKey:@"DataFork"];
+		newer=[entry objectForKey:@"ResourceFork"];
 	}
+
+	if(!newer) return older;
+
+	NSMutableDictionary *new=[NSMutableDictionary dictionaryWithDictionary:older];
+	[new addEntriesFromDictionary:newer];
+	return new;
 }
 
 -(NSString *)nameOfEntry:(int)n
@@ -515,7 +520,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(BOOL)entryIsDirectory:(int)n
 {
-	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
+	NSDictionary *dict=[self combinedParserDictionaryForEntry:n];
 	NSNumber *isdir=[dict objectForKey:XADIsDirectoryKey];
 
 	return isdir&&[isdir boolValue];
@@ -557,7 +562,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(NSString *)commentForEntry:(int)n
 {
-	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n]; // TODO: freshest or data?
+	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n]; // TODO: combined or data?
 	return [dict objectForKey:XADCommentKey];
 }
 
@@ -565,7 +570,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(NSDictionary *)attributesOfEntry:(int)n withResourceFork:(BOOL)resfork
 {
-	NSDictionary *dict=[self freshestParserDictionaryForEntry:n];
+	NSDictionary *dict=[self combinedParserDictionaryForEntry:n];
 	NSMutableDictionary *attrs=[NSMutableDictionary dictionary];
 
 	NSDate *creation=[dict objectForKey:XADCreationDateKey];
@@ -672,6 +677,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 {
 	NSDictionary *resdict=[self resourceForkParserDictionaryForEntry:n];
 	if(!resdict) return nil;
+	NSNumber *isdir=[resdict objectForKey:XADIsDirectoryKey];
+	if(isdir&&[isdir boolValue]) return nil;
 
 	@try
 	{ return [parser handleForEntryWithDictionary:resdict wantChecksum:YES]; }
@@ -1120,7 +1127,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 		}
 	}
 
-	NSDictionary *dict=[self freshestParserDictionaryForEntry:n];
+	NSDictionary *dict=[self combinedParserDictionaryForEntry:n];
 
 	FSRef ref;
 	FSCatalogInfo info;
@@ -1252,7 +1259,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 		void *xfi_Special;    /* pointer to special data (V11) */
 	};
 
-	NSDictionary *dict=[self freshestParserDictionaryForEntry:n];
+	NSDictionary *dict=[self combinedParserDictionaryForEntry:n];
 	NSDate *mod=[dict objectForKey:XADLastModificationDateKey];
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
 

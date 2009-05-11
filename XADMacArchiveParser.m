@@ -37,7 +37,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	if(self=[super initWithHandle:handle name:name])
 	{
 		currhandle=nil;
-		dittoregex=[[XADRegex alloc] initWithPattern:@"(^__MACOSX/|^)((.*/)\\._|\\._)([^/]+)$" options:0];
+		dittoregex=[[XADRegex alloc] initWithPattern:@"(^__MACOSX/|\\./|^)((.*/)\\._|\\._)([^/]+)$" options:0];
 	}
 	return self;
 }
@@ -143,8 +143,28 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	[newdict setObject:[NSNumber numberWithUnsignedInt:rsrclen] forKey:@"MacDataLength"];
 	[newdict setObject:[NSNumber numberWithUnsignedInt:rsrclen] forKey:XADFileSizeKey];
 	[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
+
+	if(finderinfo)
+	{
+		[newdict setObject:finderinfo forKey:XADFinderInfoKey];
+
+		const uint8_t *bytes=[finderinfo bytes];
+		uint32_t type=CSUInt32BE(bytes+0);
+		uint32_t creator=CSUInt32BE(bytes+4);
+
+		if(type!=0&&creator!=0&&(type&0xf000f000)==0&&(creator&0xf000f000)==0) // heuristic to recognize FolderInfo structures
+		{
+			[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+			origname=[origname stringByAppendingString:@"/"]; // Kludge to make names match. TODO: better path handling overrall
+		}
+		else
+		{
+			if(type) [newdict setObject:[NSNumber numberWithUnsignedInt:type] forKey:XADFileTypeKey];
+			if(creator) [newdict setObject:[NSNumber numberWithUnsignedInt:creator] forKey:XADFileCreatorKey];
+		}
+	}
+
 	[newdict setObject:[self XADStringWithString:origname] forKey:XADFileNameKey];
-	if(finderinfo) [newdict setObject:finderinfo forKey:XADFinderInfoKey];
 
 	[newdict removeObjectForKey:XADDataLengthKey];
 	[newdict removeObjectForKey:XADDataOffsetKey];

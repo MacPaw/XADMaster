@@ -439,13 +439,15 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	if(finderinfo&&[finderinfo length]>=10)
 	{
 		const uint8_t *bytes=[finderinfo bytes];
-		uint32_t type=CSUInt32BE(bytes+0);
-		uint32_t creator=CSUInt32BE(bytes+4);
-		int flags=CSUInt16BE(bytes+8);
+		NSNumber *isdir=[dict objectForKey:XADIsDirectoryKey];
 
-		if(type) [dict setObject:[NSNumber numberWithUnsignedInt:type] forKey:XADFileTypeKey];
-		if(creator) [dict setObject:[NSNumber numberWithUnsignedInt:type] forKey:XADFileCreatorKey];
-		[dict setObject:[NSNumber numberWithInt:flags] forKey:XADFinderFlagsKey];
+		if(!isdir||![isdir boolValue])
+		{
+			[dict setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+0)] forKey:XADFileTypeKey];
+			[dict setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+4)] forKey:XADFileCreatorKey];
+		}
+
+		[dict setObject:[NSNumber numberWithInt:CSUInt16BE(bytes+8)] forKey:XADFinderFlagsKey];
 	}
 
 	// Handle solidness - set FirstSolid, NextSolid and IsSolid depending on SolidObject.
@@ -478,6 +480,10 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 		[prevsoliddict release];
 		prevsoliddict=nil;
 	}
+
+	// If a solid file is added, set the global solid flag
+	NSNumber *solid=[dict objectForKey:XADIsSolidKey];
+	if(solid&&[solid boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsSolidKey];
 
 	if(retainpos)
 	{

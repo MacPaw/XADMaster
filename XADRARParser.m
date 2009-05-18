@@ -381,10 +381,8 @@ static int TestSignature(const uint8_t *ptr)
 	if(archiveflags&MHD_PASSWORD)
 	{
 		NSData *salt=[fh readDataOfLength:8];
-		// TODO: check for password
 		fh=[[[XADRARAESHandle alloc] initWithHandle:fh
 		password:[self password] salt:salt brokenHash:encryptversion<36] autorelease];
-
 	}
 
 	block.fh=fh;
@@ -428,7 +426,7 @@ static int TestSignature(const uint8_t *ptr)
 	if(archiveflags&MHD_PASSWORD) block.datastart=block.start+((block.headersize+15)&~15)+8;
 	else block.datastart=block.start+block.headersize;
 
-	NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
+	//NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
 
 	return block;
 }

@@ -1,12 +1,11 @@
 #import "XADArchiveParser.h"
-#import "XADRARHandle.h"
 
 typedef struct RARBlock
 {
 	int crc,type,flags;
 	int headersize;
 	off_t datasize;
-	off_t start;
+	off_t start,datastart;
 	CSHandle *fh;
 } RARBlock;
 
@@ -26,11 +25,14 @@ typedef struct RARBlock
 -(RARBlock)readArchiveHeader;
 -(RARBlock)readFileHeaderWithBlock:(RARBlock)block;
 -(RARBlock)findNextFileHeaderAfterBlock:(RARBlock)block;
--(void)readCommentBlock:(RARBlock)block;
--(XADString *)parseNameData:(NSData *)data flags:(int)flags;
 
 -(RARBlock)readBlockHeader;
 -(void)skipBlock:(RARBlock)block;
+-(CSHandle *)dataHandleFromSkipOffset:(off_t)offs length:(off_t)length
+encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt;
+
+-(void)readCommentBlock:(RARBlock)block;
+-(XADString *)parseNameData:(NSData *)data flags:(int)flags;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;

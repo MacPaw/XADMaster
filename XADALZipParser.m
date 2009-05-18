@@ -126,7 +126,7 @@ static void CalculateSillyTable(int *table,int param)
 				off_t size=ParseNumber(fh,sizebytes);
 
 				[dict setObject:[NSNumber numberWithLongLong:compsize] forKey:XADCompressedSizeKey];
-				[dict setObject:[NSNumber numberWithLongLong:compsize] forKey:XADDataLengthKey];
+				[dict setObject:[NSNumber numberWithLongLong:compsize] forKey:XADSkipLengthKey];
 				[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
 			}
 
@@ -134,7 +134,7 @@ static void CalculateSillyTable(int *table,int param)
 			NSData *namedata=[fh readDataOfLength:namelen];
 			[dict setObject:[self XADStringWithData:namedata] forKey:XADFileNameKey];
 
-			[dict setObject:[NSNumber numberWithLongLong:[fh offsetInFile]] forKey:XADDataOffsetKey];
+			[dict setObject:[NSNumber numberWithLongLong:[fh offsetInFile]] forKey:XADSkipOffsetKey];
 
 			off_t pos=[fh offsetInFile];
 			[self addEntryWithDictionary:dict];

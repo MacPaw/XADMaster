@@ -45,8 +45,9 @@ int main(int argc,char **argv)
 		NSLog(@"Parsing %@",filename);
 
 		[parser setDelegate:[[TestDelegate new] autorelease]];
-		[parser setPassword:@"test"];
-//		[parser setPassword:@"www.joomla.com.tr"];
+
+		char *pass=getenv("XADTestPassword");
+		if(pass) [parser setPassword:[NSString stringWithUTF8String:pass]];
 
 		[parser parse];
 		NSLog(@"Archive properties: %@",[parser properties]);

@@ -3,16 +3,32 @@
 
 @implementation XADRARHandle
 
--(id)initWithHandle:(CSHandle *)handle stream:(XADRARStream *)stream
+-(id)initWithRARParser:(XADRARParser *)parent version:(int)version skipOffset:(off_t)skipoffset
+inputLength:(off_t)inputlength outputLength:(off_t)outputlength encrypted:(BOOL)encrypted salt:(NSData *)salt
 {
-	if(self=[super initWithName:[handle name]])
+	return [self initWithRARParser:parent version:version
+	parts:[NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithLongLong:skipoffset],@"SkipOffset",
+		[NSNumber numberWithLongLong:inputlength],@"InputLength",
+		[NSNumber numberWithLongLong:outputlength],@"OutputLength",
+		[NSNumber numberWithBool:encrypted],@"Encrypted",
+		salt,@"Salt", // ends the list if nil
+	nil]]];
+}
+
+-(id)initWithRARParser:(XADRARParser *)parent version:(int)version parts:(NSArray *)partarray
+{
+	if(self=[super initWithName:[parent name]])
 	{
-		sourcehandle=[handle retain];
-		s=[stream retain];
+		parser=parent;
+		parts=[partarray retain];
+		method=version;
 
 		unpacker=AllocRARUnpacker(
 		(RARReadFunc)[self methodForSelector:@selector(provideInput:buffer:)],
 		self,@selector(provideInput:buffer:));
+
+		currhandle=nil;
 	}
 	return self;
 }
@@ -20,29 +36,29 @@
 -(void)dealloc
 {
 	FreeRARUnpacker(unpacker);
-	[sourcehandle release];
-	[s release];
+	[parts release];
+	[currhandle release];
 	[super dealloc];
 }
 
 -(void)resetBlockStream
 {
 	part=0;
-	[sourcehandle seekToFileOffset:s->parts[0].start];
 
-	StartRARUnpacker(unpacker,s->parts[0].length,s->method,0);
+	[self constructInputHandle];
+	StartRARUnpacker(unpacker,currsize,method,0);
 	bytesdone=0;
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	if(bytesdone>=s->parts[part].length)
+	if(bytesdone>=currsize)
 	{
-		// Try to go to the next block
-		if(++part<s->numparts)
+		// Try to go on to the next part
+		if(++part<[parts count])
 		{
-			[sourcehandle seekToFileOffset:s->parts[part].start];
-			StartRARUnpacker(unpacker,s->parts[part].length,s->method,1);
+			[self constructInputHandle];
+			StartRARUnpacker(unpacker,currsize,method,1);
 			bytesdone=0;
 		}
 		else return 0;
@@ -56,59 +72,24 @@
 	return length;
 }
 
+-(void)constructInputHandle
+{
+	[currhandle release];
+	currhandle=nil;
+
+	NSDictionary *dict=[parts objectAtIndex:part];
+
+	currhandle=[[parser dataHandleFromSkipOffset:[[dict objectForKey:@"SkipOffset"] longLongValue]
+	length:[[dict objectForKey:@"InputLength"] longLongValue]
+	encrypted:[[dict objectForKey:@"Encrypted"] longLongValue]
+	cryptoVersion:method salt:[dict objectForKey:@"Salt"]] retain];
+
+	currsize=[[dict objectForKey:@"OutputLength"] longLongValue];
+}
+
 -(int)provideInput:(int)length buffer:(void *)buffer
 {
-	off_t pos=[sourcehandle offsetInFile];
-	off_t end=s->parts[part].end;
-	if(pos+length>end) length=end-pos;
-	if(length<0) return 0;
-
-	return [sourcehandle readAtMost:length toBuffer:buffer];
-}
-
-@end
-
-
-
-@implementation XADRARStream
-
-+(XADRARStream *)streamWithVersion:(int)version start:(off_t)start compressedSize:(off_t)compsize uncompressedSize:(off_t)size
-{
-	XADRARStream *stream=[[[self alloc] initWithVersion:version] autorelease];
-	[stream addPartFrom:start compressedSize:compsize uncompressedSize:size];
-	return stream;
-}
-
--(id)initWithVersion:(int)version
-{
-	if(self=[super init])
-	{
-		method=version;
-		numparts=0;
-		parts=NULL;
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	free(parts);
-	[super dealloc];
-}
-
--(void)addPartFrom:(off_t)fileoffset compressedSize:(off_t)compsize uncompressedSize:(off_t)size
-{
-	parts=reallocf(parts,sizeof(parts[0])*(numparts+1));
-
-	parts[numparts].start=fileoffset;
-	parts[numparts].end=fileoffset+compsize;
-	parts[numparts].length=size;
-	numparts++;
-}
-
--(NSString *)description
-{
-	return [NSString stringWithFormat:@"<XADRARParts with %d %@, version %d>",numparts,numparts==1?@"entry":@"entries",method];
+	return [currhandle readAtMost:length toBuffer:buffer];
 }
 
 @end

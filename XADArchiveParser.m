@@ -67,6 +67,8 @@ NSString *XADIsFIFOKey=@"XADIsFIFO";
 NSString *XADCommentKey=@"XADComment";
 NSString *XADDataOffsetKey=@"XADDataOffset";
 NSString *XADDataLengthKey=@"XADDataLength";
+NSString *XADSkipOffsetKey=@"XADSkipOffset";
+NSString *XADSkipLengthKey=@"XADSkipLength";
 NSString *XADCompressionNameKey=@"XADCompressionName";
 
 NSString *XADIsSolidKey=@"XADIsSolid";
@@ -187,9 +189,11 @@ static int maxheader=0;
 			while(volume=[enumerator nextObject])
 			[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
 
+			handle=[CSMultiHandle multiHandleWithHandleArray:handles];
+
 			Class parserclass=[self archiveParserClassForHandle:handle name:filename];
-			return [[[parserclass alloc] initWithHandle:[CSMultiHandle multiHandleWithHandleArray:handles]
-			name:filename volumes:[volumes objectAtIndex:0]] autorelease];
+			return [[[parserclass alloc] initWithHandle:handle name:filename
+			volumes:[volumes objectAtIndex:0]] autorelease];
 		}
 		@catch(id e) { }
 	}
@@ -330,7 +334,15 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 -(void)setDelegate:(id)newdelegate { delegate=newdelegate; }
 
--(NSString *)password { return password; }
+-(NSString *)password
+{
+	if(!password)
+	{
+		[delegate archiveParserNeedsPassword:self];
+		if(!password) return @"";
+	}
+	return password;
+}
 
 -(void)setPassword:(NSString *)newpassword
 {
@@ -372,13 +384,23 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 -(CSHandle *)handleAtDataOffsetForDictionary:(NSDictionary *)dict
 {
-	CSHandle *handle=skiphandle?skiphandle:sourcehandle;
+	NSNumber *skipoffs=[dict objectForKey:XADSkipOffsetKey];
+	if(skipoffs)
+	{
+		[skiphandle seekToFileOffset:[skipoffs longLongValue]];
 
-	[handle seekToFileOffset:[[dict objectForKey:XADDataOffsetKey] longLongValue]];
+		NSNumber *length=[dict objectForKey:XADSkipLengthKey];
+		if(length) return [skiphandle nonCopiedSubHandleOfLength:[length longLongValue]];
+		else return skiphandle;
+	}
+	else
+	{
+		[sourcehandle seekToFileOffset:[[dict objectForKey:XADDataOffsetKey] longLongValue]];
 
-	NSNumber *length=[dict objectForKey:XADDataLengthKey];
-	if(length) return [handle nonCopiedSubHandleOfLength:[length longLongValue]];
-	else return handle;
+		NSNumber *length=[dict objectForKey:XADDataLengthKey];
+		if(length) return [sourcehandle nonCopiedSubHandleOfLength:[length longLongValue]];
+		else return sourcehandle;
+	}
 }
 
 -(XADSkipHandle *)skipHandle
@@ -534,8 +556,7 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 -(NSData *)encodedPassword
 {
-	if(!password) return [NSData data];
-	else return [password dataUsingEncoding:[stringsource encoding]];
+	return [[self password] dataUsingEncoding:[stringsource encoding]];
 }
 
 -(const char *)encodedCStringPassword
@@ -587,5 +608,6 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict {}
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser { return NO; }
+-(void)archiveParserNeedsPassword:(XADArchiveParser *)parser { }
 
 @end

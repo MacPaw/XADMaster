@@ -108,7 +108,9 @@ int main(int argc,char **argv)
 		XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
 
 		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:2] autorelease]];
-		[parser setPassword:@"test"];
+
+		char *pass=getenv("XADTestPassword");
+		if(pass) [parser setPassword:[NSString stringWithUTF8String:pass]];
 
 		@try {
 			[parser parse];

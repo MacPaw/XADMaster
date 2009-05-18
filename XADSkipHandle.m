@@ -148,6 +148,10 @@ static off_t ActualOffsetToSkip(XADSkipHandle *self,off_t pos)
 	numregions++;
 }
 
+-(off_t)actualOffsetForSkipOffset:(off_t)skipoffset { return SkipOffsetToActual(self,skipoffset); }
+
+-(off_t)skipOffsetForActualOffset:(off_t)actualoffset { return ActualOffsetToSkip(self,actualoffset); }
+
 
 
 -(off_t)fileSize

@@ -95,12 +95,16 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 
 
--(id)initWithData:(NSData *)data { return [self initWithData:data error:NULL]; }
+-(id)initWithData:(NSData *)data { return [self initWithData:data delegate:nil error:NULL]; }
 
--(id)initWithData:(NSData *)data error:(XADError *)error
+-(id)initWithData:(NSData *)data error:(XADError *)error { return [self initWithData:data delegate:nil error:error]; }
+
+-(id)initWithData:(NSData *)data delegate:(id)del error:(XADError *)error
 {
 	if(self=[self init])
 	{
+		delegate=del;
+
 		parser=[[XADArchiveParser archiveParserForHandle:[CSMemoryHandle memoryHandleForReadingData:data] name:@""] retain];
 		if(!parser)
 		{
@@ -116,13 +120,16 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 
 
--(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n { return [self initWithArchive:otherarchive entry:n error:NULL]; }
+-(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n { return [self initWithArchive:otherarchive entry:n delegate:nil error:NULL]; }
 
--(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n error:(XADError *)error
+-(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n error:(XADError *)error { return [self initWithArchive:otherarchive entry:n delegate:nil error:error]; }
+
+-(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n delegate:(id)del error:(XADError *)error
 {
 	if(self=[self init])
 	{
 		parentarchive=[otherarchive retain];
+		delegate=del;
 
 		CSHandle *handle=[otherarchive handleForEntry:n error:error];
 		if(handle)
@@ -286,6 +293,11 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser
 {
 	return immediatefailed;
+}
+
+-(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
+{
+	[delegate archiveNeedsPassword:self];
 }
 
 
@@ -1308,6 +1320,9 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 -(XADAction)archive:(XADArchive *)arc creatingDirectoryDidFailForEntry:(int)n
 { return [delegate archive:arc creatingDirectoryDidFailForEntry:n]; }
 
+-(void)archiveNeedsPassword:(XADArchive *)arc
+{ [delegate archiveNeedsPassword:arc]; }
+
 -(void)archive:(XADArchive *)arc extractionOfEntryWillStart:(int)n
 { [delegate archive:arc extractionOfEntryWillStart:n]; }
 
@@ -1358,6 +1373,8 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 -(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithFile:(NSString *)file newFilename:(NSString **)newname { return XADOverwriteAction; }
 -(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithDirectory:(NSString *)file newFilename:(NSString **)newname { return XADSkipAction; }
 -(XADAction)archive:(XADArchive *)archive creatingDirectoryDidFailForEntry:(int)n { return XADAbortAction; }
+
+-(void)archiveNeedsPassword:(XADArchive *)archive {}
 
 -(void)archive:(XADArchive *)archive extractionOfEntryWillStart:(int)n {}
 -(void)archive:(XADArchive *)archive extractionProgressForEntry:(int)n bytes:(off_t)bytes of:(off_t)total {}

@@ -51,8 +51,10 @@ extern NSString *XADFinderFlags;
 -(id)initWithFile:(NSString *)file delegate:(id)del error:(XADError *)error;
 -(id)initWithData:(NSData *)data;
 -(id)initWithData:(NSData *)data error:(XADError *)error;
+-(id)initWithData:(NSData *)data delegate:(id)del error:(XADError *)error;
 -(id)initWithArchive:(XADArchive *)archive entry:(int)n;
 -(id)initWithArchive:(XADArchive *)archive entry:(int)n error:(XADError *)error;
+-(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n delegate:(id)del error:(XADError *)error;
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
      immediateExtractionTo:(NSString *)destination error:(XADError *)error;
 -(void)dealloc;
@@ -151,6 +153,8 @@ extern NSString *XADFinderFlags;
 -(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithFile:(NSString *)file newFilename:(NSString **)newname;
 -(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithDirectory:(NSString *)file newFilename:(NSString **)newname;
 -(XADAction)archive:(XADArchive *)archive creatingDirectoryDidFailForEntry:(int)n;
+
+-(void)archiveNeedsPassword:(XADArchive *)archive;
 
 -(void)archive:(XADArchive *)archive extractionOfEntryWillStart:(int)n;
 -(void)archive:(XADArchive *)archive extractionProgressForEntry:(int)n bytes:(off_t)bytes of:(off_t)total;

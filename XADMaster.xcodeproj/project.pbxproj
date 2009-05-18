@@ -115,6 +115,8 @@
 		1B880D040F0AAB700061CCBE /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
 		1B880D070F0AAB970061CCBE /* XADPPMdHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B880D050F0AAB970061CCBE /* XADPPMdHandles.h */; };
 		1B880D080F0AAB970061CCBE /* XADPPMdHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */; };
+		1BA2650E0FC061E200279E95 /* XADRARCrypt20Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA2650C0FC061E200279E95 /* XADRARCrypt20Handle.h */; };
+		1BA2650F0FC061E200279E95 /* XADRARCrypt20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */; };
 		1BB8C5170F0C29F30074522A /* PPMdSubAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB8C5150F0C29F30074522A /* PPMdSubAllocator.h */; };
 		1BB8C5180F0C29F30074522A /* PPMdSubAllocatorVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C5160F0C29F30074522A /* PPMdSubAllocatorVariantG.m */; };
 		1BB8C8570F0FFAB10074522A /* PPMdVariantG.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BB8C8550F0FFAB10074522A /* PPMdVariantG.h */; };
@@ -469,6 +471,8 @@
 		1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPPMdParser.m; sourceTree = "<group>"; };
 		1B880D050F0AAB970061CCBE /* XADPPMdHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPPMdHandles.h; sourceTree = "<group>"; };
 		1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPPMdHandles.m; sourceTree = "<group>"; };
+		1BA2650C0FC061E200279E95 /* XADRARCrypt20Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRARCrypt20Handle.h; sourceTree = "<group>"; };
+		1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRARCrypt20Handle.m; sourceTree = "<group>"; };
 		1BB8C5150F0C29F30074522A /* PPMdSubAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdSubAllocator.h; sourceTree = "<group>"; };
 		1BB8C5160F0C29F30074522A /* PPMdSubAllocatorVariantG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdSubAllocatorVariantG.m; sourceTree = "<group>"; };
 		1BB8C8550F0FFAB10074522A /* PPMdVariantG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdVariantG.h; sourceTree = "<group>"; };
@@ -1040,6 +1044,8 @@
 				1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */,
 				1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */,
 				1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */,
+				1BA2650C0FC061E200279E95 /* XADRARCrypt20Handle.h */,
+				1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */,
 				1BCD5C330EEC605400D86C43 /* RARUnpacker.h */,
 				1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */,
 				1BCD65500EF8164900D86C43 /* RARBug.h */,
@@ -1369,6 +1375,7 @@
 				1B69137D0F4CB46600A415E0 /* XADNSISParser.h in Headers */,
 				1B216A750F8E8ADE001207C9 /* Progress.h in Headers */,
 				1B216A7A0F8E9064001207C9 /* CRC.h in Headers */,
+				1BA2650E0FC061E200279E95 /* XADRARCrypt20Handle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1643,6 +1650,7 @@
 				1B216A760F8E8ADE001207C9 /* Progress.m in Sources */,
 				1B216A790F8E9064001207C9 /* CRC.m in Sources */,
 				1B216BBE0F8E9DED001207C9 /* XADArchive.m in Sources */,
+				1BA2650F0FC061E200279E95 /* XADRARCrypt20Handle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

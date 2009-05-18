@@ -89,21 +89,12 @@ void ComprDataIO::UnpWrite(byte *Addr,uint Count)
 
 
 
+extern "C" uint32_t XADCalculateCRC(uint32_t prevcrc,const uint8_t *buffer,int length,const uint32_t *table);
+extern const uint32_t XADCRCTable_edb88320[256];
+
 uint CRC(uint StartCRC,const void *Addr,uint Size)
 {
-	static uint CRCTab[256]={0};
-	if (CRCTab[1]==0)
-	{
-		for (int I=0;I<256;I++)
-		{
-			uint C=I;
-			for (int J=0;J<8;J++) C=(C & 1) ? (C>>1)^0xEDB88320L : (C>>1);
-			CRCTab[I]=C;
-		}
-	}
-	byte *Data=(byte *)Addr;
-	for (int I=0;I<Size;I++) StartCRC=CRCTab[(byte)(StartCRC^Data[I])]^(StartCRC>>8);
-	return(StartCRC);
+	return XADCalculateCRC(StartCRC,(const uint8_t *)Addr,Size,XADCRCTable_edb88320);
 }
 
 ErrorHandler ErrHandler;

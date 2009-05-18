@@ -1,8 +1,10 @@
 #import "XADRARParser.h"
 #import "XADRARHandle.h"
 #import "XADRARAESHandle.h"
+#import "XADRARCrypt20Handle.h"
 #import "XADCRCHandle.h"
 #import "CSMemoryHandle.h"
+#import "CSMultiHandle.h"
 #import "XADException.h"
 #import "NSDateXAD.h"
 
@@ -56,6 +58,8 @@
 #define RAR_SIGNATURE 2
 
 static RARBlock ZeroBlock={0};
+
+static inline BOOL IsZeroBlock(RARBlock block) { return block.start==0; }
 
 static int TestSignature(const uint8_t *ptr)
 {
@@ -125,7 +129,7 @@ static int TestSignature(const uint8_t *ptr)
 
 	lastcompressed=nil;
 
-	while(block.start!=0)
+	while(!IsZeroBlock(block))
 	{
 		//NSAutoreleasePool *pool=[NSAutoreleasePool new];
 		block=[self readFileHeaderWithBlock:block];
@@ -153,7 +157,6 @@ static int TestSignature(const uint8_t *ptr)
 			if(block.flags&MHD_ENCRYPTVER)
 			{
 				encryptversion=[fh readUInt8];
-NSLog(@"encryptver: %d",encryptversion);
 			}
 			else encryptversion=0; // ?
 
@@ -161,13 +164,13 @@ NSLog(@"encryptver: %d",encryptversion);
 			{
 				RARBlock commentblock=[self readBlockHeader];
 				[self readCommentBlock:commentblock];
-				//[self skipBlock:commentblock];
 			}
 		}
 		else if(block.type==0x7a) // newsub header
 		{
 		}
 		else if(block.type==0x74) break; // file header
+		else if(IsZeroBlock(block)) [XADException raiseIllegalDataException];
 
 		[self skipBlock:block];
 	}
@@ -182,8 +185,8 @@ NSLog(@"encryptver: %d",encryptversion);
 	CSHandle *fh=block.fh;
 	XADSkipHandle *skip=[self skipHandle];
 
-	off_t skipstart=[skip offsetInFile]-11+block.headersize;
 	int flags=block.flags;
+	off_t skipstart=[skip skipOffsetForActualOffset:block.datastart];
 
 	off_t size=[fh readUInt32LE];
 	int os=[fh readUInt8];
@@ -202,11 +205,12 @@ NSLog(@"encryptver: %d",encryptversion);
 
 	NSData *namedata=[fh readDataOfLength:namelength];
 
-	// TODO: check crc?
+	NSData *salt=nil;
+	if(block.flags&LHD_SALT) salt=[fh readDataOfLength:8];
 
 	off_t datasize=block.datasize;
 
-	off_t lastpos=block.start+block.headersize+block.datasize;
+	off_t lastpos=block.datastart+block.datasize;
 	BOOL last=(block.flags&LHD_SPLIT_AFTER)?NO:YES;
 	BOOL partial=NO;
 
@@ -214,8 +218,8 @@ NSLog(@"encryptver: %d",encryptversion);
 	{
 		[self skipBlock:block];
 
-		@try { block=[self readBlockHeader]; }
-		@catch(id e) { block=ZeroBlock; break; }
+		block=[self readBlockHeader];
+		if(IsZeroBlock(block)) break;
 
 		fh=block.fh;
 
@@ -240,7 +244,7 @@ NSLog(@"encryptver: %d",encryptversion);
 
 			if(![namedata isEqual:currnamedata])
 			{ // Name doesn't match, skip back to header and give up.
-				[fh seekToFileOffset:block.start-(archiveflags&MHD_PASSWORD?8:0)];
+				[fh seekToFileOffset:block.start];
 				block=[self readBlockHeader];
 				partial=YES;
 				break;
@@ -248,8 +252,8 @@ NSLog(@"encryptver: %d",encryptversion);
 
 			datasize+=block.datasize;
 
-			[skip addSkipFrom:lastpos to:block.start+block.headersize];
-			lastpos=block.start+block.headersize+block.datasize;
+			[skip addSkipFrom:lastpos to:block.datastart];
+			lastpos=block.datastart+block.datasize;
 
 			if(!(block.flags&LHD_SPLIT_AFTER)) last=YES;
 		}
@@ -272,6 +276,8 @@ NSLog(@"encryptver: %d",encryptversion);
 		[NSNumber numberWithInt:os],@"RAROS",
 		[NSNumber numberWithUnsignedInt:attrs],@"RARAttributes",
 	nil];
+
+	if(salt) [dict setObject:salt forKey:@"RARSalt"];
 
 	if(partial) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
 
@@ -299,13 +305,11 @@ NSLog(@"encryptver: %d",encryptversion);
 
 	if(method==0x30)
 	{
-		[dict setObject:[NSNumber numberWithLongLong:skipstart] forKey:XADDataOffsetKey];
-		[dict setObject:[NSNumber numberWithLongLong:datasize] forKey:XADDataLengthKey];
+		[dict setObject:[NSNumber numberWithLongLong:skipstart] forKey:XADSkipOffsetKey];
+		[dict setObject:[NSNumber numberWithLongLong:datasize] forKey:XADSkipLengthKey];
 	}
 	else
 	{
-		XADRARStream *stream;
-
 		BOOL solid;
 		if(version<20) solid=(archiveflags&MHD_SOLID)&&lastcompressed;
 		else solid=(flags&LHD_SOLID)!=0;
@@ -316,9 +320,11 @@ NSLog(@"encryptver: %d",encryptversion);
 			return block;
 		}
 
+		NSDictionary *solidobj;
+
 		if(solid)
 		{
-			stream=[lastcompressed objectForKey:XADSolidObjectKey];
+			solidobj=[lastcompressed objectForKey:XADSolidObjectKey];
 			NSNumber *lastoffs=[lastcompressed objectForKey:XADSolidOffsetKey];
 			NSNumber *lastlen=[lastcompressed objectForKey:XADSolidLengthKey];
 			off_t newoffs=[lastoffs longLongValue]+[lastlen longLongValue];
@@ -326,12 +332,21 @@ NSLog(@"encryptver: %d",encryptversion);
 		}
 		else
 		{
-			stream=[[[XADRARStream alloc] initWithVersion:version] autorelease];
+			solidobj=[NSDictionary dictionaryWithObjectsAndKeys:
+				[NSMutableArray array],@"Parts",
+				[NSNumber numberWithInt:version],@"Version",
+			nil];
 			[dict setObject:[NSNumber numberWithLongLong:0] forKey:XADSolidOffsetKey];
 		}
-
-		[stream addPartFrom:skipstart compressedSize:datasize uncompressedSize:size];
-		[dict setObject:stream forKey:XADSolidObjectKey];
+ 
+		[[solidobj objectForKey:@"Parts"] addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSNumber numberWithLongLong:skipstart],@"SkipOffset",
+			[NSNumber numberWithLongLong:datasize],@"InputLength",
+			[NSNumber numberWithLongLong:size],@"OutputLength",
+			[NSNumber numberWithBool:(flags&LHD_PASSWORD)?YES:NO],@"Encrypted",
+			salt,@"Salt", // ends the list if nil
+		nil]];
+		[dict setObject:solidobj forKey:XADSolidObjectKey];
 		[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADSolidLengthKey];
 
 		lastcompressed=dict;
@@ -347,12 +362,109 @@ NSLog(@"encryptver: %d",encryptversion);
 	for(;;)
 	{
 		[self skipBlock:block];
-		@try { block=[self readBlockHeader]; }
-		@catch(id e) { return ZeroBlock; }
+		block=[self readBlockHeader];
+		if(IsZeroBlock(block)) return ZeroBlock;
 
 		if(block.type==0x74) return block;
 	}
 }
+
+
+
+-(RARBlock)readBlockHeader
+{
+	CSHandle *fh=[self handle];
+
+	RARBlock block;
+	block.start=[[self handle] offsetInFile];
+
+	if(archiveflags&MHD_PASSWORD)
+	{
+		NSData *salt=[fh readDataOfLength:8];
+		// TODO: check for password
+		fh=[[[XADRARAESHandle alloc] initWithHandle:fh
+		password:[self password] salt:salt brokenHash:encryptversion<36] autorelease];
+
+	}
+
+	block.fh=fh;
+
+	@try
+	{
+		block.crc=[fh readUInt16LE];
+		block.type=[fh readUInt8];
+		block.flags=[fh readUInt16LE];
+		block.headersize=[fh readUInt16LE];
+	}
+	@catch(id e) { return ZeroBlock; }
+
+	if(block.crc!=0x6152||block.type!=0x72||block.flags!=0x1a21||block.headersize!=7)
+	{
+		off_t pos=[fh offsetInFile];
+		uint32_t crc=0xffffffff;
+		@try
+		{
+			crc=XADCRC(crc,block.type,XADCRCTable_edb88320);
+			crc=XADCRC(crc,(block.flags&0xff),XADCRCTable_edb88320);
+			crc=XADCRC(crc,((block.flags>>8)&0xff),XADCRCTable_edb88320);
+			crc=XADCRC(crc,(block.headersize&0xff),XADCRCTable_edb88320);
+			crc=XADCRC(crc,((block.headersize>>8)&0xff),XADCRCTable_edb88320);
+			for(int i=7;i<block.headersize;i++) crc=XADCRC(crc,[fh readUInt8],XADCRCTable_edb88320);
+		}
+		@catch(id e) {}
+
+		if((~crc&0xffff)!=block.crc)
+		{
+			if(archiveflags&MHD_PASSWORD) [XADException raisePasswordException];
+			else [XADException raiseIllegalDataException];
+		}
+
+		[fh seekToFileOffset:pos];
+	}
+
+	if(block.flags&RARFLAG_LONG_BLOCK) block.datasize=[fh readUInt32LE];
+	else block.datasize=0;
+
+	if(archiveflags&MHD_PASSWORD) block.datastart=block.start+((block.headersize+15)&~15)+8;
+	else block.datastart=block.start+block.headersize;
+
+	NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
+
+	return block;
+}
+
+-(void)skipBlock:(RARBlock)block
+{
+	[[self handle] seekToFileOffset:block.datastart+block.datasize];
+}
+
+-(CSHandle *)dataHandleFromSkipOffset:(off_t)offs length:(off_t)length
+encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
+{
+	CSHandle *fh=[[self skipHandle] nonCopiedSubHandleFrom:offs length:length];
+
+	if(encrypted)
+	{
+		if(version<20)
+		{
+			[XADException raiseNotSupportedException];
+			return nil;
+		}
+		else if(version==20)
+		{
+			return [[[XADRARCrypt20Handle alloc] initWithHandle:fh
+			password:[self encodedPassword]] autorelease];
+		}
+		else
+		{
+			return [[[XADRARAESHandle alloc] initWithHandle:fh
+			password:[self password] salt:salt brokenHash:encryptversion<36] autorelease];
+		}
+	}
+	else return fh;
+}
+
+
 
 -(void)readCommentBlock:(RARBlock)block
 {
@@ -363,9 +475,9 @@ NSLog(@"encryptver: %d",encryptversion);
 	/*int method=*/[fh readUInt8];
 	/*int crc=*/[fh readUInt16LE];
 
-	XADRARHandle *handle=[[[XADRARHandle alloc] initWithHandle:fh
-	stream:[XADRARStream streamWithVersion:version start:[fh offsetInFile] compressedSize:block.headersize-13
-	uncompressedSize:commentsize]] autorelease];
+	XADRARHandle *handle=[[[XADRARHandle alloc] initWithRARParser:self version:version
+	skipOffset:[[self skipHandle] offsetInFile] inputLength:block.headersize-13
+	outputLength:commentsize encrypted:NO salt:nil] autorelease];
 
 	NSData *comment=[handle readDataOfLength:commentsize];
 	[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
@@ -434,55 +546,17 @@ NSLog(@"encryptver: %d",encryptversion);
 
 
 
--(RARBlock)readBlockHeader
-{
-	CSHandle *fh=[self handle];
-
-	if(archiveflags&MHD_PASSWORD)
-	{
-		NSData *salt=[fh readDataOfLength:8];
-
-		// TODO: check for password
-
-		fh=[[[XADRARAESHandle alloc] initWithHandle:fh
-		password:[self password] salt:salt brokenHash:encryptversion<36] autorelease];
-	}
-
-	RARBlock block;
-
-	block.fh=fh;
-	block.start=[[self handle] offsetInFile];
-	block.crc=[fh readUInt16LE];
-	block.type=[fh readUInt8];
-	block.flags=[fh readUInt16LE];
-	block.headersize=[fh readUInt16LE];
-	if(block.flags&RARFLAG_LONG_BLOCK) block.datasize=[fh readUInt32LE];
-	else block.datasize=0;
-
-	//if(archiveflags&MHD_PASSWORD) block.headersize+=8;
-
-NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
-
-	return block;
-}
-
--(void)skipBlock:(RARBlock)block
-{
-	//if(encryptedhandle) [encryptedhandle readAndDiscardBytes:blockstart+headersize-[handle offsetInFile]];
-	[[self handle] seekToFileOffset:block.start+block.headersize+block.datasize];
-}
-
-
-
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	if([dict objectForKey:XADIsEncryptedKey]) return nil;
-
 	CSHandle *handle;
 	if([[dict objectForKey:@"RARCompressionMethod"] intValue]==0x30)
 	{
-		handle=[self handleAtDataOffsetForDictionary:dict];
+		handle=[self dataHandleFromSkipOffset:[[dict objectForKey:XADSkipOffsetKey] longLongValue]
+		length:[[dict objectForKey:XADSkipLengthKey] longLongValue]
+		encrypted:[[dict objectForKey:XADIsEncryptedKey] boolValue]
+		cryptoVersion:[[dict objectForKey:@"RARCompressionVersion"] intValue]
+		salt:[dict objectForKey:@"RARSalt"]];
 	}
 	else
 	{
@@ -497,7 +571,9 @@ NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,bloc
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
 {
-	return [[[XADRARHandle alloc] initWithHandle:[self skipHandle] stream:obj] autorelease];
+	NSArray *parts=[obj objectForKey:@"Parts"];
+	int version=[[obj objectForKey:@"Version"] intValue];
+	return [[[XADRARHandle alloc] initWithRARParser:self version:version parts:parts] autorelease];
 }
 
 -(NSString *)formatName

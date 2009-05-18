@@ -41,6 +41,8 @@ extern NSString *XADIsFIFOKey;
 extern NSString *XADCommentKey;
 extern NSString *XADDataOffsetKey;
 extern NSString *XADDataLengthKey;
+extern NSString *XADSkipOffsetKey;
+extern NSString *XADSkipLengthKey;
 extern NSString *XADCompressionNameKey;
 
 extern NSString *XADIsSolidKey;
@@ -152,6 +154,7 @@ extern NSString *XADVolumesKey;
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict;
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser;
+-(void)archiveParserNeedsPassword:(XADArchiveParser *)parser;
 
 @end
 

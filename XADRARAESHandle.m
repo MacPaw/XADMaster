@@ -76,6 +76,7 @@ salt:(NSData *)salt brokenHash:(BOOL)brokenhash
 
 	for(int i=0;i<16;i++) keybuf[i]=digest[i^3];
 
+NSLog(@"%@",salt);
 NSLog(@"%02x%02x%02x%02x %02x%02x%02x%02x %02x%02x%02x%02x %02x%02x%02x%02x",
 keybuf[0],keybuf[1],keybuf[2],keybuf[3],keybuf[4],keybuf[5],keybuf[6],keybuf[7],
 keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybuf[15]
@@ -95,7 +96,8 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 {
 	uint8_t inblock[16];
 
-	[parent readBytes:16 toBuffer:inblock];
+	int actual=[parent readAtMost:16 toBuffer:inblock];
+	if(actual!=16) return -1;
 
 	AES_decrypt(inblock,outblock,&key);
 

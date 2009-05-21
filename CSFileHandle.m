@@ -8,10 +8,9 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 
 
-#if defined(__MINGW__)||defined(__COCOTRON__)
-#define FTELL(fh) ftell(fh)
-#else
-#define FTELL(fh) ftello(fh)
+#if defined(__MINGW__)||defined(__COCOTRON__) // ugly kludge that breaks large files on mingw
+#define ftello(fh) ftell(fh)
+#define fseekgo(fh,offs,whence) fseek(fh,offs,whence)
 #endif
 
 
@@ -96,7 +95,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 -(off_t)offsetInFile
 {
 	if(multi) return pos;
-	else return FTELL(fh);
+	else return ftello(fh);
 }
 
 -(BOOL)atEndOfFile
@@ -110,14 +109,14 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(void)seekToFileOffset:(off_t)offs
 {
-	if(fseek(fh,offs,SEEK_SET)) [self _raiseError];
-	if(multi) pos=FTELL(fh);
+	if(fseeko(fh,offs,SEEK_SET)) [self _raiseError];
+	if(multi) pos=ftello(fh);
 }
 
 -(void)seekToEndOfFile
 {
-	if(fseek(fh,0,SEEK_END)) [self _raiseError];
-	if(multi) pos=FTELL(fh);
+	if(fseeko(fh,0,SEEK_END)) [self _raiseError];
+	if(multi) pos=ftello(fh);
 }
 
 -(void)pushBackByte:(int)byte
@@ -129,18 +128,18 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 -(int)readAtMost:(int)num toBuffer:(void *)buffer
 {
 	if(num==0) return 0;
-	if(multi) fseek(fh,pos,SEEK_SET);
+	if(multi) fseeko(fh,pos,SEEK_SET);
 	int n=fread(buffer,1,num,fh);
 	if(n<=0&&!feof(fh)) [self _raiseError];
-	if(multi) pos=FTELL(fh);
+	if(multi) pos=ftello(fh);
 	return n;
 }
 
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer
 {
-	if(multi) fseek(fh,pos,SEEK_SET);
+	if(multi) fseeko(fh,pos,SEEK_SET);
 	if(fwrite(buffer,1,num,fh)!=num) [self _raiseError];
-	if(multi) pos=FTELL(fh);
+	if(multi) pos=ftello(fh);
 }
 
 
@@ -159,7 +158,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 	if(!multi)
 	{
 		multi=YES;
-		pos=FTELL(fh);
+		pos=ftello(fh);
 	}
 }
 

@@ -259,6 +259,7 @@ static int TestSignature(const uint8_t *ptr)
 		}
 		else if(block.type==0x7a) // newsub header
 		{
+			// TODO: parse new comments
 			NSLog(@"newsub");
 		}
 	}

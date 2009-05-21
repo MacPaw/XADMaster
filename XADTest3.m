@@ -32,6 +32,8 @@ NSString *EscapeString(NSString *str)
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
 	for(int i=0;i<indent;i++) printf(" ");
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
@@ -87,6 +89,8 @@ NSString *EscapeString(NSString *str)
 		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:indent+2] autorelease]];
 		[parser parse];
 	}
+
+	[pool release];
 }
 
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser
@@ -112,11 +116,11 @@ int main(int argc,char **argv)
 		char *pass=getenv("XADTestPassword");
 		if(pass) [parser setPassword:[NSString stringWithUTF8String:pass]];
 
-		@try {
+		//@try {
 			[parser parse];
-		} @catch(id e) {
-			printf("*** Exception: %s\n",[[e description] UTF8String]);
-		}
+		//} @catch(id e) {
+		//	printf("*** Exception: %s\n",[[e description] UTF8String]);
+		//}
 
 		[pool release];
 	}

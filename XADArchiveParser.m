@@ -193,7 +193,7 @@ static int maxheader=0;
 
 			Class parserclass=[self archiveParserClassForHandle:handle name:filename];
 			return [[[parserclass alloc] initWithHandle:handle name:filename
-			volumes:[volumes objectAtIndex:0]] autorelease];
+			volumes:volumes] autorelease];
 		}
 		@catch(id e) { }
 	}

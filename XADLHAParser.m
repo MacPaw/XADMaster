@@ -153,22 +153,15 @@
 		NSData *filenamedata=[dict objectForKey:@"LHAExtFileNameData"];
 		if(!filenamedata) filenamedata=[dict objectForKey:@"LHAHeaderFileNameData"];
 		NSData *directorydata=[dict objectForKey:@"LHAExtDirectoryData"];
-		if(filenamedata||directorydata)
+		XADPath *path=nil;
+		if(directorydata)
 		{
-			int filenamesize=0,directorysize=0;
-			if(filenamedata) filenamesize=[filenamedata length];
-			if(directorydata) directorysize=[directorydata length];
-
-			int size=filenamesize+directorysize;
-			uint8_t namebuf[size];
-
-			if(directorydata) memcpy(namebuf,[directorydata bytes],directorysize);
-			if(filenamedata) memcpy(namebuf+directorysize,[filenamedata bytes],filenamesize);
-
-			for(int i=0;i<size;i++) if(namebuf[i]==0xff) namebuf[i]='/';
-
-			[dict setObject:[self XADStringWithBytes:namebuf length:size] forKey:XADFileNameKey];
+			path=[self XADPathWithData:directorydata separators:"\xff"];
+			if(filenamedata) path=[path pathByAppendingPathComponent:[self XADStringWithData:filenamedata]];
 		}
+		else if(filenamedata) path=[self XADPathWithData:filenamedata separators:"\xff\\/"];
+
+		if(path) [dict setObject:path forKey:XADFileNameKey];
 
 		[self addEntryWithDictionary:dict];
 

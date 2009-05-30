@@ -3,7 +3,6 @@
 #import "XADCompactProLZHHandle.h"
 #import "XADException.h"
 #import "XADCRCHandle.h"
-#import "Paths.h"
 #import "NSDateXAD.h"
 
 @implementation XADCompactProParser
@@ -93,14 +92,14 @@
 	// Since the recognizer has already verified that the metadata is intact, reading
 	// should be safe, so to avoid stream resets, we just collect entries into an array
 	// and send all of them out at once.
-	[self parseDirectoryWithNameData:nil numberOfEntries:numentries entryArray:entries];
+	[self parseDirectoryWithPath:[self XADPath] numberOfEntries:numentries entryArray:entries];
 
 	NSEnumerator *enumerator=[entries objectEnumerator];
 	NSMutableDictionary *dict;
 	while(dict=[enumerator nextObject]) [self addEntryWithDictionary:dict];
 }
 
--(BOOL)parseDirectoryWithNameData:(NSData *)parentdata numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries
+-(BOOL)parseDirectoryWithPath:(XADPath *)parent numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries
 {
 	CSHandle *fh=[self handle];
 
@@ -110,20 +109,20 @@
 
 		int namelen=[fh readUInt8];
 		NSData *namedata=[fh readDataOfLength:namelen&0x7f];
-		NSData *pathdata=XADBuildMacPathWithData(parentdata,namedata);
+		XADPath *path=[parent pathByAppendingPathComponent:[self XADStringWithData:namedata]];
 
 		if(namelen&0x80)
 		{
 			int numdirentries=[fh readUInt16BE];
 
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-				[self XADStringWithData:pathdata],XADFileNameKey,
+				path,XADFileNameKey,
 				[NSNumber numberWithBool:YES],XADIsDirectoryKey,
 			nil];
 
 			[entries addObject:dict];
 
-			if(![self parseDirectoryWithNameData:namedata numberOfEntries:numdirentries entryArray:entries]) return NO;
+			if(![self parseDirectoryWithPath:path numberOfEntries:numdirentries entryArray:entries]) return NO;
 
 			numentries-=numdirentries+1;
 		}
@@ -150,7 +149,7 @@
 				else crckey=@"CompactProCRC32";
 
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-					[self XADStringWithData:pathdata],XADFileNameKey,
+					path,XADFileNameKey,
 					[NSNumber numberWithUnsignedInt:resourcelength],XADFileSizeKey,
 					[NSNumber numberWithUnsignedInt:resourcecomplen],XADCompressedSizeKey,
 					[NSDate XADDateWithTimeIntervalSince1904:modificationdate],XADLastModificationDateKey,
@@ -179,7 +178,7 @@
 				else crckey=@"CompactProCRC32";
 
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-					[self XADStringWithData:pathdata],XADFileNameKey,
+					path,XADFileNameKey,
 					[NSNumber numberWithUnsignedInt:datalength],XADFileSizeKey,
 					[NSNumber numberWithUnsignedInt:datacomplen],XADCompressedSizeKey,
 					[NSDate XADDateWithTimeIntervalSince1904:modificationdate],XADLastModificationDateKey,

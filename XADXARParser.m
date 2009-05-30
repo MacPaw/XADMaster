@@ -106,11 +106,11 @@ static const NSString *DateFormat=@"Date";
 	while(file=[enumerator nextObject])
 	{
 		if(![self shouldKeepParsing]) break;
-		[self finishFile:file parentPath:nil];
+		[self finishFile:file parentPath:[self XADPath]];
 	}
 }
 
--(void)finishFile:(NSMutableDictionary *)file parentPath:(NSString *)parentpath
+-(void)finishFile:(NSMutableDictionary *)file parentPath:(XADPath *)parentpath
 {
 	NSString *name=[file objectForKey:@"Name"];
 	NSString *type=[file objectForKey:@"Type"];
@@ -124,8 +124,8 @@ static const NSString *DateFormat=@"Date";
 	@"Name",@"Type",@"Link",@"Files",@"ResourceFork",@"FinderInfo",nil];
 	[file removeObjectsForKeys:tempnames];
 
-	if(parentpath) name=[parentpath stringByAppendingPathComponent:name];
-	[file setObject:[self XADStringWithString:name] forKey:XADFileNameKey];
+	XADPath *path=[parentpath pathByAppendingPathComponent:[self XADStringWithString:name]];
+	[file setObject:path forKey:XADFileNameKey];
 
 	if([type isEqual:@"directory"]||filearray) [file setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 	else if([type isEqual:@"symlink"])
@@ -170,7 +170,7 @@ static const NSString *DateFormat=@"Date";
 	{
 		NSEnumerator *enumerator=[filearray objectEnumerator];
 		NSMutableDictionary *file;
-		while(file=[enumerator nextObject]) [self finishFile:file parentPath:name];
+		while(file=[enumerator nextObject]) [self finishFile:file parentPath:path];
 	}
 }
 

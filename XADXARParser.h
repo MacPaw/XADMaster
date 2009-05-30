@@ -19,7 +19,7 @@
 
 -(void)parse;
 
--(void)finishFile:(NSMutableDictionary *)file parentPath:(NSString *)parent;
+-(void)finishFile:(NSMutableDictionary *)file parentPath:(XADPath *)parentpath;
 
 -(void)parser:(NSXMLParser *)parser didStartElement:(NSString *)name
 namespaceURI:(NSString *)namespace qualifiedName:(NSString *)qname

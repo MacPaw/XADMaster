@@ -132,7 +132,7 @@ static void CalculateSillyTable(int *table,int param)
 
 			// TODO: force korean encoding?
 			NSData *namedata=[fh readDataOfLength:namelen];
-			[dict setObject:[self XADStringWithData:namedata] forKey:XADFileNameKey];
+			[dict setObject:[self XADPathWithData:namedata separators:XADEitherPathSeparator] forKey:XADFileNameKey];
 
 			[dict setObject:[NSNumber numberWithLongLong:[fh offsetInFile]] forKey:XADSkipOffsetKey];
 

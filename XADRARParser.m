@@ -482,7 +482,7 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
 }
 
--(XADString *)parseNameData:(NSData *)data flags:(int)flags
+-(XADPath *)parseNameData:(NSData *)data flags:(int)flags
 {
 	if(flags&LHD_UNICODE)
 	{
@@ -492,10 +492,10 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 		int n=0;
 		while(n<length&&bytes[n]) n++;
 
-		if(n==length) return [self XADStringWithData:data encoding:NSUTF8StringEncoding];
+		if(n==length) return [self XADPathWithData:data encoding:NSUTF8StringEncoding separators:XADWindowsPathSeparator];
 
 		int num=length-n-1;
-		if(num<=1) return [self XADStringWithCString:(const char *)bytes];
+		if(num<=1) return [self XADPathWithCString:(const char *)bytes separators:XADWindowsPathSeparator];
 
 		CSMemoryHandle *fh=[CSMemoryHandle memoryHandleForReadingBuffer:bytes+n+1 length:num];
 		NSMutableString *str=[NSMutableString string];
@@ -537,9 +537,11 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 		}
 		@catch(id e) {}
 
-		return [self XADStringWithString:str];
+		// TODO: avoid re-encoding
+		return [self XADPathWithData:[str dataUsingEncoding:NSUTF8StringEncoding]
+		encoding:NSUTF8StringEncoding separators:XADWindowsPathSeparator];
 	}
-	else return [self XADStringWithData:data];
+	else return [self XADPathWithData:data separators:XADWindowsPathSeparator];
 }
 
 

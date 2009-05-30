@@ -136,7 +136,7 @@
 	char name[101];
 	[header getBytes:name range:NSMakeRange(0,100)];
 	name[100] = '\000';
-	[dict setObject:[self XADStringWithCString:name] forKey:XADFileNameKey];
+	[dict setObject:[self XADPathWithCString:name separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 	
 	unsigned int mode = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(100,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:mode] forKey:XADPosixPermissionsKey];
@@ -248,7 +248,7 @@
 		
 		// File path and link path.
 		else if( strcmp( key, "path" ) == 0 ) {
-			[dict setObject:[self XADStringWithCString:value encoding:NSUTF8StringEncoding] forKey:XADFileNameKey];
+			[dict setObject:[self XADPathWithCString:value encoding:NSUTF8StringEncoding separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 		}
 		else if( strcmp( key, "linkpath" ) == 0 ) {
 			[dict setObject:[self XADStringWithCString:value encoding:NSUTF8StringEncoding] forKey:XADLinkDestinationKey];
@@ -304,7 +304,7 @@
 		strcat( fullName, "/" );
 		strcat( fullName, name );
 		fullName[256] = '\000';
-		[dict setObject:[self XADStringWithCString:fullName] forKey:XADFileNameKey];
+		[dict setObject:[self XADPathWithCString:fullName separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 	}
 
 	char typeFlag;
@@ -398,7 +398,7 @@
 
 		// Set the proper key.
 		if( typeFlag == 'L' ) {
-			[dict setObject:[self XADStringWithCString:longHeaderBytes] forKey:XADFileNameKey];
+			[dict setObject:[self XADPathWithCString:longHeaderBytes separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 		}
 		else {
 			[dict setObject:[self XADStringWithCString:longHeaderBytes] forKey:XADLinkDestinationKey];

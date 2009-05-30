@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "XADException.h"
 #import "XADString.h"
+#import "XADPath.h"
 #import "XADRegex.h"
 #import "CSHandle.h"
 #import "XADSkipHandle.h"
@@ -125,8 +126,17 @@ extern NSString *XADVolumesKey;
 -(XADString *)XADStringWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length;
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding;
--(XADString *)XADStringWithCString:(const char *)string;
--(XADString *)XADStringWithCString:(const char *)string encoding:(NSStringEncoding)encoding;
+-(XADString *)XADStringWithCString:(const char *)cstring;
+-(XADString *)XADStringWithCString:(const char *)cstring encoding:(NSStringEncoding)encoding;
+
+-(XADPath *)XADPath;
+-(XADPath *)XADPathWithString:(NSString *)string;
+-(XADPath *)XADPathWithData:(NSData *)data separators:(const char *)separators;
+-(XADPath *)XADPathWithData:(NSData *)data encoding:(NSStringEncoding)encoding separators:(const char *)separators;
+-(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length separators:(const char *)separators;
+-(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding separators:(const char *)separators;
+-(XADPath *)XADPathWithCString:(const char *)cstring separators:(const char *)separators;
+-(XADPath *)XADPathWithCString:(const char *)cstring encoding:(NSStringEncoding)encoding separators:(const char *)separators;
 
 -(NSData *)encodedPassword;
 -(char *)encodedCStringPassword;

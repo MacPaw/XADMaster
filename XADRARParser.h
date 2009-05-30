@@ -32,7 +32,7 @@ typedef struct RARBlock
 encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt;
 
 -(void)readCommentBlock:(RARBlock)block;
--(XADString *)parseNameData:(NSData *)data flags:(int)flags;
+-(XADPath *)parseNameData:(NSData *)data flags:(int)flags;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;

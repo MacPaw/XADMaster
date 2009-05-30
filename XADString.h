@@ -2,7 +2,25 @@
 
 @class XADStringSource,UniversalDetector;
 
-@interface XADString:NSObject
+
+
+@protocol XADString <NSObject>
+
+-(NSString *)string;
+-(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
+-(NSData *)data;
+
+-(BOOL)encodingIsKnown;
+-(NSStringEncoding)encoding;
+-(float)confidence;
+
+-(XADStringSource *)source;
+
+@end
+
+
+
+@interface XADString:NSObject <XADString>
 {
 	NSData *data;
 	NSString *string;
@@ -17,12 +35,13 @@
 
 -(NSString *)string;
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
--(const char *)cString;
+-(NSData *)data;
 
 -(BOOL)encodingIsKnown;
 -(NSStringEncoding)encoding;
 -(float)confidence;
--(NSData *)data;
+
+-(XADStringSource *)source;
 
 -(BOOL)isEqual:(XADString *)other;
 -(unsigned)hash;
@@ -42,8 +61,7 @@
 -(id)init;
 -(void)dealloc;
 
--(XADString *)XADStringWithData:(NSData *)data;
--(XADString *)XADStringWithString:(NSString *)string;
+-(BOOL)analyzeDataAndCheckForASCII:(NSData *)data;
 
 -(NSStringEncoding)encoding;
 -(float)confidence;

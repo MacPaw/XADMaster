@@ -74,7 +74,7 @@
 		if(namelen>63) namelen=63;
 		uint8_t namebuf[63];
 		[fh readBytes:63 toBuffer:namebuf];
-		XADString *name=[self XADStringWithData:XADBuildMacPathWithBuffer(nil,namebuf,namelen)];
+		XADPath *name=[self XADPathWithBytes:namebuf length:namelen separators:XADNoPathSeparator];
 
 		uint32_t type=[fh readUInt32BE];
 		uint32_t creator=[fh readUInt32BE];

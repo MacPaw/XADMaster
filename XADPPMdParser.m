@@ -65,7 +65,8 @@
 	NSData *filename=[fh readDataOfLength:namelen];
 
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADStringWithData:filename],XADFileNameKey,
+		// TODO: Should this really be XADEitherPathSeparator?
+		[self XADPathWithData:filename separators:XADEitherPathSeparator],XADFileNameKey,
 		[self XADStringWithString:[NSString stringWithFormat:@"PPMd Variant %c",variant]],XADCompressionNameKey,
 		[NSNumber numberWithUnsignedLongLong:[fh offsetInFile]],XADDataOffsetKey,
 		[NSNumber numberWithInt:maxorder],@"PPMdMaxOrder",

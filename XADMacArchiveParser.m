@@ -1,6 +1,5 @@
 #import "XADMacArchiveParser.h"
 #import "NSDateXAD.h"
-#import "Paths.h"
 #import "CRC.h"
 
 NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
@@ -32,20 +31,30 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	return 1; // MacBinary I
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
 	if(self=[super initWithHandle:handle name:name])
 	{
 		currhandle=nil;
-		dittoregex=[[XADRegex alloc] initWithPattern:@"(^__MACOSX/|\\./|^)((.*/)\\._|\\._)([^/]+)$" options:0];
+		dittostack=[[NSMutableArray array] retain];
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[dittoregex release];
+	[dittostack release];
 	[super dealloc];
+}
+
+-(void)popDittoStackUntilPrefixFor:(XADPath *)path
+{
+	while([dittostack count])
+	{
+		XADPath *dir=[dittostack lastObject];
+		if([path hasPrefix:dir]) return;
+		[dittostack removeLastObject];
+	}
 }
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
@@ -63,13 +72,19 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		return;
 	}
 
-	NSString *name=[[dict objectForKey:XADFileNameKey] string];
+	XADPath *name=[dict objectForKey:XADFileNameKey];
 	NSNumber *isdir=[dict objectForKey:XADIsDirectoryKey];
 
-	// Handle directories - only needs to check for useless ditto directories
+	// Handle directories
 	if(isdir&&[isdir boolValue])
 	{
-		if(![name hasPrefix:@"__MACOSX/"]) // Discard directories used for ditto forks
+		// Discard directories used for ditto forks
+		if([[name firstPathComponent] isEqual:@"__MACOSX"]) return;
+
+		// Pop deeper directories off the directory stack, and push this directory
+		[self popDittoStackUntilPrefixFor:name];
+		[dittostack addObject:name];
+
 		[super addEntryWithDictionary:dict retainPosition:retainpos];
 		return;
 	}
@@ -84,14 +99,22 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	[super addEntryWithDictionary:dict retainPosition:retainpos];
 }
 
--(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name
+-(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
 {
-	if(!name) return NO;
+//	dittoregex=[[XADRegex alloc] initWithPattern:@"(^__MACOSX/|\\./|^)((.*/)\\._|\\._)([^/]+)$" options:0];
 
-	NSArray *matches=[dittoregex capturedSubstringsOfString:name];
-	if(!matches) return NO;
+	XADString *first=[name firstPathComponent];
+	XADString *last=[name lastPathComponent];
+	XADPath *basepath=[name pathByDeletingLastPathComponent];
 
-	NSString *origname=[[matches objectAtIndex:3] stringByAppendingString:[matches objectAtIndex:4]];
+	NSString *laststring=[last string];
+	if(![laststring hasPrefix:@"._"]) return NO;
+	XADString *newlast=[self XADStringWithString:[laststring substringFromIndex:2]];
+
+	if([first isEqual:@"__MACOSX"]||[first isEqual:@"."]) basepath=[basepath pathByDeletingFirstPathComponent];
+
+	XADPath *origname=[basepath pathByAppendingPathComponent:newlast];
+
 	uint32_t rsrcoffs=0,rsrclen=0;
 	uint32_t finderoffs=0,finderlen=0;
 	NSData *finderinfo=nil;
@@ -155,7 +178,6 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		if(type!=0&&creator!=0&&(type&0xf000f000)==0&&(creator&0xf000f000)==0) // heuristic to recognize FolderInfo structures
 		{
 			[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-			origname=[origname stringByAppendingString:@"/"]; // Kludge to make names match. TODO: better path handling overrall
 		}
 		else
 		{
@@ -164,7 +186,12 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		}
 	}
 
-	[newdict setObject:[self XADStringWithString:origname] forKey:XADFileNameKey];
+	// Pop deeper directories off the stack, and see this entry is on the stack as a directory
+	[self popDittoStackUntilPrefixFor:origname];
+	if([dittostack count]&&[[dittostack lastObject] isEqual:origname])
+	[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+
+	[newdict setObject:origname forKey:XADFileNameKey];
 
 	[newdict removeObjectForKey:XADDataLengthKey];
 	[newdict removeObjectForKey:XADDataOffsetKey];
@@ -177,7 +204,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	return YES;
 }
 
--(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name
+-(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
 {
 	NSNumber *isbinobj=[dict objectForKey:XADIsMacBinaryKey];
 	BOOL isbin=isbinobj?[isbinobj boolValue]:NO;
@@ -197,6 +224,9 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		if([XADMacArchiveParser macBinaryVersionForHeader:header]==0) return NO;
 	}
 
+	// TODO: should this be turned on or not? probably not.
+	//[self setIsMacArchive:YES];
+
 	const uint8_t *bytes=[header bytes];
 
 	uint32_t datasize=CSUInt32BE(bytes+83);
@@ -205,7 +235,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 	NSMutableDictionary *template=[NSMutableDictionary dictionaryWithDictionary:dict];
 	[template setObject:dict forKey:@"MacOriginalDictionary"];
-	[template setObject:[self XADStringWithData:XADBuildMacPathWithBuffer(nil,bytes+2,bytes[1])] forKey:XADFileNameKey];
+	[template setObject:[self XADPathWithBytes:bytes+2 length:bytes[1] separators:XADNoPathSeparator] forKey:XADFileNameKey];
 	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+65)] forKey:XADFileTypeKey];
 	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+69)] forKey:XADFileCreatorKey];
 	[template setObject:[NSNumber numberWithInt:bytes[73]+(bytes[101]<<8)] forKey:XADFinderFlagsKey];

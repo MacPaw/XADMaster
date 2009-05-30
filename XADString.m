@@ -13,6 +13,10 @@
 
 -(id)initWithData:(NSData *)bytedata source:(XADStringSource *)stringsource
 {
+	// Make sure the detector sees the data, and decode it directly if it is just ASCII
+	if([stringsource analyzeDataAndCheckForASCII:bytedata])
+	return [self initWithString:[[[NSString alloc] initWithData:bytedata encoding:NSASCIIStringEncoding] autorelease]];
+
 	if(self=[super init])
 	{
 		data=[bytedata retain];
@@ -41,54 +45,72 @@
 	[super dealloc];
 }
 
+
+
 -(NSString *)string
 {
-	if(string) return string;
-	return [[[NSString alloc] initWithData:data encoding:[source encoding]] autorelease];
+	return [self stringWithEncoding:[source encoding]];
 }
 
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding
 {
 	if(string) return string;
-	return [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+
+	NSString *decstr=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+	if(decstr) return decstr;
+
+	// Fall back on escaped ASCII if the encoding was unusable
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+	NSMutableString *str=[NSMutableString stringWithCapacity:length];
+
+	for(int i=0;i<length;i++)
+	{
+		if(bytes[i]<0x80) [str appendFormat:@"%c",bytes[i]];
+		else [str appendFormat:@"%%%02x",bytes[i]];
+	}
+
+	return [NSString stringWithString:str];
 }
 
--(const char *)cString
+-(NSData *)data
 {
-	if(string) return NULL;
+	if(data) return data;
 
-	NSMutableData *mutable=[NSMutableData dataWithData:data];
-	[mutable increaseLengthBy:1]; // add a single byte, which will be initialized as 0
-	return [mutable bytes];
+	return [string dataUsingEncoding:NSNonLossyASCIIStringEncoding];
 }
+
+
 
 -(BOOL)encodingIsKnown
 {
-	if(string) return YES;
+	if(!source) return YES;
 	if([source hasFixedEncoding]) return YES;
 	return NO;
 }
 
 -(NSStringEncoding)encoding
 {
-	if(string) return NSUTF8StringEncoding; // TODO: what should this really return?
+	if(!source) return NSUTF8StringEncoding; // TODO: what should this really return?
 	return [source encoding];
 }
 
 -(float)confidence
 {
-	if(string) return 1;
+	if(!source) return 1;
 	return [source confidence];
 }
 
--(NSData *)data { return data; }
+
+
+-(XADStringSource *)source { return source; }
+
+
 
 -(NSString *)description
 {
 	// TODO: more info?
-	NSString *str=[self string];
-	if(str) return str;
-	else return [data description];
+	return [self string];
 }
 
 -(BOOL)isEqual:(XADString *)other
@@ -139,36 +161,34 @@
 	[super dealloc];
 }
 
--(XADString *)XADStringWithData:(NSData *)data
+-(BOOL)analyzeDataAndCheckForASCII:(NSData *)data
 {
 	[detector analyzeData:data];
 
-	// check if string is ASCII, and convert it directly to an NSString if it is
+	// check if string is ASCII
 	const char *ptr=[data bytes];
 	int length=[data length];
-	for(int i=0;i<length;i++) if(ptr[i]&0x80) return [[[XADString alloc] initWithData:data source:self] autorelease];
+	for(int i=0;i<length;i++) if(ptr[i]&0x80) return NO;
 
-	return [[[XADString alloc] initWithString:[[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease]] autorelease];
-}
-
--(XADString *)XADStringWithString:(NSString *)string
-{
-	return [[[XADString alloc] initWithString:string] autorelease];
+	return YES;
 }
 
 -(NSStringEncoding)encoding
 {
 	if(fixedencoding) return fixedencoding;
 	if(!detector) return NSWindowsCP1252StringEncoding;
+
 	NSStringEncoding encoding=[detector encoding];
-	if(!encoding) return NSWindowsCP1252StringEncoding;
+	if(!encoding) encoding=NSWindowsCP1252StringEncoding;
 
 	// Kludge to use Mac encodings instead of the similar Windows encodings for Mac archives
 	// TODO: improve
 	if(mac)
 	{
+		if(encoding==NSWindowsCP1252StringEncoding) return NSMacOSRomanStringEncoding;
+
 		NSStringEncoding macjapanese=CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
-		if(encoding==NSShiftJISStringEncoding) encoding=macjapanese;
+		if(encoding==NSShiftJISStringEncoding) return macjapanese;
 		//else if(encoding!=NSUTF8StringEncoding&&encoding!=macjapanese) encoding=NSMacOSRomanStringEncoding;
 	}
 

@@ -436,64 +436,18 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 {
 	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
 	if(!dict) dict=[self resourceForkParserDictionaryForEntry:n];
-	XADString *xadname=[dict objectForKey:XADFileNameKey];
-	if(!xadname) return nil;
 
-	NSString *originalname;
+	XADPath *xadname=[[dict objectForKey:XADFileNameKey] safePath];
+	if(!xadname) return nil;
 
 	if(![xadname encodingIsKnown]&&delegate)
 	{
-		NSStringEncoding encoding=[delegate archive:self encodingForName:[xadname cString]
+		NSStringEncoding encoding=[delegate archive:self encodingForData:[xadname data]
 		guess:[xadname encoding] confidence:[xadname confidence]];
-		originalname=[xadname stringWithEncoding:encoding];
-	}
-	else originalname=[xadname string];
-
-	if(!originalname) return nil;
-
-	// Create a mutable string
-	NSMutableString *mutablename=[NSMutableString stringWithString:originalname];
-
-	// Changes backslashes to forward slashes
-	NSString *separator=[[[NSString alloc] initWithBytes:"\\" length:1 encoding:[xadname encoding]] autorelease];
-	[mutablename replaceOccurrencesOfString:separator withString:@"/" options:0 range:NSMakeRange(0,[mutablename length])];
-
-	// Clean up path
-	NSMutableArray *components=[NSMutableArray arrayWithArray:[mutablename pathComponents]];
-
-	// Drop . anywhere in the path
-	for(int i=0;i<[components count];)
-	{
-		NSString *comp=[components objectAtIndex:i];
-		if([comp isEqual:@"."]) [components removeObjectAtIndex:i];
-		else i++;
+		return [xadname stringWithEncoding:encoding];
 	}
 
-	// Drop all .. that can be dropped
-	for(int i=1;i<[components count];)
-	{
-		NSString *comp1=[components objectAtIndex:i-1];
-		NSString *comp2=[components objectAtIndex:i];
-		if(![comp1 isEqual:@".."]&&[comp2 isEqual:@".."])
-		{
-			[components removeObjectAtIndex:i];
-			[components removeObjectAtIndex:i-1];
-			if(i>1) i--;
-		}
-		else i++;
-	}
-
-	// Drop slashes and .. at the start of the path
-	while([components count])
-	{
-		NSString *first=[components objectAtIndex:0];
-		if([first isEqual:@"/"]||[first isEqual:@".."]) [components removeObjectAtIndex:0];
-		else break;
-	}
-
-	NSString *name=[NSString pathWithComponents:components];
-
-	return name;
+	return [xadname string];
 }
 
 -(BOOL)entryHasSize:(int)n
@@ -980,6 +934,8 @@ static double XADGetTime()
 
 		for(;;)
 		{
+			if(delegate&&[delegate archiveExtractionShouldStop:self]) [XADException raiseExceptionWithXADError:XADBreakError];
+
 			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
 			if(write(fh,buf,actual)!=actual)
 			{
@@ -1012,6 +968,7 @@ static double XADGetTime()
 					[delegate archive:self extractionProgressBytes:progress*(double)immediatesize of:immediatesize];
 				}
 			}
+
 			if(actual!=sizeof(buf)) break;
 		}
 
@@ -1043,7 +1000,7 @@ static double XADGetTime()
 	if(![xadlink encodingIsKnown]&&delegate)
 	{
 		// TODO: should there be a better way to deal with encodings?
-		NSStringEncoding encoding=[delegate archive:self encodingForName:[xadlink cString]
+		NSStringEncoding encoding=[delegate archive:self encodingForData:[xadlink data]
 		guess:[xadlink encoding] confidence:[xadlink confidence]];
 		link=[xadlink stringWithEncoding:encoding];
 	}
@@ -1353,7 +1310,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 -(NSStringEncoding)archive:(XADArchive *)archive encodingForData:(NSData *)data guess:(NSStringEncoding)guess confidence:(float)confidence
 {
 	// Default implementation calls old method
-	NSMutableData *terminateddata=[[NSMutableData alloc] dataWithData:data];
+	NSMutableData *terminateddata=[[NSMutableData alloc] initWithData:data];
 	NSStringEncoding enc=[self archive:archive encodingForName:[terminateddata bytes] guess:guess confidence:confidence];
 	[terminateddata release];
 	return enc;
@@ -1362,7 +1319,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 -(XADAction)archive:(XADArchive *)archive nameDecodingDidFailForEntry:(int)n data:(NSData *)data
 {
 	// Default implementation calls old method
-	NSMutableData *terminateddata=[[NSMutableData alloc] dataWithData:data];
+	NSMutableData *terminateddata=[[NSMutableData alloc] initWithData:data];
 	XADAction action=[self archive:archive nameDecodingDidFailForEntry:n bytes:[terminateddata bytes]];
 	[terminateddata release];
 	return action;

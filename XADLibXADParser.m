@@ -142,7 +142,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 -(NSMutableDictionary *)dictionaryForFileInfo:(struct xadFileInfo *)info
 {
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADStringWithCString:info->xfi_FileName],XADFileNameKey,
+		[self XADPathWithCString:info->xfi_FileName separators:XADEitherPathSeparator],XADFileNameKey,
 		[NSNumber numberWithUnsignedLongLong:info->xfi_CrunchSize],XADCompressedSizeKey,
 		[NSValue valueWithPointer:info],@"LibXADFileInfo",
 	nil];

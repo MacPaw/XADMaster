@@ -43,7 +43,7 @@
 
 	// TODO: set no filename flag
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADStringWithString:contentname],XADFileNameKey,
+		[self XADPathWithString:contentname],XADFileNameKey,
 		[self XADStringWithString:@"LZMA"],XADCompressionNameKey,
 		props,@"LZMAProperties",
 	nil];

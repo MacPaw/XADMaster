@@ -8,7 +8,7 @@ extern NSString *XADDisableMacForkExpansionKey;
 @interface XADMacArchiveParser:XADArchiveParser
 {
 	CSHandle *currhandle;
-	XADRegex *dittoregex;
+	NSMutableArray *dittostack;
 }
 
 +(int)macBinaryVersionForHeader:(NSData *)header;
@@ -17,8 +17,8 @@ extern NSString *XADDisableMacForkExpansionKey;
 -(void)dealloc;
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos;
--(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name;
--(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(NSString *)name;
+-(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name;
+-(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 

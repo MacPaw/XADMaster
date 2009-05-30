@@ -1,7 +1,6 @@
 #import "XADStuffItParser.h"
 #import "XADException.h"
 #import "XADCRCHandle.h"
-#import "Paths.h"
 #import "NSDateXAD.h"
 
 #import "XADStuffItRLEHandle.h"
@@ -13,6 +12,7 @@
 #import "XADLHADynamicHandle.h"
 
 // TODO: implement final bits of libxad's Stuffit.c
+// TODO: look at memory and refcount issues for automatic pool upgrade
 
 @implementation XADStuffItParser
 
@@ -76,7 +76,7 @@
 	//[fh skipBytes:7];
 	[fh skipBytes:12];
 
-	NSMutableDictionary *currdir=nil;
+	XADPath *currdir=[self XADPath];
 
 	while([fh offsetInFile]+SIT_FILEHDRSIZE<=totalsize+base && [self shouldKeepParsing])
 	{
@@ -94,8 +94,9 @@
 
 			int namelen=header[SITFH_FNAMESIZE];
 			if(namelen>63) namelen=63;
-			NSData *pathdata=XADBuildMacPathWithBuffer([currdir objectForKey:@"StuffItPathData"],header+SITFH_FNAME,namelen);
-			XADString *path=[self XADStringWithData:pathdata]; // TODO: encoding:NSMacOS...?
+
+			XADString *name=[self XADStringWithBytes:header+SITFH_FNAME length:namelen];
+			XADPath *path=[currdir pathByAppendingPathComponent:name];
 
 			off_t start=[fh offsetInFile];
 
@@ -107,19 +108,17 @@
 					[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(header+SITFH_CREATIONDATE)],XADCreationDateKey,
 					[NSNumber numberWithInt:CSUInt16BE(header+SITFH_FNDRFLAGS)],XADFinderFlagsKey,
 					[NSNumber numberWithBool:YES],XADIsDirectoryKey,
-					pathdata,@"StuffItPathData",
-					currdir,@"StuffItParentDirectory",
 				nil];
 
 				[self addEntryWithDictionary:dict];
 
-				currdir=dict;
+				currdir=path;
 
 				[fh seekToFileOffset:start];
 			}
 			else if(datamethod==StuffItEndFolder||resourcemethod==StuffItEndFolder)
 			{
-				currdir=[currdir objectForKey:@"StuffItParentDirectory"];
+				currdir=[currdir pathByDeletingLastPathComponent];
 			}
 			else
 			{
@@ -140,7 +139,6 @@
 						[NSNumber numberWithUnsignedInt:resourcecomplen],XADDataLengthKey,
 						[NSNumber numberWithInt:resourcemethod],@"StuffItCompressionMethod",
 						[NSNumber numberWithInt:CSUInt16BE(header+SITFH_RSRCCRC)],@"StuffItCRC16",
-						currdir,@"StuffItParentDirectory",
 					nil];
 
 					XADString *compressionname=[self nameOfCompressionMethod:resourcemethod];
@@ -169,7 +167,6 @@
 						[NSNumber numberWithUnsignedInt:datacomplen],XADDataLengthKey,
 						[NSNumber numberWithInt:datamethod],@"StuffItCompressionMethod",
 						[NSNumber numberWithInt:CSUInt16BE(header+SITFH_DATACRC)],@"StuffItCRC16",
-						currdir,@"StuffItParentDirectory",
 					nil];
 
 					// TODO: figure out best way to link forks

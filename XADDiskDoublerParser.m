@@ -6,7 +6,6 @@
 #import "XADCRCHandle.h"
 #import "XADChecksumHandle.h"
 #import "NSDateXAD.h"
-#import "Paths.h"
 
 @implementation XADDiskDoublerParser
 
@@ -51,17 +50,19 @@
 	CSHandle *fh=[self handle];
 	uint32_t magic=[fh readID];
 
-	if(magic==0xabcd0054) [self parseFileHeaderWithHandle:fh name:[self XADStringWithString:[self name]]];
+	if(magic==0xabcd0054) [self parseFileHeaderWithHandle:fh name:[self XADPathWithString:[self name]]];
 	else if(magic=='DDAR') [self parseArchive];
 	else if(magic=='DDA2') [self parseArchive2];
 }
+
+// TODO: look at memory and refcount issues for automatic pool upgrade
 
 -(void)parseArchive
 {
 	CSHandle *fh=[self handle];
 	[fh skipBytes:74];
 
-	NSMutableArray *pathstack=[NSMutableArray array];
+	XADPath *currdir=[self XADPath];
 
 	while([self shouldKeepParsing])
 	{
@@ -91,25 +92,19 @@
 		int rsrccrc=[fh readUInt16BE];
 		[fh skipBytes:2];
 
-		NSData *parent;
-		if([pathstack count]) parent=[[pathstack lastObject] objectForKey:@"DiskDoublerNameData"];
-		else parent=nil;
-
-		NSData *namedata=XADBuildMacPathWithBuffer(parent,namebuf,namelen);
-		XADString *name=[self XADStringWithData:namedata];
+		XADPath *name=[currdir pathByAppendingPathComponent:[self XADStringWithBytes:namebuf length:namelen]];
 
 		off_t start=[fh offsetInFile];
 		uint32_t totalsize=0;
 
 		if(enddir)
 		{
-			[pathstack removeLastObject];
+			currdir=[currdir pathByDeletingLastPathComponent];
 		}
 		else if(isdir)
 		{
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				name,XADFileNameKey,
-				namedata,@"DiskDoublerNameData",
 				[NSDate XADDateWithTimeIntervalSince1904:creation],XADCreationDateKey,
 				[NSDate XADDateWithTimeIntervalSince1904:modification],XADLastModificationDateKey,
 				[NSNumber numberWithInt:finderflags],XADFinderFlagsKey, // TODO: is this valid?
@@ -117,7 +112,7 @@
 			nil];
 
 			[self addEntryWithDictionary:dict];
-			[pathstack addObject:dict];
+			currdir=name;
 		}
 		else if(finderflags&0x20)
 		{
@@ -183,7 +178,8 @@
 	CSHandle *fh=[self handle];
 	[fh skipBytes:58];
 
-	NSMutableArray *pathstack=[NSMutableArray array];
+	XADPath *currdir=[self XADPath];
+	int lastdirlevel=0;
 
 	while([self shouldKeepParsing])
 	{
@@ -209,14 +205,10 @@
 			continue;
 		}
 
-		while(dirlevel<[pathstack count]) [pathstack removeLastObject];
+		for(int i=dirlevel;i<lastdirlevel;i++) currdir=[currdir pathByDeletingLastPathComponent];
+		lastdirlevel=dirlevel;
 
-		NSData *parent;
-		if(dirlevel==0) parent=nil;
-		else parent=[[pathstack lastObject] objectForKey:@"DiskDoublerNameData"];
-
-		NSData *namedata=XADBuildMacPathWithBuffer(parent,namebuf,namelen);
-		XADString *name=[self XADStringWithData:namedata];
+		XADPath *name=[currdir pathByAppendingPathComponent:[self XADStringWithBytes:namebuf length:namelen]];
 
 		if(entrytype&0x8000)
 		{
@@ -228,14 +220,13 @@
 
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					name,XADFileNameKey,
-					namedata,@"DiskDoublerNameData",
 					[NSDate XADDateWithTimeIntervalSince1904:creation],XADCreationDateKey,
 					[NSDate XADDateWithTimeIntervalSince1904:modification],XADLastModificationDateKey,
 					[NSNumber numberWithBool:YES],XADIsDirectoryKey,
 				nil];
 
 				[self addEntryWithDictionary:dict];
-				[pathstack addObject:dict];
+				currdir=name;
 			}
 		}
 		else
@@ -251,7 +242,7 @@
 	}
 }
 
--(uint32_t)parseFileHeaderWithHandle:(CSHandle *)fh name:(XADString *)name
+-(uint32_t)parseFileHeaderWithHandle:(CSHandle *)fh name:(XADPath *)name
 {
 	uint32_t datasize=[fh readUInt32BE];
 	uint32_t datacompsize=[fh readUInt32BE];

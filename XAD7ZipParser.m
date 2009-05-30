@@ -342,7 +342,8 @@ static void FindAttribute(CSHandle *handle,int attribute)
 			if(c==0) break;
 			[name appendFormat:@"%C",c];
 		}
-		SetObjectEntryInArray(array,i,[self XADStringWithString:name],XADFileNameKey);
+
+		SetObjectEntryInArray(array,i,[self XADPathWithString:name],XADFileNameKey);
 	}
 }
 

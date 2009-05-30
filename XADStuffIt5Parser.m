@@ -1,6 +1,5 @@
 #import "XADStuffIt5Parser.h"
 #import "XADException.h"
-#import "Paths.h"
 #import "NSDateXAD.h"
 
 @implementation XADStuffIt5Parser
@@ -109,6 +108,7 @@
 	[fh seekToFileOffset:firstoffs+base];
 
 	NSMutableDictionary *directories=[NSMutableDictionary dictionary];
+	XADPath *root=[self XADPath];
 
 	while([fh offsetInFile]+48<=totalsize+base && [self shouldKeepParsing])
 	{
@@ -183,10 +183,9 @@
 		}
 
 		off_t datastart=[fh offsetInFile];
-
-		NSDictionary *parent=[directories objectForKey:[NSNumber numberWithUnsignedInt:diroffs]];
-		NSData *pathdata=XADBuildMacPathWithData([parent objectForKey:@"StuffItPathData"],namedata);
-		XADString *path=[self XADStringWithData:pathdata];
+		XADPath *parent=[directories objectForKey:[NSNumber numberWithUnsignedInt:diroffs]];
+		if(!parent) parent=root;
+		XADPath *path=[parent pathByAppendingPathComponent:[self XADStringWithData:namedata]];
 
 		if(flags&SIT5FLAGS_DIRECTORY)
 		{
@@ -196,13 +195,12 @@
 				[NSDate XADDateWithTimeIntervalSince1904:creationdate],XADCreationDateKey,
 				[NSNumber numberWithInt:finderflags],XADFinderFlagsKey,
 				[NSNumber numberWithBool:YES],XADIsDirectoryKey,
-				pathdata,@"StuffItPathData",
 				[NSNumber numberWithInt:flags],@"StuffItFlags",
 				comment,XADCommentKey,
 			nil];
 
 			[self addEntryWithDictionary:dict];
-			[directories setObject:dict forKey:[NSNumber numberWithUnsignedLong:offs]];
+			[directories setObject:path forKey:[NSNumber numberWithUnsignedLong:offs]];
 			[fh seekToFileOffset:datastart];
 		}
 		else

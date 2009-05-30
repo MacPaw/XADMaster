@@ -435,19 +435,14 @@ static void DumpElement(StuffItXElement *element)
 				{
 					NSData *filename=ReadSitxString(fh);
 
-					NSData *fullname;
+					XADPath *path;
 					NSDictionary *parent=[dict objectForKey:[entry objectForKey:@"StuffItXParent"]];
-					if(parent)
-					{
-						NSMutableData *data=[NSMutableData dataWithData:[parent objectForKey:@"StuffItXNameData"]];
-						[data appendBytes:"/" length:1];
-						[data appendData:filename];
-						fullname=data;
-					}
-					else fullname=filename;
 
-					[entry setObject:[self XADStringWithData:fullname] forKey:XADFileNameKey];
-					if([entry objectForKey:XADIsDirectoryKey]) [entry setObject:fullname forKey:@"StuffItXNameData"];
+					if(parent) path=[[parent objectForKey:XADFileNameKey]
+					pathByAppendingPathComponent:[self XADStringWithData:filename]];
+					else path=[self XADPathWithData:filename separators:XADNoPathSeparator];
+
+					[entry setObject:path forKey:XADFileNameKey];
 				}
 				break;
 

@@ -24,7 +24,7 @@
 	NSString *name=[[self name] stringByDeletingPathExtension];
 
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADStringWithString:name],XADFileNameKey,
+		[self XADPathWithString:name],XADFileNameKey,
 		[self XADStringWithString:@"Compress"],XADCompressionNameKey,
 		[NSNumber numberWithLongLong:3],XADDataOffsetKey,
 		[NSNumber numberWithInt:flags],@"CompressFlags",

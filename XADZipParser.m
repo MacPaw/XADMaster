@@ -165,7 +165,7 @@
 			if(localnamelength)
 			{
 				namedata=[fh readDataOfLength:localnamelength];
-				[dict setObject:[self XADStringWithData:namedata] forKey:XADFileNameKey];
+				[dict setObject:[self XADPathWithData:namedata separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 
 				if(((char *)[namedata bytes])[localnamelength-1]=='/'&&uncompsize==0)
 				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
@@ -210,7 +210,7 @@
 			}
 			else
 			{
-				[dict setObject:[[self name] stringByDeletingPathExtension] forKey:XADFileNameKey];
+				[dict setObject:[self XADPathWithString:[[self name] stringByDeletingPathExtension]] forKey:XADFileNameKey];
 				// TODO: set no filename flag
 			}
 

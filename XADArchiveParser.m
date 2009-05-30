@@ -517,42 +517,96 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 }
 
 
+
 -(XADString *)XADStringWithString:(NSString *)string
 {
-	return [stringsource XADStringWithString:string];
+	return [[[XADString alloc] initWithString:string] autorelease];
 }
 
 -(XADString *)XADStringWithData:(NSData *)data
 {
-	return [stringsource XADStringWithData:data];
+	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
 }
 
 -(XADString *)XADStringWithData:(NSData *)data encoding:(NSStringEncoding)encoding
 {
-	return [XADString XADStringWithString:[[[NSString alloc] initWithData:data encoding:encoding] autorelease]];
+	NSString *string=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+	return [[[XADString alloc] initWithString:string] autorelease];
 }
 
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length
 {
-	return [stringsource XADStringWithData:[NSData dataWithBytes:bytes length:length]];
+	NSData *data=[NSData dataWithBytes:bytes length:length];
+	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
 }
 
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding
 {
-	return [XADString XADStringWithString:[[[NSString alloc] initWithData:
-	[NSData dataWithBytes:bytes length:length] encoding:encoding] autorelease]];
+	NSData *data=[NSData dataWithBytes:bytes length:length];
+	NSString *string=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+	return [[[XADString alloc] initWithString:string] autorelease];
 }
 
--(XADString *)XADStringWithCString:(const char *)string
+-(XADString *)XADStringWithCString:(const char *)cstring
 {
-	return [stringsource XADStringWithData:[NSData dataWithBytes:string length:strlen(string)]];
+	NSData *data=[NSData dataWithBytes:cstring length:strlen(cstring)];
+	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
 }
 
--(XADString *)XADStringWithCString:(const char *)string encoding:(NSStringEncoding)encoding
+-(XADString *)XADStringWithCString:(const char *)cstring encoding:(NSStringEncoding)encoding
 {
-	return [XADString XADStringWithString:[[[NSString alloc] initWithData:
-	[NSData dataWithBytes:string length:strlen(string)] encoding:encoding] autorelease]];
+	NSData *data=[NSData dataWithBytes:cstring length:strlen(cstring)];
+	NSString *string=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+	return [[[XADString alloc] initWithString:string] autorelease];
 }
+
+
+
+-(XADPath *)XADPath
+{
+	return [[XADPath new] autorelease];
+}
+
+-(XADPath *)XADPathWithString:(NSString *)string
+{
+	return [[[XADPath alloc] initWithString:string] autorelease];
+}
+
+-(XADPath *)XADPathWithData:(NSData *)data separators:(const char *)separators
+{
+	return [[[XADPath alloc] initWithBytes:[data bytes] length:[data length]
+	separators:separators source:stringsource] autorelease];
+}
+
+-(XADPath *)XADPathWithData:(NSData *)data encoding:(NSStringEncoding)encoding separators:(const char *)separators
+{
+	return [[[XADPath alloc] initWithBytes:[data bytes] length:[data length]
+	encoding:encoding separators:separators] autorelease];
+}
+
+-(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length separators:(const char *)separators
+{
+	return [[[XADPath alloc] initWithBytes:bytes length:length separators:separators source:stringsource] autorelease];
+}
+
+-(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding separators:(const char *)separators
+{
+	return [[[XADPath alloc] initWithBytes:bytes length:length encoding:encoding separators:separators] autorelease];
+}
+
+-(XADPath *)XADPathWithCString:(const char *)cstring separators:(const char *)separators
+{
+	return [[[XADPath alloc] initWithBytes:cstring length:strlen(cstring)
+	separators:separators source:stringsource] autorelease];
+}
+
+-(XADPath *)XADPathWithCString:(const char *)cstring encoding:(NSStringEncoding)encoding separators:(const char *)separators
+{
+	return [[[XADPath alloc] initWithBytes:cstring length:strlen(cstring)
+	encoding:encoding separators:separators] autorelease];
+}
+
+
 
 -(NSData *)encodedPassword
 {

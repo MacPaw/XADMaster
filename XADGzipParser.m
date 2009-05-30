@@ -82,7 +82,7 @@
 
 	if(filename)
 	{
-		[dict setObject:[self XADStringWithData:filename] forKey:XADFileNameKey];
+		[dict setObject:[self XADPathWithData:filename separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 
 		NSString *stringname=[[NSString alloc] initWithData:filename encoding:NSISOLatin1StringEncoding];
 		if([stringname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
@@ -100,7 +100,7 @@
 		else contentname=[name stringByDeletingPathExtension];
 
 		// TODO: set no filename flag
-		[dict setObject:[self XADStringWithString:contentname] forKey:XADFileNameKey];
+		[dict setObject:[self XADPathWithString:contentname] forKey:XADFileNameKey];
 
 		if([contentname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
 		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];

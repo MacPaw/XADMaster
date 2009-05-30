@@ -137,7 +137,7 @@
 			[NSNumber numberWithInt:uid],XADPosixUserKey,
 			[NSNumber numberWithInt:gid],XADPosixGroupKey,
 			[NSNumber numberWithInt:nlink],@"CpioNlink",
-			[self XADStringWithData:namedata],XADFileNameKey,
+			[self XADPathWithData:namedata separators:XADUnixPathSeparator],XADFileNameKey,
 			[NSDate dateWithTimeIntervalSince1970:mtime],XADLastModificationDateKey,
 			[NSNumber numberWithLongLong:filesize],XADFileSizeKey,
 			[NSNumber numberWithLongLong:filesize],XADCompressedSizeKey,

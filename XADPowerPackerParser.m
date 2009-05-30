@@ -31,7 +31,7 @@ static NSData *PowerPackerUnpack(NSData *packeddata,int unpackedlength);
 	size|=[fh readUInt8];
 
 	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADStringWithString:[[self name] stringByDeletingPathExtension]],XADFileNameKey,
+		[self XADPathWithString:[[self name] stringByDeletingPathExtension]],XADFileNameKey,
 		[NSNumber numberWithLongLong:size],XADFileSizeKey,
 		[NSNumber numberWithLongLong:compsize],XADCompressedSizeKey,
 		[self XADStringWithString:@"PowerPacker"],XADCompressionNameKey,

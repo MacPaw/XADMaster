@@ -27,7 +27,7 @@ extern NSString *XADFinderFlags;
 	NSTimeInterval update_interval;
 	XADError lasterror;
 
-	NSMutableArray *entries;
+	NSMutableArray *dataentries,*resourceentries;
 	NSMutableDictionary *namedict;
 	NSMutableArray *writeperms;
 

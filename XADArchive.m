@@ -62,7 +62,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		immediatesize=0;
 		parentarchive=nil;
 
-		entries=[[NSMutableArray array] retain];
+		dataentries=[[NSMutableArray array] retain];
+		resourceentries=[[NSMutableArray array] retain];
 		namedict=nil;
 		writeperms=[[NSMutableArray array] retain];
  	}
@@ -192,7 +193,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 -(void)dealloc
 {
 	[parser release];
-	[entries release];
+	[dataentries release];
+	[resourceentries release];
 	[namedict release];
 	[writeperms release];
 	[parentarchive release];
@@ -234,12 +236,11 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	if(index) // Try to update an existing entry
 	{
 		int n=[index intValue];
-		NSMutableDictionary *entry=[entries objectAtIndex:n];
 		if(isres) // Adding a resource fork to an earlier data fork
 		{
-			if(![entry objectForKey:@"ResourceFork"])
+			if([resourceentries objectAtIndex:n]==[NSNull null])
 			{
-				[entry setObject:dict forKey:@"ResourceFork"];
+				[resourceentries replaceObjectAtIndex:n withObject:dict];
 
 				if(immediatedestination)
 				{
@@ -256,9 +257,9 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		}
 		else // Adding a data fork to an earlier resource fork
 		{
-			if(![entry objectForKey:@"DataFork"])
+			if([dataentries objectAtIndex:n]==[NSNull null])
 			{
-				[entry setObject:dict forKey:@"DataFork"];
+				[dataentries replaceObjectAtIndex:n withObject:dict];
 
 				if(immediatedestination)
 				{
@@ -273,19 +274,22 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 	// Create a new entry instead
 
-	if(isres) [entries addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		dict,@"ResourceFork",
-		[NSNumber numberWithBool:YES],@"ResourceForkFirst",
-	nil]];
-	else [entries addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		dict,@"DataFork",
-	nil]];
+	if(isres)
+	{
+		[dataentries addObject:[NSNull null]];
+		[resourceentries addObject:dict];
+	}
+	else
+	{
+		[dataentries addObject:dict];
+		[resourceentries addObject:[NSNull null]];
+	}
 
-	[namedict setObject:[NSNumber numberWithInt:[entries count]-1] forKey:name];
+	[namedict setObject:[NSNumber numberWithInt:[dataentries count]-1] forKey:name];
 
 	if(immediatedestination)
 	{
-		if(![self extractEntry:[entries count]-1 to:immediatedestination
+		if(![self extractEntry:[dataentries count]-1 to:immediatedestination
 		overrideWritePermissions:YES]) immediatefailed=YES;
 	}
 }
@@ -334,7 +338,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	return [iscorrupted boolValue];
 }
 
--(int)numberOfEntries { return [entries count]; }
+-(int)numberOfEntries { return [dataentries count]; }
 
 -(BOOL)immediateExtractionFailed { return immediatefailed; }
 
@@ -402,33 +406,39 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(NSDictionary *)dataForkParserDictionaryForEntry:(int)n
 {
-	return [[entries objectAtIndex:n] objectForKey:@"DataFork"];
+	id obj=[dataentries objectAtIndex:n];
+	if(obj==[NSNull null]) return nil;
+	else return obj;
 }
 
 -(NSDictionary *)resourceForkParserDictionaryForEntry:(int)n
 {
-	return [[entries objectAtIndex:n] objectForKey:@"ResourceFork"];
+	id obj=[resourceentries objectAtIndex:n];
+	if(obj==[NSNull null]) return nil;
+	else return obj;
 }
 
 -(NSDictionary *)combinedParserDictionaryForEntry:(int)n
 {
-	NSDictionary *entry=[entries objectAtIndex:n];
-	NSDictionary *older,*newer;
-	if([entry objectForKey:@"ResourceForkFirst"])
-	{
-		older=[entry objectForKey:@"ResourceFork"];
-		newer=[entry objectForKey:@"DataFork"];
-	}
-	else
-	{
-		older=[entry objectForKey:@"DataFork"];
-		newer=[entry objectForKey:@"ResourceFork"];
-	}
+	NSDictionary *data=[dataentries objectAtIndex:n];
+	NSDictionary *resource=[resourceentries objectAtIndex:n];
 
-	if(!newer) return older;
+	if((id)data==[NSNull null]) return resource;
+	if((id)resource==[NSNull null]) return data;
 
-	NSMutableDictionary *new=[NSMutableDictionary dictionaryWithDictionary:older];
-	[new addEntriesFromDictionary:newer];
+	NSMutableDictionary *new=[NSMutableDictionary dictionaryWithDictionary:data];
+
+	id obj;
+
+	obj=[resource objectForKey:XADFileTypeKey];
+	if(obj) [new setObject:obj forKey:XADFileTypeKey];
+	obj=[resource objectForKey:XADFileCreatorKey];
+	if(obj) [new setObject:obj forKey:XADFileCreatorKey];
+	obj=[resource objectForKey:XADFinderFlagsKey];
+	if(obj) [new setObject:obj forKey:XADFinderFlagsKey];
+	obj=[resource objectForKey:XADFinderInfoKey];
+	if(obj) [new setObject:obj forKey:XADFinderInfoKey];
+
 	return new;
 }
 

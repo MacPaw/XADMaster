@@ -17,7 +17,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 @implementation CSFileHandle
 
-
+static int filesopen=0;
 
 +(CSFileHandle *)fileHandleForReadingAtPath:(NSString *)path
 { return [self fileHandleForPath:path modes:@"rb"]; }

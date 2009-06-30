@@ -64,8 +64,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 		dataentries=[[NSMutableArray array] retain];
 		resourceentries=[[NSMutableArray array] retain];
+		deferredentries=[[NSMutableArray array] retain];
 		namedict=nil;
-		writeperms=[[NSMutableArray array] retain];
  	}
 	return self;
 }
@@ -176,7 +176,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 					immediatefailed=YES;
 				}
 
-				[self fixWritePermissions];
+				[self updateAttributesForDeferredDirectories];
 				immediatedestination=nil;
 				return self;
 			}
@@ -195,8 +195,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	[parser release];
 	[dataentries release];
 	[resourceentries release];
+	[deferredentries release];
 	[namedict release];
-	[writeperms release];
 	[parentarchive release];
 
 	[super dealloc];
@@ -248,7 +248,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 					if(name)
 					if(![self _changeAllAttributesForEntry:n
 					atPath:[immediatedestination stringByAppendingPathComponent:name]
-					resourceFork:YES overrideWritePermissions:[self entryIsDirectory:n]])
+					deferDirectories:YES resourceFork:YES])
 					immediatefailed=YES;
 				}
 
@@ -264,7 +264,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 				if(immediatedestination)
 				{
 					if(![self extractEntry:n to:immediatedestination
-					overrideWritePermissions:YES resourceFork:NO]) immediatefailed=YES;
+					deferDirectories:YES resourceFork:NO]) immediatefailed=YES;
 				}
 
 				return;
@@ -290,7 +290,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	if(immediatedestination)
 	{
 		if(![self extractEntry:[dataentries count]-1 to:immediatedestination
-		overrideWritePermissions:YES]) immediatefailed=YES;
+		deferDirectories:YES]) immediatefailed=YES;
 	}
 }
 
@@ -748,7 +748,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		BOOL res;
 
 		if(sub&&[self entryIsArchive:i]) res=[self extractArchiveEntry:i to:destination];
-		else res=[self extractEntry:i to:destination overrideWritePermissions:YES];
+		else res=[self extractEntry:i to:destination deferDirectories:YES];
 
 		if(!res)
 		{
@@ -762,19 +762,19 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		[delegate archive:self extractionProgressBytes:extractsize of:totalsize];
 	}
 
-	[self fixWritePermissions];
+	[self updateAttributesForDeferredDirectories];
 
 	totalsize=0;
 	return YES;
 }
 
 -(BOOL)extractEntry:(int)n to:(NSString *)destination
-{ return [self extractEntry:n to:destination overrideWritePermissions:NO resourceFork:YES]; }
+{ return [self extractEntry:n to:destination deferDirectories:NO resourceFork:YES]; }
 
--(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override
-{ return [self extractEntry:n to:destination overrideWritePermissions:override resourceFork:YES]; }
+-(BOOL)extractEntry:(int)n to:(NSString *)destination deferDirectories:(BOOL)defer
+{ return [self extractEntry:n to:destination deferDirectories:defer resourceFork:YES]; }
 
--(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override resourceFork:(BOOL)resfork
+-(BOOL)extractEntry:(int)n to:(NSString *)destination deferDirectories:(BOOL)defer resourceFork:(BOOL)resfork
 {
 	[delegate archive:self extractionOfEntryWillStart:n];
 
@@ -805,8 +805,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	NSString *destfile=[destination stringByAppendingPathComponent:name];
 
 	while(![self _extractEntry:n as:destfile]
-	||![self _changeAllAttributesForEntry:n atPath:destfile resourceFork:resfork
-	overrideWritePermissions:override&&[self entryIsDirectory:n]])
+	||![self _changeAllAttributesForEntry:n atPath:destfile deferDirectories:defer resourceFork:resfork])
 	{
 		if(lasterror==XADBreakError) return NO;
 		else if(delegate)
@@ -1086,8 +1085,15 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 	return utc;
 }
 
--(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path resourceFork:(BOOL)resfork overrideWritePermissions:(BOOL)override
+-(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path deferDirectories:(BOOL)defer resourceFork:(BOOL)resfork
 {
+	if(defer&&[self entryIsDirectory:n])
+	{
+		[deferredentries addObject:[NSNumber numberWithInt:n]];
+		[deferredentries addObject:path];
+		return YES;
+	}
+
 	if(resfork)
 	{
 		CSHandle *rsrchandle=[self resourceHandleForEntry:n];
@@ -1116,17 +1122,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 
 	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
 	FSPermissionInfo *pinfo=(FSPermissionInfo *)&info.permissions;
-	if(permissions)
-	{
-		pinfo->mode=[permissions unsignedShortValue];
-
-		if(override)
-		{
-			pinfo->mode|=0700;
-			[writeperms addObject:permissions];
-			[writeperms addObject:path];
-		}
-	}
+	if(permissions) pinfo->mode=[permissions unsignedShortValue];
 
 	NSDate *creation=[dict objectForKey:XADCreationDateKey];
 	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
@@ -1151,29 +1147,22 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 	return YES;
 }
 
--(void)fixWritePermissions
+-(void)updateAttributesForDeferredDirectories
 {
-	NSEnumerator *enumerator=[writeperms reverseObjectEnumerator];
+	NSEnumerator *enumerator=[deferredentries reverseObjectEnumerator];
 	for(;;)
 	{
 		NSString *path=[enumerator nextObject];
-		NSNumber *permissions=[enumerator nextObject];
-		if(!path||!permissions) break;
+		NSNumber *index=[enumerator nextObject];
 
-		FSRef ref;
-		FSCatalogInfo info;
-		if(FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation],&ref,NULL)!=noErr) continue;
-		if(FSGetCatalogInfo(&ref,kFSCatInfoPermissions,&info,NULL,NULL,NULL)!=noErr) continue;
+		if(!index||!path) break;
 
-		FSPermissionInfo *pinfo=(FSPermissionInfo *)&info.permissions;
-		pinfo->mode=[permissions unsignedShortValue];
-
-		FSSetCatalogInfo(&ref,kFSCatInfoPermissions,&info);
+		[self _changeAllAttributesForEntry:[index intValue] atPath:path
+		deferDirectories:NO resourceFork:NO];
 	}
 
-	[writeperms removeAllObjects];
+	[deferredentries removeAllObjects];
 }
-
 
 
 
@@ -1194,7 +1183,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
 	if(!dict) return 0; // Special case for resource forks without data forks
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
-	if(!size) return 0x7fffffff;
+	if(!size) return INT_MAX;
 	return [size intValue];
 }
 
@@ -1262,6 +1251,14 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 
 	return fi;
 }
+
+-(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override
+{ return [self extractEntry:n to:destination deferDirectories:override resourceFork:YES]; }
+
+-(BOOL)extractEntry:(int)n to:(NSString *)destination overrideWritePermissions:(BOOL)override resourceFork:(BOOL)resfork
+{ return [self extractEntry:n to:destination deferDirectories:override resourceFork:resfork]; }
+
+-(void)fixWritePermissions { [self updateAttributesForDeferredDirectories]; }
 
 
 

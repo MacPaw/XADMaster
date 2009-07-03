@@ -551,21 +551,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 	NSDate *creation=[dict objectForKey:XADCreationDateKey];
 	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
-	if(creation&&modification)
-	{
-		[attrs setObject:creation forKey:NSFileCreationDate];
-		[attrs setObject:modification forKey:NSFileModificationDate];
-	}
-	else if(modification)
-	{
-		[attrs setObject:modification forKey:NSFileCreationDate];
-		[attrs setObject:modification forKey:NSFileModificationDate];
-	}
-	else if(creation)
-	{
-		[attrs setObject:creation forKey:NSFileCreationDate];
-		[attrs setObject:creation forKey:NSFileModificationDate];
-	}
+	if(modification) [attrs setObject:modification forKey:NSFileModificationDate];
+	if(creation) [attrs setObject:creation forKey:NSFileCreationDate];
 
 	NSNumber *type=[dict objectForKey:XADFileTypeKey];
 	if(type) [attrs setObject:type forKey:NSFileHFSTypeCode];
@@ -1317,7 +1304,10 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 -(NSStringEncoding)archive:(XADArchive *)archive encodingForData:(NSData *)data guess:(NSStringEncoding)guess confidence:(float)confidence
 {
 	// Default implementation calls old method
+NSLog(@">>> %@ %d",data,[data length]);
 	NSMutableData *terminateddata=[[NSMutableData alloc] initWithData:data];
+	[terminateddata increaseLengthBy:1]; // append a 0 byte
+NSLog(@">>> %@ %s",terminateddata,[terminateddata bytes]);
 	NSStringEncoding enc=[self archive:archive encodingForName:[terminateddata bytes] guess:guess confidence:confidence];
 	[terminateddata release];
 	return enc;

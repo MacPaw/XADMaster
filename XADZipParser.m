@@ -226,13 +226,7 @@
 				[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
 
 				if((perm&0xf000)==0x4000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-				else if((perm&0xf000)==0xa000)
-				{
-					[fh skipBytes:localextralength];
-					NSData *linkdata=[fh readDataOfLength:compsize];
-					[fh skipBytes:-compsize-localextralength];
-					[dict setObject:[self XADStringWithData:linkdata] forKey:XADLinkDestinationKey];
-				}
+				else if((perm&0xf000)==0xa000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 			}
 
 			@try {

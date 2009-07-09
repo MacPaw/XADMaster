@@ -79,16 +79,18 @@
 	if(nextstreambyte>=0) return NO;
 
 	uint8_t b[1];
-	if([self streamAtMost:1 toBuffer:b]==1)
+	@try
 	{
-		nextstreambyte=b[0];
-		return NO;
+		if([self streamAtMost:1 toBuffer:b]==1)
+		{
+			nextstreambyte=b[0];
+			return NO;
+		}
 	}
-	else
-	{
-		endofstream=YES;
-		return YES;
-	}
+	@catch(id e) {}
+
+	endofstream=YES;
+	return YES;
 }
 
 -(void)seekToFileOffset:(off_t)offs

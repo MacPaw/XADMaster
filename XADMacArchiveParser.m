@@ -11,7 +11,6 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 +(int)macBinaryVersionForHeader:(NSData *)header
 {
 	if([header length]<128) return NO;
-
 	const uint8_t *bytes=[header bytes];
 
 	if(CSUInt32BE(bytes+102)=='mBIN') return 3; // MacBinary III
@@ -25,8 +24,8 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	for(int i=101;i<=125;i++) if(bytes[i]!=0) return 0;
 	if(bytes[1]==0||bytes[1]>63) return 0;
 	for(int i=0;i<bytes[1];i++) if(bytes[i+2]==0) return 0;
-	if(CSUInt32BE(bytes+83)>0x7fffff) return 0;
-	if(CSUInt32BE(bytes+87)>0x7fffff) return 0;
+	if(CSUInt32BE(bytes+83)>0x7fffffff) return 0;
+	if(CSUInt32BE(bytes+87)>0x7fffffff) return 0;
 
 	return 1; // MacBinary I
 }

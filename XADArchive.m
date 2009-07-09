@@ -170,10 +170,22 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 				[self _parseWithErrorPointer:error];
 
 				if(!immediatefailed)
-				if([handle hasChecksum]&&[handle atEndOfFile]&&![handle isChecksumCorrect])
 				{
-					lasterror=XADChecksumError;
-					immediatefailed=YES;
+					@try
+					{
+						if([handle hasChecksum]&&[handle atEndOfFile]&&![handle isChecksumCorrect])
+						{
+							lasterror=XADChecksumError;
+							if(error) *error=lasterror;
+							immediatefailed=YES;
+						}
+					}
+					@catch(id e)
+					{
+						lasterror=[self _parseException:e];
+						if(error) *error=lasterror;
+						immediatefailed=YES;
+					}
 				}
 
 				[self updateAttributesForDeferredDirectories];
@@ -815,24 +827,36 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	NSString *path=[destination stringByAppendingPathComponent:
 	[[self nameOfEntry:n] stringByDeletingLastPathComponent]];
 
-	XADError err;
-	XADArchive *subarchive=[[XADArchive alloc] initWithArchive:self entry:n
-	immediateExtractionTo:path error:&err];
-
-	if(!subarchive)
+	for(;;)
 	{
-		lasterror=err;
-		return NO;
+		XADError err;
+		XADArchive *subarchive=[[XADArchive alloc] initWithArchive:self entry:n
+		immediateExtractionTo:path error:&err];
+
+		if(!subarchive)
+		{
+			lasterror=err;
+			return NO;
+		}
+
+		err=[subarchive lastError];
+		if(err) lasterror=err;
+
+		BOOL res=![subarchive immediateExtractionFailed];
+
+		[subarchive release];
+
+		if(res) return YES;
+		else if(err==XADBreakError) return NO;
+		else if(delegate)
+		{
+			XADAction action=[delegate archive:self extractionOfEntryDidFail:n error:err];
+
+			if(action==XADSkipAction) return YES;
+			else if(action!=XADRetryAction) return NO;
+		}
+		else return NO;
 	}
-
-	err=[subarchive lastError];
-	if(err) lasterror=err;
-
-	BOOL res=![subarchive immediateExtractionFailed];
-
-	[subarchive release];
-
-	return res;
 }
 
 

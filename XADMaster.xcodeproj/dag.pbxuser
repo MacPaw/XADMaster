@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	0867D690FE84028FC02AAC07 /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeExecutable = 1BC8931B0ED6F283006B47FE /* XADTest3 */;
 		activeTarget = 8DC2EF4F0486A6940098B216 /* XADMaster */;
 		addToTargets = (
@@ -511,6 +511,12 @@
 			1B81E0EC1006C70F005C5B23 /* PBXTextBookmark */ = 1B81E0EC1006C70F005C5B23 /* PBXTextBookmark */;
 			1B81E0ED1006C70F005C5B23 /* PBXTextBookmark */ = 1B81E0ED1006C70F005C5B23 /* PBXTextBookmark */;
 			1B81E0EE1006C70F005C5B23 /* PBXTextBookmark */ = 1B81E0EE1006C70F005C5B23 /* PBXTextBookmark */;
+			1B81E1281006E5C7005C5B23 /* PBXTextBookmark */ = 1B81E1281006E5C7005C5B23 /* PBXTextBookmark */;
+			1B81E1291006E5C7005C5B23 /* PBXTextBookmark */ = 1B81E1291006E5C7005C5B23 /* PBXTextBookmark */;
+			1B81E12A1006E5C7005C5B23 /* PBXTextBookmark */ = 1B81E12A1006E5C7005C5B23 /* PBXTextBookmark */;
+			1B81E12B1006E5C7005C5B23 /* PBXTextBookmark */ = 1B81E12B1006E5C7005C5B23 /* PBXTextBookmark */;
+			1B81E12C1006E5C7005C5B23 /* PBXTextBookmark */ = 1B81E12C1006E5C7005C5B23 /* PBXTextBookmark */;
+			1B81E12D1006E5C7005C5B23 /* PBXTextBookmark */ = 1B81E12D1006E5C7005C5B23 /* PBXTextBookmark */;
 			1B880C350F09A63A0061CCBE = 1B880C350F09A63A0061CCBE /* PBXTextBookmark */;
 			1B880C390F09A63A0061CCBE = 1B880C390F09A63A0061CCBE /* PBXTextBookmark */;
 			1B880D2E0F0ABFF20061CCBE = 1B880D2E0F0ABFF20061CCBE /* PBXTextBookmark */;
@@ -1593,9 +1599,9 @@
 	};
 	1B06D5A70DDA667A00D9C000 /* XADRARParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1068, 12198}}";
-			sepNavSelRange = "{3647, 0}";
-			sepNavVisRange = "{3160, 695}";
+			sepNavIntBoundsRect = "{{0, 0}, {1068, 12236}}";
+			sepNavSelRange = "{10238, 0}";
+			sepNavVisRange = "{9985, 408}";
 		};
 	};
 	1B06D5AA0DDA668500D9C000 /* XADStuffItParser.h */ = {
@@ -1622,9 +1628,9 @@
 	};
 	1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {804, 17803}}";
-			sepNavSelRange = "{9481, 0}";
-			sepNavVisRange = "{8768, 1231}";
+			sepNavIntBoundsRect = "{{0, 0}, {1028, 17860}}";
+			sepNavSelRange = "{1493, 0}";
+			sepNavVisRange = "{1338, 998}";
 			sepNavWindowFrame = "{{130, 60}, {1038, 769}}";
 		};
 	};
@@ -4610,9 +4616,9 @@
 	};
 	1B69137C0F4CB46600A415E0 /* XADNSISParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {929, 3887}}";
-			sepNavSelRange = "{1813, 107}";
-			sepNavVisRange = "{1528, 591}";
+			sepNavIntBoundsRect = "{{0, 0}, {1004, 3686}}";
+			sepNavSelRange = "{3005, 5}";
+			sepNavVisRange = "{2136, 1089}";
 		};
 	};
 	1B69137F0F4CB53000A415E0 /* PBXTextBookmark */ = {
@@ -5920,6 +5926,63 @@
 		rType = 0;
 		vrLen = 695;
 		vrLoc = 3160;
+	};
+	1B81E1281006E5C7005C5B23 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
+		name = "XADRARParser.m: 118";
+		rLen = 0;
+		rLoc = 3230;
+		rType = 0;
+		vrLen = 695;
+		vrLoc = 3160;
+	};
+	1B81E1291006E5C7005C5B23 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
+		name = "XAD7ZipParser.m: 55";
+		rLen = 0;
+		rLoc = 1493;
+		rType = 0;
+		vrLen = 998;
+		vrLoc = 1338;
+	};
+	1B81E12A1006E5C7005C5B23 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B69137C0F4CB46600A415E0 /* XADNSISParser.m */;
+		rLen = 5;
+		rLoc = 3005;
+		rType = 0;
+	};
+	1B81E12B1006E5C7005C5B23 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
+		name = "XADRARParser.m: 118";
+		rLen = 0;
+		rLoc = 3230;
+		rType = 0;
+		vrLen = 695;
+		vrLoc = 3160;
+	};
+	1B81E12C1006E5C7005C5B23 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */;
+		name = "XAD7ZipParser.m: 55";
+		rLen = 0;
+		rLoc = 1493;
+		rType = 0;
+		vrLen = 998;
+		vrLoc = 1338;
+	};
+	1B81E12D1006E5C7005C5B23 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B69137C0F4CB46600A415E0 /* XADNSISParser.m */;
+		name = "XADNSISParser.m: 110";
+		rLen = 5;
+		rLoc = 3005;
+		rType = 0;
+		vrLen = 1089;
+		vrLoc = 2136;
 	};
 	1B880C250F09A23B0061CCBE /* XADStuffItXBlockHandle.h */ = {
 		uiCtxt = {

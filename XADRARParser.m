@@ -125,9 +125,17 @@ static int TestSignature(const uint8_t *ptr)
 		// TODO: handle old RARs.
 	}
 
-	RARBlock block=[self readArchiveHeader];
-
+	archiveflags=0;
 	lastcompressed=nil;
+
+	RARBlock block;
+	for(;;)
+	{
+		block=[self readBlockHeaderLevel2];
+		if(IsZeroBlock(block)) [XADException raiseIllegalDataException];
+		if(block.type==0x74) break;
+		[self skipBlock:block];
+	}
 
 	while(!IsZeroBlock(block))
 	{
@@ -135,47 +143,6 @@ static int TestSignature(const uint8_t *ptr)
 		block=[self readFileHeaderWithBlock:block];
 		//[pool release];
 	}
-}
-
--(RARBlock)readArchiveHeader
-{
-	CSHandle *fh=[self handle];
-	RARBlock block;
-
-	archiveflags=0;
-
-	for(;;)
-	{
-		block=[self readBlockHeader];
-
-		if(block.type==0x73) // archive header
-		{
-			archiveflags=block.flags;
-
-			[fh skipBytes:6]; // Skip signature stuff
-
-			if(block.flags&MHD_ENCRYPTVER)
-			{
-				encryptversion=[fh readUInt8];
-			}
-			else encryptversion=0; // ?
-
-			if(block.flags&MHD_COMMENT)
-			{
-				RARBlock commentblock=[self readBlockHeader];
-				[self readCommentBlock:commentblock];
-			}
-		}
-		else if(block.type==0x7a) // newsub header
-		{
-		}
-		else if(block.type==0x74) break; // file header
-		else if(IsZeroBlock(block)) [XADException raiseIllegalDataException];
-
-		[self skipBlock:block];
-	}
-
-	return block;
 }
 
 -(RARBlock)readFileHeaderWithBlock:(RARBlock)block
@@ -218,7 +185,7 @@ static int TestSignature(const uint8_t *ptr)
 	{
 		[self skipBlock:block];
 
-		block=[self readBlockHeader];
+		block=[self readBlockHeaderLevel2];
 		if(IsZeroBlock(block)) break;
 
 		fh=block.fh;
@@ -245,7 +212,7 @@ static int TestSignature(const uint8_t *ptr)
 			if(![namedata isEqual:currnamedata])
 			{ // Name doesn't match, skip back to header and give up.
 				[fh seekToFileOffset:block.start];
-				block=[self readBlockHeader];
+				block=[self readBlockHeaderLevel2];
 				partial=YES;
 				break;
 			}
@@ -363,7 +330,7 @@ static int TestSignature(const uint8_t *ptr)
 	for(;;)
 	{
 		[self skipBlock:block];
-		block=[self readBlockHeader];
+		block=[self readBlockHeaderLevel2];
 		if(IsZeroBlock(block)) return ZeroBlock;
 
 		if(block.type==0x74) return block;
@@ -372,7 +339,54 @@ static int TestSignature(const uint8_t *ptr)
 
 
 
--(RARBlock)readBlockHeader
+-(RARBlock)readBlockHeaderLevel2
+{
+	for(;;)
+	{
+		RARBlock block=[self readBlockHeaderLevel1];
+
+		if(block.type==0x72) // file marker header
+		{
+		}
+		else if(block.type==0x73) // archive header
+		{
+			CSHandle *fh=block.fh;
+
+			archiveflags=block.flags;
+
+			[fh skipBytes:6]; // Skip signature stuff
+
+			if(block.flags&MHD_ENCRYPTVER)
+			{
+				encryptversion=[fh readUInt8];
+			}
+			else encryptversion=0; // ?
+
+			if(block.flags&MHD_COMMENT)
+			{
+				RARBlock commentblock=[self readBlockHeaderLevel1];
+				[self readCommentBlock:commentblock];
+			}
+		}
+		//else if(block.type==0x7a) // newsub header
+		//{
+		//}
+		else if(block.type==0x7b) // end header
+		{
+			archiveflags=0;
+		}
+		else
+		{
+			return block;
+		}
+
+		[self skipBlock:block];
+	}
+}
+
+
+
+-(RARBlock)readBlockHeaderLevel1
 {
 	CSHandle *fh=[self handle];
 
@@ -414,6 +428,7 @@ static int TestSignature(const uint8_t *ptr)
 
 		if((~crc&0xffff)!=block.crc)
 		{
+NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
 			if(archiveflags&MHD_PASSWORD) [XADException raisePasswordException];
 			else [XADException raiseIllegalDataException];
 		}
@@ -427,7 +442,7 @@ static int TestSignature(const uint8_t *ptr)
 	if(archiveflags&MHD_PASSWORD) block.datastart=block.start+((block.headersize+15)&~15)+8;
 	else block.datastart=block.start+block.headersize;
 
-	//NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
+	NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
 
 	return block;
 }

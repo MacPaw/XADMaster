@@ -22,11 +22,12 @@ typedef struct RARBlock
 +(BOOL)isFirstVolume:(NSString *)filename;
 
 -(void)parse;
--(RARBlock)readArchiveHeader;
 -(RARBlock)readFileHeaderWithBlock:(RARBlock)block;
 -(RARBlock)findNextFileHeaderAfterBlock:(RARBlock)block;
 
--(RARBlock)readBlockHeader;
+-(RARBlock)readBlockHeaderLevel2;
+
+-(RARBlock)readBlockHeaderLevel1;
 -(void)skipBlock:(RARBlock)block;
 -(CSHandle *)dataHandleFromSkipOffset:(off_t)offs length:(off_t)length
 encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt;

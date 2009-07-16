@@ -428,7 +428,6 @@ static int TestSignature(const uint8_t *ptr)
 
 		if((~crc&0xffff)!=block.crc)
 		{
-NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
 			if(archiveflags&MHD_PASSWORD) [XADException raisePasswordException];
 			else [XADException raiseIllegalDataException];
 		}
@@ -442,7 +441,7 @@ NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,bloc
 	if(archiveflags&MHD_PASSWORD) block.datastart=block.start+((block.headersize+15)&~15)+8;
 	else block.datastart=block.start+block.headersize;
 
-	NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
+	//NSLog(@"block:%x flags:%x headsize:%d datasize:%qu ",block.type,block.flags,block.headersize,block.datasize);
 
 	return block;
 }

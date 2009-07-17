@@ -154,7 +154,7 @@ static uint64_t ParseInt(const uint8_t *buffer,int size,int type,int offset)
 	}
 
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADStringWithData:namedata],XADFileNameKey,
+		[self XADPathWithData:namedata separators:XADUnixPathSeparator],XADFileNameKey,
 		[NSNumber numberWithLongLong:[fh offsetInFile]],XADDataOffsetKey,
 		[NSNumber numberWithBool:YES],XADIsArchiveKey,
 	nil];

@@ -1,7 +1,7 @@
 #import "XADLZSSHandle.h"
 #import "XADPrefixCode.h"
 
-@interface XADLHAStaticHandle:XADLZSSHandle
+@interface XADLZHStaticHandle:XADLZSSHandle
 {
 	XADPrefixCode *literalcode,*distancecode;
 	int blocksize,blockpos;

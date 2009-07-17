@@ -1,7 +1,7 @@
-#import "XADLHAStaticHandle.h"
+#import "XADLZHStaticHandle.h"
 
 
-@implementation XADLHAStaticHandle
+@implementation XADLZHStaticHandle
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length windowBits:(int)bits
 {

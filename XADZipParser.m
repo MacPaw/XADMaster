@@ -130,6 +130,7 @@
 			int localextralength=[fh readUInt16LE];
 
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+				[NSNumber numberWithInt:system],@"ZipOS",
 				[NSNumber numberWithInt:extractversion],@"ZipExtractVersion",
 				[NSNumber numberWithInt:flags],@"ZipFlags",
 				[NSNumber numberWithInt:compressionmethod],@"ZipCompressionMethod",
@@ -142,6 +143,32 @@
 				[NSNumber numberWithUnsignedLong:compsize],XADDataLengthKey,
 			nil];
 			if(flags&0x01) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+
+			NSString *systemname=nil;
+			switch(system)
+			{
+				case 0: systemname=@"MS-DOS"; break;
+				case 1: systemname=@"Amiga"; break;
+				case 2: systemname=@"OpenVMS"; break;
+				case 3: systemname=@"Unix"; break;
+				case 4: systemname=@"VM/CMS"; break;
+				case 5: systemname=@"Atari ST"; break;
+				case 6: systemname=@"OS/2 H.P.F.S."; break;
+				case 7: systemname=@"Macintosh"; break;
+				case 8: systemname=@"Z-System"; break;
+				case 9: systemname=@"CP/M"; break;
+				case 10: systemname=@"Windows NTFS"; break;
+				case 11: systemname=@"MVS (OS/390 - Z/OS)"; break;
+				case 12: systemname=@"VSE"; break;
+				case 13: systemname=@"Acorn Risc"; break;
+				case 14: systemname=@"VFAT"; break;
+				case 15: systemname=@"alternate MVS"; break;
+				case 16: systemname=@"BeOS"; break;
+				case 17: systemname=@"Tandem"; break;
+				case 18: systemname=@"OS/400"; break;
+				case 19: systemname=@"OS X (Darwin)"; break;
+			}
+			if(systemname) [dict setObject:[self XADStringWithString:systemname] forKey:@"ZipOSName"];
 
 			NSString *compressionname=nil;
 			switch(compressionmethod)

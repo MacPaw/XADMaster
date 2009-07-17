@@ -1,7 +1,7 @@
-#import "XADLHADynamicHandle.h"
+#import "XADLZHDynamicHandle.h"
 #import "XADException.h"
 
-@implementation XADLHADynamicHandle
+@implementation XADLZHDynamicHandle
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
@@ -63,7 +63,7 @@
 
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos
 {
-	XADLHADynamicNode *node=&nodestorage[0];
+	XADLZHDynamicNode *node=&nodestorage[0];
 	while(node->leftchild||node->rightchild)
 	{
 		if(CSInputNextBit(input)) node=node->leftchild;
@@ -88,7 +88,7 @@
 	}
 }
 
--(void)updateNode:(XADLHADynamicNode *)node
+-(void)updateNode:(XADLZHDynamicNode *)node
 {
 	if(nodestorage[0].freq==0x8000) [self reconstructTree];
 
@@ -101,9 +101,9 @@
 	}
 }
 
--(void)rearrangeNode:(XADLHADynamicNode *)node
+-(void)rearrangeNode:(XADLZHDynamicNode *)node
 {
-	XADLHADynamicNode *p=node;
+	XADLZHDynamicNode *p=node;
 
 	int p_index=p->index;
 	int q_index=p->index;
@@ -112,10 +112,10 @@
 	if(q_index<p_index)
 	{
 		// Swap the nodes p and q
-		XADLHADynamicNode *q=nodes[q_index];
+		XADLZHDynamicNode *q=nodes[q_index];
 
-		XADLHADynamicNode *new_q_parent=p->parent;
-		XADLHADynamicNode *new_p_parent=q->parent;
+		XADLZHDynamicNode *new_q_parent=p->parent;
+		XADLZHDynamicNode *new_p_parent=q->parent;
 		BOOL p_is_rightchild=(p->parent->rightchild==p);
 		BOOL q_is_rightchild=(q->parent->rightchild==q);
 
@@ -141,13 +141,13 @@
 	int numleaves=314;
 	int numnodes=numleaves*2-1;
 
-	XADLHADynamicNode *leafs[numleaves];
+	XADLZHDynamicNode *leafs[numleaves];
 	int n=0;
 	for(int i=0;i<numnodes;i++)
 	{
 		if(!nodes[i]->leftchild&&!nodes[i]->rightchild)
 		{
-			XADLHADynamicNode *leaf=nodes[i];
+			XADLZHDynamicNode *leaf=nodes[i];
 			leaf->freq=(leaf->freq+1)/2;
 			leafs[n++]=leaf;
 		}
@@ -168,7 +168,7 @@
 			leaf_index--;
 		}
 
-		XADLHADynamicNode *branch=&nodestorage[branch_index--];
+		XADLZHDynamicNode *branch=&nodestorage[branch_index--];
 		branch->leftchild=nodes[pair_index];
 		branch->rightchild=nodes[pair_index+1];
 		branch->leftchild->parent=branch;

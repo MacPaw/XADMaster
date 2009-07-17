@@ -1,18 +1,18 @@
 #import "XADLZSSHandle.h"
 #import "XADPrefixCode.h"
 
-typedef struct XADLHADynamicNode XADLHADynamicNode;
+typedef struct XADLZHDynamicNode XADLZHDynamicNode;
 
-struct XADLHADynamicNode
+struct XADLZHDynamicNode
 {
-	XADLHADynamicNode *parent,*leftchild,*rightchild;
+	XADLZHDynamicNode *parent,*leftchild,*rightchild;
 	int index,freq,value;
 };
 
-@interface XADLHADynamicHandle:XADLZSSHandle
+@interface XADLZHDynamicHandle:XADLZSSHandle
 {
 	XADPrefixCode *distancecode;
-	XADLHADynamicNode *nodes[314*2-1],nodestorage[314*2-1];
+	XADLZHDynamicNode *nodes[314*2-1],nodestorage[314*2-1];
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
@@ -21,8 +21,8 @@ struct XADLHADynamicNode
 -(void)resetLZSSHandle;
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos;
 
--(void)updateNode:(XADLHADynamicNode *)node;
--(void)rearrangeNode:(XADLHADynamicNode *)node;
+-(void)updateNode:(XADLZHDynamicNode *)node;
+-(void)rearrangeNode:(XADLZHDynamicNode *)node;
 -(void)reconstructTree;
 
 @end

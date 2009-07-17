@@ -24,8 +24,9 @@
 #import "XADCpioParser.h"
 #import "XADXARParser.h"
 #import "XADRPMParser.h"
-#import "XADLHAParser.h"
 #import "XADPowerPackerParser.h"
+#import "XADLZHParser.h"
+#import "XADARJParser.h"
 #import "XADALZipParser.h"
 #import "XADNSISParser.h"
 #import "XADLibXADParser.h"
@@ -119,7 +120,7 @@ static int maxheader=0;
 		[XADCompressParser class],
 		[XADRPMParser class],
 		[XADALZipParser class],
-		[XADLHAParser class],
+		[XADLZHParser class],
 		[XADPowerPackerParser class],
 
 		// Detectors that require lots of work
@@ -130,6 +131,7 @@ static int maxheader=0;
 		[XADNSISParser class],
 		[XADGzipSFXParser class],
 		[XADCompactProParser class],
+		[XADARJParser class],
 
 		// Over-eager detectors
 		[XADLZMAAloneParser class],

@@ -1,12 +1,12 @@
-#import "XADLHAParser.h"
-#import "XADLHAStaticHandle.h"
-#import "XADLHADynamicHandle.h"
+#import "XADLZHParser.h"
+#import "XADLZHStaticHandle.h"
+#import "XADLZHDynamicHandle.h"
 #import "XADLArcHandles.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
 
-@implementation XADLHAParser
+@implementation XADLZHParser
 
 +(int)requiredHeaderSize { return 7; }
 
@@ -106,7 +106,6 @@
 			[dict setObject:[NSNumber numberWithInt:crc] forKey:@"LHACRC16"];
 
 			os=[fh readUInt8];
-			[dict setObject:[NSNumber numberWithInt:os] forKey:@"LHAOS"];
 
 			for(;;)
 			{
@@ -125,7 +124,6 @@
 			[dict setObject:[NSNumber numberWithInt:crc] forKey:@"LHACRC16"];
 
 			os=[fh readUInt8];
-			[dict setObject:[NSNumber numberWithInt:os] forKey:@"LHAOS"];
 
 			headersize=[fh readUInt32LE];
 
@@ -137,6 +135,33 @@
 			}
 		}
 		else [XADException raiseIllegalDataException];
+
+		if(level==1||level==2||level==3)
+		{
+			[dict setObject:[NSNumber numberWithInt:os] forKey:@"LHAOS"];
+
+			NSString *osname=nil;
+			switch(os)
+			{
+				case 'M': osname=@"MS-DOS"; break;
+				case '2': osname=@"OS/2"; break;
+				case '9': osname=@"OS9"; break;
+				case 'K': osname=@"OS/68K"; break;
+				case '3': osname=@"OS/386"; break;
+				case 'H': osname=@"HUMAN"; break;
+				case 'U': osname=@"Unix"; break;
+				case 'C': osname=@"CP/M"; break;
+				case 'F': osname=@"FLEX"; break;
+				case 'm': osname=@"Mac OS"; break;
+				case 'w': osname=@"Windows 95, 98"; break;
+				case 'W': osname=@"Windows NT"; break;
+				case 'R': osname=@"Runser"; break;
+				case 'T': osname=@"TownsOS"; break;
+				case 'X': osname=@"XOSK"; break;
+				//case '': methodname=@""; break;
+			}
+			if(osname) [dict setObject:[self XADStringWithString:osname] forKey:@"LHAOSName"];
+		}
 
 		[dict setValue:[NSNumber numberWithUnsignedInt:compsize] forKey:XADCompressedSizeKey];
 		[dict setValue:[NSNumber numberWithUnsignedInt:compsize] forKey:XADDataLengthKey];
@@ -269,23 +294,23 @@
 	}
 	else if([method isEqual:@"-lh1-"])
 	{
-		handle=[[[XADLHADynamicHandle alloc] initWithHandle:handle length:size] autorelease];
+		handle=[[[XADLZHDynamicHandle alloc] initWithHandle:handle length:size] autorelease];
 	}
 	else if([method isEqual:@"-lh4-"])
 	{
-		handle=[[[XADLHAStaticHandle alloc] initWithHandle:handle length:size windowBits:12] autorelease];
+		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:12] autorelease];
 	}
 	else if([method isEqual:@"-lh5-"])
 	{
-		handle=[[[XADLHAStaticHandle alloc] initWithHandle:handle length:size windowBits:13] autorelease];
+		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:13] autorelease];
 	}
 	else if([method isEqual:@"-lh6-"])
 	{
-		handle=[[[XADLHAStaticHandle alloc] initWithHandle:handle length:size windowBits:15] autorelease];
+		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:15] autorelease];
 	}
 	else if([method isEqual:@"-lh7-"])
 	{
-		handle=[[[XADLHAStaticHandle alloc] initWithHandle:handle length:size windowBits:16] autorelease];
+		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:16] autorelease];
 	}
 	else if([method isEqual:@"-lzs-"])
 	{
@@ -309,6 +334,6 @@
 	return handle;
 }
 
--(NSString *)formatName { return @"LHA"; }
+-(NSString *)formatName { return @"LZH"; }
 
 @end

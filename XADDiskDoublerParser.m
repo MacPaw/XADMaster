@@ -3,6 +3,7 @@
 #import "XADCompactProRLEHandle.h"
 #import "XADCompactProLZHHandle.h"
 #import "XADStuffItHuffmanHandle.h"
+#import "XADXORHandle.h"
 #import "XADCRCHandle.h"
 #import "XADChecksumHandle.h"
 #import "NSDateXAD.h"
@@ -363,7 +364,8 @@
 			int flags=[handle readUInt8]^xor;
 
 			handle=[[[XADCompressHandle alloc] initWithHandle:handle length:size flags:flags] autorelease];
-			if(xor) handle=[[[XADDiskDoublerXORHandle alloc] initWithHandle:handle length:size] autorelease];
+			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
+			password:[NSData dataWithBytes:"Z" length:1]] autorelease];
 
 			if(checksum)
 			{
@@ -424,10 +426,4 @@
 @end
 
 
-
-@implementation XADDiskDoublerXORHandle:CSByteStreamHandle
-
--(uint8_t)produceByteAtOffset:(off_t)pos { return CSInputNextByte(input)^0x5a; }
-
-@end
 

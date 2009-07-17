@@ -181,7 +181,7 @@ static int TestSignature(const uint8_t *ptr)
 	BOOL last=(block.flags&LHD_SPLIT_AFTER)?NO:YES;
 	BOOL partial=NO;
 
-	while([self shouldKeepParsing])
+	for(;;)
 	{
 		[self skipBlock:block];
 
@@ -251,6 +251,16 @@ static int TestSignature(const uint8_t *ptr)
 
 	if(flags&LHD_PASSWORD) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 	if((flags&LHD_WINDOWMASK)==LHD_DIRECTORY) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+
+	NSString *osname=nil;
+	switch(os)
+	{
+		case 0: osname=@"MS-DOS"; break;
+		case 1: osname=@"OS/2"; break;
+		case 2: osname=@"Win32"; break;
+		case 3: osname=@"Unix"; break;
+	}
+	if(osname) [dict setObject:[self XADStringWithString:osname] forKey:@"RAROSName"];
 
 	switch(os)
 	{

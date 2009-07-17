@@ -274,6 +274,8 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 		parsersolidobj=nil;
 		firstsoliddict=prevsoliddict=nil;
+
+		shouldstop=NO;
 	}
 	return self;
 }
@@ -375,7 +377,10 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 -(BOOL)shouldKeepParsing
 {
 	if(!delegate) return YES;
-	return ![delegate archiveParsingShouldStop:self];
+	if(shouldstop) return NO;
+
+	shouldstop=[delegate archiveParsingShouldStop:self];
+	return !shouldstop;
 }
 
 

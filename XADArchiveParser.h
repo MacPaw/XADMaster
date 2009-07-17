@@ -73,6 +73,8 @@ extern NSString *XADVolumesKey;
 	NSMutableDictionary *firstsoliddict,*prevsoliddict;
 	id currsolidobj;
 	CSHandle *currsolidhandle;
+
+	BOOL shouldstop;
 }
 
 +(void)initialize;

@@ -137,7 +137,7 @@ static int TestSignature(const uint8_t *ptr)
 		[self skipBlock:block];
 	}
 
-	while(!IsZeroBlock(block))
+	while(!IsZeroBlock(block)&&[self shouldKeepParsing])
 	{
 		//NSAutoreleasePool *pool=[NSAutoreleasePool new];
 		block=[self readFileHeaderWithBlock:block];

@@ -59,7 +59,7 @@ extern NSString *XADFinderFlags;
      immediateExtractionTo:(NSString *)destination error:(XADError *)error;
 -(void)dealloc;
 
--(void)_parseWithErrorPointer:(XADError *)error;
+-(BOOL)_parseWithErrorPointer:(XADError *)error;
 
 -(NSString *)filename;
 -(NSArray *)allFilenames;

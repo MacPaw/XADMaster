@@ -83,8 +83,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		parser=[[XADArchiveParser archiveParserForPath:file] retain];
 		if(parser)
 		{
-			[self _parseWithErrorPointer:error];
-			return self;
+			if([self _parseWithErrorPointer:error]) return self;
 		}
 		else if(error) *error=XADDataFormatError;
 
@@ -109,8 +108,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		parser=[[XADArchiveParser archiveParserForHandle:[CSMemoryHandle memoryHandleForReadingData:data] name:@""] retain];
 		if(!parser)
 		{
-			[self _parseWithErrorPointer:error];
-			return self;
+			if([self _parseWithErrorPointer:error]) return self;
 		}
 		else if(error) *error=XADDataFormatError;
 
@@ -138,8 +136,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 			parser=[[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]] retain];
 			if(parser)
 			{
-				[self _parseWithErrorPointer:error];
-				return self;
+				if([self _parseWithErrorPointer:error]) return self;
 			}
 			else if(error) *error=XADDataFormatError;
 		}
@@ -167,30 +164,31 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 			parser=[[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]] retain];
 			if(parser)
 			{
-				[self _parseWithErrorPointer:error];
-
-				if(!immediatefailed)
+				if([self _parseWithErrorPointer:error])
 				{
-					@try
+					if(!immediatefailed)
 					{
-						if([handle hasChecksum]&&[handle atEndOfFile]&&![handle isChecksumCorrect])
+						@try
 						{
-							lasterror=XADChecksumError;
+							if([handle hasChecksum]&&[handle atEndOfFile]&&![handle isChecksumCorrect])
+							{
+								lasterror=XADChecksumError;
+								if(error) *error=lasterror;
+								immediatefailed=YES;
+							}
+						}
+						@catch(id e)
+						{
+							lasterror=[self _parseException:e];
 							if(error) *error=lasterror;
 							immediatefailed=YES;
 						}
 					}
-					@catch(id e)
-					{
-						lasterror=[self _parseException:e];
-						if(error) *error=lasterror;
-						immediatefailed=YES;
-					}
-				}
 
-				[self updateAttributesForDeferredDirectories];
-				immediatedestination=nil;
-				return self;
+					[self updateAttributesForDeferredDirectories];
+					immediatedestination=nil;
+					return self;
+				}
 			}
 			else if(error) *error=XADDataFormatError;
 		}
@@ -216,7 +214,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 
 
--(void)_parseWithErrorPointer:(XADError *)error
+-(BOOL)_parseWithErrorPointer:(XADError *)error
 {
 	[parser setDelegate:self];
 
@@ -233,6 +231,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 	[namedict release];
 	namedict=nil;
+
+	return lasterror==XADNoError||[dataentries count]!=0;
 }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict

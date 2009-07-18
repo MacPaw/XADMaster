@@ -29,6 +29,10 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 {
 	if(!xmb) return NO;
 
+		// Kludge to recognize ADF disk images, since the filesystem parsers don't provide recognition functions
+	NSString *ext=[[name pathExtension] lowercaseString];
+	if([ext isEqual:@"adf"]) return YES;
+
 	struct XADInHookData indata;
 	indata.fh=handle;
 	indata.name=[name UTF8String];
@@ -83,7 +87,8 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 -(void)parse
 {
 	addonbuild=YES;
-	numadded=0;
+	numfilesadded=0;
+	numdisksadded=0;
 
 	struct TagItem tags[]={
 		XAD_INHOOK,(xadSize)(uintptr_t)&inhook,
@@ -91,12 +96,18 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	TAG_DONE};
 
 	int err=xadGetInfoA(xmb,archive,tags);
-	if(!err&&archive->xaip_ArchiveInfo.xai_DiskInfo)
+/*	if(!err&&archive->xaip_ArchiveInfo.xai_DiskInfo)
 	{
 		xadFreeInfo(xmb,archive);
+		[[self handle] seekToFileOffset:0];
 		err=xadGetDiskInfo(xmb,archive,XAD_INDISKARCHIVE,tags,TAG_DONE);
 	}
-	else if(err==XADERR_FILETYPE) err=xadGetDiskInfoA(xmb,archive,tags);
+	else if(err==XADERR_FILETYPE)
+*/
+	if(err==XADERR_FILETYPE)
+	{
+		err=xadGetDiskInfoA(xmb,archive,tags);
+	}
 
 	if(err) [XADException raiseExceptionWithXADError:err];
 
@@ -108,32 +119,58 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
 	if(!addonbuild) // encountered entries which could not be immediately added
 	{
-		struct xadFileInfo *info=archive->xaip_ArchiveInfo.xai_FileInfo;
+		struct xadFileInfo *fileinfo=archive->xaip_ArchiveInfo.xai_FileInfo;
 
-		for(int i=0;i<numadded&&info;i++) info=info->xfi_Next;
+		for(int i=0;i<numfilesadded&&fileinfo;i++) fileinfo=fileinfo->xfi_Next;
 
-		while(info&&[self shouldKeepParsing])
+		while(fileinfo&&[self shouldKeepParsing])
 		{
-			[self addEntryWithDictionary:[self dictionaryForFileInfo:info]];
-			info=info->xfi_Next;
+			[self addEntryWithDictionary:[self dictionaryForFileInfo:fileinfo]];
+			fileinfo=fileinfo->xfi_Next;
+		}
+
+		struct xadDiskInfo *diskinfo=archive->xaip_ArchiveInfo.xai_DiskInfo;
+
+		for(int i=0;i<numdisksadded&&diskinfo;i++) diskinfo=diskinfo->xdi_Next;
+
+		while(diskinfo&&[self shouldKeepParsing])
+		{
+			[self addEntryWithDictionary:[self dictionaryForDiskInfo:diskinfo]];
+			diskinfo=diskinfo->xdi_Next;
 		}
 	}
 }
 
 -(BOOL)newEntryCallback:(struct xadProgressInfo *)proginfo
 {
-	struct xadFileInfo *info=proginfo->xpi_FileInfo;
 	if(addonbuild)
 	{
-		if(!(info->xfi_Flags&XADFIF_EXTRACTONBUILD)
-		||(info->xfi_Flags&XADFIF_ENTRYMAYCHANGE))
+		struct xadFileInfo *info=proginfo->xpi_FileInfo;
+		if(info)
 		{
-			addonbuild=NO;
+			if(!(info->xfi_Flags&XADFIF_EXTRACTONBUILD)||(info->xfi_Flags&XADFIF_ENTRYMAYCHANGE))
+			{
+				addonbuild=NO;
+			}
+			else
+			{
+				[self addEntryWithDictionary:[self dictionaryForFileInfo:info]];
+				numfilesadded++;
+			}
 		}
 		else
 		{
-			[self addEntryWithDictionary:[self dictionaryForFileInfo:info]];
-			numadded++;
+			struct xadDiskInfo *info=proginfo->xpi_DiskInfo;
+
+			if(!(info->xdi_Flags&XADDIF_EXTRACTONBUILD)||(info->xdi_Flags&XADDIF_ENTRYMAYCHANGE))
+			{
+				addonbuild=NO;
+			}
+			else
+			{
+				[self addEntryWithDictionary:[self dictionaryForDiskInfo:info]];
+				numdisksadded++;
+			}
 		}
 	}
 	return [self shouldKeepParsing];
@@ -196,27 +233,69 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	return dict;
 }
 
+-(NSMutableDictionary *)dictionaryForDiskInfo:(struct xadDiskInfo *)info
+{
+	int sectors;
+	if(!(info->xdi_Flags&(XADDIF_NOCYLINDERS|XADDIF_NOCYLSECTORS)))
+	sectors=(info->xdi_HighCyl-info->xdi_LowCyl+1)*info->xdi_CylSectors;
+	else sectors=info->xdi_TotalSectors;
+
+	NSString *filename=[[self name] stringByDeletingPathExtension];
+	if(numdisksadded>0) filename=[NSString stringWithFormat:@"%@.%d.adf",filename,numdisksadded];
+	else filename=[NSString stringWithFormat:@"%@.adf",filename];
+
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		[self XADPathWithString:filename],XADFileNameKey,
+		[NSNumber numberWithUnsignedLongLong:sectors*info->xdi_SectorSize],XADFileSizeKey,
+		[NSValue valueWithPointer:info],@"LibXADDiskInfo",
+	nil];
+
+	return dict;
+}
+
 
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	struct xadFileInfo *info=[[dict objectForKey:@"LibXADFileInfo"] pointerValue];
-	const char *pass=[self encodedCStringPassword];
-
 	NSMutableData *data;
-	if(info->xfi_Flags&XADFIF_NOUNCRUNCHSIZE) data=[NSMutableData data];
-	else data=[NSMutableData dataWithCapacity:info->xfi_Size];
+	xadERROR err;
 
-	struct Hook outhook;
-	outhook.h_Entry=OutFunc;
-	outhook.h_Data=(void *)data;
+	struct xadFileInfo *info=[[dict objectForKey:@"LibXADFileInfo"] pointerValue];
+	if(info)
+	{
+		const char *pass=NULL;
+		if(info->xfi_Flags&XADFIF_CRYPTED) pass=[self encodedCStringPassword];
 
-	xadERROR err=xadFileUnArc(xmb,archive,
-		XAD_ENTRYNUMBER,info->xfi_EntryNumber,
-		XAD_OUTHOOK,(xadSize)(uintptr_t)&outhook,
-		XAD_INHOOK,(xadSize)(uintptr_t)&inhook,
-		pass?XAD_PASSWORD:TAG_IGNORE,pass,
-	TAG_DONE);
+		if(info->xfi_Flags&XADFIF_NOUNCRUNCHSIZE) data=[NSMutableData data];
+		else data=[NSMutableData dataWithCapacity:info->xfi_Size];
+
+		struct Hook outhook;
+		outhook.h_Entry=OutFunc;
+		outhook.h_Data=(void *)data;
+
+		err=xadFileUnArc(xmb,archive,
+			XAD_ENTRYNUMBER,info->xfi_EntryNumber,
+			XAD_OUTHOOK,(xadSize)(uintptr_t)&outhook,
+			XAD_INHOOK,(xadSize)(uintptr_t)&inhook,
+			pass?XAD_PASSWORD:TAG_IGNORE,pass,
+		TAG_DONE);
+	}
+	else
+	{
+		struct xadDiskInfo *info=[[dict objectForKey:@"LibXADDiskInfo"] pointerValue];
+
+		data=[NSMutableData dataWithCapacity:[[dict objectForKey:XADFileSizeKey] unsignedIntValue]];
+
+		struct Hook outhook;
+		outhook.h_Entry=OutFunc;
+		outhook.h_Data=(void *)data;
+
+		err=xadDiskUnArc(xmb,archive,
+			XAD_ENTRYNUMBER,info->xdi_EntryNumber,
+			XAD_OUTHOOK,(xadSize)(uintptr_t)&outhook,
+			XAD_INHOOK,(xadSize)(uintptr_t)&inhook,
+		TAG_DONE);
+	}
 
 	return [[[XADLibXADMemoryHandle alloc] initWithData:data
 	successfullyExtracted:err==XADERR_OK] autorelease];

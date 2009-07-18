@@ -17,7 +17,7 @@
 	} indata;
 
 	BOOL addonbuild;
-	int numadded;
+	int numfilesadded,numdisksadded;
 
 	NSMutableData *namedata;
 }
@@ -31,6 +31,7 @@
 -(void)parse;
 -(BOOL)newEntryCallback:(struct xadProgressInfo *)proginfo;
 -(NSMutableDictionary *)dictionaryForFileInfo:(struct xadFileInfo *)info;
+-(NSMutableDictionary *)dictionaryForDiskInfo:(struct xadDiskInfo *)info;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 

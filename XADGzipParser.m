@@ -100,7 +100,7 @@
 		else contentname=[name stringByDeletingPathExtension];
 
 		// TODO: set no filename flag
-		[dict setObject:[self XADPathWithString:contentname] forKey:XADFileNameKey];
+		[dict setObject:[self XADPathWithUnseparatedString:contentname] forKey:XADFileNameKey];
 
 		if([contentname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
 		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];

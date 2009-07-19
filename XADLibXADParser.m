@@ -245,7 +245,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	else filename=[NSString stringWithFormat:@"%@.adf",filename];
 
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADPathWithString:filename],XADFileNameKey,
+		[self XADPathWithUnseparatedString:filename],XADFileNameKey,
 		[NSNumber numberWithUnsignedLongLong:sectors*info->xdi_SectorSize],XADFileSizeKey,
 		[NSValue valueWithPointer:info],@"LibXADDiskInfo",
 	nil];

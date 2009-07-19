@@ -33,7 +33,7 @@
 
 	// TODO: set no filename flag
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADPathWithString:contentname],XADFileNameKey,
+		[self XADPathWithUnseparatedString:contentname],XADFileNameKey,
 		[self XADStringWithString:@"Bzip2"],XADCompressionNameKey,
 	nil];
 

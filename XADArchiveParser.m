@@ -29,6 +29,7 @@
 #import "XADARJParser.h"
 #import "XADALZipParser.h"
 #import "XADNSISParser.h"
+#import "XADNDSParser.h"
 #import "XADLibXADParser.h"
 
 #include <dirent.h>
@@ -122,6 +123,7 @@ static int maxheader=0;
 		[XADALZipParser class],
 		[XADLZHParser class],
 		[XADPowerPackerParser class],
+		[XADNDSParser class],
 
 		// Detectors that require lots of work
 		[XADWinZipSFXParser class],
@@ -577,6 +579,11 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 -(XADPath *)XADPathWithString:(NSString *)string
 {
 	return [[[XADPath alloc] initWithString:string] autorelease];
+}
+
+-(XADPath *)XADPathWithUnseparatedString:(NSString *)string
+{
+	return [[[XADPath alloc] initWithComponents:[NSArray arrayWithObject:[self XADStringWithString:string]]] autorelease];
 }
 
 -(XADPath *)XADPathWithData:(NSData *)data separators:(const char *)separators

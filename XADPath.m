@@ -305,7 +305,12 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 -(BOOL)isEqual:(id)other { return [other isKindOfClass:[XADPath class]]&&[components isEqual:((XADPath *)other)->components]; }
 
--(unsigned)hash { return [components hash]; }
+-(unsigned)hash
+{
+	int count=[components count];
+	if(!count) return 0;
+	return [[components lastObject] hash]^count;
+}
 
 -(id)copyWithZone:(NSZone *)zone { return [self retain]; } // class is immutable, so just return self
 

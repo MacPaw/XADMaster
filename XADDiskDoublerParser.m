@@ -51,7 +51,7 @@
 	CSHandle *fh=[self handle];
 	uint32_t magic=[fh readID];
 
-	if(magic==0xabcd0054) [self parseFileHeaderWithHandle:fh name:[self XADPathWithString:[self name]]];
+	if(magic==0xabcd0054) [self parseFileHeaderWithHandle:fh name:[self XADPathWithUnseparatedString:[self name]]];
 	else if(magic=='DDAR') [self parseArchive];
 	else if(magic=='DDA2') [self parseArchive2];
 }

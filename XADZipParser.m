@@ -237,7 +237,7 @@
 			}
 			else
 			{
-				[dict setObject:[self XADPathWithString:[[self name] stringByDeletingPathExtension]] forKey:XADFileNameKey];
+				[dict setObject:[self XADPathWithUnseparatedString:[[self name] stringByDeletingPathExtension]] forKey:XADFileNameKey];
 				// TODO: set no filename flag
 			}
 

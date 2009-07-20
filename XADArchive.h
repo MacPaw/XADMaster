@@ -33,7 +33,7 @@ extern NSString *XADFinderFlags;
 
 	off_t extractsize,totalsize;
 	NSString *immediatedestination;
-	BOOL immediatefailed;
+	BOOL immediatesubarchives,immediatefailed;
 	off_t immediatesize;
 	XADArchive *parentarchive;
 }
@@ -57,6 +57,8 @@ extern NSString *XADFinderFlags;
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n delegate:(id)del error:(XADError *)error;
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
      immediateExtractionTo:(NSString *)destination error:(XADError *)error;
+-(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
+     immediateExtractionTo:(NSString *)destination subArchives:(BOOL)sub error:(XADError *)error;
 -(void)dealloc;
 
 -(BOOL)_parseWithErrorPointer:(XADError *)error;

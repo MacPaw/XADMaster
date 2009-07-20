@@ -5,7 +5,7 @@
     CrunchDisk disk archiver client from Klaus Deppisch
 
     XAD library system for archive handling
-    Copyright (C) 1998 and later by Dirk Stöcker <soft@dstoecker.de>
+    Copyright (C) 1998 and later by Dirk StË†cker <soft@dstoecker.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
 */
 
 #include "xadClient.h"
-#include "xadXPK.c"
+//#include "xadXPK.c"
 
 #ifndef XADMASTERVERSION
   #define XADMASTERVERSION      8
@@ -267,14 +267,14 @@ XADUNARCHIVE(CrunchDisk)
             else
               err = XADERR_NOMEMORY;
             break;
-          case 2:
+          /*case 2: // XPK not supported
             if(!(err = xpkDecrunch(&s, &dat.s, ai, xadMasterBase)))
             {
               CrunchDiskResort(s, buf, cd->BlockSize, ai->xai_CurDisk->xdi_CylSectors, dat.s);
               err = xadHookAccess(XADM XADAC_WRITE, m, buf, ai);
               xadFreeObjectA(XADM s, 0);
             }
-            break;
+            break;*/
           default: err = XADERR_ILLEGALDATA; break;
           }
           break;

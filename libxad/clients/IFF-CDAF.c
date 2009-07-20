@@ -5,7 +5,7 @@
     IFF-CDAF format archivers (XpkArchive and Shrink)
 
     XAD library system for archive handling
-    Copyright (C) 1998 and later by Dirk Stöcker <soft@dstoecker.de>
+    Copyright (C) 1998 and later by Dirk StË†cker <soft@dstoecker.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -802,6 +802,10 @@ XADCLIENT(Shrink) {
   NULL
 };
 
+#undef XADNEXTCLIENT
+#define XADNEXTCLIENT XADNEXTCLIENTNAME(Shrink)
+
+/* // Uses XPK only - not supported
 XADFIRSTCLIENT(XPKArchive) {
   (struct xadClient *) &Shrink_Client,
   XADCLIENT_VERSION,
@@ -820,5 +824,6 @@ XADFIRSTCLIENT(XPKArchive) {
 
 #undef XADNEXTCLIENT
 #define XADNEXTCLIENT XADNEXTCLIENTNAME(XPKArchive)
+*/
 
 #endif /* XADMASTER_IFF_CDAF_C */

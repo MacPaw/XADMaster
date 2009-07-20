@@ -362,7 +362,6 @@
 		1B06D5510DDA623800D9C000 /* hook_fh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hook_fh.c; sourceTree = "<group>"; };
 		1B06D5520DDA623800D9C000 /* init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = init.c; sourceTree = "<group>"; };
 		1B06D5530DDA623800D9C000 /* xadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xadClient.h; sourceTree = "<group>"; };
-		1B06D5540DDA623800D9C000 /* xadXPK.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xadXPK.c; sourceTree = "<group>"; };
 		1B06D5920DDA642900D9C000 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		1B06D5930DDA644800D9C000 /* ConvertE.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ConvertE.c; sourceTree = "<group>"; };
 		1B06D5940DDA644E00D9C000 /* SDI_compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDI_compiler.h; sourceTree = "<group>"; };
@@ -844,7 +843,6 @@
 				1B06D5510DDA623800D9C000 /* hook_fh.c */,
 				1B06D5520DDA623800D9C000 /* init.c */,
 				1B06D5530DDA623800D9C000 /* xadClient.h */,
-				1B06D5540DDA623800D9C000 /* xadXPK.c */,
 			);
 			path = unix;
 			sourceTree = "<group>";

@@ -1934,87 +1934,6 @@ XADUNARCHIVE(CompDisk)
 
 /************************************************************************************************************************/
 
-XADRECOGDATA(Compress)
-{
-  if(data[0] == 0x1F && data[1] == 0x9D)
-  {
-    if(data[2] & 0x60)          /* Unknown format */
-      return 0;
-    if((data[2] & UCOMPBIT_MASK) > UCOMPBITS)           /* Too much bits */
-      return 0;
-    return 1;   /* Now should be a correct file */
-  }
-  return 0;
-}
-
-XADGETINFO(Compress)
-{
-  xadINT32 err, namesize;
-  xadUINT8 data[3];
-  struct xadFileInfo *fi;
-
-  if(!(err = xadHookAccess(XADM XADAC_READ, 3, data, ai)))
-  {
-    if(ai->xai_InName && (namesize = strlen(ai->xai_InName)) >= 3)
-    {
-      --namesize;
-      if(ai->xai_InName[namesize-1] != '.' || (ai->xai_InName[namesize] != 'Z' &&
-      ai->xai_InName[namesize] != 'z'))
-        namesize = 0;
-    }
-    else
-      namesize = 0;
-
-    if((fi = (struct xadFileInfo *) xadAllocObject(XADM XADOBJ_FILEINFO, namesize ?
-    XAD_OBJNAMESIZE : TAG_IGNORE, namesize, TAG_DONE)))
-    {
-      if(namesize)
-        xadCopyMem(XADM ai->xai_InName, fi->xfi_FileName, namesize-1);
-      else
-      {
-        fi->xfi_FileName = xadGetDefaultName(XADM XAD_ARCHIVEINFO, ai,
-        XAD_EXTENSION, ".z", TAG_DONE);
-        fi->xfi_Flags |= XADFIF_NOFILENAME|XADFIF_XADSTRFILENAME;
-      }
-      xadConvertDates(XADM XAD_DATECURRENTTIME, 1, XAD_GETDATEXADDATE, &fi->xfi_Date, TAG_DONE);
-      fi->xfi_Size = 0;
-      fi->xfi_CrunchSize = ai->xai_InSize-3;
-      fi->xfi_Flags |= XADFIF_NOUNCRUNCHSIZE|XADFIF_SEEKDATAPOS|XADFIF_EXTRACTONBUILD;
-      fi->xfi_DataPos = 3;
-      fi->xfi_PrivateInfo = (xadPTR) (xadUINT32) data[2];
-      err = xadAddFileEntryA(XADM fi, ai, 0);
-    }
-    else
-      err = XADERR_NOMEMORY;
-  }
-  return err;
-}
-
-XADUNARCHIVE(Compress)
-{
-  struct xadFileInfo *fi;
-  struct xadInOut *io;
-  xadINT32 err;
-
-  fi = ai->xai_CurFile;
-
-  if((io = xadIOAlloc(XADIOF_ALLOCINBUFFER|XADIOF_ALLOCOUTBUFFER|XADIOF_NOCRC32|XADIOF_NOCRC16|XADIOF_NOOUTENDERR,
-  ai, xadMasterBase)))
-  {
-    io->xio_InSize = fi->xfi_CrunchSize;
-
-    if(!(err = xadIO_Compress(io, (xadUINT8) (xadUINT32) fi->xfi_PrivateInfo)))
-      err = xadIOWriteBuf(io);
-    xadFreeObjectA(XADM io, 0);
-  }
-  else
-    err = XADERR_NOMEMORY;
-
-  return err;
-}
-
-/************************************************************************************************************************/
-
 struct LhWarpHead {
   xadUINT8 version;
   xadUINT8 revision1;
@@ -3462,24 +3381,8 @@ XADCLIENT(Arc) {
   NULL
 };
 
-XADCLIENT(Compress) {
-  (struct xadClient *)&Arc_Client,
-  XADCLIENT_VERSION,
-  XADMASTERVERSION,
-  COMPRESS_VERSION,
-  COMPRESS_REVISION,
-  3,
-  XADCF_FILEARCHIVER|XADCF_FREEFILEINFO|XADCF_FREEXADSTRINGS,
-  XADCID_COMPRESS,
-  "Compress",
-  XADRECOGDATAP(Compress),
-  XADGETINFOP(Compress),
-  XADUNARCHIVEP(Compress),
-  NULL
-};
-
 XADCLIENT(CompDisk) {
-  (struct xadClient *)&Compress_Client,
+  (struct xadClient *)&Arc_Client,
   XADCLIENT_VERSION,
   XADMASTERVERSION,
   COMPDISK_VERSION,

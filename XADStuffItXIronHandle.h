@@ -12,7 +12,7 @@
 	int countshift1,countshift2,countshift3;
 }
 
--(id)initWithHandle:(CSHandle *)handle;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
 -(void)dealloc;
 
 -(void)resetBlockStream;

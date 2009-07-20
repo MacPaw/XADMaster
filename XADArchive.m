@@ -150,10 +150,18 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
      immediateExtractionTo:(NSString *)destination error:(XADError *)error
 {
+	return [self initWithArchive:otherarchive entry:n immediateExtractionTo:destination
+	subArchives:NO error:error];
+}
+
+-(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
+     immediateExtractionTo:(NSString *)destination subArchives:(BOOL)sub error:(XADError *)error
+{
 	if(self=[self init])
 	{
 		parentarchive=[otherarchive retain];
 		immediatedestination=destination;
+		immediatesubarchives=sub;
 		delegate=otherarchive;
 
 		immediatesize=[otherarchive representativeSizeOfEntry:n];
@@ -275,8 +283,16 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 				if(immediatedestination)
 				{
-					if(![self extractEntry:n to:immediatedestination
-					deferDirectories:YES resourceFork:NO]) immediatefailed=YES;
+					if(immediatesubarchives&&[self entryIsArchive:n])
+					{
+						if(![self extractArchiveEntry:n to:immediatedestination])
+						immediatefailed=YES;
+					}
+					else
+					{
+						if(![self extractEntry:n to:immediatedestination
+						deferDirectories:YES resourceFork:NO]) immediatefailed=YES;
+					}
 				}
 
 				return;
@@ -301,8 +317,17 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 	if(immediatedestination)
 	{
-		if(![self extractEntry:[dataentries count]-1 to:immediatedestination
-		deferDirectories:YES]) immediatefailed=YES;
+		int n=[dataentries count]-1;
+		if(immediatesubarchives&&[self entryIsArchive:n])
+		{
+			if(![self extractArchiveEntry:n to:immediatedestination])
+			immediatefailed=YES;
+		}
+		else
+		{
+			if(![self extractEntry:n to:immediatedestination
+			deferDirectories:YES resourceFork:NO]) immediatefailed=YES;
+		}
 	}
 }
 
@@ -831,7 +856,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{
 		XADError err;
 		XADArchive *subarchive=[[XADArchive alloc] initWithArchive:self entry:n
-		immediateExtractionTo:path error:&err];
+		immediateExtractionTo:path subArchives:YES error:&err];
 
 		if(!subarchive)
 		{

@@ -54,8 +54,7 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/AMPK.c"
 #include "clients/CAB.c"
 #include "clients/CrunchDisk.c"
-#include "clients/DCS.c"
-//#include "clients/DiskDoubler.c"
+//#include "clients/DCS.c" // uses XPK only, not supported
 #include "clients/DMS.c"
 #include "clients/FS_Amiga.c"
 #include "clients/FS_FAT.c"
@@ -64,13 +63,13 @@ void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);      
 #include "clients/LhA.c"
 #include "clients/LhF.c"
 #include "clients/LZX.c"
-#include "clients/MDC.c"
+//#include "clients/MDC.c" // uses XPK only, not supported
 #include "clients/MXM-SimpleArc.c"
-#include "clients/PackDev.c"
-#include "clients/PackDisk.c"
-#include "clients/SuperDuper3.c"
-#include "clients/xDisk.c"
-#include "clients/xMash.c"
+//#include "clients/PackDev.c" // uses XPK only, not supported
+//#include "clients/PackDisk.c" // uses XPK only, not supported
+//#include "clients/SuperDuper3.c" // uses XPK only, not supported
+//#include "clients/xDisk.c" // uses XPK only, not supported
+//#include "clients/xMash.c" // uses XPK only, not supported
 #include "clients/Zoom.c"
 
 const struct xadClient * const RealFirstClient = XADNEXTCLIENT;

@@ -6,7 +6,7 @@
 	uint32_t *table;
 }
 
--(id)initWithHandle:(CSHandle *)handle;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
 -(void)dealloc;
 
 -(void)resetBlockStream;

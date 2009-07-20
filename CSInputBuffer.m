@@ -35,6 +35,11 @@ void CSInputFlush(CSInputBuffer *buf)
 	buf->currbit=0;
 }
 
+void CSInputSynchronizeFileOffset(CSInputBuffer *buf)
+{
+	CSInputSeekToFileOffset(buf,CSInputFileOffset(buf));
+}
+
 void CSInputSeekToFileOffset(CSInputBuffer *buf,off_t offset)
 {
 	[buf->parent seekToFileOffset:offset];

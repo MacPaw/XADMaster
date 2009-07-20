@@ -4,6 +4,7 @@
 #import "XADStuffItXCyanideHandle.h"
 #import "XADStuffItXDarkhorseHandle.h"
 #import "XADStuffItXIronHandle.h"
+#import "XADStuffItXBlendHandle.h"
 #import "XADStuffItXEnglishHandle.h"
 #import "XADDeflateHandle.h"
 #import "XADRC4Handle.h"
@@ -119,9 +120,10 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 
 		case 2: // Darkhorse
 		{
-			int windowsize=[handle readUInt8];
+			int windowsize=1<<[handle readUInt8];
+			if(windowsize<0x100000) windowsize=0x100000;
 			handle=[[[XADStuffItXDarkhorseHandle alloc] initWithHandle:handle
-			length:length windowSize:1<<windowsize] autorelease];
+			length:length windowSize:windowsize] autorelease];
 		}
 		break;
 
@@ -132,6 +134,10 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			handle=[[[XADDeflateHandle alloc] initWithHandle:handle
 			length:length variant:XADStuffItXDeflateVariant] autorelease];
 		}
+		break;
+
+		case 4: // Blend
+			handle=[[[XADStuffItXBlendHandle alloc] initWithHandle:handle length:length] autorelease];
 		break;
 
 		case 5: // No compression, obscured by RC4

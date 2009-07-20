@@ -10,7 +10,7 @@ static xadUINT8 xadIOGetFunc(struct xadInOut *io);
 
 -(id)initWithHandle:(CSHandle *)handle inputLength:(off_t)inlength outputLength:(off_t)outlength
 {
-	if(self=[super initWithData:[NSMutableData data]])
+	if(self=[super initWithData:[NSMutableData dataWithCapacity:outlength]])
 	{
 		parent=[handle retain];
 		inlen=inlength;

@@ -46,6 +46,10 @@
 		1B2F18400EE965880000DAFF /* XADPowerPackerParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F183E0EE965880000DAFF /* XADPowerPackerParser.h */; };
 		1B2F18410EE965880000DAFF /* XADPowerPackerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F183F0EE965880000DAFF /* XADPowerPackerParser.m */; };
 		1B2F18990EE9A4440000DAFF /* XADSkipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */; };
+		1B3A64B61015030700AE25A8 /* XADLZHSFXParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */; };
+		1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
+		1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */; };
+		1B3A64C910150DB600AE25A8 /* XADLZHOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */; };
 		1B3E2B550F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */; };
 		1B3E2B560F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */; };
 		1B3E2BC80F280760003EEF98 /* sitx_english.dat in Resources */ = {isa = PBXBuildFile; fileRef = 1B3E2BC70F280760003EEF98 /* sitx_english.dat */; };
@@ -405,6 +409,10 @@
 		1B2F17E80EE8B9490000DAFF /* SystemSpecific.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSpecific.h; sourceTree = "<group>"; };
 		1B2F183E0EE965880000DAFF /* XADPowerPackerParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPowerPackerParser.h; sourceTree = "<group>"; };
 		1B2F183F0EE965880000DAFF /* XADPowerPackerParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPowerPackerParser.m; sourceTree = "<group>"; };
+		1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHSFXParsers.h; sourceTree = "<group>"; };
+		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
+		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
+		1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHOldHandles.m; sourceTree = "<group>"; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
 		1B3E2BC70F280760003EEF98 /* sitx_english.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = sitx_english.dat; sourceTree = "<group>"; };
@@ -910,12 +918,16 @@
 			children = (
 				1B3E34780F3E22FC003EEF98 /* XADLZHParser.h */,
 				1B3E34790F3E22FC003EEF98 /* XADLZHParser.m */,
+				1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */,
+				1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */,
 				1B3E34EA0F3E62C7003EEF98 /* XADLZHStaticHandle.h */,
 				1B3E34EB0F3E62C7003EEF98 /* XADLZHStaticHandle.m */,
 				1B3E35D30F3F96CF003EEF98 /* XADLZHDynamicHandle.h */,
 				1B3E35D40F3F96CF003EEF98 /* XADLZHDynamicHandle.m */,
 				1B3E35D70F3F9B17003EEF98 /* XADLArcHandles.h */,
 				1B3E35D80F3F9B17003EEF98 /* XADLArcHandles.m */,
+				1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */,
+				1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */,
 			);
 			name = LZH;
 			sourceTree = "<group>";
@@ -1416,6 +1428,8 @@
 				1B95B516101119A5009FA09E /* XADXORHandle.h in Headers */,
 				1B95B5B010112815009FA09E /* XADARJFastestHandle.h in Headers */,
 				1B8A89D51012078C00C8534E /* XADNDSParser.h in Headers */,
+				1B3A64B61015030700AE25A8 /* XADLZHSFXParsers.h in Headers */,
+				1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1695,6 +1709,8 @@
 				1B95B517101119A5009FA09E /* XADXORHandle.m in Sources */,
 				1B95B5B110112815009FA09E /* XADARJFastestHandle.m in Sources */,
 				1B8A89D61012078C00C8534E /* XADNDSParser.m in Sources */,
+				1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */,
+				1B3A64C910150DB600AE25A8 /* XADLZHOldHandles.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

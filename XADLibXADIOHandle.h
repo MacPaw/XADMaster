@@ -12,7 +12,8 @@ typedef int64_t xadSignedSize;
 typedef uint64_t xadSize;
 
 typedef int xadERROR;
-
+typedef char xadSTRING;
+typedef xadSTRING *xadSTRPTR;
 typedef void *xadPTR;
 
 typedef xadUINT32 xadTag;

@@ -2,6 +2,7 @@
 #import "XADLZHStaticHandle.h"
 #import "XADLZHDynamicHandle.h"
 #import "XADLArcHandles.h"
+#import "XADLZHOldHandles.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
@@ -19,16 +20,22 @@
 
 	if(length<7) return NO;
 
-	if(bytes[2]=='-'&&bytes[3]=='l'&&bytes[4]=='h'&&bytes[6]=='-')
+	if(bytes[2]=='-'&&bytes[3]=='l'&&bytes[4]=='h'&&bytes[6]=='-') // lzh files
 	{
 		if(bytes[5]=='0'||bytes[5]=='1') return YES; // uncompressed and old
+		if(bytes[5]=='2'||bytes[5]=='3') return YES; // old experimental
 		if(bytes[5]=='4'||bytes[5]=='5'||bytes[5]=='6'||bytes[5]=='7') return YES; // new
 		if(bytes[5]=='d') return YES; // directory
 	}
 
-	if(bytes[2]=='-'&&bytes[3]=='l'&&bytes[4]=='z'&&bytes[6]=='-')
+	if(bytes[2]=='-'&&bytes[3]=='l'&&bytes[4]=='z'&&bytes[6]=='-') // larc files
 	{
 		if(bytes[5]=='0'||bytes[5]=='4'||bytes[5]=='5') return YES;
+	}
+
+	if(bytes[2]=='-'&&bytes[3]=='p'&&bytes[4]=='m'&&bytes[6]=='-') // pmarc files
+	{
+		if(bytes[5]=='0'||bytes[5]=='1'||bytes[5]=='2') return YES;
 	}
 
 	return NO;
@@ -298,6 +305,16 @@
 	{
 		handle=[[[XADLZHDynamicHandle alloc] initWithHandle:handle length:size] autorelease];
 	}
+	else if([method isEqual:@"-lh2-"])
+	{
+		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
+		handle=[[[XADLZH2Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
+	}
+	else if([method isEqual:@"-lh3-"])
+	{
+		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
+		handle=[[[XADLZH3Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
+	}
 	else if([method isEqual:@"-lh4-"])
 	{
 		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:12] autorelease];
@@ -325,6 +342,15 @@
 	else if([method isEqual:@"-lz5-"])
 	{
 		handle=[[[XADLArcLZ5Handle alloc] initWithHandle:handle length:size] autorelease];
+	}
+	else if([method isEqual:@"-pm0-"])
+	{
+		// no compression, do nothing
+	}
+	else if([method isEqual:@"-pm2-"])
+	{
+		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
+		handle=[[[XADPMArc2Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
 	}
 	else // not supported
 	{

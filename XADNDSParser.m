@@ -276,7 +276,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 
 static NSData *ConvertTiledIconToPNG(uint8_t *tiledata,uint16_t *palette)
 {
-	NSMutableData *data=[NSMutableData dataWithCapacity:100];
+	NSMutableData *data=[NSMutableData dataWithCapacity:672];
 
 	[data appendBytes:"\211PNG\r\n\032\n" length:8];
 

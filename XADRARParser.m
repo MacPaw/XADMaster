@@ -648,7 +648,7 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 
 -(NSString *)formatName
 {
-	return @"RAR (Embedded)";
+	return @"Embedded RAR";
 }
 
 @end

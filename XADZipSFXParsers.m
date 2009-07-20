@@ -21,7 +21,7 @@
 	return NO;
 }
 
--(NSString *)formatName { return @"Zip (Self-extracting)"; }
+-(NSString *)formatName { return @"Self-extracting Zip"; }
 
 @end
 

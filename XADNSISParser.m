@@ -8,9 +8,17 @@
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
+//#import "NSISOpcodes.h"
 
-static const uint8_t NSISOldSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x53,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
-static const uint8_t NSISNewSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x73,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
+
+
+// TODO: exclude uninstallers?
+static BOOL IsNewSignature(const uint8_t *ptr)
+{
+	static const uint8_t NewSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x73,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
+	if(memcmp(ptr+4,NewSignature,16)!=0) return NO;
+	return YES;
+}
 
 @implementation XADNSISParser
 
@@ -23,8 +31,7 @@ static const uint8_t NSISNewSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x
 
 	for(int offs=0;offs<length+4+16;offs+=512)
 	{
-		if(memcmp(bytes+offs+4,NSISOldSignature,16)==0) return YES;
-		if(memcmp(bytes+offs+4,NSISNewSignature,16)==0) return YES;
+		if(IsNewSignature(bytes+offs)) return YES;
 	}
 	return NO;
 }
@@ -49,30 +56,20 @@ static const uint8_t NSISNewSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x
 {
 	CSHandle *fh=[self handle];
 
-	[fh skipBytes:516];
+	[fh skipBytes:512];
 	for(;;)
 	{
-		uint8_t buf[16];
-		[fh readBytes:16 toBuffer:buf];
-		if(memcmp(buf,NSISOldSignature,16)==0) { [self parseOldFormatWithHandle:fh]; return; }
-		if(memcmp(buf,NSISNewSignature,16)==0) { [self parseNewFormatWithHandle:fh]; return; }
-		[fh skipBytes:512-16];
+		uint8_t buf[20];
+		[fh readBytes:sizeof(buf) toBuffer:buf];
+		[fh skipBytes:-(int)sizeof(buf)];
+
+		if(IsNewSignature(buf)) { [self parseNewFormatWithHandle:fh]; return; }
+		[fh skipBytes:512];
 	}
 }
 
--(void)parseOldFormatWithHandle:(CSHandle *)fh
-{
-	uint32_t headerlength=[fh readUInt32LE];
-	uint32_t archivelength=[fh readUInt32LE];
-	uint32_t somethinglength=[fh readUInt32LE];
-	uint32_t somethinglength2=[fh readUInt32LE];
 
-	fh=[CSZlibHandle zlibHandleWithHandle:fh length:headerlength];
 
-	NSData *data=[fh readDataOfLength:256];
-NSLog(@"old: %d %d %d %d %@",headerlength,archivelength,somethinglength,somethinglength2&0x7fffffff,data);
-
-}
 
 static BOOL IsLZMA(uint8_t *sig) { return sig[0]==0x5d&&sig[1]==0x00&&sig[2]==0x00&&sig[5]==0x00; }
 
@@ -112,8 +109,11 @@ NSLog(@"what2");
 	}
 }
 
+
 -(void)parseNewFormatWithHandle:(CSHandle *)fh
 {
+	[fh skipBytes:20];
+
 	uint32_t headerlength=[fh readUInt32LE];
 	uint32_t archivelength=[fh readUInt32LE];
 

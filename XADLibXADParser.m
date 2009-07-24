@@ -303,10 +303,11 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
 -(NSString *)formatName
 {
+	if(!archive->xaip_ArchiveInfo.xai_Client) return @"libxad";
+
 	NSString *format=[[[NSString alloc] initWithBytes:archive->xaip_ArchiveInfo.xai_Client->xc_ArchiverName
 	length:strlen(archive->xaip_ArchiveInfo.xai_Client->xc_ArchiverName) encoding:NSISOLatin1StringEncoding] autorelease];
-	/*if(parentarchive) return [NSString stringWithFormat:@"%@ in %@",format,[parentarchive formatName]];
-	else*/ return format;
+	return format;
 }
 
 

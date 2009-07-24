@@ -50,6 +50,11 @@
 		1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
 		1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */; };
 		1B3A64C910150DB600AE25A8 /* XADLZHOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */; };
+		1B3A650210154DCE00AE25A8 /* CSHexDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A650010154DCE00AE25A8 /* CSHexDump.h */; };
+		1B3A650310154DCE00AE25A8 /* CSHexDump.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A650110154DCE00AE25A8 /* CSHexDump.m */; };
+		1B3A66C61017865F00AE25A8 /* NSISOpcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A66C51017865F00AE25A8 /* NSISOpcodes.h */; };
+		1B3A66D71017B7E000AE25A8 /* XADOldNSISParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A66D51017B7E000AE25A8 /* XADOldNSISParser.h */; };
+		1B3A66D81017B7E000AE25A8 /* XADOldNSISParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A66D61017B7E000AE25A8 /* XADOldNSISParser.m */; };
 		1B3E2B550F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */; };
 		1B3E2B560F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */; };
 		1B3E2BC80F280760003EEF98 /* sitx_english.dat in Resources */ = {isa = PBXBuildFile; fileRef = 1B3E2BC70F280760003EEF98 /* sitx_english.dat */; };
@@ -413,6 +418,11 @@
 		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
 		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
 		1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHOldHandles.m; sourceTree = "<group>"; };
+		1B3A650010154DCE00AE25A8 /* CSHexDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSHexDump.h; sourceTree = "<group>"; };
+		1B3A650110154DCE00AE25A8 /* CSHexDump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHexDump.m; sourceTree = "<group>"; };
+		1B3A66C51017865F00AE25A8 /* NSISOpcodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSISOpcodes.h; sourceTree = "<group>"; };
+		1B3A66D51017B7E000AE25A8 /* XADOldNSISParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADOldNSISParser.h; sourceTree = "<group>"; };
+		1B3A66D61017B7E000AE25A8 /* XADOldNSISParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADOldNSISParser.m; sourceTree = "<group>"; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
 		1B3E2BC70F280760003EEF98 /* sitx_english.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = sitx_english.dat; sourceTree = "<group>"; };
@@ -913,6 +923,18 @@
 			name = Amiga;
 			sourceTree = "<group>";
 		};
+		1B3A66351016832300AE25A8 /* NSIS */ = {
+			isa = PBXGroup;
+			children = (
+				1B69137B0F4CB46600A415E0 /* XADNSISParser.h */,
+				1B69137C0F4CB46600A415E0 /* XADNSISParser.m */,
+				1B3A66D51017B7E000AE25A8 /* XADOldNSISParser.h */,
+				1B3A66D61017B7E000AE25A8 /* XADOldNSISParser.m */,
+				1B3A66C51017865F00AE25A8 /* NSISOpcodes.h */,
+			);
+			name = NSIS;
+			sourceTree = "<group>";
+		};
 		1B3E34770F3E22EB003EEF98 /* LZH */ = {
 			isa = PBXGroup;
 			children = (
@@ -1184,6 +1206,8 @@
 				1BC89C9D0EDCAA51006B47FE /* Checksums.m */,
 				1B216A730F8E8ADE001207C9 /* Progress.h */,
 				1B216A740F8E8ADE001207C9 /* Progress.m */,
+				1B3A650010154DCE00AE25A8 /* CSHexDump.h */,
+				1B3A650110154DCE00AE25A8 /* CSHexDump.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -1250,12 +1274,11 @@
 			children = (
 				1B3E34770F3E22EB003EEF98 /* LZH */,
 				1B95B42B1010D8F9009FA09E /* ARJ */,
+				1B3A66351016832300AE25A8 /* NSIS */,
 				1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */,
 				1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */,
 				1B8A89D31012078C00C8534E /* XADNDSParser.h */,
 				1B8A89D41012078C00C8534E /* XADNDSParser.m */,
-				1B69137B0F4CB46600A415E0 /* XADNSISParser.h */,
-				1B69137C0F4CB46600A415E0 /* XADNSISParser.m */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -1430,6 +1453,9 @@
 				1B8A89D51012078C00C8534E /* XADNDSParser.h in Headers */,
 				1B3A64B61015030700AE25A8 /* XADLZHSFXParsers.h in Headers */,
 				1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */,
+				1B3A650210154DCE00AE25A8 /* CSHexDump.h in Headers */,
+				1B3A66C61017865F00AE25A8 /* NSISOpcodes.h in Headers */,
+				1B3A66D71017B7E000AE25A8 /* XADOldNSISParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1711,6 +1737,8 @@
 				1B8A89D61012078C00C8534E /* XADNDSParser.m in Sources */,
 				1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */,
 				1B3A64C910150DB600AE25A8 /* XADLZHOldHandles.m in Sources */,
+				1B3A650310154DCE00AE25A8 /* CSHexDump.m in Sources */,
+				1B3A66D81017B7E000AE25A8 /* XADOldNSISParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

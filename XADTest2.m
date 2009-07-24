@@ -42,7 +42,7 @@ int main(int argc,char **argv)
 		NSString *filename=[NSString stringWithUTF8String:argv[i]];
 		XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
 
-		NSLog(@"Parsing %@",filename);
+		NSLog(@"Parsing file \"%@\" with parser \"%@\".",filename,[parser formatName]);
 
 		[parser setDelegate:[[TestDelegate new] autorelease]];
 
@@ -50,7 +50,7 @@ int main(int argc,char **argv)
 		if(pass) [parser setPassword:[NSString stringWithUTF8String:pass]];
 
 		[parser parse];
-		NSLog(@"Archive properties: %@",[parser properties]);
+		NSLog(@"Archive format: \"%@\", properties: %@",[parser formatName],[parser properties]);
 
 		[pool release];
 	}

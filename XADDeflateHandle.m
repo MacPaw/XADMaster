@@ -101,7 +101,7 @@
 	lastblock=CSInputNextBitLE(input);
 
 	int type=CSInputNextBitStringLE(input,2);
-
+NSLog(@"%d %d",lastblock,type);
 	switch(type)
 	{
 		case 0: // stored

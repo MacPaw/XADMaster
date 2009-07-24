@@ -12,7 +12,7 @@
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
 -(void)parse;
--(void)parseOldFormatWithHandle:(CSHandle *)fh;
+
 -(void)parseNewFormatWithHandle:(CSHandle *)fh;
 -(void)parseSectionsWithHandle:(CSHandle *)fh;
 -(void)parseEntriesWithHandle:(CSHandle *)fh;

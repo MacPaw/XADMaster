@@ -861,13 +861,14 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		if(!subarchive)
 		{
 			lasterror=err;
-			return NO;
+		}
+		else
+		{
+			err=[subarchive lastError];
+			if(err) lasterror=err;
 		}
 
-		err=[subarchive lastError];
-		if(err) lasterror=err;
-
-		BOOL res=![subarchive immediateExtractionFailed];
+		BOOL res=subarchive&&![subarchive immediateExtractionFailed];
 
 		[subarchive release];
 

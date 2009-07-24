@@ -34,7 +34,7 @@ NSString *CSZlibException=@"CSZlibException";
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length header:(BOOL)header name:(NSString *)descname
 {
-	if(self=[super initWithName:descname])
+	if(self=[super initWithName:descname length:length])
 	{
 		parent=[handle retain];
 		startoffs=[parent offsetInFile];
@@ -82,6 +82,8 @@ NSString *CSZlibException=@"CSZlibException";
 
 -(void)setSeekBackAtEOF:(BOOL)seekateof { seekback=seekateof; }
 
+-(void)setEndStreamAtInputEOF:(BOOL)endateof { endstreamateof=endateof; } // Hack for NSIS's broken zlib usage
+
 -(void)resetStream
 {
 	[parent seekToFileOffset:startoffs];
@@ -101,7 +103,15 @@ NSString *CSZlibException=@"CSZlibException";
 			zs.avail_in=[parent readAtMost:sizeof(inbuffer) toBuffer:inbuffer];
 			zs.next_in=(void *)inbuffer;
 
-			if(!zs.avail_in) [parent _raiseEOF];
+			if(!zs.avail_in)
+			{
+				if(endstreamateof)
+				{
+					[self endStream];
+					return num-zs.avail_out;
+				}
+				else [parent _raiseEOF];
+			}
 		}
 
 		int err=inflate(&zs,0);

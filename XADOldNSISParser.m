@@ -2,21 +2,25 @@
 #import "CSZlibHandle.h"
 #import "NSDateXAD.h"
 
+// Beware all who venture within: This is nothing but a big pile of heuristics, hacks and
+// kludges. That it works at all is nothing short of a miracle.
+
 static int IndexOfLargestEntry(const int *entries,int num);
 
-// TODO: exclude uninstallers?
 static BOOL IsOlderSignature(const uint8_t *ptr)
 {
-	static const uint8_t OlderSignature[15]={0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x53,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
-	if(memcmp(ptr+1,OlderSignature,15)!=0) return NO;
-	if((ptr[0]&0xfc)!=0xec) return NO;
-	return YES;
+	static const uint8_t OlderSignature[16]={0xec,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x53,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
+	static const uint8_t OlderSignatureCRC[16]={0xed,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x53,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
+	if(memcmp(ptr,OlderSignature,16)==0) return YES;
+	if(memcmp(ptr,OlderSignatureCRC,16)==0) return YES;
+	return NO;
 }
 
 static BOOL IsOldSignature(const uint8_t *ptr)
 {
 	static const uint8_t OldSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x53,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
 	if(memcmp(ptr+4,OldSignature,16)!=0) return NO;
+	if(CSUInt32LE(ptr)&2) return NO; // uninstaller
 	return YES;
 }
 
@@ -49,29 +53,36 @@ static BOOL IsOldSignature(const uint8_t *ptr)
 		[fh readBytes:sizeof(buf) toBuffer:buf];
 		[fh skipBytes:-(int)sizeof(buf)];
 
-		if(IsOlderSignature(buf)) { [self parseOlderFormatWithHandle:fh]; return; }
-		if(IsOldSignature(buf)) { [self parseOldFormatWithHandle:fh]; return; }
+		if(IsOlderSignature(buf)) { [self parseOlderFormat]; return; }
+		if(IsOldSignature(buf)) { [self parseOldFormat]; return; }
 		[fh skipBytes:512];
 	}
 }
 
--(void)parseOlderFormatWithHandle:(CSHandle *)fh
+-(void)parseOlderFormat
 {
-	[fh skipBytes:16];
+	CSHandle *fh=[self handle];
+
+	uint32_t signature=[fh readUInt32LE];
+	[fh skipBytes:12];
+
 	uint32_t headerlength=[fh readUInt32LE];
 	uint32_t headeroffset=[fh readUInt32LE];
 	uint32_t totallength=[fh readUInt32LE];
 
-	base=[fh offsetInFile];
-NSLog(@"%d %d",headeroffset,headerlength);
-	CSHandle *hh=[self handleForBlockAtOffset:headeroffset length:headerlength];
+	uint32_t datalength=totallength-28;
+	if(signature&1) datalength-=4;
 
-	NSData *data=[hh remainingFileContents];
-	NSLog(@"%@",data);
+	if(headerlength+headeroffset+4<totallength)
+	[self parseWithHeaderCompressedLength:headerlength uncompressedLength:headeroffset totalDataLength:datalength];
+	else
+	[self parseWithHeaderLength:headerlength offset:headeroffset totalDataLength:datalength];
 }
 
--(void)parseOldFormatWithHandle:(CSHandle *)fh
+-(void)parseOldFormat
 {
+	CSHandle *fh=[self handle];
+
 	uint32_t flags=[fh readUInt32LE];
 	[fh skipBytes:16];
 
@@ -79,16 +90,48 @@ NSLog(@"%d %d",headeroffset,headerlength);
 	uint32_t headeroffset=[fh readUInt32LE];
 	uint32_t totallength=[fh readUInt32LE];
 
-	base=[fh offsetInFile];
-
 	uint32_t datalength=totallength-32;
 	if(flags&1) datalength-=4;
+
+	[self parseWithHeaderLength:headerlength offset:headeroffset totalDataLength:datalength];
+}
+
+// Versions 1.1o to 1.2b
+-(void)parseWithHeaderCompressedLength:(uint32_t)complength uncompressedLength:(uint32_t)uncomplength
+totalDataLength:(uint32_t)datalength
+{
+	CSHandle *fh=[self handle];
+
+	base=[fh offsetInFile]+complength;
+
+	CSHandle *hh=[fh nonCopiedSubHandleOfLength:complength];
+	if(uncomplength) hh=[CSZlibHandle zlibHandleWithHandle:hh length:uncomplength];
+	NSData *header=[hh readDataOfLength:uncomplength];
+
+	NSDictionary *blocks=[self parseBlockOffsetsWithTotalSize:datalength];
+	NSDictionary *strings=[self parseStringsWithData:header maxOffsets:7];
+
+	[self parseWithHeader:header blocks:blocks strings:strings];
+}
+
+// Versions 1.2c to 1.59
+-(void)parseWithHeaderLength:(uint32_t)headerlength offset:(uint32_t)headeroffset
+totalDataLength:(uint32_t)datalength
+{
+	CSHandle *fh=[self handle];
+
+	base=[fh offsetInFile];
 
 	NSDictionary *blocks=[self parseBlockOffsetsWithTotalSize:datalength];
 	CSHandle *hh=[self handleForBlockAtOffset:headeroffset length:headerlength];
 	NSData *header=[hh readDataOfLength:headerlength];
-	NSDictionary *strings=[self parseStringsWithData:header];
+	NSDictionary *strings=[self parseStringsWithData:header maxOffsets:16];
 
+	[self parseWithHeader:header blocks:blocks strings:strings];
+}
+
+-(void)parseWithHeader:(NSData *)header blocks:(NSDictionary *)blocks strings:(NSDictionary *)strings
+{
 	const uint8_t *bytes=[header bytes];
 	int length=[header length];
 
@@ -144,7 +187,7 @@ NSLog(@"%d %d",headeroffset,headerlength);
 		phase=IndexOfLargestEntry(stride7phases,7);
 	}
 
-	NSLog(@"stride %d, opcode %d, phase %d",stride,extractopcode,phase);
+	//NSLog(@"stride %d, opcode %d, phase %d",stride,extractopcode,phase);
 
 	XADPath *dir=[self XADPath];
 
@@ -208,9 +251,6 @@ NSLog(@"%d %d",headeroffset,headerlength);
 			}
 		}
 	}
-
-//	NSData *data=[hh remainingFileContents];
-//	NSLog(@"%@",data);
 }
 
 -(NSDictionary *)parseBlockOffsetsWithTotalSize:(uint32_t)totalsize
@@ -233,7 +273,7 @@ NSLog(@"%d %d",headeroffset,headerlength);
 	return dict;
 }
 
--(NSDictionary *)parseStringsWithData:(NSData *)data
+-(NSDictionary *)parseStringsWithData:(NSData *)data maxOffsets:(int)maxnumoffsets
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
@@ -247,16 +287,12 @@ NSLog(@"%d %d",headeroffset,headerlength);
 	}
 
 	// Scan the start of the header for things that look like string table offsets.
-	// The last thing after the strings seems to be a single flag value in most or
-	// all versions, so stop after reaching this.
-	int maxnumoffsets=27;
 	uint32_t stringoffset[maxnumoffsets];
 	int numoffsets=0;
 	int maxoffset=0;
-	for(int i=0;i+4<=length && numoffsets<maxnumoffsets;i+=4)
+	for(int i=0;i+4<=length && i<maxnumoffsets*4;i+=4)
 	{
 		uint32_t val=CSUInt32LE(bytes+i);
-		if(i>40 && val==0||val==1) break;
 		if(val!=0 && val+lasttriple+3<length)
 		{
 			stringoffset[numoffsets]=val;
@@ -265,18 +301,20 @@ NSLog(@"%d %d",headeroffset,headerlength);
 		}
 	}
 
-	// Then start testing offsets trying to find one that has null bytes just before all the
-	// string first bytes found in the header.
+	// Then start testing offsets trying to find one that has null bytes just before, or at,
+	// all the string first bytes found in the header.
 	stringtable=0;
 	for(int i=lasttriple+2;i+maxoffset<length;i++)
 	{
-		BOOL failed=NO;
-		for(int j=0;j<numoffsets && !failed;j++)
+		int startcount=0;
+		int endcount=0;
+		for(int j=0;j<numoffsets;j++)
 		{
-			if(bytes[i+stringoffset[j]-1]!=0) failed=YES;
+			if(bytes[i+stringoffset[j]-1]==0) startcount++;
+			else if(bytes[i+stringoffset[j]]==0) endcount++;
 		}
 
-		if(!failed)
+		if(startcount+endcount==numoffsets && endcount<2)
 		{
 			stringtable=i;
 			break;

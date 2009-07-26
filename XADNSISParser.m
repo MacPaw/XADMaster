@@ -12,12 +12,12 @@
 
 
 
-// TODO: exclude uninstallers?
 static BOOL IsNewSignature(const uint8_t *ptr)
 {
 	static const uint8_t NewSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x73,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
 	if(memcmp(ptr+4,NewSignature,16)!=0) return NO;
-	return YES;
+	if(CSUInt32LE(ptr)&2) return NO; // uninstaller
+	return NO;
 }
 
 @implementation XADNSISParser

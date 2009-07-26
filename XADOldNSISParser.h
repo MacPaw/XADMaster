@@ -13,14 +13,17 @@
 
 -(void)parseOlderFormat;
 -(void)parseOldFormat;
--(void)parseWithHeaderCompressedLength:(uint32_t)complength uncompressedLength:(uint32_t)uncomplength
-totalDataLength:(uint32_t)datalength;
--(void)parseWithHeaderLength:(uint32_t)headerlength offset:(uint32_t)headeroffset
-totalDataLength:(uint32_t)datalength;
--(void)parseWithHeader:(NSData *)header blocks:(NSDictionary *)blocks strings:(NSDictionary *)strings;
+-(void)parseNewishFormat;
+-(void)parseOpcodesWithHeader:(NSData *)header strings:(NSDictionary *)strings blocks:(NSDictionary *)blocks
+extractOpcode:(int)extractopcode directoryOpcode:(int)diropcode directoryArgument:(int)dirarg
+startOffset:(int)startoffs endOffset:(int)endoffs stride:(int)stride;
 
--(NSDictionary *)parseBlockOffsetsWithTotalSize:(uint32_t)totalsize;
--(NSDictionary *)parseStringsWithData:(NSData *)data maxOffsets:(int)maxnumoffsets;
+-(NSDictionary *)findBlocksWithTotalSize:(uint32_t)totalsize;
+-(NSDictionary *)findStringTableInData:(NSData *)data maxOffsets:(int)maxnumoffsets;
+-(int)findOpcodeWithData:(NSData *)data strings:(NSDictionary *)strings blocks:(NSDictionary *)blocks
+opcodePossibilities:(int *)possibleopcodes count:(int)numpossibleopcodes
+stridePossibilities:(int *)possiblestrides count:(int)numpossiblestrides
+foundStride:(int *)strideptr foundPhase:(int *)phaseptr;
 
 -(XADPath *)cleanedPathForData:(NSData *)data;
 

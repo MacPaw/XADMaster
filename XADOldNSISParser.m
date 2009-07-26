@@ -1,5 +1,6 @@
 #import "XADOldNSISParser.h"
 #import "CSZlibHandle.h"
+#import "XADDeflateHandle.h"
 #import "NSDateXAD.h"
 
 // Beware all who venture within: This is nothing but a big pile of heuristics, hacks and
@@ -24,6 +25,14 @@ static BOOL IsOldSignature(const uint8_t *ptr)
 	return YES;
 }
 
+static BOOL IsNewSignature(const uint8_t *ptr)
+{
+	static const uint8_t NewSignature[16]={0xef,0xbe,0xad,0xde,0x4e,0x75,0x6c,0x6c,0x73,0x6f,0x66,0x74,0x49,0x6e,0x73,0x74};
+	if(memcmp(ptr+4,NewSignature,16)!=0) return NO;
+	if(CSUInt32LE(ptr)&2) return NO; // uninstaller
+	return YES;
+}
+
 @implementation XADOldNSISParser
 
 +(int)requiredHeaderSize { return 0x10000; }
@@ -37,6 +46,7 @@ static BOOL IsOldSignature(const uint8_t *ptr)
 	{
 		if(IsOlderSignature(bytes+offs)) return YES;
 		if(IsOldSignature(bytes+offs)) return YES;
+		if(IsNewSignature(bytes+offs)) return YES;
 	}
 	return NO;
 }
@@ -55,10 +65,12 @@ static BOOL IsOldSignature(const uint8_t *ptr)
 
 		if(IsOlderSignature(buf)) { [self parseOlderFormat]; return; }
 		if(IsOldSignature(buf)) { [self parseOldFormat]; return; }
+		if(IsNewSignature(buf)) { [self parseNewishFormat]; return; }
 		[fh skipBytes:512];
 	}
 }
 
+// Versions 1.1o to 1.2g - opcode 3, stride 7
 -(void)parseOlderFormat
 {
 	CSHandle *fh=[self handle];
@@ -74,11 +86,57 @@ static BOOL IsOldSignature(const uint8_t *ptr)
 	if(signature&1) datalength-=4;
 
 	if(headerlength+headeroffset+4<totallength)
-	[self parseWithHeaderCompressedLength:headerlength uncompressedLength:headeroffset totalDataLength:datalength];
+	{
+		// Versions 1.1o to 1.1x
+		uint32_t complength=headerlength;
+		uint32_t uncomplength=headeroffset;
+
+NSLog(@"path 1a");
+		base=[fh offsetInFile]+complength;
+
+		CSHandle *hh=[fh nonCopiedSubHandleOfLength:complength];
+		if(uncomplength) hh=[CSZlibHandle zlibHandleWithHandle:hh length:uncomplength];
+		NSData *header=[hh readDataOfLength:uncomplength];
+
+		NSDictionary *blocks=[self findBlocksWithTotalSize:datalength];
+		NSDictionary *strings=[self findStringTableInData:header maxOffsets:7];
+
+		int stride,phase;
+		int extractopcode=[self findOpcodeWithData:header strings:strings blocks:blocks
+		opcodePossibilities:(int[]){3} count:1
+		stridePossibilities:(int[]){7} count:1
+		foundStride:&stride foundPhase:&phase];
+
+		[self parseOpcodesWithHeader:header strings:strings blocks:blocks
+		extractOpcode:extractopcode directoryOpcode:extractopcode-2 directoryArgument:0
+		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride];
+	}
 	else
-	[self parseWithHeaderLength:headerlength offset:headeroffset totalDataLength:datalength];
+	{
+		// Versions 1.1y to 1.2g
+NSLog(@"path 1b");
+		CSHandle *fh=[self handle];
+
+		base=[fh offsetInFile];
+
+		NSDictionary *blocks=[self findBlocksWithTotalSize:datalength];
+		CSHandle *hh=[self handleForBlockAtOffset:headeroffset length:headerlength];
+		NSData *header=[hh readDataOfLength:headerlength];
+		NSDictionary *strings=[self findStringTableInData:header maxOffsets:16];
+
+		int stride,phase;
+		int extractopcode=[self findOpcodeWithData:header strings:strings blocks:blocks
+		opcodePossibilities:(int[]){3} count:1
+		stridePossibilities:(int[]){7} count:1
+		foundStride:&stride foundPhase:&phase];
+
+		[self parseOpcodesWithHeader:header strings:strings blocks:blocks
+		extractOpcode:extractopcode directoryOpcode:extractopcode-2 directoryArgument:0
+		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride];
+	}
 }
 
+// Versions 1.30 to 1.59 - opcodes 4, 5, strides 7, 6
 -(void)parseOldFormat
 {
 	CSHandle *fh=[self handle];
@@ -93,105 +151,88 @@ static BOOL IsOldSignature(const uint8_t *ptr)
 	uint32_t datalength=totallength-32;
 	if(flags&1) datalength-=4;
 
-	[self parseWithHeaderLength:headerlength offset:headeroffset totalDataLength:datalength];
-}
-
-// Versions 1.1o to 1.2b
--(void)parseWithHeaderCompressedLength:(uint32_t)complength uncompressedLength:(uint32_t)uncomplength
-totalDataLength:(uint32_t)datalength
-{
-	CSHandle *fh=[self handle];
-
-	base=[fh offsetInFile]+complength;
-
-	CSHandle *hh=[fh nonCopiedSubHandleOfLength:complength];
-	if(uncomplength) hh=[CSZlibHandle zlibHandleWithHandle:hh length:uncomplength];
-	NSData *header=[hh readDataOfLength:uncomplength];
-
-	NSDictionary *blocks=[self parseBlockOffsetsWithTotalSize:datalength];
-	NSDictionary *strings=[self parseStringsWithData:header maxOffsets:7];
-
-	[self parseWithHeader:header blocks:blocks strings:strings];
-}
-
-// Versions 1.2c to 1.59
--(void)parseWithHeaderLength:(uint32_t)headerlength offset:(uint32_t)headeroffset
-totalDataLength:(uint32_t)datalength
-{
-	CSHandle *fh=[self handle];
-
 	base=[fh offsetInFile];
 
-	NSDictionary *blocks=[self parseBlockOffsetsWithTotalSize:datalength];
+	NSDictionary *blocks=[self findBlocksWithTotalSize:datalength];
 	CSHandle *hh=[self handleForBlockAtOffset:headeroffset length:headerlength];
 	NSData *header=[hh readDataOfLength:headerlength];
-	NSDictionary *strings=[self parseStringsWithData:header maxOffsets:16];
+	NSDictionary *strings=[self findStringTableInData:header maxOffsets:16];
 
-	[self parseWithHeader:header blocks:blocks strings:strings];
-}
+	int stride,phase;
+	int extractopcode=[self findOpcodeWithData:header strings:strings blocks:blocks
+	opcodePossibilities:(int[]){4,5} count:2
+	stridePossibilities:(int[]){6,7} count:2
+	foundStride:&stride foundPhase:&phase];
 
--(void)parseWithHeader:(NSData *)header blocks:(NSDictionary *)blocks strings:(NSDictionary *)strings
-{
-	const uint8_t *bytes=[header bytes];
-	int length=[header length];
-
-	// Heuristic to find the size of entries, and the opcode for extract file entries.
-	// Find candidates for extract opcodes, and measure the distances between them and
-	// which opcodes they have.
-	int stride6counts[3]={0},stride7counts[3]={0};
-	int stride6phases[6]={0},stride7phases[7]={0};
-	int lastpos=0;
-	for(int i=24;i<stringtable&&i+24<=length;i+=4)
+	if(stride==6&&extractopcode==4)
 	{
-		int opcode=CSUInt32LE(bytes+i);
-		if(opcode==3||opcode==4||opcode==5) // possible ExtractFile
-		{
-			uint32_t overwrite=CSUInt32LE(bytes+i+4);
-			uint32_t filenameoffs=CSUInt32LE(bytes+i+8);
-			uint32_t dataoffs=CSUInt32LE(bytes+i+12);
-			if(overwrite<4)
-			if([strings objectForKey:[NSNumber numberWithInt:filenameoffs]])
-			if([blocks objectForKey:[NSNumber numberWithInt:dataoffs]])
-			{
-				int pos=i/4;
-				if((pos-lastpos)%6==0)
-				{
-					stride6counts[opcode-3]++;
-					stride6phases[pos%6]++;
-				}
-				if((pos-lastpos)%7==0)
-				{
-					stride7counts[opcode-3]++;
-					stride7phases[pos%7]++;
-				}
-				lastpos=pos;
-			}
-		}
-	}
-
-	int totalstride6=stride6counts[0]+stride6counts[1]+stride6counts[2];
-	int totalstride7=stride7counts[0]+stride7counts[1]+stride7counts[2];
-
-	int stride,extractopcode,phase;
-	if(totalstride6>totalstride7)
-	{
-		stride=6;
-		extractopcode=IndexOfLargestEntry(stride6counts,3)+3;
-		phase=IndexOfLargestEntry(stride6phases,6);
-		
+NSLog(@"path 2b");
+		// Versions 1.54 - 1.59 - new directory opcode
+		[self parseOpcodesWithHeader:header strings:strings blocks:blocks
+		extractOpcode:4 directoryOpcode:3 directoryArgument:1
+		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride];
 	}
 	else
 	{
-		stride=7;
-		extractopcode=IndexOfLargestEntry(stride7counts,3)+3;
-		phase=IndexOfLargestEntry(stride7phases,7);
+NSLog(@"path 2a");
+		// Versions 1.30 - 1.53 - old directory opcode
+		[self parseOpcodesWithHeader:header strings:strings blocks:blocks
+		extractOpcode:extractopcode directoryOpcode:extractopcode-2 directoryArgument:0
+		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride];
 	}
+}
 
-	//NSLog(@"stride %d, opcode %d, phase %d",stride,extractopcode,phase);
+// Versions 1.60 to
+-(void)parseNewishFormat
+{
+NSLog(@"path 3");
+	CSHandle *fh=[self handle];
 
+	uint32_t flags=[fh readUInt32LE];
+	[fh skipBytes:16];
+
+	uint32_t headerlength=[fh readUInt32LE];
+	uint32_t totallength=[fh readUInt32LE];
+
+	uint32_t datalength=totallength-32;
+	if(flags&1) datalength-=4;
+
+	uint32_t headercompsize=[fh readUInt32LE]&0x7fffffff;
+	base=[fh offsetInFile]+headercompsize;
+
+	NSDictionary *blocks=[self findBlocksWithTotalSize:datalength];
+	CSHandle *hh=[self handleForBlockAtOffset:-(int)headercompsize-4 length:headerlength];
+	NSData *header=[hh readDataOfLength:headerlength];
+
+	NSDictionary *strings=[self findStringTableInData:header maxOffsets:0];
+
+	int stride,phase;
+	int extractopcode=[self findOpcodeWithData:header strings:strings blocks:blocks
+	opcodePossibilities:(int[]){15,17,18} count:3
+	stridePossibilities:(int[]){6} count:1
+	foundStride:&stride foundPhase:&phase];
+
+	int diropcode;
+	if(extractopcode==18) diropcode=12;
+	else diropcode=11;
+
+	[self parseOpcodesWithHeader:header strings:strings blocks:blocks
+	extractOpcode:extractopcode directoryOpcode:diropcode directoryArgument:1
+	startOffset:(stride+phase)*4 endOffset:stringtable stride:stride];
+}
+
+
+
+
+-(void)parseOpcodesWithHeader:(NSData *)header strings:(NSDictionary *)strings blocks:(NSDictionary *)blocks
+extractOpcode:(int)extractopcode directoryOpcode:(int)diropcode directoryArgument:(int)dirarg
+startOffset:(int)startoffs endOffset:(int)endoffs stride:(int)stride
+{
+	const uint8_t *bytes=[header bytes];
+	int length=[header length];
 	XADPath *dir=[self XADPath];
 
-	for(int i=(stride+phase)*4;i<stringtable&&i+24<=length;i+=4*stride)
+	for(int i=startoffs;i<endoffs&&i+24<=length;i+=4*stride)
 	{
 		int opcode=CSUInt32LE(bytes+i);
 		uint32_t args[6];
@@ -232,18 +273,9 @@ totalDataLength:(uint32_t)datalength
 				continue;
 			}
 		}
-		if(opcode==3&&extractopcode==4&&stride==6) // New createdir
+		if(opcode==diropcode)
 		{
-			if(args[1]==1&&args[2]==0&&args[3]==0&&args[4]==0)
-			{
-				NSData *path=[strings objectForKey:[NSNumber numberWithInt:args[0]]];
-				dir=[self cleanedPathForData:path];
-				continue;
-			}
-		}
-		if(opcode==extractopcode-2) // Old setdir
-		{
-			if(args[1]==0&&args[2]==0&&args[3]==0&&args[4]==0)
+			if(args[1]==dirarg&&args[2]==0&&args[3]==0&&args[4]==0)
 			{
 				NSData *path=[strings objectForKey:[NSNumber numberWithInt:args[0]]];
 				dir=[self cleanedPathForData:path];
@@ -253,7 +285,9 @@ totalDataLength:(uint32_t)datalength
 	}
 }
 
--(NSDictionary *)parseBlockOffsetsWithTotalSize:(uint32_t)totalsize
+
+
+-(NSDictionary *)findBlocksWithTotalSize:(uint32_t)totalsize
 {
 	NSMutableDictionary *dict=[NSMutableDictionary dictionary];
 
@@ -273,7 +307,7 @@ totalDataLength:(uint32_t)datalength
 	return dict;
 }
 
--(NSDictionary *)parseStringsWithData:(NSData *)data maxOffsets:(int)maxnumoffsets
+-(NSDictionary *)findStringTableInData:(NSData *)data maxOffsets:(int)maxnumoffsets
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
@@ -304,7 +338,7 @@ totalDataLength:(uint32_t)datalength
 	// Then start testing offsets trying to find one that has null bytes just before, or at,
 	// all the string first bytes found in the header.
 	stringtable=0;
-	for(int i=lasttriple+2;i+maxoffset<length;i++)
+	for(int i=lasttriple+3;i+maxoffset<length;i++)
 	{
 		int startcount=0;
 		int endcount=0;
@@ -313,7 +347,6 @@ totalDataLength:(uint32_t)datalength
 			if(bytes[i+stringoffset[j]-1]==0) startcount++;
 			else if(bytes[i+stringoffset[j]]==0) endcount++;
 		}
-
 		if(startcount+endcount==numoffsets && endcount<2)
 		{
 			stringtable=i;
@@ -339,13 +372,84 @@ totalDataLength:(uint32_t)datalength
 	return dict;
 }
 
+-(int)findOpcodeWithData:(NSData *)data strings:(NSDictionary *)strings blocks:(NSDictionary *)blocks
+opcodePossibilities:(int *)possibleopcodes count:(int)numpossibleopcodes
+stridePossibilities:(int *)possiblestrides count:(int)numpossiblestrides
+foundStride:(int *)strideptr foundPhase:(int *)phaseptr
+{
+	// Heuristic to find the size of entries, and the opcode for extract file entries.
+	// Find candidates for extract opcodes, and measure the distances between them and
+	// which opcodes they have.
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+	//NSLog(@"%@ %@ %@",data,strings,blocks);
+
+	int maxpossiblestride=possiblestrides[IndexOfLargestEntry(possiblestrides,numpossiblestrides)];
+	int strideopcodecounts[numpossiblestrides][numpossibleopcodes];
+	int stridephasecounts[numpossiblestrides][maxpossiblestride];
+	memset(strideopcodecounts,0,sizeof(strideopcodecounts));
+	memset(stridephasecounts,0,sizeof(stridephasecounts));
+
+	int lastpos=0;
+	for(int i=24;i<stringtable&&i+24<=length;i+=4)
+	{
+		int opcode=CSUInt32LE(bytes+i);
+
+		for(int j=0;j<numpossibleopcodes;j++)
+		if(opcode==possibleopcodes[j]) // possible ExtractFile
+		{
+			uint32_t overwrite=CSUInt32LE(bytes+i+4);
+			uint32_t filenameoffs=CSUInt32LE(bytes+i+8);
+			uint32_t dataoffs=CSUInt32LE(bytes+i+12);
+
+			if(overwrite<4)
+			if([strings objectForKey:[NSNumber numberWithInt:filenameoffs]])
+			if([blocks objectForKey:[NSNumber numberWithInt:dataoffs]])
+			{
+				int pos=i/4;
+				for(int k=0;k<numpossiblestrides;k++)
+				if((pos-lastpos)%possiblestrides[k]==0)
+				{
+					strideopcodecounts[k][j]++;
+					stridephasecounts[k][pos%possiblestrides[k]]++;
+				}
+				lastpos=pos;
+			}
+			break;
+		}
+	}
+
+	int totalstrideopcodes[numpossiblestrides];
+	memset(totalstrideopcodes,0,sizeof(totalstrideopcodes));
+	for(int i=0;i<numpossiblestrides;i++)
+	{
+		for(int j=0;j<numpossibleopcodes;j++)
+		totalstrideopcodes[i]+=strideopcodecounts[i][j];
+	}
+
+	int strideindex=IndexOfLargestEntry(totalstrideopcodes,numpossiblestrides);
+	int opcodeindex=IndexOfLargestEntry(strideopcodecounts[strideindex],numpossibleopcodes);
+	int phase=IndexOfLargestEntry(stridephasecounts[strideindex],possiblestrides[strideindex]);
+
+	//NSLog(@"stride %d, opcode %d, phase %d",possiblestrides[strideindex],possibleopcodes[opcodeindex],phase);
+
+	if(strideptr) *strideptr=possiblestrides[strideindex];
+	if(phaseptr) *phaseptr=phase;
+	return possibleopcodes[opcodeindex];
+}
+
+
+
+
 -(XADPath *)cleanedPathForData:(NSData *)data
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
 	if(length==8 && memcmp(bytes,"$INSTDIR",8)==0) return [self XADPath];
-	if(length>=9 && memcmp(bytes,"$INSTDIR\\",9)==0) return [self XADPathWithBytes:bytes+9 length:length-9 separators:XADWindowsPathSeparator];
+	else if(length==1 && (bytes[0]==0xea || bytes[0]==0xee || bytes[0]==0xf3 || bytes[0]==0xf7)) return [self XADPath];
+	else if(length>=9 && memcmp(bytes,"$INSTDIR\\",9)==0) return [self XADPathWithBytes:bytes+9 length:length-9 separators:XADWindowsPathSeparator];
+	else if(length>=1 && (bytes[0]==0xea || bytes[0]==0xee || bytes[0]==0xf3 || bytes[0]==0xf7) && bytes[1]=='\\') return [self XADPathWithBytes:bytes+2 length:length-2 separators:XADWindowsPathSeparator];
 	else if(length>=1 && bytes[0]=='$') return [self XADPathWithBytes:bytes+1 length:length-1 separators:XADWindowsPathSeparator];
 	else return [self XADPathWithData:data separators:XADWindowsPathSeparator];
 }
@@ -365,9 +469,16 @@ totalDataLength:(uint32_t)datalength
 	CSHandle *sub=[fh nonCopiedSubHandleOfLength:len&0x7fffffff];
 	if((len&0x80000000))
 	{
-		CSZlibHandle *handle=[CSZlibHandle zlibHandleWithHandle:sub length:length];
-		[handle setEndStreamAtInputEOF:YES];
-		return handle;
+		uint8_t head[2];
+		[fh readBytes:2 toBuffer:head];
+		[fh skipBytes:-2];
+		if(head[0]==0x78&&head[1]==0xda)
+		{
+			CSZlibHandle *handle=[CSZlibHandle zlibHandleWithHandle:sub length:length];
+			[handle setEndStreamAtInputEOF:YES];
+			return handle;
+		}
+		else return [[[XADDeflateHandle alloc] initWithHandle:sub length:length variant:XADNSISDeflateVariant] autorelease];
 	}
 	else return sub;
 }

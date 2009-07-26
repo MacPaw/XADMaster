@@ -46,6 +46,7 @@
 		if(!storedcount)
 		{
 			if(lastblock) return XADLZSSEnd;
+			if(variant==XADNSISDeflateVariant&&input->eof) return XADLZSSEnd; // kludge - CSInputAtEOF is not enough, there are a few bytes left
 			[self readBlockHeader];
 			return [self nextLiteralOrOffset:offset andLength:length atPosition:pos];
 		}
@@ -60,6 +61,7 @@
 		else if(literal==256)
 		{
 			if(lastblock) return XADLZSSEnd;
+			if(variant==XADNSISDeflateVariant&&input->eof) return XADLZSSEnd; // kludge - CSInputAtEOF is not enough, there are a few bytes left
 			[self readBlockHeader];
 			return [self nextLiteralOrOffset:offset andLength:length atPosition:pos];
 		}
@@ -101,7 +103,7 @@
 	lastblock=CSInputNextBitLE(input);
 
 	int type=CSInputNextBitStringLE(input,2);
-NSLog(@"%d %d",lastblock,type);
+
 	switch(type)
 	{
 		case 0: // stored

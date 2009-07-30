@@ -99,7 +99,6 @@
 
 	if(offs==streampos) return;
 	if(offs>streamlength) [self _raiseEOF];
-
 	if(nextstreambyte>=0)
 	{
 		nextstreambyte=-1;

@@ -12,18 +12,6 @@
 	return self;
 }
 
--(id)initWithPath:(XADPath *)parent lastPathComponent:(XADString *)name
-{
-	if(self=[super init])
-	{
-		components=[[parent->components arrayByAddingObject:name] retain];
-		source=[parent->source retain];
-
-		[self _updateStringSourceWithString:name];
-	}
-	return self;
-}
-
 -(id)initWithComponents:(NSArray *)pathcomponents
 {
 	if(self=[super init])
@@ -154,7 +142,12 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 -(XADPath *)pathByAppendingPathComponent:(XADString *)component
 {
-	return [[[XADPath alloc] initWithPath:self lastPathComponent:component] autorelease];
+	return [[[XADPath alloc] initWithComponents:[components arrayByAddingObject:component]] autorelease];
+}
+
+-(XADPath *)pathByAppendingPath:(XADPath *)path
+{
+	return [[[XADPath alloc] initWithComponents:[components arrayByAddingObjectsFromArray:path->components]] autorelease];
 }
 
 -(XADPath *)safePath

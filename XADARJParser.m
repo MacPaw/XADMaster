@@ -76,7 +76,7 @@ static NSData *ReadNullTerminatedString(CSHandle *fh);
 	//int version=headerbytes[1];
 	//int minversion=headerbytes[2];
 	//int os=headerbytes[3];
-	int archiveflags=headerbytes[4];
+	//int archiveflags=headerbytes[4];
 	//int securityversion=headerbytes[5];
 	int filetype=headerbytes[6];
 	uint32_t archivecreataion=CSUInt32LE(&headerbytes[8]);

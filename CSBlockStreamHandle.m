@@ -43,6 +43,13 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 -(void)seekToFileOffset:(off_t)offs
 {
+	if(offs==streampos) return;
+	if(nextstreambyte>=0) // NOTE: Undoes the lookahead done by StreamHandle.
+	{
+		nextstreambyte=-1;
+		streampos+=1;
+	}
+
 	if(offs>=blockstartpos&&offs<blockstartpos+blocklength)
 	{
 		streampos=offs;

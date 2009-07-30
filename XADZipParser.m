@@ -269,7 +269,8 @@
 				prevdict=nil;
 			}
 
-			if(uncompsize==0&&!([dict objectForKey:XADIsDirectoryKey]&&[[dict objectForKey:XADIsDirectoryKey] boolValue]))
+			if(uncompsize==0&&i!=numentries-1&&!([dict objectForKey:XADIsDirectoryKey]
+			&&[[dict objectForKey:XADIsDirectoryKey] boolValue]))
 			{
 				prevdict=dict; // this entry could be a directory, save it for testing against the next entry
 				prevname=namedata;

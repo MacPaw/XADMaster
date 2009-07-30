@@ -229,6 +229,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -312,7 +314,7 @@
 							<real>235</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>166 90 1143 788 0 0 1440 878 </string>
+						<string>262 90 1143 788 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -323,8 +325,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -342,7 +342,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>1BA4E1B210213B32001AB3CA</string>
+										<string>1BA4E1F610220352001AB3CA</string>
 										<key>history</key>
 										<array>
 											<string>1B21128C0A475BEC005ED2AF</string>
@@ -631,8 +631,8 @@
 											<string>1BA4E15B10210CDB001AB3CA</string>
 											<string>1BA4E17010210E71001AB3CA</string>
 											<string>1BA4E19410213840001AB3CA</string>
-											<string>1BA4E19E10213992001AB3CA</string>
-											<string>1BA4E19F10213992001AB3CA</string>
+											<string>1BA4E1EC10220352001AB3CA</string>
+											<string>1BA4E1ED10220352001AB3CA</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -1007,6 +1007,14 @@
 											<string>1BA4E1A110213992001AB3CA</string>
 											<string>1BA4E1A210213992001AB3CA</string>
 											<string>1BA4E1A310213992001AB3CA</string>
+											<string>1BA4E1EE10220352001AB3CA</string>
+											<string>1BA4E1EF10220352001AB3CA</string>
+											<string>1BA4E1F010220352001AB3CA</string>
+											<string>1BA4E1F110220352001AB3CA</string>
+											<string>1BA4E1F210220352001AB3CA</string>
+											<string>1BA4E1F310220352001AB3CA</string>
+											<string>1BA4E1F410220352001AB3CA</string>
+											<string>1BA4E1F510220352001AB3CA</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -1020,7 +1028,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {864, 742}}</string>
 								<key>RubberWindowFrame</key>
-								<string>166 90 1143 788 0 0 1440 878 </string>
+								<string>262 90 1143 788 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -1040,7 +1048,7 @@
 								<key>Frame</key>
 								<string>{{0, 747}, {864, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>166 90 1143 788 0 0 1440 878 </string>
+								<string>262 90 1143 788 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -1229,12 +1237,12 @@
 		<string>1BA4E034101FE432001AB3CA</string>
 		<string>1BA4E035101FE432001AB3CA</string>
 		<string>1CD10A99069EF8BA00B06720</string>
-		<string>1B06D57B0DDA632000D9C000</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>/Users/dag/Code/The Unarchiver/XADMaster/XADMaster.xcodeproj</string>
+		<string>1B06D57B0DDA632000D9C000</string>
 	</array>
 	<key>WindowString</key>
-	<string>166 90 1143 788 0 0 1440 878 </string>
+	<string>262 90 1143 788 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -1250,6 +1258,8 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -1272,8 +1282,6 @@
 							<string>494pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>

@@ -96,6 +96,7 @@ static BOOL LooksLikeZlib(uint8_t *sig)
 		solidhandle=nil;
 		detectedformat=UndetectedFormat;
 		expansiontypes=0;
+		_outdir=nil;
 	}
 	return self;
 }
@@ -171,7 +172,7 @@ static BOOL LooksLikeZlib(uint8_t *sig)
 
 		[self parseOpcodesWithHeader:header blocks:blocks
 		extractOpcode:extractopcode ignoreOverwrite:NO
-		directoryOpcode:extractopcode-2 directoryArgument:0
+		directoryOpcode:extractopcode-2 directoryArgument:0 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
 		stringStartOffset:stringtable stringEndOffset:uncomplength unicode:NO];
 	}
@@ -200,7 +201,7 @@ static BOOL LooksLikeZlib(uint8_t *sig)
 
 		[self parseOpcodesWithHeader:header blocks:blocks
 		extractOpcode:extractopcode ignoreOverwrite:NO
-		directoryOpcode:extractopcode-2 directoryArgument:0
+		directoryOpcode:extractopcode-2 directoryArgument:0 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
 		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO];
 	}
@@ -247,7 +248,7 @@ static BOOL LooksLikeZlib(uint8_t *sig)
 
 		[self parseOpcodesWithHeader:header blocks:blocks
 		extractOpcode:4 ignoreOverwrite:NO
-		directoryOpcode:3 directoryArgument:1
+		directoryOpcode:3 directoryArgument:1 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
 		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO];
 	}
@@ -258,7 +259,7 @@ static BOOL LooksLikeZlib(uint8_t *sig)
 
 		[self parseOpcodesWithHeader:header blocks:blocks
 		extractOpcode:extractopcode ignoreOverwrite:NO
-		directoryOpcode:extractopcode-2 directoryArgument:0
+		directoryOpcode:extractopcode-2 directoryArgument:0 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
 		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO];
 	}
@@ -341,7 +342,8 @@ static BOOL LooksLikeZlib(uint8_t *sig)
 		BOOL unicode=[self isUnicodeHeader:header stringStartOffset:stringoffs stringEndOffset:nextoffs];
 
 		[self parseOpcodesWithHeader:header blocks:blocks
-		extractOpcode:20 ignoreOverwrite:YES directoryOpcode:11 directoryArgument:1
+		extractOpcode:20 ignoreOverwrite:YES
+		directoryOpcode:11 directoryArgument:1 assignOpcode:25
 		startOffset:entryoffs endOffset:entryoffs+entrynum*4*7 stride:7
 		stringStartOffset:stringoffs stringEndOffset:nextoffs unicode:unicode];
 	}
@@ -368,7 +370,8 @@ static BOOL LooksLikeZlib(uint8_t *sig)
 		expansiontypes=DollarExpansionType|OldBinaryExpansionType;
 
 		[self parseOpcodesWithHeader:header blocks:blocks
-		extractOpcode:extractopcode ignoreOverwrite:NO directoryOpcode:diropcode directoryArgument:1
+		extractOpcode:extractopcode ignoreOverwrite:NO
+		directoryOpcode:diropcode directoryArgument:1 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
 		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO];
 	}
@@ -383,7 +386,7 @@ static int CompareEntryDataOffsets(id first,id second,void *context)
 
 -(void)parseOpcodesWithHeader:(NSData *)header blocks:(NSDictionary *)blocks
 extractOpcode:(int)extractopcode ignoreOverwrite:(BOOL)ignoreoverwrite
-directoryOpcode:(int)diropcode directoryArgument:(int)dirarg
+directoryOpcode:(int)diropcode directoryArgument:(int)dirarg assignOpcode:(int)assignopcode
 startOffset:(int)startoffs endOffset:(int)endoffs stride:(int)stride
 stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BOOL)unicode
 {
@@ -413,14 +416,10 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BO
 			{
 				uint32_t len=[block unsignedIntValue];
 
-				XADPath *filepath;
-				if(unicode) filepath=[self expandUnicodePathWithOffset:filename header:header
-				stringStartOffset:stringoffs stringEndOffset:stringendoffs currentPath:dir];
-				else filepath=[self expandPathWithOffset:filename header:header
-				stringStartOffset:stringoffs stringEndOffset:stringendoffs currentPath:dir];
-
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-					[dir pathByAppendingPath:filepath],XADFileNameKey,
+					[dir pathByAppendingPath:[self expandAnyPathWithOffset:filename
+					unicode:unicode header:header stringStartOffset:stringoffs
+					stringEndOffset:stringendoffs currentPath:dir]],XADFileNameKey,
 					[NSNumber numberWithUnsignedInt:len&0x7fffffff],XADCompressedSizeKey,
 					[NSDate XADDateWithWindowsFileTimeLow:datetimelow high:datetimehigh],XADLastModificationDateKey,
 					offs,@"NSISDataOffset",
@@ -445,11 +444,18 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BO
 		{
 			if(args[1]==dirarg&&args[2]==0&&args[3]==0&&args[4]==0)
 			{
-				if(unicode) dir=[self expandUnicodePathWithOffset:args[0] header:header
-				stringStartOffset:stringoffs stringEndOffset:stringendoffs currentPath:dir];
-				else dir=[self expandPathWithOffset:args[0] header:header
+				dir=[self expandAnyPathWithOffset:args[0] unicode:unicode header:header
 				stringStartOffset:stringoffs stringEndOffset:stringendoffs currentPath:dir];
 
+				continue;
+			}
+		}
+		if(opcode==assignopcode)
+		{
+			if(args[0]==31||args[0]==29)
+			{
+				_outdir=[self expandAnyPathWithOffset:args[1] unicode:(BOOL)unicode header:header
+				stringStartOffset:stringoffs stringEndOffset:stringendoffs currentPath:dir];
 				continue;
 			}
 		}
@@ -689,6 +695,14 @@ foundStride:(int *)strideptr foundPhase:(int *)phaseptr
 }
 
 
+-(XADPath *)expandAnyPathWithOffset:(int)offset unicode:(BOOL)unicode header:(NSData *)header
+stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath:(XADPath *)path
+{
+	if(unicode) return [self expandUnicodePathWithOffset:offset header:header
+	stringStartOffset:stringoffs stringEndOffset:stringendoffs currentPath:path];
+	else return [self expandPathWithOffset:offset header:header
+	stringStartOffset:stringoffs stringEndOffset:stringendoffs currentPath:path];
+}
 
 -(XADPath *)expandPathWithOffset:(int)offset header:(NSData *)header
 stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath:(XADPath *)path
@@ -859,7 +873,7 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath
 		{ (char []){ 0xfd,0x9a,0x80,0 },"NSIS Plugins Directory" },
 		{ (char []){ 0xfd,0x9b,0x80,0 },"Installer Executable Path" },
 		{ (char []){ 0xfd,0x9c,0x80,0 },"Installer Executable Name" },
-		{ (char []){ 0xfd,0x9d,0x80,0 },"HWNDPARENT" },
+		{ (char []){ 0xfd,0x9d,0x80,0 },NULL }, // HWNDPARENT, apparently this was _OUTDIR in some version?
 		{ (char []){ 0xfd,0x9e,0x80,0 },"_CLICK" },
 		{ (char []){ 0xfd,0x9f,0x80,0 },NULL }, // _OUTDIR
 		// TODO: work out the right constants for these and more
@@ -892,7 +906,7 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath
 bytes:(const uint8_t *)bytes length:(int)length currentPath:(XADPath *)dir
 {
 	NSMutableData *data=nil;
-	BOOL prependdir=NO;
+	XADPath *prependdir=nil;
 
 	for(int i=0;i<length;i++)
 	{
@@ -907,7 +921,11 @@ bytes:(const uint8_t *)bytes length:(int)length currentPath:(XADPath *)dir
 				const char *exp=expansions[j].expansion;
 				if(!exp)
 				{
-					if(i==0) prependdir=YES;
+					if(i==0)
+					{
+						if(j<=23) prependdir=dir;
+						else prependdir=_outdir;
+					}
 					exp="";
 				}
 
@@ -932,7 +950,7 @@ bytes:(const uint8_t *)bytes length:(int)length currentPath:(XADPath *)dir
 	if(data)
 	{
 		XADPath *path=[self XADPathWithData:data separators:XADWindowsPathSeparator];
-		if(prependdir) return [dir pathByAppendingPath:path];
+		if(prependdir) return [prependdir pathByAppendingPath:path];
 		else return path;
 	}
 	else return nil;
@@ -956,9 +974,9 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath
 		@"NSIS Plugins Directory",
 		@"Installer Executable Path",
 		@"Installer Executable Name",
-		@"HWNDPARENT",
+		nil,// apparently this was _OUTDIR in some version?
 		@"_CLICK",
-		@"_OUTDIR", // _OUTDIR
+		nil, // _OUTDIR
 	};
 
 	const uint8_t *headerbytes=[header bytes];
@@ -970,8 +988,8 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath
 	&& !(bytes[2*length]==0 && bytes[2*length+1]==0)) length++;
 
 	NSMutableString *string=[NSMutableString string];
-	BOOL prependdir=NO;
-NSLog(@"%d",length);
+	XADPath *prependdir=nil;
+
 	for(int i=0;i<length;i++)
 	{
 		uint16_t c=CSUInt16LE(&bytes[i*2]);
@@ -982,9 +1000,13 @@ NSLog(@"%d",length);
 			{
 				NSString *exp=strings[val];
 
-				if(!exp) // handle OUTDIR (only at string head, though)
+				if(!exp) // handle OUTDIR and _OUTDIR (only at string head, though)
 				{
-					if(i==0) prependdir=YES;
+					if(i==0)
+					{
+						if(val==22) prependdir=dir;
+						else prependdir=_outdir;
+					}
 					exp=@"";
 				}
 
@@ -993,12 +1015,21 @@ NSLog(@"%d",length);
 				// Skip leading slashes for empty expansions
 				if(i==0&&length>=3&&[exp length]==0&&CSUInt16LE(&bytes[i*2+4])=='\\') i++;
 			}
+			else [string appendFormat:@"User variable 0x%x",CSUInt16LE(&bytes[i*2+2])];
+
+			i++;
+		}
+		else if(c==0xe002 && i+1<length)
+		{
+			[string appendFormat:@"Shell variable 0x%x",CSUInt16LE(&bytes[i*2+2])];
 			i++;
 		}
 		else [string appendFormat:@"%C",c];
 	}
 
-	NSArray *parts=[string componentsSeparatedByString:@"\\"];
+	NSArray *parts;
+	if([string length]==0) parts=[NSArray array];
+	else parts=[string componentsSeparatedByString:@"\\"];
 	NSMutableArray *array=[NSMutableArray arrayWithCapacity:[parts count]];
 	NSEnumerator *enumerator=[parts objectEnumerator];
 	NSString *part;
@@ -1006,7 +1037,7 @@ NSLog(@"%d",length);
 
 	XADPath *path=[[[XADPath alloc] initWithComponents:array] autorelease];
 
-	if(prependdir) return [dir pathByAppendingPath:path];
+	if(prependdir) return [prependdir pathByAppendingPath:path];
 	else return path;
 }
 

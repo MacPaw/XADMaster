@@ -10,6 +10,8 @@ typedef struct NSISVariableExpansion
 	off_t base;
 	CSHandle *solidhandle;
 	int detectedformat,expansiontypes;
+
+	XADPath *_outdir;
 }
 
 +(int)requiredHeaderSize;
@@ -23,7 +25,7 @@ typedef struct NSISVariableExpansion
 
 -(void)parseOpcodesWithHeader:(NSData *)header blocks:(NSDictionary *)blocks
 extractOpcode:(int)extractopcode ignoreOverwrite:(BOOL)ignoreoverwrite
-directoryOpcode:(int)diropcode directoryArgument:(int)dirarg
+directoryOpcode:(int)diropcode directoryArgument:(int)dirarg assignOpcode:(int)assignopcode
 startOffset:(int)startoffs endOffset:(int)endoffs stride:(int)stride
 stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BOOL)unicode;
 -(void)makeEntryArrayStrictlyIncreasing:(NSMutableArray *)array;
@@ -39,6 +41,8 @@ foundStride:(int *)strideptr foundPhase:(int *)phaseptr;
 -(BOOL)isSectionedHeader:(NSData *)header;
 -(BOOL)isUnicodeHeader:(NSData *)header stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs;
 
+-(XADPath *)expandAnyPathWithOffset:(int)offset unicode:(BOOL)unicode header:(NSData *)header
+stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath:(XADPath *)path;
 -(XADPath *)expandPathWithOffset:(int)offset header:(NSData *)header
 stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath:(XADPath *)path;
 -(XADPath *)expandDollarVariablesWithBytes:(const uint8_t *)bytes length:(int)length currentPath:(XADPath *)path;

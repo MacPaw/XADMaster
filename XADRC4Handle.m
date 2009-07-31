@@ -73,7 +73,7 @@
 
 -(NSData *)encryptedData:(NSData *)data
 {
-	NSMutableData *res=[data mutableCopy];
+	NSMutableData *res=[NSMutableData dataWithData:data];
 	[self encryptBytes:[res mutableBytes] length:[res length]];
 	return [NSData dataWithData:res];
 }

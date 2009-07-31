@@ -46,7 +46,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 		NSMutableArray *handlearray=[NSMutableArray arrayWithCapacity:[other->handles count]];
 		NSEnumerator *enumerator=[other->handles objectEnumerator];
 		CSHandle *handle;
-		while(handle=[enumerator nextObject]) [handlearray addObject:[handle copy]];
+		while(handle=[enumerator nextObject]) [handlearray addObject:[[handle copy] autorelease]];
 
 		handles=[[NSArray arrayWithArray:handlearray] retain];
 		currhandle=other->currhandle;

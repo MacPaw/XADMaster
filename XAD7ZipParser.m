@@ -205,7 +205,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 		if(winattrs&0x8000)
 		{
 			int perms=winattrs>>16;
-			[file setObject:[NSNumber numberWithInt:winattrs] forKey:XADPosixPermissionsKey];
+			[file setObject:[NSNumber numberWithInt:perms] forKey:XADPosixPermissionsKey];
 			if((perms&0xf000)==0xa000) [file setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 		}
 

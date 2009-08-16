@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	0867D690FE84028FC02AAC07 /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeExecutable = 1BBAB68C0EC274A3007FE6A2 /* XADTest2 */;
 		activeTarget = 1BBAB67F0EC274A3007FE6A2 /* XADTest2 */;
 		addToTargets = (
@@ -1328,9 +1328,9 @@
 	};
 	1B06D5A70DDA667A00D9C000 /* XADRARParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {932, 12844}}";
-			sepNavSelRange = "{12351, 0}";
-			sepNavVisRange = "{11800, 1093}";
+			sepNavIntBoundsRect = "{{0, 0}, {812, 13129}}";
+			sepNavSelRange = "{10929, 0}";
+			sepNavVisRange = "{10770, 770}";
 		};
 	};
 	1B06D5AA0DDA668500D9C000 /* XADStuffItParser.h */ = {
@@ -2853,9 +2853,9 @@
 	};
 	1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {803, 4237}}";
-			sepNavSelRange = "{342, 0}";
-			sepNavVisRange = "{0, 763}";
+			sepNavIntBoundsRect = "{{0, 0}, {916, 4028}}";
+			sepNavSelRange = "{1172, 0}";
+			sepNavVisRange = "{2603, 1099}";
 		};
 	};
 	1B3E2C400F295BB1003EEF98 /* PBXTextBookmark */ = {
@@ -2908,9 +2908,9 @@
 	};
 	1B3E2DF70F2CBE28003EEF98 /* XADStuffItXIronHandle.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {980, 6213}}";
-			sepNavSelRange = "{946, 0}";
-			sepNavVisRange = "{1410, 853}";
+			sepNavIntBoundsRect = "{{0, 0}, {980, 6023}}";
+			sepNavSelRange = "{3783, 7}";
+			sepNavVisRange = "{3430, 740}";
 		};
 	};
 	1B3E2DFE0F2CBEB0003EEF98 /* PBXTextBookmark */ = {
@@ -2982,9 +2982,9 @@
 	};
 	1B3E30D70F354174003EEF98 /* XADStuffItXBlendHandle.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {836, 2356}}";
+			sepNavIntBoundsRect = "{{0, 0}, {836, 2451}}";
 			sepNavSelRange = "{878, 0}";
-			sepNavVisRange = "{486, 752}";
+			sepNavVisRange = "{484, 753}";
 		};
 	};
 	1B3E30E00F35F773003EEF98 /* PBXTextBookmark */ = {
@@ -8150,9 +8150,9 @@
 	};
 	1BC88D470ED31A46006B47FE /* XADCompressHandle.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {803, 1463}}";
-			sepNavSelRange = "{811, 0}";
-			sepNavVisRange = "{678, 809}";
+			sepNavIntBoundsRect = "{{0, 0}, {803, 1520}}";
+			sepNavSelRange = "{813, 0}";
+			sepNavVisRange = "{726, 844}";
 		};
 	};
 	1BC88D480ED31A46006B47FE /* XADCompressParser.m */ = {
@@ -9318,8 +9318,8 @@
 	1BC9A7070F007A910094C7B5 /* XADStuffItXCyanideHandle.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {803, 4579}}";
-			sepNavSelRange = "{562, 0}";
-			sepNavVisRange = "{366, 890}";
+			sepNavSelRange = "{3110, 7}";
+			sepNavVisRange = "{2635, 845}";
 		};
 	};
 	1BC9A70A0F007AA20094C7B5 /* CarrylessRangeCoder.h */ = {
@@ -9331,8 +9331,8 @@
 	};
 	1BC9A70B0F007AA20094C7B5 /* CarrylessRangeCoder.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {803, 2812}}";
-			sepNavSelRange = "{1667, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {844, 2793}}";
+			sepNavSelRange = "{1828, 0}";
 			sepNavVisRange = "{1600, 547}";
 		};
 	};
@@ -9856,9 +9856,9 @@
 	};
 	1BCD630D0EF487B500D86C43 /* XADXARParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {964, 8588}}";
-			sepNavSelRange = "{5249, 0}";
-			sepNavVisRange = "{4322, 1558}";
+			sepNavIntBoundsRect = "{{0, 0}, {1444, 9063}}";
+			sepNavSelRange = "{14969, 0}";
+			sepNavVisRange = "{14196, 1382}";
 		};
 	};
 	1BCD63350EF57B5B00D86C43 /* PBXTextBookmark */ = {

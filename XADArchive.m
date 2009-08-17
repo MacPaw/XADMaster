@@ -827,7 +827,6 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	if(![name length]) return YES; // Silently ignore unnamed files (or more likely, directories).
 
 	NSString *destfile=[destination stringByAppendingPathComponent:name];
-
 	while(![self _extractEntry:n as:destfile]
 	||![self _changeAllAttributesForEntry:n atPath:destfile deferDirectories:defer resourceFork:resfork])
 	{
@@ -1131,7 +1130,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 		return YES;
 	}
 
-	if(resfork)
+	if(resfork && ![self entryIsLink:n])
 	{
 		CSHandle *rsrchandle=[self resourceHandleForEntry:n];
 		if(rsrchandle) @try

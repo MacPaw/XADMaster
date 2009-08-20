@@ -35,6 +35,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	if(self=[super initWithHandle:handle name:name])
 	{
 		currhandle=nil;
+		queuedditto=nil;
 		dittostack=[[NSMutableArray array] retain];
 	}
 	return self;
@@ -42,18 +43,9 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 -(void)dealloc
 {
+	[queuedditto release];
 	[dittostack release];
 	[super dealloc];
-}
-
--(void)popDittoStackUntilPrefixFor:(XADPath *)path
-{
-	while([dittostack count])
-	{
-		XADPath *dir=[dittostack lastObject];
-		if([path hasPrefix:dir]) return;
-		[dittostack removeLastObject];
-	}
 }
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
@@ -84,9 +76,20 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		[self popDittoStackUntilPrefixFor:name];
 		[dittostack addObject:name];
 
+		// If we have a queued ditto fork, check if it matches this directory
+		// and get rid of it.
+		if(queuedditto)
+		{
+			BOOL match=[[queuedditto objectForKey:XADFileNameKey] isEqual:name];
+			[self addQueuedDittoDictionaryAsDirectory:match];
+		}
+
 		[super addEntryWithDictionary:dict retainPosition:retainpos];
 		return;
 	}
+
+	// If we have a queued ditto fork, get rid of it as it isn't a directory.
+	if(queuedditto) [self addQueuedDittoDictionaryAsDirectory:NO];
 
 	// Check if the file is a ditto fork
 	if([self parseAppleDoubleWithDictionary:dict name:name]) return;
@@ -97,6 +100,8 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	// Nothing else worked, it's a normal file
 	[super addEntryWithDictionary:dict retainPosition:retainpos];
 }
+
+
 
 -(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
 {
@@ -116,7 +121,6 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 	uint32_t rsrcoffs=0,rsrclen=0;
 	uint32_t finderoffs=0,finderlen=0;
-	NSData *finderinfo=nil;
 	CSHandle *fh=[self rawHandleForEntryWithDictionary:dict wantChecksum:YES];
 
 	@try
@@ -144,12 +148,6 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 				break;
 			}
 		}
-
-		if(finderoffs)
-		{
-			[fh seekToFileOffset:finderoffs];
-			finderinfo=[fh readDataOfLength:finderlen];
-		}
 	}
 	@catch(id e)
 	{
@@ -166,42 +164,65 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	[newdict setObject:[NSNumber numberWithUnsignedInt:rsrclen] forKey:XADFileSizeKey];
 	[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
 
-	if(finderinfo)
+	if(finderoffs) // Load FinderInfo struct if available
 	{
+		[fh seekToFileOffset:finderoffs];
+		NSData *finderinfo=[fh readDataOfLength:finderlen];
 		[newdict setObject:finderinfo forKey:XADFinderInfoKey];
-
-		const uint8_t *bytes=[finderinfo bytes];
-		uint32_t type=CSUInt32BE(bytes+0);
-		uint32_t creator=CSUInt32BE(bytes+4);
-
-		if(type!=0&&creator!=0&&(type&0xf000f000)==0&&(creator&0xf000f000)==0) // heuristic to recognize FolderInfo structures
-		{
-			[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-		}
-		else
-		{
-			if(type) [newdict setObject:[NSNumber numberWithUnsignedInt:type] forKey:XADFileTypeKey];
-			if(creator) [newdict setObject:[NSNumber numberWithUnsignedInt:creator] forKey:XADFileCreatorKey];
-		}
 	}
 
-	// Pop deeper directories off the stack, and see this entry is on the stack as a directory
-	[self popDittoStackUntilPrefixFor:origname];
-	if([dittostack count]&&[[dittostack lastObject] isEqual:origname])
-	[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-
+	// Replace name, remove unused entries
 	[newdict setObject:origname forKey:XADFileNameKey];
-
 	[newdict removeObjectForKey:XADDataLengthKey];
 	[newdict removeObjectForKey:XADDataOffsetKey];
 
-	currhandle=fh;
-	[self inspectEntryDictionary:newdict];
-	[super addEntryWithDictionary:newdict retainPosition:NO];
-	currhandle=nil;
+	// Pop deeper directories off the stack, and see this entry is on the stack as a directory
+	[self popDittoStackUntilPrefixFor:origname];
+	BOOL isdir=[dittostack count]&&[[dittostack lastObject] isEqual:origname];
+	if(isdir) [newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+
+	if(rsrclen||isdir)
+	{
+		currhandle=fh;
+		[self inspectEntryDictionary:newdict];
+		[super addEntryWithDictionary:newdict retainPosition:NO];
+		currhandle=nil;
+	}
+	else
+	{
+		// Entries without a resource fork might be directories, so keep them around until
+		// we can analyze the next entry.
+		[self queueDittoDictionary:newdict];
+	}
 
 	return YES;
 }
+
+-(void)popDittoStackUntilPrefixFor:(XADPath *)path
+{
+	while([dittostack count])
+	{
+		XADPath *dir=[dittostack lastObject];
+		if([path hasPrefix:dir]) return;
+		[dittostack removeLastObject];
+	}
+}
+
+-(void)queueDittoDictionary:(NSMutableDictionary *)dict
+{
+	queuedditto=[dict retain];
+}
+
+-(void)addQueuedDittoDictionaryAsDirectory:(BOOL)isdir
+{
+	if(isdir) [queuedditto setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+	[self inspectEntryDictionary:queuedditto];
+	[super addEntryWithDictionary:queuedditto retainPosition:NO];
+	[queuedditto release];
+	queuedditto=nil;
+}
+
+
 
 -(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
 {
@@ -288,6 +309,8 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	{
 		off_t offset=[[dict objectForKey:@"MacDataOffset"] longLongValue];
 		off_t length=[[dict objectForKey:@"MacDataLength"] longLongValue];
+
+		if(!length) return [self zeroLengthHandleWithChecksum:checksum];
 
 		CSHandle *handle;
 		if(currhandle) handle=currhandle;

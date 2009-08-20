@@ -1,6 +1,7 @@
 #import "XADArchiveParser.h"
 #import "CSFileHandle.h"
 #import "CSMultiHandle.h"
+#import "XADCRCHandle.h"
 
 #import "XADZipParser.h"
 #import "XADZipSFXParsers.h"
@@ -422,7 +423,12 @@ static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	return skiphandle;
 }
 
-
+-(CSHandle *)zeroLengthHandleWithChecksum:(BOOL)checksum
+{
+	CSHandle *zero=[CSMemoryHandle memoryHandleForReadingData:[NSData data]];
+	if(checksum) zero=[XADCRCHandle IEEECRC32HandleWithHandle:zero length:0 correctCRC:0 conditioned:NO];
+	return zero;
+}
 
 -(NSArray *)volumes
 {

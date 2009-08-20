@@ -8,6 +8,7 @@ extern NSString *XADDisableMacForkExpansionKey;
 @interface XADMacArchiveParser:XADArchiveParser
 {
 	CSHandle *currhandle;
+	NSMutableDictionary *queuedditto;
 	NSMutableArray *dittostack;
 }
 
@@ -17,7 +18,12 @@ extern NSString *XADDisableMacForkExpansionKey;
 -(void)dealloc;
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos;
+
 -(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name;
+-(void)popDittoStackUntilPrefixFor:(XADPath *)path;
+-(void)queueDittoDictionary:(NSMutableDictionary *)dict;
+-(void)addQueuedDittoDictionaryAsDirectory:(BOOL)isdir;
+
 -(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;

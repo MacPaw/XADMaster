@@ -357,6 +357,7 @@ static int TestSignature(const uint8_t *ptr)
 
 		if(block.type==0x72) // file marker header
 		{
+			[self skipBlock:block];
 		}
 		else if(block.type==0x73) // archive header
 		{
@@ -377,6 +378,8 @@ static int TestSignature(const uint8_t *ptr)
 				RARBlock commentblock=[self readBlockHeaderLevel1];
 				[self readCommentBlock:commentblock];
 			}
+
+			[self skipBlock:block];
 		}
 		//else if(block.type==0x7a) // newsub header
 		//{
@@ -384,13 +387,16 @@ static int TestSignature(const uint8_t *ptr)
 		else if(block.type==0x7b) // end header
 		{
 			archiveflags=0;
+
+			CSHandle *handle=[self handle];
+			if([handle respondsToSelector:@selector(currentHandle)]) handle=[(id)handle currentHandle];
+
+			[handle seekToEndOfFile];
 		}
 		else
 		{
 			return block;
 		}
-
-		[self skipBlock:block];
 	}
 }
 

@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	0867D690FE84028FC02AAC07 /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeExecutable = 1BBAB68C0EC274A3007FE6A2 /* XADTest2 */;
 		activeTarget = 1BBAB67F0EC274A3007FE6A2 /* XADTest2 */;
 		addToTargets = (
@@ -223,6 +223,25 @@
 			1B1C9D4F103E28A80016B568 /* PBXTextBookmark */ = 1B1C9D4F103E28A80016B568 /* PBXTextBookmark */;
 			1B1C9D50103E28A80016B568 /* PBXTextBookmark */ = 1B1C9D50103E28A80016B568 /* PBXTextBookmark */;
 			1B1C9D51103E28A80016B568 /* PBXTextBookmark */ = 1B1C9D51103E28A80016B568 /* PBXTextBookmark */;
+			1B1C9D64104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D64104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D65104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D65104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D66104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D66104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D67104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D67104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D68104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D68104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D69104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D69104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D6A104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D6A104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D6B104027FF0016B568 /* PlistBookmark */ = 1B1C9D6B104027FF0016B568 /* PlistBookmark */;
+			1B1C9D6C104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D6C104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D6D104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D6D104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D6E104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D6E104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D6F104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D6F104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D70104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D70104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D71104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D71104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D72104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D72104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D73104027FF0016B568 /* PBXTextBookmark */ = 1B1C9D73104027FF0016B568 /* PBXTextBookmark */;
+			1B1C9D74104027FF0016B568 /* PlistBookmark */ = 1B1C9D74104027FF0016B568 /* PlistBookmark */;
+			1B1C9D751040282B0016B568 /* PlistBookmark */ = 1B1C9D751040282B0016B568 /* PlistBookmark */;
+			1B1C9D7D1040286B0016B568 /* PlistBookmark */ = 1B1C9D7D1040286B0016B568 /* PlistBookmark */;
 			1B21128C0A475BEC005ED2AF = 1B21128C0A475BEC005ED2AF /* PBXTextBookmark */;
 			1B21129E0A475BEC005ED2AF = 1B21129E0A475BEC005ED2AF /* PBXTextBookmark */;
 			1B21129F0A475BEC005ED2AF = 1B21129F0A475BEC005ED2AF /* PBXTextBookmark */;
@@ -2060,7 +2079,7 @@
 		fRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */;
 		name = "XADDiskDoublerParser.m: 368";
 		rLen = 0;
-		rLoc = 11679;
+		rLoc = 11746;
 		rType = 0;
 		vrLen = 1113;
 		vrLoc = 11116;
@@ -2110,7 +2129,7 @@
 		fRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */;
 		name = "XADDiskDoublerParser.m: 360";
 		rLen = 4;
-		rLoc = 11368;
+		rLoc = 11435;
 		rType = 0;
 		vrLen = 1111;
 		vrLoc = 10844;
@@ -2170,7 +2189,7 @@
 		fRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */;
 		name = "XADDiskDoublerParser.m: 368";
 		rLen = 0;
-		rLoc = 11679;
+		rLoc = 11746;
 		rType = 0;
 		vrLen = 1113;
 		vrLoc = 11116;
@@ -2184,6 +2203,204 @@
 		rType = 0;
 		vrLen = 722;
 		vrLoc = 596;
+	};
+	1B1C9D64104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BC88D470ED31A46006B47FE /* XADCompressHandle.m */;
+		name = "XADCompressHandle.m: 46";
+		rLen = 0;
+		rLoc = 813;
+		rType = 0;
+		vrLen = 722;
+		vrLoc = 596;
+	};
+	1B1C9D65104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
+		name = "XADArchiveParser.m: 435";
+		rLen = 12;
+		rLoc = 11555;
+		rType = 0;
+		vrLen = 1017;
+		vrLoc = 11138;
+	};
+	1B1C9D66104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */;
+		name = "CSMultiHandle.m: 65";
+		rLen = 74;
+		rLoc = 1594;
+		rType = 0;
+		vrLen = 926;
+		vrLoc = 777;
+	};
+	1B1C9D67104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B3FAAF20EC3859F006D2F06 /* CSMultiHandle.h */;
+		name = "CSMultiHandle.h: 21";
+		rLen = 0;
+		rLoc = 468;
+		rType = 0;
+		vrLen = 693;
+		vrLoc = 0;
+	};
+	1B1C9D68104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
+		name = "XADRARParser.m: 460";
+		rLen = 0;
+		rLoc = 12540;
+		rType = 0;
+		vrLen = 1093;
+		vrLoc = 11989;
+	};
+	1B1C9D69104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BC88D7B0ED31ED9006B47FE /* XADDiskDoublerParser.h */;
+		name = "XADDiskDoublerParser.h: 22";
+		rLen = 0;
+		rLoc = 537;
+		rType = 0;
+		vrLen = 537;
+		vrLoc = 0;
+	};
+	1B1C9D6A104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */;
+		name = "XADDiskDoublerParser.m: 384";
+		rLen = 0;
+		rLoc = 12054;
+		rType = 0;
+		vrLen = 1116;
+		vrLoc = 11801;
+	};
+	1B1C9D6B104027FF0016B568 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 56FBC92B0A57541300BE98CF /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+			CFBundleExecutable,
+		);
+		name = "/Users/dag/Code/The Unarchiver/XADMaster/Info.plist";
+		rLen = 0;
+		rLoc = 2147483647;
+	};
+	1B1C9D6C104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BC88D470ED31A46006B47FE /* XADCompressHandle.m */;
+		name = "XADCompressHandle.m: 46";
+		rLen = 0;
+		rLoc = 813;
+		rType = 0;
+		vrLen = 722;
+		vrLoc = 596;
+	};
+	1B1C9D6D104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
+		name = "XADRARParser.m: 391";
+		rLen = 0;
+		rLoc = 10949;
+		rType = 0;
+		vrLen = 726;
+		vrLoc = 10101;
+	};
+	1B1C9D6E104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */;
+		name = "XADArchiveParser.m: 435";
+		rLen = 12;
+		rLoc = 11555;
+		rType = 0;
+		vrLen = 1017;
+		vrLoc = 11138;
+	};
+	1B1C9D6F104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */;
+		name = "CSMultiHandle.m: 65";
+		rLen = 74;
+		rLoc = 1594;
+		rType = 0;
+		vrLen = 926;
+		vrLoc = 777;
+	};
+	1B1C9D70104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B3FAAF20EC3859F006D2F06 /* CSMultiHandle.h */;
+		name = "CSMultiHandle.h: 21";
+		rLen = 0;
+		rLoc = 468;
+		rType = 0;
+		vrLen = 693;
+		vrLoc = 0;
+	};
+	1B1C9D71104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
+		name = "XADRARParser.m: 460";
+		rLen = 0;
+		rLoc = 12540;
+		rType = 0;
+		vrLen = 1093;
+		vrLoc = 11989;
+	};
+	1B1C9D72104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BC88D7B0ED31ED9006B47FE /* XADDiskDoublerParser.h */;
+		name = "XADDiskDoublerParser.h: 22";
+		rLen = 0;
+		rLoc = 537;
+		rType = 0;
+		vrLen = 537;
+		vrLoc = 0;
+	};
+	1B1C9D73104027FF0016B568 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */;
+		name = "XADDiskDoublerParser.m: 384";
+		rLen = 0;
+		rLoc = 12054;
+		rType = 0;
+		vrLen = 1116;
+		vrLoc = 11801;
+	};
+	1B1C9D74104027FF0016B568 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 56FBC92B0A57541300BE98CF /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+			CFBundleExecutable,
+		);
+		name = "/Users/dag/Code/The Unarchiver/XADMaster/Info.plist";
+		rLen = 0;
+		rLoc = 2147483647;
+	};
+	1B1C9D751040282B0016B568 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 56FBC92B0A57541300BE98CF /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+			CFBundleExecutable,
+		);
+		name = "/Users/dag/Code/The Unarchiver/XADMaster/Info.plist";
+		rLen = 0;
+		rLoc = 2147483647;
+	};
+	1B1C9D7D1040286B0016B568 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = 56FBC92B0A57541300BE98CF /* Info.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+			CFBundleExecutable,
+		);
+		name = "/Users/dag/Code/The Unarchiver/XADMaster/Info.plist";
+		rLen = 0;
+		rLoc = 2147483647;
 	};
 	1B210D4D0A40E457005ED2AF /* xadIO.doc */ = {
 		uiCtxt = {
@@ -5796,7 +6013,7 @@
 		fRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */;
 		name = "XADDiskDoublerParser.m: 367";
 		rLen = 0;
-		rLoc = 11619;
+		rLoc = 11686;
 		rType = 0;
 		vrLen = 1180;
 		vrLoc = 10741;

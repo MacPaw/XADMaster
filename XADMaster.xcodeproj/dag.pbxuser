@@ -1467,9 +1467,9 @@
 	};
 	1B06D5A70DDA667A00D9C000 /* XADRARParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {812, 13129}}";
-			sepNavSelRange = "{10929, 0}";
-			sepNavVisRange = "{10770, 770}";
+			sepNavIntBoundsRect = "{{0, 0}, {956, 12312}}";
+			sepNavSelRange = "{12540, 0}";
+			sepNavVisRange = "{11989, 1093}";
 		};
 	};
 	1B06D5AA0DDA668500D9C000 /* XADStuffItParser.h */ = {
@@ -4059,15 +4059,15 @@
 	1B3FAAF20EC3859F006D2F06 /* CSMultiHandle.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {803, 710}}";
-			sepNavSelRange = "{199, 26}";
-			sepNavVisRange = "{0, 665}";
+			sepNavSelRange = "{468, 0}";
+			sepNavVisRange = "{0, 693}";
 		};
 	};
 	1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1196, 2755}}";
-			sepNavSelRange = "{1382, 0}";
-			sepNavVisRange = "{710, 843}";
+			sepNavIntBoundsRect = "{{0, 0}, {1196, 2831}}";
+			sepNavSelRange = "{1594, 74}";
+			sepNavVisRange = "{777, 926}";
 		};
 	};
 	1B3FAAF40EC3859F006D2F06 /* CSFileHandle.h */ = {
@@ -6544,7 +6544,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 624";
 		rLen = 0;
-		rLoc = 16845;
+		rLoc = 17036;
 		rType = 0;
 		vrLen = 922;
 		vrLoc = 15973;
@@ -7872,7 +7872,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 624";
 		rLen = 0;
-		rLoc = 16845;
+		rLoc = 17036;
 		rType = 0;
 		vrLen = 916;
 		vrLoc = 15979;
@@ -7892,7 +7892,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 454";
 		rLen = 0;
-		rLoc = 12349;
+		rLoc = 12540;
 		rType = 0;
 		vrLen = 1091;
 		vrLoc = 11800;
@@ -7902,7 +7902,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 454";
 		rLen = 0;
-		rLoc = 12349;
+		rLoc = 12540;
 		rType = 0;
 		vrLen = 1093;
 		vrLoc = 11800;
@@ -7912,7 +7912,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 405";
 		rLen = 0;
-		rLoc = 10929;
+		rLoc = 11118;
 		rType = 0;
 		vrLen = 770;
 		vrLoc = 10770;
@@ -8092,7 +8092,7 @@
 		fRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */;
 		name = "XADRARParser.m: 405";
 		rLen = 0;
-		rLoc = 10929;
+		rLoc = 11118;
 		rType = 0;
 		vrLen = 770;
 		vrLoc = 10770;
@@ -8951,9 +8951,9 @@
 	};
 	1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {892, 13300}}";
-			sepNavSelRange = "{13050, 0}";
-			sepNavVisRange = "{12366, 1690}";
+			sepNavIntBoundsRect = "{{0, 0}, {940, 13832}}";
+			sepNavSelRange = "{11555, 12}";
+			sepNavVisRange = "{11138, 1017}";
 		};
 	};
 	1BBAB67A0EC2749B007FE6A2 /* XADTest2.m */ = {
@@ -9790,9 +9790,9 @@
 	};
 	1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {940, 8208}}";
-			sepNavSelRange = "{11679, 0}";
-			sepNavVisRange = "{11116, 1113}";
+			sepNavIntBoundsRect = "{{0, 0}, {940, 8379}}";
+			sepNavSelRange = "{12020, 0}";
+			sepNavVisRange = "{11801, 1116}";
 		};
 	};
 	1BC88DAC0ED32731006B47FE /* PBXTextBookmark */ = {

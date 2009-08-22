@@ -376,15 +376,22 @@
 		}
 		break;
 
-		case 4: // Untested!
+		case 2: // Untested!
+		{
+			int xor=0;
+			if(info1>=0x2a&&(info2&0x80)==0) xor=0x5a;
+
 			handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:size] autorelease];
+			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
+			password:[NSData dataWithBytes:"Z" length:1]] autorelease];
 
 			if(checksum)
 			{
-				handle=[XADCRCHandle IBMCRC16HandleWithHandle:handle length:size
-				correctCRC:[[dict objectForKey:@"DiskDoublerCRC"] intValue]
-				conditioned:NO];
+				handle=[[[XADChecksumHandle alloc] initWithHandle:handle length:size
+				correctChecksum:[[dict objectForKey:@"DiskDoublerCRC"] intValue]
+				mask:0xffff] autorelease];
 			}
+		}
 		break;
 
 		case 8:

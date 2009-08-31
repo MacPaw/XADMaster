@@ -93,22 +93,26 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 {
 	[parent seekToFileOffset:startoffs];
 	memcpy(xorblock,iv,16);
-	[self setBlockPointer:outblock];
+	[self setBlockPointer:buffer];
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	uint8_t inblock[16];
+	uint8_t tmpblock[16];
 
-	int actual=[parent readAtMost:16 toBuffer:inblock];
-	if(actual!=16) return -1;
+	int actual=[parent readAtMost:sizeof(buffer) toBuffer:buffer];
+	if(actual==0) return -1;
 
-	AES_decrypt(inblock,outblock,&key);
+	for(int i=0;i<sizeof(buffer);i+=16)
+	{
+		AES_decrypt(buffer+i,tmpblock,&key);
 
-	for(int i=0;i<16;i++) outblock[i]^=xorblock[i];
-	memcpy(xorblock,inblock,16);
+		for(int i=0;i<16;i++) tmpblock[i]^=xorblock[i];
+		memcpy(xorblock,buffer+i,16);
+		memcpy(buffer+i,tmpblock,16);
+	}
 
-	return 16;
+	return actual;
 }
 
 @end

@@ -173,8 +173,10 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 	// Replace name, remove unused entries
 	[newdict setObject:origname forKey:XADFileNameKey];
-	[newdict removeObjectForKey:XADDataLengthKey];
-	[newdict removeObjectForKey:XADDataOffsetKey];
+	[newdict removeObjectsForKeys:[NSArray arrayWithObjects:
+		XADDataLengthKey,XADDataOffsetKey,XADPosixPermissionsKey,
+		XADPosixUserKey,XADPosixUserNameKey,XADPosixGroupKey,XADPosixGroupNameKey,
+	nil]];
 
 	// Pop deeper directories off the stack, and see this entry is on the stack as a directory
 	[self popDittoStackUntilPrefixFor:origname];

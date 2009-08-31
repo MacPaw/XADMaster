@@ -326,7 +326,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		else
 		{
 			if(![self extractEntry:n to:immediatedestination
-			deferDirectories:YES resourceFork:NO]) immediatefailed=YES;
+			deferDirectories:YES resourceFork:YES]) immediatefailed=YES;
 		}
 	}
 }
@@ -952,6 +952,8 @@ static double XADGetTime()
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
+/*	int fh=open([destfile fileSystemRepresentation],O_WRONLY,0666);
+	if(fh==-1) fh=open([destfile fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);*/
 	int fh=open([destfile fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
 	if(fh==-1)
 	{
@@ -1139,7 +1141,14 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 			if([rsrchandle hasChecksum]&&![rsrchandle isChecksumCorrect]) [XADException raiseChecksumException];
 
 			// TODO: use xattrs?
-			if(![data writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO]) return NO;
+			if(![data writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO])
+			{
+				// Change permissions and try again
+				const char *cpath=[path fileSystemRepresentation];
+				int oldperms=chmod(cpath,0700);
+				if(![data writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO]) return NO;
+				chmod(cpath,oldperms);
+			}
 		}
 		@catch(id e)
 		{

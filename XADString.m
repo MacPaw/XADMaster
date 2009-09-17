@@ -127,7 +127,7 @@
 	else return NO;
 }
 
--(unsigned)hash
+-(NSUInteger)hash
 {
 	if(string) return [string hash];
 	else return [data hash];

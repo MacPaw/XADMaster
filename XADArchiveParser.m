@@ -215,7 +215,7 @@ static int maxheader=0;
 }
 
 
-static int XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
+static NSInteger XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 {
 	Class parserclass=classptr;
 	BOOL isfirst1=[parserclass isFirstVolume:str1];

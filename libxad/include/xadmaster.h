@@ -354,7 +354,7 @@ struct xadSplitFile { /* for XAD_INSPLITTED */
   struct xadSplitFile *xsf_Next;
   xadUINT32            xsf_Type; /* XAD_INFILENAME, XAD_INFILEHANDLE, XAD_INMEMORY, XAD_INHOOK */
   xadSize              xsf_Size; /* necessary for XAD_INMEMORY, useful for others */
-  xadUINT32            xsf_Data; /* FileName, Filehandle, Hookpointer or Memory */
+  xadSize            xsf_Data; /* FileName, Filehandle, Hookpointer or Memory */
 };
 
 struct xadSkipInfo {

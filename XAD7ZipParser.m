@@ -311,7 +311,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	int external=[handle readUInt8];
 	if(external!=0) [XADException raiseNotSupportedException]; // TODO: figure out what to do
 
-	for(int i=[indexes firstIndex];i!=NSNotFound;i=[indexes indexGreaterThanIndex:i])
+	for(NSInteger i=[indexes firstIndex];i!=NSNotFound;i=[indexes indexGreaterThanIndex:i])
 	{
 		uint32_t low=[handle readUInt32LE];
 		uint32_t high=[handle readUInt32LE];
@@ -322,7 +322,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 -(void)parseCRCsForHandle:(CSHandle *)handle array:(NSMutableArray *)array
 {
 	NSIndexSet *indexes=[self parseDefintionVectorForHandle:handle numberOfElements:[array count]];
-	for(int i=[indexes firstIndex];i!=NSNotFound;i=[indexes indexGreaterThanIndex:i])
+	for(NSInteger i=[indexes firstIndex];i!=NSNotFound;i=[indexes indexGreaterThanIndex:i])
 	SetNumberEntryInArray(array,i,[handle readUInt32LE],@"CRC");
 }
 
@@ -354,7 +354,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	int external=[handle readUInt8];
 	if(external!=0) [XADException raiseNotSupportedException]; // TODO: figure out what to do
 
-	for(int i=[indexes firstIndex];i!=NSNotFound;i=[indexes indexGreaterThanIndex:i])
+	for(NSInteger i=[indexes firstIndex];i!=NSNotFound;i=[indexes indexGreaterThanIndex:i])
 	SetNumberEntryInArray(array,i,[handle readUInt32LE],XADWindowsFileAttributesKey);
 }
 

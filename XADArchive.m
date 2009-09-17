@@ -9,7 +9,7 @@
 #import "Progress.h"
 
 #import <sys/stat.h>
-
+#import <sys/time.h>
 
 
 NSString *XADResourceDataKey=@"XADResourceData";
@@ -760,14 +760,14 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	extractsize=0;
 	totalsize=0;
 
-	for(int i=[entryset firstIndex];i!=NSNotFound;i=[entryset indexGreaterThanIndex:i])
+	for(NSUInteger i=[entryset firstIndex];i!=NSNotFound;i=[entryset indexGreaterThanIndex:i])
 	totalsize+=[self representativeSizeOfEntry:i];
 
 	int numentries=[entryset count];
 	[delegate archive:self extractionProgressFiles:0 of:numentries];
 	[delegate archive:self extractionProgressBytes:0 of:totalsize];
 
-	for(int i=[entryset firstIndex];i!=NSNotFound;i=[entryset indexGreaterThanIndex:i])
+	for(NSUInteger i=[entryset firstIndex];i!=NSNotFound;i=[entryset indexGreaterThanIndex:i])
 	{
 		BOOL res;
 

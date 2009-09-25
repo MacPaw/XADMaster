@@ -316,7 +316,7 @@
 							<real>235</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>205 90 1143 788 0 0 1440 878 </string>
+						<string>478 90 1143 788 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -334,7 +334,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>model.hpp</string>
+								<string>Localizable.strings</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -342,11 +342,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>model.hpp</string>
+										<string>Localizable.strings</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>1B782E8C106C66E100EBF3E8</string>
+										<string>1B782EE2106D28CD00EBF3E8</string>
 										<key>history</key>
 										<array>
 											<string>1B21128C0A475BEC005ED2AF</string>
@@ -637,7 +637,9 @@
 											<string>1B782E88106C66E100EBF3E8</string>
 											<string>1B782E89106C66E100EBF3E8</string>
 											<string>1B782E8A106C66E100EBF3E8</string>
-											<string>1B782E8B106C66E100EBF3E8</string>
+											<string>1B782ED7106D271F00EBF3E8</string>
+											<string>1B782ED8106D271F00EBF3E8</string>
+											<string>1B782EDA106D271F00EBF3E8</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -651,7 +653,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {864, 742}}</string>
 								<key>RubberWindowFrame</key>
-								<string>205 90 1143 788 0 0 1440 878 </string>
+								<string>478 90 1143 788 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -671,7 +673,7 @@
 								<key>Frame</key>
 								<string>{{0, 747}, {864, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>205 90 1143 788 0 0 1440 878 </string>
+								<string>478 90 1143 788 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -863,7 +865,7 @@
 		<string>/Users/dag/Code/The Unarchiver/XADMaster/XADMaster.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>205 90 1143 788 0 0 1440 878 </string>
+	<string>478 90 1143 788 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>

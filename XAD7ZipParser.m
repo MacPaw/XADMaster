@@ -14,14 +14,14 @@
 
 static uint64_t ReadNumber(CSHandle *handle)
 {
-	int first=[handle readUInt8];
+	uint64_t first=[handle readUInt8];
 	uint64_t val=0;
-
 	for(int i=0;i<8;i++)
 	{
 		if((first&(0x80>>i))==0) return val|((first&((0x80>>i)-1))<<i*8);
 		val|=(uint64_t)[handle readUInt8]<<i*8;
 	}
+
 	return val;
 }
 

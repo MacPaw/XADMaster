@@ -285,8 +285,17 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 				{
 					if(immediatesubarchives&&[self entryIsArchive:n])
 					{
-						if(![self extractArchiveEntry:n to:immediatedestination])
-						immediatefailed=YES;
+						// Try to extract as archive, if the format is unknown, extract as regular file
+						BOOL res;
+						@try { res=[self extractArchiveEntry:n to:immediatedestination]; }
+						@catch(id e) { res=NO; }
+
+						if(!res&&lasterror==XADDataFormatError)
+						{
+							if(![self extractEntry:n to:immediatedestination
+							deferDirectories:YES resourceFork:NO]) immediatefailed=YES;
+						}
+						else immediatefailed=YES;
 					}
 					else
 					{
@@ -320,8 +329,17 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		int n=[dataentries count]-1;
 		if(immediatesubarchives&&[self entryIsArchive:n])
 		{
-			if(![self extractArchiveEntry:n to:immediatedestination])
-			immediatefailed=YES;
+			// Try to extract as archive, if the format is unknown, extract as regular file
+			BOOL res;
+			@try { res=[self extractArchiveEntry:n to:immediatedestination]; }
+			@catch(id e) { res=NO; }
+
+			if(!res&&lasterror==XADDataFormatError)
+			{
+				if(![self extractEntry:n to:immediatedestination
+				deferDirectories:YES resourceFork:YES]) immediatefailed=YES;
+			}
+			else immediatefailed=YES;
 		}
 		else
 		{
@@ -771,7 +789,16 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{
 		BOOL res;
 
-		if(sub&&[self entryIsArchive:i]) res=[self extractArchiveEntry:i to:destination];
+		if(sub&&[self entryIsArchive:i])
+		{
+			@try { res=[self extractArchiveEntry:i to:destination]; }
+			@catch(id e) { res=NO; }
+
+			if(!res&&lasterror==XADDataFormatError) // Retry as regular file if the archive format was not known
+			{
+				res=[self extractEntry:i to:destination deferDirectories:YES];
+			}
+		}
 		else res=[self extractEntry:i to:destination deferDirectories:YES];
 
 		if(!res)
@@ -872,7 +899,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		[subarchive release];
 
 		if(res) return YES;
-		else if(err==XADBreakError) return NO;
+		else if(err==XADBreakError||err==XADDataFormatError) return NO;
 		else if(delegate)
 		{
 			XADAction action=[delegate archive:self extractionOfEntryDidFail:n error:err];

@@ -609,11 +609,16 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	CSHandle *handle;
 	if([[dict objectForKey:@"RARCompressionMethod"] intValue]==0x30)
 	{
-		handle=[self dataHandleFromSkipOffset:[[dict objectForKey:XADSkipOffsetKey] longLongValue]
-		length:[[dict objectForKey:XADSkipLengthKey] longLongValue]
-		encrypted:[[dict objectForKey:XADIsEncryptedKey] boolValue]
-		cryptoVersion:[[dict objectForKey:@"RARCompressionVersion"] intValue]
-		salt:[dict objectForKey:@"RARSalt"]];
+		off_t skipoffs=[[dict objectForKey:XADSkipOffsetKey] longLongValue];
+		off_t skiplength=[[dict objectForKey:XADSkipLengthKey] longLongValue];
+		off_t filesize=[[dict objectForKey:XADFileSizeKey] longLongValue];
+		BOOL encrypted=[[dict objectForKey:XADIsEncryptedKey] boolValue];
+		int cryptver=[[dict objectForKey:@"RARCompressionVersion"] intValue];
+
+		handle=[self dataHandleFromSkipOffset:skipoffs length:skiplength
+		encrypted:encrypted cryptoVersion:cryptver salt:[dict objectForKey:@"RARSalt"]];
+
+		if(skiplength!=filesize) handle=[handle nonCopiedSubHandleOfLength:filesize];
 	}
 	else
 	{

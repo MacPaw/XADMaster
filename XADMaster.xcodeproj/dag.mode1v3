@@ -228,6 +228,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -267,13 +269,7 @@
 								<string>0867D691FE84028FC02AAC07</string>
 								<string>08FB77AEFE84172EC02AAC07</string>
 								<string>1B06D5B80DDA66AA00D9C000</string>
-								<string>1BC88B760ED0E3A2006B47FE</string>
-								<string>1BCD5DA50EED8C9C00D86C43</string>
-								<string>1BC88C8A0ED22657006B47FE</string>
-								<string>1BC898E90EDA120C006B47FE</string>
-								<string>1B7E88FD0F45B5DF005B1246</string>
-								<string>1BC88C8B0ED22666006B47FE</string>
-								<string>1BBCC5A00EE74902006C3AE2</string>
+								<string>1BC885C60ECD11A9006B47FE</string>
 								<string>1BC8A0750EE4C4A3006B47FE</string>
 								<string>1B3A66351016832300AE25A8</string>
 								<string>1BC89A7D0EDB1BA6006B47FE</string>
@@ -290,13 +286,14 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>3</integer>
-									<integer>1</integer>
+									<integer>21</integer>
+									<integer>19</integer>
+									<integer>14</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {257, 729}}</string>
+							<string>{{0, 53}, {257, 729}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -317,7 +314,7 @@
 							<real>235</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>317 90 1143 788 0 0 1440 878 </string>
+						<string>213 90 1143 788 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -328,14 +325,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>XADArchive.m</string>
+								<string>XADZipParser.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -343,11 +338,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>XADArchive.m</string>
+										<string>XADZipParser.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>1B782F86106F7FE000EBF3E8</string>
+										<string>1B782F8D107169B000EBF3E8</string>
 										<key>history</key>
 										<array>
 											<string>1B21128C0A475BEC005ED2AF</string>
@@ -572,7 +567,6 @@
 											<string>1BA4E17010210E71001AB3CA</string>
 											<string>1BA4E1EC10220352001AB3CA</string>
 											<string>1BA4E2641022308E001AB3CA</string>
-											<string>1BA4E2C0102250EC001AB3CA</string>
 											<string>1BA4E2D7102270BB001AB3CA</string>
 											<string>1BA4E3981038DEDB001AB3CA</string>
 											<string>1BA4E39A1038DEDB001AB3CA</string>
@@ -598,7 +592,6 @@
 											<string>1B1C9D41103E28A80016B568</string>
 											<string>1B1C9D42103E28A80016B568</string>
 											<string>1B1C9D43103E28A80016B568</string>
-											<string>1B1C9D44103E28A80016B568</string>
 											<string>1B1C9D64104027FF0016B568</string>
 											<string>1B1C9D66104027FF0016B568</string>
 											<string>1B1C9D67104027FF0016B568</string>
@@ -640,7 +633,9 @@
 											<string>1B782F4F106F7D1A00EBF3E8</string>
 											<string>1B782F50106F7D1A00EBF3E8</string>
 											<string>1B782F51106F7D1A00EBF3E8</string>
-											<string>1B782F52106F7D1A00EBF3E8</string>
+											<string>1B782F8B107169B000EBF3E8</string>
+											<string>1B782F8C107169B000EBF3E8</string>
+											<string>1BA4E2C0102250EC001AB3CA</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -654,7 +649,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {864, 742}}</string>
 								<key>RubberWindowFrame</key>
-								<string>317 90 1143 788 0 0 1440 878 </string>
+								<string>213 90 1143 788 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -674,7 +669,7 @@
 								<key>Frame</key>
 								<string>{{0, 747}, {864, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>317 90 1143 788 0 0 1440 878 </string>
+								<string>213 90 1143 788 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -860,6 +855,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1B782F8E107169B000EBF3E8</string>
 		<string>1B782F84106F7FDC00EBF3E8</string>
 		<string>1B782F55106F7D1A00EBF3E8</string>
 		<string>1B782F56106F7D1A00EBF3E8</string>
@@ -870,7 +866,7 @@
 		<string>/Users/dag/Code/The Unarchiver/XADMaster/XADMaster.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>317 90 1143 788 0 0 1440 878 </string>
+	<string>213 90 1143 788 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>

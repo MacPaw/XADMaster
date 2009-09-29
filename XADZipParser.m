@@ -66,7 +66,7 @@
 	/*int numentriesdisk=*/[fh readUInt16LE];
 	int numentries=[fh readUInt16LE];
 	/*int centralsize=*/[fh readUInt32LE];
-	int centraloffset=[fh readUInt32LE];
+	uint32_t centraloffset=[fh readUInt32LE];
 	int commentlength=[fh readUInt16LE];
 
 	// TODO: more closely check multi-archives

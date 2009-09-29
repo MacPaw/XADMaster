@@ -387,6 +387,9 @@
 			1B782F82106F7FDC00EBF3E8 /* PBXTextBookmark */ = 1B782F82106F7FDC00EBF3E8 /* PBXTextBookmark */;
 			1B782F83106F7FDC00EBF3E8 /* PBXTextBookmark */ = 1B782F83106F7FDC00EBF3E8 /* PBXTextBookmark */;
 			1B782F86106F7FE000EBF3E8 /* PBXTextBookmark */ = 1B782F86106F7FE000EBF3E8 /* PBXTextBookmark */;
+			1B782F8B107169B000EBF3E8 /* PBXTextBookmark */ = 1B782F8B107169B000EBF3E8 /* PBXTextBookmark */;
+			1B782F8C107169B000EBF3E8 /* PBXTextBookmark */ = 1B782F8C107169B000EBF3E8 /* PBXTextBookmark */;
+			1B782F8D107169B000EBF3E8 /* PBXTextBookmark */ = 1B782F8D107169B000EBF3E8 /* PBXTextBookmark */;
 			1B81DC230FFC16D8005C5B23 = 1B81DC230FFC16D8005C5B23 /* PBXTextBookmark */;
 			1B8A8A371012947200C8534E = 1B8A8A371012947200C8534E /* PBXTextBookmark */;
 			1B8A8AD21013979600C8534E = 1B8A8AD21013979600C8534E /* PBXTextBookmark */;
@@ -994,9 +997,9 @@
 	};
 	1B06D5A30DDA666C00D9C000 /* XADZipParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1092, 10602}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1092, 10982}}";
 			sepNavSelRange = "{9633, 0}";
-			sepNavVisRange = "{843, 1142}";
+			sepNavVisRange = "{9181, 1074}";
 		};
 	};
 	1B06D5A60DDA667A00D9C000 /* XADRARParser.h */ = {
@@ -2586,9 +2589,9 @@
 	};
 	1B3FAAF50EC3859F006D2F06 /* CSFileHandle.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1148, 3013}}";
-			sepNavSelRange = "{892, 0}";
-			sepNavVisRange = "{468, 1046}";
+			sepNavIntBoundsRect = "{{0, 0}, {1148, 3192}}";
+			sepNavSelRange = "{2176, 0}";
+			sepNavVisRange = "{1841, 691}";
 		};
 	};
 	1B3FAAF60EC3859F006D2F06 /* CSMemoryHandle.h */ = {
@@ -3034,7 +3037,7 @@
 	1B5A80B50A27AA9900B189EB /* XADArchive.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1148, 28519}}";
-			sepNavSelRange = "{20480, 19}";
+			sepNavSelRange = "{19805, 0}";
 			sepNavVisRange = "{19587, 1219}";
 			sepNavVisRect = "{{0, 27219}, {766, 701}}";
 		};
@@ -4235,6 +4238,36 @@
 		vrLen = 1219;
 		vrLoc = 19587;
 	};
+	1B782F8B107169B000EBF3E8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B5A80B50A27AA9900B189EB /* XADArchive.m */;
+		name = "XADArchive.m: 772";
+		rLen = 0;
+		rLoc = 19805;
+		rType = 0;
+		vrLen = 1219;
+		vrLoc = 19587;
+	};
+	1B782F8C107169B000EBF3E8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1BC88D480ED31A46006B47FE /* XADCompressParser.m */;
+		name = "XADCompressParser.m: 33";
+		rLen = 0;
+		rLoc = 848;
+		rType = 0;
+		vrLen = 1025;
+		vrLoc = 0;
+	};
+	1B782F8D107169B000EBF3E8 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
+		name = "XADZipParser.m: 263";
+		rLen = 0;
+		rLoc = 9638;
+		rType = 0;
+		vrLen = 1074;
+		vrLoc = 9181;
+	};
 	1B81DC230FFC16D8005C5B23 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 1B3FAAF50EC3859F006D2F06 /* CSFileHandle.m */;
@@ -5215,7 +5248,7 @@
 		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
 		name = "XADZipParser.m: 263";
 		rLen = 0;
-		rLoc = 9633;
+		rLoc = 9638;
 		rType = 0;
 		vrLen = 1156;
 		vrLoc = 9099;
@@ -5924,7 +5957,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {803, 988}}";
 			sepNavSelRange = "{848, 0}";
-			sepNavVisRange = "{352, 1113}";
+			sepNavVisRange = "{0, 1025}";
 		};
 	};
 	1BC88D490ED31A46006B47FE /* XADCompressParser.h */ = {
@@ -6093,14 +6126,10 @@
 	1BC8931B0ED6F283006B47FE /* XADTest3 */ = {
 		isa = PBXExecutable;
 		activeArgIndices = (
-			NO,
-			NO,
 			YES,
 		);
 		argumentStrings = (
-			"../../Archivetest/rpm/uisp-20050207suse-89.1.i586.rpm",
-			"../../Archivetest/rpm/cndrvcups-capt-1.30-1.i386.rpm ",
-			arctest/LhA/MANGA_0020.lzh,
+			arctest/huge.zip,
 		);
 		autoAttachOnCrash = 1;
 		breakpointsEnabled = 1;

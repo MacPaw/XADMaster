@@ -59,19 +59,22 @@
 	NSMutableDictionary *prevdict=nil;
 	NSData *prevname=nil;
 
-	[self findCentralDirectory];
+	off_t endrec,zip64loc;
+	if(![self findEndOfCentralDirectory:&endrec zip64Locator:&zip64loc])
+	{
+		// TODO: parse incrementally instead
+		[XADException raiseIllegalDataException];
+	}
 
-	/*int disknumber=*/[fh readUInt16LE];
+	[fh seekToFileOffset:endrec+4];
+
+	/*uint32_t disknumber=*/[fh readUInt16LE];
 	int centraldirstartdisk=[fh readUInt16LE];
-	/*int numentriesdisk=*/[fh readUInt16LE];
-	int numentries=[fh readUInt16LE];
-	/*int centralsize=*/[fh readUInt32LE];
-	uint32_t centraloffset=[fh readUInt32LE];
+	/*off_t numentriesdisk=*/[fh readUInt16LE];
+	off_t numentries=[fh readUInt16LE];
+	/*off_t centralsize=*/[fh readUInt32LE];
+	off_t centraloffset=[fh readUInt32LE];
 	int commentlength=[fh readUInt16LE];
-
-	// TODO: more closely check multi-archives
-//	NSLog(@"disknumber:%d centraldirstartdisk:%d numentriesdisk:%d numentries:%d centralsize:%d centraloffset:%d",
-//	disknumber,centraldirstartdisk,numentriesdisk,numentries,centralsize,centraloffset);
 
 	if(commentlength)
 	{
@@ -79,12 +82,40 @@
 		[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
 	}
 
+	if(zip64loc>=0)
+	{
+		// Read locator to find where the zip64 end of central directory record actually is.
+		[fh seekToFileOffset:zip64loc+4];
+		int disk=[fh readUInt32LE];
+		off_t offs=[fh readUInt64LE];
+		[fh seekToFileOffset:[self offsetForVolume:disk offset:offs]];
+
+		uint32_t zip64id=[fh readID];
+		if(zip64id==0x504b0606)
+		{
+			/*off_t recsize=*/[fh readUInt64LE];
+			/*int version=*/[fh readUInt16LE];
+			/*int extractversion=*/[fh readUInt16LE];
+			/*uint32_t disknumber=*/[fh readUInt32LE];
+			centraldirstartdisk=[fh readUInt32LE];
+			/*off_t numentriesdisk=*/[fh readUInt64LE];
+			numentries=[fh readUInt64LE];
+			/*off_t centralsize=*/[fh readUInt64LE];
+			centraloffset=[fh readUInt64LE];
+		}
+	}
+
+	// TODO: more closely check multi-archives
+	//NSLog(@"disknumber:%d centraldirstartdisk:%d numentriesdisk:%qd numentries:%qd centralsize:%qd centraloffset:%qd",
+	//disknumber,centraldirstartdisk,numentriesdisk,numentries,centralsize,centraloffset);
+
 	[fh seekToFileOffset:[self offsetForVolume:centraldirstartdisk offset:centraloffset]];
 
 	for(int i=0;i<numentries;i++)
 	{
 		if(![self shouldKeepParsing]) break;
 
+		// Read central directory record.
 		uint32_t centralid=[fh readID];
 		if(centralid!=0x504b0102) [XADException raiseIllegalDataException]; // could try recovering here
 
@@ -95,23 +126,48 @@
 		int compressionmethod=[fh readUInt16LE];
 		uint32_t date=[fh readUInt32LE];
 		uint32_t crc=[fh readUInt32LE];
-		uint32_t compsize=[fh readUInt32LE];
-		uint32_t uncompsize=[fh readUInt32LE];
+		off_t compsize=[fh readUInt32LE];
+		off_t uncompsize=[fh readUInt32LE];
 		int namelength=[fh readUInt16LE];
 		int extralength=[fh readUInt16LE];
 		int commentlength=[fh readUInt16LE];
 		int startdisk=[fh readUInt16LE];
 		/*int infileattrib=*/[fh readUInt16LE];
 		uint32_t extfileattrib=[fh readUInt32LE];
-		uint32_t locheaderoffset=[fh readUInt32LE];
+		off_t locheaderoffset=[fh readUInt32LE];
 
 		off_t next=[fh offsetInFile]+namelength+extralength+commentlength;
+
+		// Read central directory extra fields, just to find the Zip64 field.
+		int length=extralength;
+		while(length>9)
+		{
+			int extid=[fh readUInt16LE];
+			int size=[fh readUInt16LE];
+			length-=4;
+
+			if(size>length) break;
+			length-=size;
+			off_t nextextra=[fh offsetInFile]+size;
+
+			if(extid==1&&size>=28)
+			{
+				uncompsize=[fh readUInt64LE];
+				compsize=[fh readUInt64LE];
+				locheaderoffset=[fh readUInt64LE];
+				startdisk=[fh readUInt32LE];
+				break;
+			}
+
+			[fh seekToFileOffset:nextextra];
+		}
 
 		#ifdef DEBUG
 		if(compressionmethod==2||compressionmethod==3||compressionmethod==4||compressionmethod==7)
 		NSLog(@"Untested ZIP compression method %d",compressionmethod);
 		#endif
 
+		// Read local header
 		[fh seekToFileOffset:[self offsetForVolume:startdisk offset:locheaderoffset]];
 
 		uint32_t localid=[fh readID];
@@ -137,8 +193,8 @@
 				[NSDate XADDateWithMSDOSDateTime:date],XADLastModificationDateKey,
 				[NSNumber numberWithUnsignedInt:crc],@"ZipCRC32",
 				[NSNumber numberWithUnsignedInt:localdate],@"ZipLocalDate",
-				[NSNumber numberWithUnsignedLong:compsize],XADCompressedSizeKey,
-				[NSNumber numberWithUnsignedLong:uncompsize],XADFileSizeKey,
+				[NSNumber numberWithUnsignedLongLong:compsize],XADCompressedSizeKey,
+				[NSNumber numberWithUnsignedLongLong:uncompsize],XADFileSizeKey,
 				[NSNumber numberWithLongLong:[fh offsetInFile]+localnamelength+localextralength],XADDataOffsetKey,
 				[NSNumber numberWithUnsignedLong:compsize],XADDataLengthKey,
 			nil];
@@ -288,45 +344,43 @@
 
 static inline int imin(int a,int b) { return a<b?a:b; }
 
--(void)findCentralDirectory
+-(BOOL)findEndOfCentralDirectory:(off_t *)offsptr zip64Locator:(off_t *)locatorptr
 {
 	CSHandle *fh=[self handle];
 
 	[fh seekToEndOfFile];
 	off_t end=[fh offsetInFile];
 
-	int scansize=0x10011;
-	if(scansize>end) scansize=end;
+	int numbytes=0x10011;
+	if(numbytes>end) numbytes=end;
 
-	uint8_t buf[1024];
+	uint8_t buf[numbytes];
 
-	int numbytes=imin(sizeof(buf),scansize);
 	[fh skipBytes:-numbytes];
 	[fh readBytes:numbytes toBuffer:buf];
 	int pos=numbytes-4;
-	scansize-=numbytes;
 
-	for(;;)
+	// Find end of central directory record
+	while(pos>=0)
 	{
 		if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==5&&buf[pos+3]==6) break;
-
 		pos--;
-
-		if(pos<0)
-		{
-			if(scansize==0) [XADException raiseIllegalDataException];
-
-			int lastbytes=numbytes;
-			numbytes=imin(sizeof(buf)-3,scansize);
-			memmove(buf+numbytes,buf,3);
-			[fh skipBytes:-lastbytes-numbytes];
-			[fh readBytes:numbytes toBuffer:buf];
-			pos=numbytes-1;
-			scansize-=numbytes;
-		}
 	}
 
-	[fh skipBytes:pos+4-numbytes];
+	if(pos<0) return NO; // Not found, total failure
+	*offsptr=end-numbytes+pos;
+
+	// Find zip64 end of central directory locator
+	while(pos>=0)
+	{
+		if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==6&&buf[pos+3]==7) break;
+		pos--;
+	}
+
+	if(pos<0) *locatorptr=-1;
+	else *locatorptr=end-numbytes+pos;
+
+	return YES;
 }
 
 -(void)parseZipExtraWithDictionary:(NSMutableDictionary *)dict length:(int)length
@@ -449,7 +503,6 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		else
 		{
 			//NSLog(@"unknown extension: %x %d %@",extid,size,[fh readDataOfLength:size]);
-			[fh skipBytes:size];
 		}
 
 		[fh seekToFileOffset:next];

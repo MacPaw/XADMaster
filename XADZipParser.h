@@ -10,7 +10,7 @@
 +(BOOL)isFirstVolume:(NSString *)filename;
 
 -(void)parse;
--(void)findCentralDirectory;
+-(BOOL)findEndOfCentralDirectory:(off_t *)offsptr zip64Locator:(off_t *)locatorptr;
 //-(void)findNextZipMarkerStartingAt:(off_t)startpos;
 //-(void)findNoSeekMarkerForDictionary:(NSMutableDictionary *)dict;
 -(void)parseZipExtraWithDictionary:(NSMutableDictionary *)dict length:(int)length;

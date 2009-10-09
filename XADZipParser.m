@@ -201,7 +201,7 @@
 				[NSNumber numberWithUnsignedLongLong:compsize],XADCompressedSizeKey,
 				[NSNumber numberWithUnsignedLongLong:uncompsize],XADFileSizeKey,
 				[NSNumber numberWithLongLong:[fh offsetInFile]+localnamelength+localextralength],XADDataOffsetKey,
-				[NSNumber numberWithUnsignedLong:compsize],XADDataLengthKey,
+				[NSNumber numberWithUnsignedLongLong:compsize],XADDataLengthKey,
 			nil];
 			if(flags&0x01) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 
@@ -329,7 +329,7 @@
 			}
 
 			@try {
-				if(localextralength) [self parseZipExtraWithDictionary:dict length:localextralength];
+				if(localextralength) [self parseZipExtraWithDictionary:dict length:localextralength nameData:namedata];
 			} @catch(id e) {
 				[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 				NSLog(@"Error parsing Zip extra fields: %@",e);
@@ -399,7 +399,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	return YES;
 }
 
--(void)parseZipExtraWithDictionary:(NSMutableDictionary *)dict length:(int)length
+-(void)parseZipExtraWithDictionary:(NSMutableDictionary *)dict length:(int)length nameData:(NSData *)namedata
 {
 	CSHandle *fh=[self handle];
 
@@ -438,8 +438,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		{
 			int len=[fh readUInt32LE];
 			int flags=[fh readUInt16LE];
-			[dict setObject:[NSNumber numberWithUnsignedLong:[fh readID]] forKey:XADFileTypeKey];
-			[dict setObject:[NSNumber numberWithUnsignedLong:[fh readID]] forKey:XADFileCreatorKey];
+			[dict setObject:[NSNumber numberWithUnsignedInt:[fh readID]] forKey:XADFileTypeKey];
+			[dict setObject:[NSNumber numberWithUnsignedInt:[fh readID]] forKey:XADFileCreatorKey];
 
 			CSHandle *mh=nil;
 			if(flags&0x04) mh=fh; // uncompressed
@@ -451,7 +451,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			}
 			if(mh&&len>=26)
 			{
-				[dict setObject:[NSNumber numberWithUnsignedLong:[mh readUInt16LE]] forKey:XADFinderFlagsKey];
+				[dict setObject:[NSNumber numberWithUnsignedInt:[mh readUInt16LE]] forKey:XADFinderFlagsKey];
 				[mh skipBytes:24];
 
 				off_t create,modify,backup;
@@ -495,16 +495,16 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		{
 			if([fh readID]=='ZPIT')
 			{
-				[dict setObject:[NSNumber numberWithUnsignedLong:[fh readID]] forKey:XADFileTypeKey];
-				[dict setObject:[NSNumber numberWithUnsignedLong:[fh readID]] forKey:XADFileCreatorKey];
-				if(size>=14) [dict setObject:[NSNumber numberWithUnsignedLong:[fh readUInt16BE]] forKey:XADFinderFlagsKey];
+				[dict setObject:[NSNumber numberWithUnsignedInt:[fh readID]] forKey:XADFileTypeKey];
+				[dict setObject:[NSNumber numberWithUnsignedInt:[fh readID]] forKey:XADFileCreatorKey];
+				if(size>=14) [dict setObject:[NSNumber numberWithUnsignedInt:[fh readUInt16BE]] forKey:XADFinderFlagsKey];
 			}
 		}
 		else if(extid==0x2805&&size>=6) // ZipIt Macintosh Extra Field (short, for directories)
 		{
 			if([fh readID]=='ZPIT')
 			{
-				[dict setObject:[NSNumber numberWithUnsignedLong:[fh readUInt16BE]] forKey:XADFinderFlagsKey];
+				[dict setObject:[NSNumber numberWithUnsignedInt:[fh readUInt16BE]] forKey:XADFinderFlagsKey];
 			}
 		}
 		else if(extid==0x7075&&size>=6) // Unicode Path Extra Field
@@ -512,8 +512,18 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			int version=[fh readUInt8];
 			if(version==1)
 			{
-				[dict setObject:[NSNumber numberWithUnsignedLong:[fh readUInt32LE]] forKey:@"ZipUnicodePathOriginalCRC"];
-				[dict setObject:[fh readDataOfLength:size-5] forKey:@"ZipUnicodePathData"];
+				uint32_t crc=[fh readUInt32LE];
+				NSData *unicodedata=[fh readDataOfLength:size-5];
+
+				if((XADCalculateCRC(0xffffffff,[namedata bytes],[namedata length],
+				XADCRCTable_edb88320)^0xffffffff)==crc)
+				{
+					[dict setObject:[dict objectForKey:XADFileNameKey] forKey:@"ZipRegularFilename"];
+					[dict setObject:[self XADPathWithData:unicodedata encoding:NSUTF8StringEncoding
+					separators:XADEitherPathSeparator] forKey:XADFileNameKey];
+					// Apparently at least some files use Windows path separators instead of the
+					// usual Unix. Not sure what to expect here, so using both.
+				}
 			}
 		}
 		else if(extid==0x9901&&size>=7)

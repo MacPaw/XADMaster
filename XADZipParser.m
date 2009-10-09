@@ -136,7 +136,12 @@
 		uint32_t extfileattrib=[fh readUInt32LE];
 		off_t locheaderoffset=[fh readUInt32LE];
 
-		off_t next=[fh offsetInFile]+namelength+extralength+commentlength;
+		[fh skipBytes:namelength+extralength];
+
+		NSData *comment=nil;
+		if(commentlength) comment=[fh readDataOfLength:commentlength];
+
+		off_t next=[fh offsetInFile];
 
 		// Read central directory extra fields, just to find the Zip64 field.
 		int length=extralength;
@@ -248,6 +253,9 @@
 			if(localnamelength)
 			{
 				namedata=[fh readDataOfLength:localnamelength];
+				if(flags&0x800)
+				[dict setObject:[self XADPathWithData:namedata encoding:NSUTF8StringEncoding separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+				else
 				[dict setObject:[self XADPathWithData:namedata separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 
 				if(((char *)[namedata bytes])[localnamelength-1]=='/'&&uncompsize==0)
@@ -295,6 +303,14 @@
 			{
 				[dict setObject:[self XADPathWithUnseparatedString:[[self name] stringByDeletingPathExtension]] forKey:XADFileNameKey];
 				// TODO: set no filename flag
+			}
+
+			if(comment)
+			{
+				if(flags&0x800)
+				[dict setObject:[self XADStringWithData:comment encoding:NSUTF8StringEncoding] forKey:XADCommentKey];
+				else
+				[dict setObject:[self XADStringWithData:comment] forKey:XADCommentKey];
 			}
 
 			//if(zc.System==1) fi2->xfi_Protection = ((EndGetI32(zc.ExtFileAttrib)>>16)^15)&0xFF; // amiga

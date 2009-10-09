@@ -448,6 +448,7 @@
 			1BECC173107EDCB6000385AB /* PBXTextBookmark */ = 1BECC173107EDCB6000385AB /* PBXTextBookmark */;
 			1BECC174107EDD9F000385AB /* PBXTextBookmark */ = 1BECC174107EDD9F000385AB /* PBXTextBookmark */;
 			1BECC177107EDE9D000385AB /* PBXTextBookmark */ = 1BECC177107EDE9D000385AB /* PBXTextBookmark */;
+			1BECC17A107F77B0000385AB /* PBXTextBookmark */ = 1BECC17A107F77B0000385AB /* PBXTextBookmark */;
 			1BFF167D0F0083E000E74807 = 1BFF167D0F0083E000E74807 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 1B5A7A5E0A24C65900B189EB /* Source Control */;
@@ -890,9 +891,9 @@
 	};
 	1B06D5A30DDA666C00D9C000 /* XADZipParser.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1204, 11818}}";
-			sepNavSelRange = "{10607, 0}";
-			sepNavVisRange = "{10038, 1340}";
+			sepNavIntBoundsRect = "{{0, 0}, {1084, 11989}}";
+			sepNavSelRange = "{17521, 0}";
+			sepNavVisRange = "{16543, 1487}";
 		};
 	};
 	1B06D5A60DDA667A00D9C000 /* XADRARParser.h */ = {
@@ -6004,6 +6005,16 @@
 		rType = 0;
 		vrLen = 1340;
 		vrLoc = 10038;
+	};
+	1BECC17A107F77B0000385AB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */;
+		name = "XADZipParser.m: 517";
+		rLen = 0;
+		rLoc = 17521;
+		rType = 0;
+		vrLen = 1487;
+		vrLoc = 16543;
 	};
 	1BFF167D0F0083E000E74807 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;

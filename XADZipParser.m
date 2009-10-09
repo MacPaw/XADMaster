@@ -507,6 +507,15 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 				[dict setObject:[NSNumber numberWithUnsignedLong:[fh readUInt16BE]] forKey:XADFinderFlagsKey];
 			}
 		}
+		else if(extid==0x7075&&size>=6) // Unicode Path Extra Field
+		{
+			int version=[fh readUInt8];
+			if(version==1)
+			{
+				[dict setObject:[NSNumber numberWithUnsignedLong:[fh readUInt32LE]] forKey:@"ZipUnicodePathOriginalCRC"];
+				[dict setObject:[fh readDataOfLength:size-5] forKey:@"ZipUnicodePathData"];
+			}
+		}
 		else if(extid==0x9901&&size>=7)
 		{
 			int version;

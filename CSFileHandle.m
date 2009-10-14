@@ -51,7 +51,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 	{
 		fh=file;
  		close=closeondealloc;
-		multi=NO;
+		multilock=nil;
 		parent=nil;
 	}
 	return self;
@@ -63,10 +63,14 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 	{
 		fh=other->fh;
  		close=NO;
-		multi=YES;
 		parent=[other retain];
-		pos=[other offsetInFile];
-		[other _setMultiMode];
+
+		if(!other->multilock) [other _setMultiMode];
+
+		multilock=[other->multilock retain];
+		[multilock lock];
+		pos=other->pos;
+		[multilock unlock];
 	}
 	return self;
 }
@@ -75,6 +79,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 {
 	if(fh&&close) fclose(fh);
 	[parent release];
+	[multilock release];
 	[super dealloc];
 }
 
@@ -92,7 +97,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(off_t)offsetInFile
 {
-	if(multi) return pos;
+	if(multilock) return pos;
 	else return ftello(fh);
 }
 
@@ -107,37 +112,39 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(void)seekToFileOffset:(off_t)offs
 {
+	if(multilock) { [multilock lock]; }
 	if(fseeko(fh,offs,SEEK_SET)) [self _raiseError];
-	if(multi) pos=ftello(fh);
+	if(multilock) { pos=ftello(fh); [multilock unlock]; }
 }
 
 -(void)seekToEndOfFile
 {
+	if(multilock) { [multilock lock]; }
 	if(fseeko(fh,0,SEEK_END)) [self _raiseError];
-	if(multi) pos=ftello(fh);
+	if(multilock) { pos=ftello(fh); [multilock unlock]; }
 }
 
 -(void)pushBackByte:(int)byte
 {
-	if(multi) [self _raiseNotSupported:_cmd];
+	if(multilock) [self _raiseNotSupported:_cmd];
 	if(ungetc(byte,fh)==EOF) [self _raiseError];
 }
 
 -(int)readAtMost:(int)num toBuffer:(void *)buffer
 {
 	if(num==0) return 0;
-	if(multi) fseeko(fh,pos,SEEK_SET);
+	if(multilock) { [multilock lock]; fseeko(fh,pos,SEEK_SET); }
 	int n=fread(buffer,1,num,fh);
 	if(n<=0&&!feof(fh)) [self _raiseError];
-	if(multi) pos=ftello(fh);
+	if(multilock) { pos=ftello(fh); [multilock unlock]; }
 	return n;
 }
 
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer
 {
-	if(multi) fseeko(fh,pos,SEEK_SET);
+	if(multilock) { [multilock lock]; fseeko(fh,pos,SEEK_SET); }
 	if(fwrite(buffer,1,num,fh)!=num) [self _raiseError];
-	if(multi) pos=ftello(fh);
+	if(multilock) { pos=ftello(fh); [multilock unlock]; }
 }
 
 
@@ -153,9 +160,9 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(void)_setMultiMode
 {
-	if(!multi)
+	if(!multilock)
 	{
-		multi=YES;
+		multilock=[NSLock new];
 		pos=ftello(fh);
 	}
 }

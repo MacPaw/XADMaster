@@ -17,6 +17,9 @@ extern NSString *XADDisableMacForkExpansionKey;
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
 
+-(void)parse;
+-(void)parseWithSeparateMacForks;
+
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos;
 
 -(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name;

@@ -52,7 +52,7 @@
 	return [filename rangeOfString:@".zip" options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
 }
 
--(void)parse
+-(void)parseWithSeparateMacForks
 {
 	CSHandle *fh=[self handle];
 

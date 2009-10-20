@@ -48,6 +48,16 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	[super dealloc];
 }
 
+-(void)parse
+{
+	[self parseWithSeparateMacForks];
+
+	// If we have a queued ditto fork left over, get rid of it as it isn't a directory.
+	if(queuedditto) [self addQueuedDittoDictionaryAsDirectory:NO];
+}
+
+-(void)parseWithSeparateMacForks {}
+
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
 {
 	if(retainpos) [XADException raiseNotSupportedException];

@@ -9,7 +9,7 @@
 +(XADRegex *)volumeRegexForFilename:(NSString *)filename;
 +(BOOL)isFirstVolume:(NSString *)filename;
 
--(void)parse;
+-(void)parseWithSeparateMacForks;
 -(BOOL)findEndOfCentralDirectory:(off_t *)offsptr zip64Locator:(off_t *)locatorptr;
 //-(void)findNextZipMarkerStartingAt:(off_t)startpos;
 //-(void)findNoSeekMarkerForDictionary:(NSMutableDictionary *)dict;

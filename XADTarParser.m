@@ -421,7 +421,7 @@
 	[handle seekToFileOffset:offset];
 }
 
--(void)parse
+-(void)parseWithSeparateMacForks
 {
 	// Reset global current header for posix.2001;
 	currentGlobalHeader = [NSData data];

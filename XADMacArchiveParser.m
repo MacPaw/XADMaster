@@ -121,9 +121,12 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	XADString *last=[name lastPathComponent];
 	XADPath *basepath=[name pathByDeletingLastPathComponent];
 
-	NSString *laststring=[last string];
+	if(![last hasASCIIPrefix:@"._"]) return NO;
+	XADString *newlast=[last XADStringByStrippingASCIIPrefixOfLength:2];
+/*	NSString *laststring=[last string];
 	if(![laststring hasPrefix:@"._"]) return NO;
 	XADString *newlast=[self XADStringWithString:[laststring substringFromIndex:2]];
+*/
 
 	if([first isEqual:@"__MACOSX"]||[first isEqual:@"."]) basepath=[basepath pathByDeletingFirstPathComponent];
 

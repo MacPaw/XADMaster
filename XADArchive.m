@@ -250,7 +250,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
 	BOOL isres=resnum&&[resnum boolValue];
 
-	XADString *name=[dict objectForKey:XADFileNameKey];
+	XADPath *name=[dict objectForKey:XADFileNameKey];
 
 	NSNumber *index=[namedict objectForKey:name];
 	if(index) // Try to update an existing entry

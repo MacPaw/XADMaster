@@ -107,11 +107,28 @@
 
 
 
--(NSString *)description
+-(BOOL)hasASCIIPrefix:(NSString *)asciiprefix
 {
-	// TODO: more info?
-	return [self string];
+	if(string) return [string hasPrefix:asciiprefix];
+	else
+	{
+		int length=[asciiprefix length];
+		if([data length]<length) return NO;
+
+		char cstr[length+1];
+		if(![asciiprefix getCString:cstr maxLength:length+1 encoding:NSASCIIStringEncoding]) return NO;
+
+		return !strncmp([data bytes],cstr,length);
+	}
 }
+
+-(XADString *)XADStringByStrippingASCIIPrefixOfLength:(int)length
+{
+	if(string) return [[[XADString alloc] initWithString:[string substringFromIndex:length]] autorelease];
+	else return [[[XADString alloc] initWithData:[data subdataWithRange:NSMakeRange(length,[data length]-length)] source:source] autorelease];
+}
+
+
 
 -(BOOL)isEqual:(id)other
 {
@@ -119,10 +136,15 @@
 	else if([other isKindOfClass:[self class]])
 	{
 		XADString *xadstr=(XADString *)other;
-		if(string) return [string isEqual:[xadstr string]];
+
+		if(string&&xadstr->string) return [string isEqual:xadstr->string];
+		else if(data&&xadstr->data&&source==xadstr->source) return [data isEqual:xadstr->data];
+		else return NO;
+
+/*		if(string) return [string isEqual:[xadstr string]];
 		else if(xadstr->string) return [xadstr->string isEqual:[self string]];
 		else if(source==xadstr->source||[source encoding]==[xadstr->source encoding]) return [data isEqual:xadstr->data];
-		else return [[self string] isEqual:[xadstr string]];
+		else return [[self string] isEqual:[xadstr string]];*/
 	}
 	else return NO;
 }
@@ -131,6 +153,14 @@
 {
 	if(string) return [string hash];
 	else return [data hash];
+}
+
+
+
+-(NSString *)description
+{
+	// TODO: more info?
+	return [self string];
 }
 
 -(id)copyWithZone:(NSZone *)zone

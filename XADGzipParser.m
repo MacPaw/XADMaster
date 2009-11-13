@@ -69,7 +69,17 @@
 	off_t size=[handle readUInt32LE];
 	off_t compsize=[handle offsetInFile]-datapos-8;
 
+	NSString *name=[self name];
+	NSString *extension=[[name pathExtension] lowercaseString];
+	NSString *contentname;
+	if([extension isEqual:@"tgz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"tar"];
+	else if([extension isEqual:@"adz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"adf"];
+	else if([extension isEqual:@"cpgz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"cpio"];
+	else contentname=[name stringByDeletingPathExtension];
+
+	// TODO: set no filename flag
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		[self XADPathWithUnseparatedString:contentname],XADFileNameKey,
 		[NSNumber numberWithLongLong:compsize],XADCompressedSizeKey,
 		[NSNumber numberWithLongLong:datapos],XADDataOffsetKey,
 		[NSDate dateWithTimeIntervalSince1970:time],XADLastModificationDateKey,
@@ -78,33 +88,13 @@
 		[NSNumber numberWithUnsignedInt:os],@"GzipOS",
 	nil];
 
+	// TODO: Should probably sanity-check this value
 	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
 
-	if(filename)
-	{
-		[dict setObject:[self XADPathWithData:filename separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+	if([contentname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
+	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
 
-		NSString *stringname=[[NSString alloc] initWithData:filename encoding:NSISOLatin1StringEncoding];
-		if([stringname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
-		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
-		[stringname release];
-	}
-	else
-	{
-		NSString *name=[self name];
-		NSString *extension=[[name pathExtension] lowercaseString];
-		NSString *contentname;
-		if([extension isEqual:@"tgz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"tar"];
-		else if([extension isEqual:@"adz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"adf"];
-		else if([extension isEqual:@"cpgz"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"cpio"];
-		else contentname=[name stringByDeletingPathExtension];
-
-		// TODO: set no filename flag
-		[dict setObject:[self XADPathWithUnseparatedString:contentname] forKey:XADFileNameKey];
-
-		if([contentname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
-		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
-	}
+	if(filename) [dict setObject:[self XADStringWithData:filename] forKey:@"GzipFilename"];
 
 	if(comment) [dict setObject:[self XADStringWithData:comment] forKey:XADCommentKey];
 

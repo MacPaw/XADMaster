@@ -1,6 +1,6 @@
 #import "XADGzipParser.h"
 #import "CSZlibHandle.h"
-#import "XADCRCSuffixHandle.h"
+#import "CRC.h"
 
 
 
@@ -62,13 +62,6 @@
 		}
     }
 
-	off_t datapos=[handle offsetInFile];
-
-	[handle seekToEndOfFile];
-	[handle skipBytes:-4];
-	off_t size=[handle readUInt32LE];
-	off_t compsize=[handle offsetInFile]-datapos-8;
-
 	NSString *name=[self name];
 	NSString *extension=[[name pathExtension] lowercaseString];
 	NSString *contentname;
@@ -80,40 +73,33 @@
 	// TODO: set no filename flag
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[self XADPathWithUnseparatedString:contentname],XADFileNameKey,
-		[NSNumber numberWithLongLong:compsize],XADCompressedSizeKey,
-		[NSNumber numberWithLongLong:datapos],XADDataOffsetKey,
 		[NSDate dateWithTimeIntervalSince1970:time],XADLastModificationDateKey,
 		[self XADStringWithString:@"Deflate"],XADCompressionNameKey,
 		[NSNumber numberWithUnsignedInt:extraflags],@"GzipExtraFlags",
 		[NSNumber numberWithUnsignedInt:os],@"GzipOS",
 	nil];
 
-	// TODO: Should probably sanity-check this value
-	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
+	off_t length=[handle fileSize];
+	if(length!=CSHandleMaxLength)
+	[dict setObject:[NSNumber numberWithLongLong:length] forKey:XADCompressedSizeKey];
 
 	if([contentname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
 
-	if(filename) [dict setObject:[self XADStringWithData:filename] forKey:@"GzipFilename"];
+	if(filename)
+	[dict setObject:[self XADStringWithData:filename] forKey:@"GzipFilename"];
 
-	if(comment) [dict setObject:[self XADStringWithData:comment] forKey:XADCommentKey];
+	if(comment)
+	[dict setObject:[self XADStringWithData:comment] forKey:XADCommentKey];
 
 	[self addEntryWithDictionary:dict];
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dictionary wantChecksum:(BOOL)checksum
 {
-	CSHandle *handle=[self handleAtDataOffsetForDictionary:dictionary];
-	CSZlibHandle *zh=[CSZlibHandle deflateHandleWithHandle:handle];
-
-	// TODO: somehow make checksumming work even though there are a million broken gzip files out there
-	if(checksum)
-	{
-		[zh setSeekBackAtEOF:YES]; // enable seeking back after zlib reads too much data at the end
-		return [XADCRCSuffixHandle IEEECRC32SuffixHandleWithHandle:zh
-		CRCHandle:handle bigEndianCRC:NO conditioned:YES];
-	}
-	else return zh;
+	CSHandle *handle=[self handle];
+	[handle seekToFileOffset:0];
+	return [[[XADGzipHandle alloc] initWithHandle:handle] autorelease];
 }
 
 -(NSString *)formatName { return @"Gzip"; }
@@ -167,4 +153,131 @@
 @end
 
 
+
+@implementation XADGzipHandle
+
+-(id)initWithHandle:(CSHandle *)handle
+{
+	if(self=[super initWithName:[handle name]])
+	{
+		parent=[handle retain];
+		startoffs=[parent offsetInFile];
+		currhandle=nil;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[parent release];
+	[currhandle release];
+	[super dealloc];
+}
+
+-(void)resetStream
+{
+	[parent seekToFileOffset:startoffs];
+	[currhandle release];
+	currhandle=nil;
+	checksumscorrect=YES;
+}
+
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer
+{
+	int bytesread=0;
+	uint8_t *bytebuf=buffer;
+
+	while(bytesread<num)
+	{
+		if(!currhandle)
+		{
+			currhandle=[[self zlibHandleForHandleAtHeader:parent] retain];
+			crc=0xffffffff;
+		}
+
+		int actual=[currhandle readAtMost:num-bytesread toBuffer:&bytebuf[bytesread]];
+		crc=XADCalculateCRC(crc,&bytebuf[bytesread],actual,XADCRCTable_edb88320);
+
+		bytesread+=actual;
+
+		if([currhandle atEndOfFile])
+		{
+			[currhandle release];
+			currhandle=nil;
+
+			@try
+			{
+				uint32_t correctcrc=[parent readUInt32LE];
+				uint32_t len=[parent readUInt32LE];
+				if((crc^0xffffffff)!=correctcrc) checksumscorrect=NO;
+			}
+			@catch(id e)
+			{
+				checksumscorrect=NO;
+				[self endStream];
+				break;
+			}
+
+			if([parent atEndOfFile])
+			{
+				[self endStream];
+				break;
+			}
+		}
+	}
+
+	return bytesread;
+}
+
+-(CSHandle *)zlibHandleForHandleAtHeader:(CSHandle *)handle
+{
+	uint16_t headid=[handle readUInt16BE];
+	uint8_t method=[handle readUInt8];
+	uint8_t flags=[handle readUInt8];
+	uint32_t time=[handle readUInt32LE];
+	uint8_t extraflags=[handle readUInt8];
+	uint8_t os=[handle readUInt8];
+
+	if(method!=8) [XADException raiseIllegalDataException];
+
+    if(headid!=0x1fa1)
+    {
+		if(flags&0x04) // FEXTRA: extra fields
+		{
+			uint16_t len=[handle readUInt16LE];
+			[handle skipBytes:len];
+		}
+		if(flags&0x08) // FNAME: filename
+		{
+			while([handle readUInt8]);
+		}
+		if(flags&0x10) // FCOMMENT: comment
+		{
+			while([handle readUInt8]);
+		}
+		if(flags&0x02) // FHCRC: header crc
+		{
+			[handle skipBytes:2];
+		}
+    }
+
+	CSZlibHandle *zh=[CSZlibHandle deflateHandleWithHandle:handle];
+	[zh setSeekBackAtEOF:YES];
+	return zh;
+}
+
+-(BOOL)hasChecksum
+{
+	return YES;
+}
+
+-(BOOL)isChecksumCorrect
+{
+	if(currhandle) return NO;
+	return checksumscorrect;
+}
+
+-(double)estimatedProgress { return [parent estimatedProgress]; } // TODO: better estimation using buffer?
+
+@end
 

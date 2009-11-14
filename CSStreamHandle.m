@@ -137,6 +137,7 @@
 		streampos++;
 		nextstreambyte=-1;
 		offs=1;
+		if(num==1) return 1;
 	}
 
 	int actual=[self streamAtMost:num-offs toBuffer:((uint8_t *)buffer)+offs];

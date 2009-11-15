@@ -32,6 +32,8 @@
 #import "XADNSISParser.h"
 #import "XADALZipParser.h"
 #import "XADNDSParser.h"
+#import "XADNSAParser.h"
+#import "XADSARParser.h"
 #import "XADLibXADParser.h"
 
 #include <dirent.h>
@@ -129,6 +131,8 @@ static int maxheader=0;
 		[XADLZHSFXParser class],
 		[XADPowerPackerParser class],
 		[XADNDSParser class],
+		[XADNSAParser class],
+		[XADSARParser class],
 
 		// Detectors that require lots of work
 		[XADWinZipSFXParser class],

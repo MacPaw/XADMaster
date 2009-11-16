@@ -1,6 +1,7 @@
 #import "XADGzipParser.h"
 #import "CSZlibHandle.h"
 #import "CRC.h"
+#import "Progress.h"
 
 
 
@@ -79,12 +80,12 @@
 		[NSNumber numberWithUnsignedInt:os],@"GzipOS",
 	nil];
 
-	off_t length=[handle fileSize];
-	if(length!=CSHandleMaxLength)
-	[dict setObject:[NSNumber numberWithLongLong:length] forKey:XADCompressedSizeKey];
-
 	if([contentname matchedByPattern:@"\\.(tar|cpio)" options:REG_ICASE])
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+
+	off_t filesize=[handle fileSize];
+	if(filesize!=CSHandleMaxLength)
+	[dict setObject:[NSNumber numberWithLongLong:filesize] forKey:XADCompressedSizeKey];
 
 	if(filename)
 	[dict setObject:[self XADStringWithData:filename] forKey:@"GzipFilename"];
@@ -154,6 +155,11 @@
 
 
 
+#define HeaderState 0
+#define DataState 1
+#define FooterState 2
+#define EndState 10
+
 @implementation XADGzipHandle
 
 -(id)initWithHandle:(CSHandle *)handle
@@ -177,8 +183,7 @@
 -(void)resetStream
 {
 	[parent seekToFileOffset:startoffs];
-	[currhandle release];
-	currhandle=nil;
+	state=HeaderState;
 	checksumscorrect=YES;
 }
 
@@ -187,24 +192,65 @@
 	int bytesread=0;
 	uint8_t *bytebuf=buffer;
 
-	while(bytesread<num)
+	while(bytesread<num && state!=EndState) switch(state)
 	{
-		if(!currhandle)
+		case HeaderState:
 		{
-			currhandle=[[self zlibHandleForHandleAtHeader:parent] retain];
-			crc=0xffffffff;
-		}
+			uint16_t headid=[parent readUInt16BE];
+			uint8_t method=[parent readUInt8];
+			uint8_t flags=[parent readUInt8];
+			uint32_t time=[parent readUInt32LE];
+			uint8_t extraflags=[parent readUInt8];
+			uint8_t os=[parent readUInt8];
 
-		int actual=[currhandle readAtMost:num-bytesread toBuffer:&bytebuf[bytesread]];
-		crc=XADCalculateCRC(crc,&bytebuf[bytesread],actual,XADCRCTable_edb88320);
+			if(method!=8) [XADException raiseIllegalDataException];
 
-		bytesread+=actual;
+			if(headid!=0x1fa1)
+			{
+				if(flags&0x04) // FEXTRA: extra fields
+				{
+					uint16_t len=[parent readUInt16LE];
+					[parent skipBytes:len];
+				}
+				if(flags&0x08) // FNAME: filename
+				{
+					while([parent readUInt8]);
+				}
+				if(flags&0x10) // FCOMMENT: comment
+				{
+					while([parent readUInt8]);
+				}
+				if(flags&0x02) // FHCRC: header crc
+				{
+					[parent skipBytes:2];
+				}
+			}
 
-		if([currhandle atEndOfFile])
-		{
+			CSZlibHandle *zh=[CSZlibHandle deflateHandleWithHandle:parent];
+			[zh setSeekBackAtEOF:YES];
+
 			[currhandle release];
-			currhandle=nil;
+			currhandle=[zh retain];
 
+			crc=0xffffffff;
+
+			state=DataState;
+		}
+		break;
+
+		case DataState:
+		{
+			int actual=[currhandle readAtMost:num-bytesread toBuffer:&bytebuf[bytesread]];
+			crc=XADCalculateCRC(crc,&bytebuf[bytesread],actual,XADCRCTable_edb88320);
+
+			bytesread+=actual;
+
+			if([currhandle atEndOfFile]) state=FooterState;
+		}
+		break;
+
+		case FooterState:
+		{
 			@try
 			{
 				uint32_t correctcrc=[parent readUInt32LE];
@@ -214,56 +260,24 @@
 			@catch(id e)
 			{
 				checksumscorrect=NO;
-				[self endStream];
+				state=EndState;
 				break;
 			}
 
-			if([parent atEndOfFile])
-			{
-				[self endStream];
-				break;
-			}
+			if([parent atEndOfFile]) state=EndState;
+			else state=HeaderState;
 		}
+		break;
+	}
+
+	if(state==EndState)
+	{
+		[self endStream];
+		[currhandle release];
+		currhandle=nil;
 	}
 
 	return bytesread;
-}
-
--(CSHandle *)zlibHandleForHandleAtHeader:(CSHandle *)handle
-{
-	uint16_t headid=[handle readUInt16BE];
-	uint8_t method=[handle readUInt8];
-	uint8_t flags=[handle readUInt8];
-	uint32_t time=[handle readUInt32LE];
-	uint8_t extraflags=[handle readUInt8];
-	uint8_t os=[handle readUInt8];
-
-	if(method!=8) [XADException raiseIllegalDataException];
-
-    if(headid!=0x1fa1)
-    {
-		if(flags&0x04) // FEXTRA: extra fields
-		{
-			uint16_t len=[handle readUInt16LE];
-			[handle skipBytes:len];
-		}
-		if(flags&0x08) // FNAME: filename
-		{
-			while([handle readUInt8]);
-		}
-		if(flags&0x10) // FCOMMENT: comment
-		{
-			while([handle readUInt8]);
-		}
-		if(flags&0x02) // FHCRC: header crc
-		{
-			[handle skipBytes:2];
-		}
-    }
-
-	CSZlibHandle *zh=[CSZlibHandle deflateHandleWithHandle:handle];
-	[zh setSeekBackAtEOF:YES];
-	return zh;
 }
 
 -(BOOL)hasChecksum

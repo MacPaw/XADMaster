@@ -3,7 +3,7 @@
 #import "CSBzip2Handle.h"
 #import "XADLZMAHandle.h"
 #import "XADDigestHandle.h"
-#import "XADLZMAParser.h"
+#import "XADXZHandle.h"
 #import "XADRegex.h"
 
 #define GroundState 0
@@ -436,12 +436,10 @@ length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum chec
 			int first=[handle readUInt8];
 			if(first==0xff)
 			{
-				[handle seekToFileOffset:0];
-				XADLZMAParser *parser=[[[XADLZMAParser alloc] initWithHandle:handle name:nil] autorelease];
-				lzmahandle=nil;
-				[parser parse];
-				if(!lzmahandle) return nil;
-				handle=lzmahandle;
+				/*[handle seekToFileOffset:0];
+				return [[[XADXZHandle alloc] initWithHandle:handle length:sizeval ...] autorelease];
+				*/
+				return nil;
 			}
 			else
 			{
@@ -451,6 +449,7 @@ length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum chec
 				handle=[[[XADLZMAHandle alloc] initWithHandle:handle length:streamsize propertyData:props] autorelease];
 			}
 		}
+		else if([encodingstyle isEqual:@"application/x-xz"]) handle=[[[XADXZHandle alloc] initWithHandle:handle length:sizeval] autorelease];
 		else return nil;
 	}
 	else handle=[[self handle] nonCopiedSubHandleOfLength:0]; // kludge for data-less entries
@@ -463,11 +462,6 @@ length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum chec
 	}
 
 	return handle;
-}
-
--(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
-{
-	lzmahandle=[parser handleForEntryWithDictionary:dict wantChecksum:NO];
 }
 
 

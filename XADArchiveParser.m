@@ -19,7 +19,7 @@
 #import "XADGzipParser.h"
 #import "XADBzip2Parser.h"
 #import "XADLZMAAloneParser.h"
-#import "XADLZMAParser.h"
+#import "XADXZParser.h"
 #import "XADCompressParser.h"
 #import "XADTarParser.h"
 #import "XADCpioParser.h"
@@ -106,7 +106,6 @@ static int maxheader=0;
 		[XAD7ZipParser class],
 		[XADGzipParser class],
 		[XADBzip2Parser class],
-		[XADLZMAParser class],
 		[XADTarParser class],
 
 		// Mac formats
@@ -124,6 +123,7 @@ static int maxheader=0;
 		[XADXARParser class],
 		[XADCompressParser class],
 		[XADRPMParser class],
+		[XADXZParser class],
 		[XADALZipParser class],
 		[XADLZHParser class],
 		[XADLZHAmigaSFXParser class],

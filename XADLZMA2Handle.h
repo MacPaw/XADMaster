@@ -1,5 +1,9 @@
 #import "CSStreamHandle.h"
 
+#if !__LP64__
+#define _LZMA_UINT32_IS_ULONG
+#endif
+
 #import "lzma/Lzma2Dec.h"
 
 @interface XADLZMA2Handle:CSStreamHandle

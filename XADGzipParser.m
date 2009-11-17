@@ -199,9 +199,10 @@
 			uint16_t headid=[parent readUInt16BE];
 			uint8_t method=[parent readUInt8];
 			uint8_t flags=[parent readUInt8];
-			uint32_t time=[parent readUInt32LE];
+			/*uint32_t time=[parent readUInt32LE];
 			uint8_t extraflags=[parent readUInt8];
-			uint8_t os=[parent readUInt8];
+			uint8_t os=[parent readUInt8];*/
+			[parent skipBytes:6];
 
 			if(method!=8) [XADException raiseIllegalDataException];
 
@@ -254,7 +255,8 @@
 			@try
 			{
 				uint32_t correctcrc=[parent readUInt32LE];
-				uint32_t len=[parent readUInt32LE];
+				/*uint32_t len=[parent readUInt32LE];*/
+				[parent skipBytes:4];
 				if((crc^0xffffffff)!=correctcrc) checksumscorrect=NO;
 			}
 			@catch(id e)

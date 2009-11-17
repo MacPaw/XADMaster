@@ -4,7 +4,8 @@
 
 +(NSDate *)XADDateWithTimeIntervalSince1904:(NSTimeInterval)interval
 {
-	return [NSDate dateWithTimeIntervalSince1970:interval-2082852000]; // 2082938400 seems to be off by one day?
+	return [NSDate dateWithTimeIntervalSince1970:interval-2082844800
+	-[[NSTimeZone defaultTimeZone] secondsFromGMT]];
 }
 
 +(NSDate *)XADDateWithTimeIntervalSince1601:(NSTimeInterval)interval

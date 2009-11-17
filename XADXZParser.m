@@ -27,7 +27,7 @@
 	// TODO: set no filename flag
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[self XADPathWithUnseparatedString:contentname],XADFileNameKey,
-		[self XADStringWithString:@"LZMA"],XADCompressionNameKey,
+		[self XADStringWithString:@"LZMA2"],XADCompressionNameKey,
 	nil];
 
 	if([contentname matchedByPattern:@"\\.(tar|cpio)$" options:REG_ICASE])

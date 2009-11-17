@@ -270,6 +270,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 	XADPath *filename=[dict objectForKey:XADFileNameKey];
 	XADPath *parent=[filename pathByDeletingLastPathComponent];
+	if(!parent) parent=[self XADPath];
 	XADString *namepart=[self XADStringWithBytes:bytes+2 length:bytes[1]];
 	XADPath *newpath=[parent pathByAppendingPathComponent:namepart];
 

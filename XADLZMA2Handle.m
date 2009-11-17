@@ -1,11 +1,11 @@
-#import "XADLZMAHandle.h"
+#import "XADLZMA2Handle.h"
 #import "XADException.h"
 
 static void *Alloc(void *p,size_t size) { return malloc(size); }
 static void Free(void *p,void *address) { return free(address); }
 static ISzAlloc allocator={Alloc,Free};
 
-@implementation XADLZMAHandle
+@implementation XADLZMA2Handle
 
 -(id)initWithHandle:(CSHandle *)handle propertyData:(NSData *)propertydata
 {
@@ -18,9 +18,11 @@ static ISzAlloc allocator={Alloc,Free};
 	{
 		parent=[handle retain];
 		startoffs=[parent offsetInFile];
+		seekback=NO;
 
-		LzmaDec_Construct(&lzma);
-		if(LzmaDec_Allocate(&lzma,[propertydata bytes],[propertydata length],&allocator)==SZ_OK)
+		Lzma2Dec_Construct(&lzma);
+		if([propertydata length]>=1)
+		if(Lzma2Dec_Allocate(&lzma,((uint8_t *)[propertydata bytes])[0],&allocator)==SZ_OK)
 		{
 			return self;
 		}
@@ -32,17 +34,19 @@ static ISzAlloc allocator={Alloc,Free};
 
 -(void)dealloc
 {
-	LzmaDec_Free(&lzma,&allocator);
+	Lzma2Dec_Free(&lzma,&allocator);
 
 	[parent release];
 	[super dealloc];
 
 }
 
+-(void)setSeekBackAtEOF:(BOOL)seekateof { seekback=seekateof; }
+
 -(void)resetStream
 {
 	[parent seekToFileOffset:startoffs];
-	LzmaDec_Init(&lzma);
+	Lzma2Dec_Init(&lzma);
 	bufbytes=bufoffs=0;
 }
 
@@ -56,7 +60,7 @@ static ISzAlloc allocator={Alloc,Free};
 		size_t srclen=bufbytes-bufoffs;
 		ELzmaStatus status;
 
-		int res=LzmaDec_DecodeToBuf(&lzma,buffer+total,&destlen,inbuffer+bufoffs,&srclen,LZMA_FINISH_ANY,&status);
+		int res=Lzma2Dec_DecodeToBuf(&lzma,buffer+total,&destlen,inbuffer+bufoffs,&srclen,LZMA_FINISH_ANY,&status);
 
 		total+=destlen;
 		bufoffs+=srclen;
@@ -70,6 +74,7 @@ static ISzAlloc allocator={Alloc,Free};
 		}
 		else if(status==LZMA_STATUS_FINISHED_WITH_MARK)
 		{
+			if(seekback) [parent skipBytes:-bufbytes+bufoffs];
 			[self endStream];
 			break;
 		}

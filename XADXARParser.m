@@ -431,6 +431,7 @@ length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum chec
 		if(!encodingstyle||[encodingstyle length]==0); // no encoding style, copy
 		else if([encodingstyle isEqual:@"application/x-gzip"]) handle=[CSZlibHandle zlibHandleWithHandle:handle length:sizeval];
 		else if([encodingstyle isEqual:@"application/x-bzip2"]) handle=[CSBzip2Handle bzip2HandleWithHandle:handle length:sizeval];
+		else if([encodingstyle isEqual:@"application/x-xz"]) handle=[[[XADXZHandle alloc] initWithHandle:handle length:sizeval] autorelease];
 		else if([encodingstyle isEqual:@"application/x-lzma"])
 		{
 			int first=[handle readUInt8];
@@ -449,7 +450,6 @@ length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum chec
 				handle=[[[XADLZMAHandle alloc] initWithHandle:handle length:streamsize propertyData:props] autorelease];
 			}
 		}
-		else if([encodingstyle isEqual:@"application/x-xz"]) handle=[[[XADXZHandle alloc] initWithHandle:handle length:sizeval] autorelease];
 		else return nil;
 	}
 	else handle=[[self handle] nonCopiedSubHandleOfLength:0]; // kludge for data-less entries

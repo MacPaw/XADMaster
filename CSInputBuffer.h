@@ -29,6 +29,7 @@ void _CSInputFillBuffer(CSInputBuffer *buf);
 void CSInputSkipBits(CSInputBuffer *buf,int bits);
 BOOL CSInputOnByteBoundary(CSInputBuffer *buf);
 void CSInputSkipToByteBoundary(CSInputBuffer *buf);
+void CSInputSkipTo16BitBoundary(CSInputBuffer *buf);
 
 int CSInputNextBit(CSInputBuffer *buf);
 int CSInputNextBitLE(CSInputBuffer *buf);

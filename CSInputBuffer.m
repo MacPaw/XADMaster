@@ -103,6 +103,12 @@ void CSInputSkipToByteBoundary(CSInputBuffer *buf)
 	buf->currbit=0;
 }
 
+void CSInputSkipTo16BitBoundary(CSInputBuffer *buf)
+{
+	CSInputSkipToByteBoundary(buf);
+	if(CSInputBufferOffset(buf)&1) CSInputSkipBytes(buf,1);
+}
+
 
 
 int CSInputNextBit(CSInputBuffer *buf)

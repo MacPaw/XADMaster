@@ -157,6 +157,12 @@
 		1BBC3D7C10B1DECE00A05E29 /* Lzma2Dec.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBC3D7A10B1DECE00A05E29 /* Lzma2Dec.h */; };
 		1BBC3E6E10B2304C00A05E29 /* XAD7ZipFilterHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBC3E6C10B2304C00A05E29 /* XAD7ZipFilterHandles.h */; };
 		1BBC3E6F10B2304C00A05E29 /* XAD7ZipFilterHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3E6D10B2304C00A05E29 /* XAD7ZipFilterHandles.m */; };
+		1BBC3F0E10B35A9500A05E29 /* XADLZXParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBC3F0C10B35A9500A05E29 /* XADLZXParser.h */; };
+		1BBC3F0F10B35A9500A05E29 /* XADLZXParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3F0D10B35A9500A05E29 /* XADLZXParser.m */; };
+		1BBC3F1D10B386B100A05E29 /* XADLZXHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBC3F1B10B386B100A05E29 /* XADLZXHandle.h */; };
+		1BBC3F1E10B386B100A05E29 /* XADLZXHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3F1C10B386B100A05E29 /* XADLZXHandle.m */; };
+		1BBC3FB310B7443000A05E29 /* XADMSLZXHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBC3FB110B7443000A05E29 /* XADMSLZXHandle.h */; };
+		1BBC3FB410B7443000A05E29 /* XADMSLZXHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3FB210B7443000A05E29 /* XADMSLZXHandle.m */; };
 		1BBCC4FA0EE73AC9006C3AE2 /* CSBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */; };
 		1BBCC54D0EE73B7F006C3AE2 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */; };
 		1BBCC5790EE747F6006C3AE2 /* XADBzip2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */; };
@@ -343,7 +349,6 @@
 		1B06D5010DDA623800D9C000 /* IFF-CDAF.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "IFF-CDAF.c"; sourceTree = "<group>"; };
 		1B06D5020DDA623800D9C000 /* LhA.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LhA.c; sourceTree = "<group>"; };
 		1B06D5030DDA623800D9C000 /* LhF.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LhF.c; sourceTree = "<group>"; };
-		1B06D5040DDA623800D9C000 /* LZX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LZX.c; sourceTree = "<group>"; };
 		1B06D5050DDA623800D9C000 /* MDC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MDC.c; sourceTree = "<group>"; };
 		1B06D5060DDA623800D9C000 /* MXM-SimpleArc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "MXM-SimpleArc.c"; sourceTree = "<group>"; };
 		1B06D5070DDA623800D9C000 /* PackDev.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PackDev.c; sourceTree = "<group>"; };
@@ -551,6 +556,12 @@
 		1BBC3D7A10B1DECE00A05E29 /* Lzma2Dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lzma2Dec.h; sourceTree = "<group>"; };
 		1BBC3E6C10B2304C00A05E29 /* XAD7ZipFilterHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XAD7ZipFilterHandles.h; sourceTree = "<group>"; };
 		1BBC3E6D10B2304C00A05E29 /* XAD7ZipFilterHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XAD7ZipFilterHandles.m; sourceTree = "<group>"; };
+		1BBC3F0C10B35A9500A05E29 /* XADLZXParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZXParser.h; sourceTree = "<group>"; };
+		1BBC3F0D10B35A9500A05E29 /* XADLZXParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZXParser.m; sourceTree = "<group>"; };
+		1BBC3F1B10B386B100A05E29 /* XADLZXHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZXHandle.h; sourceTree = "<group>"; };
+		1BBC3F1C10B386B100A05E29 /* XADLZXHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZXHandle.m; sourceTree = "<group>"; };
+		1BBC3FB110B7443000A05E29 /* XADMSLZXHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMSLZXHandle.h; sourceTree = "<group>"; };
+		1BBC3FB210B7443000A05E29 /* XADMSLZXHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADMSLZXHandle.m; sourceTree = "<group>"; };
 		1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = /usr/lib/libbz2.dylib; sourceTree = "<absolute>"; };
 		1BC8847F0ECCCE41006B47FE /* XADZipImplodeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADZipImplodeHandle.h; sourceTree = "<group>"; };
 		1BC884800ECCCE41006B47FE /* XADZipImplodeHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADZipImplodeHandle.m; sourceTree = "<group>"; };
@@ -864,7 +875,6 @@
 				1B06D5010DDA623800D9C000 /* IFF-CDAF.c */,
 				1B06D5020DDA623800D9C000 /* LhA.c */,
 				1B06D5030DDA623800D9C000 /* LhF.c */,
-				1B06D5040DDA623800D9C000 /* LZX.c */,
 				1B06D5050DDA623800D9C000 /* MDC.c */,
 				1B06D5060DDA623800D9C000 /* MXM-SimpleArc.c */,
 				1B06D5070DDA623800D9C000 /* PackDev.c */,
@@ -959,6 +969,10 @@
 		1B2F183D0EE965720000DAFF /* Amiga */ = {
 			isa = PBXGroup;
 			children = (
+				1BBC3F0C10B35A9500A05E29 /* XADLZXParser.h */,
+				1BBC3F0D10B35A9500A05E29 /* XADLZXParser.m */,
+				1BBC3F1B10B386B100A05E29 /* XADLZXHandle.h */,
+				1BBC3F1C10B386B100A05E29 /* XADLZXHandle.m */,
 				1B2F183E0EE965880000DAFF /* XADPowerPackerParser.h */,
 				1B2F183F0EE965880000DAFF /* XADPowerPackerParser.m */,
 			);
@@ -1061,6 +1075,15 @@
 				1B95B5AF10112815009FA09E /* XADARJFastestHandle.m */,
 			);
 			name = ARJ;
+			sourceTree = "<group>";
+		};
+		1BBC410510B79CDE00A05E29 /* CAB */ = {
+			isa = PBXGroup;
+			children = (
+				1BBC3FB110B7443000A05E29 /* XADMSLZXHandle.h */,
+				1BBC3FB210B7443000A05E29 /* XADMSLZXHandle.m */,
+			);
+			name = CAB;
 			sourceTree = "<group>";
 		};
 		1BBCC59F0EE748F9006C3AE2 /* Compressors */ = {
@@ -1325,6 +1348,7 @@
 				1B3E34770F3E22EB003EEF98 /* LZH */,
 				1B95B42B1010D8F9009FA09E /* ARJ */,
 				1B3A66351016832300AE25A8 /* NSIS */,
+				1BBC410510B79CDE00A05E29 /* CAB */,
 				1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */,
 				1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */,
 				1B8A89D31012078C00C8534E /* XADNDSParser.h */,
@@ -1517,6 +1541,9 @@
 				1BBC3D2910B0D29100A05E29 /* XADLZMA2Handle.h in Headers */,
 				1BBC3D7C10B1DECE00A05E29 /* Lzma2Dec.h in Headers */,
 				1BBC3E6E10B2304C00A05E29 /* XAD7ZipFilterHandles.h in Headers */,
+				1BBC3F0E10B35A9500A05E29 /* XADLZXParser.h in Headers */,
+				1BBC3F1D10B386B100A05E29 /* XADLZXHandle.h in Headers */,
+				1BBC3FB310B7443000A05E29 /* XADMSLZXHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1832,6 +1859,9 @@
 				1BBC3D2A10B0D29100A05E29 /* XADLZMA2Handle.m in Sources */,
 				1BBC3D7B10B1DECE00A05E29 /* Lzma2Dec.c in Sources */,
 				1BBC3E6F10B2304C00A05E29 /* XAD7ZipFilterHandles.m in Sources */,
+				1BBC3F0F10B35A9500A05E29 /* XADLZXParser.m in Sources */,
+				1BBC3F1E10B386B100A05E29 /* XADLZXHandle.m in Sources */,
+				1BBC3FB410B7443000A05E29 /* XADMSLZXHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

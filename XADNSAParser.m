@@ -59,7 +59,6 @@ static NSMutableData *MakeBMPContainer(int width,int height,uint32_t length,int 
 			case 2: methodname=@"LZSS"; break;
 			case 4: methodname=@"Bzip2"; break;
 		}
-
 		if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 
 		[self addEntryWithDictionary:dict retainPosition:YES];

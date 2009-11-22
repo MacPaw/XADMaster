@@ -43,52 +43,50 @@
 
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos
 {
-/*	int symbol=CSInputNextSymbolUsingCodeLE(input,maincode);
+/*	static const unsigned char AdditionalBitsTable[32]=
+	{
+		0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14
+	};
+
+	static const unsigned int BaseTable[32]=
+	{
+		0,1,2,3,4,6,8,12,16,24,32,48,64,96,128,192,256,384,512,768,1024,
+		1536,2048,3072,4096,6144,8192,12288,16384,24576,32768,49152
+	};
+
+	if(pos>=blockend) [self readBlockHeaderAtPosition:pos];
+
+	int symbol=CSInputNextSymbolUsingCodeLE(input,maincode);
 	if(symbol<256) return symbol;
 
-	int offset=CSInputNextSymbolUsingCodeLE(input,lengthcode);
-	int actual;
-	if(offset==0)
+	int offsclass=symbol&31;
+	int offs=BaseTable[offsclass];
+	int offsbits=AdditionalBitsTable[offsclass];
+
+	if(offs==0)
 	{
-		actual=r0;
+		offs=lastoffs;
 	}
-	else if(offset==1)
+	else if(blocktype==3 && offsbits>=3)
 	{
-		actual=r1;
-		r1=r0;
-		r0=actual;
-	}
-	else if(offset==2)
-	{
-		actual=r2;
-		r2=r0;
-		r0=actual;
+		offs+=CSInputNextBitStringLE(input,offsbits-3)<<3;
+		offs+=CSInputNextSymbolUsingCodeLE(input,offsetcode);
 	}
 	else
 	{
-		actual=offset-2;
-		r2=r1;
-		r1=r0;
-		r0=actual;
+		offs+=CSInputNextBitStringLE(input,offsbits);
 	}
 
-	if(CSInputNextBitLE(input))
-	{
-		if(literals) return CSInputNextSymbolUsingCodeLE(input,literalcode);
-		else return CSInputNextBitStringLE(input,8);
-	}
-	else
-	{
-		*offset=CSInputNextBitStringLE(input,offsetbits);
-		*offset|=CSInputNextSymbolUsingCodeLE(input,offsetcode)<<offsetbits;
-		*offset+=1;
+	int lenclass=((symbol-256)>>5)&15;
+	int len=BaseTable[lenclass]+3;
+	int lenbits=AdditionalBitsTable[lenclass];
+	len+=CSInputNextBitStringLE(input,lenbits);
 
-		*length=CSInputNextSymbolUsingCodeLE(input,lengthcode)+2;
-		if(*length==65) *length+=CSInputNextBitStringLE(input,8);
-		if(literals) (*length)++;
+	*offset=offs;
+	*length=len;
+	lastoffs=offs;
 
-		return XADLZSSMatch;
-	}*/
+	return XADLZSSMatch;*/
 }
 
 -(void)readBlockHeader
@@ -154,31 +152,39 @@ NSLog(@"%d %d",blocktype,blocksize);
 		int prelengths[20];
 		for(int i=0;i<20;i++) prelengths[i]=CSInputNextBitStringLE(input,4);
 
-		precode=[[XADPrefixCode alloc] initWithLengths:prelengths numberOfSymbols:20 maximumLength:15 shortestCodeIsZeros:NO];
+		precode=[[XADPrefixCode alloc] initWithLengths:prelengths
+		numberOfSymbols:20 maximumLength:15 shortestCodeIsZeros:YES];
 
-		for(int i=0;i<count;i++)
+		int i=0;
+		while(i<count)
 		{
 			int val=CSInputNextSymbolUsingCodeLE(input,precode);
-			if(val<=16) lengths[i]=(lengths[i]+val)%17;
+			int n,length;
+
+			if(val<=16)
+			{
+				n=1;
+				length=(lengths[i]+val)%17;
+			}
 			else if(val==17)
 			{
-				int n=CSInputNextBitStringLE(input,4)+4-fix;
-				for(int j=0;j<n;j++) lengths[i+j]=0;
-				i+=n-1;
+				n=CSInputNextBitStringLE(input,4)+4-fix;
+				length=0;
 			}
 			else if(val==18)
 			{
-				int n=CSInputNextBitStringLE(input,5+fix)+20-fix;
-				for(int j=0;j<n;j++) lengths[i+j]=0;
-				i+=n-1;
+				n=CSInputNextBitStringLE(input,5+fix)+20-fix;
+				length=0;
 			}
 			else if(val==19)
 			{
-				int n=CSInputNextBitStringLE(input,1)+4-fix;
+				n=CSInputNextBitStringLE(input,1)+4-fix;
 				int newval=CSInputNextSymbolUsingCodeLE(input,precode);
-				for(int j=0;j<n;j++) lengths[i+j]=(lengths[i+j]+newval)%17;
-				i+=n-1;
+				length=(lengths[i]+newval)%17;
 			}
+
+			for(int j=0;j<n;j++) lengths[i+j]=length;
+			i+=n;
 		}
 
 		[precode release];
@@ -189,5 +195,6 @@ NSLog(@"%d %d",blocktype,blocksize);
 		@throw;
 	}
 }
+
 
 @end

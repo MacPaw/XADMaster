@@ -74,12 +74,18 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	&&bytes[4]==0x27&&bytes[5]==0x1c&&bytes[6]==0;
 }
 
-+(XADRegex *)volumeRegexForFilename:(NSString *)filename
+
++(NSArray *)volumesForFilename:(NSString *)filename
 {
 	NSArray *matches;
+
 	if(matches=[filename substringsCapturedByPattern:@"^(.*\\.7z)\\.([0-9]+)$" options:REG_ICASE])
-	return [XADRegex regexWithPattern:[NSString stringWithFormat:
-	@"^%@\\.([0-9]+)$",[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE];
+	{
+		return [self scanForVolumesWithFilename:filename
+		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.([0-9]+)$",
+			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
+		firstFileExtension:nil];
+	}
 
 	return nil;
 }

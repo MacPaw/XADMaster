@@ -31,6 +31,7 @@
 #import "XADLZHSFXParsers.h"
 #import "XADARJParser.h"
 #import "XADNSISParser.h"
+#import "XADCABParser.h"
 #import "XADALZipParser.h"
 #import "XADNDSParser.h"
 #import "XADNSAParser.h"
@@ -126,6 +127,8 @@ static int maxheader=0;
 		[XADRPMParser class],
 		[XADXZParser class],
 		[XADALZipParser class],
+		[XADCABParser class],
+		[XADCABSFXParser class],
 		[XADLZHParser class],
 		[XADLZHAmigaSFXParser class],
 		[XADLZHCommodore64SFXParser class],
@@ -192,8 +195,15 @@ static int maxheader=0;
 {
 	CSHandle *handle;
 
-	NSArray *volumes=[self volumesForFilename:filename];
-	if(volumes)
+	@try {
+		handle=[CSFileHandle fileHandleForReadingAtPath:filename];
+	} @catch(id e) { return nil; }
+
+	Class parserclass=[self archiveParserClassForHandle:handle name:filename];
+	if(!parserclass) return nil;
+
+	NSArray *volumes=[parserclass volumesForFilename:filename];
+	if(volumes&&[volumes count]>1)
 	{
 		@try
 		{
@@ -204,67 +214,18 @@ static int maxheader=0;
 			while(volume=[enumerator nextObject])
 			[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
 
-			handle=[CSMultiHandle multiHandleWithHandleArray:handles];
+			CSMultiHandle *multihandle=[CSMultiHandle multiHandleWithHandleArray:handles];
 
-			Class parserclass=[self archiveParserClassForHandle:handle name:filename];
-			return [[[parserclass alloc] initWithHandle:handle name:filename
+			return [[[parserclass alloc] initWithHandle:multihandle name:filename
 			volumes:volumes] autorelease];
 		}
-		@catch(id e) { }
+		@catch(id e) { } // Fall through to a single file instead.
 	}
 
-	@try {
-		handle=[CSFileHandle fileHandleForReadingAtPath:filename];
-	} @catch(id e) { return nil; }
-
-	return [self archiveParserForHandle:handle name:filename];
+	return [[[parserclass alloc] initWithHandle:handle name:filename] autorelease];
 }
 
 
-static NSInteger XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
-{
-	Class parserclass=classptr;
-	BOOL isfirst1=[parserclass isFirstVolume:str1];
-	BOOL isfirst2=[parserclass isFirstVolume:str2];
-
-	if(isfirst1&&!isfirst2) return NSOrderedAscending;
-	else if(!isfirst1&&isfirst2) return NSOrderedDescending;
-//	else return [str1 compare:str2 options:NSCaseInsensitiveSearch|NSNumericSearch];
-	else return [str1 compare:str2 options:NSCaseInsensitiveSearch];
-}
-
-+(NSArray *)volumesForFilename:(NSString *)name
-{
-	NSEnumerator *enumerator=[parserclasses objectEnumerator];
-	Class parserclass;
-	while(parserclass=[enumerator nextObject])
-	{
-		XADRegex *regex=[parserclass volumeRegexForFilename:name];
-		if(!regex) continue;
-
-		NSMutableArray *volumes=[NSMutableArray array];
-
-		NSString *dirname=[name stringByDeletingLastPathComponent];
-		if(!dirname||[dirname length]==0) dirname=@".";
-
-		DIR *dir=opendir([dirname fileSystemRepresentation]);
-		if(!dir) return nil;
-
-		struct dirent *ent;
-		while(ent=readdir(dir))
-		{
-			NSString *filename=[dirname stringByAppendingPathComponent:[NSString stringWithUTF8String:ent->d_name]];
-			if([regex matchesString:filename]) [volumes addObject:filename];
-		}
-
-		closedir(dir);
-
-		[volumes sortUsingFunction:XADVolumeSort context:parserclass];
-
-		if([volumes count]>1) return volumes;
-	}
-	return nil;
-}
 
 
 
@@ -389,6 +350,47 @@ static NSInteger XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 
 
+// Internal functions
+
+static NSInteger XADVolumeSort(NSString *str1,NSString *str2,void *extptr)
+{
+	NSString *firstext=(NSString *)extptr;
+	BOOL isfirst1=firstext&&[str1 rangeOfString:firstext options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
+	BOOL isfirst2=firstext&&[str2 rangeOfString:firstext options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
+
+	if(isfirst1&&!isfirst2) return NSOrderedAscending;
+	else if(!isfirst1&&isfirst2) return NSOrderedDescending;
+//	else return [str1 compare:str2 options:NSCaseInsensitiveSearch|NSNumericSearch];
+	else return [str1 compare:str2 options:NSCaseInsensitiveSearch];
+}
+
++(NSArray *)scanForVolumesWithFilename:(NSString *)filename
+regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
+{
+	NSMutableArray *volumes=[NSMutableArray array];
+
+	NSString *dirname=[filename stringByDeletingLastPathComponent];
+	if(!dirname||[dirname length]==0) dirname=@".";
+
+	DIR *dir=opendir([dirname fileSystemRepresentation]);
+	if(!dir) return nil;
+
+	struct dirent *ent;
+	while(ent=readdir(dir))
+	{
+		NSString *filename=[dirname stringByAppendingPathComponent:[NSString stringWithUTF8String:ent->d_name]];
+		if([regex matchesString:filename]) [volumes addObject:filename];
+	}
+
+	closedir(dir);
+
+	[volumes sortUsingFunction:XADVolumeSort context:firstext];
+
+	return volumes;
+}
+
+
+
 -(BOOL)shouldKeepParsing
 {
 	if(!delegate) return YES;
@@ -435,6 +437,27 @@ static NSInteger XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 	if(checksum) zero=[XADCRCHandle IEEECRC32HandleWithHandle:zero length:0 correctCRC:0 conditioned:NO];
 	return zero;
 }
+
+-(CSHandle *)subHandleFromSolidStreamForEntryWithDictionary:(NSDictionary *)dict
+{
+	id solidobj=[dict objectForKey:XADSolidObjectKey];
+
+	if(solidobj!=currsolidobj)
+	{
+		[currsolidobj release];
+		currsolidobj=[solidobj retain];
+		[currsolidhandle release];
+		currsolidhandle=[[self handleForSolidStreamWithObject:solidobj wantChecksum:YES] retain];
+	}
+
+	if(!currsolidhandle) return nil;
+
+	off_t start=[[dict objectForKey:XADSolidOffsetKey] longLongValue];
+	off_t size=[[dict objectForKey:XADSolidLengthKey] longLongValue];
+	return [currsolidhandle nonCopiedSubHandleFrom:start length:size];
+}
+
+
 
 -(NSArray *)volumes
 {
@@ -654,33 +677,11 @@ static NSInteger XADVolumeSort(NSString *str1,NSString *str2,void *classptr)
 
 +(int)requiredHeaderSize { return 0; }
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name { return NO; }
-+(XADRegex *)volumeRegexForFilename:(NSString *)filename { return nil; }
-+(BOOL)isFirstVolume:(NSString *)filename { return NO; }
++(NSArray *)volumesForFilename:(NSString *)name { return nil; }
 
 -(void)parse {}
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum { return nil; }
 -(NSString *)formatName { return nil; } // TODO: combine names for nested archives
-
-
-
--(CSHandle *)subHandleFromSolidStreamForEntryWithDictionary:(NSDictionary *)dict
-{
-	id solidobj=[dict objectForKey:XADSolidObjectKey];
-
-	if(solidobj!=currsolidobj)
-	{
-		[currsolidobj release];
-		currsolidobj=[solidobj retain];
-		[currsolidhandle release];
-		currsolidhandle=[[self handleForSolidStreamWithObject:solidobj wantChecksum:YES] retain];
-	}
-
-	if(!currsolidhandle) return nil;
-
-	off_t start=[[dict objectForKey:XADSolidOffsetKey] longLongValue];
-	off_t size=[[dict objectForKey:XADSolidLengthKey] longLongValue];
-	return [currsolidhandle nonCopiedSubHandleFrom:start length:size];
-}
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum { return nil; }
 

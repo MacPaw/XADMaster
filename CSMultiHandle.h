@@ -10,8 +10,8 @@ extern NSString *CSSizeOfSegmentUnknownException;
 	int currhandle;
 }
 
-+(CSHandle *)multiHandleWithHandleArray:(NSArray *)handlearray;
-+(CSHandle *)multiHandleWithHandles:(CSHandle *)firsthandle,...;
++(CSMultiHandle *)multiHandleWithHandleArray:(NSArray *)handlearray;
++(CSMultiHandle *)multiHandleWithHandles:(CSHandle *)firsthandle,...;
 
 -(id)initWithHandles:(NSArray *)handlearray;
 -(id)initAsCopyOf:(CSMultiHandle *)other;

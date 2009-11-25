@@ -52,7 +52,11 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	while(blockstartpos+blocklength<=offs)
 	{
 		[self _readNextBlock];
-		if(endofstream) [self _raiseEOF];
+		if(endofstream)
+		{
+			if(offs==blockstartpos) break;
+			else [self _raiseEOF];
+		}
 	}
 
 	streampos=offs;

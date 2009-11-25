@@ -159,6 +159,7 @@
 	if(needsreset) { [self resetStream]; needsreset=NO; }
 
 	if(offs==streampos) return NO;
+	if(endofstream&&offs>streampos) [self _raiseEOF];
 	if(offs>streamlength) [self _raiseEOF];
 	if(nextstreambyte>=0)
 	{

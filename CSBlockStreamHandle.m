@@ -33,32 +33,29 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 }
 
 
+-(uint8_t *)blockPointer { return currblock; }
 
--(void)setBlockPointer:(uint8_t *)blockpointer
-{
-	currblock=blockpointer;
-}
+-(int)blockLength { return blocklength; }
+
+-(off_t)blockStartOffset { return blockstartpos; }
+
+-(void)skipToNextBlock { [self seekToFileOffset:blockstartpos+blocklength]; }
 
 
 
 -(void)seekToFileOffset:(off_t)offs
 {
-	if(offs==streampos) return;
-	if(nextstreambyte>=0) // NOTE: Undoes the lookahead done by StreamHandle.
+	if(![self _prepareStreamSeekTo:offs]) return;
+
+	if(offs<blockstartpos) [super seekToFileOffset:0];
+
+	while(blockstartpos+blocklength<=offs)
 	{
-		nextstreambyte=-1;
-		streampos+=1;
+		[self _readNextBlock];
+		if(endofstream) [self _raiseEOF];
 	}
 
-	if(offs>=blockstartpos&&offs<blockstartpos+blocklength)
-	{
-		streampos=offs;
-	}
-	else
-	{
-		if(offs>=blockstartpos+blocklength) streampos=blockstartpos+blocklength;
-		[super seekToFileOffset:offs];
-	}
+	streampos=offs;
 }
 
 -(void)resetStream
@@ -67,6 +64,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	blocklength=0;
 	endofblocks=NO;
 	[self resetBlockStream];
+	[self _readNextBlock];
 }
 
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer
@@ -86,11 +84,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 	while(n<num)
 	{
-		blockstartpos+=blocklength;
-		if(endofblocks) { [self endStream]; break; }
-		blocklength=[self produceBlockAtOffset:streampos+n];
-
-		if(blocklength<=0||!currblock) { [self endStream]; break; }
+		[self _readNextBlock];
+		if(endofstream) break;
 
 		int count=imin(blocklength,num-n);
 		memcpy(buffer+n,currblock,count);
@@ -100,9 +95,25 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	return n;
 }
 
+-(void)_readNextBlock
+{
+	blockstartpos+=blocklength;
+	if(endofblocks) { [self endStream]; return; }
+	blocklength=[self produceBlockAtOffset:blockstartpos];
+
+	if(blocklength<=0||!currblock) [self endStream];
+}
+
 -(void)resetBlockStream { }
 
 -(int)produceBlockAtOffset:(off_t)pos { return 0; }
+
+
+
+-(void)setBlockPointer:(uint8_t *)blockpointer
+{
+	currblock=blockpointer;
+}
 
 -(void)endBlockStream
 {

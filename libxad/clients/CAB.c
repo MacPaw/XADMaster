@@ -1793,6 +1793,7 @@ static xadINT32 CAB_LZXdecompress(CABSTATE, int inlen, int outlen) {
               R2 = R0; R0 = match_offset;
             }
 
+fprintf(stderr,"%d:%d\n",match_length,match_offset);
             /*D(("LZX: %ld,%ld\n",match_length,match_offset))*/
             rundest = window + window_posn;
             this_run -= match_length;

@@ -222,6 +222,12 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 
 			if([file objectForKey:XADSolidObjectKey]==continuedfolder) break;
 
+			off_t filesize=[[file objectForKey:XADFileSizeKey] longLongValue];
+			off_t streamcompsize=[[[file objectForKey:XADSolidObjectKey] objectForKey:@"BlockHandle"] fileSize];
+			off_t streamuncompsize=[[[file objectForKey:XADSolidObjectKey] objectForKey:@"UncompressedLength"] longLongValue];
+
+			[file setObject:[NSNumber numberWithLongLong:filesize*streamcompsize/streamuncompsize] forKey:XADCompressedSizeKey];
+
 			[self addEntryWithDictionary:file];
 			[files removeObjectAtIndex:0];
 		}
@@ -242,9 +248,25 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 {
 	CSHandle *handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
 
-	if(checksum&&[[[dict objectForKey:XADFileNameKey] string] isEqual:@"sitx_d538e5cf.work"])
+	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"sitx_d538e5cf.work"])
 	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
 	correctCRC:0xd538e5cf conditioned:YES];
+
+	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"CABARC.EXE"])
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
+	correctCRC:0x53c0e7bf conditioned:YES];
+
+	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"MAKECAB.EXE"])
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
+	correctCRC:0x09c36559 conditioned:YES];
+
+	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"CABINET.DLL"])
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
+	correctCRC:0xd2323fe9 conditioned:YES];
+
+	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"Georgia.TTF"])
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
+	correctCRC:0x2e09794a conditioned:YES];
 
 	return handle;
 }
@@ -259,6 +281,14 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 	{
 		case 0: return handle;
 		case 1: return [[[XADMSZipHandle alloc] initWithHandle:handle length:length] autorelease];
+//		case 0x0f03: return handle;
+		case 0x0f03: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:15] autorelease];
+		case 0x1003: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:16] autorelease];
+		case 0x1103: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:17] autorelease];
+		case 0x1203: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:18] autorelease];
+		case 0x1303: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:19] autorelease];
+		case 0x1403: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:20] autorelease];
+		case 0x1503: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:21] autorelease];
 		default: return nil;
 	}
 }

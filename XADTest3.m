@@ -38,6 +38,8 @@ NSString *EscapeString(NSString *str)
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSString *link=[[parser linkDestinationForDictionary:dict] string];
+	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
+	NSNumber *size=[dict objectForKey:XADFileSizeKey];
 	CSHandle *fh;
 
 	if(dir&&[dir boolValue]) printf("- ");
@@ -48,6 +50,7 @@ NSString *EscapeString(NSString *str)
 		[fh seekToEndOfFile];
 
 		if(!fh) printf("! ");
+		else if(size&&[size longLongValue]!=[fh offsetInFile]) printf("! ");
 		else if([fh hasChecksum]) printf("%c ",[fh isChecksumCorrect]?'o':'x');
 		else printf("? ");
 	}
@@ -59,13 +62,11 @@ NSString *EscapeString(NSString *str)
 	else if(link) printf("-> %s",[link UTF8String]);
 	else
 	{
-		NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
 		if(compsize) printf("%lld",[compsize longLongValue]);
 		else printf("?");
 
 		printf("/");
 
-		NSNumber *size=[dict objectForKey:XADFileSizeKey];
 		if(size) printf("%lld",[size longLongValue]);
 		else printf("?");
 

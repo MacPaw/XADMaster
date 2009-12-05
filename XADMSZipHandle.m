@@ -28,6 +28,8 @@
 	}
 	else if(err!=Z_OK) [self _raiseZlib];*/
 
+	[self setBlockPointer:outbuffer];
+
 	lastlength=sizeof(outbuffer)-zs.avail_out;
 	return lastlength;
 }

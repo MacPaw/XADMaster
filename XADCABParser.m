@@ -1,5 +1,5 @@
 #import "XADCABParser.h"
-#import "XADCABBlockHandle.h"
+#import "XADCABBlockReader.h"
 #import "XADMSZipHandle.h"
 #import "XADQuantumHandle.h"
 #import "XADMSLZXHandle.h"
@@ -121,18 +121,18 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 			int method=[fh readUInt16LE];
 			[fh skipBytes:head.folderextsize];
 
-			XADCABBlockHandle *blocks;
+			XADCABBlockReader *blocks;
 			if(i==0&&[folders count]==1) // Continuing a folder from last volume
 			{
 				NSDictionary *folder=[folders objectAtIndex:0];
 				if(method!=[[folder objectForKey:@"Method"] intValue]) [XADException raiseIllegalDataException];
-				blocks=[folder objectForKey:@"BlockHandle"];
+				blocks=[folder objectForKey:@"BlockReader"];
 			}
 			else
 			{
-				blocks=[[[XADCABBlockHandle alloc] initWithHandle:fh reservedBytes:head.datablockextsize] autorelease];
+				blocks=[[[XADCABBlockReader alloc] initWithHandle:fh reservedBytes:head.datablockextsize] autorelease];
 				[folders addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-					blocks,@"BlockHandle",
+					blocks,@"BlockReader",
 					[NSNumber numberWithInt:method],@"Method",
 				nil]];
 			}
@@ -182,18 +182,12 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 
 			int method=[[folder objectForKey:@"Method"] intValue];
 			NSString *methodname=nil;
-			switch(method)
+			switch(method&0x0f)
 			{
 				case 0: methodname=@"None"; break;
 				case 1: methodname=@"MSZIP"; break;
-				case 2: methodname=@"Quantum"; break;
-				case 0x0f03: methodname=@"LZX:15"; break;
-				case 0x1003: methodname=@"LZX:16"; break;
-				case 0x1103: methodname=@"LZX:17"; break;
-				case 0x1203: methodname=@"LZX:18"; break;
-				case 0x1303: methodname=@"LZX:19"; break;
-				case 0x1403: methodname=@"LZX:20"; break;
-				case 0x1503: methodname=@"LZX:21"; break;
+				case 2: methodname=[NSString stringWithFormat:@"Quantum:%d",(method>>8)&0x1f]; break;
+				case 3: methodname=[NSString stringWithFormat:@"LZX:%d",(method>>8)&0x1f]; break;
 			}
 			if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 
@@ -206,10 +200,9 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 		{
 			NSMutableDictionary *folder=[folders objectAtIndex:0];
 
-			XADCABBlockHandle *blocks=[folder objectForKey:@"BlockHandle"];
-			off_t uncomplen=[blocks scanLengths];
+			XADCABBlockReader *blocks=[folder objectForKey:@"BlockReader"];
+			[blocks scanLengths];
 
-			[folder setObject:[NSNumber numberWithLongLong:uncomplen] forKey:@"UncompressedLength"];
 			[folders removeObjectAtIndex:0];
 		}
 
@@ -223,8 +216,9 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 			if([file objectForKey:XADSolidObjectKey]==continuedfolder) break;
 
 			off_t filesize=[[file objectForKey:XADFileSizeKey] longLongValue];
-			off_t streamcompsize=[[[file objectForKey:XADSolidObjectKey] objectForKey:@"BlockHandle"] fileSize];
-			off_t streamuncompsize=[[[file objectForKey:XADSolidObjectKey] objectForKey:@"UncompressedLength"] longLongValue];
+			XADCABBlockReader *blocks=[[file objectForKey:XADSolidObjectKey] objectForKey:@"BlockReader"];
+			off_t streamcompsize=[blocks compressedLength];
+			off_t streamuncompsize=[blocks uncompressedLength];
 
 			[file setObject:[NSNumber numberWithLongLong:filesize*streamcompsize/streamuncompsize] forKey:XADCompressedSizeKey];
 
@@ -248,47 +242,48 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 {
 	CSHandle *handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
 
-	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"sitx_d538e5cf.work"])
-	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
-	correctCRC:0xd538e5cf conditioned:YES];
+	if(checksum)
+	{
+		static NSDictionary *knownchecksums=nil;
+		if(!knownchecksums) knownchecksums=[[NSDictionary alloc] initWithObjectsAndKeys:
+			[NSNumber numberWithUnsignedInt:0xd538e5cf],@"sitx_d538e5cf.work",
+			[NSNumber numberWithUnsignedInt:0x53c0e7bf],@"CABARC.EXE",
+			[NSNumber numberWithUnsignedInt:0x09c36559],@"MAKECAB.EXE",
+			[NSNumber numberWithUnsignedInt:0xd2323fe9],@"CABINET.DLL",
+			[NSNumber numberWithUnsignedInt:0x2e09794a],@"Georgia.TTF",
+			[NSNumber numberWithUnsignedInt:0xbc55bbfd],@"acmsetup.hlp",
+			[NSNumber numberWithUnsignedInt:0x80e74ea2],@"TENSION.PER",
+			[NSNumber numberWithUnsignedInt:0x1c8407bc],@"BLUEGRAS.STY",
+			[NSNumber numberWithUnsignedInt:0xe27844bb],@"AMADEUS.STY",
+			[NSNumber numberWithUnsignedInt:0xfcafb03e],@"ppmusic.ppa",
+			[NSNumber numberWithUnsignedInt:0x228a28b1],@"mssetup.dll",
+//			[NSNumber numberWithUnsignedInt:],@"",
+//			[NSNumber numberWithUnsignedInt:],@"",
+//			[NSNumber numberWithUnsignedInt:],@"",
+//			[NSNumber numberWithUnsignedInt:],@"",
+//			[NSNumber numberWithUnsignedInt:],@"",
+		nil];
 
-	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"CABARC.EXE"])
-	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
-	correctCRC:0x53c0e7bf conditioned:YES];
-
-	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"MAKECAB.EXE"])
-	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
-	correctCRC:0x09c36559 conditioned:YES];
-
-	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"CABINET.DLL"])
-	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
-	correctCRC:0xd2323fe9 conditioned:YES];
-
-	if(checksum&&[[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string] isEqual:@"Georgia.TTF"])
-	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
-	correctCRC:0x2e09794a conditioned:YES];
+		NSString *name=[[(XADPath *)[dict objectForKey:XADFileNameKey] lastPathComponent] string];
+		NSNumber *crc=[knownchecksums objectForKey:name];
+		if(crc) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
+		correctCRC:[crc unsignedIntValue] conditioned:YES];
+	}
 
 	return handle;
 }
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
 {
-	CSHandle *handle=[obj objectForKey:@"BlockHandle"];
+	XADCABBlockReader *blocks=[obj objectForKey:@"BlockReader"];
 	int method=[[obj objectForKey:@"Method"] intValue];
-	off_t length=[[obj objectForKey:@"UncompressedLength"] longLongValue];
 
-	switch(method)
+	switch(method&0x0f)
 	{
-		case 0: return handle;
-		case 1: return [[[XADMSZipHandle alloc] initWithHandle:handle length:length] autorelease];
-//		case 0x0f03: return handle;
-		case 0x0f03: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:15] autorelease];
-		case 0x1003: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:16] autorelease];
-		case 0x1103: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:17] autorelease];
-		case 0x1203: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:18] autorelease];
-		case 0x1303: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:19] autorelease];
-		case 0x1403: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:20] autorelease];
-		case 0x1503: return [[[XADMSLZXHandle alloc] initWithHandle:handle length:length windowBits:21] autorelease];
+		case 0: return [[[XADCABCopyHandle alloc] initWithBlockReader:blocks] autorelease];
+		case 1: return [[[XADMSZipHandle alloc] initWithBlockReader:blocks] autorelease];
+		case 2: return [[[XADQuantumHandle alloc] initWithBlockReader:blocks windowBits:(method>>8)&0x1f] autorelease];
+		case 3: return [[[XADMSLZXHandle alloc] initWithBlockReader:blocks windowBits:(method>>8)&0x1f] autorelease];
 		default: return nil;
 	}
 }

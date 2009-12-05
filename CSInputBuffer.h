@@ -12,7 +12,11 @@ typedef struct CSInputBuffer
 } CSInputBuffer;
 
 CSInputBuffer *CSInputBufferAlloc(CSHandle *parent,int size);
+CSInputBuffer *CSInputBufferAllocWithBuffer(uint8_t *buffer,int length);
+CSInputBuffer *CSInputBufferAllocEmpty();
 void CSInputBufferFree(CSInputBuffer *buf);
+
+void CSInputSetMemoryBuffer(CSInputBuffer *buf,uint8_t *buffer,int length);
 
 void CSInputRestart(CSInputBuffer *buf);
 void CSInputFlush(CSInputBuffer *buf);

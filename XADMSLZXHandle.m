@@ -1,13 +1,17 @@
 #import "XADMSLZXHandle.h"
 #import "XADException.h"
-#import "XADLZXHandle.h"
 
 @implementation XADMSLZXHandle
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length windowBits:(int)windowbits
+-(id)initWithBlockReader:(XADCABBlockReader *)blockreader windowBits:(int)windowbits
 {
-	if(self=[super initWithHandle:[[[XADLZXSwapHandle alloc] initWithHandle:handle] autorelease] length:length windowSize:1<<windowbits])
+	if(self=[super initWithBlockReader:blockreader])
 	{
+		input=CSInputBufferAllocEmpty();
+
+		dictionary=malloc(1<<windowbits);
+		dictionarymask=(1<<windowbits)-1;
+
 		if(windowbits==21) numslots=50;
 		else if(windowbits==20) numslots=42;
 		else numslots=windowbits*2;
@@ -20,29 +24,27 @@
 
 -(void)dealloc
 {
+	free(dictionary);
+	//CSInputBufferFree(input);
+
 	[maincode release];
 	[lengthcode release];
 	[offsetcode release];
 	[super dealloc];
 }
 
--(void)resetLZSSHandle
+-(void)resetCABBlockHandle
 {
-	ispreprocessed=CSInputNextBit(input);
-	if(ispreprocessed)
-	{
-		preprocessoffset=CSInputNextBitString(input,16)<<16;
-		preprocessoffset|=CSInputNextBitString(input,16);
-	}
-
+	headerhasbeenread=NO;
 	r0=r1=r2=1;
 	blocktype=0;
 	blockend=0;
 	memset(mainlengths,0,sizeof(mainlengths));
 	memset(lengthlengths,0,sizeof(lengthlengths));
+	memset(dictionary,0,dictionarymask+1);
 }
 
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos
+-(int)produceCABBlockWithInputBuffer:(uint8_t *)buffer length:(int)complength atOffset:(off_t)pos length:(int)uncomplength
 {
 	static const unsigned char AdditionalBitsTable[50]=
 	{
@@ -58,62 +60,120 @@
 		1048576,1179648,1310720,1441792,1572864,1703936,1835008,1966080
 	};
 
-	if(blocktype!=3 && (pos&0x7fff)==0 && pos!=0) CSInputSkipTo16BitBoundary(input);
-
-	if(pos>=blockend) [self readBlockHeaderAtPosition:pos];
-
-	if(blocktype==3) return CSInputNextByte(input);
-
-	int symbol=CSInputNextSymbolUsingCode(input,maincode);
-	if(symbol<256) return symbol;
-
-	int len=(symbol&7)+2;
-	if(len==9) len=CSInputNextSymbolUsingCode(input,lengthcode)+9;
-
-	int offsclass=(symbol-256)>>3;
-	int offs=BaseTable[offsclass];
-	int offsbits=AdditionalBitsTable[offsclass];
-
-	if(offs==0)
+	// Flip all input 16-bit words, because LZX is insane.
+	for(int i=0;i<complength/2;i++)
 	{
-		offs=r0;
+		int byte=buffer[2*i];
+		buffer[2*i]=buffer[2*i+1];
+		buffer[2*i+1]=byte;
 	}
-	else if(offs==1)
+
+	CSInputSetMemoryBuffer(input,buffer,complength);
+
+	// Read header if needed.
+	if(!headerhasbeenread)
 	{
-		offs=r1;
-		r1=r0;
-		r0=offs;
+		ispreprocessed=CSInputNextBit(input);
+		if(ispreprocessed) preprocesssize=CSInputNextBitString(input,32);
+		headerhasbeenread=YES;
 	}
-	else if(offs==2)
+
+	// Unpack data to dictionary using LZX.
+	uint8_t *dicbuffer=&dictionary[pos&dictionarymask];
+	int n=0;
+	while(n<uncomplength)
 	{
-		offs=r2;
-		r2=r0;
-		r0=offs;
-	}
-	else
-	{
-		if(blocktype==2 && offsbits>=3)
+		if(pos+n>=blockend) [self readBlockHeaderAtPosition:pos+n];
+
+		if(blocktype==3)
 		{
-			offs+=CSInputNextBitString(input,offsbits-3)<<3;
-			offs+=CSInputNextSymbolUsingCode(input,offsetcode);
+			dicbuffer[n++]=CSInputNextByte(input);
 		}
 		else
 		{
-			offs+=CSInputNextBitString(input,offsbits);
-		}
+			int symbol=CSInputNextSymbolUsingCode(input,maincode);
+			if(symbol<256)
+			{
+				dicbuffer[n++]=symbol;
+				continue;
+			}
 
-		offs-=2;
-		r2=r1;
-		r1=r0;
-		r0=offs;
+			int length=(symbol&7)+2;
+			if(length==9) length=CSInputNextSymbolUsingCode(input,lengthcode)+9;
+
+			int offsclass=(symbol-256)>>3;
+			int offset=BaseTable[offsclass];
+			int offsbits=AdditionalBitsTable[offsclass];
+
+			if(offset==0)
+			{
+				offset=r0;
+			}
+			else if(offset==1)
+			{
+				offset=r1;
+				r1=r0;
+				r0=offset;
+			}
+			else if(offset==2)
+			{
+				offset=r2;
+				r2=r0;
+				r0=offset;
+			}
+			else
+			{
+				if(blocktype==2 && offsbits>=3)
+				{
+					offset+=CSInputNextBitString(input,offsbits-3)<<3;
+					offset+=CSInputNextSymbolUsingCode(input,offsetcode);
+				}
+				else
+				{
+					offset+=CSInputNextBitString(input,offsbits);
+				}
+
+				offset-=2;
+				r2=r1;
+				r1=r0;
+				r0=offset;
+			}
+
+			for(int i=0;i<length;i++)
+			{
+				dicbuffer[n]=dictionary[(pos+n-offset)&dictionarymask];
+				n++;
+			}
+		}
 	}
 
-	*offset=offs;
-	*length=len;
+	// Undo e8-encoding if needed
+	if(ispreprocessed && pos<32768*32768)
+	{
+		memcpy(outbuffer,dicbuffer,uncomplength);
 
-//fprintf(stderr,"%d:%d\n",len,offs);
+		for(int i=0;i<uncomplength-10;i++)
+		{
+			if(outbuffer[i]==0xe8)
+			{
+				int32_t currpos=pos+i;
+				int32_t absoffs=CSInt32LE(&outbuffer[i+1]);
+				if(absoffs>=-currpos && absoffs<preprocesssize)
+				{
+					if(absoffs>=0) CSSetInt32LE(&outbuffer[i+1],absoffs-currpos);
+					else CSSetInt32LE(&outbuffer[i+1],absoffs+preprocesssize);
+				}
+				i+=4;
+			}
+		}
+		[self setBlockPointer:outbuffer];
+	}
+	else
+	{
+		[self setBlockPointer:dicbuffer];
+	}
 
-	return XADLZSSMatch;
+	return uncomplength;
 }
 
 -(void)readBlockHeaderAtPosition:(off_t)pos
@@ -158,6 +218,7 @@
 
 		case 3: // uncompressed
 		{
+NSLog(@"untested and wrong!");
 			CSInputSkipTo16BitBoundary(input);
 			r0=CSInputNextUInt32LE(input);
 			r1=CSInputNextUInt32LE(input);

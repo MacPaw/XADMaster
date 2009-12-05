@@ -3,114 +3,50 @@
 
 @implementation XADCABBlockHandle
 
--(id)initWithHandle:(CSHandle *)handle reservedBytes:(int)reserved
+-(id)initWithBlockReader:(XADCABBlockReader *)blockreader
 {
-	if(self=[super initWithName:[handle name]])
+	if(self=[super initWithName:[[blockreader handle] name] length:[blockreader uncompressedLength]])
 	{
-		parent=[handle retain];
-		extbytes=reserved;
-		numfolders=0;
-
-		[self setBlockPointer:buffer];
+		blocks=[blockreader retain];
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[parent release];
+	[blocks release];
 	[super dealloc];
 }
 
-
-
--(void)addFolderAtOffset:(off_t)startoffs numberOfBlocks:(int)num
-{
-	if(numfolders==sizeof(offsets)/sizeof(offsets[0])) [XADException raiseNotSupportedException];
-
-	offsets[numfolders]=startoffs;
-	numblocks[numfolders]=num;
-	numfolders++;
-}
-
--(off_t)scanLengths
-{
-	off_t complen=0;
-	off_t uncomplen=0;
-
-	for(int folder=0;folder<numfolders;folder++)
-	{
-		[parent seekToFileOffset:offsets[folder]];
-
-		for(int block=0;block<numblocks[folder];block++)
-		{
-			uint32_t check=[parent readUInt32LE];
-			int compbytes=[parent readUInt16LE];
-			int uncompbytes=[parent readUInt16LE];
-			[parent skipBytes:extbytes+compbytes];
-
-			complen+=compbytes;
-			uncomplen+=uncompbytes;
-		}
-	}
-
-	[self setStreamLength:complen];
-
-	return uncomplen;
-}
-
-
 -(void)resetBlockStream
 {
-	[parent seekToFileOffset:offsets[0]];
-	currentfolder=0;
-	currentblock=0;
+	[blocks restart];
+	[self resetCABBlockHandle];
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	uint32_t check=[parent readUInt32LE];
-	int compbytes=[parent readUInt16LE];
-	int uncompbytes=[parent readUInt16LE];
-	[parent skipBytes:extbytes];
+	int complen,uncomplen;
+	if([blocks readNextBlockToBuffer:inbuffer compressedLength:&complen
+	uncompressedLength:&uncomplen]) [self endBlockStream];
 
-	if(compbytes>sizeof(buffer)) [XADException raiseIllegalDataException];
+	return [self produceCABBlockWithInputBuffer:inbuffer length:complen atOffset:pos length:uncomplen];
+}
 
-	[parent readBytes:compbytes toBuffer:buffer];
+-(void)resetCABBlockHandle {}
 
-	int totalbytes=compbytes;
-	while(uncompbytes==0)
-	{
-		currentblock=0;
-		currentfolder++;
+-(int)produceCABBlockWithInputBuffer:(uint8_t *)buffer length:(int)length atOffset:(off_t)pos length:(int)uncomplength { return 0; }
 
-		if(currentfolder>=numfolders) [XADException raiseIllegalDataException];
+@end
 
-		[parent seekToFileOffset:offsets[currentfolder]];
-		check=[parent readUInt32LE];
-		compbytes=[parent readUInt16LE];
-		uncompbytes=[parent readUInt16LE];
-		[parent skipBytes:extbytes];
 
-		if(compbytes+totalbytes>sizeof(buffer)) [XADException raiseIllegalDataException];
 
-		[parent readBytes:compbytes toBuffer:&buffer[totalbytes]];
-		totalbytes+=compbytes;
-	}
+@implementation XADCABCopyHandle
 
-	currentblock++;
-	if(currentblock>=numblocks[currentfolder])
-	{
-		if(currentfolder==numfolders-1) [self endBlockStream];
-		else // Can this happen? Not sure, supporting it anyway.
-		{
-			currentblock=0;
-			currentfolder++;
-			[parent seekToFileOffset:offsets[currentfolder]];
-		}
-	}
-
-	return totalbytes;
+-(int)produceCABBlockWithInputBuffer:(uint8_t *)buffer length:(int)length atOffset:(off_t)pos length:(int)uncomplength
+{
+	[self setBlockPointer:buffer];
+	return length;
 }
 
 @end

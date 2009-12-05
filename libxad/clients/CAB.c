@@ -1793,7 +1793,6 @@ static xadINT32 CAB_LZXdecompress(CABSTATE, int inlen, int outlen) {
               R2 = R0; R0 = match_offset;
             }
 
-fprintf(stderr,"%d:%d\n",match_length,match_offset);
             /*D(("LZX: %ld,%ld\n",match_length,match_offset))*/
             rundest = window + window_posn;
             this_run -= match_length;
@@ -1948,6 +1947,8 @@ fprintf(stderr,"%d:%d\n",match_length,match_offset);
       LZX(intel_curpos) = curpos + outlen;
 
       while (data < dataend) {
+if(curpos==33495)
+printf("blah");
         if (*data++ != 0xE8) { curpos++; continue; }
         abs_off = data[0] | (data[1]<<8) | (data[2]<<16) | (data[3]<<24);
         if ((abs_off >= -curpos) && (abs_off < filesize)) {

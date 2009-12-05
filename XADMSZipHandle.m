@@ -4,42 +4,19 @@
 
 @implementation XADMSZipHandle
 
--(id)initWithHandle:(XADCABBlockHandle *)handle length:(off_t)length
+-(int)produceCABBlockWithInputBuffer:(uint8_t *)buffer length:(int)length atOffset:(off_t)pos length:(int)uncomplength
 {
-	if(self=[super initWithName:[handle name] length:length])
-	{
-		blocks=[handle retain];
-		[self setBlockPointer:buffer];
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[blocks release];
-	[super dealloc];
-}
-
--(void)resetBlockStream
-{
-	[blocks seekToFileOffset:0];
-}
-
--(int)produceBlockAtOffset:(off_t)pos
-{
-	if(pos!=0) [blocks skipToNextBlock];
-
 	z_stream zs;
 	memset(&zs,0,sizeof(zs));
 
 	inflateInit2(&zs,-MAX_WBITS);
-	inflateSetDictionary(&zs,buffer,lastlength);
+	if(pos!=0) inflateSetDictionary(&zs,outbuffer,lastlength);
 
-	zs.avail_in=[blocks blockLength]-2;
-	zs.next_in=[blocks blockPointer]+2;
+	zs.avail_in=length-2;
+	zs.next_in=buffer+2;
 
-	zs.next_out=buffer;
-	zs.avail_out=sizeof(buffer);
+	zs.next_out=outbuffer;
+	zs.avail_out=uncomplength; //sizeof(outbuffer);
 
 	int err=inflate(&zs,0);
 	inflateEnd(&zs);
@@ -51,7 +28,7 @@
 	}
 	else if(err!=Z_OK) [self _raiseZlib];*/
 
-	lastlength=sizeof(buffer)-zs.avail_out;
+	lastlength=sizeof(outbuffer)-zs.avail_out;
 	return lastlength;
 }
 

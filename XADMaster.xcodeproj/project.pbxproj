@@ -282,6 +282,10 @@
 		1BCD64340EF6CB5200D86C43 /* XADDigestHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */; };
 		1BCD65520EF8164900D86C43 /* RARBug.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD65500EF8164900D86C43 /* RARBug.h */; };
 		1BCD65530EF8164900D86C43 /* RARBug.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD65510EF8164900D86C43 /* RARBug.c */; };
+		1BE07DC010C604CE00B17F91 /* XADMSIParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE07DBE10C604CE00B17F91 /* XADMSIParser.h */; };
+		1BE07DC110C604CE00B17F91 /* XADMSIParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE07DBF10C604CE00B17F91 /* XADMSIParser.m */; };
+		1BE07E6A10C9953400B17F91 /* XADCABBlockReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE07E6810C9953400B17F91 /* XADCABBlockReader.h */; };
+		1BE07E6B10C9953400B17F91 /* XADCABBlockReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */; };
 		1BE785C610AF78D0007EA6F6 /* XADNSAParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE785C410AF78D0007EA6F6 /* XADNSAParser.h */; };
 		1BE785C710AF78D0007EA6F6 /* XADNSAParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785C510AF78D0007EA6F6 /* XADNSAParser.m */; };
 		1BE785EE10AF8607007EA6F6 /* XADSARParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE785EC10AF8607007EA6F6 /* XADSARParser.h */; };
@@ -699,6 +703,10 @@
 		1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDigestHandle.h; sourceTree = "<group>"; };
 		1BCD65500EF8164900D86C43 /* RARBug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARBug.h; sourceTree = "<group>"; };
 		1BCD65510EF8164900D86C43 /* RARBug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RARBug.c; sourceTree = "<group>"; };
+		1BE07DBE10C604CE00B17F91 /* XADMSIParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMSIParser.h; sourceTree = "<group>"; };
+		1BE07DBF10C604CE00B17F91 /* XADMSIParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADMSIParser.m; sourceTree = "<group>"; };
+		1BE07E6810C9953400B17F91 /* XADCABBlockReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCABBlockReader.h; sourceTree = "<group>"; };
+		1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCABBlockReader.m; sourceTree = "<group>"; };
 		1BE785C410AF78D0007EA6F6 /* XADNSAParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSAParser.h; sourceTree = "<group>"; };
 		1BE785C510AF78D0007EA6F6 /* XADNSAParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSAParser.m; sourceTree = "<group>"; };
 		1BE785EC10AF8607007EA6F6 /* XADSARParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSARParser.h; sourceTree = "<group>"; };
@@ -1098,6 +1106,10 @@
 			children = (
 				1BBC415510B85B4C00A05E29 /* XADCABParser.h */,
 				1BBC415610B85B4C00A05E29 /* XADCABParser.m */,
+				1BE07DBE10C604CE00B17F91 /* XADMSIParser.h */,
+				1BE07DBF10C604CE00B17F91 /* XADMSIParser.m */,
+				1BE07E6810C9953400B17F91 /* XADCABBlockReader.h */,
+				1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */,
 				1BBC42DE10BA065D00A05E29 /* XADCABBlockHandle.h */,
 				1BBC42DF10BA065D00A05E29 /* XADCABBlockHandle.m */,
 				1BBC415910B85B5E00A05E29 /* XADMSZipHandle.h */,
@@ -1572,6 +1584,8 @@
 				1BBC415B10B85B5E00A05E29 /* XADMSZipHandle.h in Headers */,
 				1BBC415F10B85B6600A05E29 /* XADQuantumHandle.h in Headers */,
 				1BBC42E010BA065D00A05E29 /* XADCABBlockHandle.h in Headers */,
+				1BE07DC010C604CE00B17F91 /* XADMSIParser.h in Headers */,
+				1BE07E6A10C9953400B17F91 /* XADCABBlockReader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1894,6 +1908,8 @@
 				1BBC415C10B85B5E00A05E29 /* XADMSZipHandle.m in Sources */,
 				1BBC416010B85B6600A05E29 /* XADQuantumHandle.m in Sources */,
 				1BBC42E110BA065D00A05E29 /* XADCABBlockHandle.m in Sources */,
+				1BE07DC110C604CE00B17F91 /* XADMSIParser.m in Sources */,
+				1BE07E6B10C9953400B17F91 /* XADCABBlockReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

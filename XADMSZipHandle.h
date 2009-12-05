@@ -1,17 +1,11 @@
-#import "CSBlockStreamHandle.h"
 #import "XADCABBlockHandle.h"
 
-@interface XADMSZipHandle:CSBlockStreamHandle
+@interface XADMSZipHandle:XADCABBlockHandle
 {
-	XADCABBlockHandle *blocks;
-	uint8_t buffer[32768];
+	uint8_t outbuffer[32768];
 	int lastlength;
 }
 
--(id)initWithHandle:(XADCABBlockHandle *)handle length:(off_t)length;
--(void)dealloc;
-
--(void)resetBlockStream;
--(int)produceBlockAtOffset:(off_t)pos;
+-(int)produceCABBlockWithInputBuffer:(uint8_t *)buffer length:(int)length atOffset:(off_t)pos length:(int)uncomplength;
 
 @end

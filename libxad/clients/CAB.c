@@ -1947,8 +1947,6 @@ static xadINT32 CAB_LZXdecompress(CABSTATE, int inlen, int outlen) {
       LZX(intel_curpos) = curpos + outlen;
 
       while (data < dataend) {
-if(curpos==33495)
-printf("blah");
         if (*data++ != 0xE8) { curpos++; continue; }
         abs_off = data[0] | (data[1]<<8) | (data[2]<<16) | (data[3]<<24);
         if ((abs_off >= -curpos) && (abs_off < filesize)) {

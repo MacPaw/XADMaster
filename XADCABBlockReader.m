@@ -78,7 +78,7 @@ uncompressedLength:(int *)uncompptr
 	int uncompbytes=[parent readUInt16LE];
 	[parent skipBytes:extbytes];
 
-	if(compbytes>32768) [XADException raiseIllegalDataException];
+	if(compbytes>32768+6144) [XADException raiseIllegalDataException];
 
 	[parent readBytes:compbytes toBuffer:buffer];
 
@@ -96,7 +96,7 @@ uncompressedLength:(int *)uncompptr
 		uncompbytes=[parent readUInt16LE];
 		[parent skipBytes:extbytes];
 
-		if(compbytes+totalbytes>32768) [XADException raiseIllegalDataException];
+		if(compbytes+totalbytes>32768+6144) [XADException raiseIllegalDataException];
 
 		[parent readBytes:compbytes toBuffer:&buffer[totalbytes]];
 		totalbytes+=compbytes;

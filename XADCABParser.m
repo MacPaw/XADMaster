@@ -242,7 +242,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 {
 	CSHandle *handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
 
-	if(checksum)
+/*	if(checksum)
 	{
 		static NSDictionary *knownchecksums=nil;
 		if(!knownchecksums) knownchecksums=[[NSDictionary alloc] initWithObjectsAndKeys:
@@ -257,9 +257,9 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 			[NSNumber numberWithUnsignedInt:0xe27844bb],@"AMADEUS.STY",
 			[NSNumber numberWithUnsignedInt:0xfcafb03e],@"ppmusic.ppa",
 			[NSNumber numberWithUnsignedInt:0x228a28b1],@"mssetup.dll",
-//			[NSNumber numberWithUnsignedInt:],@"",
-//			[NSNumber numberWithUnsignedInt:],@"",
-//			[NSNumber numberWithUnsignedInt:],@"",
+			[NSNumber numberWithUnsignedInt:0xe8762e3b],@"1394vdbg.sys",
+			[NSNumber numberWithUnsignedInt:0xf797e4fa],@"xem336n5.sys",
+			[NSNumber numberWithUnsignedInt:0x98aa2a8d],@"mdgndis5.sys",
 //			[NSNumber numberWithUnsignedInt:],@"",
 //			[NSNumber numberWithUnsignedInt:],@"",
 		nil];
@@ -268,7 +268,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 		NSNumber *crc=[knownchecksums objectForKey:name];
 		if(crc) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
 		correctCRC:[crc unsignedIntValue] conditioned:YES];
-	}
+	}*/
 
 	return handle;
 }

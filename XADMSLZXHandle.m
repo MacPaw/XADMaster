@@ -36,6 +36,7 @@
 -(void)resetCABBlockHandle
 {
 	headerhasbeenread=NO;
+	inputpos=0;
 	r0=r1=r2=1;
 	blocktype=0;
 	blockend=0;
@@ -61,14 +62,16 @@
 	};
 
 	// Flip all input 16-bit words, because LZX is insane.
-	for(int i=0;i<complength/2;i++)
+	// Make sure to align correctly, and leave single bytes at the start and end alone,
+	// and handle these by hand for unpacked blocks (which is the only place they can exist).
+	for(int i=inputpos&1;i<complength-1;i+=2)
 	{
-		int byte=buffer[2*i];
-		buffer[2*i]=buffer[2*i+1];
-		buffer[2*i+1]=byte;
+		int byte=buffer[i];
+		buffer[i]=buffer[i+1];
+		buffer[i+1]=byte;
 	}
 
-	CSInputSetMemoryBuffer(input,buffer,complength);
+	CSInputSetMemoryBuffer(input,buffer,complength,inputpos);
 
 	// Read header if needed.
 	if(!headerhasbeenread)
@@ -87,7 +90,19 @@
 
 		if(blocktype==3)
 		{
-			dicbuffer[n++]=CSInputNextByte(input);
+			if(n==0 && (inputpos&1)==1) dicbuffer[n++]=CSInputNextByte(input); // single first byte in buffer
+			else if(CSInputFileOffset(input)==complength-1) dicbuffer[n++]=CSInputNextByte(input); // single last byte in buffer
+			else if(pos+n+1==blockend) // single last byte in block
+			{
+				CSInputNextByte(input); // skip padding
+				dicbuffer[n++]=CSInputNextByte(input);
+			}
+			else
+			{
+				uint8_t byte=CSInputNextByte(input);
+				dicbuffer[n++]=CSInputNextByte(input);
+				dicbuffer[n++]=byte;
+			}
 		}
 		else
 		{
@@ -173,6 +188,8 @@
 		[self setBlockPointer:dicbuffer];
 	}
 
+	inputpos+=complength;
+
 	return uncomplength;
 }
 
@@ -218,11 +235,14 @@
 
 		case 3: // uncompressed
 		{
-NSLog(@"untested and wrong!");
 			CSInputSkipTo16BitBoundary(input);
-			r0=CSInputNextUInt32LE(input);
-			r1=CSInputNextUInt32LE(input);
-			r2=CSInputNextUInt32LE(input);
+			// Untangle the stored r0-r2 values (the byte swapping earlier messed them up)
+			r0=CSInputNextUInt16BE(input);
+			r0|=CSInputNextUInt16BE(input)<<16;
+			r1=CSInputNextUInt16BE(input);
+			r1|=CSInputNextUInt16BE(input)<<16;
+			r2=CSInputNextUInt16BE(input);
+			r2|=CSInputNextUInt16BE(input)<<16;
 		}
 		break;
 	}

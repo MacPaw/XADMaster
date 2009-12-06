@@ -18,13 +18,13 @@ CSInputBuffer *CSInputBufferAlloc(CSHandle *parent,int size)
 	return buf;
 }
 
-CSInputBuffer *CSInputBufferAllocWithBuffer(uint8_t *buffer,int length)
+CSInputBuffer *CSInputBufferAllocWithBuffer(uint8_t *buffer,int length,off_t startoffs)
 {
 	CSInputBuffer *buf=malloc(sizeof(CSInputBuffer));
 	if(!buf) return NULL;
 
 	buf->parent=NULL;
-	buf->startoffs=0;
+	buf->startoffs=-startoffs;
 	buf->eof=YES;
 
 	buf->buffer=buffer;
@@ -60,9 +60,10 @@ void CSInputBufferFree(CSInputBuffer *buf)
 	free(buf);
 }
 
-void CSInputSetMemoryBuffer(CSInputBuffer *buf,uint8_t *buffer,int length)
+void CSInputSetMemoryBuffer(CSInputBuffer *buf,uint8_t *buffer,int length,off_t startoffs)
 {
 	buf->eof=YES;
+	buf->startoffs=-startoffs;
 	buf->buffer=buffer;
 	buf->bufsize=length;
 	buf->bufbytes=length;
@@ -111,7 +112,8 @@ off_t CSInputBufferOffset(CSInputBuffer *buf)
 
 off_t CSInputFileOffset(CSInputBuffer *buf)
 {
-	return [buf->parent offsetInFile]-buf->bufbytes+buf->currbyte;
+	if(buf->parent) return [buf->parent offsetInFile]-buf->bufbytes+buf->currbyte;
+	else return buf->currbyte;
 }
 
 

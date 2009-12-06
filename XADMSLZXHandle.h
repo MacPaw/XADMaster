@@ -12,6 +12,8 @@
 	BOOL headerhasbeenread,ispreprocessed;
 	int32_t preprocesssize;
 
+	off_t inputpos;
+
 	int blocktype;
 	off_t blockend;
 	int r0,r1,r2;

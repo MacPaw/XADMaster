@@ -338,6 +338,7 @@
 		case 7: return @"LZSS";
 		case 8: return @"Compact Pro"; // Compact Pro
 		case 9: return @"AD/AD1";
+		case 10: return @"DDn";
 		default: return [NSString stringWithFormat:@"Method %d",method&0x7f];
 	}
 }

@@ -34,7 +34,7 @@
 		for(int i=0;i<length;i++) xor^=bytes[i];
 	}
 
-	NSLog(@"Checksum: %@, Length: %d, CRC32 %08x, XOR %02x",
+	NSLog(@"Checksum: %@, Length: %d, CRC32: %08x, XOR: %02x",
 	[fh hasChecksum]?[fh isChecksumCorrect]?@"Correct":@"Incorrect":@"Unknown",
 	[data length],crc,xor);
 

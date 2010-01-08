@@ -355,7 +355,6 @@
 		1B06D4F00DDA623800D9C000 /* clientfunc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = clientfunc.c; sourceTree = "<group>"; };
 		1B06D4F40DDA623800D9C000 /* Ace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ace.c; sourceTree = "<group>"; };
 		1B06D4F50DDA623800D9C000 /* AMPK.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AMPK.c; sourceTree = "<group>"; };
-		1B06D4F80DDA623800D9C000 /* CAB.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CAB.c; sourceTree = "<group>"; };
 		1B06D4FA0DDA623800D9C000 /* CrunchDisk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CrunchDisk.c; sourceTree = "<group>"; };
 		1B06D4FB0DDA623800D9C000 /* DCS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DCS.c; sourceTree = "<group>"; };
 		1B06D4FD0DDA623800D9C000 /* DMS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DMS.c; sourceTree = "<group>"; };
@@ -897,7 +896,6 @@
 			children = (
 				1B06D4F40DDA623800D9C000 /* Ace.c */,
 				1B06D4F50DDA623800D9C000 /* AMPK.c */,
-				1B06D4F80DDA623800D9C000 /* CAB.c */,
 				1B06D4FA0DDA623800D9C000 /* CrunchDisk.c */,
 				1B06D4FB0DDA623800D9C000 /* DCS.c */,
 				1B06D4FD0DDA623800D9C000 /* DMS.c */,

@@ -1,6 +1,11 @@
 #import "XADDiskDoublerADnHandle.h"
 #import "XADException.h"
 
+static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
+{
+	for(int i=0;i<length;i++) dest[i]=src[i];
+}
+
 @implementation XADDiskDoublerADnHandle
 
 -(int)produceBlockAtOffset:(off_t)pos
@@ -32,7 +37,7 @@
 
 	if(flags&1)
 	{
-		// Uncompressed blocks
+		// Uncompressed block
 		for(int i=0;i<uncompsize;i++) outbuffer[i]=CSInputNextByte(input);
 	}
 	else
@@ -64,7 +69,7 @@
 				if(currpos+length>uncompsize) length=uncompsize-currpos;
 				if(length>offset) [XADException raiseIllegalDataException];
 
-				memcpy(&outbuffer[currpos],&outbuffer[currpos-offset],length);
+				CopyBytesWithRepeat(&outbuffer[currpos],&outbuffer[currpos-offset],length);
 				currpos+=length;
 			}
 		}

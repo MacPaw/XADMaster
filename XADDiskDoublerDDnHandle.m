@@ -8,21 +8,90 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
 
 @implementation XADDiskDoublerDDnHandle
 
--(void)resetBlockStream
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	[self setBlockPointer:outbuffer];
+	if(self=[super initWithHandle:handle length:length windowSize:65536])
+	{
+		lengthcode=nil;
+	}
+	return self;
+}
 
+-(void)dealloc
+{
+	[lengthcode release];
+	[super dealloc];
+}
+
+-(void)resetLZSSHandle
+{
+	nextblock=0;
+	blockend=0;
+	literalsleft=0;
+	correctxor=0;
 	checksumcorrect=YES;
 }
 
--(int)produceBlockAtOffset:(off_t)pos
+-(int)nextLiteralOrOffset:(int *)offsetout andLength:(int *)lengthout atPosition:(off_t)pos
+{
+	if(pos>=blockend) [self readBlockAtPosition:pos];
+
+	if(uncompressed) return CSInputNextByte(input);
+
+	if(literalsleft)
+	{
+		literalsleft--;
+		// TODO: check for literals left
+		return *literalptr++;
+	}
+
+	int code=CSInputNextSymbolUsingCode(input,lengthcode);
+	if(code==0)
+	{
+		// TODO: check for literals left
+		return *literalptr++;
+	}
+	else if(code<128)
+	{
+		int length=code+2;
+		// TODO: check for offsets left
+		int offset=*offsetptr++;
+
+		if(offset>pos) [XADException raiseIllegalDataException];
+		if(pos+length>blockend) [XADException raiseIllegalDataException]; //length=uncompsize-currpos;
+
+		*offsetout=offset;
+		*lengthout=length;
+		return XADLZSSMatch;
+	}
+	else
+	{
+		int length=1<<(code-128);
+
+		if(pos+length>blockend) [XADException raiseIllegalDataException]; //length=uncompsize-currpos;
+		// TODO: check for literals left
+
+		literalsleft=length-1;
+		return *literalptr++;
+	}
+}
+
+-(void)readBlockAtPosition:(off_t)pos
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+	if(blocksize<=65536)
+	{
+		int xor=0;
+		for(int i=0;i<blocksize;i++) xor^=windowbuffer[(pos-blocksize+i)&windowmask];
+		if(xor!=correctxor) checksumcorrect=NO;
+	}
+
+	CSInputSeekToBufferOffset(input,nextblock);
 
 	uint8_t headxor=0;
 
 	uint32_t uncompsize=CSInputNextUInt32BE(input);
-	if(uncompsize>sizeof(outbuffer)) [XADException raiseIllegalDataException];
 	headxor^=uncompsize^(uncompsize>>8)^(uncompsize>>16)^(uncompsize>>24);
 
 	int numliterals=CSInputNextUInt16BE(input);
@@ -62,112 +131,67 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
 	int headcorrectxor=CSInputNextByte(input);
 	if(headxor!=headcorrectxor) [XADException raiseIllegalDataException];
 
-	NSLog(@"%d (%d %d) %d %d %d %x <%x %x %x %x>",uncompsize,numliterals,numoffsets,lengthcompsize,literalcompsize,offsetcompsize,
-	flags,datacorrectxor1,datacorrectxor2,datacorrectxor3,uncompcorrectxor);
+	//NSLog(@"%d (%d %d) %d %d %d %x <%x %x %x %x>",uncompsize,numliterals,numoffsets,lengthcompsize,literalcompsize,offsetcompsize,
+	//flags,datacorrectxor1,datacorrectxor2,datacorrectxor3,uncompcorrectxor);
+
+	blocksize=uncompsize;
+	blockend=pos+uncompsize;
+	correctxor=uncompcorrectxor;
 
 	if(flags&0x40)
 	{
-		// Uncompressed block
-		for(int i=0;i<uncompsize;i++) outbuffer[i]=CSInputNextByte(input);
+		uncompressed=YES;
+		return;
 	}
-	else
+
+	off_t literalstart=CSInputBufferOffset(input)+offsetcompsize;
+	off_t lengthstart=literalstart+literalcompsize;
+	nextblock=lengthstart+lengthcompsize;
+
+	if(numliterals+numoffsets*2>sizeof(buffer)) [XADException raiseIllegalDataException];
+
+	literalptr=buffer;
+	offsetptr=(uint16_t *)&buffer[numliterals];
+
+	XADPrefixCode *offsetcode=[self readCode];
+
+	for(int i=0;i<numoffsets;i++)
 	{
-		off_t literalstart=CSInputBufferOffset(input)+offsetcompsize;
-		off_t lengthstart=literalstart+literalcompsize;
-		off_t nextblock=lengthstart+lengthcompsize;
+		int slot=CSInputNextSymbolUsingCode(input,offsetcode);
 
-		int offsets[numoffsets];
-
-		XADPrefixCode *offsetcode=[self readCode];
-
-		for(int i=0;i<numoffsets;i++)
+		if(slot<4)
 		{
-			int slot=CSInputNextSymbolUsingCode(input,offsetcode);
-
-			if(slot<4)
-			{
-				offsets[i]=slot+1;
-			}
-			else
-			{
-				int bits=slot/2-1;
-				int start=((2+(slot&1))<<bits)+1;
-				offsets[i]=start+CSInputNextBitString(input,bits);
-			}
-
-//NSLog(@"%d",offsets[i]);
-		}
-
-		CSInputSeekToBufferOffset(input,literalstart);
-
-		uint8_t *literalptr=&outbuffer[uncompsize-numliterals];
-
-		if(flags&0x80)
-		{
-			XADPrefixCode *literalcode=[self readCode];
-
-			// Compressed literals
-			for(int i=0;i<numliterals;i++) literalptr[i]=CSInputNextSymbolUsingCode(input,literalcode);
+			offsetptr[i]=slot+1;
 		}
 		else
 		{
-			// Uncompressed literals
-			for(int i=0;i<numliterals;i++) literalptr[i]=CSInputNextByte(input);
+			int bits=slot/2-1;
+			int start=((2+(slot&1))<<bits)+1;
+			offsetptr[i]=start+CSInputNextBitString(input,bits);
 		}
-
-		CSInputSeekToBufferOffset(input,lengthstart);
-
-		XADPrefixCode *lengthcode=[self readCode];
-
-		int *offsetptr=offsets;
-
-		int currpos=0;
-		while(currpos<uncompsize)
-		{
-			int code=CSInputNextSymbolUsingCode(input,lengthcode);
-			if(code==0)
-			{
-				// check for literals left
-
-				outbuffer[currpos++]=*literalptr++;
-			}
-			else if(code<128)
-			{
-				int length=code+2;
-
-				// check for offsets left
-				int offset=*offsetptr++;
-
-				if(offset>currpos) [XADException raiseIllegalDataException];
-				if(currpos+length>uncompsize) [XADException raiseIllegalDataException]; //length=uncompsize-currpos;
-
-				CopyBytesWithRepeat(&outbuffer[currpos],&outbuffer[currpos-offset],length);
-				currpos+=length;
-			}
-			else
-			{
-				int length=1<<(code-128);
-
-				if(currpos+length>uncompsize) [XADException raiseIllegalDataException]; //length=uncompsize-currpos;
-				// check for literals left
-
-				memmove(&outbuffer[currpos],literalptr,length);
-				currpos+=length;
-				literalptr+=length;
-			}
-		}
-
-		CSInputSeekToBufferOffset(input,nextblock);
 	}
 
-	int uncompxor=0;
-	for(int i=0;i<uncompsize;i++) uncompxor^=outbuffer[i];
+	CSInputSeekToBufferOffset(input,literalstart);
 
-	if(uncompxor!=uncompcorrectxor) checksumcorrect=NO;
+	if(flags&0x80)
+	{
+		XADPrefixCode *literalcode=[self readCode];
+
+		// Compressed literals
+		for(int i=0;i<numliterals;i++) literalptr[i]=CSInputNextSymbolUsingCode(input,literalcode);
+	}
+	else
+	{
+		// Uncompressed literals
+		for(int i=0;i<numliterals;i++) literalptr[i]=CSInputNextByte(input);
+	}
+
+	CSInputSeekToBufferOffset(input,lengthstart);
+
+	[lengthcode release];
+	lengthcode=[[self readCode] retain];
 
 	[pool release];
-
-	return uncompsize;
 }
 
 -(XADPrefixCode *)readCode
@@ -181,8 +205,6 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
 	int codelengths[numcodes];
 
 	off_t end=CSInputBufferOffset(input)+numbytes;
-
-NSLog(@"%08x %d %d %d",head,numcodes,numbits,maxlength);
 
 	if(head&0x04) // uses zero coding
 	{
@@ -213,6 +235,6 @@ NSLog(@"%08x %d %d %d",head,numcodes,numbits,maxlength);
 
 -(BOOL)hasChecksum { return YES; }
 
--(BOOL)isChecksumCorrect { return checksumcorrect; }
+-(BOOL)isChecksumCorrect { return streampos==blockend && checksumcorrect; }
 
 @end

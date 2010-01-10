@@ -46,7 +46,6 @@
 
 	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.[0-9]{3}$" options:REG_ICASE])
 	{
-NSLog(@"what");
 		return [self scanForVolumesWithFilename:filename
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.[0-9]{3}$",
 			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
@@ -606,7 +605,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	{
 		NSNumber *crc=[dict objectForKey:@"ZipCRC32"];
 		if(crc) return [XADCRCHandle IEEECRC32HandleWithHandle:handle
-		length:size correctCRC:[crc unsignedIntValue] conditioned:YES];
+		length:[handle fileSize] correctCRC:[crc unsignedIntValue] conditioned:YES];
 	}
 
 	return handle;
@@ -620,8 +619,11 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		case 1: return [[[XADZipShrinkHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
 						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
-		case 8: return [CSZlibHandle deflateHandleWithHandle:parent length:size];
-		//case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
+//		case 8: return [CSZlibHandle deflateHandleWithHandle:parent length:size];
+		case 8: return [CSZlibHandle deflateHandleWithHandle:parent]; // Leave out length,
+		// because some archivers don't bother writing zip64 extensions for >4GB files, so
+		// size might be entirely wrong, and archivers are expected to just keep unarchving anyway.
+//		case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size variant:XADDeflate64DeflateVariant] autorelease];
 		case 12: return [CSBzip2Handle bzip2HandleWithHandle:parent length:size];
 		case 14:

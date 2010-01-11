@@ -36,6 +36,7 @@
 {
 	NSArray *matches;
 
+	// Check for .z01 style files.
 	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.(zip|z[0-9]{2})$" options:REG_ICASE])
 	{
 		return [self scanForVolumesWithFilename:filename
@@ -44,6 +45,8 @@
 		firstFileExtension:@"zip"];
 	}
 
+	// In case the first part of a .zip.001 split file was detected, find the other parts.
+	// If a later part was detected, XADSplitFileParser will handle it instead.
 	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.[0-9]{3}$" options:REG_ICASE])
 	{
 		return [self scanForVolumesWithFilename:filename

@@ -48,7 +48,7 @@
 	uint32_t firstminitablesec=[fh readUInt32LE];
 	uint32_t numminitablesecs=[fh readUInt32LE];
 	uint32_t firstmastersec=[fh readUInt32LE];
-	uint32_t nummastersecs=[fh readUInt32LE];
+	/*uint32_t nummastersecs=*/[fh readUInt32LE];
 
 	secsize=1<<secshift;
 	minisecsize=1<<minisecshift;

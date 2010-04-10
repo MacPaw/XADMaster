@@ -115,17 +115,15 @@ static int TestSignature(const uint8_t *ptr)
 			[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
 		firstFileExtension:@"rar"];
 	}
-	else
+
+	// Old naming scheme. Just look for rar/r01/s01 files.
+	NSArray *matches;
+	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.(rar|r[0-9]{2}|s[0-9]{2})$" options:REG_ICASE])
 	{
-		// Old naming scheme. Just look for rar/r01/s01 files.
-		NSArray *matches;
-		if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.(rar|r[0-9]{2}|s[0-9]{2})$" options:REG_ICASE])
-		{
-			return [self scanForVolumesWithFilename:filename
-			regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(rar|r[0-9]{2}|s[0-9]{2})$",
-				[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
-			firstFileExtension:@"rar"];
-		}
+		return [self scanForVolumesWithFilename:filename
+		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(rar|r[0-9]{2}|s[0-9]{2})$",
+			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
+		firstFileExtension:@"rar"];
 	}
 
 	return nil;

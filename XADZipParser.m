@@ -32,14 +32,14 @@
 	return NO;
 }
 
-+(NSArray *)volumesForFilename:(NSString *)filename
++(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
 	NSArray *matches;
 
 	// Check for .z01 style files.
-	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.(zip|z[0-9]{2})$" options:REG_ICASE])
+	if(matches=[name substringsCapturedByPattern:@"^(.*)\\.(zip|z[0-9]{2})$" options:REG_ICASE])
 	{
-		return [self scanForVolumesWithFilename:filename
+		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(zip|z[0-9]{2})$",
 			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
 		firstFileExtension:@"zip"];
@@ -47,9 +47,9 @@
 
 	// In case the first part of a .zip.001 split file was detected, find the other parts.
 	// If a later part was detected, XADSplitFileParser will handle it instead.
-	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.[0-9]{3}$" options:REG_ICASE])
+	if(matches=[name substringsCapturedByPattern:@"^(.*)\\.[0-9]{3}$" options:REG_ICASE])
 	{
-		return [self scanForVolumesWithFilename:filename
+		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.[0-9]{3}$",
 			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
 		firstFileExtension:nil];

@@ -41,8 +41,6 @@ extern NSString *XADFinderFlags;
 +(XADArchive *)archiveForFile:(NSString *)filename;
 +(XADArchive *)recursiveArchiveForFile:(NSString *)filename;
 
-+(NSArray *)volumesForFile:(NSString *)filename;
-
 
 
 -(id)init;
@@ -137,6 +135,8 @@ extern NSString *XADFinderFlags;
 -(void)updateAttributesForDeferredDirectories;
 
 // Deprecated
+
++(NSArray *)volumesForFile:(NSString *)filename;
 
 -(int)sizeOfEntry:(int)n;
 -(void *)xadFileInfoForEntry:(int)n;

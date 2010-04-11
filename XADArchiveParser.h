@@ -78,8 +78,9 @@ extern NSString *XADVolumesKey;
 }
 
 +(void)initialize;
-+(Class)archiveParserClassForHandle:(CSHandle *)handle name:(NSString *)name;
++(Class)archiveParserClassForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name;
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename;
 
 -(id)_initWithHandle:(CSHandle *)handle;
@@ -153,7 +154,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 
 +(int)requiredHeaderSize;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
-+(NSArray *)volumesForFilename:(NSString *)name;
++(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
 -(void)parse;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;

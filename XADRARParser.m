@@ -58,6 +58,8 @@
 #define RAR_OLDSIGNATURE 1
 #define RAR_SIGNATURE 2
 
+
+
 static RARBlock ZeroBlock={0};
 
 static inline BOOL IsZeroBlock(RARBlock block) { return block.start==0; }
@@ -70,6 +72,17 @@ static int TestSignature(const uint8_t *ptr)
 
 	return RAR_NOSIGNATURE;
 }
+
+static const uint8_t *FindSignature(const uint8_t *ptr,int length)
+{
+	if(length<7) return NULL;
+
+	for(int i=0;i<=length-7;i++) if(TestSignature(&ptr[i])) return &ptr[i];
+
+	return NULL;
+}
+
+
 
 @implementation XADRARParser
 
@@ -90,12 +103,10 @@ static int TestSignature(const uint8_t *ptr)
 	return NO;
 }
 
-+(NSArray *)volumesForFilename:(NSString *)filename
++(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
-	// Open file to read the archive header flags.
-	CSFileHandle *fh=[CSFileHandle fileHandleForReadingAtPath:filename];
-	uint8_t header[12];
-	[fh readBytes:12 toBuffer:header];
+	if([data length]<12) return nil;
+	const uint8_t *header=[data bytes];
 	uint16_t flags=CSUInt16LE(&header[10]);
 
 	// Don't bother looking for volumes if it the volume bit is not set.
@@ -107,8 +118,8 @@ static int TestSignature(const uint8_t *ptr)
 		// New naming scheme. Find the last number in the name, and look for other files
 		// with the same number of digits in the same location.
 		NSArray *matches;
-		if(matches=[filename substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.rar$" options:REG_ICASE])
-		return [self scanForVolumesWithFilename:filename
+		if(matches=[name substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.rar$" options:REG_ICASE])
+		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%d}%@.rar$",
 			[[matches objectAtIndex:1] escapedPattern],
 			[[matches objectAtIndex:2] length],
@@ -118,9 +129,9 @@ static int TestSignature(const uint8_t *ptr)
 
 	// Old naming scheme. Just look for rar/r01/s01 files.
 	NSArray *matches;
-	if(matches=[filename substringsCapturedByPattern:@"^(.*)\\.(rar|r[0-9]{2}|s[0-9]{2})$" options:REG_ICASE])
+	if(matches=[name substringsCapturedByPattern:@"^(.*)\\.(rar|r[0-9]{2}|s[0-9]{2})$" options:REG_ICASE])
 	{
-		return [self scanForVolumesWithFilename:filename
+		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(rar|r[0-9]{2}|s[0-9]{2})$",
 			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
 		firstFileExtension:@"rar"];
@@ -673,7 +684,7 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 
 +(int)requiredHeaderSize
 {
-	return 0x40000;
+	return 0x80000;
 }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
@@ -681,11 +692,37 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
-	if(length<7) return NO; // TODO: fix to use correct min size
-
-	for(int i=0;i<=length-7;i++) if(TestSignature(bytes+i)) return YES;
+	if(FindSignature(bytes,length)) return YES;
 
 	return NO;
+}
+
++(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
+{
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+
+	const uint8_t *header=FindSignature(bytes,length);
+	if(!header) return nil; // Shouldn't happen
+
+	uint16_t flags=CSUInt16LE(&header[10]);
+
+	// Don't bother looking for volumes if it the volume bit is not set.
+	if(!(flags&0x01)) return nil;
+
+	// Don't bother looking for volumes if it the new naming bit is not set.
+	if(!(flags&0x10)) return nil;
+
+	// New naming scheme. Find the last number in the name, and look for other files
+	// with the same number of digits in the same location.
+	NSArray *matches;
+	if(matches=[name substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.exe$" options:REG_ICASE])
+	return [self scanForVolumesWithFilename:name
+	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%d}%@.(rar|exe)$",
+		[[matches objectAtIndex:1] escapedPattern],
+		[[matches objectAtIndex:2] length],
+		[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
+	firstFileExtension:@"exe"];
 }
 
 -(void)parse

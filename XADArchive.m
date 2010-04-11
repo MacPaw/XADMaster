@@ -42,9 +42,9 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	return archive;
 }
 
-+(NSArray *)volumesForFile:(NSString *)filename
++(NSArray *)volumesForFile:(NSString *)filename // deprecated
 {
-	return [XADArchiveParser volumesForFilename:(NSString *)filename];
+	return [NSArray arrayWithObject:filename];
 }
 
 

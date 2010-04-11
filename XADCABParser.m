@@ -5,6 +5,7 @@
 #import "XADMSLZXHandle.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
+#import "CSMemoryHandle.h"
 #import "CSFileHandle.h"
 #import "CSMultiHandle.h"
 
@@ -45,15 +46,15 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 	return length>=4&&bytes[0]=='M'&&bytes[1]=='S'&&bytes[2]=='C'&&bytes[3]=='F';
 }
 
-+(NSArray *)volumesForFilename:(NSString *)filename
++(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
 	NSArray *res=nil;
 	@try
 	{
-		NSString *dirname=[filename stringByDeletingLastPathComponent];
-		NSMutableArray *volumes=[NSMutableArray arrayWithObject:filename];
+		NSString *dirname=[name stringByDeletingLastPathComponent];
+		NSMutableArray *volumes=[NSMutableArray arrayWithObject:name];
 
-		CSHandle *fh=[CSFileHandle fileHandleForReadingAtPath:filename];
+		CSHandle *fh=[CSMemoryHandle memoryHandleForReadingData:data];
 		CABHeader firsthead=ReadCABHeader(fh);
 
 		NSData *namedata=firsthead.prevvolume;
@@ -321,7 +322,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 	return NO;
 }
 
-+(NSArray *)volumesForFilename:(NSString *)name { return nil; }
++(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name { return nil; }
 
 -(void)parse
 {

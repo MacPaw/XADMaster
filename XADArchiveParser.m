@@ -170,9 +170,8 @@ static int maxheader=0;
 	}
 }
 
-+(Class)archiveParserClassForHandle:(CSHandle *)handle name:(NSString *)name
++(Class)archiveParserClassForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name
 {
-	NSData *header=[handle readDataOfLengthAtMost:maxheader];
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
 	Class parserclass;
 	while(parserclass=[enumerator nextObject])
@@ -191,7 +190,13 @@ static int maxheader=0;
 
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name
 {
-	Class parserclass=[self archiveParserClassForHandle:handle name:name];
+	NSData *header=[handle readDataOfLengthAtMost:maxheader];
+	return [self archiveParserForHandle:handle firstBytes:header name:name];
+}
+
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name
+{
+	Class parserclass=[self archiveParserClassForHandle:handle firstBytes:header name:name];
 	return [[[parserclass alloc] initWithHandle:handle name:name] autorelease];
 }
 
@@ -203,12 +208,14 @@ static int maxheader=0;
 		handle=[CSFileHandle fileHandleForReadingAtPath:filename];
 	} @catch(id e) { return nil; }
 
-	Class parserclass=[self archiveParserClassForHandle:handle name:filename];
+	NSData *header=[handle readDataOfLengthAtMost:maxheader];
+
+	Class parserclass=[self archiveParserClassForHandle:handle firstBytes:header name:filename];
 	if(!parserclass) return nil;
 
 	@try
 	{
-		NSArray *volumes=[parserclass volumesForFilename:filename];
+		NSArray *volumes=[parserclass volumesForHandle:handle firstBytes:header name:filename];
 		if(volumes&&[volumes count]>1)
 		{
 			NSMutableArray *handles=[NSMutableArray array];
@@ -681,7 +688,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 +(int)requiredHeaderSize { return 0; }
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name { return NO; }
-+(NSArray *)volumesForFilename:(NSString *)name { return nil; }
++(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name { return nil; }
 
 -(void)parse {}
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum { return nil; }

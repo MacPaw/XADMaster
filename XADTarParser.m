@@ -5,7 +5,7 @@
 #define TAR_FORMAT_USTAR 2 // POSIX-ish tar formats
 #define TAR_FORMAT_STAR 3 // STAR is POSIX-ish, but not similiar enough to ustar and posix.2001 tar.
 
-// For now, implementing v7 tar, because oldest, then ustar.
+// TODO: star.
 
 @implementation XADTarParser
 
@@ -135,7 +135,7 @@
 	return( checksum == signedChecksum || checksum == unsignedChecksum );
 }
 
--(void)parseGenericTarHeader:(NSData *)header toDict:(NSMutableDictionary *)dict
+-(int)parseGenericTarHeader:(NSData *)header toDict:(NSMutableDictionary *)dict
 {
 	char name[101];
 	[header getBytes:name range:NSMakeRange(0,100)];
@@ -183,6 +183,16 @@
 		linkName[100] = '\000';
 		[dict setObject:[self XADStringWithCString:linkName] forKey:XADLinkDestinationKey];
 		[dict setObject:[NSNumber numberWithInt:(typeFlag%2)] forKey:XADIsHardLinkKey];
+	}
+
+	// KLUDGE: Fix broken directory typeflags.
+	if( typeFlag == 0 && name[strlen(name)-1] == '/' ) {
+		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+	}
+
+	// KLUDGE: Fix broken ant tar wrong magic files.
+	if( strncmp( name, "././@LongLink", 13 ) == 0 ) {
+		return( 1 );
 	}
 }
 
@@ -438,7 +448,10 @@
 	{
 		NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
-		[self parseGenericTarHeader:header toDict:dict];
+		int wrongFormat = [self parseGenericTarHeader:header toDict:dict];
+		if( wrongFormat == 1 ) {
+			tarFormat = TAR_FORMAT_GNU;
+		}
 
 		if( tarFormat == TAR_FORMAT_V7 ) {
 			[self addTarEntryWithDictionaryAndSeek:dict];

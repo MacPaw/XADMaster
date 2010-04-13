@@ -14,6 +14,11 @@
 #import <sys/stat.h>
 
 
+
+static inline int imin(int a,int b) { return a<b?a:b; }
+
+
+
 @implementation XADZipParser
 
 +(int)requiredHeaderSize { return 8; }
@@ -58,22 +63,73 @@
 	return nil;
 }
 
+
+
 -(void)parseWithSeparateMacForks
 {
-	CSHandle *fh=[self handle];
-
 	// TODO: better handling of memory here
 	prevdict=nil;
 	prevname=nil;
 
-	off_t endrec,zip64loc;
-	if(![self findEndOfCentralDirectory:&endrec zip64Locator:&zip64loc])
+	CSHandle *fh=[self handle];
+
+	[fh seekToEndOfFile];
+	off_t end=[fh offsetInFile];
+
+	int numbytes=0x10011;
+	if(numbytes>end) numbytes=end;
+
+	uint8_t buf[numbytes];
+
+	[fh skipBytes:-numbytes];
+	[fh readBytes:numbytes toBuffer:buf];
+	int pos=numbytes-4;
+
+	// Find end of central directory record
+	while(pos>=0)
 	{
-		// TODO: parse incrementally instead
-		[XADException raiseIllegalDataException];
+		if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==5&&buf[pos+3]==6) break;
+		pos--;
 	}
 
-	[fh seekToFileOffset:endrec+4];
+	if(pos<0)
+	{
+		// Could not find a central directory record. Scan the zip file from the start instead.
+		[self parseWithoutCentralDirectory];
+		return;
+	}
+
+	off_t centraloffs=end-numbytes+pos;
+
+	// Find zip64 end of central directory locator
+	while(pos>=0)
+	{
+		if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==6&&buf[pos+3]==7) break;
+		pos--;
+	}
+
+	if(pos<0)
+	{
+		// Could not find a zip64 end of central directory locator, but proceed anyway.
+		[self parseWithCentralDirectoryAtOffset:centraloffs zip64Offset:-1];
+	}
+	else
+	{
+		// Found a zip64 end of central directory locator.
+		off_t zip64offs=end-numbytes+pos;
+		[self parseWithCentralDirectoryAtOffset:centraloffs zip64Offset:zip64offs];
+	}
+}
+
+
+
+
+
+-(void)parseWithCentralDirectoryAtOffset:(off_t)centraloffs zip64Offset:(off_t)zip64offs
+{
+	CSHandle *fh=[self handle];
+
+	[fh seekToFileOffset:centraloffs+4];
 
 	/*uint32_t disknumber=*/[fh readUInt16LE];
 	int centraldirstartdisk=[fh readUInt16LE];
@@ -89,10 +145,10 @@
 		[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
 	}
 
-	if(zip64loc>=0)
+	if(zip64offs>=0)
 	{
 		// Read locator to find where the zip64 end of central directory record actually is.
-		[fh seekToFileOffset:zip64loc+4];
+		[fh seekToFileOffset:zip64offs+4];
 		int disk=[fh readUInt32LE];
 		off_t offs=[fh readUInt64LE];
 		[fh seekToFileOffset:[self offsetForVolume:disk offset:offs]];
@@ -218,46 +274,11 @@
 
 
 
-static inline int imin(int a,int b) { return a<b?a:b; }
-
--(BOOL)findEndOfCentralDirectory:(off_t *)offsptr zip64Locator:(off_t *)locatorptr
+-(void)parseWithoutCentralDirectory
 {
-	CSHandle *fh=[self handle];
-
-	[fh seekToEndOfFile];
-	off_t end=[fh offsetInFile];
-
-	int numbytes=0x10011;
-	if(numbytes>end) numbytes=end;
-
-	uint8_t buf[numbytes];
-
-	[fh skipBytes:-numbytes];
-	[fh readBytes:numbytes toBuffer:buf];
-	int pos=numbytes-4;
-
-	// Find end of central directory record
-	while(pos>=0)
-	{
-		if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==5&&buf[pos+3]==6) break;
-		pos--;
-	}
-
-	if(pos<0) return NO; // Not found, total failure
-	*offsptr=end-numbytes+pos;
-
-	// Find zip64 end of central directory locator
-	while(pos>=0)
-	{
-		if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==6&&buf[pos+3]==7) break;
-		pos--;
-	}
-
-	if(pos<0) *locatorptr=-1;
-	else *locatorptr=end-numbytes+pos;
-
-	return YES;
+	NSLog(@"berra");
 }
+
 
 
 

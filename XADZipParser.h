@@ -11,7 +11,9 @@
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
 -(void)parseWithSeparateMacForks;
--(BOOL)findEndOfCentralDirectory:(off_t *)offsptr zip64Locator:(off_t *)locatorptr;
+-(void)parseWithCentralDirectoryAtOffset:(off_t)centraloffs zip64Offset:(off_t)zip64offs;
+-(void)parseWithoutCentralDirectory;
+
 //-(void)findNextZipMarkerStartingAt:(off_t)startpos;
 //-(void)findNoSeekMarkerForDictionary:(NSMutableDictionary *)dict;
 -(NSDictionary *)parseZipExtraWithLength:(int)length nameData:(NSData *)namedata;

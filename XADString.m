@@ -214,6 +214,7 @@
 
 	// Kludge to use Mac encodings instead of the similar Windows encodings for Mac archives
 	// TODO: improve
+	#ifdef __APPLE__
 	if(mac)
 	{
 		if(encoding==NSWindowsCP1252StringEncoding) return NSMacOSRomanStringEncoding;
@@ -222,6 +223,7 @@
 		if(encoding==NSShiftJISStringEncoding) return macjapanese;
 		//else if(encoding!=NSUTF8StringEncoding&&encoding!=macjapanese) encoding=NSMacOSRomanStringEncoding;
 	}
+	#endif
 
 	return encoding;
 }

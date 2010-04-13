@@ -3,7 +3,7 @@
 
 LZW *AllocLZW(int maxsymbols,int reservedsymbols)
 {
-	LZW *lzw=malloc(sizeof(LZW)+sizeof(LZWTreeNode)*maxsymbols);
+	LZW *lzw=(LZW *)malloc(sizeof(LZW)+sizeof(LZWTreeNode)*maxsymbols);
 	if(!lzw) return 0;
 
 	lzw->nodes=(LZWTreeNode *)&lzw[1];

@@ -62,8 +62,9 @@
 {
 	CSHandle *fh=[self handle];
 
-	NSMutableDictionary *prevdict=nil;
-	NSData *prevname=nil;
+	// TODO: better handling of memory here
+	prevdict=nil;
+	prevname=nil;
 
 	off_t endrec,zip64loc;
 	if(![self findEndOfCentralDirectory:&endrec zip64Locator:&zip64loc])
@@ -144,8 +145,8 @@
 
 		[fh skipBytes:namelength+extralength];
 
-		NSData *comment=nil;
-		if(commentlength) comment=[fh readDataOfLength:commentlength];
+		NSData *commentdata=nil;
+		if(commentlength) commentdata=[fh readDataOfLength:commentlength];
 
 		off_t next=[fh offsetInFile];
 
@@ -173,11 +174,6 @@
 			[fh seekToFileOffset:nextextra];
 		}
 
-		#ifdef DEBUG
-		if(compressionmethod==2||compressionmethod==3||compressionmethod==4||compressionmethod==7)
-		NSLog(@"Untested ZIP compression method %d",compressionmethod);
-		#endif
-
 		// Read local header
 		[fh seekToFileOffset:[self offsetForVolume:startdisk offset:locheaderoffset]];
 
@@ -187,182 +183,40 @@
 			//int localextractversion=[fh readUInt16LE];
 			//int localflags=[fh readUInt16LE];
 			//int localcompressionmethod=[fh readUInt16LE];
-			[fh skipBytes:6];
-			uint32_t localdate=[fh readUInt32LE];
+			//uint32_t localdate=[fh readUInt32LE];
 			//uint32_t localcrc=[fh readUInt32LE];
 			//uint32_t localcompsize=[fh readUInt32LE];
 			//uint32_t localuncompsize=[fh readUInt32LE];
-			[fh skipBytes:12];
+			[fh skipBytes:22];
 			int localnamelength=[fh readUInt16LE];
 			int localextralength=[fh readUInt16LE];
 
-			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-				[NSNumber numberWithInt:system],@"ZipOS",
-				[NSNumber numberWithInt:extractversion],@"ZipExtractVersion",
-				[NSNumber numberWithInt:flags],@"ZipFlags",
-				[NSNumber numberWithInt:compressionmethod],@"ZipCompressionMethod",
-				[NSDate XADDateWithMSDOSDateTime:date],XADLastModificationDateKey,
-				[NSNumber numberWithUnsignedInt:crc],@"ZipCRC32",
-				[NSNumber numberWithUnsignedInt:localdate],@"ZipLocalDate",
-				[NSNumber numberWithUnsignedLongLong:compsize],XADCompressedSizeKey,
-				[NSNumber numberWithUnsignedLongLong:uncompsize],XADFileSizeKey,
-				[NSNumber numberWithLongLong:[fh offsetInFile]+localnamelength+localextralength],XADDataOffsetKey,
-				[NSNumber numberWithUnsignedLongLong:compsize],XADDataLengthKey,
-			nil];
-			if(flags&0x01) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
-
-			NSString *systemname=nil;
-			switch(system)
-			{
-				case 0: systemname=@"MS-DOS"; break;
-				case 1: systemname=@"Amiga"; break;
-				case 2: systemname=@"OpenVMS"; break;
-				case 3: systemname=@"Unix"; break;
-				case 4: systemname=@"VM/CMS"; break;
-				case 5: systemname=@"Atari ST"; break;
-				case 6: systemname=@"OS/2 H.P.F.S."; break;
-				case 7: systemname=@"Macintosh"; break;
-				case 8: systemname=@"Z-System"; break;
-				case 9: systemname=@"CP/M"; break;
-				case 10: systemname=@"Windows NTFS"; break;
-				case 11: systemname=@"MVS (OS/390 - Z/OS)"; break;
-				case 12: systemname=@"VSE"; break;
-				case 13: systemname=@"Acorn Risc"; break;
-				case 14: systemname=@"VFAT"; break;
-				case 15: systemname=@"alternate MVS"; break;
-				case 16: systemname=@"BeOS"; break;
-				case 17: systemname=@"Tandem"; break;
-				case 18: systemname=@"OS/400"; break;
-				case 19: systemname=@"OS X (Darwin)"; break;
-			}
-			if(systemname) [dict setObject:[self XADStringWithString:systemname] forKey:@"ZipOSName"];
-
-			NSString *compressionname=nil;
-			switch(compressionmethod)
-			{
-				case 0: compressionname=@"None"; break;
-				case 1: compressionname=@"Shrink"; break;
-				case 2: compressionname=@"Reduce 1"; break;
-				case 3: compressionname=@"Reduce 2"; break;
-				case 4: compressionname=@"Reduce 3"; break;
-				case 5: compressionname=@"Reduce 4"; break;
-				case 6: compressionname=@"Implode"; break;
-				case 8: compressionname=@"Deflate"; break;
-				case 9: compressionname=@"Deflate64"; break;
-				case 12: compressionname=@"Bzip2"; break;
-				case 14: compressionname=@"LZMA"; break;
-				case 98: compressionname=@"PPMd"; break;
-			}
-			if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
+			off_t dataoffset=[fh offsetInFile]+localnamelength+localextralength;
 
 			NSData *namedata=nil;
-			if(localnamelength)
-			{
-				namedata=[fh readDataOfLength:localnamelength];
-				if(flags&0x800)
-				[dict setObject:[self XADPathWithData:namedata encoding:NSUTF8StringEncoding separators:XADUnixPathSeparator] forKey:XADFileNameKey];
-				else
-				[dict setObject:[self XADPathWithData:namedata separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+			if(localnamelength) namedata=[fh readDataOfLength:localnamelength];
 
-				if(((char *)[namedata bytes])[localnamelength-1]=='/'&&uncompsize==0)
-				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-
-				const uint8_t *namebytes=[namedata bytes];
-				int namelength=[namedata length];
-
-				// If the previous entry was suspected of being a directory, check if the new
-				// entry is a file inside it and set the directory flag for the previous one.
-				if(prevdict)
-				{
-					const char *prevbytes=[prevname bytes];
-					int prevlength=[prevname length];
-					if(prevlength<namelength)
-					{
-						int i=0;
-						while(namebytes[i]&&prevbytes[i]==namebytes[i]) i++;
-						if(!prevbytes[i]&&namebytes[i]=='/')
-						[prevdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-					}
-				}
-
-				// Check for possible MacBinary files
- 				if(namelength>4)
-				{
-					if(memcmp(namebytes+namelength-4,".bin",4)==0)
-					[dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
-				}
-
-				// Kludge to make executables in bad Mac OS X app bundles
-				// without permission information executable.
- 				if(namelength>22&&system!=3)
-				{
-					for(int i=1;i<namelength-21;i++)
-					if(memcmp(namebytes+i,".app/Contents/MacOS/",20)==0)
-					{
-						mode_t mask=umask(0); umask(mask);
-						[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
-						break;
-					}
-				}
-			}
-			else
-			{
-				[dict setObject:[self XADPathWithUnseparatedString:[[self name] stringByDeletingPathExtension]] forKey:XADFileNameKey];
-				// TODO: set no filename flag
-			}
-
-			if(comment)
-			{
-				if(flags&0x800)
-				[dict setObject:[self XADStringWithData:comment encoding:NSUTF8StringEncoding] forKey:XADCommentKey];
-				else
-				[dict setObject:[self XADStringWithData:comment] forKey:XADCommentKey];
-			}
-
-			//if(zc.System==1) fi2->xfi_Protection = ((EndGetI32(zc.ExtFileAttrib)>>16)^15)&0xFF; // amiga
-			if(system==0) // ms-dos
-			{
-				if(extfileattrib&0x10) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-				[dict setObject:[NSNumber numberWithInt:extfileattrib] forKey:XADDOSFileAttributesKey];
-			}
-			else if(system==3) // unix
-			{
-				int perm=extfileattrib>>16;
-				[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
-
-				if((perm&0xf000)==0x4000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-				else if((perm&0xf000)==0xa000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
-			}
-
+			NSDictionary *extradict=nil;
 			@try {
-				if(localextralength) [self parseZipExtraWithDictionary:dict length:localextralength nameData:namedata];
+				if(localextralength) extradict=[self parseZipExtraWithLength:localextralength nameData:namedata];
 			} @catch(id e) {
 				[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 				NSLog(@"Error parsing Zip extra fields: %@",e);
 			}
 
-			if(prevdict)
-			{
-				[self addEntryWithDictionary:prevdict];
-				prevdict=nil;
-			}
-
-			if(uncompsize==0&&i!=numentries-1&&!([dict objectForKey:XADIsDirectoryKey]
-			&&[[dict objectForKey:XADIsDirectoryKey] boolValue]))
-			{
-				prevdict=dict; // this entry could be a directory, save it for testing against the next entry
-				prevname=namedata;
-			}
-			else
-			{
-				[self addEntryWithDictionary:dict];
-			}
+			[self addZipEntryWithSystem:system extractVersion:extractversion flags:flags
+			compressionMethod:compressionmethod date:date crc:crc compressedSize:compsize
+			uncompressedSize:uncompsize extendedFileAttributes:extfileattrib
+			extraDictionary:extradict dataOffset:dataoffset nameData:namedata commentData:commentdata
+			isLastEntry:i==numentries-1];
 		}
 		else [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 
 		[fh seekToFileOffset:next];
 	}
 }
+
+
 
 static inline int imin(int a,int b) { return a<b?a:b; }
 
@@ -405,9 +259,12 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	return YES;
 }
 
--(void)parseZipExtraWithDictionary:(NSMutableDictionary *)dict length:(int)length nameData:(NSData *)namedata
+
+
+-(NSDictionary *)parseZipExtraWithLength:(int)length nameData:(NSData *)namedata
 {
 	CSHandle *fh=[self handle];
+	NSMutableDictionary *dict=[NSMutableDictionary dictionary];
 
 	off_t end=[fh offsetInFile]+length;
 
@@ -550,7 +407,188 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	}
 
 	[fh seekToFileOffset:end];
+
+	return dict;
 }
+
+
+
+
+-(void)addZipEntryWithSystem:(int)system
+extractVersion:(int)extractversion
+flags:(int)flags
+compressionMethod:(int)compressionmethod
+date:(uint32_t)date
+crc:(uint32_t)crc
+compressedSize:(off_t)compsize
+uncompressedSize:(off_t)uncompsize
+extendedFileAttributes:(uint32_t)extfileattrib
+extraDictionary:(NSDictionary *)extradict
+dataOffset:(off_t)dataoffset
+nameData:(NSData *)namedata
+commentData:(NSData *)commentdata
+isLastEntry:(BOOL)islastentry
+{
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithInt:system],@"ZipOS",
+		[NSNumber numberWithInt:extractversion],@"ZipExtractVersion",
+		[NSNumber numberWithInt:flags],@"ZipFlags",
+		[NSNumber numberWithInt:compressionmethod],@"ZipCompressionMethod",
+		[NSDate XADDateWithMSDOSDateTime:date],XADLastModificationDateKey,
+		[NSNumber numberWithUnsignedInt:crc],@"ZipCRC32",
+		//[NSNumber numberWithUnsignedInt:localdate],@"ZipLocalDate",
+		[NSNumber numberWithUnsignedLongLong:compsize],XADCompressedSizeKey,
+		[NSNumber numberWithUnsignedLongLong:uncompsize],XADFileSizeKey,
+		[NSNumber numberWithLongLong:dataoffset],XADDataOffsetKey,
+		[NSNumber numberWithUnsignedLongLong:compsize],XADDataLengthKey,
+	nil];
+	if(flags&0x01) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+
+	NSString *systemname=nil;
+	switch(system)
+	{
+		case 0: systemname=@"MS-DOS"; break;
+		case 1: systemname=@"Amiga"; break;
+		case 2: systemname=@"OpenVMS"; break;
+		case 3: systemname=@"Unix"; break;
+		case 4: systemname=@"VM/CMS"; break;
+		case 5: systemname=@"Atari ST"; break;
+		case 6: systemname=@"OS/2 H.P.F.S."; break;
+		case 7: systemname=@"Macintosh"; break;
+		case 8: systemname=@"Z-System"; break;
+		case 9: systemname=@"CP/M"; break;
+		case 10: systemname=@"Windows NTFS"; break;
+		case 11: systemname=@"MVS (OS/390 - Z/OS)"; break;
+		case 12: systemname=@"VSE"; break;
+		case 13: systemname=@"Acorn Risc"; break;
+		case 14: systemname=@"VFAT"; break;
+		case 15: systemname=@"alternate MVS"; break;
+		case 16: systemname=@"BeOS"; break;
+		case 17: systemname=@"Tandem"; break;
+		case 18: systemname=@"OS/400"; break;
+		case 19: systemname=@"OS X (Darwin)"; break;
+	}
+	if(systemname) [dict setObject:[self XADStringWithString:systemname] forKey:@"ZipOSName"];
+
+	NSString *compressionname=nil;
+	switch(compressionmethod)
+	{
+		case 0: compressionname=@"None"; break;
+		case 1: compressionname=@"Shrink"; break;
+		case 2: compressionname=@"Reduce 1"; break;
+		case 3: compressionname=@"Reduce 2"; break;
+		case 4: compressionname=@"Reduce 3"; break;
+		case 5: compressionname=@"Reduce 4"; break;
+		case 6: compressionname=@"Implode"; break;
+		case 8: compressionname=@"Deflate"; break;
+		case 9: compressionname=@"Deflate64"; break;
+		case 12: compressionname=@"Bzip2"; break;
+		case 14: compressionname=@"LZMA"; break;
+		case 98: compressionname=@"PPMd"; break;
+	}
+	if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
+
+	if(namedata)
+	{
+		const uint8_t *namebytes=[namedata bytes];
+		int namelength=[namedata length];
+
+		if(flags&0x800)
+		[dict setObject:[self XADPathWithData:namedata encoding:NSUTF8StringEncoding separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+		else
+		[dict setObject:[self XADPathWithData:namedata separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+
+		if(namebytes[namelength-1]=='/'&&uncompsize==0)
+		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+
+		// If the previous entry was suspected of being a directory, check if the new
+		// entry is a file inside it and set the directory flag for the previous one.
+		if(prevdict)
+		{
+			const char *prevbytes=[prevname bytes];
+			int prevlength=[prevname length];
+			if(prevlength<namelength)
+			{
+				int i=0;
+				while(namebytes[i]&&prevbytes[i]==namebytes[i]) i++;
+				if(!prevbytes[i]&&namebytes[i]=='/')
+				[prevdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+			}
+		}
+
+		// Check for possible MacBinary files
+		if(namelength>4)
+		{
+			if(memcmp(namebytes+namelength-4,".bin",4)==0)
+			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
+		}
+
+		// Kludge to make executables in bad Mac OS X app bundles
+		// without permission information executable.
+		if(namelength>22&&system!=3)
+		{
+			for(int i=1;i<namelength-21;i++)
+			if(memcmp(namebytes+i,".app/Contents/MacOS/",20)==0)
+			{
+				mode_t mask=umask(0); umask(mask);
+				[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
+				break;
+			}
+		}
+	}
+	else
+	{
+		[dict setObject:[self XADPathWithUnseparatedString:[[self name] stringByDeletingPathExtension]] forKey:XADFileNameKey];
+		// TODO: set no filename flag
+	}
+
+	if(commentdata)
+	{
+		if(flags&0x800)
+		[dict setObject:[self XADStringWithData:commentdata encoding:NSUTF8StringEncoding] forKey:XADCommentKey];
+		else
+		[dict setObject:[self XADStringWithData:commentdata] forKey:XADCommentKey];
+	}
+
+	//if(zc.System==1) fi2->xfi_Protection = ((EndGetI32(zc.ExtFileAttrib)>>16)^15)&0xFF; // amiga
+	if(system==0) // ms-dos
+	{
+		if(extfileattrib&0x10) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+		[dict setObject:[NSNumber numberWithInt:extfileattrib] forKey:XADDOSFileAttributesKey];
+	}
+	else if(system==3) // unix
+	{
+		int perm=extfileattrib>>16;
+		[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
+
+		if((perm&0xf000)==0x4000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+		else if((perm&0xf000)==0xa000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
+	}
+
+	if(extradict) [dict addEntriesFromDictionary:extradict];
+
+	if(prevdict)
+	{
+		[self addEntryWithDictionary:prevdict];
+		prevdict=nil;
+	}
+
+	if(uncompsize==0&&!islastentry&&!([dict objectForKey:XADIsDirectoryKey]
+	&&[[dict objectForKey:XADIsDirectoryKey] boolValue]))
+	{
+		prevdict=dict; // this entry could be a directory, save it for testing against the next entry
+		prevname=namedata;
+	}
+	else
+	{
+		[self addEntryWithDictionary:dict];
+	}
+}
+
+
+
+
+
 
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {

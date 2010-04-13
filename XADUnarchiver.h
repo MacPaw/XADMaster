@@ -55,6 +55,6 @@
 -(void)archiveNeedsPassword:(XADArchive *)archive;
 */
 
--(void)unarchiver:(XADUnarchiver *)unarchiver progressReportForFile:(int)file fileProgress:(double)fileprogress totalProgress:(double)totalprogress;
+-(void)unarchiver:(XADUnarchiver *)unarchiver progressReportForEntry:(NSDictionary *)dict fileProgress:(double)fileprogress totalProgress:(double)totalprogress;
 
 @end

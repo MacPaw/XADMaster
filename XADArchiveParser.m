@@ -1,6 +1,7 @@
 #import "XADArchiveParser.h"
 #import "CSFileHandle.h"
 #import "CSMultiHandle.h"
+#import "CSMemoryHandle.h"
 #import "XADCRCHandle.h"
 
 #import "XADZipParser.h"

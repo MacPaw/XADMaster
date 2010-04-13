@@ -7,7 +7,10 @@
 +(NSData *)dictionaryData
 {
 	static NSData *dictionary=nil;
+	#ifdef __APPLE__
+	// TODO: Add support for Linux and Windows
 	if(!dictionary) dictionary=[[NSData alloc] initWithContentsOfFile:PathForExternalResource(@"sitx_english.dat")];
+	#endif
 	return dictionary;
 }
 

@@ -8,6 +8,7 @@
 #import "CSMemoryHandle.h"
 #import "CSFileHandle.h"
 #import "CSMultiHandle.h"
+#import "Scanning.h"
 
 #include <dirent.h>
 
@@ -324,30 +325,30 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name { return nil; }
 
+static int MatchCABSignature(uint8_t *bytes,int available,off_t offset,void *state)
+{
+	if(available<20) return NO;
+
+	off_t size=*(off_t *)state;
+
+	if(bytes[0]=='M'&&bytes[1]=='S'&&bytes[2]=='C'&&bytes[3]=='F')
+	{
+		uint32_t len=CSUInt32LE(&bytes[8]);
+		uint32_t offs=CSUInt32LE(&bytes[16]);
+		if(len<=size-offset&&offs<len) return YES;
+	}
+
+	return NO;
+}
+
 -(void)parse
 {
 	CSHandle *fh=[self handle];
-	off_t remainingsize=[fh fileSize];
+	off_t size=[fh fileSize];
 
-	uint8_t buf[20];
-	[fh readBytes:sizeof(buf) toBuffer:buf];
+	if(![fh scanUsingMatchingFunction:MatchCABSignature maximumLength:3 context:&size])
+	[XADException raiseUnknownException];
 
-	for(;;)
-	{
-		if(buf[0]=='M'&&buf[1]=='S'&&buf[2]=='C'&&buf[3]=='F')
-		{
-			uint32_t len=CSUInt32LE(&buf[8]);
-			uint32_t offs=CSUInt32LE(&buf[16]);
-			if(len<=remainingsize&&offs<len) break;
-		}
-
-		memmove(buf,buf+1,sizeof(buf)-1);
-		if([fh readAtMost:1 toBuffer:&buf[sizeof(buf)-1]]==0) return;
-
-		remainingsize--;
-	}
-
-	[fh skipBytes:-sizeof(buf)];
 	[super parse];
 }
 

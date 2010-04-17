@@ -8,6 +8,7 @@
 #import "CSMultiHandle.h"
 #import "XADException.h"
 #import "NSDateXAD.h"
+#import "Scanning.h"
 
 #define RARFLAG_SKIP_IF_UNKNOWN 0x4000
 #define RARFLAG_LONG_BLOCK    0x8000
@@ -725,21 +726,17 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	firstFileExtension:@"exe"];
 }
 
+static int MatchRarSignature(uint8_t *bytes,int available,off_t offset,void *state)
+{
+	if(available<7) return NO;
+	return TestSignature(bytes);
+}
+
 -(void)parse
 {
-	CSHandle *fh=[self handle];
+	if(![[self handle] scanUsingMatchingFunction:MatchRarSignature maximumLength:7])
+	[XADException raiseUnknownException];
 
-	uint8_t buf[7];
-	[fh readBytes:sizeof(buf) toBuffer:buf];	
-
-	int sigtype;
-	while(!(sigtype=TestSignature(buf)))
-	{
-		memmove(buf,buf+1,sizeof(buf)-1);
-		buf[sizeof(buf)-1]=[fh readUInt8];
-	}
-
-	[fh skipBytes:-sizeof(buf)];
 	[super parse];
 }
 

@@ -474,7 +474,8 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 	}
 	@catch(id e) { return ZeroBlock; }
 
-	if(block.crc!=0x6152||block.type!=0x72||block.flags!=0x1a21||block.headersize!=7)
+	// Removed CRC checking because RAR uses it completely inconsitently
+/*	if(block.crc!=0x6152||block.type!=0x72||block.flags!=0x1a21||block.headersize!=7)
 	{
 		off_t pos=[fh offsetInFile];
 		uint32_t crc=0xffffffff;
@@ -485,7 +486,11 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 			crc=XADCRC(crc,((block.flags>>8)&0xff),XADCRCTable_edb88320);
 			crc=XADCRC(crc,(block.headersize&0xff),XADCRCTable_edb88320);
 			crc=XADCRC(crc,((block.headersize>>8)&0xff),XADCRCTable_edb88320);
-			for(int i=7;i<block.headersize;i++) crc=XADCRC(crc,[fh readUInt8],XADCRCTable_edb88320);
+			for(int i=7;i<block.headersize;i++)
+			{
+NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":"");
+				crc=XADCRC(crc,[fh readUInt8],XADCRCTable_edb88320);
+			}
 		}
 		@catch(id e) {}
 
@@ -496,7 +501,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 		}
 
 		[fh seekToFileOffset:pos];
-	}
+	}*/
 
 	if(block.flags&RARFLAG_LONG_BLOCK) block.datasize=[fh readUInt32LE];
 	else block.datasize=0;

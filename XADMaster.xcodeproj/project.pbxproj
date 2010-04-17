@@ -27,6 +27,8 @@
 		1B216A7A0F8E9064001207C9 /* CRC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B216A780F8E9064001207C9 /* CRC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B216A800F8E9D9E001207C9 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B216A7F0F8E9D9E001207C9 /* Carbon.framework */; };
 		1B216BBE0F8E9DED001207C9 /* XADArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5A80B50A27AA9900B189EB /* XADArchive.m */; };
+		1B23DA9F1177C99900620319 /* Scanning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DA9D1177C99900620319 /* Scanning.h */; };
+		1B23DAA01177C99900620319 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
 		1B2A408E0F13BDEB009B5B89 /* PPMdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B2A408F0F13BDEB009B5B89 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
 		1B2A41600F13F458009B5B89 /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
@@ -441,6 +443,8 @@
 		1B216A770F8E9064001207C9 /* CRC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRC.m; sourceTree = "<group>"; };
 		1B216A780F8E9064001207C9 /* CRC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRC.h; sourceTree = "<group>"; };
 		1B216A7F0F8E9D9E001207C9 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		1B23DA9D1177C99900620319 /* Scanning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scanning.h; sourceTree = "<group>"; };
+		1B23DA9E1177C99900620319 /* Scanning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scanning.m; sourceTree = "<group>"; };
 		1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdContext.h; sourceTree = "<group>"; };
 		1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdContext.m; sourceTree = "<group>"; };
 		1B2A42210F15237C009B5B89 /* PPMdSubAllocatorVariantG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdSubAllocatorVariantG.h; sourceTree = "<group>"; };
@@ -1333,6 +1337,8 @@
 				1BC89C9D0EDCAA51006B47FE /* Checksums.m */,
 				1B216A730F8E8ADE001207C9 /* Progress.h */,
 				1B216A740F8E8ADE001207C9 /* Progress.m */,
+				1B23DA9D1177C99900620319 /* Scanning.h */,
+				1B23DA9E1177C99900620319 /* Scanning.m */,
 				1B3A650010154DCE00AE25A8 /* CSHexDump.h */,
 				1B3A650110154DCE00AE25A8 /* CSHexDump.m */,
 			);
@@ -1612,6 +1618,7 @@
 				1B32D0FC10F6E461002A2C76 /* XADCFBFParser.h in Headers */,
 				1B32D2AA10F8D11D002A2C76 /* XADBlockHandle.h in Headers */,
 				1B32D3C610FA7A69002A2C76 /* XADSplitFileParser.h in Headers */,
+				1B23DA9F1177C99900620319 /* Scanning.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1940,6 +1947,7 @@
 				1B32D0FD10F6E461002A2C76 /* XADCFBFParser.m in Sources */,
 				1B32D2AB10F8D11D002A2C76 /* XADBlockHandle.m in Sources */,
 				1B32D3C710FA7A69002A2C76 /* XADSplitFileParser.m in Sources */,
+				1B23DAA01177C99900620319 /* Scanning.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

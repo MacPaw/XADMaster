@@ -12,11 +12,16 @@
 
 -(void)parseWithSeparateMacForks;
 -(void)parseWithCentralDirectoryAtOffset:(off_t)centraloffs zip64Offset:(off_t)zip64offs;
+
 -(void)parseWithoutCentralDirectory;
+-(void)findEndOfStreamMarkerWithZip64Flag:(BOOL)zip64 uncompressedSizePointer:(off_t *)uncompsizeptr
+compressedSizePointer:(off_t *)compsizeptr CRCPointer:(uint32_t *)crcptr;
+-(void)findNextEntry;
 
 //-(void)findNextZipMarkerStartingAt:(off_t)startpos;
 //-(void)findNoSeekMarkerForDictionary:(NSMutableDictionary *)dict;
--(NSDictionary *)parseZipExtraWithLength:(int)length nameData:(NSData *)namedata;
+-(NSDictionary *)parseZipExtraWithLength:(int)length nameData:(NSData *)namedata
+uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)compsizeptr;
 
 -(void)addZipEntryWithSystem:(int)system
 extractVersion:(int)extractversion

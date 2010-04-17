@@ -12,7 +12,7 @@
 
 	if(length<48) return NO;
 
-	return CSUInt32BE(bytes+11*4)==0x53465821;
+	return CSUInt32BE(&bytes[11*4])==0x53465821;
 }
 
 -(void)parse

@@ -17,6 +17,7 @@
 #import "XADBinHexParser.h"
 #import "XADMacBinaryParser.h"
 #import "XADPackItParser.h"
+#import "XADNowCompressParser.h"
 #import "XADGzipParser.h"
 #import "XADBzip2Parser.h"
 #import "XADLZMAAloneParser.h"
@@ -122,6 +123,7 @@ static int maxheader=0;
 		[XADMacBinaryParser class],
 		[XADDiskDoublerParser class],
 		[XADPackItParser class],
+		[XADNowCompressParser class],
 
 		// Less common formats
 		[XADPPMdParser class],

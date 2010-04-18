@@ -29,6 +29,8 @@
 		1B216BBE0F8E9DED001207C9 /* XADArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5A80B50A27AA9900B189EB /* XADArchive.m */; };
 		1B23DA9F1177C99900620319 /* Scanning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DA9D1177C99900620319 /* Scanning.h */; };
 		1B23DAA01177C99900620319 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
+		1B23DB8E117BA91D00620319 /* XADNowCompressParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DB8C117BA91D00620319 /* XADNowCompressParser.h */; };
+		1B23DB8F117BA91D00620319 /* XADNowCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */; };
 		1B2A408E0F13BDEB009B5B89 /* PPMdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B2A408F0F13BDEB009B5B89 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
 		1B2A41600F13F458009B5B89 /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
@@ -445,6 +447,8 @@
 		1B216A7F0F8E9D9E001207C9 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1B23DA9D1177C99900620319 /* Scanning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scanning.h; sourceTree = "<group>"; };
 		1B23DA9E1177C99900620319 /* Scanning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scanning.m; sourceTree = "<group>"; };
+		1B23DB8C117BA91D00620319 /* XADNowCompressParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNowCompressParser.h; sourceTree = "<group>"; };
+		1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNowCompressParser.m; sourceTree = "<group>"; };
 		1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdContext.h; sourceTree = "<group>"; };
 		1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdContext.m; sourceTree = "<group>"; };
 		1B2A42210F15237C009B5B89 /* PPMdSubAllocatorVariantG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdSubAllocatorVariantG.h; sourceTree = "<group>"; };
@@ -1301,6 +1305,8 @@
 				1BC88D740ED31EC3006B47FE /* XADMacBinaryParser.m */,
 				1B690E4D0F466C5400A415E0 /* XADPackItParser.h */,
 				1B690E4E0F466C5400A415E0 /* XADPackItParser.m */,
+				1B23DB8C117BA91D00620319 /* XADNowCompressParser.h */,
+				1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */,
 			);
 			name = Mac;
 			sourceTree = "<group>";
@@ -1619,6 +1625,7 @@
 				1B32D2AA10F8D11D002A2C76 /* XADBlockHandle.h in Headers */,
 				1B32D3C610FA7A69002A2C76 /* XADSplitFileParser.h in Headers */,
 				1B23DA9F1177C99900620319 /* Scanning.h in Headers */,
+				1B23DB8E117BA91D00620319 /* XADNowCompressParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1948,6 +1955,7 @@
 				1B32D2AB10F8D11D002A2C76 /* XADBlockHandle.m in Sources */,
 				1B32D3C710FA7A69002A2C76 /* XADSplitFileParser.m in Sources */,
 				1B23DAA01177C99900620319 /* Scanning.m in Sources */,
+				1B23DB8F117BA91D00620319 /* XADNowCompressParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

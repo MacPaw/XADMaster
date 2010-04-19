@@ -268,8 +268,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 					if(name)
 					if(![self _changeAllAttributesForEntry:n
 					atPath:[immediatedestination stringByAppendingPathComponent:name]
-					deferDirectories:YES resourceFork:YES])
-					immediatefailed=YES;
+					deferDirectories:YES resourceFork:YES]) immediatefailed=YES;
 				}
 
 				return;
@@ -1168,13 +1167,17 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 			if([rsrchandle hasChecksum]&&![rsrchandle isChecksumCorrect]) [XADException raiseChecksumException];
 
 			// TODO: use xattrs?
-			if(![data writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO])
+			NSString *rsrcpath=[path stringByAppendingString:@"/..namedfork/rsrc"];
+			if(![data writeToFile:rsrcpath atomically:NO])
 			{
 				// Change permissions and try again
 				const char *cpath=[path fileSystemRepresentation];
-				int oldperms=chmod(cpath,0700);
-				if(![data writeToFile:[path stringByAppendingString:@"/..namedfork/rsrc"] atomically:NO]) return NO;
-				chmod(cpath,oldperms);
+				struct stat st;
+
+				stat(cpath,&st);
+				chmod(cpath,0700);
+				if(![data writeToFile:rsrcpath atomically:NO]) return NO;
+				chmod(cpath,st.st_mode);
 			}
 		}
 		@catch(id e)
@@ -1186,9 +1189,11 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 
 	NSDictionary *dict=[self combinedParserDictionaryForEntry:n];
 
+	const char *cpath=[path fileSystemRepresentation];
+
 	FSRef ref;
 	FSCatalogInfo info;
-	if(FSPathMakeRefWithOptions((const UInt8 *)[path fileSystemRepresentation],
+	if(FSPathMakeRefWithOptions((const UInt8 *)cpath,
 	kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
 	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info,NULL,NULL,NULL)!=noErr) return NO;
 
@@ -1214,7 +1219,11 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 	if(creator) finfo->fileCreator=[creator unsignedLongValue];
 	if(finderflags) finfo->finderFlags=[finderflags unsignedShortValue];
 
-	if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info)!=noErr) return NO;
+	if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info)!=noErr)
+	{
+		chmod(cpath,0700);
+		if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info)!=noErr) return NO;
+	}
 
 	return YES;
 }

@@ -66,12 +66,25 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 
 
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+{
+	if(self=[super initWithHandle:handle name:name])
+	{
+		prevdict=nil;
+		prevname=nil;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[prevdict release];
+	[prevname release];
+	[super dealloc];
+}
+
 -(void)parseWithSeparateMacForks
 {
-	// TODO: better handling of memory here
-	prevdict=nil;
-	prevname=nil;
-
 	CSHandle *fh=[self handle];
 
 	[fh seekToEndOfFile];
@@ -366,8 +379,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	// Clean up any possible remaining dictionary, since isLastEntry was never set.
 	if(prevdict)
 	{
-		[self addEntryWithDictionary:prevdict];
-		prevdict=nil;
+		[self addRemeberedEntryAndForget];
 	}
 }
 
@@ -808,19 +820,35 @@ isLastEntry:(BOOL)islastentry
 
 	if(prevdict)
 	{
-		[self addEntryWithDictionary:prevdict];
-		prevdict=nil;
+		[self addRemeberedEntryAndForget];
 	}
 
 	if(uncompsize==0&&!islastentry&&![dict objectForKey:XADIsDirectoryKey])
 	{
-		prevdict=dict; // this entry could be a directory, save it for testing against the next entry
-		prevname=namedata;
+		// this entry could be a directory, save it for testing against the next entry
+		[self rememberEntry:dict withName:namedata];
 	}
 	else
 	{
-		[self addEntryWithDictionary:dict];
+		[self addEntryWithDictionary:dict cyclePools:YES];
 	}
+}
+
+
+
+-(void)rememberEntry:(NSMutableDictionary *)dict withName:(NSData *)namedata
+{
+	prevdict=[dict retain];
+	prevname=[namedata retain];
+}
+
+-(void)addRemeberedEntryAndForget
+{
+	[self addEntryWithDictionary:prevdict cyclePools:NO];
+	[prevdict release];
+	[prevname release];
+	prevdict=nil;
+	prevname=nil;
 }
 
 

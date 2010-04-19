@@ -75,6 +75,8 @@ extern NSString *XADVolumesKey;
 	CSHandle *currsolidhandle;
 
 	BOOL shouldstop;
+
+	NSAutoreleasePool *autopool;
 }
 
 +(void)initialize;
@@ -127,6 +129,8 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict;
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict cyclePools:(BOOL)cyclepools;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools;
 
 -(XADString *)XADStringWithString:(NSString *)string;
 -(XADString *)XADStringWithData:(NSData *)data;

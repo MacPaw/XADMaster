@@ -266,6 +266,8 @@ static int maxheader=0;
 		firstsoliddict=prevsoliddict=nil;
 
 		shouldstop=NO;
+
+		autopool=nil;
 	}
 	return self;
 }
@@ -501,10 +503,20 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict
 {
-	[self addEntryWithDictionary:dict retainPosition:NO];
+	[self addEntryWithDictionary:dict retainPosition:NO cyclePools:NO];
 }
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
+{
+	[self addEntryWithDictionary:dict retainPosition:retainpos cyclePools:NO];
+}
+
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict cyclePools:(BOOL)cyclepools
+{
+	[self addEntryWithDictionary:dict retainPosition:NO cyclePools:cyclepools];
+}
+
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
 	// If an encrypted file is added, set the global encryption flag
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
@@ -569,6 +581,8 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	NSNumber *solid=[dict objectForKey:XADIsSolidKey];
 	if(solid&&[solid boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsSolidKey];
 
+	NSAutoreleasePool *delegatepool=[NSAutoreleasePool new];
+
 	if(retainpos)
 	{
 		off_t pos=[sourcehandle offsetInFile];
@@ -576,6 +590,14 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		[sourcehandle seekToFileOffset:pos];
 	}
 	else [delegate archiveParser:self foundEntryWithDictionary:dict];
+
+	[delegatepool release];
+
+	if(cyclepools)
+	{
+		[autopool release];
+		autopool=[NSAutoreleasePool new];
+	}
 }
 
 

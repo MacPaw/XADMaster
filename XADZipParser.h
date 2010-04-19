@@ -38,6 +38,9 @@ nameData:(NSData *)namedata
 commentData:(NSData *)commentdata
 isLastEntry:(BOOL)islastentry;
 
+-(void)rememberEntry:(NSMutableDictionary *)dict withName:(NSData *)namedata;
+-(void)addRemeberedEntryAndForget;
+
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(CSHandle *)decompressionHandleWithHandle:(CSHandle *)parent method:(int)method flags:(int)flags size:(off_t)size;
 

@@ -48,8 +48,8 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	{
 		currhandle=nil;
 		queuedditto=nil;
-		kludgedata=nil;
 		dittostack=[[NSMutableArray array] retain];
+		kludgedata=nil;
 	}
 	return self;
 }
@@ -71,7 +71,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 -(void)parseWithSeparateMacForks {}
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
 	if(retainpos) [XADException raiseNotSupportedException];
 
@@ -82,7 +82,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		NSNumber *isbin=[dict objectForKey:XADIsMacBinaryKey];
 		if(isbin&&[isbin boolValue]) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
 
-		[super addEntryWithDictionary:dict retainPosition:retainpos];
+		[super addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools];
 		return;
 	}
 
@@ -107,7 +107,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 			[self addQueuedDittoDictionaryAsDirectory:match retainPosition:retainpos];
 		}
 
-		[super addEntryWithDictionary:dict retainPosition:retainpos];
+		[super addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools];
 		return;
 	}
 
@@ -115,19 +115,20 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	if(queuedditto) [self addQueuedDittoDictionaryAsDirectory:NO retainPosition:retainpos];
 
 	// Check for MacBinary files
-	if([self parseMacBinaryWithDictionary:dict name:name retainPosition:retainpos]) return;
+	if([self parseMacBinaryWithDictionary:dict name:name retainPosition:retainpos cyclePools:cyclepools]) return;
 
 	// Check if the file is a ditto fork
-	if([self parseAppleDoubleWithDictionary:dict name:name retainPosition:retainpos]) return;
+	if([self parseAppleDoubleWithDictionary:dict name:name retainPosition:retainpos cyclePools:cyclepools]) return;
 
 	// Nothing else worked, it's a normal file
-	[super addEntryWithDictionary:dict retainPosition:retainpos];
+	[super addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools];
 }
 
 
 
 
--(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name retainPosition:(BOOL)retainpos
+-(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
+retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
 	XADString *first=[name firstPathComponent];
 	XADString *last=[name lastPathComponent];
@@ -200,7 +201,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		if(kludgedata)
 		{
 			currhandle=fh;
-			[super addEntryWithDictionary:dict retainPosition:retainpos];
+			[super addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools];
 			currhandle=nil;
 			kludgedata=nil;
 			return YES;
@@ -241,7 +242,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	{
 		currhandle=fh;
 		[self inspectEntryDictionary:newdict];
-		[super addEntryWithDictionary:newdict retainPosition:retainpos];
+		[super addEntryWithDictionary:newdict retainPosition:retainpos cyclePools:cyclepools];
 		currhandle=nil;
 	}
 	else
@@ -273,14 +274,15 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 {
 	if(isdir) [queuedditto setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 	[self inspectEntryDictionary:queuedditto];
-	[super addEntryWithDictionary:queuedditto retainPosition:retainpos];
+	[super addEntryWithDictionary:queuedditto retainPosition:retainpos cyclePools:NO];
 	[queuedditto release];
 	queuedditto=nil;
 }
 
 
 
--(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name retainPosition:(BOOL)retainpos
+-(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
+retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
 	NSNumber *isbinobj=[dict objectForKey:XADIsMacBinaryKey];
 	BOOL isbin=isbinobj?[isbinobj boolValue]:NO;
@@ -343,7 +345,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		[newdict setObject:[NSNumber numberWithUnsignedInt:BlockSize(datasize)] forKey:XADCompressedSizeKey];
 
 		[self inspectEntryDictionary:newdict];
-		[super addEntryWithDictionary:newdict retainPosition:retainpos];
+		[super addEntryWithDictionary:newdict retainPosition:retainpos cyclePools:cyclepools&&!rsrcsize];
 	}
 
 	if(rsrcsize)
@@ -356,7 +358,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
 
 		[self inspectEntryDictionary:newdict];
-		[super addEntryWithDictionary:newdict retainPosition:retainpos];
+		[super addEntryWithDictionary:newdict retainPosition:retainpos cyclePools:cyclepools];
 	}
 
 	currhandle=nil;

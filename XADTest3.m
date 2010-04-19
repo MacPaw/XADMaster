@@ -32,8 +32,6 @@ NSString *EscapeString(NSString *str)
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
-
 	for(int i=0;i<indent;i++) printf(" ");
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
@@ -102,8 +100,6 @@ NSString *EscapeString(NSString *str)
 		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:indent+2] autorelease]];
 		[parser parse];
 	}
-
-	[pool release];
 }
 
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser

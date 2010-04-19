@@ -217,7 +217,7 @@
 		// Grab the pair from the header.
 		int next_pair_size = [XADTarParser readNumberInRangeFromBuffer:NSMakeRange(start_pos,read_length) buffer:header] - read_length;
 		int next_pair_offset = position + next_pair_size;
-		char* key_val_pair = (char*)malloc( sizeof(char) * next_pair_size );
+		char key_val_pair[next_pair_size];
 		memset( key_val_pair, '\0', next_pair_size );
 		[header getBytes:key_val_pair range:NSMakeRange(position,next_pair_size - 1)];
 
@@ -229,10 +229,10 @@
 			position++;
 			read_length++;
 		}
-		char* key = (char*)malloc( sizeof(char) * (read_length + 1) );
+		char key[read_length + 1];
 		memcpy( key, key_val_pair, read_length );
 		key[read_length] = '\0';
-		char* value = (char*)malloc( sizeof(char) * (max_len - read_length) + 1 );
+		char value[max_len - read_length + 1];
 		memcpy( value, key_val_pair + read_length + 1, (max_len - read_length) );
 		value[(max_len - read_length)] = '\0';		
 
@@ -281,9 +281,6 @@
 		}
 
 		// Continue after the pair.
-		free( value );
-		free( key );
-		free( key_val_pair );
 
 		position = next_pair_offset;
 	}
@@ -401,7 +398,7 @@
 	if( typeFlag == 'L' || typeFlag == 'K' ) {
 		// Read in the header
 		NSData *longHeader = [handle readDataOfLength:size];
-		char* longHeaderBytes = (char*)malloc( sizeof(char) * size );
+		char longHeaderBytes[size];
 		memset( longHeaderBytes, '\0', size );
 		[longHeader getBytes:longHeaderBytes range:NSMakeRange(0,size - 1)];
 		[handle seekToFileOffset:offset];
@@ -428,7 +425,7 @@
 	off_t size = [[dict objectForKey:XADDataLengthKey] longLongValue];
 	off_t offset = [handle offsetInFile];
 	[dict setObject:[NSNumber numberWithLong:offset] forKey:XADDataOffsetKey];
-	[self addEntryWithDictionary:dict];
+	[self addEntryWithDictionary:dict cyclePools:YES];
 	offset += size;
 	offset += (offset % 512 == 0 ? 0 : 512 - (offset % 512) );
 	[handle seekToFileOffset:offset];
@@ -441,9 +438,6 @@
 	
 	CSHandle *handle = [self handle];
 
-	// Be a little more memory-efficient.
-
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 	NSData *header = [handle readDataOfLength:512];
 		
 	int tarFormat = [XADTarParser getTarType:header];
@@ -478,9 +472,6 @@
 		}
 
 		// Read next header.
-
-		[pool release];
-		pool = [NSAutoreleasePool new];
 		header = [handle readDataOfLength:512];
 		
 		// See if the first byte is \0. This should mean that the archive is now over.
@@ -490,8 +481,6 @@
 			isArchiverOver = YES;
 		}
 	}
-
-	[pool release];
 }
 
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum

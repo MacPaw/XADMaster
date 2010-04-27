@@ -72,13 +72,6 @@ static double XADGetTime();
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
-	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
-	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
-	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
-	BOOL isdir=dirnum&&[dirnum boolValue];
-	BOOL islink=linknum&&[linknum boolValue];
-	BOOL isres=resnum&&[resnum boolValue];
-
 	NSString *path=nil;
 
 	// Ask the delegate for its opinion on the output path.
@@ -93,7 +86,8 @@ static double XADGetTime();
 	}
 
 	// If we are unpacking a resource fork, we may need to modify the path
-	if(isres)
+	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+	if(resnum&&[resnum boolValue])
 	{
 		switch(forkstyle)
 		{
@@ -108,6 +102,24 @@ static double XADGetTime();
 			break;
 		}
 	}
+
+	XADError error=[self extractEntryWithDictionary:dict as:path];
+
+	[pool release];
+
+	return error;
+}
+
+-(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path
+{
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
+	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
+	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+	BOOL isdir=dirnum&&[dirnum boolValue];
+	BOOL islink=linknum&&[linknum boolValue];
+	BOOL isres=resnum&&[resnum boolValue];
 
 	// Ask for permission and report that we are starting.
 	if(delegate)
@@ -219,28 +231,23 @@ static double XADGetTime();
 
 -(XADError)_extractLinkEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath
 {
-	XADString *xadlink=[parser linkDestinationForDictionary:dict];
-	NSString *link;
-	if(![xadlink encodingIsKnown]&&delegate)
-	{
-/*	....
-		// TODO: should there be a better way to deal with encodings?
-		NSStringEncoding encoding=[delegate archive:self encodingForData:[xadlink data]
-		guess:[xadlink encoding] confidence:[xadlink confidence]];
-		link=[xadlink stringWithEncoding:encoding];*/
-	}
-	else link=[xadlink string];
+	NSString *link=nil;
 
-	if(link)
+	if(delegate)
 	{
-		struct stat st;
-		const char *destcstr=[destpath fileSystemRepresentation];
-		if(lstat(destcstr,&st)==0) unlink(destcstr);
-		if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
-
-		return XADNoError;
+		link=[delegate unarchiver:self linkDestinationForEntryWithDictionary:dict from:destpath];
 	}
-	else return XADBadParametersError;
+
+	if(!link) link=[[parser linkDestinationForDictionary:dict] string];
+
+	if(!link) return XADBadParametersError; // TODO: better error
+
+	struct stat st;
+	const char *destcstr=[destpath fileSystemRepresentation];
+	if(lstat(destcstr,&st)==0) unlink(destcstr);
+	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
+
+	return XADNoError;
 }
 
 
@@ -306,6 +313,7 @@ static double XADGetTime();
 
 -(XADError)_ensureFileExists:(NSString *)path
 {
+	const char *cpath=[path fileSystemRepresentation];
 	
 }
 
@@ -322,15 +330,16 @@ static double XADGetTime();
 	}
 	else
 	{
-		if([self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]])
+		XADError error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
+		if(error) return error;
+
+		if(delegate)
 		{
-			if(!delegate||[delegate unarchiver:self shouldCreateDirectory:path])
-			{
-				if(mkdir(cpath,0777)==0) return XADNoError;
-				else return XADMakeDirectoryError;
-			}
-			else return XADBreakError;
+			if(![delegate unarchiver:self shouldCreateDirectory:path]) return XADBreakError;
 		}
+
+		if(mkdir(cpath,0777)==0) return XADNoError;
+		else return XADMakeDirectoryError;
 	}
 
 
@@ -358,6 +367,30 @@ static double XADGetTime();
 	[delegate unarchiverNeedsPassword:self];
 }
 
+
+@end
+
+
+
+@implementation NSObject (XADUnarchiverDelegate)
+
+-(void)unarchiverNeedsPassword:(XADUnarchiver *)unarchiver {}
+
+-(NSString *)unarchiver:(XADUnarchiver *)unarchiver pathForExtractingEntryWithDictionary:(NSDictionary *)dict { return nil; }
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldStartExtractingEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path { return YES; }
+-(void)unarchiver:(XADUnarchiver *)unarchiver willStartExtractingEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path {}
+-(void)unarchiver:(XADUnarchiver *)unarchiver finishedExtractingEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path {}
+-(void)unarchiver:(XADUnarchiver *)unarchiver failedToExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error {}
+
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory { return YES; }
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path { return NO; }
+
+-(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path { return nil; }
+//-(XADAction)unarchiver:(XADUnarchiver *)unarchiver creatingDirectoryDidFailForEntry:(int)n;
+
+-(BOOL)extractionShouldStopForUnarchiver:(XADUnarchiver *)unarchiver { return NO; }
+-(void)unarchiver:(XADUnarchiver *)unarchiver extractionProgressForEntryWithDictionary:(NSDictionary *)dict
+fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress {}
 
 @end
 

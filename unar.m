@@ -54,20 +54,23 @@ NSString *EscapeString(NSString *str)
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
 //	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
+	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 
 	NSString *name=EscapeString([[dict objectForKey:XADFileNameKey] string]);
 	printf("%s (",[name UTF8String]);
 
-	if(dir&&[dir boolValue]) printf("dir");
-	else if(link) printf("link");
+	if(dir&&[dir boolValue])
+	{
+		printf("dir");
+	}
+	else if(link&&[link boolValue]) printf("link");
 	else
 	{
 		if(size) printf("%lld",[size longLongValue]);
 		else printf("?");
-
-		NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
-		if(rsrc&&[rsrc boolValue]) printf(", rsrc");
 	}
+
+	if(rsrc&&[rsrc boolValue]) printf(", rsrc");
 
 	printf(")...");
 	fflush(stdout);
@@ -86,6 +89,16 @@ NSString *EscapeString(NSString *str)
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory
 {
 	return YES;
+}
+
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
+{
+	return YES;
+}
+
+-(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path
+{
+	return nil;
 }
 
 -(BOOL)extractionShouldStopForUnarchiver:(XADUnarchiver *)unarchiver

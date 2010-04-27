@@ -33,10 +33,10 @@ extern NSString *XADExceptionName;
 
 @interface XADException:NSObject
 {
-	XADError error;
 }
 
 +(void)raiseUnknownException;
++(void)raiseOutputException;
 +(void)raiseIllegalDataException;
 +(void)raiseNotSupportedException;
 +(void)raiseDecrunchException;
@@ -45,8 +45,7 @@ extern NSString *XADExceptionName;
 +(void)raiseDataFormatException;
 +(void)raiseExceptionWithXADError:(XADError)errnum;
 
++(XADError)parseException:(id)exception;
 +(NSString *)describeXADError:(XADError)errnum;
-
--(XADError)error;
 
 @end

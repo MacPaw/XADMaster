@@ -114,8 +114,6 @@ extern NSString *XADFinderFlags;
 -(NSData *)contentsOfEntry:(int)n;
 //-(NSData *)resourceContentsOfEntry:(int)n;
 
--(XADError)_parseException:(id)exception;
-
 -(BOOL)extractTo:(NSString *)destination;
 -(BOOL)extractTo:(NSString *)destination subArchives:(BOOL)sub;
 -(BOOL)extractEntries:(NSIndexSet *)entryset to:(NSString *)destination;

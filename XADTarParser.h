@@ -1,4 +1,5 @@
 #import "XADMacArchiveParser.h"
+#import "XADSparseHandle.h"
 
 // TODO later: Multivolume tar.
 

@@ -133,7 +133,7 @@
 	return NO;
 }
 
-static int MatchGzipSignature(uint8_t *bytes,int available,off_t offset,void *state)
+static int MatchGzipSignature(const uint8_t *bytes,int available,off_t offset,void *state)
 {
 	if(available<3) return NO;
 	return bytes[0]==0x1f&&(bytes[1]==0x8b||bytes[1]==0x9e)&&bytes[2]==8;

@@ -731,7 +731,7 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	firstFileExtension:@"exe"];
 }
 
-static int MatchRarSignature(uint8_t *bytes,int available,off_t offset,void *state)
+static int MatchRarSignature(const uint8_t *bytes,int available,off_t offset,void *state)
 {
 	if(available<7) return NO;
 	return TestSignature(bytes);

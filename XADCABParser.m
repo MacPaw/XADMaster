@@ -298,6 +298,32 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 
 @implementation XADCABSFXParser
 
+static int MatchCABSignature(const uint8_t *bytes,int available,off_t offset,void *state)
+{
+	if(available<32) return NO;
+
+	if(bytes[0]!='M'||bytes[1]!='S'||bytes[2]!='C'||bytes[3]!='F') return NO; // Signature
+
+	uint32_t len=CSUInt32LE(&bytes[8]);
+	uint32_t offs=CSUInt32LE(&bytes[16]);
+
+	if(offs>=len) return NO; // Internal consistency
+
+	if(state) // Check if cabinet fits in file
+	{
+		off_t size=*(off_t *)state;
+		if(len>size-offset) return NO;
+	}
+
+	if(bytes[24]!=1&&bytes[24]!=2&&bytes[24]!=3) return NO; // Major version
+	if(bytes[25]!=1) return NO; // Minor version
+
+	int flags=CSUInt16LE(&bytes[30]);
+	if(flags&0xfff8) return NO;
+
+	return YES;
+}
+
 +(int)requiredHeaderSize { return 65536; }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
@@ -307,39 +333,12 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 
 	if(length<20000||bytes[0]!='M'||bytes[1]!='Z') return NO;
 
-	// From libxad:
-	for(int i=8;i<=length+8;i++)
-	{
-		// word aligned code signature: 817C2404 "MSCF" (found at random, sorry)
-		if((i&1)==0)
-		if(bytes[i+0]==0x81 && bytes[i+1]==0x7c && bytes[i+2]==0x24 && bytes[i+3]==0x04 &&
-		bytes[i+4]=='M' && bytes[i+5]=='S' && bytes[i+6]=='C' && bytes[i+7]=='F') return YES;
-
-		// another revision: 7D817DDC "MSCF" (which might not be aligned)
-		if(bytes[i+0]==0x7d && bytes[i+1]==0x81 && bytes[i+2]==0x7d && bytes[i+3]==0xdc &&
-		bytes[i+4]=='M' && bytes[i+5]=='S' && bytes[i+6]=='C' && bytes[i+7]=='F') return YES;
-	}
+	for(int i=8;i<length;i++) if(MatchCABSignature(&bytes[i],length-i,i,NULL)) return YES;
 
 	return NO;
 }
 
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name { return nil; }
-
-static int MatchCABSignature(uint8_t *bytes,int available,off_t offset,void *state)
-{
-	if(available<20) return NO;
-
-	off_t size=*(off_t *)state;
-
-	if(bytes[0]=='M'&&bytes[1]=='S'&&bytes[2]=='C'&&bytes[3]=='F')
-	{
-		uint32_t len=CSUInt32LE(&bytes[8]);
-		uint32_t offs=CSUInt32LE(&bytes[16]);
-		if(len<=size-offset&&offs<len) return YES;
-	}
-
-	return NO;
-}
 
 -(void)parse
 {

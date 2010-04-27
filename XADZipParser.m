@@ -43,12 +43,12 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	NSArray *matches;
 
 	// Check for .z01 style files.
-	if(matches=[name substringsCapturedByPattern:@"^(.*)\\.(zip|z[0-9]{2})$" options:REG_ICASE])
+	if(matches=[name substringsCapturedByPattern:@"^(.*)\\.(z[0-9]{2}|zip)$" options:REG_ICASE])
 	{
 		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(zip|z[0-9]{2})$",
 			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
-		firstFileExtension:@"zip"];
+		firstFileExtension:@"z01"];
 	}
 
 	// In case the first part of a .zip.001 split file was detected, find the other parts.
@@ -385,7 +385,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 
 
-static int MatchZipDataDescriptor(uint8_t *bytes,int available,off_t offset,void *state)
+static int MatchZipDataDescriptor(const uint8_t *bytes,int available,off_t offset,void *state)
 {
 	if(available<12) return 0;
 
@@ -414,7 +414,7 @@ static int MatchZipDataDescriptor(uint8_t *bytes,int available,off_t offset,void
 	return 0;
 }
 
-static int MatchZip64DataDescriptor(uint8_t *bytes,int available,off_t offset,void *state)
+static int MatchZip64DataDescriptor(const uint8_t *bytes,int available,off_t offset,void *state)
 {
 	if(available<20) return 0;
 
@@ -481,7 +481,7 @@ compressedSizePointer:(off_t *)compsizeptr CRCPointer:(uint32_t *)crcptr
 
 
 
-static int MatchZipEntry(uint8_t *bytes,int available,off_t offset,void *state)
+static int MatchZipEntry(const uint8_t *bytes,int available,off_t offset,void *state)
 {
 	if(available<6) return NO;
 

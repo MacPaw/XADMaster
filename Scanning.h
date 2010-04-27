@@ -1,6 +1,6 @@
 #import "CSHandle.h"
 
-typedef int (*CSByteMatchingFunctionPointer)(uint8_t *bytes,int available,off_t offset,void *state);
+typedef int (*CSByteMatchingFunctionPointer)(const uint8_t *bytes,int available,off_t offset,void *state);
 
 @interface CSHandle (Scanning)
 

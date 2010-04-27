@@ -31,6 +31,11 @@
 		1B23DAA01177C99900620319 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
 		1B23DB8E117BA91D00620319 /* XADNowCompressParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DB8C117BA91D00620319 /* XADNowCompressParser.h */; };
 		1B23DB8F117BA91D00620319 /* XADNowCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */; };
+		1B23DD3C117FC7B900620319 /* XADSparseHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DD3A117FC7B900620319 /* XADSparseHandle.h */; };
+		1B23DD3D117FC7B900620319 /* XADSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADSparseHandle.m */; };
+		1B23DDA51185DFC100620319 /* XADUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */; };
+		1B23DDCB1185EBF400620319 /* unar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DDC91185EBD600620319 /* unar.m */; };
+		1B23DDF51185EC2100620319 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
 		1B2A408E0F13BDEB009B5B89 /* PPMdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B2A408F0F13BDEB009B5B89 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
 		1B2A41600F13F458009B5B89 /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
@@ -128,7 +133,7 @@
 		1B690E7C0F47907600A415E0 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
 		1B69134E0F4CA45000A415E0 /* XADZipSFXParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B69134C0F4CA44F00A415E0 /* XADZipSFXParsers.h */; };
 		1B69134F0F4CA45000A415E0 /* XADZipSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B69134D0F4CA44F00A415E0 /* XADZipSFXParsers.m */; };
-		1B81DD460FFEB87B005C5B23 /* XADUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */; };
+		1B81DD460FFEB87B005C5B23 /* XADUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B880C270F09A23B0061CCBE /* XADStuffItXBlockHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B880C250F09A23B0061CCBE /* XADStuffItXBlockHandle.h */; };
 		1B880C280F09A23B0061CCBE /* XADStuffItXBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */; };
 		1B880D030F0AAB6F0061CCBE /* XADPPMdParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B880D010F0AAB6F0061CCBE /* XADPPMdParser.h */; };
@@ -320,6 +325,13 @@
 			remoteGlobalIDString = 1B0DDCAB0A2D0AD10009B697;
 			remoteInfo = DetectorTest;
 		};
+		1B23DDF31185EC1900620319 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* XADMaster */;
+			remoteInfo = XADMaster;
+		};
 		1B3A689A101BA12C00AE25A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -449,6 +461,10 @@
 		1B23DA9E1177C99900620319 /* Scanning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scanning.m; sourceTree = "<group>"; };
 		1B23DB8C117BA91D00620319 /* XADNowCompressParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNowCompressParser.h; sourceTree = "<group>"; };
 		1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNowCompressParser.m; sourceTree = "<group>"; };
+		1B23DD3A117FC7B900620319 /* XADSparseHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSparseHandle.h; sourceTree = "<group>"; };
+		1B23DD3B117FC7B900620319 /* XADSparseHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADSparseHandle.m; sourceTree = "<group>"; };
+		1B23DDC01185EBA300620319 /* unar */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unar; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B23DDC91185EBD600620319 /* unar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = unar.m; sourceTree = "<group>"; };
 		1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdContext.h; sourceTree = "<group>"; };
 		1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdContext.m; sourceTree = "<group>"; };
 		1B2A42210F15237C009B5B89 /* PPMdSubAllocatorVariantG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdSubAllocatorVariantG.h; sourceTree = "<group>"; };
@@ -741,6 +757,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1B23DDBE1185EBA300620319 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B23DDF51185EC2100620319 /* XADMaster.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1B3A689D101BA12C00AE25A8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -798,6 +822,7 @@
 				1BBAB68B0EC274A3007FE6A2 /* XADTest2 */,
 				1BC8931A0ED6F283006B47FE /* XADTest3 */,
 				1B3A68A2101BA12C00AE25A8 /* XADTest4 */,
+				1B23DDC01185EBA300620319 /* unar */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -813,6 +838,7 @@
 				1B06D6100DDCBE4400D9C000 /* CSHandle */,
 				56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */,
 				1B5A7BA50A24F9E300B189EB /* XADTest */,
+				1B23DDC41185EBC200620319 /* unar */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
@@ -1012,6 +1038,14 @@
 			name = CSHandle;
 			sourceTree = "<group>";
 		};
+		1B23DDC41185EBC200620319 /* unar */ = {
+			isa = PBXGroup;
+			children = (
+				1B23DDC91185EBD600620319 /* unar.m */,
+			);
+			name = unar;
+			sourceTree = "<group>";
+		};
 		1B2F183D0EE965720000DAFF /* Amiga */ = {
 			isa = PBXGroup;
 			children = (
@@ -1172,6 +1206,8 @@
 			children = (
 				1BC889650ECF9AD5006B47FE /* XADTarParser.h */,
 				1BC889660ECF9AD5006B47FE /* XADTarParser.m */,
+				1B23DD3A117FC7B900620319 /* XADSparseHandle.h */,
+				1B23DD3B117FC7B900620319 /* XADSparseHandle.m */,
 				1BC889690ECF9AE2006B47FE /* XADCpioParser.h */,
 				1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */,
 				1BCD630C0EF487B500D86C43 /* XADXARParser.h */,
@@ -1626,12 +1662,30 @@
 				1B32D3C610FA7A69002A2C76 /* XADSplitFileParser.h in Headers */,
 				1B23DA9F1177C99900620319 /* Scanning.h in Headers */,
 				1B23DB8E117BA91D00620319 /* XADNowCompressParser.h in Headers */,
+				1B23DD3C117FC7B900620319 /* XADSparseHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		1B23DDBF1185EBA300620319 /* unar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B23DDC51185EBC300620319 /* Build configuration list for PBXNativeTarget "unar" */;
+			buildPhases = (
+				1B23DDBD1185EBA300620319 /* Sources */,
+				1B23DDBE1185EBA300620319 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1B23DDF41185EC1900620319 /* PBXTargetDependency */,
+			);
+			name = unar;
+			productName = unar;
+			productReference = 1B23DDC01185EBA300620319 /* unar */;
+			productType = "com.apple.product-type.tool";
+		};
 		1B3A6898101BA12C00AE25A8 /* XADTest4 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1B3A689F101BA12C00AE25A8 /* Build configuration list for PBXNativeTarget "XADTest4" */;
@@ -1744,6 +1798,7 @@
 				1BBAB67F0EC274A3007FE6A2 /* XADTest2 */,
 				1BC893190ED6F283006B47FE /* XADTest3 */,
 				1B3A6898101BA12C00AE25A8 /* XADTest4 */,
+				1B23DDBF1185EBA300620319 /* unar */,
 			);
 		};
 /* End PBXProject section */
@@ -1778,6 +1833,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1B23DDBD1185EBA300620319 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B23DDCB1185EBF400620319 /* unar.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1B3A689B101BA12C00AE25A8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1956,12 +2019,19 @@
 				1B32D3C710FA7A69002A2C76 /* XADSplitFileParser.m in Sources */,
 				1B23DAA01177C99900620319 /* Scanning.m in Sources */,
 				1B23DB8F117BA91D00620319 /* XADNowCompressParser.m in Sources */,
+				1B23DD3D117FC7B900620319 /* XADSparseHandle.m in Sources */,
+				1B23DDA51185DFC100620319 /* XADUnarchiver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1B23DDF41185EC1900620319 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* XADMaster */;
+			targetProxy = 1B23DDF31185EC1900620319 /* PBXContainerItemProxy */;
+		};
 		1B3A6899101BA12C00AE25A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* XADMaster */;
@@ -2001,6 +2071,59 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1B23DDC21185EBA500620319 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = unar;
+			};
+			name = Debug;
+		};
+		1B23DDC31185EBA500620319 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = unar;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		1B3A68A0101BA12C00AE25A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2357,6 +2480,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1B23DDC51185EBC300620319 /* Build configuration list for PBXNativeTarget "unar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B23DDC21185EBA500620319 /* Debug */,
+				1B23DDC31185EBA500620319 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1B3A689F101BA12C00AE25A8 /* Build configuration list for PBXNativeTarget "XADTest4" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

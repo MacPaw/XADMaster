@@ -3,9 +3,6 @@
 #import "XADArchive.h"
 #import "CSMemoryHandle.h"
 #import "CSHandle.h"
-#import "CSFileHandle.h"
-#import "CSZlibHandle.h"
-#import "CSBzip2Handle.h"
 #import "Progress.h"
 
 #import <sys/stat.h>
@@ -187,7 +184,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 						}
 						@catch(id e)
 						{
-							lasterror=[self _parseException:e];
+							lasterror=[XADException parseException:e];
 							if(error) *error=lasterror;
 							immediatefailed=YES;
 						}
@@ -231,7 +228,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	@try { [parser parse]; }
 	@catch(id e)
 	{
-		lasterror=[self _parseException:e];
+		lasterror=[XADException parseException:e];
 		if(error) *error=lasterror;
 	}
 
@@ -653,7 +650,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 				}
 				@catch(id e)
 				{
-					lasterror=[self _parseException:e];
+					lasterror=[XADException parseException:e];
 					XADAction action=[delegate archive:self extractionOfResourceForkForEntryDidFail:n error:lasterror];
 					if(action==XADSkipAction) break;
 					else if(action!=XADRetryAction) return nil;
@@ -679,7 +676,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{ return [parser handleForEntryWithDictionary:dict wantChecksum:YES]; }
 	@catch(id e)
 	{
-		lasterror=[self _parseException:e];
+		lasterror=[XADException parseException:e];
 		if(error) *error=lasterror;
 	}
 	return nil;
@@ -701,7 +698,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{ return [parser handleForEntryWithDictionary:resdict wantChecksum:YES]; }
 	@catch(id e)
 	{
-		lasterror=[self _parseException:e];
+		lasterror=[XADException parseException:e];
 		if(error) *error=lasterror;
 	}
 	return nil;
@@ -723,35 +720,11 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	}
 	@catch(id e)
 	{
-		lasterror=[self _parseException:e];
+		lasterror=[XADException parseException:e];
 	}
 	return nil;
 }
 
--(XADError)_parseException:(id)exception
-{
-	if([exception isKindOfClass:[NSException class]])
-	{
-		NSException *e=exception;
-		NSString *name=[e name];
-		if([name isEqual:XADExceptionName])
-		{
-			return [[[e userInfo] objectForKey:@"XADError"] intValue];
-		}
-		else if([name isEqual:CSFileErrorException])
-		{
-			return XADUnknownError; // TODO: use ErrNo in userInfo to figure out better error
-		}
-		else if([name isEqual:CSOutOfMemoryException]) return XADOutOfMemoryError;
-		else if([name isEqual:CSEndOfFileException]) return XADInputError;
-		else if([name isEqual:CSNotImplementedException]) return XADNotSupportedError;
-		else if([name isEqual:CSNotSupportedException]) return XADNotSupportedError;
-		else if([name isEqual:CSZlibException]) return XADDecrunchError;
-		else if([name isEqual:CSBzip2Exception]) return XADDecrunchError;
-	}
-
-	return XADUnknownError;
-}
 
 
 
@@ -1050,7 +1023,7 @@ static double XADGetTime()
 	}
 	@catch(id e)
 	{
-		lasterror=[self _parseException:e];
+		lasterror=[XADException parseException:e];
 		close(fh);
 		[pool release];
 		return NO;
@@ -1182,7 +1155,7 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 		}
 		@catch(id e)
 		{
-			lasterror=[self _parseException:e];
+			lasterror=[XADException parseException:e];
 			return NO;
 		}
 	}

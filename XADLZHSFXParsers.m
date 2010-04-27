@@ -101,7 +101,7 @@
 	return NO;
 }
 
-static int MatchLZHSignature(uint8_t *bytes,int available,off_t offset,void *state)
+static int MatchLZHSignature(const uint8_t *bytes,int available,off_t offset,void *state)
 {
 	if(available<5) return NO;
 	return bytes[0]=='-'&&bytes[1]=='l'&&(bytes[2]=='h'||bytes[2]=='z')&&bytes[4]=='-';

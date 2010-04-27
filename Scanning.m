@@ -6,7 +6,7 @@ typedef struct ByteString
 	int length;
 } ByteString;
 
-static int MatchByteString(uint8_t *bytes,int available,off_t offset,void *context)
+static int MatchByteString(const uint8_t *bytes,int available,off_t offset,void *context)
 {
 	ByteString *bs=context;
 	if(available<bs->length) return NO;

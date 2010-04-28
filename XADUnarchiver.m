@@ -198,8 +198,26 @@ static double XADGetTime();
 
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asMacForkForFile:(NSString *)destpath
 {
-	[self _ensureFileExists:destpath];
+	// Make sure a plain file exists at this path before proceeding.
+	const char *cpath=[path fileSystemRepresentation];
+	struct stat st;
+	if(lstat(cpath,&st)==0)
+	{
+		// If something exists that is not a regular file, try deleting it.
+		if((st.st_mode&S_IFMT)!=S_IFREG)
+		{
+			if(unlink(cpath)!=0) return XADOpenFileError; // TODO: better error
+		}
+	}
+	else
+	{
+		// If nothing exists, create an empty file.
+		int fh=open(cpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
+		if(fh==-1) return XADOpenFileError;
+		close(fh);
+	}
 
+	// Then, unpack to resource fork.
 	int fh=open([[destpath stringByAppendingPathComponent:@"..namedfork/rsrc"] fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
 	if(fh==-1) return XADOpenFileError;
 
@@ -311,12 +329,6 @@ static double XADGetTime();
 	return XADNoError;
 }
 
--(XADError)_ensureFileExists:(NSString *)path
-{
-	const char *cpath=[path fileSystemRepresentation];
-	
-}
-
 -(XADError)_ensureDirectoryExists:(NSString *)path
 {
 	if([path length]==0) return XADNoError;
@@ -341,9 +353,6 @@ static double XADGetTime();
 		if(mkdir(cpath,0777)==0) return XADNoError;
 		else return XADMakeDirectoryError;
 	}
-
-
-	return NO;
 }
 
 

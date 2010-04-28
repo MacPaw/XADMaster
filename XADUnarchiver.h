@@ -57,7 +57,6 @@
 -(XADError)_extractEntryWithDictionary:(NSDictionary *)dict toFileHandle:(int)fh;
 
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict;
--(XADError)_ensureFileExists:(NSString *)path;
 -(XADError)_ensureDirectoryExists:(NSString *)path;
 
 @end

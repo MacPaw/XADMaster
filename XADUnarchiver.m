@@ -1,5 +1,6 @@
 #import "XADUnarchiver.h"
 #import "Progress.h"
+#import "NSDateXAD.h"
 
 #import <sys/stat.h>
 #import <sys/time.h>
@@ -199,7 +200,7 @@ static double XADGetTime();
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asMacForkForFile:(NSString *)destpath
 {
 	// Make sure a plain file exists at this path before proceeding.
-	const char *cpath=[path fileSystemRepresentation];
+	const char *cpath=[destpath fileSystemRepresentation];
 	struct stat st;
 	if(lstat(cpath,&st)==0)
 	{
@@ -218,14 +219,33 @@ static double XADGetTime();
 	}
 
 	// Then, unpack to resource fork.
-	int fh=open([[destpath stringByAppendingPathComponent:@"..namedfork/rsrc"] fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
-	if(fh==-1) return XADOpenFileError;
+	XADError error;
+	const char *crsrcpath=[[destpath stringByAppendingPathComponent:@"..namedfork/rsrc"] fileSystemRepresentation];
 
-	XADError err=[self _extractEntryWithDictionary:dict toFileHandle:fh];
+	int fh=open(crsrcpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
+	if(fh!=-1)
+	{
+		// If opening the resource fork worked, extract data to it.
+		error=[self _extractEntryWithDictionary:dict toFileHandle:fh];
+	}
+	else
+	{
+		// If opening the resource fork failed, change permissions on the file and try again.
+		struct stat st;
+		stat(cpath,&st);
+		chmod(cpath,0700);
+
+		int fh=open(crsrcpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
+		if(fh==-1) return XADOpenFileError;
+
+		error=[self _extractEntryWithDictionary:dict toFileHandle:fh];
+
+		chmod(cpath,st.st_mode);
+	}
 
 	close(fh);
 
-	return err;
+	return error;
 }
 
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath
@@ -326,6 +346,88 @@ static double XADGetTime();
 
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
 {
+/*	if(defer&&[self entryIsDirectory:n])
+	{
+		[deferredentries addObject:[NSNumber numberWithInt:n]];
+		[deferredentries addObject:path];
+		return XADNoError;
+	}*/
+
+	const char *cpath=[path fileSystemRepresentation];
+
+	struct stat st;
+	if(stat(cpath,&st)!=0) return XADOpenFileError; // TODO: better error
+
+	// If the file does not have write permissions, change this temporarily
+	// and remember to change back.
+	BOOL changedpermissions=NO;
+	if(!(st.st_mode&S_IWUSR))
+	{
+		chmod(cpath,0700);
+		changedpermissions=YES;
+	}
+
+	// Handle timestamps.
+	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
+	NSDate *access=[dict objectForKey:XADLastAccessDateKey];
+
+	if(modification||access)
+	{
+		struct timeval times[2]={
+			{st.st_atimespec.tv_sec,st.st_atimespec.tv_nsec/1000},
+			{st.st_mtimespec.tv_sec,st.st_mtimespec.tv_nsec/1000},
+		};
+
+		if(access) times[0]=[access timevalStruct];
+		if(modification) times[1]=[modification timevalStruct];
+
+		if(utimes(cpath,times)!=0) return XADUnknownError; // TODO: better error
+	}
+
+	// Handle Mac OS specific metadata.
+	#ifdef __APPLE__
+	NSNumber *type=[dict objectForKey:XADFileTypeKey];
+	NSNumber *creator=[dict objectForKey:XADFileCreatorKey];
+	NSNumber *finderflags=[dict objectForKey:XADFinderFlagsKey];
+	NSDate *creation=[dict objectForKey:XADCreationDateKey];
+	// TODO: Handle FinderInfo structure
+
+	if(type||creator||finderflags||creation)
+	{
+		FSRef ref;
+		FSCatalogInfo info;
+		if(FSPathMakeRefWithOptions((const UInt8 *)cpath,
+		kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
+		if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoCreateDate,&info,NULL,NULL,NULL)!=noErr)
+		return XADUnknownError; // TODO: better error
+
+		FileInfo *finfo=(FileInfo *)&info.finderInfo;
+
+		if(type) finfo->fileType=[type unsignedLongValue];
+		if(creator) finfo->fileCreator=[creator unsignedLongValue];
+		if(finderflags) finfo->finderFlags=[finderflags unsignedShortValue];
+		if(creation) info.createDate=[creation UTCDateTime];
+
+		if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoCreateDate,&info)!=noErr)
+		return XADUnknownError; // TODO: better error
+	}
+	#endif
+
+	// Handle permissions (or change back to original permissions if they were changed).
+	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
+	if(permissions||changedpermissions)
+	{
+		mode_t mode=st.st_mode;
+
+		if(permissions)
+		{
+			// TODO: be clever
+			mode=[permissions unsignedShortValue];
+		}
+
+		if(chmod(cpath,mode&~S_IFMT)!=0) return XADUnknownError; // TODO: bette error
+	}
+
 	return XADNoError;
 }
 

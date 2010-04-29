@@ -39,5 +39,31 @@
 	return [NSDate XADDateWithWindowsFileTime:((uint64_t)high<<32)|(uint64_t)low];
 }
 
-@end
+-(struct timeval)timevalStruct
+{
+	NSTimeInterval seconds=[self timeIntervalSince1970];
+	struct timeval tv={ (time_t)seconds, (useconds_t)(fmod(seconds,1.0)*1000000) };
+	return tv;
+}
 
+#ifdef __APPLE__
+static NSDate *dateForJan1904()
+{
+	static NSDate *jan1904=nil;
+	if(!jan1904) jan1904=[[NSDate dateWithString:@"1904-01-01 00:00:00 +0000"] retain];
+	return jan1904;
+}
+
+-(UTCDateTime)UTCDateTime
+{
+	NSTimeInterval seconds=[self timeIntervalSinceDate:dateForJan1904()];
+	UTCDateTime utc={
+		(UInt16)(seconds/4294967296.0),
+		(UInt32)seconds,
+		(UInt16)(seconds*65536.0)
+	};
+	return utc;
+}
+#endif
+
+@end

@@ -4,6 +4,7 @@
 #import "CSMemoryHandle.h"
 #import "CSHandle.h"
 #import "Progress.h"
+#import "NSDateXAD.h"
 
 #import <sys/stat.h>
 #import <sys/time.h>
@@ -1104,24 +1105,6 @@ static double XADGetTime()
 	return NO;
 }
 
-static NSDate *dateForJan1904()
-{
-	static NSDate *jan1904=nil;
-	if(!jan1904) jan1904=[[NSDate dateWithString:@"1904-01-01 00:00:00 +0000"] retain];
-	return jan1904;
-}
-
-static UTCDateTime NSDateToUTCDateTime(NSDate *date)
-{
-	NSTimeInterval seconds=[date timeIntervalSinceDate:dateForJan1904()];
-	UTCDateTime utc={
-		(UInt16)(seconds/4294967296.0),
-		(UInt32)seconds,
-		(UInt16)(seconds*65536.0)
-	};
-	return utc;
-}
-
 -(BOOL)_changeAllAttributesForEntry:(int)n atPath:(NSString *)path deferDirectories:(BOOL)defer resourceFork:(BOOL)resfork
 {
 	if(defer&&[self entryIsDirectory:n])
@@ -1178,9 +1161,9 @@ static UTCDateTime NSDateToUTCDateTime(NSDate *date)
 	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
 	NSDate *access=[dict objectForKey:XADLastAccessDateKey];
 
-	if(creation) info.createDate=NSDateToUTCDateTime(creation);
-	if(modification) info.contentModDate=NSDateToUTCDateTime(modification);
-	if(access) info.accessDate=NSDateToUTCDateTime(access);
+	if(creation) info.createDate=[creation UTCDateTime];
+	if(modification) info.contentModDate=[modification UTCDateTime];
+	if(access) info.accessDate=[access UTCDateTime];
 
 	// TODO: Handle FinderInfo structure
 	NSNumber *type=[dict objectForKey:XADFileTypeKey];

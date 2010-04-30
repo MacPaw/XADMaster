@@ -350,12 +350,17 @@ static int maxheader=0;
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict
 {
+	// Return the destination path for a link.
+
+	// Check if this entry actually is a link.
 	NSNumber *islink=[dict objectForKey:XADIsLinkKey];
 	if(!islink||![islink boolValue]) return nil;
 
+	// If the destination is stored in the dictionary, return it directly.
 	XADString *linkdest=[dict objectForKey:XADLinkDestinationKey];
 	if(linkdest) return linkdest;
 
+	// If not, return the contents of the data stream as the destination (for Zip files and the like).
 	CSHandle *handle=[self handleForEntryWithDictionary:dict wantChecksum:YES];
 	NSData *linkdata=[handle remainingFileContents];
 	if([handle hasChecksum]&&![handle isChecksumCorrect]) return nil; // TODO: do something else here?
@@ -363,6 +368,43 @@ static int maxheader=0;
 	return [self XADStringWithData:linkdata];
 }
 
+-(NSData *)finderInfoForDictionary:(NSDictionary *)dict
+{
+	// Return a FinderInfo struct with extended info (32 bytes in size).
+
+	NSData *finderinfo=[dict objectForKey:XADFinderInfoKey];
+	if(finderinfo)
+	{
+		// If a FinderInfo struct already exists, return it. Extend it to 32 bytes if needed.
+
+		if([finderinfo length]>=32) return finderinfo;
+		NSMutableData *extendedinfo=[NSMutableData dataWithData:finderinfo];
+		[extendedinfo setLength:32];
+		return extendedinfo;
+	}
+	else
+	{
+		// If a FinderInfo struct doesn't exist, make one.
+
+		uint8_t finderinfo[32]={ 0x00 };
+
+		NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
+		BOOL isdir=dirnum&&[dirnum boolValue];
+		if(!isdir)
+		{
+			NSNumber *typenum=[dict objectForKey:XADFinderFlagsKey];
+			NSNumber *creatornum=[dict objectForKey:XADFinderFlagsKey];
+
+			if(typenum) CSSetUInt32BE(&finderinfo[0],[typenum unsignedIntValue]);
+			if(creatornum) CSSetUInt32BE(&finderinfo[4],[creatornum unsignedIntValue]);
+		}
+
+		NSNumber *flagsnum=[dict objectForKey:XADFinderFlagsKey];
+		if(flagsnum) CSSetUInt16BE(&finderinfo[8],[flagsnum unsignedShortValue]);
+
+		return [NSData dataWithBytes:finderinfo length:32];
+	}
+}
 
 
 

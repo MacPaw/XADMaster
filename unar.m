@@ -83,7 +83,7 @@ NSString *EscapeString(NSString *str)
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver failedToExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
 {
-	printf(" Failed!\n");
+	printf(" Failed! (%s)\n",[[XADException describeXADError:error] UTF8String]);
 }
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory
@@ -160,7 +160,7 @@ int main(int argc,const char **argv)
 		if(unarchiver)
 		{
 			printf("\n");
-
+[unarchiver setMacResourceForkStyle:XADVisibleAppleDoubleForkStyle];
 			if(destination) [unarchiver setDestination:destination];
 
 			[unarchiver setDelegate:[[[Unarchiver alloc] initWithIndentLevel:2] autorelease]];

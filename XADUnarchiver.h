@@ -44,7 +44,7 @@
 -(int)macResourceForkStyle;
 -(void)setMacResourceForkStyle:(int)forkhandling;
 
--(void)parseAndUnarchive;
+-(XADError)parseAndUnarchive;
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict;
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path;

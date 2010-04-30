@@ -64,9 +64,17 @@ static double XADGetTime();
 
 -(void)setMacResourceForkStyle:(int)style { forkstyle=style; }
 
--(void)parseAndUnarchive
+-(XADError)parseAndUnarchive
 {
-	[parser parse];
+	@try
+	{
+		[parser parse];
+	}
+	@catch(id e)
+	{
+		return [XADException parseException:e];
+	}
+	return XADNoError;
 }
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict
@@ -129,17 +137,17 @@ static double XADGetTime();
 		[delegate unarchiver:self willStartExtractingEntryWithDictionary:dict to:path];
 	}
 
-	XADError error;
+	XADError error=XADNoError;
 
 	if(isres)
 	{
 		switch(forkstyle)
 		{
 			case XADIgnoredForkStyle:
-				error=XADNoError;
 			break;
 
 			case XADMacOSXForkStyle:
+				if(!isdir)
 				error=[self _extractResourceForkEntryWithDictionary:dict asMacForkForFile:path];
 			break;
 
@@ -250,16 +258,35 @@ static double XADGetTime();
 
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath
 {
-/*	int fh=open([destpath fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
+	int fh=open([destpath fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
 	if(fh==-1) return XADOpenFileError;
 
-	XADError err=[self _extractEntryWithDictionary:dict toFileHandle:fh];
+	uint8_t header[0x32]=
+	{
+		0x00,0x05,0x16,0x07,0x00,0x02,0x00,0x00,
+		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+		0x00,0x02,
+		0x00,0x00,0x00,0x09,0x00,0x00,0x00,0x32,0x00,0x00,0x00,0x20,
+		0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x52,0x00,0x00,0x00,0x00,
+	};
+
+	off_t size=0;
+	NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
+	if(sizenum) size=[sizenum longLongValue];
+
+	CSSetUInt32BE(&header[46],size);
+	write(fh,header,sizeof(header));
+
+	NSData *finderinfo=[parser finderInfoForDictionary:dict];
+	if([finderinfo length]<32) { close(fh); return XADUnknownError; }
+	write(fh,[finderinfo bytes],32);
+
+	XADError error=XADNoError;
+	if(size) error=[self _extractEntryWithDictionary:dict toFileHandle:fh];
 
 	close(fh);
 
-	return err;*/
-
-	return XADNotSupportedError;
+	return error;
 }
 
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath

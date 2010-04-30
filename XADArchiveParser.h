@@ -105,6 +105,7 @@ extern NSString *XADVolumesKey;
 -(XADStringSource *)stringSource;
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict;
+-(NSData *)finderInfoForDictionary:(NSDictionary *)dict;
 
 
 

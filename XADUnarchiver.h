@@ -18,6 +18,7 @@
 	XADArchiveParser *parser;
 	NSString *destination;
 	int forkstyle;
+	BOOL preservepermissions;
 	double updateinterval;
 
 	id delegate;
@@ -41,10 +42,16 @@
 //-(void)setEncoding:(NSStringEncoding)encoding;
 
 -(NSString *)destination;
--(void)setDestination:(NSString *)destinationpath;
+-(void)setDestination:(NSString *)destpath;
 
 -(int)macResourceForkStyle;
--(void)setMacResourceForkStyle:(int)forkhandling;
+-(void)setMacResourceForkStyle:(int)style;
+
+-(BOOL)preservesPermissions;
+-(void)setPreserevesPermissions:(BOOL)preserveflag;
+
+-(double)updateInterval;
+-(void)setUpdateInterval:(double)interval;
 
 -(XADError)parseAndUnarchive;
 

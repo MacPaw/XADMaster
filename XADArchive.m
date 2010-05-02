@@ -1155,7 +1155,12 @@ static double XADGetTime()
 
 	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
 	FSPermissionInfo *pinfo=(FSPermissionInfo *)&info.permissions;
-	if(permissions) pinfo->mode=[permissions unsignedShortValue];
+	if(permissions)
+	{
+		mode_t mask=umask(022);
+		umask(mask); // This is stupid. Is there no sane way to just READ the umask?
+		pinfo->mode=[permissions unsignedShortValue]&~(mask|S_ISUID|S_ISGID);
+	}
 
 	NSDate *creation=[dict objectForKey:XADCreationDateKey];
 	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];

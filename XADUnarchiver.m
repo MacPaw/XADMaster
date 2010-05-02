@@ -28,6 +28,7 @@ static double XADGetTime();
 		parser=[archiveparser retain];
 		destination=nil;
 		forkstyle=XADDefaultForkStyle;
+		preservepermissions=NO;
 		updateinterval=0.1;
 		delegate=nil;
 
@@ -57,15 +58,25 @@ static double XADGetTime();
 
 -(NSString *)destination { return destination; }
 
--(void)setDestination:(NSString *)destinationpath
+-(void)setDestination:(NSString *)destpath
 {
 	[destination autorelease];
-	destination=[destinationpath retain];
+	destination=[destpath retain];
 }
 
 -(int)macResourceForkStyle { return forkstyle; }
 
 -(void)setMacResourceForkStyle:(int)style { forkstyle=style; }
+
+-(BOOL)preservesPermissions { return preservepermissions; }
+
+-(void)setPreserevesPermissions:(BOOL)preserveflag { preservepermissions=preserveflag; }
+
+-(double)updateInterval { return updateinterval; }
+
+-(void)setUpdateInterval:(double)interval { updateinterval=interval; }
+
+
 
 -(XADError)parseAndUnarchive
 {
@@ -512,8 +523,13 @@ deferDirectories:(BOOL)defer
 
 		if(permissions)
 		{
-			// TODO: be clever
 			mode=[permissions unsignedShortValue];
+			if(!preservepermissions)
+			{
+				mode_t mask=umask(022);
+				umask(mask); // This is stupid. Is there no sane way to just READ the umask?
+				mode&=~(mask|S_ISUID|S_ISGID);
+			}
 		}
 
 		if(chmod(cpath,mode&~S_IFMT)!=0) return XADUnknownError; // TODO: bette error

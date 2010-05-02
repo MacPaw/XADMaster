@@ -487,7 +487,6 @@
 
 	// Be a little more memory-efficient.
 
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 	NSData *header = [handle readDataOfLength:512];
 		
 	int tarFormat = [XADTarParser getTarType:header];
@@ -528,8 +527,6 @@
 		}
 
 		// Read next header.
-		[pool release];
-		pool = [NSAutoreleasePool new];
 		header = [handle readDataOfLength:512];
 		
 		// See if the first byte is \0. This should mean that the archive is now over.
@@ -539,8 +536,6 @@
 			isArchiverOver = YES;
 		}
 	}
-
-	[pool release];
 }
 
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum

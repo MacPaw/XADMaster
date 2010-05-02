@@ -160,7 +160,7 @@ int main(int argc,const char **argv)
 		if(unarchiver)
 		{
 			printf("\n");
-[unarchiver setMacResourceForkStyle:XADVisibleAppleDoubleForkStyle];
+//[unarchiver setMacResourceForkStyle:XADVisibleAppleDoubleForkStyle];
 			if(destination) [unarchiver setDestination:destination];
 
 			[unarchiver setDelegate:[[[Unarchiver alloc] initWithIndentLevel:2] autorelease]];

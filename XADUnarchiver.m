@@ -31,6 +31,8 @@ static double XADGetTime();
 		updateinterval=0.1;
 		delegate=nil;
 
+		deferreddirectories=[NSMutableArray new];
+
 		[parser setDelegate:self];
 	}
 	return self;
@@ -40,6 +42,7 @@ static double XADGetTime();
 {
 	[parser release];
 	[destination release];
+	[deferreddirectories release];
 	[super dealloc];
 }
 
@@ -74,10 +77,16 @@ static double XADGetTime();
 	{
 		return [XADException parseException:e];
 	}
-	return XADNoError;
+
+	return [self finishExtractions];
 }
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict
+{
+	return [self extractEntryWithDictionary:dict forceDirectories:NO];
+}
+
+-(XADError)extractEntryWithDictionary:(NSDictionary *)dict forceDirectories:(BOOL)force
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
@@ -112,7 +121,7 @@ static double XADGetTime();
 		}
 	}
 
-	XADError error=[self extractEntryWithDictionary:dict as:path];
+	XADError error=[self extractEntryWithDictionary:dict as:path forceDirectories:force];
 
 	[pool release];
 
@@ -120,6 +129,11 @@ static double XADGetTime();
 }
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path
+{
+	return [self extractEntryWithDictionary:dict as:path forceDirectories:NO];
+}
+
+-(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path forceDirectories:(BOOL)force
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
@@ -178,7 +192,7 @@ static double XADGetTime();
 	// Update file attributes
 	if(!error)
 	{
-		error=[self _updateFileAttributesAtPath:path forEntryWithDictionary:dict];
+		error=[self _updateFileAttributesAtPath:path forEntryWithDictionary:dict deferDirectories:!force];
 	}
 
 	// Report success or failure
@@ -192,6 +206,51 @@ static double XADGetTime();
 
 	return error;
 }
+
+static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *context)
+{
+	NSDictionary *dict1=[entry1 objectAtIndex:1];
+	NSDictionary *dict2=[entry2 objectAtIndex:1];
+
+	XADPath *path1=[dict1 objectForKey:XADFileNameKey];
+	XADPath *path2=[dict2 objectForKey:XADFileNameKey];
+	int depth1=[path1 depth];
+	int depth2=[path2 depth];
+	if(depth1>depth2) return NSOrderedAscending;
+	else if(depth1<depth2) return NSOrderedDescending;
+
+	NSNumber *resnum1=[dict1 objectForKey:XADIsResourceForkKey];
+	NSNumber *resnum2=[dict2 objectForKey:XADIsResourceForkKey];
+	BOOL isres1=resnum1&&[resnum1 boolValue];
+	BOOL isres2=resnum2&&[resnum2 boolValue];
+	if(!resnum1&&resnum2) return NSOrderedAscending;
+	else if(resnum1&&!resnum2) return NSOrderedDescending;
+
+	return NSOrderedSame;
+}
+
+-(XADError)finishExtractions
+{
+	[deferreddirectories sortUsingFunction:SortDirectoriesByDepthAndResource context:NULL];
+
+	NSEnumerator *enumerator=[deferreddirectories objectEnumerator];
+	NSArray *entry;
+	while(entry=[enumerator nextObject])
+	{
+		NSString *path=[entry objectAtIndex:0];
+		NSDictionary *dict=[entry objectAtIndex:1];
+
+		XADError error=[self _updateFileAttributesAtPath:path forEntryWithDictionary:dict deferDirectories:NO];
+		if(error) return error;
+	}
+
+	[deferreddirectories removeAllObjects];
+
+	return XADNoError;
+}
+
+
+
 
 -(XADError)_extractFileEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath
 {
@@ -371,14 +430,19 @@ static double XADGetTime();
 
 
 
+
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
+deferDirectories:(BOOL)defer
 {
-/*	if(defer&&[self entryIsDirectory:n])
+	if(defer)
 	{
-		[deferredentries addObject:[NSNumber numberWithInt:n]];
-		[deferredentries addObject:path];
-		return XADNoError;
-	}*/
+		NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
+		if(dirnum&&[dirnum boolValue])
+		{
+			[deferreddirectories addObject:[NSArray arrayWithObjects:path,dict,nil]];
+			return XADNoError;
+		}
+	}
 
 	const char *cpath=[path fileSystemRepresentation];
 

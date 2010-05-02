@@ -263,6 +263,11 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	return data;
 }
 
+-(int)depth
+{
+	return [components count];
+}
+
 
 
 -(BOOL)encodingIsKnown

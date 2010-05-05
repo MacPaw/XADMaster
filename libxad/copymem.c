@@ -24,6 +24,8 @@
 
 #include "functions.h"
 
+#define UNIX
+
 #ifdef UNIX
 #  include <string.h>
 FUNCxadCopyMem /* const void *s, xadPTR d, xadSize size */

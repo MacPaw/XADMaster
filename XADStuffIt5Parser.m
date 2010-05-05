@@ -104,8 +104,8 @@
 	off_t base=[fh offsetInFile];
 
 	[fh skipBytes:84];
-	uint32_t totalsize=[fh readUInt32BE];
-	uint32_t something=[fh readUInt32BE];
+	/*uint32_t totalsize=*/[fh readUInt32BE];
+	/*uint32_t something=*/[fh readUInt32BE];
 	int numfiles=[fh readUInt16BE];
 	uint32_t firstoffs=[fh readUInt32BE];
 	[fh seekToFileOffset:firstoffs+base];
@@ -136,7 +136,7 @@
 		uint32_t modificationdate=[fh readUInt32BE];
 		/*uint32_t prevoffs=*/[fh readUInt32BE];
 		/*uint32_t nextoffs=*/[fh readUInt32BE];
-		uint32_t diroffs=[fh readUInt32BE];
+		/*uint32_t diroffs=*/[fh readUInt32BE];
 		int namelength=[fh readUInt16BE];
 		/*int headercrc=*/[fh readUInt16BE];
 		uint32_t datalength=[fh readUInt32BE];

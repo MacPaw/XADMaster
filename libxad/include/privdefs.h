@@ -24,6 +24,8 @@
 
 #include "xadmaster.h"
 
+#define UNIX
+
 #ifdef UNIX
 #include <stdio.h>
 #include <string.h>

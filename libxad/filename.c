@@ -47,7 +47,8 @@ struct MyString {
 #define PATHSIGN       '/'
 #define PATHSIGNMAPPER '\\' /* maps the path sign if it represents no path */
 
-#ifndef NO_FILENAME_MANGLING
+//#ifndef NO_FILENAME_MANGLING
+#if 0
 
 /* converts string back to unicode */
 /* NOTE: len is the character len and not byte len for unicode */

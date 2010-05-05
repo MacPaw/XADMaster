@@ -160,7 +160,6 @@ static double XADGetTime();
 	BOOL islink=linknum&&[linknum boolValue];
 	BOOL isres=resnum&&[resnum boolValue];
 	BOOL isarchive=archivenum&&[archivenum boolValue];
-	BOOL shouldrecurse=NO;
 
 	// Ask for permission and report that we are starting.
 	if(delegate)
@@ -257,8 +256,8 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 	NSNumber *resnum2=[dict2 objectForKey:XADIsResourceForkKey];
 	BOOL isres1=resnum1&&[resnum1 boolValue];
 	BOOL isres2=resnum2&&[resnum2 boolValue];
-	if(!resnum1&&resnum2) return NSOrderedAscending;
-	else if(resnum1&&!resnum2) return NSOrderedDescending;
+	if(!isres1&&isres2) return NSOrderedAscending;
+	else if(isres1&&!isres2) return NSOrderedDescending;
 
 	return NSOrderedSame;
 }

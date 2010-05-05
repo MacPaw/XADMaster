@@ -19,11 +19,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "config.h"
+#include "../config.h"
 #undef VERSION
 
-#include "functions.h"
-#include "version.h"
+#include "../include/functions.h"
+#include "../include/version.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

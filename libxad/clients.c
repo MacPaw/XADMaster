@@ -24,13 +24,13 @@
 
 #include "config.h"
 
-#include <xadmaster.h>
+#include "include/xadmaster.h"
 #ifdef DEBUG
 void DebugFileSearched(const struct xadArchiveInfo *ai, const xadSTRING *, ...); /* print with 'D' */
 void DebugClient(const struct xadArchiveInfo *ai, const xadSTRING *, ...);       /* print with 'D' */
 #endif
 
-#include "version.h"
+#include "include/version.h"
 #define XADMASTERFILE
 
 #define XADIOGETBITSHIGH

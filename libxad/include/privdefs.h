@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <strings.h>
-#include <emulation.h>
+#include "../unix/emulation.h"
 #define stricmp(a, b) strcasecmp((char *)(a), (char *)(b))
 #define strnicmp(a, b, c) strncasecmp((char *)(a), (char *)(b), c)
 #elif defined(AMIGA)

@@ -27,7 +27,7 @@
 #define XADMASTERREVISION  0
 #define DATETXT            "31.03.2003"
 
-#include "config.h"
+#include "../config.h"
 
 #define LIBNAME   "xadmaster.library"
 

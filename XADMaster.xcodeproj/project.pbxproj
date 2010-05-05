@@ -2402,10 +2402,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Build/Debug\"",
 				);
-				OTHER_CFLAGS = (
-					"\"-I$(SRCROOT)/libxad/unix\"",
-					"\"-I$(SRCROOT)/libxad/include\"",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -2436,10 +2433,7 @@
 					"\"$(SRCROOT)/../../Build/Debug\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				OTHER_CFLAGS = (
-					"\"-I$(SRCROOT)/libxad/unix\"",
-					"\"-I$(SRCROOT)/libxad/include\"",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -2685,10 +2679,7 @@
 				"GCC_VERSION[arch=x86_64]" = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"\"-I$(SRCROOT)/libxad/unix\"",
-					"\"-I$(SRCROOT)/libxad/include\"",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					UniversalDetector,
@@ -2724,10 +2715,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"\"-I$(SRCROOT)/libxad/unix\"",
-					"\"-I$(SRCROOT)/libxad/include\"",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					UniversalDetector,
@@ -2764,6 +2752,7 @@
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk;
+				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
@@ -2793,6 +2782,7 @@
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk;
+				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};

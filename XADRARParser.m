@@ -729,6 +729,8 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 		[[matches objectAtIndex:2] length],
 		[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
 	firstFileExtension:@"exe"];
+
+	return nil;
 }
 
 static int MatchRarSignature(const uint8_t *bytes,int available,off_t offset,void *state)

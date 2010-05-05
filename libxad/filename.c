@@ -22,7 +22,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "functions.h"
+#include "include/functions.h"
 
 #include "cs_atarist_to_unicode.c"
 #include "cs_c64_to_unicode.c"

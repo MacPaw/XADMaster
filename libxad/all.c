@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#include "functions.h"
+#include "include/functions.h"
 #include "clientfunc.c"
 #include "copymem.c"
 #include "crc.c"
@@ -39,7 +39,7 @@
 #include "hook_disk.c"
 #endif
 #include "hook_diskarc.c"
-#include "hook_fh.c"
+#include "unix/hook_fh.c"
 #include "hook_mem.c"
 #include "hook_splitted.c"
 #include "hook_stream.c"

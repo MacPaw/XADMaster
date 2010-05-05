@@ -34,8 +34,8 @@
 #include <time.h>
 #endif
 
-#include "functions.h"
-#include "ConvertE.c"
+#include "include/functions.h"
+#include "include/ConvertE.c"
 
 struct MyClockData
 {

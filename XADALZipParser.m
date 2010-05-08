@@ -73,7 +73,7 @@ static void CalculateSillyTable(int *table,int param)
 		off_t offs=0;
 		for(int i=0;i<count-1;i++)
 		{
-			offs+=[[volumes objectAtIndex:i] fileSize];
+			offs+=[(CSHandle *)[volumes objectAtIndex:i] fileSize];
 			[fh addSkipFrom:offs-16 to:offs+8];
 		}
 	}

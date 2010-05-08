@@ -410,8 +410,10 @@ static int maxheader=0;
 
 // Internal functions
 
-static NSInteger XADVolumeSort(NSString *str1,NSString *str2,void *extptr)
+static NSInteger XADVolumeSort(id entry1,id entry2,void *extptr)
 {
+	NSString *str1=entry1;
+	NSString *str2=entry2;
 	NSString *firstext=(NSString *)extptr;
 	BOOL isfirst1=firstext&&[str1 rangeOfString:firstext options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
 	BOOL isfirst2=firstext&&[str2 rangeOfString:firstext options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
@@ -529,7 +531,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	{
 		NSArray *handles=[(id)sourcehandle handles];
 		int count=[handles count];
-		for(int i=0;i<count&&i<disk;i++) offset+=[[handles objectAtIndex:i] fileSize];
+		for(int i=0;i<count&&i<disk;i++) offset+=[(CSHandle *)[handles objectAtIndex:i] fileSize];
 	}
 
 	return offset;

@@ -5,7 +5,7 @@
 
 extern "C" {
 
-RARUnpacker *AllocRARUnpacker(RARReadFunc readfunc,void *readparam1,void *readparam2)
+RARUnpacker *AllocRARUnpacker(RARReadFunc readfunc,void *readparam1,const void *readparam2)
 {
 	RARUnpacker *self=(RARUnpacker *)malloc(sizeof(RARUnpacker));
 	if(!self) return NULL;

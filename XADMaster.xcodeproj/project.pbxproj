@@ -1160,7 +1160,7 @@
 				1B3FAD650EC5D4E8006D2F06 /* XADMacArchiveParser.h */,
 				1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */,
 				1BC885C60ECD11A9006B47FE /* Zip */,
-				1BC88B750ED0E399006B47FE /* Rar */,
+				1BC88B750ED0E399006B47FE /* RAR */,
 				1BC88B760ED0E3A2006B47FE /* 7-Zip */,
 				1B880CFE0F0AAB360061CCBE /* PPMd */,
 				1BC88C8A0ED22657006B47FE /* Mac */,
@@ -1432,7 +1432,7 @@
 			name = Utilities;
 			sourceTree = "<group>";
 		};
-		1BC88B750ED0E399006B47FE /* Rar */ = {
+		1BC88B750ED0E399006B47FE /* RAR */ = {
 			isa = PBXGroup;
 			children = (
 				1B06D5A60DDA667A00D9C000 /* XADRARParser.h */,
@@ -1449,7 +1449,7 @@
 				1BCD65510EF8164900D86C43 /* RARBug.c */,
 				1BC89D020EDCC1D4006B47FE /* unrar */,
 			);
-			name = Rar;
+			name = RAR;
 			sourceTree = "<group>";
 		};
 		1BC88B760ED0E3A2006B47FE /* 7-Zip */ = {

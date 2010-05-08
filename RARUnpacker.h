@@ -7,7 +7,7 @@ extern "C" {
 
 #include <sys/types.h>
 
-typedef int (*RARReadFunc)(void *,void *,int,void *);
+typedef int (*RARReadFunc)(void *,const void *,int,void *);
 
 typedef struct RARUnpacker
 {
@@ -18,10 +18,11 @@ typedef struct RARUnpacker
 	int blocklength,maxblocklength;
 
 	RARReadFunc readfunc;
-	void *readparam1,*readparam2;
+	void *readparam1;
+	const void *readparam2;
 } RARUnpacker;
 
-RARUnpacker *AllocRARUnpacker(RARReadFunc readfunc,void *readparam1,void *readparam2);
+RARUnpacker *AllocRARUnpacker(RARReadFunc readfunc,void *readparam1,const void *readparam2);
 void FreeRARUnpacker(RARUnpacker *self);
 void StartRARUnpacker(RARUnpacker *self,off_t length,int method,int solid);
 void *NextRARBlock(RARUnpacker *self,int *length);

@@ -1,5 +1,7 @@
 #import "NSDateXAD.h"
 
+#import <math.h>
+
 @implementation NSDate (XAD)
 
 +(NSDate *)XADDateWithTimeIntervalSince1904:(NSTimeInterval)interval

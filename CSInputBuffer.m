@@ -237,5 +237,3 @@ unsigned int CSInputPeekBitStringLE(CSInputBuffer *buf,int bits)
 	}
 	return res;
 }
-
-

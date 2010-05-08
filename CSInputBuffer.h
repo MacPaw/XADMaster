@@ -44,16 +44,26 @@ unsigned int CSInputPeekBitStringLE(CSInputBuffer *buf,int bits);
 
 #define CSInputBufferLookAhead 4
 
+static inline void _CSInputBufferRaiseEOF(CSInputBuffer *buf)
+{
+	[buf->parent _raiseEOF];
+}
+
+static inline int _CSInputBytesLeftInBuffer(CSInputBuffer *buf)
+{
+	return buf->bufbytes-buf->currbyte;
+}
+
 static inline void _CSInputCheckAndFillBuffer(CSInputBuffer *buf)
 {
-	if(!buf->eof&&buf->currbyte+CSInputBufferLookAhead>=buf->bufbytes) _CSInputFillBuffer(buf);
+	if(!buf->eof&&_CSInputBytesLeftInBuffer(buf)<=CSInputBufferLookAhead) _CSInputFillBuffer(buf);
 }
 
 static inline void CSInputSkipBytes(CSInputBuffer *buf,int num) { buf->currbyte+=num; }
 
 static inline int CSInputPeekByte(CSInputBuffer *buf,int offs)
 {
-	if(buf->currbyte+offs>=buf->bufbytes) [buf->parent _raiseEOF];
+	if(offs>=_CSInputBytesLeftInBuffer(buf)) _CSInputBufferRaiseEOF(buf);
 
 	return buf->buffer[buf->currbyte+offs];
 }
@@ -70,6 +80,12 @@ static inline BOOL CSInputAtEOF(CSInputBuffer *buf)
 {
 	_CSInputCheckAndFillBuffer(buf);
 	return buf->currbyte>=buf->bufbytes;
+}
+
+static inline int CSInputBitsLeftInBuffer(CSInputBuffer *buf)
+{
+	_CSInputCheckAndFillBuffer(buf);
+	return _CSInputBytesLeftInBuffer(buf)*8-buf->currbit;
 }
 
 #define CSInputNextValueImpl(type,name,conv) \

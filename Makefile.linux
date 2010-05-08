@@ -16,12 +16,18 @@ GNUSTEP_OPTS =	-DGNUSTEP \
 		-fconstant-string-class=NSConstantString
 
 GCC_OPTS = 	-c \
-		-std=gnu99 \
 		-Wno-import \
 		-Wno-multichar \
 		-g \
 		-D_FILE_OFFSET_BITS=64 \
 		-I/usr/include/GNUstep
+
+OBJC_OPTS =	-std=gnu99
+
+C_OPTS =	-std=gnu99
+
+CPP_OPTS =
+
 
 # Options for linking
 GNUSTEP_LIBS =	-lgnustep-base
@@ -214,11 +220,11 @@ SOURCE_FILES = $(OBJC_FILES) $(C_FILES) $(CPP_FILES)
 # Suffix rules
 .SUFFIXES: .o .m .c
 .m.o :
-	$(OBJCC) $(GNUSTEP_OPTS) $(GCC_OPTS) $(INCLUDE_DIRS) $< -o $@	
+	$(OBJCC) $(OBJC_OPTS) $(GNUSTEP_OPTS) $(GCC_OPTS) $(INCLUDE_DIRS) $< -o $@	
 .c.o :
-	$(CC) $(GCC_OPTS) $< -o $@
+	$(CC) $(C_OPTS) $(GCC_OPTS) $< -o $@
 .cpp.o :
-	$(CPP) $(GCC_OPTS) $< -o $@
+	$(CPP) $(CPP_OPTS) $(GCC_OPTS) $< -o $@
 
 # Compilation rules
 all: unar XADTest2 XADTest3 XADTest4

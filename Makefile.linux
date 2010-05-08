@@ -8,51 +8,31 @@ LD = g++
 
 # Options for compilation
 GNUSTEP_OPTS =	-DGNUSTEP \
-		-DGNUSTEP_BASE_LIBRARY=1 \
-		-DGNU_GUI_LIBRARY=1 \
 		-DGNU_RUNTIME=1 \
-		-DGNUSTEP_BASE_LIBRARY=1 \
 		-D_NATIVE_OBJC_EXCEPTIONS \
 		-fgnu-runtime \
-		-D_REENTRANT \
-		-DGSWARN \
-		-DGSDIAGNOSE \
 		-fexceptions \
 		-fobjc-exceptions \
 		-fconstant-string-class=NSConstantString
 
-INCLUDE_DIRS =	-I. \
-		-I../UniversalDetector/universalchardet \
-		-Ilibxad/include/ \
-		-I/usr/include/GNUstep
-		
 GCC_OPTS = 	-c \
-		-MMD \
-		-MP \
-		-fPIC \
-		-g \
-		-Wall \
-		-DDEBUG \
-		-fno-omit-frame-pointer \
+		-std=gnu99 \
 		-Wno-import \
+		-Wno-multichar \
 		-g \
-		-fno-strict-aliasing \
-		-std=gnu99
+		-D_FILE_OFFSET_BITS=64 \
+		-I/usr/include/GNUstep
 
 # Options for linking
-GNUSTEP_LIBS =	-L/usr/local/lib \
-		-L/usr/lib \
-		-lgnustep-base
+GNUSTEP_LIBS =	-lgnustep-base
 
 BASE_LIBS =	-lcrypto \
 		-lbz2 \
 		-lpthread \
 		-lobjc \
 		-lm
-LD_OPTS =	-rdynamic \
-		-Wl,-Bsymbolic-functions \
-		-shared-libgcc \
-		-fexceptions \
+
+LD_OPTS =	-fexceptions \
 		-fgnu-runtime
 
 # Files for compilation
@@ -183,7 +163,6 @@ OBJC_FILES =	CarrylessRangeCoder.o \
 		XADLibXADParser.o \
 		../UniversalDetector/UniversalDetector.o \
 		XADUnarchiver.o \
-		unar.o
 
 C_FILES =	BWT.o \
 		lzma/LzmaDec.o \
@@ -237,29 +216,33 @@ SOURCE_FILES = $(OBJC_FILES) $(C_FILES) $(CPP_FILES)
 .m.o :
 	$(OBJCC) $(GNUSTEP_OPTS) $(GCC_OPTS) $(INCLUDE_DIRS) $< -o $@	
 .c.o :
-	$(CC) $(GCC_OPTS) $(INCLUDE_DIRS) $< -o $@
+	$(CC) $(GCC_OPTS) $< -o $@
 .cpp.o :
-	$(CPP) $(GCC_OPTS) $(INCLUDE_DIRS) $< -o $@
-	
-# Compilation rules
-all: unar
+	$(CPP) $(GCC_OPTS) $< -o $@
 
-unar: $(SOURCE_FILES)
-	$(LD) $(LD_OPTS) -o $@ $(SOURCE_FILES) $(GNUSTEP_LIBS) $(BASE_LIBS)
+# Compilation rules
+all: unar XADTest2 XADTest3 XADTest4
+
+unar: unar.o $(SOURCE_FILES)
+	$(LD) $(LD_OPTS) -o $@ $^ $(GNUSTEP_LIBS) $(BASE_LIBS)
+
+XADTest2: XADTest2.o $(SOURCE_FILES)
+	$(LD) $(LD_OPTS) -o $@ $^ $(GNUSTEP_LIBS) $(BASE_LIBS)
+
+XADTest3: XADTest3.o $(SOURCE_FILES)
+	$(LD) $(LD_OPTS) -o $@ $^ $(GNUSTEP_LIBS) $(BASE_LIBS)
+
+XADTest4: XADTest4.o $(SOURCE_FILES)
+	$(LD) $(LD_OPTS) -o $@ $^ $(GNUSTEP_LIBS) $(BASE_LIBS)
 
 clean:
 	rm -f 	*.o \
-		*.d \
 		*~ \
 		lzma/*.o \
-		lzma/*.d \
 		lzma/*~ \
 		unrar/*.o \
-		unrar/*.d \
 		unrar/*~ \
 		../UniversalDetector/*.o \
-		../UniversalDetector/*.d \
 		../UniversalDetector/*~ \
 		../UniversalDetector/universalchardet/*.o \
-		../UniversalDetector/universalchardet/*.d \
 		../UniversalDetector/universalchardet/*~

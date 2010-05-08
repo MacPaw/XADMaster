@@ -1,4 +1,4 @@
-#import <XADMaster/XADUnarchiver.h>
+#import "XADUnarchiver.h"
 
 #import <sys/stat.h>
 

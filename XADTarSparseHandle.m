@@ -1,7 +1,7 @@
-#import "XADSparseHandle.h"
+#import "XADTarSparseHandle.h"
 #import "SystemSpecific.h"
 
-@implementation XADSparseHandle
+@implementation XADTarSparseHandle
 
 // Make a new sparse handle by wrapping around another CSHandle
 -(id)initWithHandle:(CSHandle *)handle size:(off_t)size
@@ -9,7 +9,7 @@
 	if( (self = [super initWithName:[handle name]]) )
 	{
 		parent = [handle retain];
-		regions = malloc( sizeof( XADSparseRegion ) );
+		regions = malloc( sizeof( XADTarSparseRegion ) );
 		regions[ 0 ].nextRegion = -1;
 		regions[ 0 ].size = [parent fileSize];
 		regions[ 0 ].offset = 0;
@@ -26,14 +26,14 @@
 }
 
 // Copy constructor
--(id)initAsCopyOf:(XADSparseHandle *)other
+-(id)initAsCopyOf:(XADTarSparseHandle *)other
 {
 	if( (self = [super initAsCopyOf:other]) )
 	{
 		parent = [other->parent copy];
 		numRegions = other->numRegions;
-		regions = malloc( sizeof( XADSparseRegion ) * numRegions );
-		memcpy( regions, other->regions, sizeof( XADSparseRegion ) * numRegions );
+		regions = malloc( sizeof( XADTarSparseRegion ) * numRegions );
+		memcpy( regions, other->regions, sizeof( XADTarSparseRegion ) * numRegions );
 		currentOffset = other->currentOffset;
 		currentRegion = other->currentRegion;
 		realFileSize = other->realFileSize;
@@ -89,7 +89,7 @@
 	}
 
 	// Make two new regions.
-	regions = reallocf( regions, sizeof( XADSparseRegion ) * ( numRegions + 2 ) );
+	regions = reallocf( regions, sizeof( XADTarSparseRegion ) * ( numRegions + 2 ) );
 
 	// Start processing at the end.
 	regions[ numRegions + 1 ].offset = start + length;
@@ -123,10 +123,10 @@
 		fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
 	}
 
-	XADSparseRegion inRegion = regions[ [self regionIndexForOffset:([self fileSize] - 1)] ];
+	XADTarSparseRegion inRegion = regions[ [self regionIndexForOffset:([self fileSize] - 1)] ];
 	
 	// Make a new region.
-	regions = reallocf( regions, sizeof( XADSparseRegion ) * ( numRegions + 1 ) );
+	regions = reallocf( regions, sizeof( XADTarSparseRegion ) * ( numRegions + 1 ) );
 
 	// Figure out the current size.
 	off_t sizeBeforeAdding = 0;

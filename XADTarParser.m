@@ -542,7 +542,7 @@
 {
 	CSHandle* retHandle = [self handleAtDataOffsetForDictionary:dict];
 	if( [[dict objectForKey:@"TARIsSparseFile"] boolValue] ) {
-		XADSparseHandle* sparseHandle = [[XADSparseHandle alloc] initWithHandle:retHandle size:[[dict objectForKey:XADDataLengthKey] longValue]];
+		XADTarSparseHandle* sparseHandle = [[XADTarSparseHandle alloc] initWithHandle:retHandle size:[[dict objectForKey:XADDataLengthKey] longValue]];
 		NSArray* offsets = [dict objectForKey:@"TARSparseRegionOffsets"];	
 		NSArray* lengths = [dict objectForKey:@"TARSparseRegionLengths"];
 		int sparseRegionCount = [offsets count];

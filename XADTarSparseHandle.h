@@ -1,18 +1,18 @@
 #import "CSHandle.h"
 
-typedef struct XADSparseRegion
+typedef struct XADTarSparseRegion
 {
 	int nextRegion;
 	off_t offset;
 	off_t size;
 	BOOL hasData;
 	off_t dataOffset;
-} XADSparseRegion;
+} XADTarSparseRegion;
 
-@interface XADSparseHandle:CSHandle
+@interface XADTarSparseHandle:CSHandle
 {
 	CSHandle *parent;
-	XADSparseRegion *regions;
+	XADTarSparseRegion *regions;
 	int numRegions;
 	int currentRegion;
 	off_t currentOffset;
@@ -20,7 +20,7 @@ typedef struct XADSparseRegion
 }
 
 -(id)initWithHandle:(CSHandle *)handle size:(off_t)size;
--(id)initAsCopyOf:(XADSparseHandle *)other;
+-(id)initAsCopyOf:(XADTarSparseHandle *)other;
 -(void)dealloc;
 
 -(void)addSparseRegionFrom:(off_t)start length:(off_t)length;

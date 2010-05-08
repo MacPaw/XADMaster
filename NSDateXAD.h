@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <sys/time.h>
 
 @interface NSDate (XAD)
 

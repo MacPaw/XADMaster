@@ -1,4 +1,4 @@
-#import <XADMaster/XADArchiveParser.h>
+#import "XADArchiveParser.h"
 
 @interface ArchiveTester:NSObject
 {

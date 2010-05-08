@@ -31,8 +31,8 @@
 		1B23DAA01177C99900620319 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
 		1B23DB8E117BA91D00620319 /* XADNowCompressParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DB8C117BA91D00620319 /* XADNowCompressParser.h */; };
 		1B23DB8F117BA91D00620319 /* XADNowCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */; };
-		1B23DD3C117FC7B900620319 /* XADSparseHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DD3A117FC7B900620319 /* XADSparseHandle.h */; };
-		1B23DD3D117FC7B900620319 /* XADSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADSparseHandle.m */; };
+		1B23DD3C117FC7B900620319 /* XADTarSparseHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DD3A117FC7B900620319 /* XADTarSparseHandle.h */; };
+		1B23DD3D117FC7B900620319 /* XADTarSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADTarSparseHandle.m */; };
 		1B23DDA51185DFC100620319 /* XADUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */; };
 		1B23DDCB1185EBF400620319 /* unar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DDC91185EBD600620319 /* unar.m */; };
 		1B23E0F71190F47E00620319 /* XADException.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C330DDBC8BF005B0F68 /* XADException.m */; };
@@ -118,7 +118,7 @@
 		1B23E1481190F57600620319 /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
 		1B23E1491190F57600620319 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
 		1B23E14A1190F57700620319 /* XADSARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785ED10AF8607007EA6F6 /* XADSARParser.m */; };
-		1B23E14B1190F57700620319 /* XADSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADSparseHandle.m */; };
+		1B23E14B1190F57700620319 /* XADTarSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADTarSparseHandle.m */; };
 		1B23E14C1190F57900620319 /* XADSplitFileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D3C510FA7A69002A2C76 /* XADSplitFileParser.m */; };
 		1B23E14D1190F57900620319 /* XADStuffIt13Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89A770EDB12F8006B47FE /* XADStuffIt13Handle.m */; };
 		1B23E14E1190F57A00620319 /* XADStuffIt5Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88BF00ED1D95B006B47FE /* XADStuffIt5Parser.m */; };
@@ -616,8 +616,8 @@
 		1B23DA9E1177C99900620319 /* Scanning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scanning.m; sourceTree = "<group>"; };
 		1B23DB8C117BA91D00620319 /* XADNowCompressParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNowCompressParser.h; sourceTree = "<group>"; };
 		1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNowCompressParser.m; sourceTree = "<group>"; };
-		1B23DD3A117FC7B900620319 /* XADSparseHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSparseHandle.h; sourceTree = "<group>"; };
-		1B23DD3B117FC7B900620319 /* XADSparseHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADSparseHandle.m; sourceTree = "<group>"; };
+		1B23DD3A117FC7B900620319 /* XADTarSparseHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADTarSparseHandle.h; sourceTree = "<group>"; };
+		1B23DD3B117FC7B900620319 /* XADTarSparseHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTarSparseHandle.m; sourceTree = "<group>"; };
 		1B23DDC01185EBA300620319 /* unar */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unar; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B23DDC91185EBD600620319 /* unar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = unar.m; sourceTree = "<group>"; };
 		1B23E1B11190F8CC00620319 /* libUniversalDetector.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libUniversalDetector.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1369,8 +1369,8 @@
 			children = (
 				1BC889650ECF9AD5006B47FE /* XADTarParser.h */,
 				1BC889660ECF9AD5006B47FE /* XADTarParser.m */,
-				1B23DD3A117FC7B900620319 /* XADSparseHandle.h */,
-				1B23DD3B117FC7B900620319 /* XADSparseHandle.m */,
+				1B23DD3A117FC7B900620319 /* XADTarSparseHandle.h */,
+				1B23DD3B117FC7B900620319 /* XADTarSparseHandle.m */,
 				1BC889690ECF9AE2006B47FE /* XADCpioParser.h */,
 				1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */,
 				1BCD630C0EF487B500D86C43 /* XADXARParser.h */,
@@ -1825,7 +1825,7 @@
 				1B32D3C610FA7A69002A2C76 /* XADSplitFileParser.h in Headers */,
 				1B23DA9F1177C99900620319 /* Scanning.h in Headers */,
 				1B23DB8E117BA91D00620319 /* XADNowCompressParser.h in Headers */,
-				1B23DD3C117FC7B900620319 /* XADSparseHandle.h in Headers */,
+				1B23DD3C117FC7B900620319 /* XADTarSparseHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2091,7 +2091,7 @@
 				1B23E1481190F57600620319 /* XADRARParser.m in Sources */,
 				1B23E1491190F57600620319 /* XADRPMParser.m in Sources */,
 				1B23E14A1190F57700620319 /* XADSARParser.m in Sources */,
-				1B23E14B1190F57700620319 /* XADSparseHandle.m in Sources */,
+				1B23E14B1190F57700620319 /* XADTarSparseHandle.m in Sources */,
 				1B23E14C1190F57900620319 /* XADSplitFileParser.m in Sources */,
 				1B23E14D1190F57900620319 /* XADStuffIt13Handle.m in Sources */,
 				1B23E14E1190F57A00620319 /* XADStuffIt5Parser.m in Sources */,
@@ -2332,7 +2332,7 @@
 				1B32D3C710FA7A69002A2C76 /* XADSplitFileParser.m in Sources */,
 				1B23DAA01177C99900620319 /* Scanning.m in Sources */,
 				1B23DB8F117BA91D00620319 /* XADNowCompressParser.m in Sources */,
-				1B23DD3D117FC7B900620319 /* XADSparseHandle.m in Sources */,
+				1B23DD3D117FC7B900620319 /* XADTarSparseHandle.m in Sources */,
 				1B23DDA51185DFC100620319 /* XADUnarchiver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

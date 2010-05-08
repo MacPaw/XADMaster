@@ -2,6 +2,7 @@
 #import "Progress.h"
 #import "NSDateXAD.h"
 
+#import <fcntl.h>
 #import <sys/stat.h>
 #import <sys/time.h>
 
@@ -531,8 +532,13 @@ deferDirectories:(BOOL)defer
 	if(modification||access)
 	{
 		struct timeval times[2]={
+			#ifdef __APPLE__
 			{st.st_atimespec.tv_sec,st.st_atimespec.tv_nsec/1000},
 			{st.st_mtimespec.tv_sec,st.st_mtimespec.tv_nsec/1000},
+			#else
+			{st.st_atim.tv_sec,st.st_atim.tv_nsec/1000},
+			{st.st_mtim.tv_sec,st.st_mtim.tv_nsec/1000},
+			#endif
 		};
 
 		if(access) times[0]=[access timevalStruct];

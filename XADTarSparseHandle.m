@@ -219,7 +219,7 @@
 	// Seek if we have to.
 	if( regions[ currentRegion ].hasData && regions[ currentRegion ].dataOffset != [parent offsetInFile] )
 	{
-		fprintf( stderr, "Seeking: %d.\n", regions[ currentRegion ].dataOffset );
+	//	fprintf( stderr, "Seeking: %d.\n", regions[ currentRegion ].dataOffset );
 		[parent seekToFileOffset:regions[ currentRegion ].dataOffset];
 	}
 	

@@ -165,7 +165,11 @@ static double XADGetTime();
 	// Ask for permission and report that we are starting.
 	if(delegate)
 	{
-		if(![delegate unarchiver:self shouldExtractEntryWithDictionary:dict to:path]) return XADBreakError;
+		if(![delegate unarchiver:self shouldExtractEntryWithDictionary:dict to:path])
+		{
+			[pool release];
+			return XADBreakError;
+		}
 		[delegate unarchiver:self willExtractEntryWithDictionary:dict to:path];
 	}
 

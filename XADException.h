@@ -37,15 +37,15 @@ extern NSString *XADExceptionName;
 {
 }
 
-+(void)raiseUnknownException;
-+(void)raiseOutputException;
-+(void)raiseIllegalDataException;
-+(void)raiseNotSupportedException;
-+(void)raiseDecrunchException;
-+(void)raisePasswordException;
-+(void)raiseChecksumException;
-+(void)raiseDataFormatException;
-+(void)raiseExceptionWithXADError:(XADError)errnum;
++(void)raiseUnknownException __attribute__((noreturn));
++(void)raiseOutputException __attribute__((noreturn));
++(void)raiseIllegalDataException __attribute__((noreturn));
++(void)raiseNotSupportedException __attribute__((noreturn));
++(void)raiseDecrunchException __attribute__((noreturn));
++(void)raisePasswordException __attribute__((noreturn));
++(void)raiseChecksumException __attribute__((noreturn));
++(void)raiseDataFormatException __attribute__((noreturn));
++(void)raiseExceptionWithXADError:(XADError)errnum __attribute__((noreturn));
 
 +(XADError)parseException:(id)exception;
 +(NSString *)describeXADError:(XADError)errnum;

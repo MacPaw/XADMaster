@@ -141,6 +141,7 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
 	if(flags&0x40)
 	{
 		uncompressed=YES;
+		[pool release];
 		return;
 	}
 

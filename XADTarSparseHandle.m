@@ -76,14 +76,14 @@
 -(void)addSparseRegionFrom:(off_t)start length:(off_t)length
 {
 	for( int i = 0; i < numRegions; i++ ) {
-		fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
+	//	fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
 	}
 
 	int inRegion = [self regionIndexForOffset:start];
-	fprintf( stderr, "In region %d\n", inRegion );
+	//fprintf( stderr, "In region %d\n", inRegion );
 	if( start + length >= regions[ inRegion ].offset + regions[ inRegion ].size )
 	{
-		fprintf( stderr, "s: %d; l: %d; iro:%d; irs: %d; s1: %d, s2: %d (i: %d)\n", start, length, regions[ inRegion ].offset, regions[ inRegion ].size, start + length, regions[ inRegion ].offset + regions[ inRegion ].size, [self regionIndexForOffset:start] );
+		//fprintf( stderr, "s: %d; l: %d; iro:%d; irs: %d; s1: %d, s2: %d (i: %d)\n", start, length, regions[ inRegion ].offset, regions[ inRegion ].size, start + length, regions[ inRegion ].offset + regions[ inRegion ].size, [self regionIndexForOffset:start] );
 		
 		[NSException raise:NSInvalidArgumentException format:@"Attempted to add sparse region over region boundary."];
 	}
@@ -113,14 +113,14 @@
 
 	numRegions += 2;
 
-	fprintf( stderr, "Adding section worked.\n" );
+	//fprintf( stderr, "Adding section worked.\n" );
 }
 
 // Add a new sparse region as last region of a file.
 -(void)addFinalSparseRegionEndingAt:(off_t)regionEndsAt
 {
 	for( int i = 0; i < numRegions; i++ ) {
-		fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
+// 		fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
 	}
 
 	XADTarSparseRegion inRegion = regions[ [self regionIndexForOffset:([self fileSize] - 1)] ];
@@ -150,10 +150,10 @@
 	numRegions++;
 
 	for( int i = 0; i < numRegions; i++ ) {
-		fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
+// 		fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
 	}
 
-	fprintf( stderr, "Adding final section worked.\n" );
+// 	fprintf( stderr, "Adding final section worked.\n" );
 }
 
 // Set the only region to "empty".
@@ -167,10 +167,10 @@
 	currentRegion = [self regionIndexForOffset:currentOffset];
 
 	for( int i = 0; i < numRegions; i++ ) {
-		fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
+// 		fprintf( stderr, "%d: %d->%d (%s - %d) => %d\n", i, regions[ i ].offset, regions[ i ].size, (regions[ i ].hasData ? "has data" : "no data"), regions[ i ].dataOffset, regions[ i ].nextRegion );
 	}
 
-	fprintf( stderr, "Setting single section worked.\n" );
+// 	fprintf( stderr, "Setting single section worked.\n" );
 }
 
 // Return real file size.
@@ -208,7 +208,7 @@
 // reading because if you do things will break.
 -(int)readAtMost:(int)num toBuffer:(void *)buffer
 {
-	fprintf( stderr, "Readatmost %d\n", num );
+// 	fprintf( stderr, "Readatmost %d\n", num );
 	// Do not read further than allowed.
 	if( currentOffset + num > [self fileSize] )
 	{
@@ -231,7 +231,7 @@
 	off_t dataLeftInRegion = regions[ currentRegion ].size - positionInRegion;
 	while( positionInBuffer + dataLeftInRegion < num && currentOffset < stopAtSize )
 	{
-		fprintf( stderr, "Reading: %d really %d.\n", positionInBuffer, currentOffset );
+// 		fprintf( stderr, "Reading: %d really %d.\n", positionInBuffer, currentOffset );
 		if( regions[ currentOffset ].hasData )
 		{
 			[parent readAtMost:dataLeftInRegion toBuffer:buffer];
@@ -264,7 +264,7 @@
 		}
 	}
 	
-	fprintf( stderr, "Readatmost okay, read %d.\n", positionInBuffer );
+// 	fprintf( stderr, "Readatmost okay, read %d.\n", positionInBuffer );
 
 	return( positionInBuffer );
 }

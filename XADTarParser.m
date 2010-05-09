@@ -70,7 +70,7 @@
 	NSString *readString = [[NSString alloc] initWithUTF8String:buffer];
 	NSScanner* scanner = [NSScanner scannerWithString:readString];
 	[readString release];
-	int64_t returnValue;
+	long long returnValue;
 	if([scanner scanLongLong:&returnValue] == YES) {
 		return( returnValue );
 	}
@@ -82,7 +82,7 @@
 	NSString *readString = [[NSString alloc] initWithData:[buffer subdataWithRange:range] encoding:NSASCIIStringEncoding];
 	NSScanner* scanner = [NSScanner scannerWithString:readString];
 	[readString release];
-	int64_t returnValue;
+	long long returnValue;
 	if([scanner scanLongLong:&returnValue] == YES) {
 		return( returnValue );
 	}
@@ -145,7 +145,7 @@
 		off_t regionOffset = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(24*i,12) buffer:header];
 		off_t regionLength = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(24*i+12,12) buffer:header];
 
-		printf( "Parse da sparse: %d -> %d\n", regionOffset, regionLength );
+		// printf( "Parse sparse header: %d -> %d\n", regionOffset, regionLength );
 
 		// Are we done yet?
 		if( regionLength == 0 && regionOffset == 0 ) {
@@ -439,30 +439,31 @@
 	}
 
 	// Sparse header?
-	printf( "Test for typeflag, is: %c\n", typeFlag );
 	if( typeFlag == 'S' ) {
-		// Get and store real size.
-		off_t size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(483,12) buffer:header];
-		[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
-		[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADDataLengthKey];
-
-		// Set up sparse map storage.
-		[dict setObject:[NSNumber numberWithBool:YES] forKey:@"TARIsSparseFile"];
-		[dict setObject:[[NSMutableArray alloc] init] forKey:@"TARSparseRegionOffsets"];
-		[dict setObject:[[NSMutableArray alloc] init] forKey:@"TARSparseRegionLengths"];
+		// For now, pass out a "Not supported".
 		
-		NSData* sparseMap = [header subdataWithRange:NSMakeRange(386,96)];
-		[self parseSparseHeadersFromData:sparseMap numHeaders:4 toDict:dict];
-
-		// Handle extended sparse headers.
-		char hasExtended;
-		[header getBytes:&hasExtended range:NSMakeRange(482,1)];
-		printf( "Hasx: %d\n", hasExtended );
-		while( hasExtended == 1 ) {
-			NSData *sparseMap = [handle readDataOfLength:512];
-			[self parseSparseHeadersFromData:sparseMap numHeaders:21 toDict:dict];
-			[sparseMap getBytes:&hasExtended range:NSMakeRange(504,1)];
-		}
+// 		// Get and store real size.
+// 		off_t size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(483,12) buffer:header];
+// 		[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
+// 		[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADDataLengthKey];
+// 
+// 		// Set up sparse map storage.
+		[dict setObject:[NSNumber numberWithBool:YES] forKey:@"TARIsSparseFile"];
+// 		[dict setObject:[[NSMutableArray alloc] init] forKey:@"TARSparseRegionOffsets"];
+// 		[dict setObject:[[NSMutableArray alloc] init] forKey:@"TARSparseRegionLengths"];
+// 		
+// 		NSData* sparseMap = [header subdataWithRange:NSMakeRange(386,96)];
+// 		[self parseSparseHeadersFromData:sparseMap numHeaders:4 toDict:dict];
+// 
+// 		// Handle extended sparse headers.
+// 		char hasExtended;
+// 		[header getBytes:&hasExtended range:NSMakeRange(482,1)];
+// 		printf( "Hasx: %d\n", hasExtended );
+// 		while( hasExtended == 1 ) {
+// 			NSData *sparseMap = [handle readDataOfLength:512];
+// 			[self parseSparseHeadersFromData:sparseMap numHeaders:21 toDict:dict];
+// 			[sparseMap getBytes:&hasExtended range:NSMakeRange(504,1)];
+// 		}
 	}
 }
 
@@ -515,10 +516,8 @@
 		}
 		else if( tarFormat == TAR_FORMAT_GNU )
 		{
-			printf( "Adding GNUTar handle\n" );
 			[self parseGnuTarHeader:header toDict:dict];
 			[self addTarEntryWithDictionaryAndSeek:dict];
-			printf( "Added\n" );
 		}
 		else
 		{
@@ -542,35 +541,38 @@
 {
 	CSHandle* retHandle = [self handleAtDataOffsetForDictionary:dict];
 	if( [[dict objectForKey:@"TARIsSparseFile"] boolValue] ) {
-		XADTarSparseHandle* sparseHandle = [[XADTarSparseHandle alloc] initWithHandle:retHandle size:[[dict objectForKey:XADDataLengthKey] longValue]];
-		NSArray* offsets = [dict objectForKey:@"TARSparseRegionOffsets"];	
-		NSArray* lengths = [dict objectForKey:@"TARSparseRegionLengths"];
-		int sparseRegionCount = [offsets count];
-		for( int i = 0; i < sparseRegionCount; i++ ) {
-			// GNU tar is pretty special about some things.
-			if( [[lengths objectAtIndex:i] longValue] == 0 )
-			{
-				// The final region is also the first - special case!
-				if( i == 0 )
-				{
-					printf( "Final region add (not really)!\n" );
-					[sparseHandle setSingleEmptySparseRegion];
-				}
-				else
-				{
-					printf( "Final region add!\n" );
-					[sparseHandle addFinalSparseRegionEndingAt:[[offsets objectAtIndex:i] longValue]];
-				}
-			}
-			else
-			{
-				printf( "Normal region add!\n" );
-				[sparseHandle addSparseRegionFrom:[[offsets objectAtIndex:i] longValue] length:[[lengths objectAtIndex:i] longValue]];
-			}
-		}
-		return( sparseHandle );
+		// Just return nil.
+		return( nil );
+	
+// 		XADTarSparseHandle* sparseHandle = [[XADTarSparseHandle alloc] initWithHandle:retHandle size:[[dict objectForKey:XADDataLengthKey] longValue]];
+// 		NSArray* offsets = [dict objectForKey:@"TARSparseRegionOffsets"];	
+// 		NSArray* lengths = [dict objectForKey:@"TARSparseRegionLengths"];
+// 		int sparseRegionCount = [offsets count];
+// 		for( int i = 0; i < sparseRegionCount; i++ ) {
+// 			// GNU tar is pretty special about some things.
+// 			if( [[lengths objectAtIndex:i] longValue] == 0 )
+// 			{
+// 				// The final region is also the first - special case!
+// 				if( i == 0 )
+// 				{
+// 					printf( "Final region add (not really)!\n" );
+// 					[sparseHandle setSingleEmptySparseRegion];
+// 				}
+// 				else
+// 				{
+// 					printf( "Final region add!\n" );
+// 					[sparseHandle addFinalSparseRegionEndingAt:[[offsets objectAtIndex:i] longValue]];
+// 				}
+// 			}
+// 			else
+// 			{
+// 				printf( "Normal region add!\n" );
+// 				[sparseHandle addSparseRegionFrom:[[offsets objectAtIndex:i] longValue] length:[[lengths objectAtIndex:i] longValue]];
+// 			}
+// 		}
+// 		return( sparseHandle );
 	}
-	printf( "Handle return" );
+//	printf( "Handle return" );
 	return( retHandle );
 }
 // This should maybe return USTAR or POSIX Tar or whatever the proper tar type is.

@@ -173,7 +173,8 @@ static double XADGetTime();
 		[delegate unarchiver:self willExtractEntryWithDictionary:dict to:path];
 	}
 
-	XADError error=XADNoError;
+	XADError error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
+	if(error) goto end;
 
 	// Attempt to extract embedded archives if requested.
 	if(isarchive&&delegate)

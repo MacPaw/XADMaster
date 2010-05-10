@@ -177,7 +177,7 @@ static int NextArithmeticBitString(ArithmeticDecoder *decoder,ArithmeticModel *m
 
 			if(numbytes+zerocount>blocksize) [XADException raiseDecrunchException];
 
-			memset(block+numbytes,DecodeMTF(&mtf,0),zerocount);
+			memset(&block[numbytes],DecodeMTF(&mtf,0),zerocount);
 			numbytes+=zerocount;
 		}
 

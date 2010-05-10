@@ -2,6 +2,8 @@
 
 #import <sys/stat.h>
 
+#define VERSION_STRING "v0.1"
+
 NSString *EscapeString(NSString *str)
 {
 	NSMutableString *res=[NSMutableString string];
@@ -128,7 +130,10 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 
 void usage(const char *name)
 {
-	fprintf(stderr,"Usage: %s archive [ archive2 ... ] [ destination_directory ]\n",name);
+	fprintf(stderr,
+	"unar " VERSION_STRING " (" __DATE__ ")\n"
+	"Usage: %s archive [ archive2 ... ] [ destination_directory ]\n",
+	name);
 }
 
 int main(int argc,const char **argv)

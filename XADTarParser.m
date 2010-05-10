@@ -216,6 +216,8 @@
 	if( strncmp( name, "././@LongLink", 13 ) == 0 ) {
 		return( 1 );
 	}
+
+	return( 0 );
 }
 
 -(void)parsePaxTarHeader:(NSData *)header toDict:(NSMutableDictionary *)dict {

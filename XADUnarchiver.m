@@ -445,6 +445,7 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 	{
 		return [XADException parseException:e];
 	}
+	return XADUnknownError; // Kludge to keep gcc quiet
 }
 
 

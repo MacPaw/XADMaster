@@ -2,7 +2,7 @@
 
 #import <sys/stat.h>
 
-#define VERSION_STRING "v0.1"
+#define VERSION_STRING "v0.2"
 
 NSString *EscapeString(NSString *str)
 {

@@ -266,7 +266,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 					if(name)
 					if(![self _changeAllAttributesForEntry:n
 					atPath:[immediatedestination stringByAppendingPathComponent:name]
-					deferDirectories:YES resourceFork:YES]) immediatefailed=YES;
+					deferDirectories:YES resourceFork:YES])
+					immediatefailed=YES;
 				}
 
 				return;
@@ -290,14 +291,16 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 						if(!res&&lasterror==XADDataFormatError)
 						{
 							if(![self extractEntry:n to:immediatedestination
-							deferDirectories:YES resourceFork:NO]) immediatefailed=YES;
+							deferDirectories:YES resourceFork:NO])
+							immediatefailed=YES;
 						}
 						else immediatefailed=YES;
 					}
 					else
 					{
 						if(![self extractEntry:n to:immediatedestination
-						deferDirectories:YES resourceFork:NO]) immediatefailed=YES;
+						deferDirectories:YES resourceFork:NO])
+						immediatefailed=YES;
 					}
 				}
 
@@ -331,17 +334,22 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 			@try { res=[self extractArchiveEntry:n to:immediatedestination]; }
 			@catch(id e) { res=NO; }
 
-			if(!res&&lasterror==XADDataFormatError)
+			if(!res)
 			{
-				if(![self extractEntry:n to:immediatedestination
-				deferDirectories:YES resourceFork:YES]) immediatefailed=YES;
+				if(lasterror==XADDataFormatError)
+				{
+					if(![self extractEntry:n to:immediatedestination
+					deferDirectories:YES resourceFork:YES])
+					immediatefailed=YES;
+				}
+				else immediatefailed=YES;
 			}
-			else immediatefailed=YES;
 		}
 		else
 		{
 			if(![self extractEntry:n to:immediatedestination
-			deferDirectories:YES resourceFork:YES]) immediatefailed=YES;
+			deferDirectories:YES resourceFork:YES])
+			immediatefailed=YES;
 		}
 	}
 }

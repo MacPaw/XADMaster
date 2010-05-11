@@ -68,7 +68,7 @@
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath;
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractLinkEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
--(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath;
+-(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename;
 -(XADError)_extractEntryWithDictionary:(NSDictionary *)dict toFileHandle:(int)fh;
 
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict

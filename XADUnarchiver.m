@@ -183,7 +183,7 @@ static double XADGetTime();
 
 		if([delegate unarchiver:self shouldExtractArchiveEntryWithDictionary:dict to:unarchiverpath])
 		{
-			error=[self _extractArchiveEntryWithDictionary:dict to:unarchiverpath];
+			error=[self _extractArchiveEntryWithDictionary:dict to:unarchiverpath name:[path lastPathComponent]];
 			// If extraction was attempted, and succeeded for failed, skip everything else.
 			// Otherwise, if the archive couldn't be opened, fall through and extract normally.
 			if(error!=XADSubArchiveError) goto end;
@@ -413,14 +413,14 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 	return XADNoError;
 }
 
--(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath
+-(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename
 {
 	@try
 	{
 		CSHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
 		if(!srchandle) return XADNotSupportedError;
 
-		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:srchandle name:@""]; // TODO: provide a name?
+		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:srchandle name:filename]; // TODO: provide a name?
 		if(!subparser) return XADSubArchiveError;
 
 		XADUnarchiver *unarchiver=[XADUnarchiver unarchiverForArchiveParser:subparser];
@@ -538,9 +538,12 @@ deferDirectories:(BOOL)defer
 	if(modification||access)
 	{
 		struct timeval times[2]={
-			#ifdef __APPLE__
+			#if defined(__APPLE__)
 			{st.st_atimespec.tv_sec,st.st_atimespec.tv_nsec/1000},
 			{st.st_mtimespec.tv_sec,st.st_mtimespec.tv_nsec/1000},
+			#elif defined(__MINGW32__)
+			{st.st_atime,0},
+			{st.st_mtime,0},
 			#else
 			{st.st_atim.tv_sec,st.st_atim.tv_nsec/1000},
 			{st.st_mtim.tv_sec,st.st_mtim.tv_nsec/1000},

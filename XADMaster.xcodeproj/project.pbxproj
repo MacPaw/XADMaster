@@ -114,7 +114,7 @@
 		1B23E1441190F57200620319 /* XADQuantumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415E10B85B6600A05E29 /* XADQuantumHandle.m */; };
 		1B23E1451190F57400620319 /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
 		1B23E1461190F57400620319 /* XADRARCrypt20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */; };
-		1B23E1471190F57500620319 /* XADRARHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */; };
+		1B23E1471190F57500620319 /* XADRAROfficialHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */; };
 		1B23E1481190F57600620319 /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
 		1B23E1491190F57600620319 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
 		1B23E14A1190F57700620319 /* XADSARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785ED10AF8607007EA6F6 /* XADSARParser.m */; };
@@ -264,7 +264,7 @@
 		1B23E5A21198BC2000620319 /* XADQuantumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415E10B85B6600A05E29 /* XADQuantumHandle.m */; };
 		1B23E5A31198BC2000620319 /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
 		1B23E5A41198BC2000620319 /* XADRARCrypt20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */; };
-		1B23E5A51198BC2000620319 /* XADRARHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */; };
+		1B23E5A51198BC2000620319 /* XADRAROfficialHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */; };
 		1B23E5A61198BC2000620319 /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
 		1B23E5A71198BC2000620319 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
 		1B23E5A81198BC2000620319 /* XADSARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785ED10AF8607007EA6F6 /* XADSARParser.m */; };
@@ -328,6 +328,10 @@
 		1B23E5E21198BC2000620319 /* CSZlibHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFF0EC3859F006D2F06 /* CSZlibHandle.m */; };
 		1B23E5E31198BC2000620319 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5DA60EED8C9C00D86C43 /* LzmaDec.c */; };
 		1B23E5E41198BC2000620319 /* XADZipShrinkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC884840ECCCE69006B47FE /* XADZipShrinkHandle.m */; };
+		1B23E75E1199CB7C00620319 /* XADRAR20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */; };
+		1B23E75F1199CB8300620319 /* XADRAR20Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23E75C1199CB7C00620319 /* XADRAR20Handle.h */; };
+		1B23E7601199CB9200620319 /* XADRAR20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */; };
+		1B23E77B1199E55B00620319 /* XADRAR20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */; };
 		1B2A408E0F13BDEB009B5B89 /* PPMdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B2A408F0F13BDEB009B5B89 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
 		1B2A41600F13F458009B5B89 /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
@@ -413,6 +417,20 @@
 		1B3FAD680EC5D4E8006D2F06 /* XADMacArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */; };
 		1B3FAD800EC6826E006D2F06 /* NSDateXAD.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAD7E0EC6826E006D2F06 /* NSDateXAD.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAD810EC6826E006D2F06 /* NSDateXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */; };
+		1B4C000011AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
+		1B4C000111AF109300CDACC1 /* LZSS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4CFFFD11AF109300CDACC1 /* LZSS.h */; };
+		1B4C000211AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
+		1B4CFB69119B7F1600CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
+		1B4CFB6C119B7F2500CDACC1 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
+		1B4CFD0E119CD1B900CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
+		1B4CFDAE119EDD0D00CDACC1 /* XADRARVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */; };
+		1B4CFDB6119F570800CDACC1 /* XADRARVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */; };
+		1B4CFDB7119F571100CDACC1 /* XADRARVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */; };
+		1B4CFEB711A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */; };
+		1B4CFEB811A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */; };
+		1B4CFEB911A3334300CDACC1 /* XADFastLZSSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4CFEB511A3334200CDACC1 /* XADFastLZSSHandle.h */; };
+		1B4CFEBA11A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */; };
+		1B4CFFFF11AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
 		1B578C340DDBC8BF005B0F68 /* XADException.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B578C320DDBC8BF005B0F68 /* XADException.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B578C580DDCFFD0005B0F68 /* XADGzipParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B578C560DDCFFD0005B0F68 /* XADGzipParser.h */; };
 		1B578C590DDCFFD0005B0F68 /* XADGzipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */; };
@@ -545,8 +563,8 @@
 		1BC89D490EDCC2F4006B47FE /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */; };
 		1BC89D4A0EDCC2FB006B47FE /* getbits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D160EDCC1F3006B47FE /* getbits.cpp */; };
 		1BC89D4B0EDCC2FF006B47FE /* rarvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */; };
-		1BC89D790EDCC6ED006B47FE /* XADRARHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89D770EDCC6ED006B47FE /* XADRARHandle.h */; };
-		1BC89D7A0EDCC6ED006B47FE /* XADRARHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */; };
+		1BC89D790EDCC6ED006B47FE /* XADRAROfficialHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89D770EDCC6ED006B47FE /* XADRAROfficialHandle.h */; };
+		1BC89D7A0EDCC6ED006B47FE /* XADRAROfficialHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */; };
 		1BC89DEC0EDDBB33006B47FE /* XADRARAESHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */; };
 		1BC89DED0EDDBB33006B47FE /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
 		1BC89F130EE0CD71006B47FE /* XADDeflateHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89F110EE0CD71006B47FE /* XADDeflateHandle.h */; };
@@ -632,14 +650,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1B23E0871190F29400620319 /* libUniversalDetector.a */;
+			remoteGlobalIDString = 1B23E0871190F29400620319;
 			remoteInfo = libUniversalDetector;
 		};
 		1B23E1C01190F9AF00620319 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1B23E0861190F29400620319 /* libUniversalDetector */;
+			remoteGlobalIDString = 1B23E0861190F29400620319;
 			remoteInfo = libUniversalDetector;
 		};
 		1B3A689A101BA12C00AE25A8 /* PBXContainerItemProxy */ = {
@@ -777,6 +795,8 @@
 		1B23DDC91185EBD600620319 /* unar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = unar.m; sourceTree = "<group>"; };
 		1B23E1B11190F8CC00620319 /* libUniversalDetector.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libUniversalDetector.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B23E5EF1198BC2000620319 /* unar */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unar; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B23E75C1199CB7C00620319 /* XADRAR20Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR20Handle.h; sourceTree = "<group>"; };
+		1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR20Handle.m; sourceTree = "<group>"; };
 		1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdContext.h; sourceTree = "<group>"; };
 		1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPMdContext.m; sourceTree = "<group>"; };
 		1B2A42210F15237C009B5B89 /* PPMdSubAllocatorVariantG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdSubAllocatorVariantG.h; sourceTree = "<group>"; };
@@ -809,7 +829,7 @@
 		1B3A650110154DCE00AE25A8 /* CSHexDump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHexDump.m; sourceTree = "<group>"; };
 		1B3A66D51017B7E000AE25A8 /* XADNSISParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSISParser.h; sourceTree = "<group>"; };
 		1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSISParser.m; sourceTree = "<group>"; };
-		1B3A68A2101BA12C00AE25A8 /* XADTest4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest4; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B3A68A2101BA12C00AE25A8 /* XADTest3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest3; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B3A68A9101BA14A00AE25A8 /* XADTest4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest4.m; sourceTree = "<group>"; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
@@ -859,6 +879,16 @@
 		1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADMacArchiveParser.m; sourceTree = "<group>"; };
 		1B3FAD7E0EC6826E006D2F06 /* NSDateXAD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDateXAD.h; sourceTree = "<group>"; };
 		1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDateXAD.m; sourceTree = "<group>"; };
+		1B4CFB67119B7F1600CDACC1 /* XADRAR30Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR30Handle.h; sourceTree = "<group>"; };
+		1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR30Handle.m; sourceTree = "<group>"; };
+		1B4CFB6A119B7F2500CDACC1 /* XADRAR15Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR15Handle.h; sourceTree = "<group>"; };
+		1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR15Handle.m; sourceTree = "<group>"; };
+		1B4CFDAC119EDD0D00CDACC1 /* XADRARVirtualMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRARVirtualMachine.h; sourceTree = "<group>"; };
+		1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRARVirtualMachine.m; sourceTree = "<group>"; };
+		1B4CFEB511A3334200CDACC1 /* XADFastLZSSHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADFastLZSSHandle.h; sourceTree = "<group>"; };
+		1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADFastLZSSHandle.m; sourceTree = "<group>"; };
+		1B4CFFFD11AF109300CDACC1 /* LZSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZSS.h; sourceTree = "<group>"; };
+		1B4CFFFE11AF109300CDACC1 /* LZSS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LZSS.c; sourceTree = "<group>"; };
 		1B578C320DDBC8BF005B0F68 /* XADException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADException.h; sourceTree = "<group>"; };
 		1B578C330DDBC8BF005B0F68 /* XADException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADException.m; sourceTree = "<group>"; };
 		1B578C560DDCFFD0005B0F68 /* XADGzipParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADGzipParser.h; sourceTree = "<group>"; };
@@ -988,29 +1018,29 @@
 		1BC89A770EDB12F8006B47FE /* XADStuffIt13Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffIt13Handle.m; sourceTree = "<group>"; };
 		1BC89C9D0EDCAA51006B47FE /* Checksums.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Checksums.m; sourceTree = "<group>"; };
 		1BC89C9E0EDCAA51006B47FE /* Checksums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Checksums.h; sourceTree = "<group>"; };
-		1BC89D070EDCC1F3006B47FE /* unpack20.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unpack20.cpp; path = unrar/unpack20.cpp; sourceTree = "<group>"; };
-		1BC89D080EDCC1F3006B47FE /* getbits.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = getbits.hpp; path = unrar/getbits.hpp; sourceTree = "<group>"; };
-		1BC89D0B0EDCC1F3006B47FE /* int64.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = int64.hpp; path = unrar/int64.hpp; sourceTree = "<group>"; };
-		1BC89D0C0EDCC1F3006B47FE /* coder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = coder.cpp; path = unrar/coder.cpp; sourceTree = "<group>"; };
-		1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rarvm.cpp; path = unrar/rarvm.cpp; sourceTree = "<group>"; };
-		1BC89D0E0EDCC1F3006B47FE /* rardefs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = rardefs.hpp; path = unrar/rardefs.hpp; sourceTree = "<group>"; };
-		1BC89D0F0EDCC1F3006B47FE /* rar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = rar.hpp; path = unrar/rar.hpp; sourceTree = "<group>"; };
-		1BC89D100EDCC1F3006B47FE /* suballoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = suballoc.cpp; path = unrar/suballoc.cpp; sourceTree = "<group>"; };
-		1BC89D110EDCC1F3006B47FE /* suballoc.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = suballoc.hpp; path = unrar/suballoc.hpp; sourceTree = "<group>"; };
-		1BC89D120EDCC1F3006B47FE /* compress.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = compress.hpp; path = unrar/compress.hpp; sourceTree = "<group>"; };
-		1BC89D130EDCC1F3006B47FE /* model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = model.cpp; path = unrar/model.cpp; sourceTree = "<group>"; };
-		1BC89D140EDCC1F3006B47FE /* model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = model.hpp; path = unrar/model.hpp; sourceTree = "<group>"; };
-		1BC89D160EDCC1F3006B47FE /* getbits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = getbits.cpp; path = unrar/getbits.cpp; sourceTree = "<group>"; };
-		1BC89D170EDCC1F3006B47FE /* coder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = coder.hpp; path = unrar/coder.hpp; sourceTree = "<group>"; };
-		1BC89D180EDCC1F3006B47FE /* rartypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = rartypes.hpp; path = unrar/rartypes.hpp; sourceTree = "<group>"; };
-		1BC89D190EDCC1F3006B47FE /* array.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = array.hpp; path = unrar/array.hpp; sourceTree = "<group>"; };
-		1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unpack.cpp; path = unrar/unpack.cpp; sourceTree = "<group>"; };
-		1BC89D1B0EDCC1F3006B47FE /* rarvm.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = rarvm.hpp; path = unrar/rarvm.hpp; sourceTree = "<group>"; };
-		1BC89D1C0EDCC1F3006B47FE /* rarvmtbl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rarvmtbl.cpp; path = unrar/rarvmtbl.cpp; sourceTree = "<group>"; };
-		1BC89D1D0EDCC1F3006B47FE /* unpack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = unpack.hpp; path = unrar/unpack.hpp; sourceTree = "<group>"; };
-		1BC89D1E0EDCC1F3006B47FE /* unpack15.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unpack15.cpp; path = unrar/unpack15.cpp; sourceTree = "<group>"; };
-		1BC89D770EDCC6ED006B47FE /* XADRARHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRARHandle.h; sourceTree = "<group>"; };
-		1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRARHandle.m; sourceTree = "<group>"; };
+		1BC89D070EDCC1F3006B47FE /* unpack20.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack20.cpp; sourceTree = "<group>"; };
+		1BC89D080EDCC1F3006B47FE /* getbits.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = getbits.hpp; sourceTree = "<group>"; };
+		1BC89D0B0EDCC1F3006B47FE /* int64.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = int64.hpp; sourceTree = "<group>"; };
+		1BC89D0C0EDCC1F3006B47FE /* coder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = coder.cpp; sourceTree = "<group>"; };
+		1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rarvm.cpp; sourceTree = "<group>"; };
+		1BC89D0E0EDCC1F3006B47FE /* rardefs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rardefs.hpp; sourceTree = "<group>"; };
+		1BC89D0F0EDCC1F3006B47FE /* rar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rar.hpp; sourceTree = "<group>"; };
+		1BC89D100EDCC1F3006B47FE /* suballoc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = suballoc.cpp; sourceTree = "<group>"; };
+		1BC89D110EDCC1F3006B47FE /* suballoc.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = suballoc.hpp; sourceTree = "<group>"; };
+		1BC89D120EDCC1F3006B47FE /* compress.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = compress.hpp; sourceTree = "<group>"; };
+		1BC89D130EDCC1F3006B47FE /* model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = model.cpp; sourceTree = "<group>"; };
+		1BC89D140EDCC1F3006B47FE /* model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = model.hpp; sourceTree = "<group>"; };
+		1BC89D160EDCC1F3006B47FE /* getbits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = getbits.cpp; sourceTree = "<group>"; };
+		1BC89D170EDCC1F3006B47FE /* coder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = coder.hpp; sourceTree = "<group>"; };
+		1BC89D180EDCC1F3006B47FE /* rartypes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rartypes.hpp; sourceTree = "<group>"; };
+		1BC89D190EDCC1F3006B47FE /* array.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = array.hpp; sourceTree = "<group>"; };
+		1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack.cpp; sourceTree = "<group>"; };
+		1BC89D1B0EDCC1F3006B47FE /* rarvm.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rarvm.hpp; sourceTree = "<group>"; };
+		1BC89D1C0EDCC1F3006B47FE /* rarvmtbl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rarvmtbl.cpp; sourceTree = "<group>"; };
+		1BC89D1D0EDCC1F3006B47FE /* unpack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unpack.hpp; sourceTree = "<group>"; };
+		1BC89D1E0EDCC1F3006B47FE /* unpack15.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack15.cpp; sourceTree = "<group>"; };
+		1BC89D770EDCC6ED006B47FE /* XADRAROfficialHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XADRAROfficialHandle.h; path = ../BadLicense/XADRAROfficialHandle.h; sourceTree = SOURCE_ROOT; };
+		1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = XADRAROfficialHandle.m; path = ../BadLicense/XADRAROfficialHandle.m; sourceTree = SOURCE_ROOT; };
 		1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRARAESHandle.h; sourceTree = "<group>"; };
 		1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRARAESHandle.m; sourceTree = "<group>"; };
 		1BC89F110EE0CD71006B47FE /* XADDeflateHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDeflateHandle.h; sourceTree = "<group>"; };
@@ -1027,8 +1057,8 @@
 		1BC9A70B0F007AA20094C7B5 /* CarrylessRangeCoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarrylessRangeCoder.m; sourceTree = "<group>"; };
 		1BC9A70E0F007AAF0094C7B5 /* BWT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWT.h; sourceTree = "<group>"; };
 		1BC9A70F0F007AAF0094C7B5 /* BWT.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BWT.c; sourceTree = "<group>"; };
-		1BCD5C330EEC605400D86C43 /* RARUnpacker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARUnpacker.h; sourceTree = "<group>"; };
-		1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RARUnpacker.cpp; sourceTree = "<group>"; };
+		1BCD5C330EEC605400D86C43 /* RARUnpacker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RARUnpacker.h; path = ../BadLicense/RARUnpacker.h; sourceTree = SOURCE_ROOT; };
+		1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RARUnpacker.cpp; path = ../BadLicense/RARUnpacker.cpp; sourceTree = SOURCE_ROOT; };
 		1BCD5DA10EED8C9500D86C43 /* XADLZMAHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZMAHandle.m; sourceTree = "<group>"; };
 		1BCD5DA20EED8C9500D86C43 /* XADLZMAHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZMAHandle.h; sourceTree = "<group>"; };
 		1BCD5DA60EED8C9C00D86C43 /* LzmaDec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LzmaDec.c; sourceTree = "<group>"; };
@@ -1145,7 +1175,7 @@
 				1B5A7BA30A24F9B400B189EB /* XADTest */,
 				1BBAB68B0EC274A3007FE6A2 /* XADTest2 */,
 				1BC8931A0ED6F283006B47FE /* XADTest3 */,
-				1B3A68A2101BA12C00AE25A8 /* XADTest4 */,
+				1B3A68A2101BA12C00AE25A8 /* XADTest3 */,
 				1B23DDC01185EBA300620319 /* unar */,
 				1B23E5EF1198BC2000620319 /* unar */,
 			);
@@ -1416,6 +1446,18 @@
 			name = LZH;
 			sourceTree = "<group>";
 		};
+		1B4C019A11B095DB00CDACC1 /* Official */ = {
+			isa = PBXGroup;
+			children = (
+				1BC89D770EDCC6ED006B47FE /* XADRAROfficialHandle.h */,
+				1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */,
+				1BCD5C330EEC605400D86C43 /* RARUnpacker.h */,
+				1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */,
+				1BC89D020EDCC1D4006B47FE /* unrar */,
+			);
+			name = Official;
+			sourceTree = "<group>";
+		};
 		1B5A7BA50A24F9E300B189EB /* XADTest */ = {
 			isa = PBXGroup;
 			children = (
@@ -1601,17 +1643,21 @@
 			children = (
 				1B06D5A60DDA667A00D9C000 /* XADRARParser.h */,
 				1B06D5A70DDA667A00D9C000 /* XADRARParser.m */,
-				1BC89D770EDCC6ED006B47FE /* XADRARHandle.h */,
-				1BC89D780EDCC6ED006B47FE /* XADRARHandle.m */,
+				1B4CFB6A119B7F2500CDACC1 /* XADRAR15Handle.h */,
+				1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */,
+				1B23E75C1199CB7C00620319 /* XADRAR20Handle.h */,
+				1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */,
+				1B4CFB67119B7F1600CDACC1 /* XADRAR30Handle.h */,
+				1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */,
+				1B4CFDAC119EDD0D00CDACC1 /* XADRARVirtualMachine.h */,
+				1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */,
 				1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */,
 				1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */,
 				1BA2650C0FC061E200279E95 /* XADRARCrypt20Handle.h */,
 				1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */,
-				1BCD5C330EEC605400D86C43 /* RARUnpacker.h */,
-				1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */,
 				1BCD65500EF8164900D86C43 /* RARBug.h */,
 				1BCD65510EF8164900D86C43 /* RARBug.c */,
-				1BC89D020EDCC1D4006B47FE /* unrar */,
+				1B4C019A11B095DB00CDACC1 /* Official */,
 			);
 			name = RAR;
 			sourceTree = "<group>";
@@ -1721,10 +1767,14 @@
 				1BC88A260ED06D76006B47FE /* XADPrefixCode.m */,
 				1BC89A760EDB12F8006B47FE /* XADLZSSHandle.h */,
 				1BC89A740EDB12F8006B47FE /* XADLZSSHandle.m */,
+				1B4CFEB511A3334200CDACC1 /* XADFastLZSSHandle.h */,
+				1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */,
 				1BC9A70A0F007AA20094C7B5 /* CarrylessRangeCoder.h */,
 				1BC9A70B0F007AA20094C7B5 /* CarrylessRangeCoder.m */,
 				1BC9A70E0F007AAF0094C7B5 /* BWT.h */,
 				1BC9A70F0F007AAF0094C7B5 /* BWT.c */,
+				1B4CFFFD11AF109300CDACC1 /* LZSS.h */,
+				1B4CFFFE11AF109300CDACC1 /* LZSS.c */,
 				1BC88D430ED31A31006B47FE /* LZW.h */,
 				1BC88D440ED31A31006B47FE /* LZW.c */,
 			);
@@ -1757,7 +1807,8 @@
 				1BC89D070EDCC1F3006B47FE /* unpack20.cpp */,
 			);
 			name = unrar;
-			sourceTree = "<group>";
+			path = ../BadLicense/unrar;
+			sourceTree = SOURCE_ROOT;
 		};
 		1BC89D7B0EDCC722006B47FE /* LibXAD */ = {
 			isa = PBXGroup;
@@ -1901,7 +1952,7 @@
 				1BC89A790EDB12F8006B47FE /* XADStuffIt13Handle.h in Headers */,
 				1BC89A7A0EDB12F8006B47FE /* XADLZSSHandle.h in Headers */,
 				1BC89CA00EDCAA51006B47FE /* Checksums.h in Headers */,
-				1BC89D790EDCC6ED006B47FE /* XADRARHandle.h in Headers */,
+				1BC89D790EDCC6ED006B47FE /* XADRAROfficialHandle.h in Headers */,
 				1BC89DEC0EDDBB33006B47FE /* XADRARAESHandle.h in Headers */,
 				1BC89F130EE0CD71006B47FE /* XADDeflateHandle.h in Headers */,
 				1BC8A07D0EE4C4DA006B47FE /* XADALZipParser.h in Headers */,
@@ -1990,6 +2041,9 @@
 				1B23DA9F1177C99900620319 /* Scanning.h in Headers */,
 				1B23DB8E117BA91D00620319 /* XADNowCompressParser.h in Headers */,
 				1B23DD3C117FC7B900620319 /* XADTarSparseHandle.h in Headers */,
+				1B23E75F1199CB8300620319 /* XADRAR20Handle.h in Headers */,
+				1B4CFEB911A3334300CDACC1 /* XADFastLZSSHandle.h in Headers */,
+				1B4C000111AF109300CDACC1 /* LZSS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2044,7 +2098,7 @@
 			);
 			name = XADTest4;
 			productName = XADTest3;
-			productReference = 1B3A68A2101BA12C00AE25A8 /* XADTest4 */;
+			productReference = 1B3A68A2101BA12C00AE25A8 /* XADTest3 */;
 			productType = "com.apple.product-type.tool";
 		};
 		1B5A7BA20A24F9B400B189EB /* XADTest */ = {
@@ -2269,7 +2323,7 @@
 				1B23E1441190F57200620319 /* XADQuantumHandle.m in Sources */,
 				1B23E1451190F57400620319 /* XADRARAESHandle.m in Sources */,
 				1B23E1461190F57400620319 /* XADRARCrypt20Handle.m in Sources */,
-				1B23E1471190F57500620319 /* XADRARHandle.m in Sources */,
+				1B23E1471190F57500620319 /* XADRAROfficialHandle.m in Sources */,
 				1B23E1481190F57600620319 /* XADRARParser.m in Sources */,
 				1B23E1491190F57600620319 /* XADRPMParser.m in Sources */,
 				1B23E14A1190F57700620319 /* XADSARParser.m in Sources */,
@@ -2333,6 +2387,12 @@
 				1B23E1841190F5B600620319 /* CSZlibHandle.m in Sources */,
 				1B23E1A61190F89600620319 /* LzmaDec.c in Sources */,
 				1B23E1AE1190F8B300620319 /* XADZipShrinkHandle.m in Sources */,
+				1B23E75E1199CB7C00620319 /* XADRAR20Handle.m in Sources */,
+				1B4CFB69119B7F1600CDACC1 /* XADRAR30Handle.m in Sources */,
+				1B4CFB6C119B7F2500CDACC1 /* XADRAR15Handle.m in Sources */,
+				1B4CFDAE119EDD0D00CDACC1 /* XADRARVirtualMachine.m in Sources */,
+				1B4CFEB711A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
+				1B4C000011AF109300CDACC1 /* LZSS.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2420,7 +2480,7 @@
 				1B23E5A21198BC2000620319 /* XADQuantumHandle.m in Sources */,
 				1B23E5A31198BC2000620319 /* XADRARAESHandle.m in Sources */,
 				1B23E5A41198BC2000620319 /* XADRARCrypt20Handle.m in Sources */,
-				1B23E5A51198BC2000620319 /* XADRARHandle.m in Sources */,
+				1B23E5A51198BC2000620319 /* XADRAROfficialHandle.m in Sources */,
 				1B23E5A61198BC2000620319 /* XADRARParser.m in Sources */,
 				1B23E5A71198BC2000620319 /* XADRPMParser.m in Sources */,
 				1B23E5A81198BC2000620319 /* XADSARParser.m in Sources */,
@@ -2484,6 +2544,11 @@
 				1B23E5E21198BC2000620319 /* CSZlibHandle.m in Sources */,
 				1B23E5E31198BC2000620319 /* LzmaDec.c in Sources */,
 				1B23E5E41198BC2000620319 /* XADZipShrinkHandle.m in Sources */,
+				1B23E7601199CB9200620319 /* XADRAR20Handle.m in Sources */,
+				1B4CFD0E119CD1B900CDACC1 /* XADRAR30Handle.m in Sources */,
+				1B4CFDB6119F570800CDACC1 /* XADRARVirtualMachine.m in Sources */,
+				1B4CFEB811A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
+				1B4CFFFF11AF109300CDACC1 /* LZSS.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2575,7 +2640,7 @@
 				1BC89D490EDCC2F4006B47FE /* unpack.cpp in Sources */,
 				1BC89D4A0EDCC2FB006B47FE /* getbits.cpp in Sources */,
 				1BC89D4B0EDCC2FF006B47FE /* rarvm.cpp in Sources */,
-				1BC89D7A0EDCC6ED006B47FE /* XADRARHandle.m in Sources */,
+				1BC89D7A0EDCC6ED006B47FE /* XADRAROfficialHandle.m in Sources */,
 				1BC89DED0EDDBB33006B47FE /* XADRARAESHandle.m in Sources */,
 				1BC89F140EE0CD71006B47FE /* XADDeflateHandle.m in Sources */,
 				1BC8A07C0EE4C4DA006B47FE /* XADALZipParser.m in Sources */,
@@ -2667,6 +2732,10 @@
 				1B23DB8F117BA91D00620319 /* XADNowCompressParser.m in Sources */,
 				1B23DD3D117FC7B900620319 /* XADTarSparseHandle.m in Sources */,
 				1B23DDA51185DFC100620319 /* XADUnarchiver.m in Sources */,
+				1B23E77B1199E55B00620319 /* XADRAR20Handle.m in Sources */,
+				1B4CFDB7119F571100CDACC1 /* XADRARVirtualMachine.m in Sources */,
+				1B4CFEBA11A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
+				1B4C000211AF109300CDACC1 /* LZSS.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3077,7 +3146,6 @@
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../UniversalDetector/build/Release\"";
 				FRAMEWORK_VERSION = A;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -3116,7 +3184,6 @@
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../UniversalDetector/build/Release\"";
 				FRAMEWORK_VERSION = A;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -3153,7 +3220,6 @@
 					/Library/Frameworks,
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"../UniversalDetector/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_VERSION_i386 = 4.0;
 				GCC_VERSION_ppc = 4.0;
@@ -3183,7 +3249,6 @@
 					/Library/Frameworks,
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"../UniversalDetector/build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_VERSION_i386 = 4.0;
 				GCC_VERSION_ppc = 4.0;

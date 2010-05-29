@@ -1,4 +1,5 @@
 #import "XADArchiveParser.h"
+#import "CSInputBuffer.h"
 
 typedef struct RARBlock
 {
@@ -29,15 +30,22 @@ typedef struct RARBlock
 
 -(RARBlock)readBlockHeaderLevel1;
 -(void)skipBlock:(RARBlock)block;
--(CSHandle *)dataHandleFromSkipOffset:(off_t)offs length:(off_t)length
-encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt;
--(NSData *)keyForSalt:(NSData *)salt;
 
 -(void)readCommentBlock:(RARBlock)block;
 -(XADPath *)parseNameData:(NSData *)data flags:(int)flags;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
+-(CSHandle *)handleWithVersion:(int)version skipOffset:(off_t)skipoffset
+inputLength:(off_t)inputlength outputLength:(off_t)outputlength encrypted:(BOOL)encrypted
+salt:(NSData *)salt;
+
+-(CSHandle *)dataHandleFromSkipOffset:(off_t)offs length:(off_t)length
+encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt;
+-(NSData *)keyForSalt:(NSData *)salt;
+
+-(CSInputBuffer *)inputBufferForNextPart:(int *)part parts:(NSArray *)parts;
+
 -(NSString *)formatName;
 
 @end

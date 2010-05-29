@@ -50,25 +50,20 @@ int CSInputNextSymbolUsingCode(CSInputBuffer *buf,XADPrefixCode *code)
 {
 	if(!code->table1) [code _makeTable];
 
-	int bitsleft=CSInputBitsLeftInBuffer(buf);
-
-	int bits;
-	if(bitsleft>=code->tablesize) bits=CSInputPeekBitString(buf,code->tablesize);
-	else bits=CSInputPeekBitString(buf,bitsleft)<<(code->tablesize-bitsleft);
+	int bits=CSInputPeekBitString(buf,code->tablesize);
 
 	int length=code->table1[bits].length;
 	int value=code->table1[bits].value;
 
 	if(length<0) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
-	if(length>bitsleft) _CSInputBufferRaiseEOF(buf);
 
 	if(length<=code->tablesize)
 	{
-		CSInputSkipBits(buf,length);
+		CSInputSkipPeekedBits(buf,length);
 		return value;
 	}
 
-	CSInputSkipBits(buf,code->tablesize);
+	CSInputSkipPeekedBits(buf,code->tablesize);
 
 	int node=value;
 	while(!IsLeafNode(code,node))
@@ -84,25 +79,20 @@ int CSInputNextSymbolUsingCodeLE(CSInputBuffer *buf,XADPrefixCode *code)
 {
 	if(!code->table2) [code _makeTableLE];
 
-	int bitsleft=CSInputBitsLeftInBuffer(buf);
-
-	int bits;
-	if(bitsleft>=code->tablesize) bits=CSInputPeekBitStringLE(buf,code->tablesize);
-	else bits=CSInputPeekBitStringLE(buf,bitsleft);
+	int bits=CSInputPeekBitStringLE(buf,code->tablesize);
 
 	int length=code->table2[bits].length;
 	int value=code->table2[bits].value;
 
 	if(length<0) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code in bitstream"];
-	if(length>bitsleft) _CSInputBufferRaiseEOF(buf);
 
 	if(length<=code->tablesize)
 	{
-		CSInputSkipBits(buf,length);
+		CSInputSkipPeekedBitsLE(buf,length);
 		return value;
 	}
 
-	CSInputSkipBits(buf,code->tablesize);
+	CSInputSkipPeekedBitsLE(buf,code->tablesize);
 
 	int node=value;
 	while(!IsLeafNode(code,node))

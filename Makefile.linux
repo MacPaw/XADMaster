@@ -1,12 +1,18 @@
 # Lets roll our own makefile, with blackjack and hookers [because GNUSteps sucks.
 
+
+
 # Compilers and linkers
+
 OBJCC = gcc
 CC = gcc
 CPP = g++
 LD = g++
 
+
+
 # Options for compilation
+
 GNUSTEP_OPTS =	-DGNUSTEP \
 		-DGNU_RUNTIME=1 \
 		-D_NATIVE_OBJC_EXCEPTIONS \
@@ -16,239 +22,294 @@ GNUSTEP_OPTS =	-DGNUSTEP \
 		-fconstant-string-class=NSConstantString
 
 GCC_OPTS = 	-c \
+		-O2 \
 		-Wno-import \
 		-Wno-multichar \
 		-g \
 		-D_FILE_OFFSET_BITS=64 \
-		-I/usr/include/GNUstep
+		-isystem /usr/include/GNUstep
 
 OBJC_OPTS =	-std=gnu99
 
 C_OPTS =	-std=gnu99
 
-CPP_OPTS =
+CXX_OPTS =
+
+OBJCFLAGS = $(OBJC_OPTS) $(GCC_OPTS) $(GNUSTEP_OPTS)
+CFLAGS = $(C_OPTS) $(GCC_OPTS)
+CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS)
+
 
 
 # Options for linking
-GNUSTEP_LIBS =	-lgnustep-base
 
-BASE_LIBS =	-lcrypto \
-		-lbz2 \
-		-lpthread \
-		-lobjc \
-		-lm
+LIBS =	-lgnustep-base \
+	-lcrypto \
+	-lbz2 \
+	-lpthread \
+	-lobjc \
+	-lm
 
-LD_OPTS =	-fexceptions \
+LDFLAGS =	-fexceptions \
 		-fgnu-runtime
 
+
+
 # Files for compilation
-OBJC_FILES =	CarrylessRangeCoder.o \
-		Checksums.o \
-		CRC.o \
-		CSBlockStreamHandle.o \
-		CSByteStreamHandle.o \
-		CSBzip2Handle.o \
-		CSFileHandle.o \
-		CSHandle.o \
-		CSHexDump.o \
-		CSInputBuffer.o \
-		CSMemoryHandle.o \
-		CSMultiHandle.o \
-		CSStreamHandle.o \
-		CSSubHandle.o \
-		CSZlibHandle.o \
-		NSDateXAD.o \
-		NumberParsing.o \
-		PPMdContext.o \
-		PPMdSubAllocatorBrimstone.o \
-		PPMdSubAllocatorVariantG.o \
-		PPMdSubAllocatorVariantH.o \
-		PPMdSubAllocatorVariantI.o \
-		PPMdVariantG.o \
-		PPMdVariantH.o \
-		PPMdVariantI.o \
-		Progress.o \
-		StuffItXUtilities.o \
-		XAD7ZipBCJ2Handle.o \
-		XAD7ZipBranchHandles.o \
-		XAD7ZipParser.o \
-		XADALZipParser.o \
-		XADArchiveParser.o \
-		XADARJFastestHandle.o \
-		XADARJParser.o \
-		XADBinHexParser.o \
-		XADBlockHandle.o \
-		XADBzip2Parser.o \
-		XADCABBlockHandle.o \
-		XADCABBlockReader.o \
-		XADCABParser.o \
-		XADCFBFParser.o \
-		XADChecksumHandle.o \
-		XADCompactProLZHHandle.o \
-		XADCompactProParser.o \
-		XADCompactProRLEHandle.o \
-		XADCompressHandle.o \
-		XADCompressParser.o \
-		XADCpioParser.o \
-		XADCRCHandle.o \
-		XADCRCSuffixHandle.o \
-		XADDeflateHandle.o \
-		XADDeltaHandle.o \
-		XADDigestHandle.o \
-		XADDiskDoublerADnHandle.o \
-		XADDiskDoublerDDnHandle.o \
-		XADDiskDoublerParser.o \
-		XADException.o \
-		XADGzipParser.o \
-		XADLArcHandles.o \
-		XADLibXADIOHandle.o \
-		XADLZHDynamicHandle.o \
-		XADLZHOldHandles.o \
-		XADLZHParser.o \
-		XADLZHSFXParsers.o \
-		XADLZHStaticHandle.o \
-		XADLZMA2Handle.o \
-		XADLZMAAloneParser.o \
-		XADLZMAHandle.o \
-		XADLZSSHandle.o \
-		XADLZXHandle.o \
-		XADLZXParser.o \
-		XADMacArchiveParser.o \
-		XADMacBinaryParser.o \
-		XADMSLZXHandle.o \
-		XADMSZipHandle.o \
-		XADNDSParser.o \
-		XADNSAParser.o \
-		XADNSISBzip2Handle.o \
-		XADNSISParser.o \
-		XADPackItParser.o \
-		XADPath.o \
-		XADPowerPackerParser.o \
-		XADPPMdHandles.o \
-		XADPPMdParser.o \
-		XADPrefixCode.o \
-		XADQuantumHandle.o \
-		XADRARAESHandle.o \
-		XADRARCrypt20Handle.o \
-		XADRARHandle.o \
-		XADRARParser.o \
-		XADRC4Handle.o \
-		XADRegex.o \
-		XADRPMParser.o \
-		XADSARParser.o \
-		XADSkipHandle.o \
-		XADSplitFileParser.o \
-		XADString.o \
-		XADStuffIt13Handle.o \
-		XADStuffIt5Parser.o \
-		XADStuffItArsenicHandle.o \
-		XADStuffItHuffmanHandle.o \
-		XADStuffItOldHandles.o \
-		XADStuffItParser.o \
-		XADStuffItRLEHandle.o \
-		XADStuffItXBlendHandle.o \
-		XADStuffItXBlockHandle.o \
-		XADStuffItXCyanideHandle.o \
-		XADStuffItXDarkhorseHandle.o \
-		XADStuffItXEnglishHandle.o \
-		XADStuffItXIronHandle.o \
-		XADStuffItXParser.o \
-		XADTarParser.o \
-		XADWinZipAESHandle.o \
-		XADXARParser.o \
-		XADXORHandle.o \
-		XADXZHandle.o \
-		XADXZParser.o \
-		XADZipCryptHandle.o \
-		XADZipImplodeHandle.o \
-		XADZipParser.o \
-		XADZipSFXParsers.o \
-		XADZipShrinkHandle.o \
-		XADNowCompressParser.o\
-		XADTarSparseHandle.o \
-		XADLibXADParser.o \
-		../UniversalDetector/UniversalDetector.o \
-		XADUnarchiver.o \
 
-C_FILES =	BWT.o \
-		lzma/LzmaDec.o \
-		lzma/BraIA64.o \
-		lzma/Bra86.o \
-		lzma/Bra.o \
-		lzma/Lzma2Dec.o \
-		RARBug.o \
-		../UniversalDetector/universalchardet/kludge.o \
-		LZW.o \
-		libxad/all.o \
-		libxad/clients.o \
-		libxad/unix/emulation.o \
-		libxad/unix/init.o
+OBJC_FILES =	CarrylessRangeCoder.m \
+		Checksums.m \
+		CRC.m \
+		CSBlockStreamHandle.m \
+		CSByteStreamHandle.m \
+		CSBzip2Handle.m \
+		CSFileHandle.m \
+		CSHandle.m \
+		CSHexDump.m \
+		CSInputBuffer.m \
+		CSMemoryHandle.m \
+		CSMultiHandle.m \
+		CSStreamHandle.m \
+		CSSubHandle.m \
+		CSZlibHandle.m \
+		NSDateXAD.m \
+		NumberParsing.m \
+		PPMdContext.m \
+		PPMdSubAllocatorBrimstone.m \
+		PPMdSubAllocatorVariantG.m \
+		PPMdSubAllocatorVariantH.m \
+		PPMdSubAllocatorVariantI.m \
+		PPMdVariantG.m \
+		PPMdVariantH.m \
+		PPMdVariantI.m \
+		Progress.m \
+		StuffItXUtilities.m \
+		XAD7ZipBCJ2Handle.m \
+		XAD7ZipBranchHandles.m \
+		XAD7ZipParser.m \
+		XADALZipParser.m \
+		XADArchiveParser.m \
+		XADARJFastestHandle.m \
+		XADARJParser.m \
+		XADBinHexParser.m \
+		XADBlockHandle.m \
+		XADBzip2Parser.m \
+		XADCABBlockHandle.m \
+		XADCABBlockReader.m \
+		XADCABParser.m \
+		XADCFBFParser.m \
+		XADChecksumHandle.m \
+		XADCompactProLZHHandle.m \
+		XADCompactProParser.m \
+		XADCompactProRLEHandle.m \
+		XADCompressHandle.m \
+		XADCompressParser.m \
+		XADCpioParser.m \
+		XADCRCHandle.m \
+		XADCRCSuffixHandle.m \
+		XADDeflateHandle.m \
+		XADDeltaHandle.m \
+		XADDigestHandle.m \
+		XADDiskDoublerADnHandle.m \
+		XADDiskDoublerDDnHandle.m \
+		XADDiskDoublerParser.m \
+		XADException.m \
+		XADFastLZSSHandle.m \
+		XADGzipParser.m \
+		XADLArcHandles.m \
+		XADLibXADIOHandle.m \
+		XADLibXADParser.m \
+		XADLZHDynamicHandle.m \
+		XADLZHOldHandles.m \
+		XADLZHParser.m \
+		XADLZHSFXParsers.m \
+		XADLZHStaticHandle.m \
+		XADLZMA2Handle.m \
+		XADLZMAAloneParser.m \
+		XADLZMAHandle.m \
+		XADLZSSHandle.m \
+		XADLZXHandle.m \
+		XADLZXParser.m \
+		XADMacArchiveParser.m \
+		XADMacBinaryParser.m \
+		XADMSLZXHandle.m \
+		XADMSZipHandle.m \
+		XADNDSParser.m \
+		XADNowCompressParser.m \
+		XADNSAParser.m \
+		XADNSISBzip2Handle.m \
+		XADNSISParser.m \
+		XADPackItParser.m \
+		XADPath.m \
+		XADPowerPackerParser.m \
+		XADPPMdHandles.m \
+		XADPPMdParser.m \
+		XADPrefixCode.m \
+		XADQuantumHandle.m \
+		XADRARAESHandle.m \
+		XADRARCrypt20Handle.m \
+		XADRAR20Handle.m \
+		XADRAR30Handle.m \
+		XADRARHandle.m \
+		XADRARParser.m \
+		XADRARVirtualMachine.m \
+		XADRC4Handle.m \
+		XADRegex.m \
+		XADRPMParser.m \
+		XADSARParser.m \
+		XADSkipHandle.m \
+		XADSplitFileParser.m \
+		XADString.m \
+		XADStuffIt13Handle.m \
+		XADStuffIt5Parser.m \
+		XADStuffItArsenicHandle.m \
+		XADStuffItHuffmanHandle.m \
+		XADStuffItOldHandles.m \
+		XADStuffItParser.m \
+		XADStuffItRLEHandle.m \
+		XADStuffItXBlendHandle.m \
+		XADStuffItXBlockHandle.m \
+		XADStuffItXCyanideHandle.m \
+		XADStuffItXDarkhorseHandle.m \
+		XADStuffItXEnglishHandle.m \
+		XADStuffItXIronHandle.m \
+		XADStuffItXParser.m \
+		XADTarParser.m \
+		XADTarSparseHandle.m \
+		XADUnarchiver.m \
+		XADWinZipAESHandle.m \
+		XADXARParser.m \
+		XADXORHandle.m \
+		XADXZHandle.m \
+		XADXZParser.m \
+		XADZipCryptHandle.m \
+		XADZipImplodeHandle.m \
+		XADZipParser.m \
+		XADZipSFXParsers.m \
+		XADZipShrinkHandle.m \
+		../UniversalDetector/UniversalDetector.m
 
-CPP_FILES =	RARUnpacker.o \
-		unrar/getbits.o \
-		unrar/rarvm.o \
-		unrar/unpack.o \
-		../UniversalDetector/WrappedUniversalDetector.o \
-		../UniversalDetector/universalchardet/CharDistribution.o \
-		../UniversalDetector/universalchardet/JpCntx.o \
-		../UniversalDetector/universalchardet/LangBulgarianModel.o \
-		../UniversalDetector/universalchardet/LangCyrillicModel.o \
-		../UniversalDetector/universalchardet/LangGreekModel.o \
-		../UniversalDetector/universalchardet/LangHebrewModel.o \
-		../UniversalDetector/universalchardet/LangHungarianModel.o \
-		../UniversalDetector/universalchardet/LangThaiModel.o \
-		../UniversalDetector/universalchardet/nsBig5Prober.o \
-		../UniversalDetector/universalchardet/nsCharSetProber.o \
-		../UniversalDetector/universalchardet/nsEscCharsetProber.o \
-		../UniversalDetector/universalchardet/nsEscSM.o \
-		../UniversalDetector/universalchardet/nsEUCJPProber.o \
-		../UniversalDetector/universalchardet/nsEUCKRProber.o \
-		../UniversalDetector/universalchardet/nsEUCTWProber.o \
-		../UniversalDetector/universalchardet/nsGB2312Prober.o \
-		../UniversalDetector/universalchardet/nsHebrewProber.o \
-		../UniversalDetector/universalchardet/nsLatin1Prober.o \
-		../UniversalDetector/universalchardet/nsMBCSGroupProber.o \
-		../UniversalDetector/universalchardet/nsMBCSSM.o \
-		../UniversalDetector/universalchardet/nsSBCharSetProber.o \
-		../UniversalDetector/universalchardet/nsSBCSGroupProber.o \
-		../UniversalDetector/universalchardet/nsSJISProber.o \
-		../UniversalDetector/universalchardet/nsUniversalDetector.o \
-		../UniversalDetector/universalchardet/nsUTF8Prober.o
+C_FILES =	BWT.c \
+		LZW.c \
+		RARBug.c \
+		libxad/all.c \
+		libxad/clients.c \
+		libxad/unix/emulation.c \
+		libxad/unix/init.c \
+		lzma/LzmaDec.c \
+		lzma/BraIA64.c \
+		lzma/Bra86.c \
+		lzma/Bra.c \
+		lzma/Lzma2Dec.c \
+		../UniversalDetector/universalchardet/kludge.c
 
-SOURCE_FILES = $(OBJC_FILES) $(C_FILES) $(CPP_FILES)
+CXX_FILES =	RARUnpacker.cpp \
+		unrar/getbits.cpp \
+		unrar/rarvm.cpp \
+		unrar/unpack.cpp \
+		../UniversalDetector/WrappedUniversalDetector.cpp \
+		../UniversalDetector/universalchardet/CharDistribution.cpp \
+		../UniversalDetector/universalchardet/JpCntx.cpp \
+		../UniversalDetector/universalchardet/LangBulgarianModel.cpp \
+		../UniversalDetector/universalchardet/LangCyrillicModel.cpp \
+		../UniversalDetector/universalchardet/LangGreekModel.cpp \
+		../UniversalDetector/universalchardet/LangHebrewModel.cpp \
+		../UniversalDetector/universalchardet/LangHungarianModel.cpp \
+		../UniversalDetector/universalchardet/LangThaiModel.cpp \
+		../UniversalDetector/universalchardet/nsBig5Prober.cpp \
+		../UniversalDetector/universalchardet/nsCharSetProber.cpp \
+		../UniversalDetector/universalchardet/nsEscCharsetProber.cpp \
+		../UniversalDetector/universalchardet/nsEscSM.cpp \
+		../UniversalDetector/universalchardet/nsEUCJPProber.cpp \
+		../UniversalDetector/universalchardet/nsEUCKRProber.cpp \
+		../UniversalDetector/universalchardet/nsEUCTWProber.cpp \
+		../UniversalDetector/universalchardet/nsGB2312Prober.cpp \
+		../UniversalDetector/universalchardet/nsHebrewProber.cpp \
+		../UniversalDetector/universalchardet/nsLatin1Prober.cpp \
+		../UniversalDetector/universalchardet/nsMBCSGroupProber.cpp \
+		../UniversalDetector/universalchardet/nsMBCSSM.cpp \
+		../UniversalDetector/universalchardet/nsSBCharSetProber.cpp \
+		../UniversalDetector/universalchardet/nsSBCSGroupProber.cpp \
+		../UniversalDetector/universalchardet/nsSJISProber.cpp \
+		../UniversalDetector/universalchardet/nsUniversalDetector.cpp \
+		../UniversalDetector/universalchardet/nsUTF8Prober.cpp
+
+MAIN_FILES =	XADTest2.m \
+		XADTest3.m \
+		XADTest4.m \
+		unar.m
+
+EXECUTABLE_FILES =	XADTest2 \
+			XADTest3 \
+			XADTest4 \
+			unar
+
+SOURCE_FILES = $(OBJC_FILES) $(C_FILES) $(CPP_FILES) $(MAIN_FILES)
+
+OBJC_OBJS=$(OBJC_FILES:.m=.o)
+
+C_OBJS=$(C_FILES:.c=.o)
+
+CXX_OBJS=$(CXX_FILES:.cpp=.o)
+
+MAIN_OBJS=$(MAIN_FILES:.m=.o)
+
+OBJS = $(OBJC_OBJS) $(C_OBJS) $(CXX_OBJS)
+
+
+
+
 
 # Suffix rules
+
 .SUFFIXES: .o .m .c
-.m.o :
-	$(OBJCC) $(OBJC_OPTS) $(GNUSTEP_OPTS) $(GCC_OPTS) $(INCLUDE_DIRS) $< -o $@	
-.c.o :
-	$(CC) $(C_OPTS) $(GCC_OPTS) $< -o $@
-.cpp.o :
-	$(CPP) $(CPP_OPTS) $(GCC_OPTS) $< -o $@
+
+.m.o:
+	$(OBJCC) $(OBJCFLAGS) $< -o $@	
+
+.c.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+
 
 # Compilation rules
+
 all: unar XADTest2 XADTest3 XADTest4
 
-unar: unar.o $(SOURCE_FILES)
-	$(LD) $(LD_OPTS) -o $@ $^ $(GNUSTEP_LIBS) $(BASE_LIBS)
+unar: unar.o $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-XADTest2: XADTest2.o $(SOURCE_FILES)
-	$(LD) $(LD_OPTS) -o $@ $^ $(GNUSTEP_LIBS) $(BASE_LIBS)
+XADTest2: XADTest2.o $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-XADTest3: XADTest3.o $(SOURCE_FILES)
-	$(LD) $(LD_OPTS) -o $@ $^ $(GNUSTEP_LIBS) $(BASE_LIBS)
+XADTest3: XADTest3.o $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-XADTest4: XADTest4.o $(SOURCE_FILES)
-	$(LD) $(LD_OPTS) -o $@ $^ $(GNUSTEP_LIBS) $(BASE_LIBS)
+XADTest4: XADTest4.o $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm -f 	*.o \
+	rm -f 	$(OBJS) \
+		$(MAIN_OBJS) \
+		$(EXECUTABLE_OBJS) \
 		*~ \
-		lzma/*.o \
 		lzma/*~ \
-		unrar/*.o \
 		unrar/*~ \
-		../UniversalDetector/*.o \
 		../UniversalDetector/*~ \
-		../UniversalDetector/universalchardet/*.o \
 		../UniversalDetector/universalchardet/*~
+
+depend: Makefile.depend
+
+Makefile.depend:
+	$(OBJCC) -MM $(OBJCFLAGS) $(OBJC_FILES) $(MAIN_FILES) >Makefile.dependtmp
+	$(CC) -MM $(CFLAGS) $(C_FILES) >>Makefile.dependtmp
+	$(CXX) -MM $(CXXFLAGS) $(CXX_FILES) >>Makefile.dependtmp
+	sed 's/.*: *\([^ ]*\)\.\([^ ]*\)/\1.o: \1.\2/g' <Makefile.dependtmp >Makefile.depend
+	rm Makefile.dependtmp
+
+
+
+include Makefile.depend

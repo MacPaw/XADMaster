@@ -1,5 +1,5 @@
 #import "XADRARParser.h"
-#import "XADRARHandle.h"
+#import "XADRAR20Handle.h"
 #import "XADRARAESHandle.h"
 #import "XADRARCrypt20Handle.h"
 #import "XADCRCHandle.h"
@@ -9,6 +9,8 @@
 #import "XADException.h"
 #import "NSDateXAD.h"
 #import "Scanning.h"
+
+#import "../BadLicense/XADRAROfficialHandle.h"
 
 #define RARFLAG_SKIP_IF_UNKNOWN 0x4000
 #define RARFLAG_LONG_BLOCK    0x8000
@@ -345,11 +347,11 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 			return block;
 		}
 
-		NSDictionary *solidobj;
+		NSMutableArray *parts;
 
 		if(solid)
 		{
-			solidobj=[lastcompressed objectForKey:XADSolidObjectKey];
+			parts=[lastcompressed objectForKey:XADSolidObjectKey];
 			NSNumber *lastoffs=[lastcompressed objectForKey:XADSolidOffsetKey];
 			NSNumber *lastlen=[lastcompressed objectForKey:XADSolidLengthKey];
 			off_t newoffs=[lastoffs longLongValue]+[lastlen longLongValue];
@@ -357,21 +359,19 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 		}
 		else
 		{
-			solidobj=[NSDictionary dictionaryWithObjectsAndKeys:
-				[NSMutableArray array],@"Parts",
-				[NSNumber numberWithInt:version],@"Version",
-			nil];
+			parts=[NSMutableArray array];
 			[dict setObject:[NSNumber numberWithLongLong:0] forKey:XADSolidOffsetKey];
 		}
  
-		[[solidobj objectForKey:@"Parts"] addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+		[parts addObject:[NSDictionary dictionaryWithObjectsAndKeys:
 			[NSNumber numberWithLongLong:skipstart],@"SkipOffset",
 			[NSNumber numberWithLongLong:datasize],@"InputLength",
 			[NSNumber numberWithLongLong:size],@"OutputLength",
+			[NSNumber numberWithInt:version],@"Version",
 			[NSNumber numberWithBool:(flags&LHD_PASSWORD)?YES:NO],@"Encrypted",
 			salt,@"Salt", // ends the list if nil
 		nil]];
-		[dict setObject:solidobj forKey:XADSolidObjectKey];
+		[dict setObject:parts forKey:XADSolidObjectKey];
 		[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADSolidLengthKey];
 
 		lastcompressed=dict;
@@ -519,45 +519,6 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 	[[self handle] seekToFileOffset:block.datastart+block.datasize];
 }
 
--(CSHandle *)dataHandleFromSkipOffset:(off_t)offs length:(off_t)length
-encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
-{
-	CSHandle *fh=[[self skipHandle] nonCopiedSubHandleFrom:offs length:length];
-
-	if(encrypted)
-	{
-		if(version<20)
-		{
-			[XADException raiseNotSupportedException];
-			return nil;
-		}
-		else if(version==20)
-		{
-			return [[[XADRARCrypt20Handle alloc] initWithHandle:fh
-			password:[self encodedPassword]] autorelease];
-		}
-		else
-		{
-			return [[[XADRARAESHandle alloc] initWithHandle:fh key:[self keyForSalt:salt]] autorelease];
-		}
-	}
-	else return fh;
-}
-
--(NSData *)keyForSalt:(NSData *)salt
-{
-	if(!keys) keys=[NSMutableDictionary new];
-
-	NSData *key=[keys objectForKey:salt];
-	if(key) return key;
-
-	key=[XADRARAESHandle keyForPassword:[self password] salt:salt brokenHash:encryptversion<36];
-	[keys setObject:key forKey:salt];
-	return key;
-}
-
-
-
 -(void)readCommentBlock:(RARBlock)block
 {
 	CSHandle *fh=block.fh;
@@ -567,9 +528,8 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	/*int method=*/[fh readUInt8];
 	/*int crc=*/[fh readUInt16LE];
 
-	XADRARHandle *handle=[[[XADRARHandle alloc] initWithRARParser:self version:version
-	skipOffset:[[self skipHandle] offsetInFile] inputLength:block.headersize-13
-	outputLength:commentsize encrypted:NO salt:nil] autorelease];
+	CSHandle *handle=[self handleWithVersion:version skipOffset:[[self skipHandle] offsetInFile]
+	inputLength:block.headersize-13 outputLength:commentsize encrypted:NO salt:nil];
 
 	NSData *comment=[handle readDataOfLength:commentsize];
 	[self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
@@ -670,9 +630,89 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
 {
-	NSArray *parts=[obj objectForKey:@"Parts"];
-	int version=[[obj objectForKey:@"Version"] intValue];
-	return [[[XADRARHandle alloc] initWithRARParser:self version:version parts:parts] autorelease];
+	int version=[[[obj objectAtIndex:0] objectForKey:@"Version"] intValue];
+
+	if(!getenv("XADTestRAR")||strcasecmp(getenv("XADTestRAR"),"old")!=0)
+	switch(version)
+	{
+		case 20:
+		case 26:
+			return [[[XADRAR20Handle alloc] initWithRARParser:self parts:obj] autorelease];
+
+		case 29:
+		case 36:
+//			return [[[XADRAR30Handle alloc] initWithRARParser:self parts:obj] autorelease];
+
+		default:
+			return [[[XADRAROfficialHandle alloc] initWithRARParser:self version:version parts:obj] autorelease];
+	}
+	else return [[[XADRAROfficialHandle alloc] initWithRARParser:self version:version parts:obj] autorelease];
+}
+
+-(CSHandle *)handleWithVersion:(int)version skipOffset:(off_t)skipoffset
+inputLength:(off_t)inputlength outputLength:(off_t)outputlength encrypted:(BOOL)encrypted
+salt:(NSData *)salt
+{
+	return [self handleForSolidStreamWithObject:[NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithLongLong:skipoffset],@"SkipOffset",
+		[NSNumber numberWithLongLong:inputlength],@"InputLength",
+		[NSNumber numberWithLongLong:outputlength],@"OutputLength",
+		[NSNumber numberWithInt:version],@"Version",
+		[NSNumber numberWithBool:encrypted],@"Encrypted",
+		salt,@"Salt", // ends the list if nil
+	nil]] wantChecksum:NO];
+}
+
+-(CSHandle *)dataHandleFromSkipOffset:(off_t)offs length:(off_t)length
+encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
+{
+	CSHandle *fh=[[self skipHandle] nonCopiedSubHandleFrom:offs length:length];
+
+	if(encrypted)
+	{
+		if(version<20)
+		{
+			[XADException raiseNotSupportedException];
+			return nil;
+		}
+		else if(version==20)
+		{
+			return [[[XADRARCrypt20Handle alloc] initWithHandle:fh
+			password:[self encodedPassword]] autorelease];
+		}
+		else
+		{
+			return [[[XADRARAESHandle alloc] initWithHandle:fh key:[self keyForSalt:salt]] autorelease];
+		}
+	}
+	else return fh;
+}
+
+-(NSData *)keyForSalt:(NSData *)salt
+{
+	if(!keys) keys=[NSMutableDictionary new];
+
+	NSData *key=[keys objectForKey:salt];
+	if(key) return key;
+
+	key=[XADRARAESHandle keyForPassword:[self password] salt:salt brokenHash:encryptversion<36];
+	[keys setObject:key forKey:salt];
+	return key;
+}
+
+-(CSInputBuffer *)inputBufferForNextPart:(int *)part parts:(NSArray *)parts
+{
+	if(*part>=[parts count]) [XADException raiseExceptionWithXADError:XADInputError]; // TODO: better error
+	NSDictionary *dict=[parts objectAtIndex:(*part)++];
+
+	CSHandle *handle=[self
+	dataHandleFromSkipOffset:[[dict objectForKey:@"SkipOffset"] longLongValue]
+	length:[[dict objectForKey:@"InputLength"] longLongValue]
+	encrypted:[[dict objectForKey:@"Encrypted"] longLongValue]
+	cryptoVersion:[[dict objectForKey:@"Version"] intValue]
+	salt:[dict objectForKey:@"Salt"]];
+
+	return CSInputBufferAlloc(handle,16384);
 }
 
 -(NSString *)formatName

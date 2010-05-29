@@ -274,7 +274,7 @@ static xadINT32 opendestfile(struct xadArchiveInfoP *ai)
     }
     else
       ret = XADERR_NOMEMORY;
-    if(!ret && ((ai->xaip_OutFileHandle = open(name, O_WRONLY|O_CREAT)) == -1))
+    if(!ret && ((ai->xaip_OutFileHandle = open(name, O_WRONLY|O_CREAT, S_IRWXU)) == -1))
       ret = XADERR_OPENFILE;
   }
 

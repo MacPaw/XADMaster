@@ -38,6 +38,7 @@ extern NSString *XADExceptionName;
 }
 
 +(void)raiseUnknownException;
++(void)raiseInputException;
 +(void)raiseOutputException;
 +(void)raiseIllegalDataException;
 +(void)raiseNotSupportedException;

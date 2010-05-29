@@ -9,6 +9,7 @@ NSString *XADExceptionName=@"XADException";
 @implementation XADException
 
 +(void)raiseUnknownException  { [self raiseExceptionWithXADError:XADUnknownError]; }
++(void)raiseInputException  { [self raiseExceptionWithXADError:XADInputError]; }
 +(void)raiseOutputException  { [self raiseExceptionWithXADError:XADOutputError]; }
 +(void)raiseIllegalDataException  { [self raiseExceptionWithXADError:XADIllegalDataError]; }
 +(void)raiseNotSupportedException  { [self raiseExceptionWithXADError:XADNotSupportedError]; }

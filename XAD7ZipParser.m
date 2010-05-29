@@ -6,7 +6,7 @@
 #import "XADDeflateHandle.h"
 #import "XADPPMdHandles.h"
 #import "XADZipShrinkHandle.h"
-#import "XADRARHandle.h"
+//#import "XADRARHandle.h"
 #import "XADCompressHandle.h"
 #import "XADDeltaHandle.h"
 #import "XADCRCHandle.h"

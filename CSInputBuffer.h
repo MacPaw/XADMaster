@@ -8,92 +8,173 @@ typedef struct CSInputBuffer
 	BOOL eof;
 
 	uint8_t *buffer;
-	int bufsize,bufbytes,currbyte,currbit;
+	unsigned int bufsize,bufbytes,currbyte;
+
+	uint32_t bits;
+	unsigned int numbits;
 } CSInputBuffer;
 
+
+
+// Allocation and management
+
 CSInputBuffer *CSInputBufferAlloc(CSHandle *parent,int size);
-CSInputBuffer *CSInputBufferAllocWithBuffer(uint8_t *buffer,int length,off_t startoffs);
+CSInputBuffer *CSInputBufferAllocWithBuffer(const uint8_t *buffer,int length,off_t startoffs);
 CSInputBuffer *CSInputBufferAllocEmpty();
-void CSInputBufferFree(CSInputBuffer *buf);
+void CSInputBufferFree(CSInputBuffer *self);
 
-void CSInputSetMemoryBuffer(CSInputBuffer *buf,uint8_t *buffer,int length,off_t startoffs);
+void CSInputSetMemoryBuffer(CSInputBuffer *self,uint8_t *buffer,int length,off_t startoffs);
 
-void CSInputRestart(CSInputBuffer *buf);
-void CSInputFlush(CSInputBuffer *buf);
-void CSInputSynchronizeFileOffset(CSInputBuffer *buf);
-void CSInputSeekToFileOffset(CSInputBuffer *buf,off_t offset);
-void CSInputSeekToBufferOffset(CSInputBuffer *buf,off_t offset);
-void CSInputSetStartOffset(CSInputBuffer *buf,off_t offset);
 
-off_t CSInputBufferOffset(CSInputBuffer *buf);
-off_t CSInputFileOffset(CSInputBuffer *buf);
 
-void _CSInputFillBuffer(CSInputBuffer *buf);
+// Buffer and file positioning
 
-void CSInputSkipBits(CSInputBuffer *buf,int bits);
-BOOL CSInputOnByteBoundary(CSInputBuffer *buf);
-void CSInputSkipToByteBoundary(CSInputBuffer *buf);
-void CSInputSkipTo16BitBoundary(CSInputBuffer *buf);
+void CSInputRestart(CSInputBuffer *self);
+void CSInputFlush(CSInputBuffer *self);
 
-int CSInputNextBit(CSInputBuffer *buf);
-int CSInputNextBitLE(CSInputBuffer *buf);
-unsigned int CSInputNextBitString(CSInputBuffer *buf,int bits);
-unsigned int CSInputNextBitStringLE(CSInputBuffer *buf,int bits);
-unsigned int CSInputPeekBitString(CSInputBuffer *buf,int bits);
-unsigned int CSInputPeekBitStringLE(CSInputBuffer *buf,int bits);
+void CSInputSynchronizeFileOffset(CSInputBuffer *self);
+void CSInputSeekToFileOffset(CSInputBuffer *self,off_t offset);
+void CSInputSeekToBufferOffset(CSInputBuffer *self,off_t offset);
+void CSInputSetStartOffset(CSInputBuffer *self,off_t offset);
+off_t CSInputBufferOffset(CSInputBuffer *self);
+off_t CSInputFileOffset(CSInputBuffer *self);
+
+void _CSInputFillBuffer(CSInputBuffer *self);
+
+
+
+
+// Byte reading
 
 #define CSInputBufferLookAhead 4
 
-static inline void _CSInputBufferRaiseEOF(CSInputBuffer *buf)
+static inline void _CSInputBufferRaiseEOF(CSInputBuffer *self)
 {
-	[buf->parent _raiseEOF];
+	[self->parent _raiseEOF];
 }
 
-static inline int _CSInputBytesLeftInBuffer(CSInputBuffer *buf)
+static inline int _CSInputBytesLeftInBuffer(CSInputBuffer *self)
 {
-	return buf->bufbytes-buf->currbyte;
+	return self->bufbytes-self->currbyte;
 }
 
-static inline void _CSInputCheckAndFillBuffer(CSInputBuffer *buf)
+static inline void _CSInputCheckAndFillBuffer(CSInputBuffer *self)
 {
-	if(!buf->eof&&_CSInputBytesLeftInBuffer(buf)<=CSInputBufferLookAhead) _CSInputFillBuffer(buf);
+	if(!self->eof&&_CSInputBytesLeftInBuffer(self)<=CSInputBufferLookAhead) _CSInputFillBuffer(self);
 }
 
-static inline void CSInputSkipBytes(CSInputBuffer *buf,int num) { buf->currbyte+=num; }
-
-static inline int CSInputPeekByte(CSInputBuffer *buf,int offs)
+static inline void CSInputSkipBytes(CSInputBuffer *self,int num)
 {
-	if(offs>=_CSInputBytesLeftInBuffer(buf)) _CSInputBufferRaiseEOF(buf);
-
-	return buf->buffer[buf->currbyte+offs];
+	self->currbyte+=num;
 }
 
-static inline int CSInputNextByte(CSInputBuffer *buf)
+static inline int _CSInputPeekByteWithoutEOF(CSInputBuffer *self,int offs)
 {
-	_CSInputCheckAndFillBuffer(buf);
-	int byte=CSInputPeekByte(buf,0);
-	CSInputSkipBytes(buf,1);
+	return self->buffer[self->currbyte+offs];
+}
+
+static inline int CSInputPeekByte(CSInputBuffer *self,int offs)
+{
+	if(offs>=_CSInputBytesLeftInBuffer(self)) _CSInputBufferRaiseEOF(self);
+	return _CSInputPeekByteWithoutEOF(self,offs);
+}
+
+static inline int CSInputNextByte(CSInputBuffer *self)
+{
+	_CSInputCheckAndFillBuffer(self);
+	int byte=CSInputPeekByte(self,0);
+	CSInputSkipBytes(self,1);
 	return byte;
 }
 
-static inline BOOL CSInputAtEOF(CSInputBuffer *buf)
+static inline BOOL CSInputAtEOF(CSInputBuffer *self)
 {
-	_CSInputCheckAndFillBuffer(buf);
-	return buf->currbyte>=buf->bufbytes;
+	_CSInputCheckAndFillBuffer(self);
+	return _CSInputBytesLeftInBuffer(self)<=0;
 }
 
-static inline int CSInputBitsLeftInBuffer(CSInputBuffer *buf)
+
+
+
+// Bitstream reading
+
+void _CSInputFillBits(CSInputBuffer *self);
+void _CSInputFillBitsLE(CSInputBuffer *self);
+
+unsigned int CSInputNextBit(CSInputBuffer *self);
+unsigned int CSInputNextBitLE(CSInputBuffer *self);
+unsigned int CSInputNextBitString(CSInputBuffer *self,int numbits);
+unsigned int CSInputNextBitStringLE(CSInputBuffer *self,int numbits);
+unsigned int CSInputNextLongBitString(CSInputBuffer *self,int numbits);
+unsigned int CSInputNextLongBitStringLE(CSInputBuffer *self,int numbits);
+
+void CSInputSkipBits(CSInputBuffer *self,int numbits);
+void CSInputSkipBitsLE(CSInputBuffer *self,int numbits);
+BOOL CSInputOnByteBoundary(CSInputBuffer *self);
+void CSInputSkipToByteBoundary(CSInputBuffer *self);
+void CSInputSkipTo16BitBoundary(CSInputBuffer *self);
+
+static inline unsigned int CSInputBitsLeftInBuffer(CSInputBuffer *self)
 {
-	_CSInputCheckAndFillBuffer(buf);
-	return _CSInputBytesLeftInBuffer(buf)*8-buf->currbit;
+	_CSInputCheckAndFillBuffer(self);
+	return _CSInputBytesLeftInBuffer(self)*8+(self->numbits&7);
 }
+
+static inline void _CSInputCheckAndFillBits(CSInputBuffer *self,int numbits)
+{
+	if(numbits>self->numbits) _CSInputFillBits(self);
+}
+
+static inline void _CSInputCheckAndFillBitsLE(CSInputBuffer *self,int numbits)
+{
+	if(numbits>self->numbits) _CSInputFillBitsLE(self);
+}
+
+static inline unsigned int CSInputPeekBitString(CSInputBuffer *self,int numbits)
+{
+	_CSInputCheckAndFillBits(self,numbits);
+	return self->bits>>(32-numbits);
+}
+
+static inline unsigned int CSInputPeekBitStringLE(CSInputBuffer *self,int numbits)
+{
+	_CSInputCheckAndFillBitsLE(self,numbits);
+	return self->bits&((1<<numbits)-1);
+}
+
+static inline void CSInputSkipPeekedBits(CSInputBuffer *self,int numbits)
+{
+	int numbytes=(numbits-(self->numbits&7)+7)>>3;
+	CSInputSkipBytes(self,numbytes);
+
+	if(_CSInputBytesLeftInBuffer(self)<0) _CSInputBufferRaiseEOF(self);
+
+	self->bits<<=numbits;
+	self->numbits-=numbits;
+}
+
+static inline void CSInputSkipPeekedBitsLE(CSInputBuffer *self,int numbits)
+{
+	int numbytes=(numbits-(self->numbits&7)+7)>>3;
+	CSInputSkipBytes(self,numbytes);
+
+	if(_CSInputBytesLeftInBuffer(self)<0) _CSInputBufferRaiseEOF(self);
+
+	self->bits>>=numbits;
+	self->numbits-=numbits;
+}
+
+
+
+
+// Multibyte reading
 
 #define CSInputNextValueImpl(type,name,conv) \
-static inline type name(CSInputBuffer *buf) \
+static inline type name(CSInputBuffer *self) \
 { \
-	_CSInputCheckAndFillBuffer(buf); \
-	type val=conv(buf->buffer+buf->currbyte); \
-	CSInputSkipBytes(buf,sizeof(type)); \
+	_CSInputCheckAndFillBuffer(self); \
+	type val=conv(self->buffer+self->currbyte); \
+	CSInputSkipBytes(self,sizeof(type)); \
 	return val; \
 }
 

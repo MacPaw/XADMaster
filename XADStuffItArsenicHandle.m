@@ -57,7 +57,7 @@ static void InitializeArithmeticDecoder(ArithmeticDecoder *decoder,CSInputBuffer
 {
 	decoder->input=input;
 	decoder->range=One;
-	decoder->code=CSInputNextBitString(input,NumBits);
+	decoder->code=CSInputNextLongBitString(input,NumBits);
 }
 
 static void ReadNextArithmeticCode(ArithmeticDecoder *decoder,int symlow,int symsize,int symtot)

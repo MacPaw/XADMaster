@@ -94,8 +94,8 @@
 
 		[firstfilter executeOnVirtualMachine:vm atPosition:pos];
 
-		uint32_t lastaddress=[firstfilter filteredBlockAddress];
-		uint32_t lastlength=[firstfilter filteredBlockLength];
+		uint32_t lastfilteraddress=[firstfilter filteredBlockAddress];
+		uint32_t lastfilterlength=[firstfilter filteredBlockLength];
 
 		[stack removeObjectAtIndex:0];
 
@@ -108,15 +108,15 @@
 
 			// Check if this filter applies.
 			if([filter startPosition]!=filterstart) break;
-			if([filter length]!=lastlength) break;
+			if([filter length]!=lastfilterlength) break;
 
 			// Move last filtered block into place and run.
-			memmove(&memory[0],&memory[lastaddress],lastlength);
+			memmove(&memory[0],&memory[lastfilteraddress],lastfilterlength);
 
 			[filter executeOnVirtualMachine:vm atPosition:pos];
 
-			lastaddress=[filter filteredBlockAddress];
-			lastlength=[filter filteredBlockLength];
+			lastfilteraddress=[filter filteredBlockAddress];
+			lastfilterlength=[filter filteredBlockLength];
 
 			[stack removeObjectAtIndex:0];
 		}
@@ -131,10 +131,10 @@
 			if(filterstart<end) [XADException raiseIllegalDataException];
 		}
 
-		[self setBlockPointer:&memory[lastaddress]];
+		[self setBlockPointer:&memory[lastfilteraddress]];
 
 		lastend=end;
-		return lastlength;
+		return lastfilterlength;
 	}
 	else
 	{
@@ -148,7 +148,10 @@
 		[self setBlockPointer:LZSSWindowPointerForPosition(&lzss,pos)];
 
 		lastend=actualend;
-		return actualend-start;
+
+		// Check if we immediately hit a new filter, and try again.
+		if(actualend==start && actualend==filterstart) return [self produceBlockAtOffset:pos];
+		else return actualend-start;
 	}
 }
 
@@ -522,16 +525,17 @@
 	usagecount[num]++;
 
 	// Read filter range
-	uint32_t blockstart=CSInputNextRARVMNumber(filterinput);
-	if(flags&0x40) blockstart+=258;
+	uint32_t blockstartwindowoffs=CSInputNextRARVMNumber(filterinput);
+	if(flags&0x40) blockstartwindowoffs+=258;
 
 	uint32_t blocklength;
 	if(flags&0x20) blocklength=oldfilterlength[num]=CSInputNextRARVMNumber(filterinput);
 	else blocklength=oldfilterlength[num];
 
 	// Convert filter range from window position to stream position
-	off_t blockstartpos=(LZSSPosition(&lzss)&~(off_t)LZSSWindowMask(&lzss))+blockstartpos;
-	if(blockstartpos<LZSSPosition(&lzss)) blockstartpos+=LZSSWindowSize(&lzss);
+//	off_t blockstartpos=(LZSSPosition(&lzss)&~(off_t)LZSSWindowMask(&lzss))+blockstartwindowoffs;
+//	if(blockstartpos<LZSSPosition(&lzss)) blockstartpos+=LZSSWindowSize(&lzss);
+	off_t blockstartpos=blockstartwindowoffs+LZSSPosition(&lzss);
 
 	uint32_t registers[8]={
 		[3]=XADRARProgramGlobalAddress,[4]=blocklength,
@@ -588,11 +592,11 @@
 
 	// Create a filter object and add it to the stack.
 	XADRAR30Filter *filter=[XADRAR30Filter filterForProgramInvocation:invocation
-	startPosition:blockstart length:length];
+	startPosition:blockstartpos length:blocklength];
 	[stack addObject:filter];
 
 	// If this is the first filter added to an empty stack, set the filter start marker.
-	if([stack count]==1) filterstart=blockstart;
+	if([stack count]==1) filterstart=blockstartpos;
 
 	CSInputBufferFree(filterinput);
 }

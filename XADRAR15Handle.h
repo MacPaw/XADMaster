@@ -1,4 +1,5 @@
 #import "XADFastLZSSHandle.h"
+#import "XADRARParser.h"
 #import "XADPrefixCode.h"
 
 @interface XADRAR15Handle:XADFastLZSSHandle

@@ -46,7 +46,6 @@ CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS)
 LIBS =	-lgnustep-base \
 	-lcrypto \
 	-lbz2 \
-	-lpthread \
 	-lobjc \
 	-lm
 
@@ -150,7 +149,7 @@ OBJC_FILES =	CarrylessRangeCoder.m \
 		XADRARCrypt20Handle.m \
 		XADRAR20Handle.m \
 		XADRAR30Handle.m \
-		XADRARHandle.m \
+		XADRAR30Filter.m \
 		XADRARParser.m \
 		XADRARVirtualMachine.m \
 		XADRC4Handle.m \
@@ -187,9 +186,11 @@ OBJC_FILES =	CarrylessRangeCoder.m \
 		XADZipParser.m \
 		XADZipSFXParsers.m \
 		XADZipShrinkHandle.m \
+		../BadLicense/XADRARHandle.m \
 		../UniversalDetector/UniversalDetector.m
 
 C_FILES =	BWT.c \
+		LZSS.c \
 		LZW.c \
 		RARBug.c \
 		libxad/all.c \
@@ -203,10 +204,10 @@ C_FILES =	BWT.c \
 		lzma/Lzma2Dec.c \
 		../UniversalDetector/universalchardet/kludge.c
 
-CXX_FILES =	RARUnpacker.cpp \
-		unrar/getbits.cpp \
-		unrar/rarvm.cpp \
-		unrar/unpack.cpp \
+CXX_FILES =	../BadLicense/RARUnpacker.cpp \
+		../BadLicense/unrar/getbits.cpp \
+		../BadLicense/unrar/rarvm.cpp \
+		../BadLicense/unrar/unpack.cpp \
 		../UniversalDetector/WrappedUniversalDetector.cpp \
 		../UniversalDetector/universalchardet/CharDistribution.cpp \
 		../UniversalDetector/universalchardet/JpCntx.cpp \

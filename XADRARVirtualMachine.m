@@ -217,6 +217,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	for(int i=1;i<length;i++) xor^=bytes[i];
 	if(xor!=bytes[0]) [XADException raiseIllegalDataException];
 
+	// Calculate CRC for fast native path replacements.
 	crc=XADCalculateCRC(0xffffffff,bytes,length,XADCRCTable_edb88320)^0xffffffff;
 
 	CSInputBuffer *input=CSInputBufferAllocWithBuffer(&bytes[1],length-1,0);
@@ -351,14 +352,14 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 -(NSData *)globalData { return globaldata; }
 
--(uint32_t)register:(int)n
+-(uint32_t)initialRegisterState:(int)n
 {
 	if(n<0||n>=8) [NSException raise:NSRangeException format:@"Attempted to set non-existent register"];
 
 	return initialregisters[n];
 }
 
--(void)setRegister:(int)n toValue:(uint32_t)val
+-(void)setInitialRegisterState:(int)n toValue:(uint32_t)val
 {
 	if(n<0||n>=8) [NSException raise:NSRangeException format:@"Attempted to set non-existent register"];
 

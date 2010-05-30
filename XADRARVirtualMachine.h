@@ -8,7 +8,8 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 
 #define XADRARProgramMemorySize 0x40000
 #define XADRARProgramMemoryMask (XADRARProgramMemorySize-1)
-#define XADRARProgramGlobalAddress 0x3c000
+#define XADRARProgramWorkSize 0x3c000
+#define XADRARProgramGlobalAddress XADRARProgramWorkSize
 #define XADRARProgramGlobalSize 0x2000
 #define XADRARProgramSystemGlobalSize 64
 #define XADRARProgramUserGlobalSize (XADRARProgramGlobalSize-XADRARProgramSystemGlobalSize)
@@ -81,8 +82,8 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 -(XADRARProgramCode *)programCode;
 -(NSData *)globalData;
 
--(uint32_t)register:(int)n;
--(void)setRegister:(int)n toValue:(uint32_t)val;
+-(uint32_t)initialRegisterState:(int)n;
+-(void)setInitialRegisterState:(int)n toValue:(uint32_t)val;
 -(void)setGlobalValueAtOffset:(int)offs toValue:(uint32_t)val;
 
 -(void)backupGlobalData;
@@ -100,7 +101,7 @@ static inline uint32_t XADRARVirtualMachineRead32(XADRARVirtualMachine *self,uin
 	return CSUInt32LE(&self->memory[address&XADRARProgramMemoryMask]);
 }
 
-static inline uint32_t XADRARVirtualMachineWrite32(XADRARVirtualMachine *self,uint32_t address,uint32_t val)
+static inline void XADRARVirtualMachineWrite32(XADRARVirtualMachine *self,uint32_t address,uint32_t val)
 {
 	CSSetUInt32LE(&self->memory[address&XADRARProgramMemoryMask],val);
 }

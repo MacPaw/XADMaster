@@ -32,8 +32,6 @@ static int iabs(int x) { return x<0?-x:x; }
 
 -(void)resetLZSSHandle
 {
-	[super resetLZSSHandle];
-
 	part=0;
 	endpos=0;
 
@@ -53,10 +51,11 @@ static int iabs(int x) { return x<0?-x:x; }
 
 -(void)startNextPart
 {
-	off_t outputsize=[[[parts objectAtIndex:part] objectForKey:@"OutputLength"] longLongValue];
-	endpos+=outputsize;
+	off_t partlength;
+	CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:&partlength];
 
-	[self setInputBuffer:[parser inputBufferForNextPart:&part parts:parts]];
+	[self setInputBuffer:buf];
+	endpos+=partlength;
 }
 
 static inline int DecodeAudio(XADRAR20AudioState *state,int *channeldelta,int delta)

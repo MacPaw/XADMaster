@@ -1,17 +1,24 @@
 #import "XADRAR30Handle.h"
+#import "XADRAR30Filter.h"
 #import "XADException.h"
 
 @implementation XADRAR30Handle
 
--(id)initWithRARParser:(XADRARParser *)parent version:(int)version parts:(NSArray *)partarray
+-(id)initWithRARParser:(XADRARParser *)parent parts:(NSArray *)partarray
 {
-	if(self=[super initWithRARParser:parent version:version parts:partarray windowSize:0x400000])
+	if(self=[super initWithName:[parent filename]])
 	{
+		parser=parent;
+		parts=[partarray retain];
+
+		InitializeLZSS(&lzss,0x400000);
+
 		maincode=nil;
 		offsetcode=nil;
 		lowoffsetcode=nil;
 		lengthcode=nil;
 		alloc=NULL;
+		vm=nil;
 		filtercode=nil;
 		stack=nil;
 	}
@@ -20,19 +27,26 @@
 
 -(void)dealloc
 {
+	[parts release];
+	CleanupLZSS(&lzss);
 	[maincode release];
 	[offsetcode release];
 	[lowoffsetcode release];
 	[lengthcode release];
 	FreeSubAllocatorVariantH(alloc);
+	[vm release];
 	[filtercode release];
 	[stack release];
 	[super dealloc];
 }
 
--(void)resetLZSSHandle
+-(void)resetBlockStream
 {
-	[super resetLZSSHandle];
+	part=0;
+	endpos=0;
+	lastend=0;
+
+	RestartLZSS(&lzss);
 
 	memset(lengthtable,0,sizeof(lengthtable));
 
@@ -44,12 +58,101 @@
 
 	[filtercode removeAllObjects];
 	[stack removeAllObjects];
+	filterstart=CSHandleMaxLength;
 	lastfilternum=0;
 
+	[self startNextPart];
 	[self allocAndParseCodes];
 }
 
--(void)expandFromPosition:(off_t)pos
+-(void)startNextPart
+{
+	off_t partlength;
+	CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:&partlength];
+
+	endpos+=partlength;
+	[self setInputBuffer:buf];
+}
+
+-(int)produceBlockAtOffset:(off_t)pos
+{
+	if(lastend==filterstart)
+	{
+		XADRAR30Filter *firstfilter=[stack objectAtIndex:0];
+		off_t start=filterstart;
+		int length=[firstfilter length];
+		off_t end=start+length;
+
+		// Remove the filter start marker and unpack enough data to run the filter on.
+		filterstart=CSHandleMaxLength;
+		off_t actualend=[self expandToPosition:end];
+		if(actualend!=end) [XADException raiseIllegalDataException];
+
+		// Copy data to virtual machine memory and run the first filter.
+		uint8_t *memory=[vm memory];
+		CopyBytesFromLZSSWindow(&lzss,memory,start,length);
+
+		[firstfilter executeOnVirtualMachine:vm atPosition:pos];
+
+		uint32_t lastaddress=[firstfilter filteredBlockAddress];
+		uint32_t lastlength=[firstfilter filteredBlockLength];
+
+		[stack removeObjectAtIndex:0];
+
+		// Run any furhter filters that match the exact same range of data,
+		// taking into account that the length may have changed.
+		for(;;)
+		{
+			if([stack count]==0) break;
+			XADRAR30Filter *filter=[stack objectAtIndex:0];
+
+			// Check if this filter applies.
+			if([filter startPosition]!=filterstart) break;
+			if([filter length]!=lastlength) break;
+
+			// Move last filtered block into place and run.
+			memmove(&memory[0],&memory[lastaddress],lastlength);
+
+			[filter executeOnVirtualMachine:vm atPosition:pos];
+
+			lastaddress=[filter filteredBlockAddress];
+			lastlength=[filter filteredBlockLength];
+
+			[stack removeObjectAtIndex:0];
+		}
+
+		// If there are further filters on the stack, set up the filter start marker again
+		// and sanity-check filter ordering.
+		if([stack count])
+		{
+			XADRAR30Filter *filter=[stack objectAtIndex:0];
+			filterstart=[filter startPosition];
+
+			if(filterstart<end) [XADException raiseIllegalDataException];
+		}
+
+		[self setBlockPointer:&memory[lastaddress]];
+
+		lastend=end;
+		return lastlength;
+	}
+	else
+	{
+		off_t start=lastend;
+		off_t end=start+0x40000;
+		off_t windowend=NextLZSSWindowEdgeAfterPosition(&lzss,start);
+		if(end>windowend) end=windowend;
+
+		off_t actualend=[self expandToPosition:end];
+
+		[self setBlockPointer:LZSSWindowPointerForPosition(&lzss,pos)];
+
+		lastend=actualend;
+		return actualend-start;
+	}
+}
+
+-(off_t)expandToPosition:(off_t)end
 {
 	static const int lengthbases[28]={0,1,2,3,4,5,6,7,8,10,12,14,16,20,24,28,32,
 	40,48,56,64,80,96,112,128,160,192,224};
@@ -65,15 +168,12 @@
 	static unsigned int shortbases[8]={0,4,8,16,32,64,128,192};
 	static unsigned int shortbits[8]={2,2,3,4,5,6,6,6};
 
-	while(XADLZSSShouldKeepExpandingWithBarrier(self))
+	for(;;)
 	{
-		while(pos>=filterend)
-		{
-			XADRAR30Filter *firstfilter=[stack objectAtIndex:0];
-
-			XADLZSSCopyBytesFromWindow(self,[vm memory],[firstfilter startPosition],[firstfilter length]);
-			[firstfilter executeOnVirtualMachine:vm atPosition:
-		}
+		off_t pos=LZSSPosition(&lzss);
+		if(pos>=end) return end;
+		if(pos>=endpos) return endpos;
+		if(pos>=filterstart) return filterstart;
 
 		if(ppmblock)
 		{
@@ -82,7 +182,7 @@
 
 			if(byte!=ppmescape)
 			{
-				XADLZSSLiteral(self,byte,&pos);
+				EmitLZSSLiteral(&lzss,byte);
 			}
 			else
 			{
@@ -100,7 +200,7 @@
 					break;
 
 					case 3:
-						[self readFilterFromPPMdAtPosition:pos];
+						[self readFilterFromPPMd];
 					break;
 
 					case 4:
@@ -112,18 +212,18 @@
 
 						int len=NextPPMdVariantHByte(&ppmd);
 
-						XADLZSSMatch(self,offs+2,len+32,&pos);
+						EmitLZSSMatch(&lzss,offs+2,len+32);
 					}
 					break;
 
 					case 5:
 					{
 						int len=NextPPMdVariantHByte(&ppmd);
-						XADLZSSMatch(self,1,len+4,&pos);
+						EmitLZSSMatch(&lzss,1,len+4);
 					}
 
 					default:
-						XADLZSSLiteral(self,byte,&pos);
+						EmitLZSSLiteral(&lzss,byte);
 					break;
 				}
 			}
@@ -135,7 +235,7 @@
 
 			if(symbol<256)
 			{
-				XADLZSSLiteral(self,symbol,&pos);
+				EmitLZSSLiteral(&lzss,symbol);
 				continue;
 			}
 			else if(symbol==256)
@@ -156,7 +256,7 @@
 			}
 			else if(symbol==257)
 			{
-				[self readFilterFromInputAtPosition:pos];
+				[self readFilterFromInput];
 				continue;
 			}
 			else if(symbol==258)
@@ -238,7 +338,7 @@
 			lastoffset=offs;
 			lastlength=len;
 
-			XADLZSSMatch(self,offs,len,&pos);
+			EmitLZSSMatch(&lzss,offs,len);
 		}
 	}
 }
@@ -362,7 +462,7 @@
 
 
 
--(void)readFilterFromInputAtPosition:(off_t)pos
+-(void)readFilterFromInput
 {
 	int flags=CSInputNextBitString(input,8);
 
@@ -373,18 +473,19 @@
 	uint8_t code[length];
 	for(int i=0;i<length;i++) code[i]=CSInputNextBitString(input,8);
 
-	[self parseFilter:code length:length flags:flags position:pos];
+	[self parseFilter:code length:length flags:flags];
 }
 
--(void)readFilterFromPPMdAtPosition:(off_t)pos
+-(void)readFilterFromPPMd
 {
 	[XADException raiseNotSupportedException];
 }
 
--(void)parseFilter:(const uint8_t *)bytes length:(int)length flags:(int)flags position:(off_t)pos
+-(void)parseFilter:(const uint8_t *)bytes length:(int)length flags:(int)flags
 {
 	// TODO: deal with memory leaks from exceptions
 
+	if(!vm) vm=[XADRARVirtualMachine new];
 	if(!filtercode) filtercode=[NSMutableArray new];
 	if(!stack) stack=[NSMutableArray new];
 
@@ -429,22 +530,8 @@
 	else blocklength=oldfilterlength[num];
 
 	// Convert filter range from window position to stream position
-	off_t blockstartpos=(pos&~(off_t)windowmask)+blockstartpos;
-	if(blockstartpos<pos) pos+=windowmask+1;
-
-	// Enforce ordering of filters. Filters have to be defined in order of position,
-	// and either exactly overlapping the previous, or not overlapping at all.
-	// RAR code does not do this, but would break if it does not hold.
-	if([stack count])
-	{
-		XADRAR30Filter *prev=[stack lastObject];
-		off_t prevstartpos=[prev startPosition];
-		int prevlength=[prev length];
-
-		if(blockstartpos!=prevstartpos || blocklength!=prevlength) // Not exact overlap?
-		if(blockstartpos<prevstartpos+prevlength) // Not strictly following?
-		[XADException raiseIllegalDataException];
-	}
+	off_t blockstartpos=(LZSSPosition(&lzss)&~(off_t)LZSSWindowMask(&lzss))+blockstartpos;
+	if(blockstartpos<LZSSPosition(&lzss)) blockstartpos+=LZSSWindowSize(&lzss);
 
 	uint32_t registers[8]={
 		[3]=XADRARProgramGlobalAddress,[4]=blocklength,
@@ -500,16 +587,12 @@
 	[invocation setGlobalValueAtOffset:0x2c toValue:usagecount[num]];
 
 	// Create a filter object and add it to the stack.
-	XADRAR30Filter *filter=[[[XADRAR30Filter alloc] initWithProgramInvocation:invocation
-	startPosition:blockstart length:length] autorelease];
+	XADRAR30Filter *filter=[XADRAR30Filter filterForProgramInvocation:invocation
+	startPosition:blockstart length:length];
 	[stack addObject:filter];
 
-	// If this is the first filter added to an empty stack, (re-)enable the write barrier and set end marker.
-	if([stack count]==1)
-	{
-		XADLZSSSetWriteBarrier(self,blockstart);
-		filterend=blockstart+blocklength;
-	}
+	// If this is the first filter added to an empty stack, set the filter start marker.
+	if([stack count]==1) filterstart=blockstart;
 
 	CSInputBufferFree(filterinput);
 }
@@ -517,48 +600,3 @@
 
 @end
 
-
-
-@implementation XADRAR30Filter
-
--(id)initWithProgramInvocation:(XADRARProgramInvocation *)program
-startPosition:(off_t)blockstart length:(int)blocklength
-{
-	if(self=[super init])
-	{
-		invocation=[program retain];
-		startpos=blockstart;
-		length=blocklength;
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[invocation release];
-	[super dealloc];
-}
-
--(off_t)startPosition { return startpos; }
-
--(int)length { return length; }
-
--(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos
-{
-	[invocation restoreGlobalDataIfAvailable]; // This is silly, but RAR does it.
-
-	[invocation setRegister:6 toValue:(uint32_t)pos];
-	[invocation setGlobalValueAtOffset:0x24 toValue:(uint32_t)pos];
-	[invocation setGlobalValueAtOffset:0x28 toValue:(uint32_t)(pos>>32)];
-
-	[invocation executeOnVitualMachine:vm];
-
-/*	filteredblockaddress=XADRARVirtualMachineRead32(XADRARProgramGlobalAddress+0x20)&XADRARProgramMemoryMask;
-	filteredblocklength=XADRARVirtualMachineRead32(XADRARProgramGlobalAddress+0x1c)&XADRARProgramMemoryMask;
-
-	if(filteredblockaddress+filteredblocklength>=XADRARProgramMemorySize) filteredblockaddress=filteredblocklength=0;
-*/
-	[invocation backupGlobalData]; // Also silly.
-}
-
-@end

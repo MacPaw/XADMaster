@@ -1,6 +1,8 @@
 #import "XADFastLZSSHandle.h"
 #import "XADException.h"
 
+// TODO: Seeking
+
 @implementation XADFastLZSSHandle
 
 -(id)initWithName:(NSString *)descname windowSize:(int)windowsize

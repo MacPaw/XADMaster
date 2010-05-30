@@ -1,7 +1,7 @@
-#import "XADRARHandle.h"
+#import "XADFastLZSSHandle.h"
 #import "XADPrefixCode.h"
 
-@interface XADRAR15Handle:XADRARHandle
+@interface XADRAR15Handle:XADFastLZSSHandle
 {
 //	XADPrefixCode *maincode,*offsetcode,*lengthcode;
 }
@@ -10,7 +10,5 @@
 -(void)dealloc;
 
 -(void)resetLZSSHandle;
--(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos;
-//-(void)allocAndParseCodes;
 
 @end

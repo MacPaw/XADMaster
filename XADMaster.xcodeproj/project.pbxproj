@@ -420,6 +420,12 @@
 		1B4C000011AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
 		1B4C000111AF109300CDACC1 /* LZSS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4CFFFD11AF109300CDACC1 /* LZSS.h */; };
 		1B4C000211AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
+		1B4C01F811B0A56000CDACC1 /* XADRAR30Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4CFB67119B7F1600CDACC1 /* XADRAR30Handle.h */; };
+		1B4C020B11B0AAFA00CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
+		1B4C025911B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
+		1B4C025A11B1DAC300CDACC1 /* XADRAR30Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */; };
+		1B4C025B11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
+		1B4C025C11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
 		1B4CFB69119B7F1600CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
 		1B4CFB6C119B7F2500CDACC1 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
 		1B4CFD0E119CD1B900CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
@@ -829,7 +835,7 @@
 		1B3A650110154DCE00AE25A8 /* CSHexDump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHexDump.m; sourceTree = "<group>"; };
 		1B3A66D51017B7E000AE25A8 /* XADNSISParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSISParser.h; sourceTree = "<group>"; };
 		1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSISParser.m; sourceTree = "<group>"; };
-		1B3A68A2101BA12C00AE25A8 /* XADTest3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest3; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B3A68A2101BA12C00AE25A8 /* XADTest4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest4; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B3A68A9101BA14A00AE25A8 /* XADTest4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest4.m; sourceTree = "<group>"; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
@@ -879,6 +885,8 @@
 		1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADMacArchiveParser.m; sourceTree = "<group>"; };
 		1B3FAD7E0EC6826E006D2F06 /* NSDateXAD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDateXAD.h; sourceTree = "<group>"; };
 		1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDateXAD.m; sourceTree = "<group>"; };
+		1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR30Filter.h; sourceTree = "<group>"; };
+		1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR30Filter.m; sourceTree = "<group>"; };
 		1B4CFB67119B7F1600CDACC1 /* XADRAR30Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR30Handle.h; sourceTree = "<group>"; };
 		1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR30Handle.m; sourceTree = "<group>"; };
 		1B4CFB6A119B7F2500CDACC1 /* XADRAR15Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR15Handle.h; sourceTree = "<group>"; };
@@ -1175,7 +1183,7 @@
 				1B5A7BA30A24F9B400B189EB /* XADTest */,
 				1BBAB68B0EC274A3007FE6A2 /* XADTest2 */,
 				1BC8931A0ED6F283006B47FE /* XADTest3 */,
-				1B3A68A2101BA12C00AE25A8 /* XADTest3 */,
+				1B3A68A2101BA12C00AE25A8 /* XADTest4 */,
 				1B23DDC01185EBA300620319 /* unar */,
 				1B23E5EF1198BC2000620319 /* unar */,
 			);
@@ -1649,6 +1657,8 @@
 				1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */,
 				1B4CFB67119B7F1600CDACC1 /* XADRAR30Handle.h */,
 				1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */,
+				1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */,
+				1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */,
 				1B4CFDAC119EDD0D00CDACC1 /* XADRARVirtualMachine.h */,
 				1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */,
 				1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */,
@@ -2044,6 +2054,8 @@
 				1B23E75F1199CB8300620319 /* XADRAR20Handle.h in Headers */,
 				1B4CFEB911A3334300CDACC1 /* XADFastLZSSHandle.h in Headers */,
 				1B4C000111AF109300CDACC1 /* LZSS.h in Headers */,
+				1B4C01F811B0A56000CDACC1 /* XADRAR30Handle.h in Headers */,
+				1B4C025A11B1DAC300CDACC1 /* XADRAR30Filter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2098,7 +2110,7 @@
 			);
 			name = XADTest4;
 			productName = XADTest3;
-			productReference = 1B3A68A2101BA12C00AE25A8 /* XADTest3 */;
+			productReference = 1B3A68A2101BA12C00AE25A8 /* XADTest4 */;
 			productType = "com.apple.product-type.tool";
 		};
 		1B5A7BA20A24F9B400B189EB /* XADTest */ = {
@@ -2393,6 +2405,7 @@
 				1B4CFDAE119EDD0D00CDACC1 /* XADRARVirtualMachine.m in Sources */,
 				1B4CFEB711A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
 				1B4C000011AF109300CDACC1 /* LZSS.c in Sources */,
+				1B4C025C11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2549,6 +2562,7 @@
 				1B4CFDB6119F570800CDACC1 /* XADRARVirtualMachine.m in Sources */,
 				1B4CFEB811A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
 				1B4CFFFF11AF109300CDACC1 /* LZSS.c in Sources */,
+				1B4C025911B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2736,6 +2750,8 @@
 				1B4CFDB7119F571100CDACC1 /* XADRARVirtualMachine.m in Sources */,
 				1B4CFEBA11A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
 				1B4C000211AF109300CDACC1 /* LZSS.c in Sources */,
+				1B4C020B11B0AAFA00CDACC1 /* XADRAR30Handle.m in Sources */,
+				1B4C025B11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,6 @@
 #import "XADRARVirtualMachine.h"
 #import "XADException.h"
+#import "CRC.h"
 
 #define RARMovOpcode 0
 #define RARCmpOpcode 1
@@ -145,6 +146,8 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	[super dealloc];
 }
 
+-(uint8_t *)memory { return memory; }
+
 -(void)setRegisters:(uint32_t *)newregisters
 {
 	memcpy(registers,newregisters,sizeof(registers));
@@ -214,6 +217,8 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	for(int i=1;i<length;i++) xor^=bytes[i];
 	if(xor!=bytes[0]) [XADException raiseIllegalDataException];
 
+	crc=XADCalculateCRC(0xffffffff,bytes,length,XADCRCTable_edb88320)^0xffffffff;
+
 	CSInputBuffer *input=CSInputBufferAllocWithBuffer(&bytes[1],length-1,0);
 
 	// Read static data, if any.
@@ -246,7 +251,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 		if(numargs==2) [str appendString:@","];
 		if(numargs==2) [str appendString:[self parseArgumentFromBuffer:input byteMode:bytemode]];
 
-		NSLog(@"%@",str);
+		//NSLog(@"%@",str);
 	}
 
 	CSInputBufferFree(input);
@@ -303,6 +308,8 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 -(NSMutableData *)globalBackup { return globalbackup; }
 
+-(uint32_t)CRC { return crc; }
+
 -(NSString *)disassemble
 {
 	return @"";
@@ -343,6 +350,13 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 -(XADRARProgramCode *)programCode { return programcode; }
 
 -(NSData *)globalData { return globaldata; }
+
+-(uint32_t)register:(int)n
+{
+	if(n<0||n>=8) [NSException raise:NSRangeException format:@"Attempted to set non-existent register"];
+
+	return initialregisters[n];
+}
 
 -(void)setRegister:(int)n toValue:(uint32_t)val
 {
@@ -390,7 +404,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 	[vm executeProgramCode:programcode];
 
-/*	uint32_t newgloballength=XADRARVirtualMachineRead32(XADRARProgramGlobalAddress+0x30);
+	uint32_t newgloballength=XADRARVirtualMachineRead32(vm,XADRARProgramGlobalAddress+0x30);
 	if(newgloballength>XADRARProgramUserGlobalSize) newgloballength=XADRARProgramUserGlobalSize;
 	if(newgloballength>0)
 	{
@@ -398,7 +412,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 		length:newgloballength+XADRARProgramSystemGlobalSize
 		toMutableData:[globaldata mutableBytes]];
 	}
-	else [globaldata setLength:0];*/
+	else [globaldata setLength:0];
 }
 
 @end

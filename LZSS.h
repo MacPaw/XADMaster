@@ -36,6 +36,10 @@ static inline int CurrentLZSSWindowOffset(LZSS *self) { return LZSSWindowOffsetF
 
 static inline uint8_t *CurrentLZSSWindowPointer(LZSS *self) { return LZSSWindowPointerForPosition(self,self->position); }
 
+static inline off_t NextLZSSWindowEdgeAfterPosition(LZSS *self,off_t pos) { return (pos+LZSSWindowSize(self))&~(off_t)LZSSWindowMask(self); }
+
+static inline off_t NextLZSSWindowEdge(LZSS *self) { return NextLZSSWindowEdgeAfterPosition(self,self->position); }
+
 
 
 

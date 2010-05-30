@@ -1,5 +1,7 @@
 #import "XADRARParser.h"
+//#import "XADRAR15Handle.h"
 #import "XADRAR20Handle.h"
+#import "XADRAR30Handle.h"
 #import "XADRARAESHandle.h"
 #import "XADRARCrypt20Handle.h"
 #import "XADCRCHandle.h"
@@ -125,7 +127,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%d}%@.rar$",
 			[[matches objectAtIndex:1] escapedPattern],
-			[[matches objectAtIndex:2] length],
+			[(NSString *)[matches objectAtIndex:2] length],
 			[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
 		firstFileExtension:@"rar"];
 	}
@@ -641,7 +643,7 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 
 		case 29:
 		case 36:
-//			return [[[XADRAR30Handle alloc] initWithRARParser:self parts:obj] autorelease];
+			return [[[XADRAR30Handle alloc] initWithRARParser:self parts:obj] autorelease];
 
 		default:
 			return [[[XADRAROfficialHandle alloc] initWithRARParser:self version:version parts:obj] autorelease];
@@ -700,10 +702,12 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	return key;
 }
 
--(CSInputBuffer *)inputBufferForNextPart:(int *)part parts:(NSArray *)parts
+-(CSInputBuffer *)inputBufferForNextPart:(int *)part parts:(NSArray *)parts length:(off_t *)partlength;
 {
 	if(*part>=[parts count]) [XADException raiseExceptionWithXADError:XADInputError]; // TODO: better error
 	NSDictionary *dict=[parts objectAtIndex:(*part)++];
+
+	if(partlength) *partlength=[[dict objectForKey:@"OutputLength"] longLongValue];
 
 	CSHandle *handle=[self
 	dataHandleFromSkipOffset:[[dict objectForKey:@"SkipOffset"] longLongValue]
@@ -766,7 +770,7 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	return [self scanForVolumesWithFilename:name
 	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%d}%@.(rar|exe)$",
 		[[matches objectAtIndex:1] escapedPattern],
-		[[matches objectAtIndex:2] length],
+		[(NSString *)[matches objectAtIndex:2] length],
 		[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
 	firstFileExtension:@"exe"];
 

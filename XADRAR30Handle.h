@@ -1,12 +1,20 @@
-#import "XADRARHandle.h"
+#import "CSBlockStreamHandle.h"
+#import "XADRARParser.h"
+#import "LZSS.h"
 #import "XADPrefixCode.h"
 #import "PPMdVariantH.h"
 #import "PPMdSubAllocatorVariantH.h"
 #import "XADRARVirtualMachine.h"
 
-@interface XADRAR30Handle:XADRARHandle
+@interface XADRAR30Handle:CSBlockStreamHandle
 {
-	int lengthtable[299+60+17+28];
+	XADRARParser *parser;
+
+	NSArray *parts;
+	int part;
+	off_t endpos,lastend;
+
+	LZSS lzss;
 
 	XADPrefixCode *maincode,*offsetcode,*lowoffsetcode,*lengthcode;
 
@@ -19,39 +27,26 @@
 	PPMdSubAllocatorVariantH *alloc;
 	int ppmescape;
 
+	XADRARVirtualMachine *vm;
 	NSMutableArray *filtercode,*stack;
+	off_t filterstart;
 	int lastfilternum;
 	int oldfilterlength[1024],usagecount[1024];
-	off_t filterend;
+
+	int lengthtable[299+60+17+28];
 }
 
--(id)initWithRARParser:(XADRARParser *)parent version:(int)version parts:(NSArray *)partarray;
+-(id)initWithRARParser:(XADRARParser *)parent parts:(NSArray *)partarray;
 -(void)dealloc;
 
--(void)resetLZSSHandle;
--(void)expandFromPosition:(off_t)pos;
+-(void)resetBlockStream;
+-(void)startNextPart;
+-(int)produceBlockAtOffset:(off_t)pos;
+-(off_t)expandToPosition:(off_t)end;
 -(void)allocAndParseCodes;
 
--(void)readFilterFromInputAtPosition:(off_t)pos;
--(void)readFilterFromPPMdAtPosition:(off_t)pos;
--(void)parseFilter:(const uint8_t *)bytes length:(int)length flags:(int)flags position:(off_t)pos;
-
-@end
-
-@interface XADRAR30Filter:NSObject
-{
-	XADRARProgramInvocation *invocation;
-	off_t startpos;
-	int length;
-}
-
--(id)initWithProgramInvocation:(XADRARProgramInvocation *)program
-startPosition:(off_t)blockstart length:(int)blocklength;
--(void)dealloc;
-
--(off_t)startPosition;
--(int)length;
-
--(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos;
+-(void)readFilterFromInput;
+-(void)readFilterFromPPMd;
+-(void)parseFilter:(const uint8_t *)bytes length:(int)length flags:(int)flags;
 
 @end

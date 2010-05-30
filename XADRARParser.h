@@ -44,7 +44,7 @@ salt:(NSData *)salt;
 encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt;
 -(NSData *)keyForSalt:(NSData *)salt;
 
--(CSInputBuffer *)inputBufferForNextPart:(int *)part parts:(NSArray *)parts;
+-(CSInputBuffer *)inputBufferForNextPart:(int *)part parts:(NSArray *)parts length:(off_t *)partlength;
 
 -(NSString *)formatName;
 

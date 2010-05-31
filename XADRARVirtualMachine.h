@@ -1,29 +1,16 @@
 #import "CSInputBuffer.h"
-
+#import "RARVirtualMachine.h"
 
 
 uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 
 
 
-#define XADRARProgramMemorySize 0x40000
-#define XADRARProgramMemoryMask (XADRARProgramMemorySize-1)
-#define XADRARProgramWorkSize 0x3c000
-#define XADRARProgramGlobalAddress XADRARProgramWorkSize
-#define XADRARProgramGlobalSize 0x2000
-#define XADRARProgramSystemGlobalSize 64
-#define XADRARProgramUserGlobalSize (XADRARProgramGlobalSize-XADRARProgramSystemGlobalSize)
-
 @class XADRARProgramCode,XADRARProgramInvocation;
 
 @interface XADRARVirtualMachine:NSObject
 {
-	uint32_t registers[8];
-	int flags;
-	// TODO: align?
-	@public
-	uint8_t memory[XADRARProgramMemorySize+3]; // Let memory accesses at the end overflow.
-	                                           // Possibly not 100% correct but unlikely to be a problem.
+	RARVirtualMachine vm;
 }
 
 -(id)init;
@@ -38,6 +25,9 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 -(void)writeMemoryAtAddress:(uint32_t)address length:(int)length fromBuffer:(const uint8_t *)buffer;
 -(void)writeMemoryAtAddress:(uint32_t)address length:(int)length fromData:(NSData *)data;
 
+-(uint32_t)readWordAtAddress:(uint32_t)address;
+-(void)writeWordAtAddress:(uint32_t)address value:(uint32_t)value;
+
 -(void)executeProgramCode:(XADRARProgramCode *)code;
 
 @end
@@ -46,6 +36,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 
 @interface XADRARProgramCode:NSObject
 {
+	NSMutableData *opcodes;
 	NSData *staticdata;
 	NSMutableData *globalbackup;
 
@@ -56,8 +47,12 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 -(void)dealloc;
 
 -(void)parseByteCode:(const uint8_t *)bytes length:(int)length;
--(NSString *)parseArgumentFromBuffer:(CSInputBuffer *)input byteMode:(BOOL)bytemode;
+-(void)parseOperandFromBuffer:(CSInputBuffer *)input addressingMode:(unsigned int *)modeptr
+value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentInstructionOffset:(int)instructionoffset;
 
+
+-(RAROpcode *)opcodes;
+-(int)numberOfOpcodes;
 -(NSData *)staticData;
 -(NSMutableData *)globalBackup;
 -(uint32_t)CRC;
@@ -92,16 +87,3 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 -(void)executeOnVitualMachine:(XADRARVirtualMachine *)vm;
 
 @end
-
-
-
-
-static inline uint32_t XADRARVirtualMachineRead32(XADRARVirtualMachine *self,uint32_t address)
-{
-	return CSUInt32LE(&self->memory[address&XADRARProgramMemoryMask]);
-}
-
-static inline void XADRARVirtualMachineWrite32(XADRARVirtualMachine *self,uint32_t address,uint32_t val)
-{
-	CSSetUInt32LE(&self->memory[address&XADRARProgramMemoryMask],val);
-}

@@ -56,12 +56,12 @@ startPosition:(off_t)startpos length:(int)length
 
 	[invocation executeOnVitualMachine:vm];
 
-	filteredblockaddress=XADRARVirtualMachineRead32(vm,XADRARProgramGlobalAddress+0x20)&XADRARProgramMemoryMask;
-	filteredblocklength=XADRARVirtualMachineRead32(vm,XADRARProgramGlobalAddress+0x1c)&XADRARProgramMemoryMask;
+	filteredblockaddress=[vm readWordAtAddress:RARProgramGlobalAddress+0x20]&RARProgramMemoryMask;
+	filteredblocklength=[vm readWordAtAddress:RARProgramGlobalAddress+0x1c]&RARProgramMemoryMask;
 filteredblockaddress=0;
 filteredblocklength=[invocation initialRegisterState:4];
 
-	if(filteredblockaddress+filteredblocklength>=XADRARProgramMemorySize) filteredblockaddress=filteredblocklength=0;
+	if(filteredblockaddress+filteredblocklength>=RARProgramMemorySize) filteredblockaddress=filteredblocklength=0;
 
 	[invocation backupGlobalData]; // Also silly.
 }
@@ -77,7 +77,7 @@ filteredblocklength=[invocation initialRegisterState:4];
 	int numchannels=[invocation initialRegisterState:0];
 	uint8_t *memory=[vm memory];
 
-	if(length>XADRARProgramWorkSize/2) return;
+	if(length>RARProgramWorkSize/2) return;
 
 	filteredblockaddress=length;
 	filteredblocklength=length;

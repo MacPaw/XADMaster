@@ -426,6 +426,10 @@
 		1B4C025A11B1DAC300CDACC1 /* XADRAR30Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */; };
 		1B4C025B11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
 		1B4C025C11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
+		1B4C03AA11B34E1A00CDACC1 /* RARVirtualMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4C03A811B34E1A00CDACC1 /* RARVirtualMachine.h */; };
+		1B4C03AB11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */; };
+		1B4C03AC11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */; };
+		1B4C03AD11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */; };
 		1B4CFB69119B7F1600CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
 		1B4CFB6C119B7F2500CDACC1 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
 		1B4CFD0E119CD1B900CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
@@ -887,6 +891,8 @@
 		1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDateXAD.m; sourceTree = "<group>"; };
 		1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR30Filter.h; sourceTree = "<group>"; };
 		1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR30Filter.m; sourceTree = "<group>"; };
+		1B4C03A811B34E1A00CDACC1 /* RARVirtualMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARVirtualMachine.h; sourceTree = "<group>"; };
+		1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RARVirtualMachine.c; sourceTree = "<group>"; };
 		1B4CFB67119B7F1600CDACC1 /* XADRAR30Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR30Handle.h; sourceTree = "<group>"; };
 		1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR30Handle.m; sourceTree = "<group>"; };
 		1B4CFB6A119B7F2500CDACC1 /* XADRAR15Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR15Handle.h; sourceTree = "<group>"; };
@@ -1659,12 +1665,14 @@
 				1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */,
 				1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */,
 				1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */,
-				1B4CFDAC119EDD0D00CDACC1 /* XADRARVirtualMachine.h */,
-				1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */,
 				1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */,
 				1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */,
 				1BA2650C0FC061E200279E95 /* XADRARCrypt20Handle.h */,
 				1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */,
+				1B4CFDAC119EDD0D00CDACC1 /* XADRARVirtualMachine.h */,
+				1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */,
+				1B4C03A811B34E1A00CDACC1 /* RARVirtualMachine.h */,
+				1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */,
 				1BCD65500EF8164900D86C43 /* RARBug.h */,
 				1BCD65510EF8164900D86C43 /* RARBug.c */,
 				1B4C019A11B095DB00CDACC1 /* Official */,
@@ -2056,6 +2064,7 @@
 				1B4C000111AF109300CDACC1 /* LZSS.h in Headers */,
 				1B4C01F811B0A56000CDACC1 /* XADRAR30Handle.h in Headers */,
 				1B4C025A11B1DAC300CDACC1 /* XADRAR30Filter.h in Headers */,
+				1B4C03AA11B34E1A00CDACC1 /* RARVirtualMachine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2406,6 +2415,7 @@
 				1B4CFEB711A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
 				1B4C000011AF109300CDACC1 /* LZSS.c in Sources */,
 				1B4C025C11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
+				1B4C03AC11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2563,6 +2573,7 @@
 				1B4CFEB811A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
 				1B4CFFFF11AF109300CDACC1 /* LZSS.c in Sources */,
 				1B4C025911B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
+				1B4C03AD11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2752,6 +2763,7 @@
 				1B4C000211AF109300CDACC1 /* LZSS.c in Sources */,
 				1B4C020B11B0AAFA00CDACC1 /* XADRAR30Handle.m in Sources */,
 				1B4C025B11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
+				1B4C03AB11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

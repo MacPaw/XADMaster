@@ -2,114 +2,6 @@
 #import "XADException.h"
 #import "CRC.h"
 
-#define RARMovOpcode 0
-#define RARCmpOpcode 1
-#define RARAddOpcode 2
-#define RARSubOpcode 3
-#define RARJzOpcode 4
-#define RARJnzOpcode 5
-#define RARIncOpcode 6
-#define RARDecOpcode 7
-#define RARJmpOpcode 8
-#define RARXorOpcode 9
-#define RARAndOpcode 10
-#define RAROrOpcode 11
-#define RARTestOpcode 12
-#define RARJsOpcode 13
-#define RARJnsOpcode 14
-#define RARJbOpcode 15
-#define RARJbeOpcode 16
-#define RARJaOpcode 17
-#define RARJaeOpcode 18
-#define RARPushOpcode 19
-#define RARPopOpcode 20
-#define RARCallOpcode 21
-#define RARRetOpcode 22
-#define RARNotOpcode 23
-#define RARShlOpcode 24
-#define RARShrOpcode 25
-#define RARSarOpcode 26
-#define RARNegOpcode 27
-#define RARPushaOpcode 28
-#define RARPopaOpcode 29
-#define RARPushfOpcode 30
-#define RARPopfOpcode 31
-#define RARMovzxOpcode 32
-#define RARMovsxOpcode 33
-#define RARXchgOpcode 34
-#define RARMulOpcode 35
-#define RARDivOpcode 36
-#define RARAdcOpcode 37
-#define RARSbbOpcode 38
-#define RARPrintOpcode 39
-
-#define RAR0OperandsFlag 0
-#define RAR1OperandFlag 1
-#define RAR2OperandsFlag 2
-#define RAROperandsFlag 3
-#define RARHasByteModeFlag 4
-#define RARJumpFlag 8
-#define RARProcFlag 16
-#define RARReadStatusFlag 32
-#define RARWriteStatusFlag 64
-
-static int OpcodeFlags[40]=
-{
-	[RARMovOpcode]=RAR2OperandsFlag | RARHasByteModeFlag,
-	[RARCmpOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARAddOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARSubOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARJzOpcode]=RAR1OperandFlag | RARReadStatusFlag | RARReadStatusFlag,
-	[RARJnzOpcode]=RAR1OperandFlag | RARReadStatusFlag | RARReadStatusFlag,
-	[RARIncOpcode]=RAR1OperandFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARDecOpcode]=RAR1OperandFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARJmpOpcode]=RAR1OperandFlag | RARReadStatusFlag,
-	[RARXorOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARAndOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RAROrOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARTestOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARJsOpcode]=RAR1OperandFlag | RARReadStatusFlag | RARReadStatusFlag,
-	[RARJnsOpcode]=RAR1OperandFlag | RARReadStatusFlag | RARReadStatusFlag,
-	[RARJbOpcode]=RAR1OperandFlag | RARReadStatusFlag | RARReadStatusFlag,
-	[RARJbeOpcode]=RAR1OperandFlag | RARReadStatusFlag | RARReadStatusFlag,
-	[RARJaOpcode]=RAR1OperandFlag | RARReadStatusFlag | RARReadStatusFlag,
-	[RARJaeOpcode]=RAR1OperandFlag | RARReadStatusFlag | RARReadStatusFlag,
-	[RARPushOpcode]=RAR1OperandFlag,
-	[RARPopOpcode]=RAR1OperandFlag,
-	[RARCallOpcode]=RAR1OperandFlag | RARProcFlag,
-	[RARRetOpcode]=RAR0OperandsFlag | RARProcFlag,
-	[RARNotOpcode]=RAR1OperandFlag | RARHasByteModeFlag,
-	[RARShlOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARShrOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARSarOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARNegOpcode]=RAR1OperandFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARPushaOpcode]=RAR0OperandsFlag,
-	[RARPopaOpcode]=RAR0OperandsFlag,
-	[RARPushfOpcode]=RAR0OperandsFlag | RARReadStatusFlag,
-	[RARPopfOpcode]=RAR0OperandsFlag | RARWriteStatusFlag,
-	[RARMovzxOpcode]=RAR2OperandsFlag,
-	[RARMovsxOpcode]=RAR2OperandsFlag,
-	[RARXchgOpcode]=RAR2OperandsFlag | RARHasByteModeFlag,
-	[RARMulOpcode]=RAR2OperandsFlag | RARHasByteModeFlag,
-	[RARDivOpcode]=RAR2OperandsFlag | RARHasByteModeFlag,
-	[RARAdcOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARReadStatusFlag | RARWriteStatusFlag,
-	[RARSbbOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARReadStatusFlag | RARWriteStatusFlag,
-	[RARPrintOpcode]=RAR0OperandsFlag
-};
-
-static NSString *OpcodeNames[40]=
-{
-	[RARMovOpcode]=@"mov",[RARCmpOpcode]=@"cmp",[RARAddOpcode]=@"add",[RARSubOpcode]=@"sub",
-	[RARJzOpcode]=@"jz",[RARJnzOpcode]=@"jnz",[RARIncOpcode]=@"inc",[RARDecOpcode]=@"dec",
-	[RARJmpOpcode]=@"jmp",[RARXorOpcode]=@"xor",[RARAndOpcode]=@"and",[RAROrOpcode]=@"or",
-	[RARTestOpcode]=@"test",[RARJsOpcode]=@"js",[RARJnsOpcode]=@"jns",[RARJbOpcode]=@"jb",
-	[RARJbeOpcode]=@"jbe",[RARJaOpcode]=@"ja",[RARJaeOpcode]=@"jae",[RARPushOpcode]=@"push",
-	[RARPopOpcode]=@"pop",[RARCallOpcode]=@"call",[RARRetOpcode]=@"ret",[RARNotOpcode]=@"not",
-	[RARShlOpcode]=@"shl",[RARShrOpcode]=@"shr",[RARSarOpcode]=@"sar",[RARNegOpcode]=@"neg",
-	[RARPushaOpcode]=@"pusha",[RARPopaOpcode]=@"popa",[RARPushfOpcode]=@"pushf",[RARPopfOpcode]=@"popf",
-	[RARMovzxOpcode]=@"movzx",[RARMovsxOpcode]=@"movsx",[RARXchgOpcode]=@"xchg",[RARMulOpcode]=@"mul",
-	[RARDivOpcode]=@"div",[RARAdcOpcode]=@"adc",[RARSbbOpcode]=@"sbb",[RARPrintOpcode]=@"print"
-};
 
 
 
@@ -137,25 +29,27 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 {
 	if(self=[super init])
 	{
+		InitializeRARVirtualMachine(&vm);
 	}
 	return self;
 }
 
 -(void)dealloc
 {
+	//CleanupRARVirutalMachine(&vm);
 	[super dealloc];
 }
 
--(uint8_t *)memory { return memory; }
+-(uint8_t *)memory { return vm.memory; }
 
 -(void)setRegisters:(uint32_t *)newregisters
 {
-	memcpy(registers,newregisters,sizeof(registers));
+	SetRARVirtualMachineRegisters(&vm,newregisters);
 }
 
 -(void)readMemoryAtAddress:(uint32_t)address length:(int)length toBuffer:(uint8_t *)buffer
 {
-	memcpy(buffer,&memory[address],length);
+	memcpy(buffer,&vm.memory[address],length);
 }
 
 -(void)readMemoryAtAddress:(uint32_t)address length:(int)length toMutableData:(NSMutableData *)data
@@ -165,7 +59,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 -(void)writeMemoryAtAddress:(uint32_t)address length:(int)length fromBuffer:(const uint8_t *)buffer
 {
-	memcpy(&memory[address],buffer,length);
+	memcpy(&vm.memory[address],buffer,length);
 }
 
 -(void)writeMemoryAtAddress:(uint32_t)address length:(int)length fromData:(NSData *)data
@@ -173,10 +67,19 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	[self writeMemoryAtAddress:address length:length fromBuffer:[data bytes]];
 }
 
+-(uint32_t)readWordAtAddress:(uint32_t)address
+{
+	return RARVirtualMachineRead32(&vm,address);
+}
+
+-(void)writeWordAtAddress:(uint32_t)address value:(uint32_t)value
+{
+	RARVirtualMachineWrite32(&vm,address,value);
+}
+
 -(void)executeProgramCode:(XADRARProgramCode *)code
 {
-	flags=0; // ?
-	//...
+//	ExecuteRARCode(&vm,[code opcodes],[code length]);
 }
 
 @end
@@ -191,6 +94,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 {
 	if(self=[super init])
 	{
+		opcodes=[NSMutableData new];
 		staticdata=nil;
 		globalbackup=[NSMutableData new];
 
@@ -201,6 +105,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 -(void)dealloc
 {
+	[opcodes release];
 	[staticdata release];
 	[globalbackup release];
 	[super dealloc];
@@ -237,33 +142,50 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	// Read instructions.
 	while(CSInputBitsLeftInBuffer(input)>=8)
 	{
-		int opcode=CSInputNextBitString(input,4);
-		if(opcode&0x08) opcode=((opcode<<2)|CSInputNextBitString(input,2))-24;
+		[opcodes increaseLengthBy:sizeof(RAROpcode)];
+		RAROpcode *opcodearray=[self opcodes];
+		int currinstruction=[self numberOfOpcodes]-1;
+		RAROpcode *opcode=&opcodearray[currinstruction];
+
+		int instruction=CSInputNextBitString(input,4);
+		if(instruction&0x08) instruction=((instruction<<2)|CSInputNextBitString(input,2))-24;
 
 		BOOL bytemode=NO;
-		if(OpcodeFlags[opcode]&RARHasByteModeFlag) bytemode=CSInputNextBitString(input,1);
+		if(RARInstructionHasByteMode(instruction)) bytemode=CSInputNextBitString(input,1);
 
-		NSMutableString *str=[NSMutableString stringWithFormat:@"%@%@",OpcodeNames[opcode],bytemode?@"b":@""];
+		SetRAROpcodeInstruction(opcode,instruction,bytemode);
 
-		int numargs=OpcodeFlags[opcode]&RAROperandsFlag;
+		int numargs=NumberOfRARInstructionOperands(instruction);
 
-		if(numargs>=1) [str appendString:@"\t"];
-		if(numargs>=1) [str appendString:[self parseArgumentFromBuffer:input byteMode:bytemode]];
-		if(numargs==2) [str appendString:@","];
-		if(numargs==2) [str appendString:[self parseArgumentFromBuffer:input byteMode:bytemode]];
-
-		//NSLog(@"%@",str);
+		if(numargs>=1)
+		{
+			unsigned int addressingmode;
+			uint32_t value;
+			[self parseOperandFromBuffer:input addressingMode:&addressingmode value:&value
+			byteMode:bytemode isJump:RARInstructionIsJump(instruction)
+			currentInstructionOffset:currinstruction];
+			SetRAROpcodeOperand1(opcode,addressingmode,value);
+		}
+		if(numargs==2)
+		{
+			unsigned int addressingmode;
+			uint32_t value;
+			[self parseOperandFromBuffer:input addressingMode:&addressingmode value:&value
+			 byteMode:bytemode isJump:NO currentInstructionOffset:0];
+			SetRAROpcodeOperand2(opcode,addressingmode,value);
+		}
 	}
 
 	CSInputBufferFree(input);
 }
 
--(NSString *)parseArgumentFromBuffer:(CSInputBuffer *)input byteMode:(BOOL)bytemode
+-(void)parseOperandFromBuffer:(CSInputBuffer *)input addressingMode:(unsigned int *)modeptr
+value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentInstructionOffset:(int)instructionoffset
 {
 	if(CSInputNextBit(input))
 	{
 		int reg=CSInputNextBitString(input,3);
-		return [NSString stringWithFormat:@"r%d",reg];
+		*modeptr=RARRegisterAddressingMode(reg);
 	}
 	else
 	{
@@ -273,37 +195,55 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 			{
 				if(CSInputNextBit(input))
 				{
-					int32_t base=CSInputNextRARVMNumber(input);
-					return [NSString stringWithFormat:@"(%d)",base];
+					*valueptr=CSInputNextRARVMNumber(input);
+					*modeptr=RARAbsoluteAddressingMode;
 				}
 				else
 				{
 					int reg=CSInputNextBitString(input,3);
-					int32_t base=CSInputNextRARVMNumber(input);
-					return [NSString stringWithFormat:@"(%d,r%d)",base,reg];
+					*valueptr=CSInputNextRARVMNumber(input);
+					*modeptr=RARIndexedAbsoluteAddressingMode(reg);
 				}
 			}
 			else
 			{
 				int reg=CSInputNextBitString(input,3);
-				return [NSString stringWithFormat:@"(r%d)",reg];
+				*modeptr=RARRegisterIndirectAddressingMode(reg);
 			}
 		}
 		else
 		{
 			if(bytemode)
 			{
-				int val=CSInputNextBitString(input,8);
-				return [NSString stringWithFormat:@"%d",val];
+				*valueptr=CSInputNextBitString(input,8);
+				*modeptr=RARImmediateAddressingMode;
+				//return [NSString stringWithFormat:@"%d",val];
 			}
 			else
 			{
-				int32_t val=CSInputNextRARVMNumber(input);
-				return [NSString stringWithFormat:@"%d",val];
+				*valueptr=CSInputNextRARVMNumber(input);
+				*modeptr=RARImmediateAddressingMode;
+			}
+
+			if(isjump)
+			{
+				if(*valueptr>=256) *valueptr-=256; // Absolute address
+				else
+				{
+					// Relative address
+					if(*valueptr>=136) *valueptr-=264;
+					else if(*valueptr>=16) *valueptr-=8;
+					else if(*valueptr>=8) *valueptr-=16;
+					*valueptr+=instructionoffset;
+				}
 			}
 		}
 	}
 }
+
+-(RAROpcode *)opcodes { return [opcodes mutableBytes]; }
+
+-(int)numberOfOpcodes { return [opcodes length]/sizeof(RAROpcode); }
 
 -(NSData *)staticData { return staticdata; }
 
@@ -313,7 +253,17 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 -(NSString *)disassemble
 {
-	return @"";
+	RAROpcode *opcodearray=[self opcodes];
+	int numopcodes=[self numberOfOpcodes];
+
+	NSMutableString *disassembly=[NSMutableString string];
+
+	for(int i=0;i<numopcodes;i++)
+	{
+		[disassembly appendFormat:@"%04x\t%s\n",i,DescribeRAROpcode(&opcodearray[i])];
+	}
+
+	return disassembly;
 }
 
 @end
@@ -331,9 +281,9 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 		if(data)
 		{
 			globaldata=[[NSMutableData alloc] initWithData:data];
-			if([globaldata length]<XADRARProgramSystemGlobalSize) [globaldata setLength:XADRARProgramSystemGlobalSize];
+			if([globaldata length]<RARProgramSystemGlobalSize) [globaldata setLength:RARProgramSystemGlobalSize];
 		}
-		else globaldata=[[NSMutableData alloc] initWithLength:XADRARProgramSystemGlobalSize];
+		else globaldata=[[NSMutableData alloc] initWithLength:RARProgramSystemGlobalSize];
 
 		if(registers) memcpy(initialregisters,registers,sizeof(initialregisters));
 		else memset(initialregisters,0,sizeof(initialregisters));
@@ -377,40 +327,40 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 -(void)backupGlobalData
 {
 	NSMutableData *backup=[programcode globalBackup];
-	if([globaldata length]>XADRARProgramSystemGlobalSize) [backup setData:globaldata];
+	if([globaldata length]>RARProgramSystemGlobalSize) [backup setData:globaldata];
 	else [backup setLength:0];
 }
 
 -(void)restoreGlobalDataIfAvailable
 {
 	NSMutableData *backup=[programcode globalBackup];
-	if([backup length]>XADRARProgramSystemGlobalSize) [globaldata setData:backup];
+	if([backup length]>RARProgramSystemGlobalSize) [globaldata setData:backup];
 }
 
 -(void)executeOnVitualMachine:(XADRARVirtualMachine *)vm
 {
 	int globallength=[globaldata length];
-	if(globallength>XADRARProgramGlobalSize) globallength=XADRARProgramGlobalSize;
-	[vm writeMemoryAtAddress:XADRARProgramGlobalAddress length:globallength fromData:globaldata];
+	if(globallength>RARProgramGlobalSize) globallength=RARProgramGlobalSize;
+	[vm writeMemoryAtAddress:RARProgramGlobalAddress length:globallength fromData:globaldata];
 
 	NSData *staticdata=[programcode staticData];
 	if(staticdata)
 	{
 		int staticlength=[staticdata length];
-		if(staticlength>XADRARProgramGlobalSize-globallength) staticlength=XADRARProgramGlobalSize-globallength;
-		[vm writeMemoryAtAddress:XADRARProgramGlobalAddress length:staticlength fromData:staticdata];
+		if(staticlength>RARProgramGlobalSize-globallength) staticlength=RARProgramGlobalSize-globallength;
+		[vm writeMemoryAtAddress:RARProgramGlobalAddress length:staticlength fromData:staticdata];
 	}
 
 	[vm setRegisters:initialregisters];
 
 	[vm executeProgramCode:programcode];
 
-	uint32_t newgloballength=XADRARVirtualMachineRead32(vm,XADRARProgramGlobalAddress+0x30);
-	if(newgloballength>XADRARProgramUserGlobalSize) newgloballength=XADRARProgramUserGlobalSize;
+	uint32_t newgloballength=[vm readWordAtAddress:RARProgramGlobalAddress+0x30];
+	if(newgloballength>RARProgramUserGlobalSize) newgloballength=RARProgramUserGlobalSize;
 	if(newgloballength>0)
 	{
-		[vm readMemoryAtAddress:XADRARProgramGlobalAddress
-		length:newgloballength+XADRARProgramSystemGlobalSize
+		[vm readMemoryAtAddress:RARProgramGlobalAddress
+		length:newgloballength+RARProgramSystemGlobalSize
 		toMutableData:[globaldata mutableBytes]];
 	}
 	else [globaldata setLength:0];

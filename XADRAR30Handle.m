@@ -535,8 +535,8 @@
 	else blocklength=oldfilterlength[num];
 
 	uint32_t registers[8]={
-		[3]=XADRARProgramGlobalAddress,[4]=blocklength,
-		[5]=usagecount[num],[7]=XADRARProgramMemorySize
+		[3]=RARProgramGlobalAddress,[4]=blocklength,
+		[5]=usagecount[num],[7]=RARProgramMemorySize
 	};
 
 	// Read register override values
@@ -558,6 +558,8 @@
 
 		code=[[[XADRARProgramCode alloc] initWithByteCode:bytecode length:length] autorelease];
 		[filtercode addObject:code];
+
+		NSLog(@"\n%@",[code disassemble]);
 	}
 	else
 	{
@@ -570,12 +572,12 @@
 	{
 		int length=CSInputNextRARVMNumber(filterinput);
 
-		if(length>XADRARProgramUserGlobalSize) [XADException raiseIllegalDataException];
+		if(length>RARProgramUserGlobalSize) [XADException raiseIllegalDataException];
 
-		data=[NSMutableData dataWithLength:length+XADRARProgramSystemGlobalSize];
+		data=[NSMutableData dataWithLength:length+RARProgramSystemGlobalSize];
 		uint8_t *databytes=[data mutableBytes];
 
-		for(int i=0;i<length;i++) databytes[i+XADRARProgramSystemGlobalSize]=CSInputNextBitString(filterinput,8);
+		for(int i=0;i<length;i++) databytes[i+RARProgramSystemGlobalSize]=CSInputNextBitString(filterinput,8);
 	}
 
 	// Create an invocation and set register and memory parameters.

@@ -165,17 +165,19 @@
 	131072,196608,262144,327680,393216,458752,524288,589824,655360,720896,786432,
 	851968,917504,983040,1048576,1310720,1572864,1835008,2097152,2359296,2621440,
 	2883584,3145728,3407872,3670016,3932160};
-	static unsigned char offsetbits[60]={0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,
+	static const unsigned char offsetbits[60]={0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,
 	11,11,12,12,13,13,14,14,15,15,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
 	18,18,18,18,18,18,18,18,18,18,18,18};
-	static unsigned int shortbases[8]={0,4,8,16,32,64,128,192};
-	static unsigned int shortbits[8]={2,2,3,4,5,6,6,6};
+	static const unsigned int shortbases[8]={0,4,8,16,32,64,128,192};
+	static const unsigned int shortbits[8]={2,2,3,4,5,6,6,6};
+
+	off_t start=LZSSPosition(&lzss);
 
 	for(;;)
 	{
 		off_t pos=LZSSPosition(&lzss);
 		if(pos>=end) return end;
-		if(pos>=endpos) return endpos;
+		if(pos!=start && pos>=endpos) return endpos; // Avoid stopping if we are starting from the end of a piece.
 		if(pos>=filterstart) return filterstart;
 
 		if(ppmblock)
@@ -525,17 +527,12 @@
 	usagecount[num]++;
 
 	// Read filter range
-	uint32_t blockstartwindowoffs=CSInputNextRARVMNumber(filterinput);
-	if(flags&0x40) blockstartwindowoffs+=258;
+	off_t blockstartpos=CSInputNextRARVMNumber(filterinput)+LZSSPosition(&lzss);
+	if(flags&0x40) blockstartpos+=258;
 
 	uint32_t blocklength;
 	if(flags&0x20) blocklength=oldfilterlength[num]=CSInputNextRARVMNumber(filterinput);
 	else blocklength=oldfilterlength[num];
-
-	// Convert filter range from window position to stream position
-//	off_t blockstartpos=(LZSSPosition(&lzss)&~(off_t)LZSSWindowMask(&lzss))+blockstartwindowoffs;
-//	if(blockstartpos<LZSSPosition(&lzss)) blockstartpos+=LZSSWindowSize(&lzss);
-	off_t blockstartpos=blockstartwindowoffs+LZSSPosition(&lzss);
 
 	uint32_t registers[8]={
 		[3]=XADRARProgramGlobalAddress,[4]=blocklength,

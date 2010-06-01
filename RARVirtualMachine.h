@@ -23,15 +23,19 @@ typedef struct RARVirtualMachine
 	                                           // Possibly not 100% correct but unlikely to be a problem.
 } RARVirtualMachine;
 
+typedef uint32_t (*RARGetterFunction)(RARVirtualMachine *self,uint32_t value);
+typedef void (*RARSetterFunction)(RARVirtualMachine *self,uint32_t value,uint32_t data);
+
 typedef struct RAROpcode
 {
-	void *opcodelabel;
+	void *instructionlabel;
 
-	void *operand1getter;
-	void *operand1setter;
+	RARGetterFunction operand1getter;
+	RARSetterFunction operand1setter;
 	uint32_t value1;
 
-	void *operand2getter;
+	RARGetterFunction operand2getter;
+	RARSetterFunction operand2setter;
 	uint32_t value2;
 
 	uint8_t instruction;
@@ -39,26 +43,38 @@ typedef struct RAROpcode
 	uint8_t addressingmode1;
 	uint8_t addressingmode2;
 
-	#if UINTPTR_MAX==UINT32_MAX
-	uint8_t padding[4]; // 32-bit machine, pad to 32 bytes
-	#else
-	uint8_t padding[20]; // 64-bit machine, pad to 64 bytes
+	#if UINTPTR_MAX==UINT64_MAX
+	uint8_t padding[12]; // 64-bit machine, pad to 64 bytes
 	#endif
 } RAROpcode;
 
 
 
+// Setup
+
 void InitializeRARVirtualMachine(RARVirtualMachine *self);
-void PrepareRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes);
-void ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes);
+
+// Program building
 
 void SetRAROpcodeInstruction(RAROpcode *opcode,unsigned int instruction,bool bytemode);
 void SetRAROpcodeOperand1(RAROpcode *opcode,unsigned int addressingmode,uint32_t value);
 void SetRAROpcodeOperand2(RAROpcode *opcode,unsigned int addressingmode,uint32_t value);
+bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes);
 
+// Execution
+
+void ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes);
+
+
+// Instruction properties
+
+int NumberOfRARInstructionOperands(unsigned int instruction);
 bool RARInstructionHasByteMode(unsigned int instruction);
 bool RARInstructionIsJump(unsigned int instruction);
-int NumberOfRARInstructionOperands(unsigned int instruction);
+bool RARInstructionWritesFirstOperand(unsigned int instruction);
+bool RARInstructionWritesSecondOperand(unsigned int instruction);
+
+// Disassembling
 
 char *DescribeRAROpcode(RAROpcode *opcode);
 char *DescribeRARInstruction(RAROpcode *opcode);
@@ -74,57 +90,73 @@ static inline void SetRARVirtualMachineRegisters(RARVirtualMachine *self,uint32_
 	memcpy(self->registers,registers,sizeof(self->registers));
 }
 
+static inline uint32_t _RARRead32(const uint8_t *b) { return ((uint32_t)b[3]<<24)|((uint32_t)b[2]<<16)|((uint32_t)b[1]<<8)|(uint32_t)b[0]; }
+
+static inline void _RARWrite32(uint8_t *b,uint32_t n) { b[3]=(n>>24)&0xff; b[2]=(n>>16)&0xff; b[1]=(n>>8)&0xff; b[0]=n&0xff; }
+
 static inline uint32_t RARVirtualMachineRead32(RARVirtualMachine *self,uint32_t address)
 {
-	return CSUInt32LE(&self->memory[address&RARProgramMemoryMask]);
+	return _RARRead32(&self->memory[address&RARProgramMemoryMask]);
 }
 
 static inline void RARVirtualMachineWrite32(RARVirtualMachine *self,uint32_t address,uint32_t val)
 {
-	CSSetUInt32LE(&self->memory[address&RARProgramMemoryMask],val);
+	_RARWrite32(&self->memory[address&RARProgramMemoryMask],val);
 }
 
-#define RARMovOpcode 0
-#define RARCmpOpcode 1
-#define RARAddOpcode 2
-#define RARSubOpcode 3
-#define RARJzOpcode 4
-#define RARJnzOpcode 5
-#define RARIncOpcode 6
-#define RARDecOpcode 7
-#define RARJmpOpcode 8
-#define RARXorOpcode 9
-#define RARAndOpcode 10
-#define RAROrOpcode 11
-#define RARTestOpcode 12
-#define RARJsOpcode 13
-#define RARJnsOpcode 14
-#define RARJbOpcode 15
-#define RARJbeOpcode 16
-#define RARJaOpcode 17
-#define RARJaeOpcode 18
-#define RARPushOpcode 19
-#define RARPopOpcode 20
-#define RARCallOpcode 21
-#define RARRetOpcode 22
-#define RARNotOpcode 23
-#define RARShlOpcode 24
-#define RARShrOpcode 25
-#define RARSarOpcode 26
-#define RARNegOpcode 27
-#define RARPushaOpcode 28
-#define RARPopaOpcode 29
-#define RARPushfOpcode 30
-#define RARPopfOpcode 31
-#define RARMovzxOpcode 32
-#define RARMovsxOpcode 33
-#define RARXchgOpcode 34
-#define RARMulOpcode 35
-#define RARDivOpcode 36
-#define RARAdcOpcode 37
-#define RARSbbOpcode 38
-#define RARPrintOpcode 39
-#define RARNumberOfOpcodes 40
+static inline uint32_t RARVirtualMachineRead8(RARVirtualMachine *self,uint32_t address)
+{
+	return self->memory[address&RARProgramMemoryMask];
+}
+
+static inline void RARVirtualMachineWrite8(RARVirtualMachine *self,uint32_t address,uint32_t val)
+{
+	self->memory[address&RARProgramMemoryMask]=val;
+}
+
+#define RARMovInstruction 0
+#define RARCmpInstruction 1
+#define RARAddInstruction 2
+#define RARSubInstruction 3
+#define RARJzInstruction 4
+#define RARJnzInstruction 5
+#define RARIncInstruction 6
+#define RARDecInstruction 7
+#define RARJmpInstruction 8
+#define RARXorInstruction 9
+#define RARAndInstruction 10
+#define RAROrInstruction 11
+#define RARTestInstruction 12
+#define RARJsInstruction 13
+#define RARJnsInstruction 14
+#define RARJbInstruction 15
+#define RARJbeInstruction 16
+#define RARJaInstruction 17
+#define RARJaeInstruction 18
+#define RARPushInstruction 19
+#define RARPopInstruction 20
+#define RARCallInstruction 21
+#define RARRetInstruction 22
+#define RARNotInstruction 23
+#define RARShlInstruction 24
+#define RARShrInstruction 25
+#define RARSarInstruction 26
+#define RARNegInstruction 27
+#define RARPushaInstruction 28
+#define RARPopaInstruction 29
+#define RARPushfInstruction 30
+#define RARPopfInstruction 31
+#define RARMovzxInstruction 32
+#define RARMovsxInstruction 33
+#define RARXchgInstruction 34
+#define RARMulInstruction 35
+#define RARDivInstruction 36
+#define RARAdcInstruction 37
+#define RARSbbInstruction 38
+#define RARPrintInstruction 39
+#define RARNumberOfInstructions 40
+
+#define RARByteModeIndex(inst) ((inst)+RARNumberOfInstructions)
 
 #define RARRegisterAddressingMode(n) (0+(n))
 #define RARRegisterIndirectAddressingMode(n) (8+(n))

@@ -6,12 +6,12 @@
 +(XADRAR30Filter *)filterForProgramInvocation:(XADRARProgramInvocation *)program
 startPosition:(off_t)startpos length:(int)length
 {
-NSLog(@"%08x",[[program programCode] CRC]);
+	//NSLog(@"%08x",[[program programCode] CRC]);
 
 	Class class;
 	switch([[program programCode] CRC])
 	{
-		case 0x0e06077d: class=[XADRAR30DeltaFilter class]; break;
+		//case 0x0e06077d: class=[XADRAR30DeltaFilter class]; break;
 		default: class=[XADRAR30Filter class]; break;
 	}
 

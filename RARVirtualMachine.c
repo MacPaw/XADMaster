@@ -2,29 +2,23 @@
 
 #import <stdio.h>
 
-#define RAR0OperandsFlag 0
-#define RAR1OperandFlag 1
-#define RAR2OperandsFlag 2
-#define RAROperandsFlag 3
-#define RARHasByteModeFlag 4
-#define RARLabelOperandFlag 8
-#define RARReadStatusFlag 16
-#define RARWriteStatusFlag 32
 
-static int InstructionFlags[40];
-static char *InstructionNames[40];
+
+static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes);
+
+static RARGetterFunction OperandGetters_32[RARNumberOfAddressingModes];
+static RARGetterFunction OperandGetters_8[RARNumberOfAddressingModes];
+static RARSetterFunction OperandSetters_32[RARNumberOfAddressingModes];
+static RARSetterFunction OperandSetters_8[RARNumberOfAddressingModes];
+
+
+
+
+// Setup
 
 void InitializeRARVirtualMachine(RARVirtualMachine *self)
 {
-}
-
-void PrepareRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
-{
-}
-
-void ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
-{
-//	flags=0; // ?
+	memset(self->registers,0,sizeof(self->registers));
 }
 
 
@@ -49,31 +43,549 @@ void SetRAROpcodeOperand2(RAROpcode *opcode,unsigned int addressingmode,uint32_t
 	opcode->value2=value;
 }
 
+bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
+{
+	void **instructionlabels_32=RunVirtualMachineOrGetLabels(NULL,NULL,0);
+	void **instructionlabels_8=&instructionlabels_32[RARNumberOfInstructions];
+
+	for(int i=0;i<numopcodes;i++)
+	{
+		if(opcodes[i].instruction>=RARNumberOfInstructions) return false;
+
+		void **instructionlabels;
+		RARSetterFunction *setterfunctions;
+		RARGetterFunction *getterfunctions;
+		if(opcodes[i].bytemode)
+		{
+			instructionlabels=instructionlabels_8;
+			getterfunctions=OperandGetters_8;
+			setterfunctions=OperandSetters_8;
+		}
+		else
+		{
+			instructionlabels=instructionlabels_32;
+			getterfunctions=OperandGetters_32;
+			setterfunctions=OperandSetters_32;
+		}
+
+		if(!instructionlabels[opcodes[i].instruction]) return false;
+		opcodes[i].instructionlabel=instructionlabels[opcodes[i].instruction];
+
+		int numoperands=NumberOfRARInstructionOperands(opcodes[i].instruction);
+
+		if(numoperands>=1)
+		{
+			if(opcodes[i].addressingmode1>=RARNumberOfAddressingModes) return false;
+			opcodes[i].operand1getter=getterfunctions[opcodes[i].addressingmode1];
+			opcodes[i].operand1setter=setterfunctions[opcodes[i].addressingmode1];
+
+			if(opcodes[i].addressingmode1==RARImmediateAddressingMode)
+			{
+				if(RARInstructionWritesFirstOperand(opcodes[i].instruction)) return false;
+				else opcodes[i].value1&=RARProgramMemoryMask;
+			}
+		}
+
+		if(numoperands==2)
+		{
+			if(opcodes[i].addressingmode2>=RARNumberOfAddressingModes) return false;
+			opcodes[i].operand2getter=getterfunctions[opcodes[i].addressingmode2];
+			opcodes[i].operand2setter=setterfunctions[opcodes[i].addressingmode2];
+
+			if(opcodes[i].addressingmode2==RARImmediateAddressingMode)
+			{
+				if(RARInstructionWritesSecondOperand(opcodes[i].instruction)) return false;
+				else opcodes[i].value2&=RARProgramMemoryMask;
+			}
+		}
+	}
+
+	return true;
+}
+
+
+
+// Execution
+
+void ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
+{
+	self->flags=0; // ?
+	RunVirtualMachineOrGetLabels(self,opcodes,numopcodes);
+}
+
+
+
+// Direct-threading implementation function
+
+#define GetOperand1() (opcode->getter1(self,opcode->value1))
+#define GetOperand2() (opcode->getter2(self,opcode->value2))
+#define SetOperand1(data) (opcode->setter1(self,opcode->value1,data))
+#define SetOperand2(data) (opcode->setter2(self,opcode->value2,data))
+
+static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
+{
+	static void *labels[2][RARNumberOfInstructions]=
+	{
+		[0][RARMovInstruction]=&&MovLabel,
+		[0][RARCmpInstruction]=&&CmpLabel,
+		[0][RARAddInstruction]=&&AddLabel,
+		[0][RARSubInstruction]=&&SubLabel,
+		[0][RARJzInstruction]=&&JzLabel,
+		[0][RARJnzInstruction]=&&JnzLabel,
+		[0][RARIncInstruction]=&&IncLabel,
+		[0][RARDecInstruction]=&&DecLabel,
+		[0][RARJmpInstruction]=&&JmpLabel,
+		[0][RARXorInstruction]=&&XorLabel,
+		[0][RARAndInstruction]=&&AndLabel,
+		[0][RAROrInstruction]=&&OrLabel,
+		[0][RARTestInstruction]=&&TestLabel,
+		[0][RARJsInstruction]=&&JsLabel,
+		[0][RARJnsInstruction]=&&JnsLabel,
+		[0][RARJbInstruction]=&&JbLabel,
+		[0][RARJbeInstruction]=&&JbeLabel,
+		[0][RARJaInstruction]=&&JaLabel,
+		[0][RARJaeInstruction]=&&JaeLabel,
+		[0][RARPushInstruction]=&&PushLabel,
+		[0][RARPopInstruction]=&&PopLabel,
+		[0][RARCallInstruction]=&&CallLabel,
+		[0][RARRetInstruction]=&&RetLabel,
+		[0][RARNotInstruction]=&&NotLabel,
+		[0][RARShlInstruction]=&&ShlLabel,
+		[0][RARShrInstruction]=&&ShrLabel,
+		[0][RARSarInstruction]=&&SarLabel,
+		[0][RARNegInstruction]=&&NegLabel,
+		[0][RARPushaInstruction]=&&PushaLabel,
+		[0][RARPopaInstruction]=&&PopaLabel,
+		[0][RARPushfInstruction]=&&PushfLabel,
+		[0][RARPopfInstruction]=&&PopfLabel,
+		[0][RARMovzxInstruction]=&&MovzxLabel,
+		[0][RARMovsxInstruction]=&&MovsxLabel,
+		[0][RARXchgInstruction]=&&XchgLabel,
+		[0][RARMulInstruction]=&&MulLabel,
+		[0][RARDivInstruction]=&&DivLabel,
+		[0][RARAdcInstruction]=&&AdcLabel,
+		[0][RARSbbInstruction]=&&SbbLabel,
+		[0][RARPrintInstruction]=&&PrintLabel,
+		[1][RARMovInstruction]=&&MovByteLabel,
+		[1][RARCmpInstruction]=&&CmpByteLabel,
+		[1][RARAddInstruction]=&&AddByteLabel,
+		[1][RARSubInstruction]=&&SubByteLabel,
+		[1][RARIncInstruction]=&&IncByteLabel,
+		[1][RARDecInstruction]=&&DecByteLabel,
+		[1][RARXorInstruction]=&&XorByteLabel,
+		[1][RARAndInstruction]=&&AndByteLabel,
+		[1][RAROrInstruction]=&&OrByteLabel,
+		[1][RARTestInstruction]=&&TestByteLabel,
+		[1][RARNotInstruction]=&&NotByteLabel,
+		[1][RARShlInstruction]=&&ShlByteLabel,
+		[1][RARShrInstruction]=&&ShrByteLabel,
+		[1][RARSarInstruction]=&&SarByteLabel,
+		[1][RARNegInstruction]=&&NegByteLabel,
+		[1][RARXchgInstruction]=&&XchgByteLabel,
+		[1][RARMulInstruction]=&&MulByteLabel,
+		[1][RARDivInstruction]=&&DivByteLabel,
+		[1][RARAdcInstruction]=&&AdcByteLabel,
+		[1][RARSbbInstruction]=&&SbbByteLabel,
+	};
+
+	if(!opcodes) return &labels[0][0];
+
+	MovLabel:
+//		SetOperand1(GetOperand2());
+
+	CmpLabel:
+
+	AddLabel:
+//		SetOperand1(GetOperand1()+GetOperand2());
+
+	SubLabel:
+	JzLabel:
+	JnzLabel:
+	IncLabel:
+	DecLabel:
+	JmpLabel:
+	XorLabel:
+	AndLabel:
+	OrLabel:
+	TestLabel:
+	JsLabel:
+	JnsLabel:
+	JbLabel:
+	JbeLabel:
+	JaLabel:
+	JaeLabel:
+	PushLabel:
+	PopLabel:
+	CallLabel:
+	RetLabel:
+	NotLabel:
+	ShlLabel:
+	ShrLabel:
+	SarLabel:
+	NegLabel:
+	PushaLabel:
+	PopaLabel:
+	PushfLabel:
+	PopfLabel:
+	MovzxLabel:
+	MovsxLabel:
+	XchgLabel:
+	MulLabel:
+	DivLabel:
+	AdcLabel:
+	SbbLabel:
+	PrintLabel:
+	NumberOfLabel:
+	MovByteLabel:
+	CmpByteLabel:
+	AddByteLabel:
+	SubByteLabel:
+	IncByteLabel:
+	DecByteLabel:
+	XorByteLabel:
+	AndByteLabel:
+	OrByteLabel:
+	TestByteLabel:
+	NotByteLabel:
+	ShlByteLabel:
+	ShrByteLabel:
+	SarByteLabel:
+	NegByteLabel:
+	XchgByteLabel:
+	MulByteLabel:
+	DivByteLabel:
+	AdcByteLabel:
+	SbbByteLabel:
+	return NULL;
+}
+
+static uint32_t RegisterGetter0_32(RARVirtualMachine *self,uint32_t value) { return self->registers[0]; }
+static uint32_t RegisterGetter1_32(RARVirtualMachine *self,uint32_t value) { return self->registers[1]; }
+static uint32_t RegisterGetter2_32(RARVirtualMachine *self,uint32_t value) { return self->registers[2]; }
+static uint32_t RegisterGetter3_32(RARVirtualMachine *self,uint32_t value) { return self->registers[3]; }
+static uint32_t RegisterGetter4_32(RARVirtualMachine *self,uint32_t value) { return self->registers[4]; }
+static uint32_t RegisterGetter5_32(RARVirtualMachine *self,uint32_t value) { return self->registers[5]; }
+static uint32_t RegisterGetter6_32(RARVirtualMachine *self,uint32_t value) { return self->registers[6]; }
+static uint32_t RegisterGetter7_32(RARVirtualMachine *self,uint32_t value) { return self->registers[7]; }
+static uint32_t RegisterGetter0_8(RARVirtualMachine *self,uint32_t value) { return self->registers[0]&0xff; }
+static uint32_t RegisterGetter1_8(RARVirtualMachine *self,uint32_t value) { return self->registers[1]&0xff; }
+static uint32_t RegisterGetter2_8(RARVirtualMachine *self,uint32_t value) { return self->registers[2]&0xff; }
+static uint32_t RegisterGetter3_8(RARVirtualMachine *self,uint32_t value) { return self->registers[3]&0xff; }
+static uint32_t RegisterGetter4_8(RARVirtualMachine *self,uint32_t value) { return self->registers[4]&0xff; }
+static uint32_t RegisterGetter5_8(RARVirtualMachine *self,uint32_t value) { return self->registers[5]&0xff; }
+static uint32_t RegisterGetter6_8(RARVirtualMachine *self,uint32_t value) { return self->registers[6]&0xff; }
+static uint32_t RegisterGetter7_8(RARVirtualMachine *self,uint32_t value) { return self->registers[7]&0xff; }
+
+static uint32_t RegisterIndirectGetter0_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,self->registers[0]); }
+static uint32_t RegisterIndirectGetter1_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,self->registers[1]); }
+static uint32_t RegisterIndirectGetter2_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,self->registers[2]); }
+static uint32_t RegisterIndirectGetter3_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,self->registers[3]); }
+static uint32_t RegisterIndirectGetter4_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,self->registers[4]); }
+static uint32_t RegisterIndirectGetter5_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,self->registers[5]); }
+static uint32_t RegisterIndirectGetter6_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,self->registers[6]); }
+static uint32_t RegisterIndirectGetter7_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,self->registers[7]); }
+static uint32_t RegisterIndirectGetter0_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,self->registers[0]); }
+static uint32_t RegisterIndirectGetter1_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,self->registers[1]); }
+static uint32_t RegisterIndirectGetter2_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,self->registers[2]); }
+static uint32_t RegisterIndirectGetter3_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,self->registers[3]); }
+static uint32_t RegisterIndirectGetter4_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,self->registers[4]); }
+static uint32_t RegisterIndirectGetter5_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,self->registers[5]); }
+static uint32_t RegisterIndirectGetter6_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,self->registers[6]); }
+static uint32_t RegisterIndirectGetter7_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,self->registers[7]); }
+
+static uint32_t IndexedAbsoluteGetter0_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,value+self->registers[0]); }
+static uint32_t IndexedAbsoluteGetter1_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,value+self->registers[1]); }
+static uint32_t IndexedAbsoluteGetter2_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,value+self->registers[2]); }
+static uint32_t IndexedAbsoluteGetter3_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,value+self->registers[3]); }
+static uint32_t IndexedAbsoluteGetter4_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,value+self->registers[4]); }
+static uint32_t IndexedAbsoluteGetter5_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,value+self->registers[5]); }
+static uint32_t IndexedAbsoluteGetter6_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,value+self->registers[6]); }
+static uint32_t IndexedAbsoluteGetter7_32(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead32(self,value+self->registers[7]); }
+static uint32_t IndexedAbsoluteGetter0_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,value+self->registers[0]); }
+static uint32_t IndexedAbsoluteGetter1_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,value+self->registers[1]); }
+static uint32_t IndexedAbsoluteGetter2_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,value+self->registers[2]); }
+static uint32_t IndexedAbsoluteGetter3_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,value+self->registers[3]); }
+static uint32_t IndexedAbsoluteGetter4_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,value+self->registers[4]); }
+static uint32_t IndexedAbsoluteGetter5_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,value+self->registers[5]); }
+static uint32_t IndexedAbsoluteGetter6_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,value+self->registers[6]); }
+static uint32_t IndexedAbsoluteGetter7_8(RARVirtualMachine *self,uint32_t value) { return RARVirtualMachineRead8(self,value+self->registers[7]); }
+
+// Note: Absolute addressing is pre-masked in PrepareRAROpcodes.
+static uint32_t AbsoluteGetter_32(RARVirtualMachine *self,uint32_t value) { return _RARRead32(&self->memory[value]); }
+static uint32_t AbsoluteGetter_8(RARVirtualMachine *self,uint32_t value) { return self->memory[value]; }
+static uint32_t ImmediateGetter(RARVirtualMachine *self,uint32_t value) { return value; }
+
+static void RegisterSetter0_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[0]=data; }
+static void RegisterSetter1_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[1]=data; }
+static void RegisterSetter2_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[2]=data; }
+static void RegisterSetter3_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[3]=data; }
+static void RegisterSetter4_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[4]=data; }
+static void RegisterSetter5_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[5]=data; }
+static void RegisterSetter6_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[6]=data; }
+static void RegisterSetter7_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[7]=data; }
+static void RegisterSetter0_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[0]=data&0xff; }
+static void RegisterSetter1_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[1]=data&0xff; }
+static void RegisterSetter2_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[2]=data&0xff; }
+static void RegisterSetter3_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[3]=data&0xff; }
+static void RegisterSetter4_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[4]=data&0xff; }
+static void RegisterSetter5_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[5]=data&0xff; }
+static void RegisterSetter6_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[6]=data&0xff; }
+static void RegisterSetter7_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->registers[7]=data&0xff; }
+
+static void RegisterIndirectSetter0_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,self->registers[0],data); }
+static void RegisterIndirectSetter1_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,self->registers[1],data); }
+static void RegisterIndirectSetter2_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,self->registers[2],data); }
+static void RegisterIndirectSetter3_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,self->registers[3],data); }
+static void RegisterIndirectSetter4_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,self->registers[4],data); }
+static void RegisterIndirectSetter5_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,self->registers[5],data); }
+static void RegisterIndirectSetter6_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,self->registers[6],data); }
+static void RegisterIndirectSetter7_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,self->registers[7],data); }
+static void RegisterIndirectSetter0_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,self->registers[0],data); }
+static void RegisterIndirectSetter1_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,self->registers[1],data); }
+static void RegisterIndirectSetter2_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,self->registers[2],data); }
+static void RegisterIndirectSetter3_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,self->registers[3],data); }
+static void RegisterIndirectSetter4_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,self->registers[4],data); }
+static void RegisterIndirectSetter5_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,self->registers[5],data); }
+static void RegisterIndirectSetter6_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,self->registers[6],data); }
+static void RegisterIndirectSetter7_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,self->registers[7],data); }
+
+static void IndexedAbsoluteSetter0_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,value+self->registers[0],data); }
+static void IndexedAbsoluteSetter1_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,value+self->registers[1],data); }
+static void IndexedAbsoluteSetter2_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,value+self->registers[2],data); }
+static void IndexedAbsoluteSetter3_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,value+self->registers[3],data); }
+static void IndexedAbsoluteSetter4_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,value+self->registers[4],data); }
+static void IndexedAbsoluteSetter5_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,value+self->registers[5],data); }
+static void IndexedAbsoluteSetter6_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,value+self->registers[6],data); }
+static void IndexedAbsoluteSetter7_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite32(self,value+self->registers[7],data); }
+static void IndexedAbsoluteSetter0_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,value+self->registers[0],data); }
+static void IndexedAbsoluteSetter1_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,value+self->registers[1],data); }
+static void IndexedAbsoluteSetter2_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,value+self->registers[2],data); }
+static void IndexedAbsoluteSetter3_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,value+self->registers[3],data); }
+static void IndexedAbsoluteSetter4_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,value+self->registers[4],data); }
+static void IndexedAbsoluteSetter5_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,value+self->registers[5],data); }
+static void IndexedAbsoluteSetter6_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,value+self->registers[6],data); }
+static void IndexedAbsoluteSetter7_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { RARVirtualMachineWrite8(self,value+self->registers[7],data); }
+
+// Note: Absolute addressing is pre-masked in PrepareRAROpcodes.
+static void AbsoluteSetter_32(RARVirtualMachine *self,uint32_t value,uint32_t data) { _RARWrite32(&self->memory[value],data); }
+static void AbsoluteSetter_8(RARVirtualMachine *self,uint32_t value,uint32_t data) { self->memory[value]=data; }
+
+static RARGetterFunction OperandGetters_32[RARNumberOfAddressingModes]=
+{
+	[RARRegisterAddressingMode(0)]=RegisterGetter0_32,
+	[RARRegisterAddressingMode(1)]=RegisterGetter1_32,
+	[RARRegisterAddressingMode(2)]=RegisterGetter2_32,
+	[RARRegisterAddressingMode(3)]=RegisterGetter3_32,
+	[RARRegisterAddressingMode(4)]=RegisterGetter4_32,
+	[RARRegisterAddressingMode(5)]=RegisterGetter5_32,
+	[RARRegisterAddressingMode(6)]=RegisterGetter6_32,
+	[RARRegisterAddressingMode(7)]=RegisterGetter7_32,
+	[RARRegisterIndirectAddressingMode(0)]=RegisterIndirectGetter0_32,
+	[RARRegisterIndirectAddressingMode(1)]=RegisterIndirectGetter1_32,
+	[RARRegisterIndirectAddressingMode(2)]=RegisterIndirectGetter2_32,
+	[RARRegisterIndirectAddressingMode(3)]=RegisterIndirectGetter3_32,
+	[RARRegisterIndirectAddressingMode(4)]=RegisterIndirectGetter4_32,
+	[RARRegisterIndirectAddressingMode(5)]=RegisterIndirectGetter5_32,
+	[RARRegisterIndirectAddressingMode(6)]=RegisterIndirectGetter6_32,
+	[RARRegisterIndirectAddressingMode(7)]=RegisterIndirectGetter7_32,
+	[RARIndexedAbsoluteAddressingMode(0)]=IndexedAbsoluteGetter0_32,
+	[RARIndexedAbsoluteAddressingMode(1)]=IndexedAbsoluteGetter1_32,
+	[RARIndexedAbsoluteAddressingMode(2)]=IndexedAbsoluteGetter2_32,
+	[RARIndexedAbsoluteAddressingMode(3)]=IndexedAbsoluteGetter3_32,
+	[RARIndexedAbsoluteAddressingMode(4)]=IndexedAbsoluteGetter4_32,
+	[RARIndexedAbsoluteAddressingMode(5)]=IndexedAbsoluteGetter5_32,
+	[RARIndexedAbsoluteAddressingMode(6)]=IndexedAbsoluteGetter6_32,
+	[RARIndexedAbsoluteAddressingMode(7)]=IndexedAbsoluteGetter7_32,
+	[RARAbsoluteAddressingMode]=AbsoluteGetter_32,
+	[RARImmediateAddressingMode]=ImmediateGetter,
+};
+
+static RARGetterFunction OperandGetters_8[RARNumberOfAddressingModes]=
+{
+	[RARRegisterAddressingMode(0)]=RegisterGetter0_8,
+	[RARRegisterAddressingMode(1)]=RegisterGetter1_8,
+	[RARRegisterAddressingMode(2)]=RegisterGetter2_8,
+	[RARRegisterAddressingMode(3)]=RegisterGetter3_8,
+	[RARRegisterAddressingMode(4)]=RegisterGetter4_8,
+	[RARRegisterAddressingMode(5)]=RegisterGetter5_8,
+	[RARRegisterAddressingMode(6)]=RegisterGetter6_8,
+	[RARRegisterAddressingMode(7)]=RegisterGetter7_8,
+	[RARRegisterIndirectAddressingMode(0)]=RegisterIndirectGetter0_8,
+	[RARRegisterIndirectAddressingMode(1)]=RegisterIndirectGetter1_8,
+	[RARRegisterIndirectAddressingMode(2)]=RegisterIndirectGetter2_8,
+	[RARRegisterIndirectAddressingMode(3)]=RegisterIndirectGetter3_8,
+	[RARRegisterIndirectAddressingMode(4)]=RegisterIndirectGetter4_8,
+	[RARRegisterIndirectAddressingMode(5)]=RegisterIndirectGetter5_8,
+	[RARRegisterIndirectAddressingMode(6)]=RegisterIndirectGetter6_8,
+	[RARRegisterIndirectAddressingMode(7)]=RegisterIndirectGetter7_8,
+	[RARIndexedAbsoluteAddressingMode(0)]=IndexedAbsoluteGetter0_8,
+	[RARIndexedAbsoluteAddressingMode(1)]=IndexedAbsoluteGetter1_8,
+	[RARIndexedAbsoluteAddressingMode(2)]=IndexedAbsoluteGetter2_8,
+	[RARIndexedAbsoluteAddressingMode(3)]=IndexedAbsoluteGetter3_8,
+	[RARIndexedAbsoluteAddressingMode(4)]=IndexedAbsoluteGetter4_8,
+	[RARIndexedAbsoluteAddressingMode(5)]=IndexedAbsoluteGetter5_8,
+	[RARIndexedAbsoluteAddressingMode(6)]=IndexedAbsoluteGetter6_8,
+	[RARIndexedAbsoluteAddressingMode(7)]=IndexedAbsoluteGetter7_8,
+	[RARAbsoluteAddressingMode]=AbsoluteGetter_8,
+	[RARImmediateAddressingMode]=ImmediateGetter,
+};
+
+
+static RARSetterFunction OperandSetters_32[RARNumberOfAddressingModes]=
+{
+	[RARRegisterAddressingMode(0)]=RegisterSetter0_32,
+	[RARRegisterAddressingMode(1)]=RegisterSetter1_32,
+	[RARRegisterAddressingMode(2)]=RegisterSetter2_32,
+	[RARRegisterAddressingMode(3)]=RegisterSetter3_32,
+	[RARRegisterAddressingMode(4)]=RegisterSetter4_32,
+	[RARRegisterAddressingMode(5)]=RegisterSetter5_32,
+	[RARRegisterAddressingMode(6)]=RegisterSetter6_32,
+	[RARRegisterAddressingMode(7)]=RegisterSetter7_32,
+	[RARRegisterIndirectAddressingMode(0)]=RegisterIndirectSetter0_32,
+	[RARRegisterIndirectAddressingMode(1)]=RegisterIndirectSetter1_32,
+	[RARRegisterIndirectAddressingMode(2)]=RegisterIndirectSetter2_32,
+	[RARRegisterIndirectAddressingMode(3)]=RegisterIndirectSetter3_32,
+	[RARRegisterIndirectAddressingMode(4)]=RegisterIndirectSetter4_32,
+	[RARRegisterIndirectAddressingMode(5)]=RegisterIndirectSetter5_32,
+	[RARRegisterIndirectAddressingMode(6)]=RegisterIndirectSetter6_32,
+	[RARRegisterIndirectAddressingMode(7)]=RegisterIndirectSetter7_32,
+	[RARIndexedAbsoluteAddressingMode(0)]=IndexedAbsoluteSetter0_32,
+	[RARIndexedAbsoluteAddressingMode(1)]=IndexedAbsoluteSetter1_32,
+	[RARIndexedAbsoluteAddressingMode(2)]=IndexedAbsoluteSetter2_32,
+	[RARIndexedAbsoluteAddressingMode(3)]=IndexedAbsoluteSetter3_32,
+	[RARIndexedAbsoluteAddressingMode(4)]=IndexedAbsoluteSetter4_32,
+	[RARIndexedAbsoluteAddressingMode(5)]=IndexedAbsoluteSetter5_32,
+	[RARIndexedAbsoluteAddressingMode(6)]=IndexedAbsoluteSetter6_32,
+	[RARIndexedAbsoluteAddressingMode(7)]=IndexedAbsoluteSetter7_32,
+	[RARAbsoluteAddressingMode]=AbsoluteSetter_32,
+};
+
+static RARSetterFunction OperandSetters_8[RARNumberOfAddressingModes]=
+{
+	[RARRegisterAddressingMode(0)]=RegisterSetter0_8,
+	[RARRegisterAddressingMode(1)]=RegisterSetter1_8,
+	[RARRegisterAddressingMode(2)]=RegisterSetter2_8,
+	[RARRegisterAddressingMode(3)]=RegisterSetter3_8,
+	[RARRegisterAddressingMode(4)]=RegisterSetter4_8,
+	[RARRegisterAddressingMode(5)]=RegisterSetter5_8,
+	[RARRegisterAddressingMode(6)]=RegisterSetter6_8,
+	[RARRegisterAddressingMode(7)]=RegisterSetter7_8,
+	[RARRegisterIndirectAddressingMode(0)]=RegisterIndirectSetter0_8,
+	[RARRegisterIndirectAddressingMode(1)]=RegisterIndirectSetter1_8,
+	[RARRegisterIndirectAddressingMode(2)]=RegisterIndirectSetter2_8,
+	[RARRegisterIndirectAddressingMode(3)]=RegisterIndirectSetter3_8,
+	[RARRegisterIndirectAddressingMode(4)]=RegisterIndirectSetter4_8,
+	[RARRegisterIndirectAddressingMode(5)]=RegisterIndirectSetter5_8,
+	[RARRegisterIndirectAddressingMode(6)]=RegisterIndirectSetter6_8,
+	[RARRegisterIndirectAddressingMode(7)]=RegisterIndirectSetter7_8,
+	[RARIndexedAbsoluteAddressingMode(0)]=IndexedAbsoluteSetter0_8,
+	[RARIndexedAbsoluteAddressingMode(1)]=IndexedAbsoluteSetter1_8,
+	[RARIndexedAbsoluteAddressingMode(2)]=IndexedAbsoluteSetter2_8,
+	[RARIndexedAbsoluteAddressingMode(3)]=IndexedAbsoluteSetter3_8,
+	[RARIndexedAbsoluteAddressingMode(4)]=IndexedAbsoluteSetter4_8,
+	[RARIndexedAbsoluteAddressingMode(5)]=IndexedAbsoluteSetter5_8,
+	[RARIndexedAbsoluteAddressingMode(6)]=IndexedAbsoluteSetter6_8,
+	[RARIndexedAbsoluteAddressingMode(7)]=IndexedAbsoluteSetter7_8,
+	[RARAbsoluteAddressingMode]=AbsoluteSetter_8,
+};
+
+
+
 
 
 // Instruction properties
 
+#define RAR0OperandsFlag 0
+#define RAR1OperandFlag 1
+#define RAR2OperandsFlag 2
+#define RAROperandsFlag 3
+#define RARHasByteModeFlag 4
+#define RARLabelOperandFlag 8
+#define RARWritesFirstOperandFlag 16
+#define RARWritesSecondOperandFlag 32
+#define RARReadsStatusFlag 64
+#define RARWritesStatusFlag 128
+
+static const int InstructionFlags[40]=
+{
+	[RARMovInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag,
+	[RARCmpInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesStatusFlag,
+	[RARAddInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARSubInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARJzInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARJnzInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARIncInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARDecInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARJmpInstruction]=RAR1OperandFlag | RARLabelOperandFlag,
+	[RARXorInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARAndInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RAROrInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARTestInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesStatusFlag,
+	[RARJsInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARJnsInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARJbInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARJbeInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARJaInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARJaeInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARPushInstruction]=RAR1OperandFlag,
+	[RARPopInstruction]=RAR1OperandFlag,
+	[RARCallInstruction]=RAR1OperandFlag | RARLabelOperandFlag,
+	[RARRetInstruction]=RAR0OperandsFlag | RARLabelOperandFlag,
+	[RARNotInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag,
+	[RARShlInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARShrInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARSarInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARNegInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
+	[RARPushaInstruction]=RAR0OperandsFlag,
+	[RARPopaInstruction]=RAR0OperandsFlag,
+	[RARPushfInstruction]=RAR0OperandsFlag | RARReadsStatusFlag,
+	[RARPopfInstruction]=RAR0OperandsFlag | RARWritesStatusFlag,
+	[RARMovzxInstruction]=RAR2OperandsFlag | RARWritesFirstOperandFlag,
+	[RARMovsxInstruction]=RAR2OperandsFlag | RARWritesFirstOperandFlag,
+	[RARXchgInstruction]=RAR2OperandsFlag | RARWritesFirstOperandFlag | RARWritesSecondOperandFlag | RARHasByteModeFlag,
+	[RARMulInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag,
+	[RARDivInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag,
+	[RARAdcInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARReadsStatusFlag | RARWritesStatusFlag,
+	[RARSbbInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARReadsStatusFlag | RARWritesStatusFlag,
+	[RARPrintInstruction]=RAR0OperandsFlag
+};
+
+int NumberOfRARInstructionOperands(unsigned int instruction)
+{
+	if(instruction>=RARNumberOfInstructions) return 0;
+	return InstructionFlags[instruction]&RAROperandsFlag;
+}
+
 bool RARInstructionHasByteMode(unsigned int instruction)
 {
-	if(instruction>=RARNumberOfOpcodes) return false;
+	if(instruction>=RARNumberOfInstructions) return false;
 	return (InstructionFlags[instruction]&RARHasByteModeFlag)!=0;
 }
 
 bool RARInstructionIsJump(unsigned int instruction)
 {
-	if(instruction>=RARNumberOfOpcodes) return false;
+	if(instruction>=RARNumberOfInstructions) return false;
 	return (InstructionFlags[instruction]&RARLabelOperandFlag)!=0;
 }
 
-int NumberOfRARInstructionOperands(unsigned int instruction)
+bool RARInstructionWritesFirstOperand(unsigned int instruction)
 {
-	if(instruction>=RARNumberOfOpcodes) return 0;
-	return InstructionFlags[instruction]&RAROperandsFlag;
+	if(instruction>=RARNumberOfInstructions) return false;
+	return (InstructionFlags[instruction]&RARWritesFirstOperandFlag)!=0;
+}
+
+bool RARInstructionWritesSecondOperand(unsigned int instruction)
+{
+	if(instruction>=RARNumberOfInstructions) return false;
+	return (InstructionFlags[instruction]&RARWritesFirstOperandFlag)!=0;
 }
 
 
 
-// Disassembler
+
+
+
+// Disassembling
 
 char *DescribeRAROpcode(RAROpcode *opcode)
 {
@@ -81,7 +593,7 @@ char *DescribeRAROpcode(RAROpcode *opcode)
 
 	int numoperands=NumberOfRARInstructionOperands(opcode->instruction);
 
-	char *instruction=DescribeRARInstruction(opcode);
+	char *instruction=DescribeRAROpcode(opcode);
 	strcpy(string,instruction);
 
 	if(numoperands==0) return string;
@@ -99,7 +611,21 @@ char *DescribeRAROpcode(RAROpcode *opcode)
 
 char *DescribeRARInstruction(RAROpcode *opcode)
 {
-	if(opcode->instruction>=RARNumberOfOpcodes) return "invalid";
+	static const char *InstructionNames[40]=
+	{
+		[RARMovInstruction]="mov",[RARCmpInstruction]="cmp",[RARAddInstruction]="add",[RARSubInstruction]="sub",
+		[RARJzInstruction]="jz",[RARJnzInstruction]="jnz",[RARIncInstruction]="inc",[RARDecInstruction]="dec",
+		[RARJmpInstruction]="jmp",[RARXorInstruction]="xor",[RARAndInstruction]="and",[RAROrInstruction]="or",
+		[RARTestInstruction]="test",[RARJsInstruction]="js",[RARJnsInstruction]="jns",[RARJbInstruction]="jb",
+		[RARJbeInstruction]="jbe",[RARJaInstruction]="ja",[RARJaeInstruction]="jae",[RARPushInstruction]="push",
+		[RARPopInstruction]="pop",[RARCallInstruction]="call",[RARRetInstruction]="ret",[RARNotInstruction]="not",
+		[RARShlInstruction]="shl",[RARShrInstruction]="shr",[RARSarInstruction]="sar",[RARNegInstruction]="neg",
+		[RARPushaInstruction]="pusha",[RARPopaInstruction]="popa",[RARPushfInstruction]="pushf",[RARPopfInstruction]="popf",
+		[RARMovzxInstruction]="movzx",[RARMovsxInstruction]="movsx",[RARXchgInstruction]="xchg",[RARMulInstruction]="mul",
+		[RARDivInstruction]="div",[RARAdcInstruction]="adc",[RARSbbInstruction]="sbb",[RARPrintInstruction]="print"
+	};
+
+	if(opcode->instruction>=RARNumberOfInstructions) return "invalid";
 
 	static char string[8];
 	strcpy(string,InstructionNames[opcode->instruction]);
@@ -154,64 +680,3 @@ char *DescribeRAROperand2(RAROpcode *opcode)
 {
 	return DescribeRAROperand(opcode->addressingmode2,opcode->value2);
 }
-
-
-
-static int InstructionFlags[40]=
-{
-	[RARMovOpcode]=RAR2OperandsFlag | RARHasByteModeFlag,
-	[RARCmpOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARAddOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARSubOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARJzOpcode]=RAR1OperandFlag | RARLabelOperandFlag | RARReadStatusFlag,
-	[RARJnzOpcode]=RAR1OperandFlag | RARLabelOperandFlag | RARReadStatusFlag,
-	[RARIncOpcode]=RAR1OperandFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARDecOpcode]=RAR1OperandFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARJmpOpcode]=RAR1OperandFlag | RARLabelOperandFlag,
-	[RARXorOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARAndOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RAROrOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARTestOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARJsOpcode]=RAR1OperandFlag | RARLabelOperandFlag | RARReadStatusFlag,
-	[RARJnsOpcode]=RAR1OperandFlag | RARLabelOperandFlag | RARReadStatusFlag,
-	[RARJbOpcode]=RAR1OperandFlag | RARLabelOperandFlag | RARReadStatusFlag,
-	[RARJbeOpcode]=RAR1OperandFlag | RARLabelOperandFlag | RARReadStatusFlag,
-	[RARJaOpcode]=RAR1OperandFlag | RARLabelOperandFlag | RARReadStatusFlag,
-	[RARJaeOpcode]=RAR1OperandFlag | RARLabelOperandFlag | RARReadStatusFlag,
-	[RARPushOpcode]=RAR1OperandFlag,
-	[RARPopOpcode]=RAR1OperandFlag,
-	[RARCallOpcode]=RAR1OperandFlag | RARLabelOperandFlag,
-	[RARRetOpcode]=RAR0OperandsFlag | RARLabelOperandFlag,
-	[RARNotOpcode]=RAR1OperandFlag | RARHasByteModeFlag,
-	[RARShlOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARShrOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARSarOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARNegOpcode]=RAR1OperandFlag | RARHasByteModeFlag | RARWriteStatusFlag,
-	[RARPushaOpcode]=RAR0OperandsFlag,
-	[RARPopaOpcode]=RAR0OperandsFlag,
-	[RARPushfOpcode]=RAR0OperandsFlag | RARReadStatusFlag,
-	[RARPopfOpcode]=RAR0OperandsFlag | RARWriteStatusFlag,
-	[RARMovzxOpcode]=RAR2OperandsFlag,
-	[RARMovsxOpcode]=RAR2OperandsFlag,
-	[RARXchgOpcode]=RAR2OperandsFlag | RARHasByteModeFlag,
-	[RARMulOpcode]=RAR2OperandsFlag | RARHasByteModeFlag,
-	[RARDivOpcode]=RAR2OperandsFlag | RARHasByteModeFlag,
-	[RARAdcOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARReadStatusFlag | RARWriteStatusFlag,
-	[RARSbbOpcode]=RAR2OperandsFlag | RARHasByteModeFlag | RARReadStatusFlag | RARWriteStatusFlag,
-	[RARPrintOpcode]=RAR0OperandsFlag
-};
-
-static char *InstructionNames[40]=
-{
-	[RARMovOpcode]="mov",[RARCmpOpcode]="cmp",[RARAddOpcode]="add",[RARSubOpcode]="sub",
-	[RARJzOpcode]="jz",[RARJnzOpcode]="jnz",[RARIncOpcode]="inc",[RARDecOpcode]="dec",
-	[RARJmpOpcode]="jmp",[RARXorOpcode]="xor",[RARAndOpcode]="and",[RAROrOpcode]="or",
-	[RARTestOpcode]="test",[RARJsOpcode]="js",[RARJnsOpcode]="jns",[RARJbOpcode]="jb",
-	[RARJbeOpcode]="jbe",[RARJaOpcode]="ja",[RARJaeOpcode]="jae",[RARPushOpcode]="push",
-	[RARPopOpcode]="pop",[RARCallOpcode]="call",[RARRetOpcode]="ret",[RARNotOpcode]="not",
-	[RARShlOpcode]="shl",[RARShrOpcode]="shr",[RARSarOpcode]="sar",[RARNegOpcode]="neg",
-	[RARPushaOpcode]="pusha",[RARPopaOpcode]="popa",[RARPushfOpcode]="pushf",[RARPopfOpcode]="popf",
-	[RARMovzxOpcode]="movzx",[RARMovsxOpcode]="movsx",[RARXchgOpcode]="xchg",[RARMulOpcode]="mul",
-	[RARDivOpcode]="div",[RARAdcOpcode]="adc",[RARSbbOpcode]="sbb",[RARPrintOpcode]="print"
-};
-

@@ -79,7 +79,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 -(void)executeProgramCode:(XADRARProgramCode *)code
 {
-//	ExecuteRARCode(&vm,[code opcodes],[code length]);
+	ExecuteRARCode(&vm,[code opcodes],[code numberOfOpcodes]);
 }
 
 @end
@@ -98,9 +98,12 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 		staticdata=nil;
 		globalbackup=[NSMutableData new];
 
-		[self parseByteCode:bytes length:length];
+		if([self parseByteCode:bytes length:length]) return self;
+
+		[self release];
 	}
-	return self;
+
+	return nil;
 }
 
 -(void)dealloc
@@ -111,16 +114,16 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	[super dealloc];
 }
 
--(void)parseByteCode:(const uint8_t *)bytes length:(int)length
+-(BOOL)parseByteCode:(const uint8_t *)bytes length:(int)length
 {
 	// TODO: deal with exceptions causing memory leaks
 
-	if(length==0) [XADException raiseIllegalDataException];
+	if(length==0) return NO;
 
 	// Check XOR sum.
 	uint8_t xor=0;
 	for(int i=1;i<length;i++) xor^=bytes[i];
-	if(xor!=bytes[0]) [XADException raiseIllegalDataException];
+	if(xor!=bytes[0]) return NO;
 
 	// Calculate CRC for fast native path replacements.
 	crc=XADCalculateCRC(0xffffffff,bytes,length,XADCRCTable_edb88320)^0xffffffff;
@@ -177,6 +180,8 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	}
 
 	CSInputBufferFree(input);
+
+	return PrepareRAROpcodes([self opcodes],[self numberOfOpcodes]);
 }
 
 -(void)parseOperandFromBuffer:(CSInputBuffer *)input addressingMode:(unsigned int *)modeptr

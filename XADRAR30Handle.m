@@ -559,6 +559,8 @@
 		code=[[[XADRARProgramCode alloc] initWithByteCode:bytecode length:length] autorelease];
 		[filtercode addObject:code];
 
+		if(!code) [XADException raiseIllegalDataException];
+
 		NSLog(@"\n%@",[code disassemble]);
 	}
 	else

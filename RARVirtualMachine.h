@@ -20,7 +20,7 @@ typedef struct RARVirtualMachine
 	int flags;
 	// TODO: align?
 	uint8_t memory[RARProgramMemorySize+3]; // Let memory accesses at the end overflow.
-	                                           // Possibly not 100% correct but unlikely to be a problem.
+	                                        // Possibly not 100% correct but unlikely to be a problem.
 } RARVirtualMachine;
 
 typedef uint32_t (*RARGetterFunction)(RARVirtualMachine *self,uint32_t value);
@@ -155,8 +155,6 @@ static inline void RARVirtualMachineWrite8(RARVirtualMachine *self,uint32_t addr
 #define RARSbbInstruction 38
 #define RARPrintInstruction 39
 #define RARNumberOfInstructions 40
-
-#define RARByteModeIndex(inst) ((inst)+RARNumberOfInstructions)
 
 #define RARRegisterAddressingMode(n) (0+(n))
 #define RARRegisterIndirectAddressingMode(n) (8+(n))

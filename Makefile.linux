@@ -186,13 +186,14 @@ OBJC_FILES =	CarrylessRangeCoder.m \
 		XADZipParser.m \
 		XADZipSFXParsers.m \
 		XADZipShrinkHandle.m \
-		../BadLicense/XADRARHandle.m \
+		../BadLicense/XADRAROfficialHandle.m \
 		../UniversalDetector/UniversalDetector.m
 
 C_FILES =	BWT.c \
 		LZSS.c \
 		LZW.c \
 		RARBug.c \
+		RARVirtualMachine.c \
 		libxad/all.c \
 		libxad/clients.c \
 		libxad/unix/emulation.c \
@@ -302,15 +303,12 @@ clean:
 		../UniversalDetector/*~ \
 		../UniversalDetector/universalchardet/*~
 
-depend: Makefile.depend
-
-Makefile.depend:
+depend:
 	$(OBJCC) -MM $(OBJCFLAGS) $(OBJC_FILES) $(MAIN_FILES) >Makefile.dependtmp
 	$(CC) -MM $(CFLAGS) $(C_FILES) >>Makefile.dependtmp
 	$(CXX) -MM $(CXXFLAGS) $(CXX_FILES) >>Makefile.dependtmp
 	sed 's/.*: *\([^ ]*\)\.\([^ ]*\)/\1.o: \1.\2/g' <Makefile.dependtmp >Makefile.depend
 	rm Makefile.dependtmp
 
-
-
 include Makefile.depend
+

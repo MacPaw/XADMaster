@@ -1,6 +1,6 @@
 #include "RARVirtualMachine.h"
 
-#import <stdio.h>
+#include <stdio.h>
 
 
 
@@ -117,10 +117,19 @@ void ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 
 // Direct-threading implementation function
 
-#define GetOperand1() (opcode->getter1(self,opcode->value1))
-#define GetOperand2() (opcode->getter2(self,opcode->value2))
-#define SetOperand1(data) (opcode->setter1(self,opcode->value1,data))
-#define SetOperand2(data) (opcode->setter2(self,opcode->value2,data))
+#define ZeroFlag 1
+#define CarryFlag 2
+#define SignFlag 0x80000000
+
+#define GetOperand1() (opcode->operand1getter(self,opcode->value1))
+#define GetOperand2() (opcode->operand2getter(self,opcode->value2))
+#define SetOperand1(data) { opcode->operand1setter(self,opcode->value1,data); }
+#define SetOperand2(data) { opcode->operand2setter(self,opcode->value2,data); }
+#define NextInstruction() { opcode++; goto *opcode->instructionlabel; }
+#define Jump(offs) { uint32_t o=(offs); if(o>=numopcodes) return NULL; opcode=&opcode[o]; goto *opcode->instructionlabel; }
+
+#define SetFlags(before,after) {}
+#define SetSimpleFlags(val) {}
 
 static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 {
@@ -190,30 +199,87 @@ static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *op
 
 	if(!opcodes) return &labels[0][0];
 
+	RAROpcode *opcode=&opcodes[0];
+	uint32_t val1,val2,res;
+
 	MovLabel:
-//		SetOperand1(GetOperand2());
+		SetOperand1(GetOperand2());
+		NextInstruction();
 
 	CmpLabel:
+		NextInstruction();
 
 	AddLabel:
-//		SetOperand1(GetOperand1()+GetOperand2());
+		val1=GetOperand1();
+		val2=GetOperand2();
+		res=val1+val2;
+		SetOperand1(res);
+		SetFlags(val1,res);
+		NextInstruction();
+	AddByteLabel:
+		val1=GetOperand1();
+		val2=GetOperand2();
+		res=val1+val2;
+		SetOperand1(res);
+		SetFlags(val1,res);
+		NextInstruction();
 
 	SubLabel:
+		val1=GetOperand1();
+		val2=GetOperand2();
+		res=val1-val2;
+		SetOperand1(res);
+		SetFlags(val1,res);
+		NextInstruction();
+	SubByteLabel:
+
 	JzLabel:
+		if(self->flags&ZeroFlag) Jump(GetOperand1())
+		else NextInstruction();
+
 	JnzLabel:
+		if(!(self->flags&ZeroFlag)) Jump(GetOperand1())
+		else NextInstruction()
+
 	IncLabel:
 	DecLabel:
+		NextInstruction();
+
 	JmpLabel:
+		Jump(GetOperand1());
+
 	XorLabel:
 	AndLabel:
 	OrLabel:
+
 	TestLabel:
+		SetSimpleFlags(GetOperand1());
+		NextInstruction();
+
 	JsLabel:
+		if(self->flags&SignFlag) Jump(GetOperand1())
+		else NextInstruction()
+
 	JnsLabel:
+		if(!(self->flags&SignFlag)) Jump(GetOperand1())
+		else NextInstruction()
+
 	JbLabel:
+		if(self->flags&CarryFlag) Jump(GetOperand1())
+		else NextInstruction()
+
 	JbeLabel:
+		if(self->flags&(CarryFlag|ZeroFlag)) Jump(GetOperand1())
+		else NextInstruction()
+
 	JaLabel:
+		if(!(self->flags&(CarryFlag|ZeroFlag))) Jump(GetOperand1())
+		else NextInstruction()
+
 	JaeLabel:
+		if(!(self->flags&CarryFlag)) Jump(GetOperand1())
+		else NextInstruction()
+
 	PushLabel:
 	PopLabel:
 	CallLabel:
@@ -235,11 +301,8 @@ static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *op
 	AdcLabel:
 	SbbLabel:
 	PrintLabel:
-	NumberOfLabel:
 	MovByteLabel:
 	CmpByteLabel:
-	AddByteLabel:
-	SubByteLabel:
 	IncByteLabel:
 	DecByteLabel:
 	XorByteLabel:
@@ -256,6 +319,8 @@ static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *op
 	DivByteLabel:
 	AdcByteLabel:
 	SbbByteLabel:
+	NextInstruction();
+
 	return NULL;
 }
 

@@ -113,10 +113,10 @@ XADCABParser.o: XADCABParser.m XADCABParser.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h XADCABBlockReader.h \
  XADMSZipHandle.h XADCABBlockHandle.h CSBlockStreamHandle.h \
- CSStreamHandle.h CSInputBuffer.h XADQuantumHandle.h XADMSLZXHandle.h \
- XADPrefixCode.h XADCRCHandle.h Progress.h CSZlibHandle.h CSBzip2Handle.h \
- CRC.h NSDateXAD.h CSMemoryHandle.h CSFileHandle.h CSMultiHandle.h \
- Scanning.h
+ CSStreamHandle.h CSInputBuffer.h XADQuantumHandle.h LZSS.h \
+ XADMSLZXHandle.h XADPrefixCode.h XADCRCHandle.h Progress.h \
+ CSZlibHandle.h CSBzip2Handle.h CRC.h NSDateXAD.h CSMemoryHandle.h \
+ CSFileHandle.h CSMultiHandle.h Scanning.h
 XADCFBFParser.o: XADCFBFParser.m XADCFBFParser.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h XADBlockHandle.h NSDateXAD.h
@@ -182,7 +182,7 @@ XADDiskDoublerParser.o: XADDiskDoublerParser.m XADDiskDoublerParser.h \
 XADException.o: XADException.m XADException.h CSFileHandle.h CSHandle.h \
  CSZlibHandle.h CSStreamHandle.h CSInputBuffer.h CSBzip2Handle.h
 XADFastLZSSHandle.o: XADFastLZSSHandle.m XADFastLZSSHandle.h \
- CSStreamHandle.h CSHandle.h CSInputBuffer.h XADException.h
+ CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h XADException.h
 XADGzipParser.o: XADGzipParser.m XADGzipParser.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h CSStreamHandle.h \
@@ -248,7 +248,7 @@ XADMacBinaryParser.o: XADMacBinaryParser.m XADMacBinaryParser.h \
  CSSubHandle.h CSStreamHandle.h CSInputBuffer.h
 XADMSLZXHandle.o: XADMSLZXHandle.m XADMSLZXHandle.h XADCABBlockHandle.h \
  CSBlockStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
- XADCABBlockReader.h XADPrefixCode.h XADException.h
+ XADCABBlockReader.h XADPrefixCode.h LZSS.h XADException.h
 XADMSZipHandle.o: XADMSZipHandle.m XADMSZipHandle.h XADCABBlockHandle.h \
  CSBlockStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
  XADCABBlockReader.h
@@ -300,41 +300,40 @@ XADPrefixCode.o: XADPrefixCode.m XADPrefixCode.h CSInputBuffer.h \
  CSHandle.h SystemSpecific.h
 XADQuantumHandle.o: XADQuantumHandle.m XADQuantumHandle.h \
  XADCABBlockHandle.h CSBlockStreamHandle.h CSStreamHandle.h CSHandle.h \
- CSInputBuffer.h XADCABBlockReader.h XADException.h
+ CSInputBuffer.h XADCABBlockReader.h LZSS.h XADException.h
 XADRARAESHandle.o: XADRARAESHandle.m XADRARAESHandle.h \
  CSBlockStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
  RARBug.h
 XADRARCrypt20Handle.o: XADRARCrypt20Handle.m XADRARCrypt20Handle.h \
  CSBlockStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h CRC.h
-XADRAR20Handle.o: XADRAR20Handle.m XADRAR20Handle.h XADRARHandle.h \
- XADFastLZSSHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
- XADRARParser.h XADArchiveParser.h XADException.h XADString.h XADPath.h \
- XADRegex.h XADSkipHandle.h Checksums.h CSSubHandle.h \
- CSBlockStreamHandle.h RARUnpacker.h XADPrefixCode.h
-XADRAR30Handle.o: XADRAR30Handle.m XADRAR30Handle.h XADRARHandle.h \
- XADFastLZSSHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
- XADRARParser.h XADArchiveParser.h XADException.h XADString.h XADPath.h \
- XADRegex.h XADSkipHandle.h Checksums.h CSSubHandle.h \
- CSBlockStreamHandle.h RARUnpacker.h XADPrefixCode.h PPMdVariantH.h \
- PPMdContext.h CarrylessRangeCoder.h PPMdSubAllocator.h \
- PPMdSubAllocatorVariantH.h XADRARVirtualMachine.h
-XADRARHandle.o: XADRARHandle.m XADRARHandle.h XADFastLZSSHandle.h \
+XADRAR20Handle.o: XADRAR20Handle.m XADRAR20Handle.h XADFastLZSSHandle.h \
+ CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h XADRARParser.h \
+ XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ XADSkipHandle.h Checksums.h CSSubHandle.h XADPrefixCode.h
+XADRAR30Handle.o: XADRAR30Handle.m XADRAR30Handle.h CSBlockStreamHandle.h \
  CSStreamHandle.h CSHandle.h CSInputBuffer.h XADRARParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
- XADSkipHandle.h Checksums.h CSSubHandle.h CSBlockStreamHandle.h \
- RARUnpacker.h XADRAR20Handle.h XADPrefixCode.h XADRAR30Handle.h \
+ XADSkipHandle.h Checksums.h CSSubHandle.h LZSS.h XADPrefixCode.h \
  PPMdVariantH.h PPMdContext.h CarrylessRangeCoder.h PPMdSubAllocator.h \
- PPMdSubAllocatorVariantH.h XADRARVirtualMachine.h SystemSpecific.h
+ PPMdSubAllocatorVariantH.h XADRARVirtualMachine.h RARVirtualMachine.h \
+ XADRAR30Filter.h
+XADRAR30Filter.o: XADRAR30Filter.m XADRAR30Filter.h XADRARParser.h \
+ XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h CSInputBuffer.h \
+ XADRARVirtualMachine.h RARVirtualMachine.h
 XADRARParser.o: XADRARParser.m XADRARParser.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
- XADSkipHandle.h Checksums.h CSSubHandle.h XADRARHandle.h \
- XADFastLZSSHandle.h CSStreamHandle.h CSInputBuffer.h \
- CSBlockStreamHandle.h RARUnpacker.h XADRAR20Handle.h XADPrefixCode.h \
+ XADSkipHandle.h Checksums.h CSSubHandle.h CSInputBuffer.h \
+ XADRAR20Handle.h XADFastLZSSHandle.h CSStreamHandle.h LZSS.h \
+ XADPrefixCode.h XADRAR30Handle.h CSBlockStreamHandle.h PPMdVariantH.h \
+ PPMdContext.h CarrylessRangeCoder.h PPMdSubAllocator.h \
+ PPMdSubAllocatorVariantH.h XADRARVirtualMachine.h RARVirtualMachine.h \
  XADRARAESHandle.h XADRARCrypt20Handle.h XADCRCHandle.h Progress.h \
  CSZlibHandle.h CSBzip2Handle.h CRC.h CSFileHandle.h CSMemoryHandle.h \
- CSMultiHandle.h NSDateXAD.h Scanning.h
+ CSMultiHandle.h NSDateXAD.h Scanning.h \
+ ../BadLicense/XADRAROfficialHandle.h ../BadLicense/RARUnpacker.h
 XADRARVirtualMachine.o: XADRARVirtualMachine.m XADRARVirtualMachine.h \
- CSInputBuffer.h CSHandle.h XADException.h
+ CSInputBuffer.h CSHandle.h RARVirtualMachine.h XADException.h CRC.h
 XADRC4Handle.o: XADRC4Handle.m XADRC4Handle.h CSStreamHandle.h CSHandle.h \
  CSInputBuffer.h
 XADRegex.o: XADRegex.m XADRegex.h
@@ -449,20 +448,20 @@ XADZipCryptHandle.o: XADZipCryptHandle.m XADZipCryptHandle.h \
  CSByteStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
  XADException.h CRC.h
 XADZipImplodeHandle.o: XADZipImplodeHandle.m XADZipImplodeHandle.h \
- XADLZSSHandle.h CSByteStreamHandle.h CSStreamHandle.h CSHandle.h \
- CSInputBuffer.h XADPrefixCode.h XADException.h
+ XADFastLZSSHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h \
+ XADPrefixCode.h XADException.h
 XADZipParser.o: XADZipParser.m XADZipParser.h XADMacArchiveParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h CSStreamHandle.h \
- CSInputBuffer.h XADZipImplodeHandle.h XADLZSSHandle.h \
- CSByteStreamHandle.h XADPrefixCode.h XADZipShrinkHandle.h LZW.h \
- XADDeflateHandle.h XADLZMAHandle.h lzma/LzmaDec.h lzma/Types.h \
- XADPPMdHandles.h PPMdVariantG.h PPMdContext.h CarrylessRangeCoder.h \
- PPMdSubAllocator.h PPMdVariantH.h PPMdSubAllocatorVariantH.h \
- PPMdVariantI.h PPMdSubAllocatorVariantI.h PPMdSubAllocatorVariantG.h \
- PPMdSubAllocatorBrimstone.h XADZipCryptHandle.h XADWinZipAESHandle.h \
- CSZlibHandle.h CSBzip2Handle.h XADCRCHandle.h Progress.h CRC.h \
- NSDateXAD.h Scanning.h
+ CSInputBuffer.h XADZipImplodeHandle.h XADFastLZSSHandle.h LZSS.h \
+ XADPrefixCode.h XADZipShrinkHandle.h CSByteStreamHandle.h LZW.h \
+ XADDeflateHandle.h XADLZSSHandle.h XADLZMAHandle.h lzma/LzmaDec.h \
+ lzma/Types.h XADPPMdHandles.h PPMdVariantG.h PPMdContext.h \
+ CarrylessRangeCoder.h PPMdSubAllocator.h PPMdVariantH.h \
+ PPMdSubAllocatorVariantH.h PPMdVariantI.h PPMdSubAllocatorVariantI.h \
+ PPMdSubAllocatorVariantG.h PPMdSubAllocatorBrimstone.h \
+ XADZipCryptHandle.h XADWinZipAESHandle.h CSZlibHandle.h CSBzip2Handle.h \
+ XADCRCHandle.h Progress.h CRC.h NSDateXAD.h Scanning.h
 XADZipSFXParsers.o: XADZipSFXParsers.m XADZipSFXParsers.h XADZipParser.h \
  XADMacArchiveParser.h XADArchiveParser.h XADException.h XADString.h \
  XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
@@ -470,6 +469,22 @@ XADZipSFXParsers.o: XADZipSFXParsers.m XADZipSFXParsers.h XADZipParser.h \
 XADZipShrinkHandle.o: XADZipShrinkHandle.m XADZipShrinkHandle.h \
  CSByteStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h LZW.h \
  XADException.h
+../BadLicense/XADRAROfficialHandle.o: ../BadLicense/XADRAROfficialHandle.m \
+ ../BadLicense/XADRAROfficialHandle.h \
+ ../BadLicense/../XADMaster/CSBlockStreamHandle.h \
+ ../BadLicense/../XADMaster/CSStreamHandle.h \
+ ../BadLicense/../XADMaster/CSHandle.h \
+ ../BadLicense/../XADMaster/CSInputBuffer.h \
+ ../BadLicense/../XADMaster/XADRARParser.h \
+ ../BadLicense/../XADMaster/XADArchiveParser.h \
+ ../BadLicense/../XADMaster/XADException.h \
+ ../BadLicense/../XADMaster/XADString.h \
+ ../BadLicense/../XADMaster/XADPath.h \
+ ../BadLicense/../XADMaster/XADRegex.h \
+ ../BadLicense/../XADMaster/XADSkipHandle.h \
+ ../BadLicense/../XADMaster/Checksums.h \
+ ../BadLicense/../XADMaster/CSSubHandle.h ../BadLicense/RARUnpacker.h \
+ ../BadLicense/../XADMaster/SystemSpecific.h
 ../UniversalDetector/UniversalDetector.o: ../UniversalDetector/UniversalDetector.m \
  ../UniversalDetector/UniversalDetector.h \
  ../UniversalDetector/WrappedUniversalDetector.h
@@ -486,8 +501,10 @@ unar.o: unar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
  CSSubHandle.h
 BWT.o: BWT.c BWT.h
+LZSS.o: LZSS.c LZSS.h
 LZW.o: LZW.c LZW.h
 RARBug.o: RARBug.c RARBug.h
+RARVirtualMachine.o: RARVirtualMachine.c RARVirtualMachine.h
 libxad/all.o: libxad/all.c libxad/config.h libxad/include/functions.h \
  libxad/include/xadmaster.h libxad/include/privdefs.h \
  libxad/include/../unix/emulation.h \
@@ -536,23 +553,37 @@ lzma/Lzma2Dec.o: lzma/Lzma2Dec.c lzma/Lzma2Dec.h lzma/LzmaDec.h lzma/Types.h
  ../UniversalDetector/universalchardet/prtypes.h \
  ../UniversalDetector/universalchardet/prcpucfg.h \
  ../UniversalDetector/universalchardet/protypes.h
-RARUnpacker.o: RARUnpacker.cpp RARUnpacker.h SystemSpecific.h \
- unrar/rar.hpp unrar/rartypes.hpp unrar/rardefs.hpp unrar/int64.hpp \
- unrar/array.hpp unrar/getbits.hpp unrar/compress.hpp unrar/rarvm.hpp \
- unrar/model.hpp unrar/coder.hpp unrar/suballoc.hpp unrar/unpack.hpp
-unrar/getbits.o: unrar/getbits.cpp unrar/rar.hpp unrar/rartypes.hpp \
- unrar/rardefs.hpp unrar/int64.hpp unrar/array.hpp unrar/getbits.hpp \
- unrar/compress.hpp unrar/rarvm.hpp unrar/model.hpp unrar/coder.hpp \
- unrar/suballoc.hpp unrar/unpack.hpp
-unrar/rarvm.o: unrar/rarvm.cpp unrar/rar.hpp unrar/rartypes.hpp \
- unrar/rardefs.hpp unrar/int64.hpp unrar/array.hpp unrar/getbits.hpp \
- unrar/compress.hpp unrar/rarvm.hpp unrar/model.hpp unrar/coder.hpp \
- unrar/suballoc.hpp unrar/unpack.hpp unrar/rarvmtbl.cpp
-unrar/unpack.o: unrar/unpack.cpp unrar/rar.hpp unrar/rartypes.hpp \
- unrar/rardefs.hpp unrar/int64.hpp unrar/array.hpp unrar/getbits.hpp \
- unrar/compress.hpp unrar/rarvm.hpp unrar/model.hpp unrar/coder.hpp \
- unrar/suballoc.hpp unrar/unpack.hpp unrar/coder.cpp unrar/suballoc.cpp \
- unrar/model.cpp unrar/unpack15.cpp unrar/unpack20.cpp
+../BadLicense/RARUnpacker.o: ../BadLicense/RARUnpacker.cpp ../BadLicense/RARUnpacker.h \
+ ../BadLicense/../XADMaster/SystemSpecific.h ../BadLicense/unrar/rar.hpp \
+ ../BadLicense/unrar/rartypes.hpp ../BadLicense/unrar/rardefs.hpp \
+ ../BadLicense/unrar/int64.hpp ../BadLicense/unrar/array.hpp \
+ ../BadLicense/unrar/getbits.hpp ../BadLicense/unrar/compress.hpp \
+ ../BadLicense/unrar/rarvm.hpp ../BadLicense/unrar/model.hpp \
+ ../BadLicense/unrar/coder.hpp ../BadLicense/unrar/suballoc.hpp \
+ ../BadLicense/unrar/unpack.hpp
+../BadLicense/unrar/getbits.o: ../BadLicense/unrar/getbits.cpp ../BadLicense/unrar/rar.hpp \
+ ../BadLicense/unrar/rartypes.hpp ../BadLicense/unrar/rardefs.hpp \
+ ../BadLicense/unrar/int64.hpp ../BadLicense/unrar/array.hpp \
+ ../BadLicense/unrar/getbits.hpp ../BadLicense/unrar/compress.hpp \
+ ../BadLicense/unrar/rarvm.hpp ../BadLicense/unrar/model.hpp \
+ ../BadLicense/unrar/coder.hpp ../BadLicense/unrar/suballoc.hpp \
+ ../BadLicense/unrar/unpack.hpp
+../BadLicense/unrar/rarvm.o: ../BadLicense/unrar/rarvm.cpp ../BadLicense/unrar/rar.hpp \
+ ../BadLicense/unrar/rartypes.hpp ../BadLicense/unrar/rardefs.hpp \
+ ../BadLicense/unrar/int64.hpp ../BadLicense/unrar/array.hpp \
+ ../BadLicense/unrar/getbits.hpp ../BadLicense/unrar/compress.hpp \
+ ../BadLicense/unrar/rarvm.hpp ../BadLicense/unrar/model.hpp \
+ ../BadLicense/unrar/coder.hpp ../BadLicense/unrar/suballoc.hpp \
+ ../BadLicense/unrar/unpack.hpp ../BadLicense/unrar/rarvmtbl.cpp
+../BadLicense/unrar/unpack.o: ../BadLicense/unrar/unpack.cpp ../BadLicense/unrar/rar.hpp \
+ ../BadLicense/unrar/rartypes.hpp ../BadLicense/unrar/rardefs.hpp \
+ ../BadLicense/unrar/int64.hpp ../BadLicense/unrar/array.hpp \
+ ../BadLicense/unrar/getbits.hpp ../BadLicense/unrar/compress.hpp \
+ ../BadLicense/unrar/rarvm.hpp ../BadLicense/unrar/model.hpp \
+ ../BadLicense/unrar/coder.hpp ../BadLicense/unrar/suballoc.hpp \
+ ../BadLicense/unrar/unpack.hpp ../BadLicense/unrar/coder.cpp \
+ ../BadLicense/unrar/suballoc.cpp ../BadLicense/unrar/model.cpp \
+ ../BadLicense/unrar/unpack15.cpp ../BadLicense/unrar/unpack20.cpp
 WrappedUniversalDetector.o: \
  ../UniversalDetector/WrappedUniversalDetector.cpp \
  ../UniversalDetector/WrappedUniversalDetector.h \

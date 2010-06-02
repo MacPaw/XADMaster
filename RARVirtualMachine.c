@@ -4,7 +4,8 @@
 
 
 
-static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes);
+static bool RunVirtualMachineOrGetLabels(RARVirtualMachine *self,
+RAROpcode *opcodes,int numopcodes,void ***instructionlabels);
 
 static RARGetterFunction OperandGetters_32[RARNumberOfAddressingModes];
 static RARGetterFunction OperandGetters_8[RARNumberOfAddressingModes];
@@ -45,8 +46,10 @@ void SetRAROpcodeOperand2(RAROpcode *opcode,unsigned int addressingmode,uint32_t
 
 bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 {
-	void **instructionlabels_32=RunVirtualMachineOrGetLabels(NULL,NULL,0);
-	void **instructionlabels_8=&instructionlabels_32[RARNumberOfInstructions];
+	void **instructionlabels_32,**instructionlabels_8;
+
+	RunVirtualMachineOrGetLabels(NULL,NULL,0,&instructionlabels_32);
+	instructionlabels_8=&instructionlabels_32[RARNumberOfInstructions];
 
 	for(int i=0;i<numopcodes;i++)
 	{
@@ -103,14 +106,22 @@ bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 	return true;
 }
 
+bool IsProgramTerminated(RAROpcode *opcodes,int numopcodes)
+{
+	return RARInstructionIsJump(opcodes[numopcodes-1].instruction);
+}
+
 
 
 // Execution
 
-void ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
+bool ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 {
+	if(!IsProgramTerminated(opcodes,numopcodes)) return false;
+
 	self->flags=0; // ?
-	RunVirtualMachineOrGetLabels(self,opcodes,numopcodes);
+
+	return RunVirtualMachineOrGetLabels(self,opcodes,numopcodes,NULL);
 }
 
 
@@ -123,15 +134,22 @@ void ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 
 #define GetOperand1() (opcode->operand1getter(self,opcode->value1))
 #define GetOperand2() (opcode->operand2getter(self,opcode->value2))
-#define SetOperand1(data) { opcode->operand1setter(self,opcode->value1,data); }
-#define SetOperand2(data) { opcode->operand2setter(self,opcode->value2,data); }
-#define NextInstruction() { opcode++; goto *opcode->instructionlabel; }
-#define Jump(offs) { uint32_t o=(offs); if(o>=numopcodes) return NULL; opcode=&opcode[o]; goto *opcode->instructionlabel; }
+#define SetOperand1(data) opcode->operand1setter(self,opcode->value1,data)
+#define SetOperand2(data) opcode->operand2setter(self,opcode->value2,data)
 
-#define SetFlags(before,after) {}
-#define SetSimpleFlags(val) {}
+#define SetAllFlags(before,after) ({})
+#define SetAllByteFlags(before,after) ({})
+#define SetSimpleFlags(val) ({})
 
-static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
+#define SetOperand1AndAllFlags(before,after) ({})
+#define SetOperand1AndAllByteFlags(before,after) ({})
+#define SetOperand1AndSimpleFlags(val) ({})
+
+#define NextInstruction() ({ opcode++; goto *opcode->instructionlabel; })
+#define Jump(offs) ({ uint32_t o=(offs); if(o>=numopcodes) return false; opcode=&opcode[o]; goto *opcode->instructionlabel; })
+
+static bool RunVirtualMachineOrGetLabels(RARVirtualMachine *self,
+RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 {
 	static void *labels[2][RARNumberOfInstructions]=
 	{
@@ -197,7 +215,11 @@ static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *op
 		[1][RARSbbInstruction]=&&SbbByteLabel,
 	};
 
-	if(!opcodes) return &labels[0][0];
+	if(instructionlabels)
+	{
+		*instructionlabels=&labels[0][0];
+		return true;
+	}
 
 	RAROpcode *opcode=&opcodes[0];
 	uint32_t val1,val2,res;
@@ -211,37 +233,35 @@ static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *op
 
 	AddLabel:
 		val1=GetOperand1();
-		val2=GetOperand2();
-		res=val1+val2;
-		SetOperand1(res);
-		SetFlags(val1,res);
+		SetOperand1AndAllFlags(val1,val1+GetOperand2());
 		NextInstruction();
+
 	AddByteLabel:
 		val1=GetOperand1();
-		val2=GetOperand2();
-		res=val1+val2;
-		SetOperand1(res);
-		SetFlags(val1,res);
+		SetOperand1AndAllByteFlags(val1,val1+GetOperand2()); //?
 		NextInstruction();
 
 	SubLabel:
 		val1=GetOperand1();
-		val2=GetOperand2();
-		res=val1-val2;
-		SetOperand1(res);
-		SetFlags(val1,res);
+		SetOperand1AndAllFlags(val1,val1-GetOperand2());
 		NextInstruction();
 	SubByteLabel:
+		val1=GetOperand1();
+		SetOperand1AndAllFlags(val1,val1-GetOperand2());
+		NextInstruction();
 
 	JzLabel:
-		if(self->flags&ZeroFlag) Jump(GetOperand1())
+		if(self->flags&ZeroFlag) Jump(GetOperand1());
 		else NextInstruction();
 
 	JnzLabel:
-		if(!(self->flags&ZeroFlag)) Jump(GetOperand1())
-		else NextInstruction()
+		if(!(self->flags&ZeroFlag)) Jump(GetOperand1());
+		else NextInstruction();
 
 	IncLabel:
+		SetOperand1AndSimpleFlags(GetOperand1()+1);
+		NextInstruction();
+
 	DecLabel:
 		NextInstruction();
 
@@ -257,28 +277,28 @@ static void **RunVirtualMachineOrGetLabels(RARVirtualMachine *self,RAROpcode *op
 		NextInstruction();
 
 	JsLabel:
-		if(self->flags&SignFlag) Jump(GetOperand1())
-		else NextInstruction()
+		if(self->flags&SignFlag) Jump(GetOperand1());
+		else NextInstruction();
 
 	JnsLabel:
-		if(!(self->flags&SignFlag)) Jump(GetOperand1())
-		else NextInstruction()
+		if(!(self->flags&SignFlag)) Jump(GetOperand1());
+		else NextInstruction();
 
 	JbLabel:
-		if(self->flags&CarryFlag) Jump(GetOperand1())
-		else NextInstruction()
+		if(self->flags&CarryFlag) Jump(GetOperand1());
+		else NextInstruction();
 
 	JbeLabel:
-		if(self->flags&(CarryFlag|ZeroFlag)) Jump(GetOperand1())
-		else NextInstruction()
+		if(self->flags&(CarryFlag|ZeroFlag)) Jump(GetOperand1());
+		else NextInstruction();
 
 	JaLabel:
-		if(!(self->flags&(CarryFlag|ZeroFlag))) Jump(GetOperand1())
-		else NextInstruction()
+		if(!(self->flags&(CarryFlag|ZeroFlag))) Jump(GetOperand1());
+		else NextInstruction();
 
 	JaeLabel:
-		if(!(self->flags&CarryFlag)) Jump(GetOperand1())
-		else NextInstruction()
+		if(!(self->flags&CarryFlag)) Jump(GetOperand1());
+		else NextInstruction();
 
 	PushLabel:
 	PopLabel:

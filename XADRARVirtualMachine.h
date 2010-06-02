@@ -28,7 +28,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 -(uint32_t)readWordAtAddress:(uint32_t)address;
 -(void)writeWordAtAddress:(uint32_t)address value:(uint32_t)value;
 
--(void)executeProgramCode:(XADRARProgramCode *)code;
+-(BOOL)executeProgramCode:(XADRARProgramCode *)code;
 
 @end
 
@@ -84,6 +84,6 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentIn
 -(void)backupGlobalData;
 -(void)restoreGlobalDataIfAvailable;
 
--(void)executeOnVitualMachine:(XADRARVirtualMachine *)vm;
+-(BOOL)executeOnVitualMachine:(XADRARVirtualMachine *)vm;
 
 @end

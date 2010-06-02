@@ -787,7 +787,6 @@
 		1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADBinHexParser.m; sourceTree = "<group>"; };
 		1B06D5B90DDA67E000D9C000 /* XADString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADString.h; sourceTree = "<group>"; };
 		1B06D5BA0DDA67E000D9C000 /* XADString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADString.m; sourceTree = "<group>"; };
-		1B210D4D0A40E457005ED2AF /* xadIO.doc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = xadIO.doc; path = libxad_reject/amiga/source/clients/xadIO.doc; sourceTree = "<group>"; };
 		1B21106F0A4452C2005ED2AF /* XADRegex.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XADRegex.m; sourceTree = "<group>"; };
 		1B2110700A4452C2005ED2AF /* XADRegex.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XADRegex.h; sourceTree = "<group>"; };
 		1B216A730F8E8ADE001207C9 /* Progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Progress.h; sourceTree = "<group>"; };
@@ -910,8 +909,6 @@
 		1B578C5A0DDCFFE0005B0F68 /* XADBzip2Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADBzip2Parser.h; sourceTree = "<group>"; };
 		1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADBzip2Parser.m; sourceTree = "<group>"; };
 		1B5A7AF50A24CFD200B189EB /* XADArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADArchive.h; sourceTree = "<group>"; };
-		1B5A7B390A24D3A800B189EB /* xadmaster.doc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = xadmaster.doc; path = libxad_reject/amiga/include/Autodocs/xadmaster.doc; sourceTree = "<group>"; };
-		1B5A7B3A0A24D3B100B189EB /* xadsub.doc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = xadsub.doc; path = libxad_reject/amiga/include/Autodocs/xadsub.doc; sourceTree = "<group>"; };
 		1B5A7BA30A24F9B400B189EB /* XADTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B5A7BA90A24FA0200B189EB /* XADTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest.m; sourceTree = "<group>"; };
 		1B5A80B50A27AA9900B189EB /* XADArchive.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XADArchive.m; sourceTree = "<group>"; };
@@ -1907,9 +1904,6 @@
 			isa = PBXGroup;
 			children = (
 				32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */,
-				1B5A7B390A24D3A800B189EB /* xadmaster.doc */,
-				1B5A7B3A0A24D3B100B189EB /* xadsub.doc */,
-				1B210D4D0A40E457005ED2AF /* xadIO.doc */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";

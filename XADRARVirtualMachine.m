@@ -77,9 +77,9 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	RARVirtualMachineWrite32(&vm,address,value);
 }
 
--(void)executeProgramCode:(XADRARProgramCode *)code
+-(BOOL)executeProgramCode:(XADRARProgramCode *)code
 {
-	ExecuteRARCode(&vm,[code opcodes],[code numberOfOpcodes]);
+	return ExecuteRARCode(&vm,[code opcodes],[code numberOfOpcodes]);
 }
 
 @end
@@ -177,6 +177,17 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 			 byteMode:bytemode isJump:NO currentInstructionOffset:0];
 			SetRAROpcodeOperand2(opcode,addressingmode,value);
 		}
+	}
+
+	// Check if program is properly terminated, if not, add a ret opcode.
+	if(!IsProgramTerminated([self opcodes],[self numberOfOpcodes]))
+	{
+		[opcodes increaseLengthBy:sizeof(RAROpcode)];
+		RAROpcode *opcodearray=[self opcodes];
+		int currinstruction=[self numberOfOpcodes]-1;
+		RAROpcode *opcode=&opcodearray[currinstruction];
+
+		SetRAROpcodeInstruction(opcode,RARRetInstruction,false);
 	}
 
 	CSInputBufferFree(input);
@@ -342,7 +353,7 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentIn
 	if([backup length]>RARProgramSystemGlobalSize) [globaldata setData:backup];
 }
 
--(void)executeOnVitualMachine:(XADRARVirtualMachine *)vm
+-(BOOL)executeOnVitualMachine:(XADRARVirtualMachine *)vm
 {
 	int globallength=[globaldata length];
 	if(globallength>RARProgramGlobalSize) globallength=RARProgramGlobalSize;
@@ -358,7 +369,7 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentIn
 
 	[vm setRegisters:initialregisters];
 
-	[vm executeProgramCode:programcode];
+	if(![vm executeProgramCode:programcode]) return NO;
 
 	uint32_t newgloballength=[vm readWordAtAddress:RARProgramGlobalAddress+0x30];
 	if(newgloballength>RARProgramUserGlobalSize) newgloballength=RARProgramUserGlobalSize;
@@ -369,6 +380,8 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentIn
 		toMutableData:[globaldata mutableBytes]];
 	}
 	else [globaldata setLength:0];
+
+	return YES;
 }
 
 @end

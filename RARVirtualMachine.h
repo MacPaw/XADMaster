@@ -63,7 +63,7 @@ bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes);
 
 // Execution
 
-void ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes);
+bool ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes);
 
 
 // Instruction properties

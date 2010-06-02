@@ -54,7 +54,7 @@ startPosition:(off_t)startpos length:(int)length
 	[invocation setGlobalValueAtOffset:0x24 toValue:(uint32_t)pos];
 	[invocation setGlobalValueAtOffset:0x28 toValue:(uint32_t)(pos>>32)];
 
-	[invocation executeOnVitualMachine:vm];
+	if(![invocation executeOnVitualMachine:vm]) [XADException raiseIllegalDataException];
 
 	filteredblockaddress=[vm readWordAtAddress:RARProgramGlobalAddress+0x20]&RARProgramMemoryMask;
 	filteredblocklength=[vm readWordAtAddress:RARProgramGlobalAddress+0x1c]&RARProgramMemoryMask;

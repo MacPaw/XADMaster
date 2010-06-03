@@ -226,6 +226,7 @@
 						int len=NextPPMdVariantHByte(&ppmd);
 						EmitLZSSMatch(&lzss,1,len+4);
 					}
+					break;
 
 					default:
 						EmitLZSSLiteral(&lzss,byte);
@@ -361,7 +362,7 @@
 
 	if(ppmblock)
 	{
-		int flags=CSInputNextByte(input);
+		int flags=CSInputNextBitString(input,7);
 
 		int maxalloc;
 		if(flags&0x20) maxalloc=CSInputNextByte(input);

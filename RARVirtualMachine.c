@@ -70,7 +70,7 @@ bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 			getterfunctions=OperandGetters_8;
 			setterfunctions=OperandSetters_32;
 		}
-		if(opcodes[i].bytemode)
+		else if(opcodes[i].bytemode)
 		{
 			if(!RARInstructionHasByteMode(opcodes[i].instruction)) return false;
 
@@ -98,7 +98,10 @@ bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 			if(opcodes[i].addressingmode1==RARImmediateAddressingMode)
 			{
 				if(RARInstructionWritesFirstOperand(opcodes[i].instruction)) return false;
-				else opcodes[i].value1&=RARProgramMemoryMask;
+			}
+			else if(opcodes[i].addressingmode1==RARAbsoluteAddressingMode)
+			{
+				opcodes[i].value1&=RARProgramMemoryMask;
 			}
 		}
 
@@ -111,7 +114,10 @@ bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 			if(opcodes[i].addressingmode2==RARImmediateAddressingMode)
 			{
 				if(RARInstructionWritesSecondOperand(opcodes[i].instruction)) return false;
-				else opcodes[i].value2&=RARProgramMemoryMask;
+			}
+			else if(opcodes[i].addressingmode2==RARAbsoluteAddressingMode)
+			{
+				opcodes[i].value2&=RARProgramMemoryMask;
 			}
 		}
 	}
@@ -148,15 +154,18 @@ bool ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 #define SetOperand1(data) opcode->operand1setter(self,opcode->value1,data)
 #define SetOperand2(data) opcode->operand2setter(self,opcode->value2,data)
 
-#define SetFlagsWithCarry(res,carry) ({ uint32_t result=(res); self->flags=(result==0?ZeroFlag:(result&SignFlag))|(carry); })
-#define SetByteFlagsWithCarry(res,carry) ({ uint32_t result=(res); self->flags=(result==0?ZeroFlag:(SignExtend(result)&SignFlag))|(carry); })
+#define SetFlagsWithCarry(res,carry) ({ uint32_t result=(res); flags=(result==0?ZeroFlag:(result&SignFlag))|(carry); })
+#define SetByteFlagsWithCarry(res,carry) ({ uint32_t result=(res); flags=(result==0?ZeroFlag:(SignExtend(result)&SignFlag))|(carry); })
 #define SetFlags(res) (SetFlagsWithCarry(res,0))
 
 #define SetOperand1AndFlagsWithCarry(res,carry) ({ uint32_t r=(res); SetFlagsWithCarry(r,carry); SetOperand1(r); })
 #define SetOperand1AndByteFlagsWithCarry(res,carry) ({ uint32_t r=(res); SetByteFlagsWithCarry(r,carry); SetOperand1(r); })
 #define SetOperand1AndFlags(res) ({ uint32_t r=(res); SetFlags(r); SetOperand1(r); })
 
+static int count=0;
 //#define Debug() ({ printf("Execute: %04x\t%s\n",opcode-opcodes,DescribeRAROpcode(opcode)); })
+//#define Debug() ({ printf("%d %04x %08x ",count++,opcode-opcodes,flags); for(int i=0;i<8;i++) printf("%08x(%08x) ",self->registers[i],RARVirtualMachineRead32(self,self->registers[i])); printf("\n"); })
+//#define Debug() ({ printf("%d %04x %s\t%08x ",count++,opcode-opcodes,DescribeRAROpcode(opcode),flags); for(int i=0;i<8;i++) printf("%08x(%08x) ",self->registers[i],RARVirtualMachineRead32(self,self->registers[i])); printf("\n"); })
 #define Debug() ({ })
 
 #define NextInstruction() ({ opcode++; Debug(); goto *opcode->instructionlabel; })
@@ -216,6 +225,8 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 	}
 
 	RAROpcode *opcode;
+	uint32_t flags=self->flags;
+
 	Jump(0);
 
 	MovLabel:
@@ -256,11 +267,11 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 	}*/
 
 	JzLabel:
-		if(self->flags&ZeroFlag) Jump(GetOperand1());
+		if(flags&ZeroFlag) Jump(GetOperand1());
 		else NextInstruction();
 
 	JnzLabel:
-		if(!(self->flags&ZeroFlag)) Jump(GetOperand1());
+		if(!(flags&ZeroFlag)) Jump(GetOperand1());
 		else NextInstruction();
 
 	IncLabel:
@@ -297,27 +308,27 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 		NextInstruction();
 
 	JsLabel:
-		if(self->flags&SignFlag) Jump(GetOperand1());
+		if(flags&SignFlag) Jump(GetOperand1());
 		else NextInstruction();
 
 	JnsLabel:
-		if(!(self->flags&SignFlag)) Jump(GetOperand1());
+		if(!(flags&SignFlag)) Jump(GetOperand1());
 		else NextInstruction();
 
 	JbLabel:
-		if(self->flags&CarryFlag) Jump(GetOperand1());
+		if(flags&CarryFlag) Jump(GetOperand1());
 		else NextInstruction();
 
 	JbeLabel:
-		if(self->flags&(CarryFlag|ZeroFlag)) Jump(GetOperand1());
+		if(flags&(CarryFlag|ZeroFlag)) Jump(GetOperand1());
 		else NextInstruction();
 
 	JaLabel:
-		if(!(self->flags&(CarryFlag|ZeroFlag))) Jump(GetOperand1());
+		if(!(flags&(CarryFlag|ZeroFlag))) Jump(GetOperand1());
 		else NextInstruction();
 
 	JaeLabel:
-		if(!(self->flags&CarryFlag)) Jump(GetOperand1());
+		if(!(flags&CarryFlag)) Jump(GetOperand1());
 		else NextInstruction();
 
 	PushLabel:
@@ -337,7 +348,11 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 
 	RetLabel:
 	{
-		if(self->registers[7]>=RARProgramMemorySize) return true;
+		if(self->registers[7]>=RARProgramMemorySize)
+		{
+			self->flags=flags;
+			return true;
+		}
 		uint32_t retaddr=RARVirtualMachineRead32(self,self->registers[7]);
 		self->registers[7]+=4;
 		Jump(retaddr);
@@ -387,11 +402,11 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 
 	PushfLabel:
 		self->registers[7]-=4;
-		RARVirtualMachineWrite32(self,self->registers[7],self->flags);
+		RARVirtualMachineWrite32(self,self->registers[7],flags);
 		NextInstruction();
 
 	PopfLabel:
-		self->flags=RARVirtualMachineRead32(self,self->registers[7]);
+		flags=RARVirtualMachineRead32(self,self->registers[7]);
 		self->registers[7]+=4;
 		NextInstruction();
 
@@ -426,14 +441,14 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 	AdcLabel:
 	{
 		uint32_t term1=GetOperand1();
-		uint32_t carry=self->flags&CarryFlag;
+		uint32_t carry=flags&CarryFlag;
 		SetOperand1AndFlagsWithCarry(term1+GetOperand2()+carry,result<term1 || result==term1 && carry);
 		NextInstruction();
 	}
 	AdcByteLabel:
 	{
 		uint32_t term1=GetOperand1();
-		uint32_t carry=self->flags&CarryFlag;
+		uint32_t carry=flags&CarryFlag;
 		SetOperand1AndFlagsWithCarry(term1+GetOperand2()+carry&0xff,result<term1 || result==term1 && carry); // Does not correctly set sign bit.
 		NextInstruction();
 	}
@@ -441,14 +456,14 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 	SbbLabel:
 	{
 		uint32_t term1=GetOperand1();
-		uint32_t carry=self->flags&CarryFlag;
+		uint32_t carry=flags&CarryFlag;
 		SetOperand1AndFlagsWithCarry(term1-GetOperand2()-carry,result>term1 || result==term1 && carry);
 		NextInstruction();
 	}
 	SbbByteLabel:
 	{
 		uint32_t term1=GetOperand1();
-		uint32_t carry=self->flags&CarryFlag;
+		uint32_t carry=flags&CarryFlag;
 		SetOperand1AndFlagsWithCarry(term1-GetOperand2()-carry&0xff,result>term1 || result==term1 && carry); // Does not correctly set sign bit.
 		NextInstruction();
 	}

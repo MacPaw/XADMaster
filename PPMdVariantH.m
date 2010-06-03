@@ -95,7 +95,6 @@ static void RestartModel(PPMdModelVariantH *self)
 
 int NextPPMdVariantHByte(PPMdModelVariantH *self)
 {
-//NSLog(@"%x %x",self->core.coder.range,self->core.coder.code);
 	if(self->MinContext->LastStateIndex!=0) DecodeSymbol1VariantH(self->MinContext,self);
 	else DecodeBinSymbolVariantH(self->MinContext,self);
 

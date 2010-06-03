@@ -48,8 +48,8 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 
 -(BOOL)parseByteCode:(const uint8_t *)bytes length:(int)length;
 -(void)parseOperandFromBuffer:(CSInputBuffer *)input addressingMode:(unsigned int *)modeptr
-value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentInstructionOffset:(int)instructionoffset;
-
+value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isRelativeJump:(BOOL)isjump
+currentInstructionOffset:(int)instructionoffset;
 
 -(RAROpcode *)opcodes;
 -(int)numberOfOpcodes;

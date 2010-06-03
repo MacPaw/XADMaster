@@ -165,7 +165,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 			unsigned int addressingmode;
 			uint32_t value;
 			[self parseOperandFromBuffer:input addressingMode:&addressingmode value:&value
-			byteMode:bytemode isJump:RARInstructionIsJump(instruction)
+			byteMode:bytemode isRelativeJump:RARInstructionIsRelativeJump(instruction)
 			currentInstructionOffset:currinstruction];
 			SetRAROpcodeOperand1(opcode,addressingmode,value);
 		}
@@ -174,7 +174,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 			unsigned int addressingmode;
 			uint32_t value;
 			[self parseOperandFromBuffer:input addressingMode:&addressingmode value:&value
-			 byteMode:bytemode isJump:NO currentInstructionOffset:0];
+			 byteMode:bytemode isRelativeJump:NO currentInstructionOffset:0];
 			SetRAROpcodeOperand2(opcode,addressingmode,value);
 		}
 	}
@@ -196,7 +196,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 }
 
 -(void)parseOperandFromBuffer:(CSInputBuffer *)input addressingMode:(unsigned int *)modeptr
-value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentInstructionOffset:(int)instructionoffset
+value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isRelativeJump:(BOOL)isrel currentInstructionOffset:(int)instructionoffset
 {
 	if(CSInputNextBit(input))
 	{
@@ -241,7 +241,7 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isJump:(BOOL)isjump currentIn
 				*modeptr=RARImmediateAddressingMode;
 			}
 
-			if(isjump)
+			if(isrel)
 			{
 				if(*valueptr>=256) *valueptr-=256; // Absolute address
 				else

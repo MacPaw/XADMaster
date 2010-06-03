@@ -58,8 +58,17 @@ bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 		void **instructionlabels;
 		RARSetterFunction *setterfunctions;
 		RARGetterFunction *getterfunctions;
+
+		if(opcodes[i].instruction==RARMovsxInstruction||opcodes[i].instruction==RARMovzxInstruction)
+		{
+			instructionlabels=instructionlabels_32;
+			getterfunctions=OperandGetters_8;
+			setterfunctions=OperandSetters_32;
+		}
 		if(opcodes[i].bytemode)
 		{
+			if(!RARInstructionHasByteMode(opcodes[i].instruction)) return false;
+
 			instructionlabels=instructionlabels_8;
 			getterfunctions=OperandGetters_8;
 			setterfunctions=OperandSetters_8;
@@ -71,7 +80,6 @@ bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 			setterfunctions=OperandSetters_32;
 		}
 
-		if(!instructionlabels[opcodes[i].instruction]) return false;
 		opcodes[i].instructionlabel=instructionlabels[opcodes[i].instruction];
 
 		int numoperands=NumberOfRARInstructionOperands(opcodes[i].instruction);
@@ -128,22 +136,24 @@ bool ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 
 // Direct-threading implementation function
 
-#define ZeroFlag 1
-#define CarryFlag 2
+#define CarryFlag 1
+#define ZeroFlag 2
 #define SignFlag 0x80000000
+
+#define SignExtend(a) ((uint32_t)((int8_t)(a)))
 
 #define GetOperand1() (opcode->operand1getter(self,opcode->value1))
 #define GetOperand2() (opcode->operand2getter(self,opcode->value2))
 #define SetOperand1(data) opcode->operand1setter(self,opcode->value1,data)
 #define SetOperand2(data) opcode->operand2setter(self,opcode->value2,data)
 
-#define SetAllFlags(before,after) ({})
-#define SetAllByteFlags(before,after) ({})
-#define SetSimpleFlags(val) ({})
+#define SetFlagsWithCarry(res,carry) ({ uint32_t result=(res); self->flags=(result==0?ZeroFlag:(result&SignFlag))|(carry); })
+#define SetByteFlagsWithCarry(res,carry) ({ uint32_t result=(res); self->flags=(result==0?ZeroFlag:(SignExtend(result)&SignFlag))|(carry); })
+#define SetFlags(res) (SetFlagsWithCarry(res,0))
 
-#define SetOperand1AndAllFlags(before,after) ({})
-#define SetOperand1AndAllByteFlags(before,after) ({})
-#define SetOperand1AndSimpleFlags(val) ({})
+#define SetOperand1AndFlagsWithCarry(res,carry) ({ uint32_t r=(res); SetFlagsWithCarry(r,carry); SetOperand1(r); })
+#define SetOperand1AndByteFlagsWithCarry(res,carry) ({ uint32_t r=(res); SetByteFlagsWithCarry(r,carry); SetOperand1(r); })
+#define SetOperand1AndFlags(res) ({ uint32_t r=(res); SetFlags(r); SetOperand1(r); })
 
 #define NextInstruction() ({ opcode++; goto *opcode->instructionlabel; })
 #define Jump(offs) ({ uint32_t o=(offs); if(o>=numopcodes) return false; opcode=&opcode[o]; goto *opcode->instructionlabel; })
@@ -153,19 +163,19 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 {
 	static void *labels[2][RARNumberOfInstructions]=
 	{
-		[0][RARMovInstruction]=&&MovLabel,
-		[0][RARCmpInstruction]=&&CmpLabel,
-		[0][RARAddInstruction]=&&AddLabel,
-		[0][RARSubInstruction]=&&SubLabel,
+		[0][RARMovInstruction]=&&MovLabel,[1][RARMovInstruction]=&&MovLabel,
+		[0][RARCmpInstruction]=&&CmpLabel,[1][RARCmpInstruction]=&&CmpLabel,
+		[0][RARAddInstruction]=&&AddLabel,[1][RARAddInstruction]=&&AddByteLabel,
+		[0][RARSubInstruction]=&&SubLabel,[1][RARSubInstruction]=&&SubLabel,
 		[0][RARJzInstruction]=&&JzLabel,
 		[0][RARJnzInstruction]=&&JnzLabel,
-		[0][RARIncInstruction]=&&IncLabel,
-		[0][RARDecInstruction]=&&DecLabel,
+		[0][RARIncInstruction]=&&IncLabel,[1][RARIncInstruction]=&&IncByteLabel,
+		[0][RARDecInstruction]=&&DecLabel,[1][RARDecInstruction]=&&DecByteLabel,
 		[0][RARJmpInstruction]=&&JmpLabel,
-		[0][RARXorInstruction]=&&XorLabel,
-		[0][RARAndInstruction]=&&AndLabel,
-		[0][RAROrInstruction]=&&OrLabel,
-		[0][RARTestInstruction]=&&TestLabel,
+		[0][RARXorInstruction]=&&XorLabel,[1][RARXorInstruction]=&&XorLabel,
+		[0][RARAndInstruction]=&&AndLabel,[1][RARAndInstruction]=&&AndLabel,
+		[0][RAROrInstruction]=&&OrLabel,[1][RAROrInstruction]=&&OrLabel,
+		[0][RARTestInstruction]=&&TestLabel,[1][RARTestInstruction]=&&TestLabel,
 		[0][RARJsInstruction]=&&JsLabel,
 		[0][RARJnsInstruction]=&&JnsLabel,
 		[0][RARJbInstruction]=&&JbLabel,
@@ -176,11 +186,11 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 		[0][RARPopInstruction]=&&PopLabel,
 		[0][RARCallInstruction]=&&CallLabel,
 		[0][RARRetInstruction]=&&RetLabel,
-		[0][RARNotInstruction]=&&NotLabel,
-		[0][RARShlInstruction]=&&ShlLabel,
-		[0][RARShrInstruction]=&&ShrLabel,
-		[0][RARSarInstruction]=&&SarLabel,
-		[0][RARNegInstruction]=&&NegLabel,
+		[0][RARNotInstruction]=&&NotLabel,[1][RARNotInstruction]=&&NotLabel,
+		[0][RARShlInstruction]=&&ShlLabel,[1][RARShlInstruction]=&&ShlLabel,
+		[0][RARShrInstruction]=&&ShrLabel,[1][RARShrInstruction]=&&ShrLabel,
+		[0][RARSarInstruction]=&&SarLabel,[1][RARSarInstruction]=&&SarLabel,
+		[0][RARNegInstruction]=&&NegLabel,[1][RARNegInstruction]=&&NegLabel,
 		[0][RARPushaInstruction]=&&PushaLabel,
 		[0][RARPopaInstruction]=&&PopaLabel,
 		[0][RARPushfInstruction]=&&PushfLabel,
@@ -188,31 +198,11 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 		[0][RARMovzxInstruction]=&&MovzxLabel,
 		[0][RARMovsxInstruction]=&&MovsxLabel,
 		[0][RARXchgInstruction]=&&XchgLabel,
-		[0][RARMulInstruction]=&&MulLabel,
-		[0][RARDivInstruction]=&&DivLabel,
-		[0][RARAdcInstruction]=&&AdcLabel,
-		[0][RARSbbInstruction]=&&SbbLabel,
+		[0][RARMulInstruction]=&&MulLabel,[1][RARMulInstruction]=&&MulLabel,
+		[0][RARDivInstruction]=&&DivLabel,[1][RARDivInstruction]=&&DivLabel,
+		[0][RARAdcInstruction]=&&AdcLabel,[1][RARAdcInstruction]=&&AdcByteLabel,
+		[0][RARSbbInstruction]=&&SbbLabel,[1][RARSbbInstruction]=&&SbbByteLabel,
 		[0][RARPrintInstruction]=&&PrintLabel,
-		[1][RARMovInstruction]=&&MovByteLabel,
-		[1][RARCmpInstruction]=&&CmpByteLabel,
-		[1][RARAddInstruction]=&&AddByteLabel,
-		[1][RARSubInstruction]=&&SubByteLabel,
-		[1][RARIncInstruction]=&&IncByteLabel,
-		[1][RARDecInstruction]=&&DecByteLabel,
-		[1][RARXorInstruction]=&&XorByteLabel,
-		[1][RARAndInstruction]=&&AndByteLabel,
-		[1][RAROrInstruction]=&&OrByteLabel,
-		[1][RARTestInstruction]=&&TestByteLabel,
-		[1][RARNotInstruction]=&&NotByteLabel,
-		[1][RARShlInstruction]=&&ShlByteLabel,
-		[1][RARShrInstruction]=&&ShrByteLabel,
-		[1][RARSarInstruction]=&&SarByteLabel,
-		[1][RARNegInstruction]=&&NegByteLabel,
-		[1][RARXchgInstruction]=&&XchgByteLabel,
-		[1][RARMulInstruction]=&&MulByteLabel,
-		[1][RARDivInstruction]=&&DivByteLabel,
-		[1][RARAdcInstruction]=&&AdcByteLabel,
-		[1][RARSbbInstruction]=&&SbbByteLabel,
 	};
 
 	if(instructionlabels)
@@ -221,34 +211,45 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 		return true;
 	}
 
-	RAROpcode *opcode=&opcodes[0];
-	uint32_t val1,val2,res;
+	RAROpcode *opcode;
+	Jump(0);
 
 	MovLabel:
 		SetOperand1(GetOperand2());
 		NextInstruction();
 
 	CmpLabel:
+	{
+		uint32_t term1=GetOperand1();
+		SetFlagsWithCarry(term1-GetOperand2(),result>term1);
 		NextInstruction();
+	}
 
 	AddLabel:
-		val1=GetOperand1();
-		SetOperand1AndAllFlags(val1,val1+GetOperand2());
+	{
+		uint32_t term1=GetOperand1();
+		SetOperand1AndFlagsWithCarry(term1+GetOperand2(),result<term1);
 		NextInstruction();
-
+	}
 	AddByteLabel:
-		val1=GetOperand1();
-		SetOperand1AndAllByteFlags(val1,val1+GetOperand2()); //?
+	{
+		uint32_t term1=GetOperand1();
+		SetOperand1AndByteFlagsWithCarry(term1+GetOperand2()&0xff,result<term1);
 		NextInstruction();
+	}
 
 	SubLabel:
-		val1=GetOperand1();
-		SetOperand1AndAllFlags(val1,val1-GetOperand2());
+	{
+		uint32_t term1=GetOperand1();
+		SetOperand1AndFlagsWithCarry(term1-GetOperand2(),result>term1);
 		NextInstruction();
-	SubByteLabel:
-		val1=GetOperand1();
-		SetOperand1AndAllFlags(val1,val1-GetOperand2());
+	}
+/*	SubByteLabel: // Not correctly implemented in the RAR VM
+	{
+		uint32_t term1=GetOperand1();
+		SetOperandAndByteFlagsWithCarry(term1-GetOperand2()&0xff,result>term1);
 		NextInstruction();
+	}*/
 
 	JzLabel:
 		if(self->flags&ZeroFlag) Jump(GetOperand1());
@@ -259,21 +260,36 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 		else NextInstruction();
 
 	IncLabel:
-		SetOperand1AndSimpleFlags(GetOperand1()+1);
+		SetOperand1AndFlags(GetOperand1()+1);
+		NextInstruction();
+	IncByteLabel:
+		SetOperand1AndFlags(GetOperand1()+1&0xff);
 		NextInstruction();
 
 	DecLabel:
+		SetOperand1AndFlags(GetOperand1()-1);
+		NextInstruction();
+	DecByteLabel:
+		SetOperand1AndFlags(GetOperand1()-1&0xff);
 		NextInstruction();
 
 	JmpLabel:
 		Jump(GetOperand1());
 
 	XorLabel:
+		SetOperand1AndFlags(GetOperand1()^GetOperand2());
+		NextInstruction();
+
 	AndLabel:
+		SetOperand1AndFlags(GetOperand1()&GetOperand2());
+		NextInstruction();
+
 	OrLabel:
+		SetOperand1AndFlags(GetOperand1()|GetOperand2());
+		NextInstruction();
 
 	TestLabel:
-		SetSimpleFlags(GetOperand1());
+		SetFlags(GetOperand1()&GetOperand2());
 		NextInstruction();
 
 	JsLabel:
@@ -301,47 +317,141 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 		else NextInstruction();
 
 	PushLabel:
-	PopLabel:
-	CallLabel:
-	RetLabel:
-	NotLabel:
-	ShlLabel:
-	ShrLabel:
-	SarLabel:
-	NegLabel:
-	PushaLabel:
-	PopaLabel:
-	PushfLabel:
-	PopfLabel:
-	MovzxLabel:
-	MovsxLabel:
-	XchgLabel:
-	MulLabel:
-	DivLabel:
-	AdcLabel:
-	SbbLabel:
-	PrintLabel:
-	MovByteLabel:
-	CmpByteLabel:
-	IncByteLabel:
-	DecByteLabel:
-	XorByteLabel:
-	AndByteLabel:
-	OrByteLabel:
-	TestByteLabel:
-	NotByteLabel:
-	ShlByteLabel:
-	ShrByteLabel:
-	SarByteLabel:
-	NegByteLabel:
-	XchgByteLabel:
-	MulByteLabel:
-	DivByteLabel:
-	AdcByteLabel:
-	SbbByteLabel:
-	NextInstruction();
+		self->registers[7]-=4;
+		RARVirtualMachineWrite32(self,self->registers[7],GetOperand1());
+		NextInstruction();
 
-	return NULL;
+	PopLabel:
+		SetOperand1(RARVirtualMachineRead32(self,self->registers[7]));
+		self->registers[7]+=4;
+		NextInstruction();
+
+	CallLabel:
+		self->registers[7]-=4;
+		RARVirtualMachineWrite32(self,self->registers[7],opcode-opcodes+1);
+		Jump(GetOperand1());
+
+	RetLabel:
+	{
+		if(self->registers[7]>=RARProgramMemorySize) return true;
+		uint32_t retaddr=RARVirtualMachineRead32(self,self->registers[7]);
+		self->registers[7]+=4;
+		Jump(retaddr);
+	}
+
+	NotLabel:
+		SetOperand1(~GetOperand1());
+		NextInstruction();
+
+	ShlLabel:
+	{
+		uint32_t op1=GetOperand1();
+		uint32_t op2=GetOperand2();
+		SetOperand1AndFlagsWithCarry(op1<<op2,((op1<<(op2-1))&0x80000000)!=0);
+		NextInstruction();
+	}
+
+	ShrLabel:
+	{
+		uint32_t op1=GetOperand1();
+		uint32_t op2=GetOperand2();
+		SetOperand1AndFlagsWithCarry(op1>>op2,((op1>>(op2-1))&1)!=0);
+		NextInstruction();
+	}
+
+	SarLabel:
+	{
+		uint32_t op1=GetOperand1();
+		uint32_t op2=GetOperand2();
+		SetOperand1AndFlagsWithCarry(((int32_t)op1)>>op2,((op1>>(op2-1))&1)!=0);
+		NextInstruction();
+	}
+
+	NegLabel:
+		SetOperand1AndFlagsWithCarry(-GetOperand1(),result!=0);
+		NextInstruction();
+
+	PushaLabel:
+		for(int i=0;i<8;i++) RARVirtualMachineWrite32(self,self->registers[7]-i*4-4,self->registers[i]);
+		self->registers[7]-=32;
+		NextInstruction();
+
+	PopaLabel:
+		for(int i=0;i<8;i++) self->registers[7-i]=RARVirtualMachineRead32(self,self->registers[7]+i*4);
+		NextInstruction();
+
+	PushfLabel:
+		self->registers[7]-=4;
+		RARVirtualMachineWrite32(self,self->registers[7],self->flags);
+		NextInstruction();
+
+	PopfLabel:
+		self->flags=RARVirtualMachineRead32(self,self->registers[7]);
+		self->registers[7]+=4;
+		NextInstruction();
+
+	MovzxLabel:
+		SetOperand1(GetOperand2());
+		NextInstruction();
+
+	MovsxLabel:
+		SetOperand1(SignExtend(GetOperand2()));
+		NextInstruction();
+
+	XchgLabel:
+	{
+		uint32_t op1=GetOperand1();
+		uint32_t op2=GetOperand2();
+		SetOperand1(op2);
+		SetOperand2(op1);
+		NextInstruction();
+	}
+
+	MulLabel:
+		SetOperand1(GetOperand1()*GetOperand2());
+		NextInstruction();
+
+	DivLabel:
+	{
+		uint32_t denominator=GetOperand2();
+		if(denominator!=0) SetOperand1(GetOperand1()/denominator);
+		NextInstruction();
+	}
+
+	AdcLabel:
+	{
+		uint32_t term1=GetOperand1();
+		uint32_t carry=self->flags&CarryFlag;
+		SetOperand1AndFlagsWithCarry(term1+GetOperand2()+carry,result<term1 || result==term1 && carry);
+		NextInstruction();
+	}
+	AdcByteLabel:
+	{
+		uint32_t term1=GetOperand1();
+		uint32_t carry=self->flags&CarryFlag;
+		SetOperand1AndFlagsWithCarry(term1+GetOperand2()+carry&0xff,result<term1 || result==term1 && carry); // Does not correctly set sign bit.
+		NextInstruction();
+	}
+
+	SbbLabel:
+	{
+		uint32_t term1=GetOperand1();
+		uint32_t carry=self->flags&CarryFlag;
+		SetOperand1AndFlagsWithCarry(term1-GetOperand2()-carry,result>term1 || result==term1 && carry);
+		NextInstruction();
+	}
+	SbbByteLabel:
+	{
+		uint32_t term1=GetOperand1();
+		uint32_t carry=self->flags&CarryFlag;
+		SetOperand1AndFlagsWithCarry(term1-GetOperand2()-carry&0xff,result>term1 || result==term1 && carry); // Does not correctly set sign bit.
+		NextInstruction();
+	}
+
+	PrintLabel:
+		NextInstruction();
+
+	return false;
 }
 
 static uint32_t RegisterGetter0_32(RARVirtualMachine *self,uint32_t value) { return self->registers[0]; }
@@ -585,11 +695,12 @@ static RARSetterFunction OperandSetters_8[RARNumberOfAddressingModes]=
 #define RAR2OperandsFlag 2
 #define RAROperandsFlag 3
 #define RARHasByteModeFlag 4
-#define RARLabelOperandFlag 8
-#define RARWritesFirstOperandFlag 16
-#define RARWritesSecondOperandFlag 32
-#define RARReadsStatusFlag 64
-#define RARWritesStatusFlag 128
+#define RARIsJumpFlag 8
+#define RARIsRelativeJumpFlag 16
+#define RARWritesFirstOperandFlag 32
+#define RARWritesSecondOperandFlag 64
+#define RARReadsStatusFlag 128
+#define RARWritesStatusFlag 256
 
 static const int InstructionFlags[40]=
 {
@@ -597,25 +708,25 @@ static const int InstructionFlags[40]=
 	[RARCmpInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesStatusFlag,
 	[RARAddInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARSubInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
-	[RARJzInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
-	[RARJnzInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARJzInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJnzInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
 	[RARIncInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARDecInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
-	[RARJmpInstruction]=RAR1OperandFlag | RARLabelOperandFlag,
+	[RARJmpInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag,
 	[RARXorInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARAndInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RAROrInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARTestInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesStatusFlag,
-	[RARJsInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
-	[RARJnsInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
-	[RARJbInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
-	[RARJbeInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
-	[RARJaInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
-	[RARJaeInstruction]=RAR1OperandFlag | RARLabelOperandFlag | RARReadsStatusFlag,
+	[RARJsInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJnsInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJbInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJbeInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJaInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJaeInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
 	[RARPushInstruction]=RAR1OperandFlag,
 	[RARPopInstruction]=RAR1OperandFlag,
-	[RARCallInstruction]=RAR1OperandFlag | RARLabelOperandFlag,
-	[RARRetInstruction]=RAR0OperandsFlag | RARLabelOperandFlag,
+	[RARCallInstruction]=RAR1OperandFlag | RARIsJumpFlag,
+	[RARRetInstruction]=RAR0OperandsFlag | RARIsJumpFlag,
 	[RARNotInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag,
 	[RARShlInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARShrInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
@@ -650,7 +761,13 @@ bool RARInstructionHasByteMode(unsigned int instruction)
 bool RARInstructionIsJump(unsigned int instruction)
 {
 	if(instruction>=RARNumberOfInstructions) return false;
-	return (InstructionFlags[instruction]&RARLabelOperandFlag)!=0;
+	return (InstructionFlags[instruction]&RARIsJumpFlag)!=0;
+}
+
+bool RARInstructionIsRelativeJump(unsigned int instruction)
+{
+	if(instruction>=RARNumberOfInstructions) return false;
+	return (InstructionFlags[instruction]&RARIsRelativeJumpFlag)!=0;
 }
 
 bool RARInstructionWritesFirstOperand(unsigned int instruction)
@@ -678,7 +795,7 @@ char *DescribeRAROpcode(RAROpcode *opcode)
 
 	int numoperands=NumberOfRARInstructionOperands(opcode->instruction);
 
-	char *instruction=DescribeRAROpcode(opcode);
+	char *instruction=DescribeRARInstruction(opcode);
 	strcpy(string,instruction);
 
 	if(numoperands==0) return string;

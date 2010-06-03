@@ -17,7 +17,7 @@
 typedef struct RARVirtualMachine
 {
 	uint32_t registers[8];
-	int flags;
+	uint32_t flags;
 	// TODO: align?
 	uint8_t memory[RARProgramMemorySize+3]; // Let memory accesses at the end overflow.
 	                                        // Possibly not 100% correct but unlikely to be a problem.

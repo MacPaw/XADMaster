@@ -557,11 +557,11 @@
 		for(int i=0;i<length;i++) bytecode[i]=CSInputNextBitString(filterinput,8);
 
 		code=[[[XADRARProgramCode alloc] initWithByteCode:bytecode length:length] autorelease];
-		[filtercode addObject:code];
-
 		if(!code) [XADException raiseIllegalDataException];
 
-		NSLog(@"\n%@",[code disassemble]);
+		[filtercode addObject:code];
+
+		//NSLog(@"%08x\n%@",[code CRC],[code disassemble]);
 	}
 	else
 	{

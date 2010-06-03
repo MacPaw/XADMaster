@@ -59,6 +59,7 @@ void InitializeRARVirtualMachine(RARVirtualMachine *self);
 void SetRAROpcodeInstruction(RAROpcode *opcode,unsigned int instruction,bool bytemode);
 void SetRAROpcodeOperand1(RAROpcode *opcode,unsigned int addressingmode,uint32_t value);
 void SetRAROpcodeOperand2(RAROpcode *opcode,unsigned int addressingmode,uint32_t value);
+bool IsProgramTerminated(RAROpcode *opcodes,int numopcodes);
 bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes);
 
 // Execution
@@ -70,7 +71,8 @@ bool ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes);
 
 int NumberOfRARInstructionOperands(unsigned int instruction);
 bool RARInstructionHasByteMode(unsigned int instruction);
-bool RARInstructionIsJump(unsigned int instruction);
+bool RARInstructionIsUnconditionalJump(unsigned int instruction);
+bool RARInstructionIsRelativeJump(unsigned int instruction);
 bool RARInstructionWritesFirstOperand(unsigned int instruction);
 bool RARInstructionWritesSecondOperand(unsigned int instruction);
 

@@ -58,8 +58,6 @@ startPosition:(off_t)startpos length:(int)length
 
 	filteredblockaddress=[vm readWordAtAddress:RARProgramGlobalAddress+0x20]&RARProgramMemoryMask;
 	filteredblocklength=[vm readWordAtAddress:RARProgramGlobalAddress+0x1c]&RARProgramMemoryMask;
-filteredblockaddress=0;
-filteredblocklength=[invocation initialRegisterState:4];
 
 	if(filteredblockaddress+filteredblocklength>=RARProgramMemorySize) filteredblockaddress=filteredblocklength=0;
 

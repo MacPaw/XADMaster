@@ -44,6 +44,11 @@ void SetRAROpcodeOperand2(RAROpcode *opcode,unsigned int addressingmode,uint32_t
 	opcode->value2=value;
 }
 
+bool IsProgramTerminated(RAROpcode *opcodes,int numopcodes)
+{
+	return RARInstructionIsUnconditionalJump(opcodes[numopcodes-1].instruction);
+}
+
 bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 {
 	void **instructionlabels_32,**instructionlabels_8;
@@ -114,10 +119,6 @@ bool PrepareRAROpcodes(RAROpcode *opcodes,int numopcodes)
 	return true;
 }
 
-bool IsProgramTerminated(RAROpcode *opcodes,int numopcodes)
-{
-	return RARInstructionIsJump(opcodes[numopcodes-1].instruction);
-}
 
 
 
@@ -155,8 +156,11 @@ bool ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 #define SetOperand1AndByteFlagsWithCarry(res,carry) ({ uint32_t r=(res); SetByteFlagsWithCarry(r,carry); SetOperand1(r); })
 #define SetOperand1AndFlags(res) ({ uint32_t r=(res); SetFlags(r); SetOperand1(r); })
 
-#define NextInstruction() ({ opcode++; goto *opcode->instructionlabel; })
-#define Jump(offs) ({ uint32_t o=(offs); if(o>=numopcodes) return false; opcode=&opcode[o]; goto *opcode->instructionlabel; })
+//#define Debug() ({ printf("Execute: %04x\t%s\n",opcode-opcodes,DescribeRAROpcode(opcode)); })
+#define Debug() ({ })
+
+#define NextInstruction() ({ opcode++; Debug(); goto *opcode->instructionlabel; })
+#define Jump(offs) ({ uint32_t o=(offs); if(o>=numopcodes) return false; opcode=&opcodes[o]; Debug(); goto *opcode->instructionlabel; })
 
 static bool RunVirtualMachineOrGetLabels(RARVirtualMachine *self,
 RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
@@ -372,12 +376,13 @@ RAROpcode *opcodes,int numopcodes,void ***instructionlabels)
 		NextInstruction();
 
 	PushaLabel:
-		for(int i=0;i<8;i++) RARVirtualMachineWrite32(self,self->registers[7]-i*4-4,self->registers[i]);
+		for(int i=0;i<8;i++) RARVirtualMachineWrite32(self,self->registers[7]-4-i*4,self->registers[i]);
 		self->registers[7]-=32;
+
 		NextInstruction();
 
 	PopaLabel:
-		for(int i=0;i<8;i++) self->registers[7-i]=RARVirtualMachineRead32(self,self->registers[7]+i*4);
+		for(int i=0;i<8;i++) self->registers[i]=RARVirtualMachineRead32(self,self->registers[7]+28-i*4);
 		NextInstruction();
 
 	PushfLabel:
@@ -695,7 +700,7 @@ static RARSetterFunction OperandSetters_8[RARNumberOfAddressingModes]=
 #define RAR2OperandsFlag 2
 #define RAROperandsFlag 3
 #define RARHasByteModeFlag 4
-#define RARIsJumpFlag 8
+#define RARIsUnconditionalJumpFlag 8
 #define RARIsRelativeJumpFlag 16
 #define RARWritesFirstOperandFlag 32
 #define RARWritesSecondOperandFlag 64
@@ -708,25 +713,25 @@ static const int InstructionFlags[40]=
 	[RARCmpInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesStatusFlag,
 	[RARAddInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARSubInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
-	[RARJzInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
-	[RARJnzInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJzInstruction]=RAR1OperandFlag | RARIsUnconditionalJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJnzInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
 	[RARIncInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARDecInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
-	[RARJmpInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag,
+	[RARJmpInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag,
 	[RARXorInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARAndInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RAROrInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARTestInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesStatusFlag,
-	[RARJsInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
-	[RARJnsInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
-	[RARJbInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
-	[RARJbeInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
-	[RARJaInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
-	[RARJaeInstruction]=RAR1OperandFlag | RARIsJumpFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJsInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJnsInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJbInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJbeInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJaInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
+	[RARJaeInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
 	[RARPushInstruction]=RAR1OperandFlag,
 	[RARPopInstruction]=RAR1OperandFlag,
-	[RARCallInstruction]=RAR1OperandFlag | RARIsJumpFlag,
-	[RARRetInstruction]=RAR0OperandsFlag | RARIsJumpFlag,
+	[RARCallInstruction]=RAR1OperandFlag,
+	[RARRetInstruction]=RAR0OperandsFlag | RARIsUnconditionalJumpFlag,
 	[RARNotInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag,
 	[RARShlInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
 	[RARShrInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,
@@ -758,10 +763,10 @@ bool RARInstructionHasByteMode(unsigned int instruction)
 	return (InstructionFlags[instruction]&RARHasByteModeFlag)!=0;
 }
 
-bool RARInstructionIsJump(unsigned int instruction)
+bool RARInstructionIsUnconditionalJump(unsigned int instruction)
 {
 	if(instruction>=RARNumberOfInstructions) return false;
-	return (InstructionFlags[instruction]&RARIsJumpFlag)!=0;
+	return (InstructionFlags[instruction]&RARIsUnconditionalJumpFlag)!=0;
 }
 
 bool RARInstructionIsRelativeJump(unsigned int instruction)
@@ -779,7 +784,7 @@ bool RARInstructionWritesFirstOperand(unsigned int instruction)
 bool RARInstructionWritesSecondOperand(unsigned int instruction)
 {
 	if(instruction>=RARNumberOfInstructions) return false;
-	return (InstructionFlags[instruction]&RARWritesFirstOperandFlag)!=0;
+	return (InstructionFlags[instruction]&RARWritesSecondOperandFlag)!=0;
 }
 
 

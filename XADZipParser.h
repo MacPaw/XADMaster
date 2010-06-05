@@ -29,6 +29,7 @@ flags:(int)flags
 compressionMethod:(int)compressionmethod
 date:(uint32_t)date
 crc:(uint32_t)crc
+localDate:(uint32_t)localdate
 compressedSize:(off_t)compsize
 uncompressedSize:(off_t)uncompsize
 extendedFileAttributes:(uint32_t)extfileattrib

@@ -253,11 +253,12 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			//int localextractversion=[fh readUInt16LE];
 			//int localflags=[fh readUInt16LE];
 			//int localcompressionmethod=[fh readUInt16LE];
-			//uint32_t localdate=[fh readUInt32LE];
+			[fh skipBytes:6];
+			uint32_t localdate=[fh readUInt32LE];
 			//uint32_t localcrc=[fh readUInt32LE];
 			//uint32_t localcompsize=[fh readUInt32LE];
 			//uint32_t localuncompsize=[fh readUInt32LE];
-			[fh skipBytes:22];
+			[fh skipBytes:12];
 			int localnamelength=[fh readUInt16LE];
 			int localextralength=[fh readUInt16LE];
 
@@ -276,8 +277,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			}
 
 			[self addZipEntryWithSystem:system extractVersion:extractversion flags:flags
-			compressionMethod:compressionmethod date:date crc:crc compressedSize:compsize
-			uncompressedSize:uncompsize extendedFileAttributes:extfileattrib
+			compressionMethod:compressionmethod date:date crc:crc localDate:localdate
+			compressedSize:compsize uncompressedSize:uncompsize extendedFileAttributes:extfileattrib
 			extraDictionary:extradict dataOffset:dataoffset nameData:namedata commentData:commentdata
 			isLastEntry:i==numentries-1];
 		}
@@ -347,8 +348,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 				}
 
 				[self addZipEntryWithSystem:-1 extractVersion:extractversion flags:flags
-				compressionMethod:compressionmethod date:date crc:crc compressedSize:compsize
-				uncompressedSize:uncompsize extendedFileAttributes:0xffffffff
+				compressionMethod:compressionmethod date:date crc:crc localDate:date
+				compressedSize:compsize uncompressedSize:uncompsize extendedFileAttributes:0xffffffff
 				extraDictionary:extradict dataOffset:dataoffset nameData:namedata commentData:nil
 				isLastEntry:NO];
 
@@ -667,6 +668,7 @@ flags:(int)flags
 compressionMethod:(int)compressionmethod
 date:(uint32_t)date
 crc:(uint32_t)crc
+localDate:(uint32_t)localdate
 compressedSize:(off_t)compsize
 uncompressedSize:(off_t)uncompsize
 extendedFileAttributes:(uint32_t)extfileattrib
@@ -682,7 +684,7 @@ isLastEntry:(BOOL)islastentry
 		[NSNumber numberWithInt:compressionmethod],@"ZipCompressionMethod",
 		[NSDate XADDateWithMSDOSDateTime:date],XADLastModificationDateKey,
 		[NSNumber numberWithUnsignedInt:crc],@"ZipCRC32",
-		//[NSNumber numberWithUnsignedInt:localdate],@"ZipLocalDate",
+		[NSNumber numberWithUnsignedInt:localdate],@"ZipLocalDate",
 		[NSNumber numberWithUnsignedLongLong:compsize],XADCompressedSizeKey,
 		[NSNumber numberWithUnsignedLongLong:uncompsize],XADFileSizeKey,
 		[NSNumber numberWithLongLong:dataoffset],XADDataOffsetKey,

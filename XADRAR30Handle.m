@@ -43,7 +43,6 @@
 -(void)resetBlockStream
 {
 	part=0;
-	endpos=0;
 	lastend=0;
 
 	RestartLZSS(&lzss);
@@ -61,21 +60,22 @@
 	filterstart=CSHandleMaxLength;
 	lastfilternum=0;
 
-	[self startNextPart];
-	[self allocAndParseCodes];
+	startnewpart=startnewtable=YES;
 }
 
--(void)startNextPart
-{
-	off_t partlength;
-	CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:&partlength];
-
-	endpos+=partlength;
-	[self setInputBuffer:buf];
-}
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
+	if(startnewpart)
+	{
+		CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:NULL];
+		[self setInputBuffer:buf];
+
+		if(startnewtable) [self allocAndParseCodes];
+
+		startnewpart=startnewtable=NO;
+	}
+
 	if(lastend==filterstart)
 	{
 		XADRAR30Filter *firstfilter=[stack objectAtIndex:0];
@@ -171,14 +171,11 @@
 	static const unsigned int shortbases[8]={0,4,8,16,32,64,128,192};
 	static const unsigned int shortbits[8]={2,2,3,4,5,6,6,6};
 
-	off_t start=LZSSPosition(&lzss);
+	if(filterstart<end) end=filterstart; // Make sure we stop when we reach a filter.
 
 	for(;;)
 	{
-		off_t pos=LZSSPosition(&lzss);
-		if(pos>=end) return end;
-		if(pos!=start && pos>=endpos) return endpos; // Avoid stopping if we are starting from the end of a piece.
-		if(pos>=filterstart) return filterstart;
+		if(LZSSPosition(&lzss)>=end) return end;
 
 		if(ppmblock)
 		{
@@ -199,13 +196,13 @@
 						[self allocAndParseCodes];
 					break;
 
-					case -1:
 					case 2:
-						[XADException raiseInputException]; // TODO: better error;
+						return LZSSPosition(&lzss);
 					break;
 
 					case 3:
 						[self readFilterFromPPMd];
+						if(filterstart<end) end=filterstart; // Make sure we stop when we reach a filter.
 					break;
 
 					case 4:
@@ -226,6 +223,10 @@
 						int len=NextPPMdVariantHByte(&ppmd);
 						EmitLZSSMatch(&lzss,1,len+4);
 					}
+					break;
+
+					case -1:
+						[XADException raiseInputException]; // TODO: better error;
 					break;
 
 					default:
@@ -250,19 +251,20 @@
 
 				if(newfile)
 				{
-					BOOL newtable=CSInputNextBit(input);
-					[self startNextPart];
-					if(newtable) [self allocAndParseCodes];
+					startnewpart=YES;
+					startnewtable=CSInputNextBit(input);
+					return LZSSPosition(&lzss);
 				}
 				else
 				{
 					[self allocAndParseCodes];
+					continue;
 				}
-				continue;
 			}
 			else if(symbol==257)
 			{
 				[self readFilterFromInput];
+				if(filterstart<end) end=filterstart; // Make sure we stop when we reach a filter.
 				continue;
 			}
 			else if(symbol==258)
@@ -562,7 +564,7 @@
 
 		[filtercode addObject:code];
 
-		//NSLog(@"%08x\n%@",[code CRC],[code disassemble]);
+//		NSLog(@"%08x\n%@",[code CRC],[code disassemble]);
 	}
 	else
 	{

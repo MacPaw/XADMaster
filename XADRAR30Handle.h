@@ -12,7 +12,8 @@
 
 	NSArray *parts;
 	int part;
-	off_t endpos,lastend;
+	off_t lastend;
+	BOOL startnewpart,startnewtable;
 
 	LZSS lzss;
 
@@ -40,7 +41,6 @@
 -(void)dealloc;
 
 -(void)resetBlockStream;
--(void)startNextPart;
 -(int)produceBlockAtOffset:(off_t)pos;
 -(off_t)expandToPosition:(off_t)end;
 -(void)allocAndParseCodes;

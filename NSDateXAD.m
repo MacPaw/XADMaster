@@ -41,12 +41,14 @@
 	return [NSDate XADDateWithWindowsFileTime:((uint64_t)high<<32)|(uint64_t)low];
 }
 
+#ifndef __MINGW32__
 -(struct timeval)timevalStruct
 {
 	NSTimeInterval seconds=[self timeIntervalSince1970];
 	struct timeval tv={ (time_t)seconds, (suseconds_t)(fmod(seconds,1.0)*1000000) };
 	return tv;
 }
+#endif
 
 #ifdef __APPLE__
 static NSDate *dateForJan1904()

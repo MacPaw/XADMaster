@@ -1,6 +1,8 @@
 #import "CSStreamHandle.h"
 
+#define Byte zlibByte
 #include <zlib.h>
+#undef Byte
 
 #define CSZlibHandle XADZlibHandle
 

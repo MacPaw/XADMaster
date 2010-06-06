@@ -1,12 +1,6 @@
 #import "XADUnarchiver.h"
+#import "CSFileHandle.h"
 #import "Progress.h"
-#import "NSDateXAD.h"
-
-#import <fcntl.h>
-#import <sys/stat.h>
-#import <sys/time.h>
-
-static double XADGetTime();
 
 @implementation XADUnarchiver
 
@@ -200,7 +194,7 @@ static double XADGetTime();
 
 			case XADMacOSXForkStyle:
 				if(!isdir)
-				error=[self _extractResourceForkEntryWithDictionary:dict asMacForkForFile:path];
+				error=[self _extractResourceForkEntryWithDictionary:dict asPlatformSpecificForkForFile:path];
 			break;
 
 			case XADHiddenAppleDoubleForkStyle:
@@ -293,71 +287,22 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 -(XADError)_extractFileEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath
 {
-	int fh=open([destpath fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
-	if(fh==-1) return XADOpenFileError;
+	CSHandle *fh;
+	@try { fh=[CSFileHandle fileHandleForWritingAtPath:destpath]; }
+	@catch(id e) { return XADOpenFileError; }
 
-	XADError err=[self _extractEntryWithDictionary:dict toFileHandle:fh];
+	XADError err=[self _extractEntryWithDictionary:dict toHandle:fh];
 
-	close(fh);
+	[fh close];
 
 	return err;
 }
 
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asMacForkForFile:(NSString *)destpath
-{
-	// Make sure a plain file exists at this path before proceeding.
-	const char *cpath=[destpath fileSystemRepresentation];
-	struct stat st;
-	if(lstat(cpath,&st)==0)
-	{
-		// If something exists that is not a regular file, try deleting it.
-		if((st.st_mode&S_IFMT)!=S_IFREG)
-		{
-			if(unlink(cpath)!=0) return XADOpenFileError; // TODO: better error
-		}
-	}
-	else
-	{
-		// If nothing exists, create an empty file.
-		int fh=open(cpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
-		if(fh==-1) return XADOpenFileError;
-		close(fh);
-	}
-
-	// Then, unpack to resource fork.
-	XADError error;
-	const char *crsrcpath=[[destpath stringByAppendingPathComponent:@"..namedfork/rsrc"] fileSystemRepresentation];
-
-	int fh=open(crsrcpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
-	if(fh!=-1)
-	{
-		// If opening the resource fork worked, extract data to it.
-		error=[self _extractEntryWithDictionary:dict toFileHandle:fh];
-	}
-	else
-	{
-		// If opening the resource fork failed, change permissions on the file and try again.
-		struct stat st;
-		stat(cpath,&st);
-		chmod(cpath,0700);
-
-		int fh=open(crsrcpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
-		if(fh==-1) return XADOpenFileError;
-
-		error=[self _extractEntryWithDictionary:dict toFileHandle:fh];
-
-		chmod(cpath,st.st_mode);
-	}
-
-	close(fh);
-
-	return error;
-}
-
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath
 {
-	int fh=open([destpath fileSystemRepresentation],O_WRONLY|O_CREAT|O_TRUNC,0666);
-	if(fh==-1) return XADOpenFileError;
+	CSHandle *fh;
+	@try { fh=[CSFileHandle fileHandleForWritingAtPath:destpath]; }
+	@catch(id e) { return XADOpenFileError; }
 
 	uint8_t header[0x32]=
 	{
@@ -373,16 +318,16 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 	if(sizenum) size=[sizenum longLongValue];
 
 	CSSetUInt32BE(&header[46],size);
-	write(fh,header,sizeof(header));
+	[fh writeBytes:sizeof(header) fromBuffer:header];
 
 	NSData *finderinfo=[parser finderInfoForDictionary:dict];
-	if([finderinfo length]<32) { close(fh); return XADUnknownError; }
-	write(fh,[finderinfo bytes],32);
+	if([finderinfo length]<32) return XADUnknownError;
+	[fh writeBytes:32 fromBuffer:[finderinfo bytes]];
 
 	XADError error=XADNoError;
-	if(size) error=[self _extractEntryWithDictionary:dict toFileHandle:fh];
+	if(size) error=[self _extractEntryWithDictionary:dict toHandle:fh];
 
-	close(fh);
+	[fh close];
 
 	return error;
 }
@@ -405,12 +350,7 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 	if(!link) return XADBadParametersError; // TODO: better error
 
-	struct stat st;
-	const char *destcstr=[destpath fileSystemRepresentation];
-	if(lstat(destcstr,&st)==0) unlink(destcstr);
-	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
-
-	return XADNoError;
+	return [self _createPlatformSpecificLinkToPath:link from:destpath];
 }
 
 -(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename
@@ -450,7 +390,7 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 
 
--(XADError)_extractEntryWithDictionary:(NSDictionary *)dict toFileHandle:(int)fh
+-(XADError)_extractEntryWithDictionary:(NSDictionary *)dict toHandle:(CSHandle *)fh
 {
 	@try
 	{
@@ -463,18 +403,23 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 		off_t done=0;
 		double updatetime=0;
-		uint8_t buf[65536];
+		uint8_t buf[0x40000];
 
 		for(;;)
 		{
 			if(delegate&&[delegate extractionShouldStopForUnarchiver:self]) return XADBreakError;
 
 			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
-			if(actual&&write(fh,buf,actual)!=actual) return XADOutputError;
+			if(actual)
+			{
+				// TODO: combine the except parsing for input and output
+				@try { [fh writeBytes:actual fromBuffer:buf]; }
+				@catch(id e) { return XADOutputError; }
+			}
 
 			done+=actual;
 
-			double currtime=XADGetTime();
+			double currtime=_XADUnarchiverGetTime();
 			if(currtime-updatetime>updateinterval)
 			{
 				updatetime=currtime;
@@ -501,9 +446,6 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 	return XADNoError;
 }
 
-
-
-
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
 deferDirectories:(BOOL)defer
 {
@@ -517,106 +459,19 @@ deferDirectories:(BOOL)defer
 		}
 	}
 
-	const char *cpath=[path fileSystemRepresentation];
-
-	struct stat st;
-	if(stat(cpath,&st)!=0) return XADOpenFileError; // TODO: better error
-
-	// If the file does not have write permissions, change this temporarily
-	// and remember to change back.
-	BOOL changedpermissions=NO;
-	if(!(st.st_mode&S_IWUSR))
-	{
-		chmod(cpath,0700);
-		changedpermissions=YES;
-	}
-
-	// Handle timestamps.
-	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
-	NSDate *access=[dict objectForKey:XADLastAccessDateKey];
-
-	if(modification||access)
-	{
-		struct timeval times[2]={
-			#if defined(__APPLE__)
-			{st.st_atimespec.tv_sec,st.st_atimespec.tv_nsec/1000},
-			{st.st_mtimespec.tv_sec,st.st_mtimespec.tv_nsec/1000},
-			#elif defined(__MINGW32__)
-			{st.st_atime,0},
-			{st.st_mtime,0},
-			#else
-			{st.st_atim.tv_sec,st.st_atim.tv_nsec/1000},
-			{st.st_mtim.tv_sec,st.st_mtim.tv_nsec/1000},
-			#endif
-		};
-
-		if(access) times[0]=[access timevalStruct];
-		if(modification) times[1]=[modification timevalStruct];
-
-		if(utimes(cpath,times)!=0) return XADUnknownError; // TODO: better error
-	}
-
-	// Handle Mac OS specific metadata.
-	#ifdef __APPLE__
-	NSNumber *type=[dict objectForKey:XADFileTypeKey];
-	NSNumber *creator=[dict objectForKey:XADFileCreatorKey];
-	NSNumber *finderflags=[dict objectForKey:XADFinderFlagsKey];
-	NSDate *creation=[dict objectForKey:XADCreationDateKey];
-	// TODO: Handle FinderInfo structure
-
-	if(type||creator||finderflags||creation)
-	{
-		FSRef ref;
-		FSCatalogInfo info;
-		if(FSPathMakeRefWithOptions((const UInt8 *)cpath,
-		kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
-		if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoCreateDate,&info,NULL,NULL,NULL)!=noErr)
-		return XADUnknownError; // TODO: better error
-
-		FileInfo *finfo=(FileInfo *)&info.finderInfo;
-
-		if(type) finfo->fileType=[type unsignedLongValue];
-		if(creator) finfo->fileCreator=[creator unsignedLongValue];
-		if(finderflags) finfo->finderFlags=[finderflags unsignedShortValue];
-		if(creation) info.createDate=[creation UTCDateTime];
-
-		if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoCreateDate,&info)!=noErr)
-		return XADUnknownError; // TODO: better error
-	}
-	#endif
-
-	// Handle permissions (or change back to original permissions if they were changed).
-	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
-	if(permissions||changedpermissions)
-	{
-		mode_t mode=st.st_mode;
-
-		if(permissions)
-		{
-			mode=[permissions unsignedShortValue];
-			if(!preservepermissions)
-			{
-				mode_t mask=umask(022);
-				umask(mask); // This is stupid. Is there no sane way to just READ the umask?
-				mode&=~(mask|S_ISUID|S_ISGID);
-			}
-		}
-
-		if(chmod(cpath,mode&~S_IFMT)!=0) return XADUnknownError; // TODO: bette error
-	}
-
-	return XADNoError;
+	return [self _updatePlatformSpecificFileAttributesAtPath:path forEntryWithDictionary:dict];
 }
 
 -(XADError)_ensureDirectoryExists:(NSString *)path
 {
 	if([path length]==0) return XADNoError;
 
-	const char *cpath=[path fileSystemRepresentation];
-	struct stat st;
-	if(lstat(cpath,&st)==0)
+	NSFileManager *manager=[NSFileManager defaultManager];
+
+	BOOL isdir;
+	if([manager fileExistsAtPath:path isDirectory:&isdir])
 	{
-		if((st.st_mode&S_IFMT)==S_IFDIR) return XADNoError;
+		if(isdir) return XADNoError;
 		else return XADMakeDirectoryError;
 	}
 	else
@@ -629,7 +484,7 @@ deferDirectories:(BOOL)defer
 			if(![delegate unarchiver:self shouldCreateDirectory:path]) return XADBreakError;
 		}
 
-		if(mkdir(cpath,0777)==0) return XADNoError;
+		if([manager createDirectoryAtPath:path attributes:nil]) return XADNoError;
 		else return XADMakeDirectoryError;
 	}
 }
@@ -684,12 +539,3 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress {
 
 @end
 
-
-
-
-static double XADGetTime()
-{
-	struct timeval tv;
-	gettimeofday(&tv,NULL);
-	return (double)tv.tv_sec+(double)tv.tv_usec/1000000.0;
-}

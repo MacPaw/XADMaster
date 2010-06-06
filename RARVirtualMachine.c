@@ -162,7 +162,7 @@ bool ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 #define SetOperand1AndByteFlagsWithCarry(res,carry) ({ uint32_t r=(res); SetByteFlagsWithCarry(r,carry); SetOperand1(r); })
 #define SetOperand1AndFlags(res) ({ uint32_t r=(res); SetFlags(r); SetOperand1(r); })
 
-static int count=0;
+//static int count=0;
 //#define Debug() ({ printf("Execute: %04x\t%s\n",opcode-opcodes,DescribeRAROpcode(opcode)); })
 //#define Debug() ({ printf("%d %04x %08x ",count++,opcode-opcodes,flags); for(int i=0;i<8;i++) printf("%08x(%08x) ",self->registers[i],RARVirtualMachineRead32(self,self->registers[i])); printf("\n"); })
 //#define Debug() ({ printf("%d %04x %s\t%08x ",count++,opcode-opcodes,DescribeRAROpcode(opcode),flags); for(int i=0;i<8;i++) printf("%08x(%08x) ",self->registers[i],RARVirtualMachineRead32(self,self->registers[i])); printf("\n"); })

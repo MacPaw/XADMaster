@@ -1,6 +1,8 @@
 #import "XADMSZipHandle.h"
 
+#define Byte zlibByte
 #include <zlib.h>
+#undef Byte
 
 @implementation XADMSZipHandle
 

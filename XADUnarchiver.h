@@ -64,16 +64,24 @@
 -(XADError)finishExtractions;
 
 -(XADError)_extractFileEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asMacForkForFile:(NSString *)destpath;
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath;
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractLinkEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename;
--(XADError)_extractEntryWithDictionary:(NSDictionary *)dict toFileHandle:(int)fh;
+-(XADError)_extractEntryWithDictionary:(NSDictionary *)dict toHandle:(CSHandle *)fh;
 
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
 deferDirectories:(BOOL)defer;
 -(XADError)_ensureDirectoryExists:(NSString *)path;
+
+@end
+
+
+@interface XADUnarchiver (PlatformSpecific)
+
+-(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asPlatformSpecificForkForFile:(NSString *)destpath;
+-(XADError)_createPlatformSpecificLinkToPath:(NSString *)link from:(NSString *)path;
+-(XADError)_updatePlatformSpecificFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict;
 
 @end
 
@@ -102,3 +110,6 @@ deferDirectories:(BOOL)defer;
 fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress;
 
 @end
+
+
+double _XADUnarchiverGetTime();

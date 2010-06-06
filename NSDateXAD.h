@@ -10,7 +10,9 @@
 +(NSDate *)XADDateWithWindowsFileTime:(uint64_t)filetime;
 +(NSDate *)XADDateWithWindowsFileTimeLow:(uint32_t)low high:(uint32_t)high;
 
+#ifndef __MINGW32__
 -(struct timeval)timevalStruct;
+#endif
 
 #ifdef __APPLE__
 -(UTCDateTime)UTCDateTime;

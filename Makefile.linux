@@ -176,6 +176,7 @@ OBJC_FILES =	CarrylessRangeCoder.m \
 		XADTarParser.m \
 		XADTarSparseHandle.m \
 		XADUnarchiver.m \
+		XADUnarchiverLinux.m \
 		XADWinZipAESHandle.m \
 		XADXARParser.m \
 		XADXORHandle.m \

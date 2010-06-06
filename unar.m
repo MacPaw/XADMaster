@@ -1,7 +1,5 @@
 #import "XADUnarchiver.h"
 
-#import <sys/stat.h>
-
 #define VERSION_STRING "v0.2"
 
 NSString *EscapeString(NSString *str)
@@ -151,12 +149,13 @@ int main(int argc,const char **argv)
 
 	if(numfiles>1)
 	{
-		struct stat st;
-		if(lstat(argv[argc-1],&st)==0)
+		NSString *path=[NSString stringWithUTF8String:argv[argc-1]];
+		BOOL isdir;
+		if([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isdir])
 		{
-			if((st.st_mode&S_IFMT)==S_IFDIR)
+			if(isdir)
 			{
-				destination=[NSString stringWithUTF8String:argv[argc-1]];
+				destination=path;
 				numfiles--;
 			}
 		}

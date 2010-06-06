@@ -262,8 +262,13 @@ static xadINT32 opendestfile(struct xadArchiveInfoP *ai)
 
             if(!ret)
             {
+              #ifndef __MINGW32__
               if(mkdir(buf, S_IRWXU) == -1)
                 ret = XADERR_MAKEDIR;
+              #else
+              if(mkdir(buf) == -1)
+                ret = XADERR_MAKEDIR;
+              #endif
             }
           }
           buf[i] = name[i];

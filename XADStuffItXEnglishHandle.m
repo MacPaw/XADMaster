@@ -1,6 +1,5 @@
 #import "XADStuffItXEnglishHandle.h"
 #import "XADException.h"
-#import "SystemSpecific.h"
 
 @implementation XADStuffItXEnglishHandle
 
@@ -9,7 +8,11 @@
 	static NSData *dictionary=nil;
 	#ifdef __APPLE__
 	// TODO: Add support for Linux and Windows
-	if(!dictionary) dictionary=[[NSData alloc] initWithContentsOfFile:PathForExternalResource(@"sitx_english.dat")];
+	if(!dictionary)
+	{
+		NSString *path=[[NSBundle bundleForClass:self] pathForResource:@"sitx_english.dat" ofType:nil];
+		dictionary=[[NSData alloc] initWithContentsOfFile:path];
+	}
 	#endif
 	return dictionary;
 }

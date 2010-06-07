@@ -31,7 +31,7 @@ typedef struct CABHeader
 static CABHeader ReadCABHeader(CSHandle *fh);
 static void SkipCString(CSHandle *fh);
 static NSData *ReadCString(CSHandle *fh);
-static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
+static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *dircontents);
 
 
 
@@ -52,11 +52,14 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 	NSArray *res=nil;
 	@try
 	{
-		NSString *dirname=[name stringByDeletingLastPathComponent];
-		NSMutableArray *volumes=[NSMutableArray arrayWithObject:name];
-
 		CSHandle *fh=[CSMemoryHandle memoryHandleForReadingData:data];
 		CABHeader firsthead=ReadCABHeader(fh);
+
+		if(!firsthead.prevvolume&&!firsthead.nextvolume) return nil;
+
+		NSString *dirname=[name stringByDeletingLastPathComponent];
+		NSArray *dircontents=[[NSFileManager defaultManager] directoryContentsAtPath:dirname];
+		NSMutableArray *volumes=[NSMutableArray arrayWithObject:name];
 
 		NSData *namedata=firsthead.prevvolume;
 		int lastindex=firsthead.cabindex;
@@ -64,7 +67,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 		{
 			NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
-			CSHandle *fh=FindHandleForName(namedata,dirname);
+			CSHandle *fh=FindHandleForName(namedata,dirname,dircontents);
 			[volumes insertObject:[fh name] atIndex:0];
 			CABHeader head=ReadCABHeader(fh);
 			if(head.cabindex!=lastindex-1) @throw @"Index mismatch";
@@ -84,7 +87,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname);
 		{
 			NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
-			CSHandle *fh=FindHandleForName(namedata,dirname);
+			CSHandle *fh=FindHandleForName(namedata,dirname,dircontents);
 			[volumes addObject:[fh name]];
 			CABHeader head=ReadCABHeader(fh);
 			if(head.cabindex!=lastindex+1) @throw @"Index mismatch";
@@ -416,7 +419,7 @@ static NSData *ReadCString(CSHandle *fh)
 	return data;
 }
 
-static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname)
+static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *dircontents)
 {
 	NSString *filepart=[[[NSString alloc] initWithData:namedata encoding:NSWindowsCP1252StringEncoding] autorelease];
 	NSString *volumename=[dirname stringByAppendingPathComponent:filepart];
@@ -428,31 +431,21 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname)
 	}
 	@catch(id e) { }
 
-	if(!dirname||[dirname length]==0) dirname=@".";
-	DIR *dir=opendir([dirname fileSystemRepresentation]);
-	if(!dir) return nil;
-
-	struct dirent *ent;
-	while(ent=readdir(dir))
+	NSEnumerator *enumerator=[dircontents objectEnumerator];
+	NSString *direntry;
+	while(direntry=[enumerator nextObject])
 	{
-		int len=strlen(ent->d_name);
-		if(len==[namedata length]&&strncasecmp([namedata bytes],ent->d_name,len)==0)
+		if([filepart caseInsensitiveCompare:direntry]==NSOrderedSame)
 		{
-			NSString *filename=[dirname stringByAppendingPathComponent:[NSString stringWithUTF8String:ent->d_name]];
+			NSString *filename=[dirname stringByAppendingPathComponent:direntry];
 			@try
 			{
 				CSHandle *handle=[CSFileHandle fileHandleForReadingAtPath:filename];
-				if(handle)
-				{
-					closedir(dir);
-					return handle;
-				}
+				if(handle) return handle;
 			}
 			@catch(id e) { }
 		}
 	}
-
-	closedir(dir);
 
 	return nil;
 }

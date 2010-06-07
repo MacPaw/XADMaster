@@ -278,7 +278,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 		else if(block.type==0x7a) // newsub header
 		{
 			// TODO: parse new comments
-			NSLog(@"newsub");
+			//NSLog(@"newsub");
 		}
 	}
 

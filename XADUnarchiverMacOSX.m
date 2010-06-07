@@ -1,4 +1,5 @@
 #import "XADUnarchiver.h"
+#import "CSFileHandle.h"
 #import "NSDateXAD.h"
 
 #import <fcntl.h>
@@ -29,31 +30,31 @@
 	}
 
 	// Then, unpack to resource fork.
-	XADError error;
-	const char *crsrcpath=[[destpath stringByAppendingPathComponent:@"..namedfork/rsrc"] fileSystemRepresentation];
+	NSString *forkpath=[destpath stringByAppendingPathComponent:@"..namedfork/rsrc"];
+	int originalpermissions=-1;
+	CSHandle *fh=nil;
 
-	int fh=open(crsrcpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
-	if(fh!=-1)
+	@try { fh=[CSFileHandle fileHandleForWritingAtPath:forkpath]; }
+	@catch(id e) {}
+
+	// If opening the resource fork failed, change permissions on the file and try again.
+	if(!fh)
 	{
-		// If opening the resource fork worked, extract data to it.
-		error=[self _extractEntryWithDictionary:dict toFileHandle:fh];
-	}
-	else
-	{
-		// If opening the resource fork failed, change permissions on the file and try again.
 		struct stat st;
 		stat(cpath,&st);
+		originalpermissions=st.st_mode;
+
 		chmod(cpath,0700);
 
-		int fh=open(crsrcpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
-		if(fh==-1) return XADOpenFileError;
-
-		error=[self _extractEntryWithDictionary:dict toFileHandle:fh];
-
-		chmod(cpath,st.st_mode);
+		@try { fh=[CSFileHandle fileHandleForWritingAtPath:forkpath]; }
+		@catch(id e) { return XADOpenFileError; }
 	}
 
-	close(fh);
+	XADError error=[self _extractEntryWithDictionary:dict toHandle:fh];
+
+	[fh close];
+
+	if(originalpermissions!=-1) chmod(cpath,originalpermissions);
 
 	return error;
 }

@@ -1,6 +1,11 @@
 #import "XADUnarchiver.h"
+#import "NSStringXAD.h"
 
-#define VERSION_STRING "v0.2"
+#ifdef __MINGW32__
+#import <windows.h>
+#endif
+
+#define VERSION_STRING @"v0.2"
 
 NSString *EscapeString(NSString *str)
 {
@@ -48,7 +53,7 @@ NSString *EscapeString(NSString *str)
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	for(int i=0;i<indent;i++) printf(" ");
+	for(int i=0;i<indent;i++) [@" " print];
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
@@ -57,22 +62,23 @@ NSString *EscapeString(NSString *str)
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 
 	NSString *name=EscapeString([[dict objectForKey:XADFileNameKey] string]);
-	printf("%s (",[name UTF8String]);
+	[name print];
+	[@" (" print];
 
 	if(dir&&[dir boolValue])
 	{
-		printf("dir");
+		[@"dir" print];
 	}
-	else if(link&&[link boolValue]) printf("link");
+	else if(link&&[link boolValue]) [@"link" print];
 	else
 	{
-		if(size) printf("%lld",[size longLongValue]);
-		else printf("?");
+		if(size) [[NSString stringWithFormat:@"%lld",[size longLongValue]] print];
+		else [@"?" print];
 	}
 
-	if(rsrc&&[rsrc boolValue]) printf(", rsrc");
+	if(rsrc&&[rsrc boolValue]) [@", rsrc" print];
 
-	printf(")...");
+	[@")..." print];
 	fflush(stdout);
 }
 
@@ -82,8 +88,13 @@ NSString *EscapeString(NSString *str)
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
 {
-	if(!error) printf(" OK.\n");
-	else printf(" Failed! (%s)\n",[[XADException describeXADError:error] UTF8String]);
+	if(!error) [@" OK.\n" print];
+	else
+	{
+		[@" Failed! (" print];
+		[[XADException describeXADError:error] print];
+		[@")\n" print];
+	}
 }
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory
@@ -125,39 +136,58 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 
 
 
-
-void usage(const char *name)
+NSArray *CommandLineArguments(int argc,const char **argv)
 {
-	fprintf(stderr,
-	"unar " VERSION_STRING " (" __DATE__ ")\n"
-	"Usage: %s archive [ archive2 ... ] [ destination_directory ]\n",
-	name);
+	NSMutableArray *arguments=[NSMutableArray array];
+
+	#ifdef __MINGW32__
+
+	int wargc;
+	wchar_t **wargv=CommandLineToArgvW(GetCommandLineW(),&wargc);
+
+	for(int i=0;i<wargc;i++) [arguments addObject:
+	[NSString stringWithCharacters:wargv[i] length:wcslen(wargv[i])]];
+
+	#else
+
+	for(int i=0;i<argc;i++) [arguments addObject:[NSString stringWithUTF8String:argv[i]]];
+
+	#endif
+
+	return arguments;
+}
+
+void PrintUsage(NSString *name)
+{
+	[[NSString stringWithFormat:
+	@"unar " VERSION_STRING @" (" @__DATE__ @")\n"
+	@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
+	name] printToFile:stderr];
 }
 
 int main(int argc,const char **argv)
 {
-	if(argc==1)
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+	NSArray *arguments=CommandLineArguments(argc,argv);
+	int numfiles=[arguments count]-1;
+
+	if(numfiles==0)
 	{
-		usage(argv[0]);
+		PrintUsage([arguments objectAtIndex:0]);
 		return 0;
 	}
 
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
-
-	int numfiles=argc-1;
 	NSString *destination=nil;
 
 	if(numfiles>1)
 	{
-		NSString *path=[NSString stringWithUTF8String:argv[argc-1]];
+		NSString *path=[arguments lastObject];
 		BOOL isdir;
-		if([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isdir])
+		if(![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isdir]||isdir)
 		{
-			if(isdir)
-			{
-				destination=path;
-				numfiles--;
-			}
+			destination=path;
+			numfiles--;
 		}
 	}
 
@@ -165,15 +195,19 @@ int main(int argc,const char **argv)
 	{
 		NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 
-		printf("Extracting %s...",argv[i+1]);
+		NSString *filename=[arguments objectAtIndex:i+1];
+
+		[@"Extracting " print];
+		[filename print];
+		[@"..." print];
+
 		fflush(stdout);
 
-		NSString *filename=[NSString stringWithUTF8String:argv[i+1]];
 		XADUnarchiver *unarchiver=[XADUnarchiver unarchiverForPath:filename];
 
 		if(unarchiver)
 		{
-			printf("\n");
+			[@"\n" print];
 //[unarchiver setMacResourceForkStyle:XADVisibleAppleDoubleForkStyle];
 			if(destination) [unarchiver setDestination:destination];
 
@@ -186,7 +220,7 @@ int main(int argc,const char **argv)
 		}
 		else
 		{
-			printf(" Couldn't open archive.\n");
+			[@" Couldn't open archive.\n" print];
 		}
 
 		[pool release];

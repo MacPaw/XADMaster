@@ -1,6 +1,10 @@
 #import <Foundation/Foundation.h>
 #import <sys/time.h>
 
+#ifdef __MINGW32__
+#include <windows.h>
+#endif
+
 @interface NSDate (XAD)
 
 +(NSDate *)XADDateWithTimeIntervalSince1904:(NSTimeInterval)interval;
@@ -16,6 +20,10 @@
 
 #ifdef __APPLE__
 -(UTCDateTime)UTCDateTime;
+#endif
+
+#ifdef __MINGW32__
+-(FILETIME)FILETIME;
 #endif
 
 @end

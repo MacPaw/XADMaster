@@ -432,17 +432,15 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	NSString *dirname=[filename stringByDeletingLastPathComponent];
 	if(!dirname||[dirname length]==0) dirname=@".";
 
-	DIR *dir=opendir([dirname fileSystemRepresentation]);
-	if(!dir) return nil;
+	NSEnumerator *enumerator=[[[NSFileManager defaultManager] directoryContentsAtPath:dirname] objectEnumerator];
+	if(!enumerator) return nil;
 
-	struct dirent *ent;
-	while(ent=readdir(dir))
+	NSString *direntry;
+	while(direntry=[enumerator nextObject])
 	{
-		NSString *filename=[dirname stringByAppendingPathComponent:[NSString stringWithUTF8String:ent->d_name]];
+		NSString *filename=[dirname stringByAppendingPathComponent:direntry];
 		if([regex matchesString:filename]) [volumes addObject:filename];
 	}
-
-	closedir(dir);
 
 	[volumes sortUsingFunction:XADVolumeSort context:firstext];
 

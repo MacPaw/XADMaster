@@ -22,61 +22,50 @@
 {
 	const wchar_t *wpath=[path fileSystemRepresentationW];
 
-//	struct stat st;
-//	if(stat(cpath,&st)!=0) return XADOpenFileError; // TODO: better error
-
-/*	// If the file does not have write permissions, change this temporarily
-	// and remember to change back.
-	BOOL changedpermissions=NO;
-	if(!(st.st_mode&S_IWUSR))
+	// If the file is read-only, change this temporarily and remember to change back.
+	BOOL changedattributes=NO;
+	DWORD oldattributes=GetFileAttributesW(wpath);
+	if(oldattributes!=INVALID_FILE_ATTRIBUTES&&(oldattributes&FILE_ATTRIBUTE_READONLY))
 	{
-		chmod(cpath,0700);
-		changedpermissions=YES;
-	}*/
+		SetFileAttributesW(wpath,oldattributes&~INVALID_FILE_ATTRIBUTES);
+		changedattributes=YES;
+	}
 
-	// Handle timestamps.
-/*	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
+	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
+	NSDate *creation=[dict objectForKey:XADCreationDateKey];
 	NSDate *access=[dict objectForKey:XADLastAccessDateKey];
 
-	if(modification||access)
+	if(modification||creation||access)
 	{
-		struct timeval times[2]={
-			{st.st_atime,0},
-			{st.st_mtime,0},
-		};
+		HANDLE handle=CreateFileW(wpath,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
+		if(handle==INVALID_HANDLE_VALUE) return XADUnknownError; // TODO: better error
 
-		if(access) times[0]=[access timevalStruct];
-		if(modification) times[1]=[modification timevalStruct];
+		FILETIME creationtime,lastaccesstime,lastwritetime;
 
-		if(utimes(cpath,times)!=0) return XADUnknownError; // TODO: better error
-	}*/
+		if(creation) creationtime=[creation FILETIME];
+		if(access) lastaccesstime=[access FILETIME];
+		if(modification) lastwritetime=[modification FILETIME];
+
+		if(!SetFileTime(handle,
+		creation?&creationtime:NULL,
+		access?&lastaccesstime:NULL,
+		modification?&lastwritetime:NULL))
+		{
+			CloseHandle(handle);
+			return XADUnknownError; // TODO: better error
+		}
+
+		CloseHandle(handle);
+	}
 
 	NSNumber *attributes=[dict objectForKey:XADWindowsFileAttributesKey];
 	if(!attributes) attributes=[dict objectForKey:XADDOSFileAttributesKey];
-	if(attributes)
+	if(attributes||changedattributes)
 	{
-		SetFileAttributesW(wpath,[attributes intValue]);
+		DWORD newattributes=oldattributes;
+		if(attributes) newattributes=[attributes intValue];
+		SetFileAttributesW(wpath,newattributes);
 	}
-
-	// Handle permissions (or change back to original permissions if they were changed).
-/*	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
-	if(permissions||changedpermissions)
-	{
-		mode_t mode=st.st_mode;
-
-		if(permissions)
-		{
-			mode=[permissions unsignedShortValue];
-			if(!preservepermissions)
-			{
-				mode_t mask=umask(022);
-				umask(mask); // This is stupid. Is there no sane way to just READ the umask?
-				mode&=~mask;
-			}
-		}
-
-		if(chmod(cpath,mode&~S_IFMT)!=0) return XADUnknownError; // TODO: better error
-	}*/
 
 	return XADNoError;
 }

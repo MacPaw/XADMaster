@@ -115,10 +115,10 @@
 		int length=[asciiprefix length];
 		if([data length]<length) return NO;
 
-		char cstr[length+1];
-		if(![asciiprefix getCString:cstr maxLength:length+1 encoding:NSASCIIStringEncoding]) return NO;
+		const uint8_t *bytes=[data bytes];
+		for(int i=0;i<length;i++) if(bytes[i]!=[string characterAtIndex:i]) return NO;
 
-		return !strncmp([data bytes],cstr,length);
+		return YES;
 	}
 }
 

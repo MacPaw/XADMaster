@@ -11,7 +11,7 @@ startPosition:(off_t)startpos length:(int)length
 	Class class;
 	switch([[program programCode] CRC])
 	{
-		//case 0x0e06077d: class=[XADRAR30DeltaFilter class]; break;
+		case 0x0e06077d: class=[XADRAR30DeltaFilter class]; break;
 		default: class=[XADRAR30Filter class]; break;
 	}
 

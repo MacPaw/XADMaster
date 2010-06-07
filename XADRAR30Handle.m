@@ -564,7 +564,7 @@
 
 		[filtercode addObject:code];
 
-//		NSLog(@"%08x\n%@",[code CRC],[code disassemble]);
+		//NSLog(@"%08x\n%@",[code CRC],[code disassemble]);
 	}
 	else
 	{

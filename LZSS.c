@@ -26,9 +26,7 @@ void RestartLZSS(LZSS *self)
 	self->position=0;
 }
 
-
-
-void CopyBytesFromLZSSWindow(LZSS *self,uint8_t *buffer,off_t startpos,int length)
+void CopyBytesFromLZSSWindow(LZSS *self,uint8_t *buffer,int64_t startpos,int length)
 {
 	int windowoffs=LZSSWindowOffsetForPosition(self,startpos);
 

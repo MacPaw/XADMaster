@@ -72,6 +72,7 @@ OBJC_FILES =	CarrylessRangeCoder.m \
 		CSSubHandle.m \
 		CSZlibHandle.m \
 		NSDateXAD.m \
+		NSStringXAD.m \
 		NumberParsing.m \
 		PPMdContext.m \
 		PPMdSubAllocatorBrimstone.m \

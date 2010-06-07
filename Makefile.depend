@@ -399,7 +399,7 @@ XADStuffItXDarkhorseHandle.o: XADStuffItXDarkhorseHandle.m \
  XADException.h
 XADStuffItXEnglishHandle.o: XADStuffItXEnglishHandle.m \
  XADStuffItXEnglishHandle.h CSByteStreamHandle.h CSStreamHandle.h \
- CSHandle.h CSInputBuffer.h XADException.h SystemSpecific.h
+ CSHandle.h CSInputBuffer.h XADException.h
 XADStuffItXIronHandle.o: XADStuffItXIronHandle.m XADStuffItXIronHandle.h \
  CSBlockStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
  XADException.h StuffItXUtilities.h CarrylessRangeCoder.h BWT.h \
@@ -425,8 +425,11 @@ XADTarSparseHandle.o: XADTarSparseHandle.m XADTarSparseHandle.h \
  CSHandle.h SystemSpecific.h
 XADUnarchiver.o: XADUnarchiver.m XADUnarchiver.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
- XADSkipHandle.h Checksums.h CSSubHandle.h Progress.h CSStreamHandle.h \
- CSInputBuffer.h CSZlibHandle.h CSBzip2Handle.h NSDateXAD.h
+ XADSkipHandle.h Checksums.h CSSubHandle.h CSFileHandle.h Progress.h \
+ CSStreamHandle.h CSInputBuffer.h CSZlibHandle.h CSBzip2Handle.h
+XADUnarchiverLinux.o: XADUnarchiverLinux.m XADUnarchiver.h \
+ XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h NSDateXAD.h
 XADWinZipAESHandle.o: XADWinZipAESHandle.m XADWinZipAESHandle.h \
  CSStreamHandle.h CSHandle.h CSInputBuffer.h XADException.h
 XADXARParser.o: XADXARParser.m XADXARParser.h XADArchiveParser.h \
@@ -499,7 +502,7 @@ XADTest4.o: XADTest4.m XADArchiveParser.h XADException.h XADString.h \
  CSSubHandle.h
 unar.o: unar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
- CSSubHandle.h
+ CSSubHandle.h NSStringXAD.h
 BWT.o: BWT.c BWT.h
 LZSS.o: LZSS.c LZSS.h
 LZW.o: LZW.c LZW.h

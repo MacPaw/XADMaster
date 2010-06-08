@@ -34,3 +34,11 @@ startPosition:(off_t)startpos length:(int)length;
 @interface XADRAR30AudioFilter:XADRAR30Filter {}
 -(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos;
 @end
+
+@interface XADRAR30E8Filter:XADRAR30Filter {}
+-(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos;
+@end
+
+@interface XADRAR30E8E9Filter:XADRAR30Filter {}
+-(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos;
+@end

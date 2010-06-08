@@ -10,6 +10,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 
 @interface XADRARVirtualMachine:NSObject
 {
+	@public
 	RARVirtualMachine vm;
 }
 
@@ -31,6 +32,26 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 -(BOOL)executeProgramCode:(XADRARProgramCode *)code;
 
 @end
+
+static inline uint32_t XADRARVirtualMachineRead32(XADRARVirtualMachine *self,uint32_t address)
+{
+	return RARVirtualMachineRead32(&self->vm,address);
+}
+
+static inline void XADRARVirtualMachineWrite32(XADRARVirtualMachine *self,uint32_t address,uint32_t val)
+{
+	RARVirtualMachineWrite32(&self->vm,address,val);
+}
+
+static inline uint32_t XADRARVirtualMachineRead8(XADRARVirtualMachine *self,uint32_t address)
+{
+	return RARVirtualMachineRead8(&self->vm,address);
+}
+
+static inline void XADRARVirtualMachineWrite8(XADRARVirtualMachine *self,uint32_t address,uint32_t val)
+{
+	RARVirtualMachineWrite8(&self->vm,address,val);
+}
 
 
 

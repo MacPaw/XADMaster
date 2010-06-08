@@ -1,17 +1,19 @@
 #import "XADRAR30Filter.h"
 #import "XADException.h"
+#import "RARAudioDecoder.h"
 
 @implementation XADRAR30Filter
 
 +(XADRAR30Filter *)filterForProgramInvocation:(XADRARProgramInvocation *)program
 startPosition:(off_t)startpos length:(int)length
 {
-	//NSLog(@"%08x",[[program programCode] CRC]);
+	NSLog(@"%010qx",[[program programCode] fingerprint]);
 
 	Class class;
-	switch([[program programCode] CRC])
+	switch([[program programCode] fingerprint])
 	{
-		case 0x0e06077d: class=[XADRAR30DeltaFilter class]; break;
+		case 0x1d0e06077d: class=[XADRAR30DeltaFilter class]; break;
+		case 0xd8bc85e701: class=[XADRAR30AudioFilter class]; break;
 		default: class=[XADRAR30Filter class]; break;
 	}
 
@@ -67,10 +69,13 @@ startPosition:(off_t)startpos length:(int)length
 @end
 
 
+
+
 @implementation XADRAR30DeltaFilter
 
 -(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos
 {
+NSLog(@"delta");
 	int length=[invocation initialRegisterState:4]; // should really be blocklength, but, RAR.
 	int numchannels=[invocation initialRegisterState:0];
 	uint8_t *memory=[vm memory];
@@ -89,6 +94,38 @@ startPosition:(off_t)startpos length:(int)length
 		{
 			uint8_t newbyte=lastbyte-*src++;
 			lastbyte=dest[destoffs]=newbyte;
+		}
+	}
+}
+
+@end
+
+
+
+@implementation XADRAR30AudioFilter
+
+-(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos
+{
+NSLog(@"audio");
+	int length=[invocation initialRegisterState:4]; // should really be blocklength, but, RAR.
+	int numchannels=[invocation initialRegisterState:0];
+	uint8_t *memory=[vm memory];
+
+	if(length>RARProgramWorkSize/2) return;
+
+	filteredblockaddress=length;
+	filteredblocklength=length;
+
+	uint8_t *src=&memory[0];
+	uint8_t *dest=&memory[filteredblockaddress];
+	for(int i=0;i<numchannels;i++)
+	{
+		RAR30AudioState state;
+		memset(&state,0,sizeof(state));
+
+		for(int destoffs=i;destoffs<length;destoffs+=numchannels)
+		{
+			dest[destoffs]=DecodeRAR30Audio(&state,*src++);
 		}
 	}
 }

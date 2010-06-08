@@ -126,7 +126,8 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	if(xor!=bytes[0]) return NO;
 
 	// Calculate CRC for fast native path replacements.
-	crc=XADCalculateCRC(0xffffffff,bytes,length,XADCRCTable_edb88320)^0xffffffff;
+	fingerprint=XADCalculateCRC(0xffffffff,bytes,length,XADCRCTable_edb88320)^0xffffffff;
+	fingerprint|=(uint64_t)length<<32;
 
 	CSInputBuffer *input=CSInputBufferAllocWithBuffer(&bytes[1],length-1,0);
 
@@ -265,7 +266,7 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isRelativeJump:(BOOL)isrel cu
 
 -(NSMutableData *)globalBackup { return globalbackup; }
 
--(uint32_t)CRC { return crc; }
+-(uint64_t)fingerprint { return fingerprint; }
 
 -(NSString *)disassemble
 {

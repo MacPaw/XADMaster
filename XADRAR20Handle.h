@@ -1,16 +1,7 @@
 #import "XADFastLZSSHandle.h"
 #import "XADRARParser.h"
 #import "XADPrefixCode.h"
-
-typedef struct XADRAR20AudioState
-{
-	int weight1,weight2,weight3,weight4,weight5;
-	int delta1,delta2,delta3,delta4;
-	int lastdelta;
-	int error[11];
-	int count;
-	int lastbyte;
-} XADRAR20AudioState;
+#import "RARAudioDecoder.h"
 
 @interface XADRAR20Handle:XADFastLZSSHandle
 {
@@ -28,7 +19,7 @@ typedef struct XADRAR20AudioState
 
 	BOOL audioblock;
 	int channel,channeldelta,numchannels;
-	XADRAR20AudioState audiostate[4];
+	RAR20AudioState audiostate[4];
 
 	int lengthtable[1028];
 }

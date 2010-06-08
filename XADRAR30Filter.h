@@ -27,9 +27,10 @@ startPosition:(off_t)startpos length:(int)length;
 
 @end
 
-@interface XADRAR30DeltaFilter:XADRAR30Filter
-{
-}
+@interface XADRAR30DeltaFilter:XADRAR30Filter {}
 -(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos;
+@end
 
+@interface XADRAR30AudioFilter:XADRAR30Filter {}
+-(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos;
 @end

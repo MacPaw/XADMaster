@@ -40,7 +40,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input);
 	NSData *staticdata;
 	NSMutableData *globalbackup;
 
-	uint32_t crc;
+	uint64_t fingerprint;
 }
 
 -(id)initWithByteCode:(const uint8_t *)bytes length:(int)length;
@@ -55,7 +55,7 @@ currentInstructionOffset:(int)instructionoffset;
 -(int)numberOfOpcodes;
 -(NSData *)staticData;
 -(NSMutableData *)globalBackup;
--(uint32_t)CRC;
+-(uint64_t)fingerprint;
 
 -(NSString *)disassemble;
 

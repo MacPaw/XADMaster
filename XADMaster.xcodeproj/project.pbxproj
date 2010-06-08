@@ -369,6 +369,10 @@
 		1B34A0BA11BB293A00396C26 /* regex.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A0B911BB293A00396C26 /* regex.c */; };
 		1B34A10211BBD2B100396C26 /* NSStringXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringXAD.m */; };
 		1B34A12A11BBE4D800396C26 /* NSStringXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringXAD.m */; };
+		1B34A55811BDC1AC00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
+		1B34A55911BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
+		1B34A55A11BDC1AD00396C26 /* RARAudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34A55611BDC1AC00396C26 /* RARAudioDecoder.h */; };
+		1B34A55B11BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
 		1B3A64B61015030700AE25A8 /* XADLZHSFXParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */; };
 		1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
 		1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */; };
@@ -853,6 +857,8 @@
 		1B34A0B911BB293A00396C26 /* regex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regex.c; path = Windows/regex.c; sourceTree = "<group>"; };
 		1B34A10011BBD2B100396C26 /* NSStringXAD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringXAD.h; sourceTree = "<group>"; };
 		1B34A10111BBD2B100396C26 /* NSStringXAD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringXAD.m; sourceTree = "<group>"; };
+		1B34A55611BDC1AC00396C26 /* RARAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARAudioDecoder.h; sourceTree = "<group>"; };
+		1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RARAudioDecoder.c; sourceTree = "<group>"; };
 		1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHSFXParsers.h; sourceTree = "<group>"; };
 		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
 		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
@@ -1716,6 +1722,8 @@
 				1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */,
 				1B4C03A811B34E1A00CDACC1 /* RARVirtualMachine.h */,
 				1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */,
+				1B34A55611BDC1AC00396C26 /* RARAudioDecoder.h */,
+				1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */,
 				1BCD65500EF8164900D86C43 /* RARBug.h */,
 				1BCD65510EF8164900D86C43 /* RARBug.c */,
 				1B4C019A11B095DB00CDACC1 /* Official */,
@@ -2107,6 +2115,7 @@
 				1B4C01F811B0A56000CDACC1 /* XADRAR30Handle.h in Headers */,
 				1B4C025A11B1DAC300CDACC1 /* XADRAR30Filter.h in Headers */,
 				1B4C03AA11B34E1A00CDACC1 /* RARVirtualMachine.h in Headers */,
+				1B34A55A11BDC1AD00396C26 /* RARAudioDecoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2460,6 +2469,7 @@
 				1B4C03AC11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
 				1B349EF111BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */,
 				1B34A12A11BBE4D800396C26 /* NSStringXAD.m in Sources */,
+				1B34A55911BDC1AD00396C26 /* RARAudioDecoder.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2621,6 +2631,7 @@
 				1B349EF811BACA4F00396C26 /* XADUnarchiverWindows.m in Sources */,
 				1B34A0BA11BB293A00396C26 /* regex.c in Sources */,
 				1B34A10211BBD2B100396C26 /* NSStringXAD.m in Sources */,
+				1B34A55811BDC1AC00396C26 /* RARAudioDecoder.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2812,6 +2823,7 @@
 				1B4C025B11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
 				1B4C03AB11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
 				1B349EF211BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */,
+				1B34A55B11BDC1AD00396C26 /* RARAudioDecoder.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

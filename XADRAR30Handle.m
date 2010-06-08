@@ -486,7 +486,21 @@
 
 -(void)readFilterFromPPMd
 {
-	[XADException raiseNotSupportedException];
+	// TODO: handle errors from NextPPMdVariantHByte()?
+	int flags=NextPPMdVariantHByte(&ppmd);
+
+	int length=(flags&7)+1;
+	if(length==7) length=NextPPMdVariantHByte(&ppmd)+7;
+	else if(length==8)
+	{
+		length=NextPPMdVariantHByte(&ppmd)<<8;
+		length|=NextPPMdVariantHByte(&ppmd);
+	}
+
+	uint8_t code[length];
+	for(int i=0;i<length;i++) code[i]=NextPPMdVariantHByte(&ppmd);
+
+	[self parseFilter:code length:length flags:flags];
 }
 
 -(void)parseFilter:(const uint8_t *)bytes length:(int)length flags:(int)flags

@@ -1,9 +1,11 @@
 #import "XADRARParser.h"
-//#import "XADRAR15Handle.h"
+#import "XADRAR15Handle.h"
 #import "XADRAR20Handle.h"
 #import "XADRAR30Handle.h"
+#import "XADRAR13CryptHandle.h"
+#import "XADRAR15CryptHandle.h"
+#import "XADRAR20CryptHandle.h"
 #import "XADRARAESHandle.h"
-#import "XADRARCrypt20Handle.h"
 #import "XADCRCHandle.h"
 #import "CSFileHandle.h"
 #import "CSMemoryHandle.h"
@@ -302,6 +304,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 	if(flags&LHD_PASSWORD) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 	if((flags&LHD_WINDOWMASK)==LHD_DIRECTORY) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+	if(version==15 && os==0 && (attrs&0x10)) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 
 	NSString *osname=nil;
 	switch(os)
@@ -634,9 +637,14 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 {
 	int version=[[[obj objectAtIndex:0] objectForKey:@"Version"] intValue];
 
-	if(!getenv("XADTestRAR")||strcasecmp(getenv("XADTestRAR"),"old")!=0)
+	#ifdef SUPPORT_OFFICIAL_UNRAR
+	return [[[XADRAROfficialHandle alloc] initWithRARParser:self version:version parts:obj] autorelease];
+	#else
 	switch(version)
 	{
+		case 15:
+			return [[[XADRAR15Handle alloc] initWithRARParser:self parts:obj] autorelease];
+
 		case 20:
 		case 26:
 			return [[[XADRAR20Handle alloc] initWithRARParser:self parts:obj] autorelease];
@@ -646,9 +654,9 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 			return [[[XADRAR30Handle alloc] initWithRARParser:self parts:obj] autorelease];
 
 		default:
-			return [[[XADRAROfficialHandle alloc] initWithRARParser:self version:version parts:obj] autorelease];
+			return nil;
 	}
-	else return [[[XADRAROfficialHandle alloc] initWithRARParser:self version:version parts:obj] autorelease];
+	#endif
 }
 
 -(CSHandle *)handleWithVersion:(int)version skipOffset:(off_t)skipoffset
@@ -672,18 +680,18 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 
 	if(encrypted)
 	{
-		if(version<20)
+		switch(version)
 		{
-			[XADException raiseNotSupportedException];
-			return nil;
-		}
-		else if(version==20)
-		{
-			return [[[XADRARCrypt20Handle alloc] initWithHandle:fh
+			case 13: return [[[XADRAR13CryptHandle alloc] initWithHandle:fh
 			password:[self encodedPassword]] autorelease];
-		}
-		else
-		{
+
+			case 15: return [[[XADRAR15CryptHandle alloc] initWithHandle:fh
+			password:[self encodedPassword]] autorelease];
+
+			case 20: return [[[XADRAR20CryptHandle alloc] initWithHandle:fh
+			password:[self encodedPassword]] autorelease];
+
+			default:
 			return [[[XADRARAESHandle alloc] initWithHandle:fh key:[self keyForSalt:salt]] autorelease];
 		}
 	}

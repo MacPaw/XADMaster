@@ -113,7 +113,7 @@
 		1B23E1431190F57100620319 /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
 		1B23E1441190F57200620319 /* XADQuantumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415E10B85B6600A05E29 /* XADQuantumHandle.m */; };
 		1B23E1451190F57400620319 /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
-		1B23E1461190F57400620319 /* XADRARCrypt20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */; };
+		1B23E1461190F57400620319 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
 		1B23E1471190F57500620319 /* XADRAROfficialHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */; };
 		1B23E1481190F57600620319 /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
 		1B23E1491190F57600620319 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
@@ -263,7 +263,7 @@
 		1B23E5A11198BC2000620319 /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
 		1B23E5A21198BC2000620319 /* XADQuantumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415E10B85B6600A05E29 /* XADQuantumHandle.m */; };
 		1B23E5A31198BC2000620319 /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
-		1B23E5A41198BC2000620319 /* XADRARCrypt20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */; };
+		1B23E5A41198BC2000620319 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
 		1B23E5A51198BC2000620319 /* XADRAROfficialHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */; };
 		1B23E5A61198BC2000620319 /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
 		1B23E5A71198BC2000620319 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
@@ -373,6 +373,16 @@
 		1B34A55911BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
 		1B34A55A11BDC1AD00396C26 /* RARAudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34A55611BDC1AC00396C26 /* RARAudioDecoder.h */; };
 		1B34A55B11BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
+		1B34A65011C01A5A00396C26 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
+		1B34A65111C01A6200396C26 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
+		1B34A7B211C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */; };
+		1B34A7B311C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */; };
+		1B34A7B411C2D97500396C26 /* XADRAR15CryptHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34A7B011C2D97500396C26 /* XADRAR15CryptHandle.h */; };
+		1B34A7B511C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */; };
+		1B34A7EB11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */; };
+		1B34A7EC11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */; };
+		1B34A7ED11C2E0E800396C26 /* XADRAR13CryptHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34A7E911C2E0E800396C26 /* XADRAR13CryptHandle.h */; };
+		1B34A7EE11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */; };
 		1B3A64B61015030700AE25A8 /* XADLZHSFXParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */; };
 		1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
 		1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */; };
@@ -484,8 +494,8 @@
 		1B95B517101119A5009FA09E /* XADXORHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B515101119A5009FA09E /* XADXORHandle.m */; };
 		1B95B5B010112815009FA09E /* XADARJFastestHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B5AE10112815009FA09E /* XADARJFastestHandle.h */; };
 		1B95B5B110112815009FA09E /* XADARJFastestHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B5AF10112815009FA09E /* XADARJFastestHandle.m */; };
-		1BA2650E0FC061E200279E95 /* XADRARCrypt20Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA2650C0FC061E200279E95 /* XADRARCrypt20Handle.h */; };
-		1BA2650F0FC061E200279E95 /* XADRARCrypt20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */; };
+		1BA2650E0FC061E200279E95 /* XADRAR20CryptHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA2650C0FC061E200279E95 /* XADRAR20CryptHandle.h */; };
+		1BA2650F0FC061E200279E95 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
 		1BA266DE0FC78BF600279E95 /* XADPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA266DC0FC78BF600279E95 /* XADPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BA266DF0FC78BF600279E95 /* XADPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA266DD0FC78BF600279E95 /* XADPath.m */; };
 		1BA4DF0E101DFC73001AB3CA /* XADNSISBzip2Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA4DF0C101DFC73001AB3CA /* XADNSISBzip2Handle.h */; };
@@ -859,6 +869,10 @@
 		1B34A10111BBD2B100396C26 /* NSStringXAD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringXAD.m; sourceTree = "<group>"; };
 		1B34A55611BDC1AC00396C26 /* RARAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARAudioDecoder.h; sourceTree = "<group>"; };
 		1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RARAudioDecoder.c; sourceTree = "<group>"; };
+		1B34A7B011C2D97500396C26 /* XADRAR15CryptHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR15CryptHandle.h; sourceTree = "<group>"; };
+		1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR15CryptHandle.m; sourceTree = "<group>"; };
+		1B34A7E911C2E0E800396C26 /* XADRAR13CryptHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR13CryptHandle.h; sourceTree = "<group>"; };
+		1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR13CryptHandle.m; sourceTree = "<group>"; };
 		1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHSFXParsers.h; sourceTree = "<group>"; };
 		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
 		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
@@ -963,8 +977,8 @@
 		1B95B515101119A5009FA09E /* XADXORHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADXORHandle.m; sourceTree = "<group>"; };
 		1B95B5AE10112815009FA09E /* XADARJFastestHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADARJFastestHandle.h; sourceTree = "<group>"; };
 		1B95B5AF10112815009FA09E /* XADARJFastestHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADARJFastestHandle.m; sourceTree = "<group>"; };
-		1BA2650C0FC061E200279E95 /* XADRARCrypt20Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRARCrypt20Handle.h; sourceTree = "<group>"; };
-		1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRARCrypt20Handle.m; sourceTree = "<group>"; };
+		1BA2650C0FC061E200279E95 /* XADRAR20CryptHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR20CryptHandle.h; sourceTree = "<group>"; };
+		1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR20CryptHandle.m; sourceTree = "<group>"; };
 		1BA266DC0FC78BF600279E95 /* XADPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPath.h; sourceTree = "<group>"; };
 		1BA266DD0FC78BF600279E95 /* XADPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPath.m; sourceTree = "<group>"; };
 		1BA4DF0C101DFC73001AB3CA /* XADNSISBzip2Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSISBzip2Handle.h; sourceTree = "<group>"; };
@@ -1714,10 +1728,14 @@
 				1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */,
 				1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */,
 				1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */,
+				1B34A7E911C2E0E800396C26 /* XADRAR13CryptHandle.h */,
+				1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */,
+				1B34A7B011C2D97500396C26 /* XADRAR15CryptHandle.h */,
+				1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */,
+				1BA2650C0FC061E200279E95 /* XADRAR20CryptHandle.h */,
+				1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */,
 				1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */,
 				1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */,
-				1BA2650C0FC061E200279E95 /* XADRARCrypt20Handle.h */,
-				1BA2650D0FC061E200279E95 /* XADRARCrypt20Handle.m */,
 				1B4CFDAC119EDD0D00CDACC1 /* XADRARVirtualMachine.h */,
 				1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */,
 				1B4C03A811B34E1A00CDACC1 /* RARVirtualMachine.h */,
@@ -2075,7 +2093,7 @@
 				1B69134E0F4CA45000A415E0 /* XADZipSFXParsers.h in Headers */,
 				1B216A750F8E8ADE001207C9 /* Progress.h in Headers */,
 				1B216A7A0F8E9064001207C9 /* CRC.h in Headers */,
-				1BA2650E0FC061E200279E95 /* XADRARCrypt20Handle.h in Headers */,
+				1BA2650E0FC061E200279E95 /* XADRAR20CryptHandle.h in Headers */,
 				1BA266DE0FC78BF600279E95 /* XADPath.h in Headers */,
 				1B81DD460FFEB87B005C5B23 /* XADUnarchiver.h in Headers */,
 				1B95B42E1010D906009FA09E /* XADARJParser.h in Headers */,
@@ -2116,6 +2134,8 @@
 				1B4C025A11B1DAC300CDACC1 /* XADRAR30Filter.h in Headers */,
 				1B4C03AA11B34E1A00CDACC1 /* RARVirtualMachine.h in Headers */,
 				1B34A55A11BDC1AD00396C26 /* RARAudioDecoder.h in Headers */,
+				1B34A7B411C2D97500396C26 /* XADRAR15CryptHandle.h in Headers */,
+				1B34A7ED11C2E0E800396C26 /* XADRAR13CryptHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2394,7 +2414,7 @@
 				1B23E1431190F57100620319 /* XADPPMdParser.m in Sources */,
 				1B23E1441190F57200620319 /* XADQuantumHandle.m in Sources */,
 				1B23E1451190F57400620319 /* XADRARAESHandle.m in Sources */,
-				1B23E1461190F57400620319 /* XADRARCrypt20Handle.m in Sources */,
+				1B23E1461190F57400620319 /* XADRAR20CryptHandle.m in Sources */,
 				1B23E1471190F57500620319 /* XADRAROfficialHandle.m in Sources */,
 				1B23E1481190F57600620319 /* XADRARParser.m in Sources */,
 				1B23E1491190F57600620319 /* XADRPMParser.m in Sources */,
@@ -2470,6 +2490,8 @@
 				1B349EF111BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */,
 				1B34A12A11BBE4D800396C26 /* NSStringXAD.m in Sources */,
 				1B34A55911BDC1AD00396C26 /* RARAudioDecoder.c in Sources */,
+				1B34A7B211C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */,
+				1B34A7EB11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2556,7 +2578,7 @@
 				1B23E5A11198BC2000620319 /* XADPPMdParser.m in Sources */,
 				1B23E5A21198BC2000620319 /* XADQuantumHandle.m in Sources */,
 				1B23E5A31198BC2000620319 /* XADRARAESHandle.m in Sources */,
-				1B23E5A41198BC2000620319 /* XADRARCrypt20Handle.m in Sources */,
+				1B23E5A41198BC2000620319 /* XADRAR20CryptHandle.m in Sources */,
 				1B23E5A51198BC2000620319 /* XADRAROfficialHandle.m in Sources */,
 				1B23E5A61198BC2000620319 /* XADRARParser.m in Sources */,
 				1B23E5A71198BC2000620319 /* XADRPMParser.m in Sources */,
@@ -2632,6 +2654,9 @@
 				1B34A0BA11BB293A00396C26 /* regex.c in Sources */,
 				1B34A10211BBD2B100396C26 /* NSStringXAD.m in Sources */,
 				1B34A55811BDC1AC00396C26 /* RARAudioDecoder.c in Sources */,
+				1B34A65111C01A6200396C26 /* XADRAR15Handle.m in Sources */,
+				1B34A7B311C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */,
+				1B34A7EC11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2781,7 +2806,7 @@
 				1B216A760F8E8ADE001207C9 /* Progress.m in Sources */,
 				1B216A790F8E9064001207C9 /* CRC.m in Sources */,
 				1B216BBE0F8E9DED001207C9 /* XADArchive.m in Sources */,
-				1BA2650F0FC061E200279E95 /* XADRARCrypt20Handle.m in Sources */,
+				1BA2650F0FC061E200279E95 /* XADRAR20CryptHandle.m in Sources */,
 				1BA266DF0FC78BF600279E95 /* XADPath.m in Sources */,
 				1B95B42F1010D906009FA09E /* XADARJParser.m in Sources */,
 				1B95B517101119A5009FA09E /* XADXORHandle.m in Sources */,
@@ -2824,6 +2849,9 @@
 				1B4C03AB11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
 				1B349EF211BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */,
 				1B34A55B11BDC1AD00396C26 /* RARAudioDecoder.c in Sources */,
+				1B34A65011C01A5A00396C26 /* XADRAR15Handle.m in Sources */,
+				1B34A7B511C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */,
+				1B34A7EE11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

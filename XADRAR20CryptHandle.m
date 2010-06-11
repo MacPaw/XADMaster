@@ -1,7 +1,7 @@
-#import "XADRARCrypt20Handle.h"
+#import "XADRAR20CryptHandle.h"
 #import "CRC.h"
 
-@implementation XADRARCrypt20Handle
+@implementation XADRAR20CryptHandle
 
 -(id)initWithHandle:(CSHandle *)handle password:(NSData *)passdata
 {

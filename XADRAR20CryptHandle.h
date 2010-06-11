@@ -1,6 +1,6 @@
 #import "CSBlockStreamHandle.h"
 
-@interface XADRARCrypt20Handle:CSBlockStreamHandle
+@interface XADRAR20CryptHandle:CSBlockStreamHandle
 {
 	CSHandle *parent;
 	off_t startoffs;

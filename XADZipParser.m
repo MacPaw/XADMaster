@@ -644,7 +644,6 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 			[dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:@"WinZipAESVendor"];
 			[dict setObject:[NSNumber numberWithInt:[fh readUInt8]] forKey:@"WinZipAESKeySize"];
 			[dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:@"WinZipAESCompressionMethod"];
-			if(version==2) [dict removeObjectForKey:@"ZipCRC32"];
 		}
 		else
 		{
@@ -891,6 +890,8 @@ isLastEntry:(BOOL)islastentry
 			}
 
 			// TODO: handle checksums for WinZip AES files!
+			if(version==2) checksum=NO;
+
 			fh=[[[XADWinZipAESHandle alloc] initWithHandle:fh length:compsize
 			password:[self encodedPassword] keyLength:keybytes] autorelease];
 		}

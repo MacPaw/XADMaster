@@ -231,6 +231,8 @@
 		1B34AAB811C30EDB00396C26 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA70EC52532006D2F06 /* libz.dylib */; };
 		1B34AABC11C30F5400396C26 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34AABB11C30F5400396C26 /* libstdc++.6.dylib */; };
 		1B34AAC711C30F9A00396C26 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61550EF349EE00D86C43 /* BraIA64.c */; };
+		1B34AB2D11C3196800396C26 /* StuffItXEnglishDictionary.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */; };
+		1B34AB2E11C3196800396C26 /* StuffItXEnglishDictionary.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */; };
 		1B3A64B61015030700AE25A8 /* XADLZHSFXParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */; };
 		1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
 		1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */; };
@@ -243,7 +245,6 @@
 		1B3A68B2101BA1C300AE25A8 /* XADTest4.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A68A9101BA14A00AE25A8 /* XADTest4.m */; };
 		1B3E2B550F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */; };
 		1B3E2B560F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */; };
-		1B3E2BC80F280760003EEF98 /* sitx_english.dat in Resources */ = {isa = PBXBuildFile; fileRef = 1B3E2BC70F280760003EEF98 /* sitx_english.dat */; };
 		1B3E2BF30F28D715003EEF98 /* XADRC4Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E2BF10F28D715003EEF98 /* XADRC4Handle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3E2BF40F28D715003EEF98 /* XADRC4Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2BF20F28D715003EEF98 /* XADRC4Handle.m */; };
 		1B3E2C3A0F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3E2C380F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h */; };
@@ -713,6 +714,7 @@
 		1B34A97511C2FD0500396C26 /* libXADMaster.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libXADMaster.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B34AA8411C30BC100396C26 /* UniversalDetector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniversalDetector.framework; path = ../../Build/Debug/UniversalDetector.framework; sourceTree = SOURCE_ROOT; };
 		1B34AABB11C30F5400396C26 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "/usr/lib/libstdc++.6.dylib"; sourceTree = "<absolute>"; };
+		1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StuffItXEnglishDictionary.c; sourceTree = "<group>"; };
 		1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHSFXParsers.h; sourceTree = "<group>"; };
 		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
 		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
@@ -725,7 +727,6 @@
 		1B3A68A9101BA14A00AE25A8 /* XADTest4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest4.m; sourceTree = "<group>"; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
-		1B3E2BC70F280760003EEF98 /* sitx_english.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = sitx_english.dat; sourceTree = "<group>"; };
 		1B3E2BF10F28D715003EEF98 /* XADRC4Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRC4Handle.h; sourceTree = "<group>"; };
 		1B3E2BF20F28D715003EEF98 /* XADRC4Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRC4Handle.m; sourceTree = "<group>"; };
 		1B3E2C380F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXDarkhorseHandle.h; sourceTree = "<group>"; };
@@ -1799,9 +1800,9 @@
 				1B3E30D70F354174003EEF98 /* XADStuffItXBlendHandle.m */,
 				1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */,
 				1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */,
+				1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */,
 				1B2A4A160F1D7E58009B5B89 /* StuffItXUtilities.h */,
 				1B2A4A170F1D7E58009B5B89 /* StuffItXUtilities.m */,
-				1B3E2BC70F280760003EEF98 /* sitx_english.dat */,
 			);
 			name = StuffItX;
 			sourceTree = "<group>";
@@ -2180,7 +2181,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				1B3E2BC80F280760003EEF98 /* sitx_english.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2351,6 +2351,7 @@
 				1B34AAAE11C30E0200396C26 /* emulation.c in Sources */,
 				1B34AAB111C30E6A00396C26 /* RARBug.c in Sources */,
 				1B34AAC711C30F9A00396C26 /* BraIA64.c in Sources */,
+				1B34AB2D11C3196800396C26 /* StuffItXEnglishDictionary.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2546,6 +2547,7 @@
 				1B34A65011C01A5A00396C26 /* XADRAR15Handle.m in Sources */,
 				1B34A7B511C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */,
 				1B34A7EE11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */,
+				1B34AB2E11C3196800396C26 /* StuffItXEnglishDictionary.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

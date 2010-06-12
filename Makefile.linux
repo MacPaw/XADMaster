@@ -147,7 +147,10 @@ OBJC_FILES =	CarrylessRangeCoder.m \
 		XADPrefixCode.m \
 		XADQuantumHandle.m \
 		XADRARAESHandle.m \
-		XADRARCrypt20Handle.m \
+		XADRAR13CryptHandle.m \
+		XADRAR15CryptHandle.m \
+		XADRAR15Handle.m \
+		XADRAR20CryptHandle.m \
 		XADRAR20Handle.m \
 		XADRAR30Handle.m \
 		XADRAR30Filter.m \
@@ -188,12 +191,13 @@ OBJC_FILES =	CarrylessRangeCoder.m \
 		XADZipParser.m \
 		XADZipSFXParsers.m \
 		XADZipShrinkHandle.m \
-		../BadLicense/XADRAROfficialHandle.m \
 		../UniversalDetector/UniversalDetector.m
 
 C_FILES =	BWT.c \
 		LZSS.c \
 		LZW.c \
+		StuffItXEnglishDictionary.c \
+		RARAudioDecoder.c \
 		RARBug.c \
 		RARVirtualMachine.c \
 		libxad/all.c \
@@ -207,11 +211,7 @@ C_FILES =	BWT.c \
 		lzma/Lzma2Dec.c \
 		../UniversalDetector/universalchardet/kludge.c
 
-CXX_FILES =	../BadLicense/RARUnpacker.cpp \
-		../BadLicense/unrar/getbits.cpp \
-		../BadLicense/unrar/rarvm.cpp \
-		../BadLicense/unrar/unpack.cpp \
-		../UniversalDetector/WrappedUniversalDetector.cpp \
+CXX_FILES =	../UniversalDetector/WrappedUniversalDetector.cpp \
 		../UniversalDetector/universalchardet/CharDistribution.cpp \
 		../UniversalDetector/universalchardet/JpCntx.cpp \
 		../UniversalDetector/universalchardet/LangBulgarianModel.cpp \

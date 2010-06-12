@@ -12,7 +12,6 @@
 		1B06D5590DDA625700D9C000 /* emulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D54F0DDA623800D9C000 /* emulation.c */; };
 		1B06D55A0DDA626700D9C000 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5520DDA623800D9C000 /* init.c */; };
 		1B06D55C0DDA627200D9C000 /* xadmaster.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5490DDA623800D9C000 /* xadmaster.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1B06D5950DDA644E00D9C000 /* SDI_compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5940DDA644E00D9C000 /* SDI_compiler.h */; };
 		1B06D5A00DDA665800D9C000 /* XADLibXADParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D59E0DDA665800D9C000 /* XADLibXADParser.h */; };
 		1B06D5A40DDA666C00D9C000 /* XADZipParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5A20DDA666C00D9C000 /* XADZipParser.h */; };
 		1B06D5A80DDA667A00D9C000 /* XADRARParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5A60DDA667A00D9C000 /* XADRARParser.h */; };
@@ -34,303 +33,7 @@
 		1B23DD3C117FC7B900620319 /* XADTarSparseHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23DD3A117FC7B900620319 /* XADTarSparseHandle.h */; };
 		1B23DD3D117FC7B900620319 /* XADTarSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADTarSparseHandle.m */; };
 		1B23DDA51185DFC100620319 /* XADUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */; };
-		1B23DDCB1185EBF400620319 /* unar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DDC91185EBD600620319 /* unar.m */; };
-		1B23E0F71190F47E00620319 /* XADException.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C330DDBC8BF005B0F68 /* XADException.m */; };
-		1B23E0F81190F47E00620319 /* XADPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA266DD0FC78BF600279E95 /* XADPath.m */; };
-		1B23E0F91190F47F00620319 /* XADString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5BA0DDA67E000D9C000 /* XADString.m */; };
-		1B23E0FA1190F47F00620319 /* XADUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */; };
-		1B23E0FB1190F49D00620319 /* Bra.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61540EF349EE00D86C43 /* Bra.c */; };
-		1B23E0FC1190F49E00620319 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61530EF349EE00D86C43 /* Bra86.c */; };
-		1B23E0FD1190F49F00620319 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61550EF349EE00D86C43 /* BraIA64.c */; };
-		1B23E0FE1190F4B000620319 /* clients.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D52E0DDA623800D9C000 /* clients.c */; };
-		1B23E0FF1190F4B100620319 /* all.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D4EF0DDA623800D9C000 /* all.c */; };
-		1B23E1001190F4BE00620319 /* emulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D54F0DDA623800D9C000 /* emulation.c */; };
-		1B23E1011190F4CA00620319 /* getbits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D160EDCC1F3006B47FE /* getbits.cpp */; };
-		1B23E1021190F4D700620319 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5520DDA623800D9C000 /* init.c */; };
-		1B23E1031190F4D800620319 /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D7910B1DECE00A05E29 /* Lzma2Dec.c */; };
-		1B23E1041190F4F200620319 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
-		1B23E1051190F4F300620319 /* PPMdSubAllocatorBrimstone.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A4B020F20F994009B5B89 /* PPMdSubAllocatorBrimstone.m */; };
-		1B23E1061190F4F300620319 /* PPMdSubAllocatorVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C5160F0C29F30074522A /* PPMdSubAllocatorVariantG.m */; };
-		1B23E1071190F4F400620319 /* PPMdSubAllocatorVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A42260F15238C009B5B89 /* PPMdSubAllocatorVariantH.m */; };
-		1B23E1081190F4F400620319 /* PPMdSubAllocatorVariantI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A45FD0F19483E009B5B89 /* PPMdSubAllocatorVariantI.m */; };
-		1B23E1091190F4F500620319 /* PPMdVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C8560F0FFAB10074522A /* PPMdVariantG.m */; };
-		1B23E10A1190F4F800620319 /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
-		1B23E10B1190F4F900620319 /* PPMdVariantI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A435E0F158323009B5B89 /* PPMdVariantI.m */; };
-		1B23E10C1190F4FB00620319 /* RARBug.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD65510EF8164900D86C43 /* RARBug.c */; };
-		1B23E10D1190F4FE00620319 /* RARUnpacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */; };
-		1B23E10E1190F51000620319 /* rarvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */; };
-		1B23E10F1190F51300620319 /* StuffItXUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A4A170F1D7E58009B5B89 /* StuffItXUtilities.m */; };
-		1B23E1101190F52B00620319 /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */; };
-		1B23E1111190F52D00620319 /* XAD7ZipBCJ2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61960EF4208C00D86C43 /* XAD7ZipBCJ2Handle.m */; };
-		1B23E1121190F52E00620319 /* XAD7ZipBranchHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD616C0EF3582300D86C43 /* XAD7ZipBranchHandles.m */; };
-		1B23E1131190F52F00620319 /* XAD7ZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */; };
-		1B23E1141190F52F00620319 /* XADALZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */; };
-		1B23E1151190F53100620319 /* XADArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */; };
-		1B23E1161190F53200620319 /* XADARJFastestHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B5AF10112815009FA09E /* XADARJFastestHandle.m */; };
-		1B23E1171190F53200620319 /* XADARJParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B42D1010D906009FA09E /* XADARJParser.m */; };
-		1B23E1181190F53300620319 /* XADBinHexParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */; };
-		1B23E1191190F53500620319 /* XADBzip2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */; };
-		1B23E11A1190F53600620319 /* XADCABBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC42DF10BA065D00A05E29 /* XADCABBlockHandle.m */; };
-		1B23E11B1190F53600620319 /* XADCABBlockReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */; };
-		1B23E11C1190F53700620319 /* XADCABParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415610B85B4C00A05E29 /* XADCABParser.m */; };
-		1B23E11D1190F53700620319 /* XADCFBFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D0FB10F6E461002A2C76 /* XADCFBFParser.m */; };
-		1B23E11E1190F53900620319 /* XADCompactProLZHHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC898EB0EDA1236006B47FE /* XADCompactProLZHHandle.m */; };
-		1B23E11F1190F53A00620319 /* XADCompactProParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D780ED31ECD006B47FE /* XADCompactProParser.m */; };
-		1B23E1201190F53A00620319 /* XADCompactProRLEHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC898190ED9E4D0006B47FE /* XADCompactProRLEHandle.m */; };
-		1B23E1211190F53C00620319 /* XADCompressHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D470ED31A46006B47FE /* XADCompressHandle.m */; };
-		1B23E1221190F53D00620319 /* XADCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D480ED31A46006B47FE /* XADCompressParser.m */; };
-		1B23E1231190F53E00620319 /* XADCpioParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */; };
-		1B23E1251190F54300620319 /* XADDeflateHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89F120EE0CD71006B47FE /* XADDeflateHandle.m */; };
-		1B23E1261190F54400620319 /* XADDiskDoublerADnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */; };
-		1B23E1271190F54400620319 /* XADDiskDoublerDDnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC5753810F0F62B0056F44C /* XADDiskDoublerDDnHandle.m */; };
-		1B23E1281190F54D00620319 /* XADDiskDoublerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */; };
-		1B23E1291190F54F00620319 /* XADGzipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */; };
-		1B23E12A1190F55900620319 /* XADLArcHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E35D80F3F9B17003EEF98 /* XADLArcHandles.m */; };
-		1B23E12B1190F55A00620319 /* XADLibXADIOHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8903E0ED47D76006B47FE /* XADLibXADIOHandle.m */; };
-		1B23E12C1190F55B00620319 /* XADLibXADParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D59F0DDA665800D9C000 /* XADLibXADParser.m */; };
-		1B23E12D1190F55E00620319 /* XADLZHDynamicHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E35D40F3F96CF003EEF98 /* XADLZHDynamicHandle.m */; };
-		1B23E12E1190F55F00620319 /* XADLZHOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */; };
-		1B23E12F1190F56000620319 /* XADLZHParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E34790F3E22FC003EEF98 /* XADLZHParser.m */; };
-		1B23E1301190F56000620319 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
-		1B23E1311190F56200620319 /* XADLZHStaticHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E34EB0F3E62C7003EEF98 /* XADLZHStaticHandle.m */; };
-		1B23E1321190F56300620319 /* XADLZMA2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D2810B0D29100A05E29 /* XADLZMA2Handle.m */; };
-		1B23E1331190F56300620319 /* XADLZMAAloneParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */; };
-		1B23E1341190F56400620319 /* XADLZMAHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5DA10EED8C9500D86C43 /* XADLZMAHandle.m */; };
-		1B23E1351190F56400620319 /* XADLZXHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3F1C10B386B100A05E29 /* XADLZXHandle.m */; };
-		1B23E1361190F56600620319 /* XADLZXParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3F0D10B35A9500A05E29 /* XADLZXParser.m */; };
-		1B23E1371190F56600620319 /* XADMacArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */; };
-		1B23E1381190F56700620319 /* XADMacBinaryParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D740ED31EC3006B47FE /* XADMacBinaryParser.m */; };
-		1B23E1391190F56800620319 /* XADMSLZXHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3FB210B7443000A05E29 /* XADMSLZXHandle.m */; };
-		1B23E13A1190F56A00620319 /* XADMSZipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415A10B85B5E00A05E29 /* XADMSZipHandle.m */; };
-		1B23E13B1190F56B00620319 /* XADNDSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8A89D41012078C00C8534E /* XADNDSParser.m */; };
-		1B23E13C1190F56B00620319 /* XADNowCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */; };
-		1B23E13D1190F56C00620319 /* XADNSAParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785C510AF78D0007EA6F6 /* XADNSAParser.m */; };
-		1B23E13E1190F56C00620319 /* XADNSISBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4DF0D101DFC73001AB3CA /* XADNSISBzip2Handle.m */; };
-		1B23E13F1190F56F00620319 /* XADNSISParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */; };
-		1B23E1401190F57000620319 /* XADPackItParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E4E0F466C5400A415E0 /* XADPackItParser.m */; };
-		1B23E1411190F57000620319 /* XADPowerPackerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F183F0EE965880000DAFF /* XADPowerPackerParser.m */; };
-		1B23E1421190F57100620319 /* XADPPMdHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */; };
-		1B23E1431190F57100620319 /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
-		1B23E1441190F57200620319 /* XADQuantumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415E10B85B6600A05E29 /* XADQuantumHandle.m */; };
-		1B23E1451190F57400620319 /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
-		1B23E1461190F57400620319 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
-		1B23E1471190F57500620319 /* XADRAROfficialHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */; };
-		1B23E1481190F57600620319 /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
-		1B23E1491190F57600620319 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
-		1B23E14A1190F57700620319 /* XADSARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785ED10AF8607007EA6F6 /* XADSARParser.m */; };
-		1B23E14B1190F57700620319 /* XADTarSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADTarSparseHandle.m */; };
-		1B23E14C1190F57900620319 /* XADSplitFileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D3C510FA7A69002A2C76 /* XADSplitFileParser.m */; };
-		1B23E14D1190F57900620319 /* XADStuffIt13Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89A770EDB12F8006B47FE /* XADStuffIt13Handle.m */; };
-		1B23E14E1190F57A00620319 /* XADStuffIt5Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88BF00ED1D95B006B47FE /* XADStuffIt5Parser.m */; };
-		1B23E14F1190F57A00620319 /* XADStuffItArsenicHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC894F50ED7ABBE006B47FE /* XADStuffItArsenicHandle.m */; };
-		1B23E1501190F57B00620319 /* XADStuffItHuffmanHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88FF00ED39F39006B47FE /* XADStuffItHuffmanHandle.m */; };
-		1B23E1511190F57C00620319 /* XADStuffItOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC890400ED47D76006B47FE /* XADStuffItOldHandles.m */; };
-		1B23E1521190F57D00620319 /* XADStuffItParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */; };
-		1B23E1531190F57E00620319 /* XADStuffItRLEHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88EF40ED36152006B47FE /* XADStuffItRLEHandle.m */; };
-		1B23E1541190F57F00620319 /* XADStuffItXBlendHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E30D70F354174003EEF98 /* XADStuffItXBlendHandle.m */; };
-		1B23E1551190F58000620319 /* XADStuffItXBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */; };
-		1B23E1561190F58000620319 /* XADStuffItXCyanideHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A7070F007A910094C7B5 /* XADStuffItXCyanideHandle.m */; };
-		1B23E1571190F58100620319 /* XADStuffItXDarkhorseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */; };
-		1B23E1581190F58400620319 /* XADStuffItXEnglishHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */; };
-		1B23E1591190F58500620319 /* XADStuffItXIronHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2DF70F2CBE28003EEF98 /* XADStuffItXIronHandle.m */; };
-		1B23E15A1190F58600620319 /* XADStuffItXParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A7030F007A760094C7B5 /* XADStuffItXParser.m */; };
-		1B23E15B1190F58600620319 /* XADTarParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC889660ECF9AD5006B47FE /* XADTarParser.m */; };
-		1B23E15C1190F58700620319 /* XADWinZipAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC885CC0ECD11CF006B47FE /* XADWinZipAESHandle.m */; };
-		1B23E15D1190F58900620319 /* XADXARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */; };
-		1B23E15E1190F58B00620319 /* XADXZHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D2410B0C9C700A05E29 /* XADXZHandle.m */; };
-		1B23E15F1190F58C00620319 /* XADXZParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD62AA0EF4722400D86C43 /* XADXZParser.m */; };
-		1B23E1601190F58C00620319 /* XADZipCryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC885C80ECD11BC006B47FE /* XADZipCryptHandle.m */; };
-		1B23E1611190F58D00620319 /* XADZipImplodeHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC884800ECCCE41006B47FE /* XADZipImplodeHandle.m */; };
-		1B23E1621190F58E00620319 /* XADZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */; };
-		1B23E1631190F58F00620319 /* XADZipSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B69134D0F4CA44F00A415E0 /* XADZipSFXParsers.m */; };
-		1B23E1641190F59600620319 /* BWT.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A70F0F007AAF0094C7B5 /* BWT.c */; };
-		1B23E1651190F59700620319 /* CarrylessRangeCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A70B0F007AA20094C7B5 /* CarrylessRangeCoder.m */; };
-		1B23E1661190F59700620319 /* LZW.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D440ED31A31006B47FE /* LZW.c */; };
-		1B23E1671190F59800620319 /* XADLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89A740EDB12F8006B47FE /* XADLZSSHandle.m */; };
-		1B23E1681190F59900620319 /* XADPrefixCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88A260ED06D76006B47FE /* XADPrefixCode.m */; };
-		1B23E1691190F59D00620319 /* CRC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A770F8E9064001207C9 /* CRC.m */; };
-		1B23E16A1190F59D00620319 /* NumberParsing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E377E0F422D2F003EEF98 /* NumberParsing.m */; };
-		1B23E16B1190F59F00620319 /* XADBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D2A910F8D11D002A2C76 /* XADBlockHandle.m */; };
-		1B23E16C1190F59F00620319 /* XADChecksumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E39F30F45F62F003EEF98 /* XADChecksumHandle.m */; };
-		1B23E16D1190F5A000620319 /* XADCRCHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64280EF6CA3F00D86C43 /* XADCRCHandle.m */; };
-		1B23E16E1190F5A000620319 /* XADCRCSuffixHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64260EF6CA3F00D86C43 /* XADCRCSuffixHandle.m */; };
-		1B23E16F1190F5A100620319 /* XADDeltaHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3E6D10B2304C00A05E29 /* XADDeltaHandle.m */; };
-		1B23E1701190F5A100620319 /* XADDigestHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */; };
-		1B23E1711190F5A300620319 /* XADRC4Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2BF20F28D715003EEF98 /* XADRC4Handle.m */; };
-		1B23E1721190F5A300620319 /* XADRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B21106F0A4452C2005ED2AF /* XADRegex.m */; };
-		1B23E1731190F5A300620319 /* XADSkipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */; };
-		1B23E1741190F5A400620319 /* XADXORHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B515101119A5009FA09E /* XADXORHandle.m */; };
-		1B23E1751190F5A800620319 /* Checksums.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89C9D0EDCAA51006B47FE /* Checksums.m */; };
-		1B23E1761190F5A800620319 /* CSHexDump.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A650110154DCE00AE25A8 /* CSHexDump.m */; };
-		1B23E1771190F5A900620319 /* NSDateXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */; };
-		1B23E1781190F5AA00620319 /* Progress.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A740F8E8ADE001207C9 /* Progress.m */; };
-		1B23E1791190F5AA00620319 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
-		1B23E17A1190F5AD00620319 /* CSBlockStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFB0EC3859F006D2F06 /* CSBlockStreamHandle.m */; };
-		1B23E17B1190F5AE00620319 /* CSByteStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFD0EC3859F006D2F06 /* CSByteStreamHandle.m */; };
-		1B23E17C1190F5AF00620319 /* CSBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */; };
-		1B23E17D1190F5B000620319 /* CSFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF50EC3859F006D2F06 /* CSFileHandle.m */; };
-		1B23E17E1190F5B100620319 /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */; };
-		1B23E17F1190F5B200620319 /* CSInputBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8903F0ED47D76006B47FE /* CSInputBuffer.m */; };
-		1B23E1801190F5B200620319 /* CSMemoryHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF70EC3859F006D2F06 /* CSMemoryHandle.m */; };
-		1B23E1811190F5B300620319 /* CSMultiHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */; };
-		1B23E1821190F5B300620319 /* CSStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF90EC3859F006D2F06 /* CSStreamHandle.m */; };
-		1B23E1831190F5B500620319 /* CSSubHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF10EC3859F006D2F06 /* CSSubHandle.m */; };
-		1B23E1841190F5B600620319 /* CSZlibHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFF0EC3859F006D2F06 /* CSZlibHandle.m */; };
-		1B23E1A61190F89600620319 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5DA60EED8C9C00D86C43 /* LzmaDec.c */; };
-		1B23E1A71190F89D00620319 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B216A7F0F8E9D9E001207C9 /* Carbon.framework */; };
-		1B23E1A81190F89E00620319 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
-		1B23E1A91190F89F00620319 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA20EC52505006D2F06 /* libcrypto.dylib */; };
-		1B23E1AA1190F8A000620319 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */; };
-		1B23E1AB1190F8A100620319 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA70EC52532006D2F06 /* libz.dylib */; };
-		1B23E1AE1190F8B300620319 /* XADZipShrinkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC884840ECCCE69006B47FE /* XADZipShrinkHandle.m */; };
-		1B23E1B21190F8CC00620319 /* libUniversalDetector.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B23E1B11190F8CC00620319 /* libUniversalDetector.a */; };
-		1B23E5551198BC2000620319 /* unar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DDC91185EBD600620319 /* unar.m */; };
-		1B23E5561198BC2000620319 /* XADException.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C330DDBC8BF005B0F68 /* XADException.m */; };
-		1B23E5571198BC2000620319 /* XADPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA266DD0FC78BF600279E95 /* XADPath.m */; };
-		1B23E5581198BC2000620319 /* XADString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5BA0DDA67E000D9C000 /* XADString.m */; };
-		1B23E5591198BC2000620319 /* XADUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */; };
-		1B23E55A1198BC2000620319 /* Bra.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61540EF349EE00D86C43 /* Bra.c */; };
-		1B23E55B1198BC2000620319 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61530EF349EE00D86C43 /* Bra86.c */; };
-		1B23E55C1198BC2000620319 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61550EF349EE00D86C43 /* BraIA64.c */; };
-		1B23E55D1198BC2000620319 /* clients.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D52E0DDA623800D9C000 /* clients.c */; };
-		1B23E55E1198BC2000620319 /* all.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D4EF0DDA623800D9C000 /* all.c */; };
-		1B23E55F1198BC2000620319 /* emulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D54F0DDA623800D9C000 /* emulation.c */; };
-		1B23E5601198BC2000620319 /* getbits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D160EDCC1F3006B47FE /* getbits.cpp */; };
-		1B23E5611198BC2000620319 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5520DDA623800D9C000 /* init.c */; };
-		1B23E5621198BC2000620319 /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D7910B1DECE00A05E29 /* Lzma2Dec.c */; };
-		1B23E5631198BC2000620319 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
-		1B23E5641198BC2000620319 /* PPMdSubAllocatorBrimstone.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A4B020F20F994009B5B89 /* PPMdSubAllocatorBrimstone.m */; };
-		1B23E5651198BC2000620319 /* PPMdSubAllocatorVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C5160F0C29F30074522A /* PPMdSubAllocatorVariantG.m */; };
-		1B23E5661198BC2000620319 /* PPMdSubAllocatorVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A42260F15238C009B5B89 /* PPMdSubAllocatorVariantH.m */; };
-		1B23E5671198BC2000620319 /* PPMdSubAllocatorVariantI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A45FD0F19483E009B5B89 /* PPMdSubAllocatorVariantI.m */; };
-		1B23E5681198BC2000620319 /* PPMdVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C8560F0FFAB10074522A /* PPMdVariantG.m */; };
-		1B23E5691198BC2000620319 /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
-		1B23E56A1198BC2000620319 /* PPMdVariantI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A435E0F158323009B5B89 /* PPMdVariantI.m */; };
-		1B23E56B1198BC2000620319 /* RARBug.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD65510EF8164900D86C43 /* RARBug.c */; };
-		1B23E56C1198BC2000620319 /* RARUnpacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */; };
-		1B23E56D1198BC2000620319 /* rarvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */; };
-		1B23E56E1198BC2000620319 /* StuffItXUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A4A170F1D7E58009B5B89 /* StuffItXUtilities.m */; };
-		1B23E56F1198BC2000620319 /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */; };
-		1B23E5701198BC2000620319 /* XAD7ZipBCJ2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61960EF4208C00D86C43 /* XAD7ZipBCJ2Handle.m */; };
-		1B23E5711198BC2000620319 /* XAD7ZipBranchHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD616C0EF3582300D86C43 /* XAD7ZipBranchHandles.m */; };
-		1B23E5721198BC2000620319 /* XAD7ZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */; };
-		1B23E5731198BC2000620319 /* XADALZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */; };
-		1B23E5741198BC2000620319 /* XADArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */; };
-		1B23E5751198BC2000620319 /* XADARJFastestHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B5AF10112815009FA09E /* XADARJFastestHandle.m */; };
-		1B23E5761198BC2000620319 /* XADARJParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B42D1010D906009FA09E /* XADARJParser.m */; };
-		1B23E5771198BC2000620319 /* XADBinHexParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */; };
-		1B23E5781198BC2000620319 /* XADBzip2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */; };
-		1B23E5791198BC2000620319 /* XADCABBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC42DF10BA065D00A05E29 /* XADCABBlockHandle.m */; };
-		1B23E57A1198BC2000620319 /* XADCABBlockReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */; };
-		1B23E57B1198BC2000620319 /* XADCABParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415610B85B4C00A05E29 /* XADCABParser.m */; };
-		1B23E57C1198BC2000620319 /* XADCFBFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D0FB10F6E461002A2C76 /* XADCFBFParser.m */; };
-		1B23E57D1198BC2000620319 /* XADCompactProLZHHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC898EB0EDA1236006B47FE /* XADCompactProLZHHandle.m */; };
-		1B23E57E1198BC2000620319 /* XADCompactProParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D780ED31ECD006B47FE /* XADCompactProParser.m */; };
-		1B23E57F1198BC2000620319 /* XADCompactProRLEHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC898190ED9E4D0006B47FE /* XADCompactProRLEHandle.m */; };
-		1B23E5801198BC2000620319 /* XADCompressHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D470ED31A46006B47FE /* XADCompressHandle.m */; };
-		1B23E5811198BC2000620319 /* XADCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D480ED31A46006B47FE /* XADCompressParser.m */; };
-		1B23E5821198BC2000620319 /* XADCpioParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */; };
-		1B23E5831198BC2000620319 /* XADDeflateHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89F120EE0CD71006B47FE /* XADDeflateHandle.m */; };
-		1B23E5841198BC2000620319 /* XADDiskDoublerADnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */; };
-		1B23E5851198BC2000620319 /* XADDiskDoublerDDnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC5753810F0F62B0056F44C /* XADDiskDoublerDDnHandle.m */; };
-		1B23E5861198BC2000620319 /* XADDiskDoublerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */; };
-		1B23E5871198BC2000620319 /* XADGzipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */; };
-		1B23E5881198BC2000620319 /* XADLArcHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E35D80F3F9B17003EEF98 /* XADLArcHandles.m */; };
-		1B23E5891198BC2000620319 /* XADLibXADIOHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8903E0ED47D76006B47FE /* XADLibXADIOHandle.m */; };
-		1B23E58A1198BC2000620319 /* XADLibXADParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D59F0DDA665800D9C000 /* XADLibXADParser.m */; };
-		1B23E58B1198BC2000620319 /* XADLZHDynamicHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E35D40F3F96CF003EEF98 /* XADLZHDynamicHandle.m */; };
-		1B23E58C1198BC2000620319 /* XADLZHOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */; };
-		1B23E58D1198BC2000620319 /* XADLZHParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E34790F3E22FC003EEF98 /* XADLZHParser.m */; };
-		1B23E58E1198BC2000620319 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
-		1B23E58F1198BC2000620319 /* XADLZHStaticHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E34EB0F3E62C7003EEF98 /* XADLZHStaticHandle.m */; };
-		1B23E5901198BC2000620319 /* XADLZMA2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D2810B0D29100A05E29 /* XADLZMA2Handle.m */; };
-		1B23E5911198BC2000620319 /* XADLZMAAloneParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */; };
-		1B23E5921198BC2000620319 /* XADLZMAHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5DA10EED8C9500D86C43 /* XADLZMAHandle.m */; };
-		1B23E5931198BC2000620319 /* XADLZXHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3F1C10B386B100A05E29 /* XADLZXHandle.m */; };
-		1B23E5941198BC2000620319 /* XADLZXParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3F0D10B35A9500A05E29 /* XADLZXParser.m */; };
-		1B23E5951198BC2000620319 /* XADMacArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */; };
-		1B23E5961198BC2000620319 /* XADMacBinaryParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D740ED31EC3006B47FE /* XADMacBinaryParser.m */; };
-		1B23E5971198BC2000620319 /* XADMSLZXHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3FB210B7443000A05E29 /* XADMSLZXHandle.m */; };
-		1B23E5981198BC2000620319 /* XADMSZipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415A10B85B5E00A05E29 /* XADMSZipHandle.m */; };
-		1B23E5991198BC2000620319 /* XADNDSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8A89D41012078C00C8534E /* XADNDSParser.m */; };
-		1B23E59A1198BC2000620319 /* XADNowCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */; };
-		1B23E59B1198BC2000620319 /* XADNSAParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785C510AF78D0007EA6F6 /* XADNSAParser.m */; };
-		1B23E59C1198BC2000620319 /* XADNSISBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4DF0D101DFC73001AB3CA /* XADNSISBzip2Handle.m */; };
-		1B23E59D1198BC2000620319 /* XADNSISParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */; };
-		1B23E59E1198BC2000620319 /* XADPackItParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E4E0F466C5400A415E0 /* XADPackItParser.m */; };
-		1B23E59F1198BC2000620319 /* XADPowerPackerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F183F0EE965880000DAFF /* XADPowerPackerParser.m */; };
-		1B23E5A01198BC2000620319 /* XADPPMdHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */; };
-		1B23E5A11198BC2000620319 /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
-		1B23E5A21198BC2000620319 /* XADQuantumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415E10B85B6600A05E29 /* XADQuantumHandle.m */; };
-		1B23E5A31198BC2000620319 /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
-		1B23E5A41198BC2000620319 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
-		1B23E5A51198BC2000620319 /* XADRAROfficialHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */; };
-		1B23E5A61198BC2000620319 /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
-		1B23E5A71198BC2000620319 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
-		1B23E5A81198BC2000620319 /* XADSARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785ED10AF8607007EA6F6 /* XADSARParser.m */; };
-		1B23E5A91198BC2000620319 /* XADTarSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADTarSparseHandle.m */; };
-		1B23E5AA1198BC2000620319 /* XADSplitFileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D3C510FA7A69002A2C76 /* XADSplitFileParser.m */; };
-		1B23E5AB1198BC2000620319 /* XADStuffIt13Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89A770EDB12F8006B47FE /* XADStuffIt13Handle.m */; };
-		1B23E5AC1198BC2000620319 /* XADStuffIt5Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88BF00ED1D95B006B47FE /* XADStuffIt5Parser.m */; };
-		1B23E5AD1198BC2000620319 /* XADStuffItArsenicHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC894F50ED7ABBE006B47FE /* XADStuffItArsenicHandle.m */; };
-		1B23E5AE1198BC2000620319 /* XADStuffItHuffmanHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88FF00ED39F39006B47FE /* XADStuffItHuffmanHandle.m */; };
-		1B23E5AF1198BC2000620319 /* XADStuffItOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC890400ED47D76006B47FE /* XADStuffItOldHandles.m */; };
-		1B23E5B01198BC2000620319 /* XADStuffItParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */; };
-		1B23E5B11198BC2000620319 /* XADStuffItRLEHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88EF40ED36152006B47FE /* XADStuffItRLEHandle.m */; };
-		1B23E5B21198BC2000620319 /* XADStuffItXBlendHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E30D70F354174003EEF98 /* XADStuffItXBlendHandle.m */; };
-		1B23E5B31198BC2000620319 /* XADStuffItXBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */; };
-		1B23E5B41198BC2000620319 /* XADStuffItXCyanideHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A7070F007A910094C7B5 /* XADStuffItXCyanideHandle.m */; };
-		1B23E5B51198BC2000620319 /* XADStuffItXDarkhorseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */; };
-		1B23E5B61198BC2000620319 /* XADStuffItXEnglishHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */; };
-		1B23E5B71198BC2000620319 /* XADStuffItXIronHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2DF70F2CBE28003EEF98 /* XADStuffItXIronHandle.m */; };
-		1B23E5B81198BC2000620319 /* XADStuffItXParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A7030F007A760094C7B5 /* XADStuffItXParser.m */; };
-		1B23E5B91198BC2000620319 /* XADTarParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC889660ECF9AD5006B47FE /* XADTarParser.m */; };
-		1B23E5BA1198BC2000620319 /* XADWinZipAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC885CC0ECD11CF006B47FE /* XADWinZipAESHandle.m */; };
-		1B23E5BB1198BC2000620319 /* XADXARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */; };
-		1B23E5BC1198BC2000620319 /* XADXZHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D2410B0C9C700A05E29 /* XADXZHandle.m */; };
-		1B23E5BD1198BC2000620319 /* XADXZParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD62AA0EF4722400D86C43 /* XADXZParser.m */; };
-		1B23E5BE1198BC2000620319 /* XADZipCryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC885C80ECD11BC006B47FE /* XADZipCryptHandle.m */; };
-		1B23E5BF1198BC2000620319 /* XADZipImplodeHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC884800ECCCE41006B47FE /* XADZipImplodeHandle.m */; };
-		1B23E5C01198BC2000620319 /* XADZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */; };
-		1B23E5C11198BC2000620319 /* XADZipSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B69134D0F4CA44F00A415E0 /* XADZipSFXParsers.m */; };
-		1B23E5C21198BC2000620319 /* BWT.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A70F0F007AAF0094C7B5 /* BWT.c */; };
-		1B23E5C31198BC2000620319 /* CarrylessRangeCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A70B0F007AA20094C7B5 /* CarrylessRangeCoder.m */; };
-		1B23E5C41198BC2000620319 /* LZW.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D440ED31A31006B47FE /* LZW.c */; };
-		1B23E5C51198BC2000620319 /* XADLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89A740EDB12F8006B47FE /* XADLZSSHandle.m */; };
-		1B23E5C61198BC2000620319 /* XADPrefixCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88A260ED06D76006B47FE /* XADPrefixCode.m */; };
-		1B23E5C71198BC2000620319 /* CRC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A770F8E9064001207C9 /* CRC.m */; };
-		1B23E5C81198BC2000620319 /* NumberParsing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E377E0F422D2F003EEF98 /* NumberParsing.m */; };
-		1B23E5C91198BC2000620319 /* XADBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D2A910F8D11D002A2C76 /* XADBlockHandle.m */; };
-		1B23E5CA1198BC2000620319 /* XADChecksumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E39F30F45F62F003EEF98 /* XADChecksumHandle.m */; };
-		1B23E5CB1198BC2000620319 /* XADCRCHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64280EF6CA3F00D86C43 /* XADCRCHandle.m */; };
-		1B23E5CC1198BC2000620319 /* XADCRCSuffixHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64260EF6CA3F00D86C43 /* XADCRCSuffixHandle.m */; };
-		1B23E5CD1198BC2000620319 /* XADDeltaHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3E6D10B2304C00A05E29 /* XADDeltaHandle.m */; };
-		1B23E5CE1198BC2000620319 /* XADDigestHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */; };
-		1B23E5CF1198BC2000620319 /* XADRC4Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2BF20F28D715003EEF98 /* XADRC4Handle.m */; };
-		1B23E5D01198BC2000620319 /* XADRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B21106F0A4452C2005ED2AF /* XADRegex.m */; };
-		1B23E5D11198BC2000620319 /* XADSkipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */; };
-		1B23E5D21198BC2000620319 /* XADXORHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B515101119A5009FA09E /* XADXORHandle.m */; };
-		1B23E5D31198BC2000620319 /* Checksums.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89C9D0EDCAA51006B47FE /* Checksums.m */; };
-		1B23E5D41198BC2000620319 /* CSHexDump.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A650110154DCE00AE25A8 /* CSHexDump.m */; };
-		1B23E5D51198BC2000620319 /* NSDateXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */; };
-		1B23E5D61198BC2000620319 /* Progress.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A740F8E8ADE001207C9 /* Progress.m */; };
-		1B23E5D71198BC2000620319 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
-		1B23E5D81198BC2000620319 /* CSBlockStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFB0EC3859F006D2F06 /* CSBlockStreamHandle.m */; };
-		1B23E5D91198BC2000620319 /* CSByteStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFD0EC3859F006D2F06 /* CSByteStreamHandle.m */; };
-		1B23E5DA1198BC2000620319 /* CSBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */; };
-		1B23E5DB1198BC2000620319 /* CSFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF50EC3859F006D2F06 /* CSFileHandle.m */; };
-		1B23E5DC1198BC2000620319 /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */; };
-		1B23E5DD1198BC2000620319 /* CSInputBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8903F0ED47D76006B47FE /* CSInputBuffer.m */; };
-		1B23E5DE1198BC2000620319 /* CSMemoryHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF70EC3859F006D2F06 /* CSMemoryHandle.m */; };
-		1B23E5DF1198BC2000620319 /* CSMultiHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */; };
-		1B23E5E01198BC2000620319 /* CSStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF90EC3859F006D2F06 /* CSStreamHandle.m */; };
-		1B23E5E11198BC2000620319 /* CSSubHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF10EC3859F006D2F06 /* CSSubHandle.m */; };
-		1B23E5E21198BC2000620319 /* CSZlibHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFF0EC3859F006D2F06 /* CSZlibHandle.m */; };
-		1B23E5E31198BC2000620319 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5DA60EED8C9C00D86C43 /* LzmaDec.c */; };
-		1B23E5E41198BC2000620319 /* XADZipShrinkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC884840ECCCE69006B47FE /* XADZipShrinkHandle.m */; };
-		1B23E75E1199CB7C00620319 /* XADRAR20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */; };
 		1B23E75F1199CB8300620319 /* XADRAR20Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B23E75C1199CB7C00620319 /* XADRAR20Handle.h */; };
-		1B23E7601199CB9200620319 /* XADRAR20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */; };
 		1B23E77B1199E55B00620319 /* XADRAR20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */; };
 		1B2A408E0F13BDEB009B5B89 /* PPMdContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B2A408F0F13BDEB009B5B89 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
@@ -357,32 +60,177 @@
 		1B32D2AB10F8D11D002A2C76 /* XADBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D2A910F8D11D002A2C76 /* XADBlockHandle.m */; };
 		1B32D3C610FA7A69002A2C76 /* XADSplitFileParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B32D3C410FA7A69002A2C76 /* XADSplitFileParser.h */; };
 		1B32D3C710FA7A69002A2C76 /* XADSplitFileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D3C510FA7A69002A2C76 /* XADSplitFileParser.m */; };
-		1B349EF111BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */; };
 		1B349EF211BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */; };
-		1B349EF811BACA4F00396C26 /* XADUnarchiverWindows.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */; };
-		1B34A03011BB1BF900396C26 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
-		1B34A03F11BB1CD900396C26 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03C11BB1CD900396C26 /* libbz2.a */; };
-		1B34A04111BB1CD900396C26 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03E11BB1CD900396C26 /* libz.a */; };
-		1B34A04511BB1F2000396C26 /* libeay32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A04411BB1F2000396C26 /* libeay32.a */; };
-		1B34A06711BB21A900396C26 /* libwinmm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A06611BB21A900396C26 /* libwinmm.a */; };
-		1B34A08F11BB254800396C26 /* libstdc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A08E11BB254800396C26 /* libstdc++.a */; };
-		1B34A0BA11BB293A00396C26 /* regex.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A0B911BB293A00396C26 /* regex.c */; };
-		1B34A10211BBD2B100396C26 /* NSStringXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringXAD.m */; };
-		1B34A12A11BBE4D800396C26 /* NSStringXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringXAD.m */; };
-		1B34A55811BDC1AC00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
-		1B34A55911BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
 		1B34A55A11BDC1AD00396C26 /* RARAudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34A55611BDC1AC00396C26 /* RARAudioDecoder.h */; };
 		1B34A55B11BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
 		1B34A65011C01A5A00396C26 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
-		1B34A65111C01A6200396C26 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
-		1B34A7B211C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */; };
-		1B34A7B311C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */; };
 		1B34A7B411C2D97500396C26 /* XADRAR15CryptHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34A7B011C2D97500396C26 /* XADRAR15CryptHandle.h */; };
 		1B34A7B511C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */; };
-		1B34A7EB11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */; };
-		1B34A7EC11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */; };
 		1B34A7ED11C2E0E800396C26 /* XADRAR13CryptHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34A7E911C2E0E800396C26 /* XADRAR13CryptHandle.h */; };
 		1B34A7EE11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */; };
+		1B34A97D11C2FE1700396C26 /* XADArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5A80B50A27AA9900B189EB /* XADArchive.m */; };
+		1B34A97E11C2FE1900396C26 /* XADException.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C330DDBC8BF005B0F68 /* XADException.m */; };
+		1B34A97F11C2FE1B00396C26 /* XADPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA266DD0FC78BF600279E95 /* XADPath.m */; };
+		1B34A98011C2FE1C00396C26 /* XADString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5BA0DDA67E000D9C000 /* XADString.m */; };
+		1B34A98111C2FE1C00396C26 /* XADUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */; };
+		1B34A98211C2FE1F00396C26 /* XADUnarchiverMacOSX.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */; };
+		1B34A98311C2FE2700396C26 /* XADArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */; };
+		1B34A98411C2FE2A00396C26 /* XADMacArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */; };
+		1B34A98511C2FE2E00396C26 /* XADDeflateHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89F120EE0CD71006B47FE /* XADDeflateHandle.m */; };
+		1B34A98611C2FE2F00396C26 /* XADWinZipAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC885CC0ECD11CF006B47FE /* XADWinZipAESHandle.m */; };
+		1B34A98711C2FE3000396C26 /* XADZipCryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC885C80ECD11BC006B47FE /* XADZipCryptHandle.m */; };
+		1B34A98811C2FE3100396C26 /* XADZipImplodeHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC884800ECCCE41006B47FE /* XADZipImplodeHandle.m */; };
+		1B34A98911C2FE3200396C26 /* XADZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */; };
+		1B34A98A11C2FE3400396C26 /* XADZipSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B69134D0F4CA44F00A415E0 /* XADZipSFXParsers.m */; };
+		1B34A98B11C2FE3600396C26 /* XADZipShrinkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC884840ECCCE69006B47FE /* XADZipShrinkHandle.m */; };
+		1B34A98F11C2FE6800396C26 /* XADRAR13CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */; };
+		1B34A99011C2FE6900396C26 /* XADRAR15CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */; };
+		1B34A99111C2FE6E00396C26 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
+		1B34A99211C2FE7700396C26 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
+		1B34A99311C2FE7B00396C26 /* XADRAR20Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */; };
+		1B34A99411C2FE7D00396C26 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
+		1B34A9A311C2FF2400396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
+		1B34A9A411C2FF2800396C26 /* RARVirtualMachine.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */; };
+		1B34A9A511C2FF3300396C26 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
+		1B34A9A611C2FF3500396C26 /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
+		1B34A9A811C2FF3B00396C26 /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
+		1B34A9A911C2FF3D00396C26 /* XADRARVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */; };
+		1B34A9AA11C2FF4500396C26 /* Bra.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61540EF349EE00D86C43 /* Bra.c */; };
+		1B34A9AB11C2FF4600396C26 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61530EF349EE00D86C43 /* Bra86.c */; };
+		1B34A9AC11C2FF4800396C26 /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D7910B1DECE00A05E29 /* Lzma2Dec.c */; };
+		1B34A9AD11C2FF4A00396C26 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5DA60EED8C9C00D86C43 /* LzmaDec.c */; };
+		1B34A9AE11C2FF4D00396C26 /* XAD7ZipBCJ2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61960EF4208C00D86C43 /* XAD7ZipBCJ2Handle.m */; };
+		1B34A9AF11C2FF4E00396C26 /* XAD7ZipBranchHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD616C0EF3582300D86C43 /* XAD7ZipBranchHandles.m */; };
+		1B34A9B011C2FF5000396C26 /* XAD7ZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */; };
+		1B34A9B111C2FF5400396C26 /* XADLZMA2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D2810B0D29100A05E29 /* XADLZMA2Handle.m */; };
+		1B34A9B211C2FF5600396C26 /* XADLZMAHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5DA10EED8C9500D86C43 /* XADLZMAHandle.m */; };
+		1B34A9B311C2FF5A00396C26 /* PPMdContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A408D0F13BDEB009B5B89 /* PPMdContext.m */; };
+		1B34A9B411C2FF5B00396C26 /* PPMdSubAllocatorBrimstone.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A4B020F20F994009B5B89 /* PPMdSubAllocatorBrimstone.m */; };
+		1B34A9B511C2FF5D00396C26 /* PPMdSubAllocatorVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C5160F0C29F30074522A /* PPMdSubAllocatorVariantG.m */; };
+		1B34A9B611C2FF5E00396C26 /* PPMdSubAllocatorVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A42260F15238C009B5B89 /* PPMdSubAllocatorVariantH.m */; };
+		1B34A9B711C2FF5F00396C26 /* PPMdSubAllocatorVariantI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A45FD0F19483E009B5B89 /* PPMdSubAllocatorVariantI.m */; };
+		1B34A9B811C2FF6100396C26 /* PPMdVariantG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C8560F0FFAB10074522A /* PPMdVariantG.m */; };
+		1B34A9B911C2FF6200396C26 /* PPMdVariantH.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BB8C85A0F0FFB290074522A /* PPMdVariantH.m */; };
+		1B34A9BA11C2FF6300396C26 /* PPMdVariantI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A435E0F158323009B5B89 /* PPMdVariantI.m */; };
+		1B34A9BB11C2FF6500396C26 /* XADPPMdHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */; };
+		1B34A9BC11C2FF6700396C26 /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
+		1B34A9BE11C2FF6E00396C26 /* StuffItXUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2A4A170F1D7E58009B5B89 /* StuffItXUtilities.m */; };
+		1B34A9BF11C2FF6F00396C26 /* XADBinHexParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */; };
+		1B34A9C011C2FF7100396C26 /* XADCompactProLZHHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC898EB0EDA1236006B47FE /* XADCompactProLZHHandle.m */; };
+		1B34A9C111C2FF7300396C26 /* XADCompactProParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D780ED31ECD006B47FE /* XADCompactProParser.m */; };
+		1B34A9C211C2FF7700396C26 /* XADCompactProRLEHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC898190ED9E4D0006B47FE /* XADCompactProRLEHandle.m */; };
+		1B34A9C311C2FF7A00396C26 /* XADDiskDoublerADnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */; };
+		1B34A9C411C2FF7C00396C26 /* XADDiskDoublerDDnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC5753810F0F62B0056F44C /* XADDiskDoublerDDnHandle.m */; };
+		1B34A9C511C2FF7F00396C26 /* XADDiskDoublerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */; };
+		1B34A9C611C2FF8100396C26 /* XADMacBinaryParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D740ED31EC3006B47FE /* XADMacBinaryParser.m */; };
+		1B34A9C711C2FF8200396C26 /* XADNowCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */; };
+		1B34A9C811C2FF8600396C26 /* XADPackItParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E4E0F466C5400A415E0 /* XADPackItParser.m */; };
+		1B34A9C911C2FF8900396C26 /* XADStuffIt13Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89A770EDB12F8006B47FE /* XADStuffIt13Handle.m */; };
+		1B34A9CA11C2FF8C00396C26 /* XADStuffIt5Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88BF00ED1D95B006B47FE /* XADStuffIt5Parser.m */; };
+		1B34A9CB11C2FF8E00396C26 /* XADStuffItArsenicHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC894F50ED7ABBE006B47FE /* XADStuffItArsenicHandle.m */; };
+		1B34A9CC11C2FF9000396C26 /* XADStuffItHuffmanHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88FF00ED39F39006B47FE /* XADStuffItHuffmanHandle.m */; };
+		1B34A9CD11C2FF9300396C26 /* XADStuffItOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC890400ED47D76006B47FE /* XADStuffItOldHandles.m */; };
+		1B34A9CE11C2FF9500396C26 /* XADStuffItParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5AB0DDA668500D9C000 /* XADStuffItParser.m */; };
+		1B34A9CF11C2FF9700396C26 /* XADStuffItRLEHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88EF40ED36152006B47FE /* XADStuffItRLEHandle.m */; };
+		1B34A9D011C2FF9900396C26 /* XADStuffItXBlendHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E30D70F354174003EEF98 /* XADStuffItXBlendHandle.m */; };
+		1B34A9D111C2FF9C00396C26 /* XADStuffItXBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */; };
+		1B34A9D211C2FF9F00396C26 /* XADStuffItXCyanideHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A7070F007A910094C7B5 /* XADStuffItXCyanideHandle.m */; };
+		1B34A9D311C2FFA000396C26 /* XADStuffItXDarkhorseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2C390F294DEE003EEF98 /* XADStuffItXDarkhorseHandle.m */; };
+		1B34A9D411C2FFA300396C26 /* XADStuffItXEnglishHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */; };
+		1B34A9D511C2FFA500396C26 /* XADStuffItXIronHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2DF70F2CBE28003EEF98 /* XADStuffItXIronHandle.m */; };
+		1B34A9D611C2FFA700396C26 /* XADStuffItXParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A7030F007A760094C7B5 /* XADStuffItXParser.m */; };
+		1B34A9F411C307BD00396C26 /* XADBzip2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */; };
+		1B34A9F511C307BE00396C26 /* XADCompressHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D470ED31A46006B47FE /* XADCompressHandle.m */; };
+		1B34A9F611C307BF00396C26 /* XADCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D480ED31A46006B47FE /* XADCompressParser.m */; };
+		1B34A9F711C307C000396C26 /* XADCpioParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8896A0ECF9AE2006B47FE /* XADCpioParser.m */; };
+		1B34A9F811C307C100396C26 /* XADGzipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */; };
+		1B34A9F911C307C200396C26 /* XADLZMAAloneParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64230EF6CA0500D86C43 /* XADLZMAAloneParser.m */; };
+		1B34A9FA11C307C600396C26 /* XADRPMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B690E7A0F47907600A415E0 /* XADRPMParser.m */; };
+		1B34A9FB11C307C700396C26 /* XADTarParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC889660ECF9AD5006B47FE /* XADTarParser.m */; };
+		1B34A9FC11C307C800396C26 /* XADTarSparseHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DD3B117FC7B900620319 /* XADTarSparseHandle.m */; };
+		1B34A9FD11C307C900396C26 /* XADXARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD630D0EF487B500D86C43 /* XADXARParser.m */; };
+		1B34A9FE11C307CA00396C26 /* XADXZHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3D2410B0C9C700A05E29 /* XADXZHandle.m */; };
+		1B34A9FF11C307CC00396C26 /* XADXZParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD62AA0EF4722400D86C43 /* XADXZParser.m */; };
+		1B34AA0011C307CF00396C26 /* XADLZXHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3F1C10B386B100A05E29 /* XADLZXHandle.m */; };
+		1B34AA0111C307D000396C26 /* XADLZXParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3F0D10B35A9500A05E29 /* XADLZXParser.m */; };
+		1B34AA0211C307D100396C26 /* XADPowerPackerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F183F0EE965880000DAFF /* XADPowerPackerParser.m */; };
+		1B34AA0311C307D400396C26 /* XADALZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */; };
+		1B34AA0411C307D500396C26 /* XADARJFastestHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B5AF10112815009FA09E /* XADARJFastestHandle.m */; };
+		1B34AA0511C307D600396C26 /* XADARJParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B42D1010D906009FA09E /* XADARJParser.m */; };
+		1B34AA0611C307D800396C26 /* XADCABBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC42DF10BA065D00A05E29 /* XADCABBlockHandle.m */; };
+		1B34AA0711C307D800396C26 /* XADCABBlockReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */; };
+		1B34AA0811C307D900396C26 /* XADCABParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415610B85B4C00A05E29 /* XADCABParser.m */; };
+		1B34AA0B11C307E100396C26 /* XADCFBFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D0FB10F6E461002A2C76 /* XADCFBFParser.m */; };
+		1B34AA0C11C307E400396C26 /* XADLZHParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E34790F3E22FC003EEF98 /* XADLZHParser.m */; };
+		1B34AA0D11C307E400396C26 /* XADLZHOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */; };
+		1B34AA0E11C307E500396C26 /* XADLZHDynamicHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E35D40F3F96CF003EEF98 /* XADLZHDynamicHandle.m */; };
+		1B34AA0F11C307E600396C26 /* XADLArcHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E35D80F3F9B17003EEF98 /* XADLArcHandles.m */; };
+		1B34AA1011C307EA00396C26 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
+		1B34AA1111C307EB00396C26 /* XADLZHStaticHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E34EB0F3E62C7003EEF98 /* XADLZHStaticHandle.m */; };
+		1B34AA1211C307EF00396C26 /* XADMSLZXHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3FB210B7443000A05E29 /* XADMSLZXHandle.m */; };
+		1B34AA1311C307F000396C26 /* XADMSZipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415A10B85B5E00A05E29 /* XADMSZipHandle.m */; };
+		1B34AA1511C307F600396C26 /* XADNDSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8A89D41012078C00C8534E /* XADNDSParser.m */; };
+		1B34AA1611C307F700396C26 /* XADNSAParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785C510AF78D0007EA6F6 /* XADNSAParser.m */; };
+		1B34AA1711C307FC00396C26 /* XADNSISBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4DF0D101DFC73001AB3CA /* XADNSISBzip2Handle.m */; };
+		1B34AA1811C3080100396C26 /* XADNSISParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */; };
+		1B34AA1911C3080400396C26 /* XADQuantumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC415E10B85B6600A05E29 /* XADQuantumHandle.m */; };
+		1B34AA1A11C3080600396C26 /* XADSARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785ED10AF8607007EA6F6 /* XADSARParser.m */; };
+		1B34AA1B11C3080700396C26 /* XADSplitFileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D3C510FA7A69002A2C76 /* XADSplitFileParser.m */; };
+		1B34AA1C11C3081100396C26 /* init.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5520DDA623800D9C000 /* init.c */; };
+		1B34AA1D11C3081700396C26 /* all.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D4EF0DDA623800D9C000 /* all.c */; };
+		1B34AA1E11C3084C00396C26 /* XADLibXADIOHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8903E0ED47D76006B47FE /* XADLibXADIOHandle.m */; };
+		1B34AA1F11C3084D00396C26 /* XADLibXADParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D59F0DDA665800D9C000 /* XADLibXADParser.m */; };
+		1B34AA2011C3085200396C26 /* BWT.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A70F0F007AAF0094C7B5 /* BWT.c */; };
+		1B34AA2111C3085300396C26 /* CarrylessRangeCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A70B0F007AA20094C7B5 /* CarrylessRangeCoder.m */; };
+		1B34AA2211C3085500396C26 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
+		1B34AA2311C3085600396C26 /* LZW.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88D440ED31A31006B47FE /* LZW.c */; };
+		1B34AA2411C3085800396C26 /* XADFastLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */; };
+		1B34AA2511C3085800396C26 /* XADLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89A740EDB12F8006B47FE /* XADLZSSHandle.m */; };
+		1B34AA2611C3085A00396C26 /* XADPrefixCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC88A260ED06D76006B47FE /* XADPrefixCode.m */; };
+		1B34AA2711C3085E00396C26 /* CRC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A770F8E9064001207C9 /* CRC.m */; };
+		1B34AA2811C3085F00396C26 /* NumberParsing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E377E0F422D2F003EEF98 /* NumberParsing.m */; };
+		1B34AA2911C3086200396C26 /* XADBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D2A910F8D11D002A2C76 /* XADBlockHandle.m */; };
+		1B34AA2A11C3086300396C26 /* XADChecksumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E39F30F45F62F003EEF98 /* XADChecksumHandle.m */; };
+		1B34AA2B11C3086400396C26 /* XADCRCHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64280EF6CA3F00D86C43 /* XADCRCHandle.m */; };
+		1B34AA2C11C3086900396C26 /* XADCRCSuffixHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64260EF6CA3F00D86C43 /* XADCRCSuffixHandle.m */; };
+		1B34AA2D11C3086A00396C26 /* XADDeltaHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC3E6D10B2304C00A05E29 /* XADDeltaHandle.m */; };
+		1B34AA2E11C3086B00396C26 /* XADDigestHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */; };
+		1B34AA2F11C3086C00396C26 /* XADRC4Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2BF20F28D715003EEF98 /* XADRC4Handle.m */; };
+		1B34AA3011C3086E00396C26 /* XADRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B21106F0A4452C2005ED2AF /* XADRegex.m */; };
+		1B34AA3111C3087100396C26 /* XADSkipHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F17E50EE8AF7B0000DAFF /* XADSkipHandle.m */; };
+		1B34AA3211C3087200396C26 /* XADXORHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B515101119A5009FA09E /* XADXORHandle.m */; };
+		1B34AA3311C3087500396C26 /* Checksums.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89C9D0EDCAA51006B47FE /* Checksums.m */; };
+		1B34AA3411C3087600396C26 /* CSHexDump.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A650110154DCE00AE25A8 /* CSHexDump.m */; };
+		1B34AA3511C3087700396C26 /* NSDateXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */; };
+		1B34AA3611C3087800396C26 /* NSStringXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringXAD.m */; };
+		1B34AA3711C3087900396C26 /* Progress.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A740F8E8ADE001207C9 /* Progress.m */; };
+		1B34AA3811C3087A00396C26 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
+		1B34AA3911C3087E00396C26 /* CSBlockStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFB0EC3859F006D2F06 /* CSBlockStreamHandle.m */; };
+		1B34AA3A11C3087F00396C26 /* CSByteStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFD0EC3859F006D2F06 /* CSByteStreamHandle.m */; };
+		1B34AA3B11C3088000396C26 /* CSBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */; };
+		1B34AA3C11C3088000396C26 /* CSFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF50EC3859F006D2F06 /* CSFileHandle.m */; };
+		1B34AA3D11C3088100396C26 /* CSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */; };
+		1B34AA3E11C3088200396C26 /* CSInputBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8903F0ED47D76006B47FE /* CSInputBuffer.m */; };
+		1B34AA3F11C3088500396C26 /* CSMemoryHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF70EC3859F006D2F06 /* CSMemoryHandle.m */; };
+		1B34AA4011C3088500396C26 /* CSMultiHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */; };
+		1B34AA4111C3088700396C26 /* CSStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF90EC3859F006D2F06 /* CSStreamHandle.m */; };
+		1B34AA4211C3088700396C26 /* CSSubHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF10EC3859F006D2F06 /* CSSubHandle.m */; };
+		1B34AA4311C3088900396C26 /* CSZlibHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFF0EC3859F006D2F06 /* CSZlibHandle.m */; };
+		1B34AA7111C30B3500396C26 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA20EC52505006D2F06 /* libcrypto.dylib */; };
+		1B34AA7211C30B3600396C26 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */; };
+		1B34AA7311C30B3700396C26 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03C11BB1CD900396C26 /* libbz2.a */; };
+		1B34AA7411C30B3A00396C26 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
+		1B34AA7511C30B3D00396C26 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B216A7F0F8E9D9E001207C9 /* Carbon.framework */; };
+		1B34AA7611C30B5200396C26 /* libUniversalDetector.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B23E1B11190F8CC00620319 /* libUniversalDetector.a */; };
+		1B34AA8511C30BC100396C26 /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34AA8411C30BC100396C26 /* UniversalDetector.framework */; };
+		1B34AA9F11C30C0400396C26 /* unar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DDC91185EBD600620319 /* unar.m */; };
+		1B34AAA811C30DA400396C26 /* libXADMaster.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A97511C2FD0500396C26 /* libXADMaster.a */; };
+		1B34AAAD11C30DFF00396C26 /* clients.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D52E0DDA623800D9C000 /* clients.c */; };
+		1B34AAAE11C30E0200396C26 /* emulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D54F0DDA623800D9C000 /* emulation.c */; };
+		1B34AAB111C30E6A00396C26 /* RARBug.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD65510EF8164900D86C43 /* RARBug.c */; };
+		1B34AAB811C30EDB00396C26 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA70EC52532006D2F06 /* libz.dylib */; };
+		1B34AABC11C30F5400396C26 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34AABB11C30F5400396C26 /* libstdc++.6.dylib */; };
+		1B34AAC711C30F9A00396C26 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61550EF349EE00D86C43 /* BraIA64.c */; };
 		1B3A64B61015030700AE25A8 /* XADLZHSFXParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */; };
 		1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
 		1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */; };
@@ -443,30 +291,17 @@
 		1B3FAD680EC5D4E8006D2F06 /* XADMacArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */; };
 		1B3FAD800EC6826E006D2F06 /* NSDateXAD.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAD7E0EC6826E006D2F06 /* NSDateXAD.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAD810EC6826E006D2F06 /* NSDateXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */; };
-		1B4C000011AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
 		1B4C000111AF109300CDACC1 /* LZSS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4CFFFD11AF109300CDACC1 /* LZSS.h */; };
 		1B4C000211AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
 		1B4C01F811B0A56000CDACC1 /* XADRAR30Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4CFB67119B7F1600CDACC1 /* XADRAR30Handle.h */; };
 		1B4C020B11B0AAFA00CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
-		1B4C025911B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
 		1B4C025A11B1DAC300CDACC1 /* XADRAR30Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */; };
 		1B4C025B11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
-		1B4C025C11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
 		1B4C03AA11B34E1A00CDACC1 /* RARVirtualMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4C03A811B34E1A00CDACC1 /* RARVirtualMachine.h */; };
 		1B4C03AB11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */; };
-		1B4C03AC11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */; };
-		1B4C03AD11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */; };
-		1B4CFB69119B7F1600CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
-		1B4CFB6C119B7F2500CDACC1 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
-		1B4CFD0E119CD1B900CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
-		1B4CFDAE119EDD0D00CDACC1 /* XADRARVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */; };
-		1B4CFDB6119F570800CDACC1 /* XADRARVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */; };
 		1B4CFDB7119F571100CDACC1 /* XADRARVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */; };
-		1B4CFEB711A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */; };
-		1B4CFEB811A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */; };
 		1B4CFEB911A3334300CDACC1 /* XADFastLZSSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4CFEB511A3334200CDACC1 /* XADFastLZSSHandle.h */; };
 		1B4CFEBA11A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */; };
-		1B4CFFFF11AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
 		1B578C340DDBC8BF005B0F68 /* XADException.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B578C320DDBC8BF005B0F68 /* XADException.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B578C580DDCFFD0005B0F68 /* XADGzipParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B578C560DDCFFD0005B0F68 /* XADGzipParser.h */; };
 		1B578C590DDCFFD0005B0F68 /* XADGzipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C570DDCFFD0005B0F68 /* XADGzipParser.m */; };
@@ -656,17 +491,6 @@
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildRule section */
-		1B23E61D1198C0D200620319 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = org.cocotron.1.0.windows.i386.gcc.default;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-/* End PBXBuildRule section */
-
 /* Begin PBXContainerItemProxy section */
 		1B06D3760DDA5C2600D9C000 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -695,6 +519,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1B23E0861190F29400620319;
 			remoteInfo = libUniversalDetector;
+		};
+		1B34AA6411C309ED00396C26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B34A97411C2FD0500396C26 /* libXADMaster */;
+			remoteInfo = libXADMaster;
+		};
+		1B34AA6A11C30A1400396C26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B34A97411C2FD0500396C26 /* libXADMaster */;
+			remoteInfo = libXADMaster;
 		};
 		1B3A689A101BA12C00AE25A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -829,7 +667,6 @@
 		1B23DDC01185EBA300620319 /* unar */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unar; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B23DDC91185EBD600620319 /* unar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = unar.m; sourceTree = "<group>"; };
 		1B23E1B11190F8CC00620319 /* libUniversalDetector.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libUniversalDetector.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B23E5EF1198BC2000620319 /* unar.exe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unar.exe; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B23E75C1199CB7C00620319 /* XADRAR20Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR20Handle.h; sourceTree = "<group>"; };
 		1B23E75D1199CB7C00620319 /* XADRAR20Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR20Handle.m; sourceTree = "<group>"; };
 		1B2A408C0F13BDEB009B5B89 /* PPMdContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPMdContext.h; sourceTree = "<group>"; };
@@ -873,6 +710,9 @@
 		1B34A7B111C2D97500396C26 /* XADRAR15CryptHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR15CryptHandle.m; sourceTree = "<group>"; };
 		1B34A7E911C2E0E800396C26 /* XADRAR13CryptHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR13CryptHandle.h; sourceTree = "<group>"; };
 		1B34A7EA11C2E0E800396C26 /* XADRAR13CryptHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR13CryptHandle.m; sourceTree = "<group>"; };
+		1B34A97511C2FD0500396C26 /* libXADMaster.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libXADMaster.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B34AA8411C30BC100396C26 /* UniversalDetector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniversalDetector.framework; path = ../../Build/Debug/UniversalDetector.framework; sourceTree = SOURCE_ROOT; };
+		1B34AABB11C30F5400396C26 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "/usr/lib/libstdc++.6.dylib"; sourceTree = "<absolute>"; };
 		1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHSFXParsers.h; sourceTree = "<group>"; };
 		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
 		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
@@ -1157,25 +997,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B23E1A71190F89D00620319 /* Carbon.framework in Frameworks */,
-				1B23E1A81190F89E00620319 /* Foundation.framework in Frameworks */,
-				1B23E1A91190F89F00620319 /* libcrypto.dylib in Frameworks */,
-				1B23E1AA1190F8A000620319 /* libbz2.dylib in Frameworks */,
-				1B23E1AB1190F8A100620319 /* libz.dylib in Frameworks */,
-				1B23E1B21190F8CC00620319 /* libUniversalDetector.a in Frameworks */,
+				1B34AA7111C30B3500396C26 /* libcrypto.dylib in Frameworks */,
+				1B34AA7211C30B3600396C26 /* libbz2.dylib in Frameworks */,
+				1B34AA7311C30B3700396C26 /* libbz2.a in Frameworks */,
+				1B34AA7411C30B3A00396C26 /* Foundation.framework in Frameworks */,
+				1B34AA7511C30B3D00396C26 /* Carbon.framework in Frameworks */,
+				1B34AA7611C30B5200396C26 /* libUniversalDetector.a in Frameworks */,
+				1B34AAA811C30DA400396C26 /* libXADMaster.a in Frameworks */,
+				1B34AAB811C30EDB00396C26 /* libz.dylib in Frameworks */,
+				1B34AABC11C30F5400396C26 /* libstdc++.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1B23E5E51198BC2000620319 /* Frameworks */ = {
+		1B34A97311C2FD0500396C26 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B34A03011BB1BF900396C26 /* Foundation.framework in Frameworks */,
-				1B34A03F11BB1CD900396C26 /* libbz2.a in Frameworks */,
-				1B34A04111BB1CD900396C26 /* libz.a in Frameworks */,
-				1B34A04511BB1F2000396C26 /* libeay32.a in Frameworks */,
-				1B34A06711BB21A900396C26 /* libwinmm.a in Frameworks */,
-				1B34A08F11BB254800396C26 /* libstdc++.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1222,6 +1059,7 @@
 				1B3FAC5D0EC5255A006D2F06 /* Foundation.framework in Frameworks */,
 				1BBCC54D0EE73B7F006C3AE2 /* libbz2.dylib in Frameworks */,
 				1B216A800F8E9D9E001207C9 /* Carbon.framework in Frameworks */,
+				1B34AA8511C30BC100396C26 /* UniversalDetector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1236,8 +1074,8 @@
 				1BBAB68B0EC274A3007FE6A2 /* XADTest2 */,
 				1BC8931A0ED6F283006B47FE /* XADTest3 */,
 				1B3A68A2101BA12C00AE25A8 /* XADTest4 */,
+				1B34A97511C2FD0500396C26 /* libXADMaster.a */,
 				1B23DDC01185EBA300620319 /* unar */,
-				1B23E5EF1198BC2000620319 /* unar.exe */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1270,7 +1108,8 @@
 				1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */,
 				1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */,
 				1B216A7F0F8E9D9E001207C9 /* Carbon.framework */,
-				1B23E1B11190F8CC00620319 /* libUniversalDetector.a */,
+				1B34AA8411C30BC100396C26 /* UniversalDetector.framework */,
+				1B34AACA11C30FC500396C26 /* For static linking */,
 				1B34A03A11BB1CC300396C26 /* Windows Libraries */,
 			);
 			name = "External Frameworks and Libraries";
@@ -1309,8 +1148,8 @@
 			isa = PBXGroup;
 			children = (
 				1B06D3770DDA5C2600D9C000 /* UniversalDetector.framework */,
-				1B06D3790DDA5C2600D9C000 /* DetectorTest */,
 				1B23E08C1190F2B400620319 /* libUniversalDetector.a */,
+				1B06D3790DDA5C2600D9C000 /* DetectorTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1491,6 +1330,15 @@
 				1B34A08E11BB254800396C26 /* libstdc++.a */,
 			);
 			name = "Windows Libraries";
+			sourceTree = "<group>";
+		};
+		1B34AACA11C30FC500396C26 /* For static linking */ = {
+			isa = PBXGroup;
+			children = (
+				1B23E1B11190F8CC00620319 /* libUniversalDetector.a */,
+				1B34AABB11C30F5400396C26 /* libstdc++.6.dylib */,
+			);
+			name = "For static linking";
 			sourceTree = "<group>";
 		};
 		1B3A66351016832300AE25A8 /* NSIS */ = {
@@ -1985,13 +1833,19 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		1B34A97111C2FD0500396C26 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF500486A6940098B216 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				1B2110720A4452C2005ED2AF /* XADRegex.h in Headers */,
 				1B06D55C0DDA627200D9C000 /* xadmaster.h in Headers */,
-				1B06D5950DDA644E00D9C000 /* SDI_compiler.h in Headers */,
 				1B06D5A00DDA665800D9C000 /* XADLibXADParser.h in Headers */,
 				1B06D5A40DDA666C00D9C000 /* XADZipParser.h in Headers */,
 				1B06D5A80DDA667A00D9C000 /* XADRARParser.h in Headers */,
@@ -2152,6 +2006,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				1B34AA6B11C30A1400396C26 /* PBXTargetDependency */,
 				1B23E1C11190F9AF00620319 /* PBXTargetDependency */,
 			);
 			name = unar;
@@ -2159,22 +2014,22 @@
 			productReference = 1B23DDC01185EBA300620319 /* unar */;
 			productType = "com.apple.product-type.tool";
 		};
-		1B23E5511198BC2000620319 /* unar.exe */ = {
+		1B34A97411C2FD0500396C26 /* libXADMaster */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1B23E5EC1198BC2000620319 /* Build configuration list for PBXNativeTarget "unar.exe" */;
+			buildConfigurationList = 1B34A97A11C2FD2500396C26 /* Build configuration list for PBXNativeTarget "libXADMaster" */;
 			buildPhases = (
-				1B23E5541198BC2000620319 /* Sources */,
-				1B23E5E51198BC2000620319 /* Frameworks */,
+				1B34A97111C2FD0500396C26 /* Headers */,
+				1B34A97211C2FD0500396C26 /* Sources */,
+				1B34A97311C2FD0500396C26 /* Frameworks */,
 			);
 			buildRules = (
-				1B23E61D1198C0D200620319 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
-			name = unar.exe;
-			productName = unar;
-			productReference = 1B23E5EF1198BC2000620319 /* unar.exe */;
-			productType = "com.apple.product-type.tool";
+			name = libXADMaster;
+			productName = libXADMaster;
+			productReference = 1B34A97511C2FD0500396C26 /* libXADMaster.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 		1B3A6898101BA12C00AE25A8 /* XADTest4 */ = {
 			isa = PBXNativeTarget;
@@ -2186,6 +2041,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				1B34AA6511C309ED00396C26 /* PBXTargetDependency */,
 				1B3A6899101BA12C00AE25A8 /* PBXTargetDependency */,
 			);
 			name = XADTest4;
@@ -2288,8 +2144,8 @@
 				1BBAB67F0EC274A3007FE6A2 /* XADTest2 */,
 				1BC893190ED6F283006B47FE /* XADTest3 */,
 				1B3A6898101BA12C00AE25A8 /* XADTest4 */,
+				1B34A97411C2FD0500396C26 /* libXADMaster */,
 				1B23DDBF1185EBA300620319 /* unar */,
-				1B23E5511198BC2000620319 /* unar.exe */,
 			);
 		};
 /* End PBXProject section */
@@ -2335,328 +2191,166 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B23DDCB1185EBF400620319 /* unar.m in Sources */,
-				1B23E0F71190F47E00620319 /* XADException.m in Sources */,
-				1B23E0F81190F47E00620319 /* XADPath.m in Sources */,
-				1B23E0F91190F47F00620319 /* XADString.m in Sources */,
-				1B23E0FA1190F47F00620319 /* XADUnarchiver.m in Sources */,
-				1B23E0FB1190F49D00620319 /* Bra.c in Sources */,
-				1B23E0FC1190F49E00620319 /* Bra86.c in Sources */,
-				1B23E0FD1190F49F00620319 /* BraIA64.c in Sources */,
-				1B23E0FE1190F4B000620319 /* clients.c in Sources */,
-				1B23E0FF1190F4B100620319 /* all.c in Sources */,
-				1B23E1001190F4BE00620319 /* emulation.c in Sources */,
-				1B23E1011190F4CA00620319 /* getbits.cpp in Sources */,
-				1B23E1021190F4D700620319 /* init.c in Sources */,
-				1B23E1031190F4D800620319 /* Lzma2Dec.c in Sources */,
-				1B23E1041190F4F200620319 /* PPMdContext.m in Sources */,
-				1B23E1051190F4F300620319 /* PPMdSubAllocatorBrimstone.m in Sources */,
-				1B23E1061190F4F300620319 /* PPMdSubAllocatorVariantG.m in Sources */,
-				1B23E1071190F4F400620319 /* PPMdSubAllocatorVariantH.m in Sources */,
-				1B23E1081190F4F400620319 /* PPMdSubAllocatorVariantI.m in Sources */,
-				1B23E1091190F4F500620319 /* PPMdVariantG.m in Sources */,
-				1B23E10A1190F4F800620319 /* PPMdVariantH.m in Sources */,
-				1B23E10B1190F4F900620319 /* PPMdVariantI.m in Sources */,
-				1B23E10C1190F4FB00620319 /* RARBug.c in Sources */,
-				1B23E10D1190F4FE00620319 /* RARUnpacker.cpp in Sources */,
-				1B23E10E1190F51000620319 /* rarvm.cpp in Sources */,
-				1B23E10F1190F51300620319 /* StuffItXUtilities.m in Sources */,
-				1B23E1101190F52B00620319 /* unpack.cpp in Sources */,
-				1B23E1111190F52D00620319 /* XAD7ZipBCJ2Handle.m in Sources */,
-				1B23E1121190F52E00620319 /* XAD7ZipBranchHandles.m in Sources */,
-				1B23E1131190F52F00620319 /* XAD7ZipParser.m in Sources */,
-				1B23E1141190F52F00620319 /* XADALZipParser.m in Sources */,
-				1B23E1151190F53100620319 /* XADArchiveParser.m in Sources */,
-				1B23E1161190F53200620319 /* XADARJFastestHandle.m in Sources */,
-				1B23E1171190F53200620319 /* XADARJParser.m in Sources */,
-				1B23E1181190F53300620319 /* XADBinHexParser.m in Sources */,
-				1B23E1191190F53500620319 /* XADBzip2Parser.m in Sources */,
-				1B23E11A1190F53600620319 /* XADCABBlockHandle.m in Sources */,
-				1B23E11B1190F53600620319 /* XADCABBlockReader.m in Sources */,
-				1B23E11C1190F53700620319 /* XADCABParser.m in Sources */,
-				1B23E11D1190F53700620319 /* XADCFBFParser.m in Sources */,
-				1B23E11E1190F53900620319 /* XADCompactProLZHHandle.m in Sources */,
-				1B23E11F1190F53A00620319 /* XADCompactProParser.m in Sources */,
-				1B23E1201190F53A00620319 /* XADCompactProRLEHandle.m in Sources */,
-				1B23E1211190F53C00620319 /* XADCompressHandle.m in Sources */,
-				1B23E1221190F53D00620319 /* XADCompressParser.m in Sources */,
-				1B23E1231190F53E00620319 /* XADCpioParser.m in Sources */,
-				1B23E1251190F54300620319 /* XADDeflateHandle.m in Sources */,
-				1B23E1261190F54400620319 /* XADDiskDoublerADnHandle.m in Sources */,
-				1B23E1271190F54400620319 /* XADDiskDoublerDDnHandle.m in Sources */,
-				1B23E1281190F54D00620319 /* XADDiskDoublerParser.m in Sources */,
-				1B23E1291190F54F00620319 /* XADGzipParser.m in Sources */,
-				1B23E12A1190F55900620319 /* XADLArcHandles.m in Sources */,
-				1B23E12B1190F55A00620319 /* XADLibXADIOHandle.m in Sources */,
-				1B23E12C1190F55B00620319 /* XADLibXADParser.m in Sources */,
-				1B23E12D1190F55E00620319 /* XADLZHDynamicHandle.m in Sources */,
-				1B23E12E1190F55F00620319 /* XADLZHOldHandles.m in Sources */,
-				1B23E12F1190F56000620319 /* XADLZHParser.m in Sources */,
-				1B23E1301190F56000620319 /* XADLZHSFXParsers.m in Sources */,
-				1B23E1311190F56200620319 /* XADLZHStaticHandle.m in Sources */,
-				1B23E1321190F56300620319 /* XADLZMA2Handle.m in Sources */,
-				1B23E1331190F56300620319 /* XADLZMAAloneParser.m in Sources */,
-				1B23E1341190F56400620319 /* XADLZMAHandle.m in Sources */,
-				1B23E1351190F56400620319 /* XADLZXHandle.m in Sources */,
-				1B23E1361190F56600620319 /* XADLZXParser.m in Sources */,
-				1B23E1371190F56600620319 /* XADMacArchiveParser.m in Sources */,
-				1B23E1381190F56700620319 /* XADMacBinaryParser.m in Sources */,
-				1B23E1391190F56800620319 /* XADMSLZXHandle.m in Sources */,
-				1B23E13A1190F56A00620319 /* XADMSZipHandle.m in Sources */,
-				1B23E13B1190F56B00620319 /* XADNDSParser.m in Sources */,
-				1B23E13C1190F56B00620319 /* XADNowCompressParser.m in Sources */,
-				1B23E13D1190F56C00620319 /* XADNSAParser.m in Sources */,
-				1B23E13E1190F56C00620319 /* XADNSISBzip2Handle.m in Sources */,
-				1B23E13F1190F56F00620319 /* XADNSISParser.m in Sources */,
-				1B23E1401190F57000620319 /* XADPackItParser.m in Sources */,
-				1B23E1411190F57000620319 /* XADPowerPackerParser.m in Sources */,
-				1B23E1421190F57100620319 /* XADPPMdHandles.m in Sources */,
-				1B23E1431190F57100620319 /* XADPPMdParser.m in Sources */,
-				1B23E1441190F57200620319 /* XADQuantumHandle.m in Sources */,
-				1B23E1451190F57400620319 /* XADRARAESHandle.m in Sources */,
-				1B23E1461190F57400620319 /* XADRAR20CryptHandle.m in Sources */,
-				1B23E1471190F57500620319 /* XADRAROfficialHandle.m in Sources */,
-				1B23E1481190F57600620319 /* XADRARParser.m in Sources */,
-				1B23E1491190F57600620319 /* XADRPMParser.m in Sources */,
-				1B23E14A1190F57700620319 /* XADSARParser.m in Sources */,
-				1B23E14B1190F57700620319 /* XADTarSparseHandle.m in Sources */,
-				1B23E14C1190F57900620319 /* XADSplitFileParser.m in Sources */,
-				1B23E14D1190F57900620319 /* XADStuffIt13Handle.m in Sources */,
-				1B23E14E1190F57A00620319 /* XADStuffIt5Parser.m in Sources */,
-				1B23E14F1190F57A00620319 /* XADStuffItArsenicHandle.m in Sources */,
-				1B23E1501190F57B00620319 /* XADStuffItHuffmanHandle.m in Sources */,
-				1B23E1511190F57C00620319 /* XADStuffItOldHandles.m in Sources */,
-				1B23E1521190F57D00620319 /* XADStuffItParser.m in Sources */,
-				1B23E1531190F57E00620319 /* XADStuffItRLEHandle.m in Sources */,
-				1B23E1541190F57F00620319 /* XADStuffItXBlendHandle.m in Sources */,
-				1B23E1551190F58000620319 /* XADStuffItXBlockHandle.m in Sources */,
-				1B23E1561190F58000620319 /* XADStuffItXCyanideHandle.m in Sources */,
-				1B23E1571190F58100620319 /* XADStuffItXDarkhorseHandle.m in Sources */,
-				1B23E1581190F58400620319 /* XADStuffItXEnglishHandle.m in Sources */,
-				1B23E1591190F58500620319 /* XADStuffItXIronHandle.m in Sources */,
-				1B23E15A1190F58600620319 /* XADStuffItXParser.m in Sources */,
-				1B23E15B1190F58600620319 /* XADTarParser.m in Sources */,
-				1B23E15C1190F58700620319 /* XADWinZipAESHandle.m in Sources */,
-				1B23E15D1190F58900620319 /* XADXARParser.m in Sources */,
-				1B23E15E1190F58B00620319 /* XADXZHandle.m in Sources */,
-				1B23E15F1190F58C00620319 /* XADXZParser.m in Sources */,
-				1B23E1601190F58C00620319 /* XADZipCryptHandle.m in Sources */,
-				1B23E1611190F58D00620319 /* XADZipImplodeHandle.m in Sources */,
-				1B23E1621190F58E00620319 /* XADZipParser.m in Sources */,
-				1B23E1631190F58F00620319 /* XADZipSFXParsers.m in Sources */,
-				1B23E1641190F59600620319 /* BWT.c in Sources */,
-				1B23E1651190F59700620319 /* CarrylessRangeCoder.m in Sources */,
-				1B23E1661190F59700620319 /* LZW.c in Sources */,
-				1B23E1671190F59800620319 /* XADLZSSHandle.m in Sources */,
-				1B23E1681190F59900620319 /* XADPrefixCode.m in Sources */,
-				1B23E1691190F59D00620319 /* CRC.m in Sources */,
-				1B23E16A1190F59D00620319 /* NumberParsing.m in Sources */,
-				1B23E16B1190F59F00620319 /* XADBlockHandle.m in Sources */,
-				1B23E16C1190F59F00620319 /* XADChecksumHandle.m in Sources */,
-				1B23E16D1190F5A000620319 /* XADCRCHandle.m in Sources */,
-				1B23E16E1190F5A000620319 /* XADCRCSuffixHandle.m in Sources */,
-				1B23E16F1190F5A100620319 /* XADDeltaHandle.m in Sources */,
-				1B23E1701190F5A100620319 /* XADDigestHandle.m in Sources */,
-				1B23E1711190F5A300620319 /* XADRC4Handle.m in Sources */,
-				1B23E1721190F5A300620319 /* XADRegex.m in Sources */,
-				1B23E1731190F5A300620319 /* XADSkipHandle.m in Sources */,
-				1B23E1741190F5A400620319 /* XADXORHandle.m in Sources */,
-				1B23E1751190F5A800620319 /* Checksums.m in Sources */,
-				1B23E1761190F5A800620319 /* CSHexDump.m in Sources */,
-				1B23E1771190F5A900620319 /* NSDateXAD.m in Sources */,
-				1B23E1781190F5AA00620319 /* Progress.m in Sources */,
-				1B23E1791190F5AA00620319 /* Scanning.m in Sources */,
-				1B23E17A1190F5AD00620319 /* CSBlockStreamHandle.m in Sources */,
-				1B23E17B1190F5AE00620319 /* CSByteStreamHandle.m in Sources */,
-				1B23E17C1190F5AF00620319 /* CSBzip2Handle.m in Sources */,
-				1B23E17D1190F5B000620319 /* CSFileHandle.m in Sources */,
-				1B23E17E1190F5B100620319 /* CSHandle.m in Sources */,
-				1B23E17F1190F5B200620319 /* CSInputBuffer.m in Sources */,
-				1B23E1801190F5B200620319 /* CSMemoryHandle.m in Sources */,
-				1B23E1811190F5B300620319 /* CSMultiHandle.m in Sources */,
-				1B23E1821190F5B300620319 /* CSStreamHandle.m in Sources */,
-				1B23E1831190F5B500620319 /* CSSubHandle.m in Sources */,
-				1B23E1841190F5B600620319 /* CSZlibHandle.m in Sources */,
-				1B23E1A61190F89600620319 /* LzmaDec.c in Sources */,
-				1B23E1AE1190F8B300620319 /* XADZipShrinkHandle.m in Sources */,
-				1B23E75E1199CB7C00620319 /* XADRAR20Handle.m in Sources */,
-				1B4CFB69119B7F1600CDACC1 /* XADRAR30Handle.m in Sources */,
-				1B4CFB6C119B7F2500CDACC1 /* XADRAR15Handle.m in Sources */,
-				1B4CFDAE119EDD0D00CDACC1 /* XADRARVirtualMachine.m in Sources */,
-				1B4CFEB711A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
-				1B4C000011AF109300CDACC1 /* LZSS.c in Sources */,
-				1B4C025C11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
-				1B4C03AC11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
-				1B349EF111BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */,
-				1B34A12A11BBE4D800396C26 /* NSStringXAD.m in Sources */,
-				1B34A55911BDC1AD00396C26 /* RARAudioDecoder.c in Sources */,
-				1B34A7B211C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */,
-				1B34A7EB11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */,
+				1B34AA9F11C30C0400396C26 /* unar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1B23E5541198BC2000620319 /* Sources */ = {
+		1B34A97211C2FD0500396C26 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B23E5551198BC2000620319 /* unar.m in Sources */,
-				1B23E5561198BC2000620319 /* XADException.m in Sources */,
-				1B23E5571198BC2000620319 /* XADPath.m in Sources */,
-				1B23E5581198BC2000620319 /* XADString.m in Sources */,
-				1B23E5591198BC2000620319 /* XADUnarchiver.m in Sources */,
-				1B23E55A1198BC2000620319 /* Bra.c in Sources */,
-				1B23E55B1198BC2000620319 /* Bra86.c in Sources */,
-				1B23E55C1198BC2000620319 /* BraIA64.c in Sources */,
-				1B23E55D1198BC2000620319 /* clients.c in Sources */,
-				1B23E55E1198BC2000620319 /* all.c in Sources */,
-				1B23E55F1198BC2000620319 /* emulation.c in Sources */,
-				1B23E5601198BC2000620319 /* getbits.cpp in Sources */,
-				1B23E5611198BC2000620319 /* init.c in Sources */,
-				1B23E5621198BC2000620319 /* Lzma2Dec.c in Sources */,
-				1B23E5631198BC2000620319 /* PPMdContext.m in Sources */,
-				1B23E5641198BC2000620319 /* PPMdSubAllocatorBrimstone.m in Sources */,
-				1B23E5651198BC2000620319 /* PPMdSubAllocatorVariantG.m in Sources */,
-				1B23E5661198BC2000620319 /* PPMdSubAllocatorVariantH.m in Sources */,
-				1B23E5671198BC2000620319 /* PPMdSubAllocatorVariantI.m in Sources */,
-				1B23E5681198BC2000620319 /* PPMdVariantG.m in Sources */,
-				1B23E5691198BC2000620319 /* PPMdVariantH.m in Sources */,
-				1B23E56A1198BC2000620319 /* PPMdVariantI.m in Sources */,
-				1B23E56B1198BC2000620319 /* RARBug.c in Sources */,
-				1B23E56C1198BC2000620319 /* RARUnpacker.cpp in Sources */,
-				1B23E56D1198BC2000620319 /* rarvm.cpp in Sources */,
-				1B23E56E1198BC2000620319 /* StuffItXUtilities.m in Sources */,
-				1B23E56F1198BC2000620319 /* unpack.cpp in Sources */,
-				1B23E5701198BC2000620319 /* XAD7ZipBCJ2Handle.m in Sources */,
-				1B23E5711198BC2000620319 /* XAD7ZipBranchHandles.m in Sources */,
-				1B23E5721198BC2000620319 /* XAD7ZipParser.m in Sources */,
-				1B23E5731198BC2000620319 /* XADALZipParser.m in Sources */,
-				1B23E5741198BC2000620319 /* XADArchiveParser.m in Sources */,
-				1B23E5751198BC2000620319 /* XADARJFastestHandle.m in Sources */,
-				1B23E5761198BC2000620319 /* XADARJParser.m in Sources */,
-				1B23E5771198BC2000620319 /* XADBinHexParser.m in Sources */,
-				1B23E5781198BC2000620319 /* XADBzip2Parser.m in Sources */,
-				1B23E5791198BC2000620319 /* XADCABBlockHandle.m in Sources */,
-				1B23E57A1198BC2000620319 /* XADCABBlockReader.m in Sources */,
-				1B23E57B1198BC2000620319 /* XADCABParser.m in Sources */,
-				1B23E57C1198BC2000620319 /* XADCFBFParser.m in Sources */,
-				1B23E57D1198BC2000620319 /* XADCompactProLZHHandle.m in Sources */,
-				1B23E57E1198BC2000620319 /* XADCompactProParser.m in Sources */,
-				1B23E57F1198BC2000620319 /* XADCompactProRLEHandle.m in Sources */,
-				1B23E5801198BC2000620319 /* XADCompressHandle.m in Sources */,
-				1B23E5811198BC2000620319 /* XADCompressParser.m in Sources */,
-				1B23E5821198BC2000620319 /* XADCpioParser.m in Sources */,
-				1B23E5831198BC2000620319 /* XADDeflateHandle.m in Sources */,
-				1B23E5841198BC2000620319 /* XADDiskDoublerADnHandle.m in Sources */,
-				1B23E5851198BC2000620319 /* XADDiskDoublerDDnHandle.m in Sources */,
-				1B23E5861198BC2000620319 /* XADDiskDoublerParser.m in Sources */,
-				1B23E5871198BC2000620319 /* XADGzipParser.m in Sources */,
-				1B23E5881198BC2000620319 /* XADLArcHandles.m in Sources */,
-				1B23E5891198BC2000620319 /* XADLibXADIOHandle.m in Sources */,
-				1B23E58A1198BC2000620319 /* XADLibXADParser.m in Sources */,
-				1B23E58B1198BC2000620319 /* XADLZHDynamicHandle.m in Sources */,
-				1B23E58C1198BC2000620319 /* XADLZHOldHandles.m in Sources */,
-				1B23E58D1198BC2000620319 /* XADLZHParser.m in Sources */,
-				1B23E58E1198BC2000620319 /* XADLZHSFXParsers.m in Sources */,
-				1B23E58F1198BC2000620319 /* XADLZHStaticHandle.m in Sources */,
-				1B23E5901198BC2000620319 /* XADLZMA2Handle.m in Sources */,
-				1B23E5911198BC2000620319 /* XADLZMAAloneParser.m in Sources */,
-				1B23E5921198BC2000620319 /* XADLZMAHandle.m in Sources */,
-				1B23E5931198BC2000620319 /* XADLZXHandle.m in Sources */,
-				1B23E5941198BC2000620319 /* XADLZXParser.m in Sources */,
-				1B23E5951198BC2000620319 /* XADMacArchiveParser.m in Sources */,
-				1B23E5961198BC2000620319 /* XADMacBinaryParser.m in Sources */,
-				1B23E5971198BC2000620319 /* XADMSLZXHandle.m in Sources */,
-				1B23E5981198BC2000620319 /* XADMSZipHandle.m in Sources */,
-				1B23E5991198BC2000620319 /* XADNDSParser.m in Sources */,
-				1B23E59A1198BC2000620319 /* XADNowCompressParser.m in Sources */,
-				1B23E59B1198BC2000620319 /* XADNSAParser.m in Sources */,
-				1B23E59C1198BC2000620319 /* XADNSISBzip2Handle.m in Sources */,
-				1B23E59D1198BC2000620319 /* XADNSISParser.m in Sources */,
-				1B23E59E1198BC2000620319 /* XADPackItParser.m in Sources */,
-				1B23E59F1198BC2000620319 /* XADPowerPackerParser.m in Sources */,
-				1B23E5A01198BC2000620319 /* XADPPMdHandles.m in Sources */,
-				1B23E5A11198BC2000620319 /* XADPPMdParser.m in Sources */,
-				1B23E5A21198BC2000620319 /* XADQuantumHandle.m in Sources */,
-				1B23E5A31198BC2000620319 /* XADRARAESHandle.m in Sources */,
-				1B23E5A41198BC2000620319 /* XADRAR20CryptHandle.m in Sources */,
-				1B23E5A51198BC2000620319 /* XADRAROfficialHandle.m in Sources */,
-				1B23E5A61198BC2000620319 /* XADRARParser.m in Sources */,
-				1B23E5A71198BC2000620319 /* XADRPMParser.m in Sources */,
-				1B23E5A81198BC2000620319 /* XADSARParser.m in Sources */,
-				1B23E5A91198BC2000620319 /* XADTarSparseHandle.m in Sources */,
-				1B23E5AA1198BC2000620319 /* XADSplitFileParser.m in Sources */,
-				1B23E5AB1198BC2000620319 /* XADStuffIt13Handle.m in Sources */,
-				1B23E5AC1198BC2000620319 /* XADStuffIt5Parser.m in Sources */,
-				1B23E5AD1198BC2000620319 /* XADStuffItArsenicHandle.m in Sources */,
-				1B23E5AE1198BC2000620319 /* XADStuffItHuffmanHandle.m in Sources */,
-				1B23E5AF1198BC2000620319 /* XADStuffItOldHandles.m in Sources */,
-				1B23E5B01198BC2000620319 /* XADStuffItParser.m in Sources */,
-				1B23E5B11198BC2000620319 /* XADStuffItRLEHandle.m in Sources */,
-				1B23E5B21198BC2000620319 /* XADStuffItXBlendHandle.m in Sources */,
-				1B23E5B31198BC2000620319 /* XADStuffItXBlockHandle.m in Sources */,
-				1B23E5B41198BC2000620319 /* XADStuffItXCyanideHandle.m in Sources */,
-				1B23E5B51198BC2000620319 /* XADStuffItXDarkhorseHandle.m in Sources */,
-				1B23E5B61198BC2000620319 /* XADStuffItXEnglishHandle.m in Sources */,
-				1B23E5B71198BC2000620319 /* XADStuffItXIronHandle.m in Sources */,
-				1B23E5B81198BC2000620319 /* XADStuffItXParser.m in Sources */,
-				1B23E5B91198BC2000620319 /* XADTarParser.m in Sources */,
-				1B23E5BA1198BC2000620319 /* XADWinZipAESHandle.m in Sources */,
-				1B23E5BB1198BC2000620319 /* XADXARParser.m in Sources */,
-				1B23E5BC1198BC2000620319 /* XADXZHandle.m in Sources */,
-				1B23E5BD1198BC2000620319 /* XADXZParser.m in Sources */,
-				1B23E5BE1198BC2000620319 /* XADZipCryptHandle.m in Sources */,
-				1B23E5BF1198BC2000620319 /* XADZipImplodeHandle.m in Sources */,
-				1B23E5C01198BC2000620319 /* XADZipParser.m in Sources */,
-				1B23E5C11198BC2000620319 /* XADZipSFXParsers.m in Sources */,
-				1B23E5C21198BC2000620319 /* BWT.c in Sources */,
-				1B23E5C31198BC2000620319 /* CarrylessRangeCoder.m in Sources */,
-				1B23E5C41198BC2000620319 /* LZW.c in Sources */,
-				1B23E5C51198BC2000620319 /* XADLZSSHandle.m in Sources */,
-				1B23E5C61198BC2000620319 /* XADPrefixCode.m in Sources */,
-				1B23E5C71198BC2000620319 /* CRC.m in Sources */,
-				1B23E5C81198BC2000620319 /* NumberParsing.m in Sources */,
-				1B23E5C91198BC2000620319 /* XADBlockHandle.m in Sources */,
-				1B23E5CA1198BC2000620319 /* XADChecksumHandle.m in Sources */,
-				1B23E5CB1198BC2000620319 /* XADCRCHandle.m in Sources */,
-				1B23E5CC1198BC2000620319 /* XADCRCSuffixHandle.m in Sources */,
-				1B23E5CD1198BC2000620319 /* XADDeltaHandle.m in Sources */,
-				1B23E5CE1198BC2000620319 /* XADDigestHandle.m in Sources */,
-				1B23E5CF1198BC2000620319 /* XADRC4Handle.m in Sources */,
-				1B23E5D01198BC2000620319 /* XADRegex.m in Sources */,
-				1B23E5D11198BC2000620319 /* XADSkipHandle.m in Sources */,
-				1B23E5D21198BC2000620319 /* XADXORHandle.m in Sources */,
-				1B23E5D31198BC2000620319 /* Checksums.m in Sources */,
-				1B23E5D41198BC2000620319 /* CSHexDump.m in Sources */,
-				1B23E5D51198BC2000620319 /* NSDateXAD.m in Sources */,
-				1B23E5D61198BC2000620319 /* Progress.m in Sources */,
-				1B23E5D71198BC2000620319 /* Scanning.m in Sources */,
-				1B23E5D81198BC2000620319 /* CSBlockStreamHandle.m in Sources */,
-				1B23E5D91198BC2000620319 /* CSByteStreamHandle.m in Sources */,
-				1B23E5DA1198BC2000620319 /* CSBzip2Handle.m in Sources */,
-				1B23E5DB1198BC2000620319 /* CSFileHandle.m in Sources */,
-				1B23E5DC1198BC2000620319 /* CSHandle.m in Sources */,
-				1B23E5DD1198BC2000620319 /* CSInputBuffer.m in Sources */,
-				1B23E5DE1198BC2000620319 /* CSMemoryHandle.m in Sources */,
-				1B23E5DF1198BC2000620319 /* CSMultiHandle.m in Sources */,
-				1B23E5E01198BC2000620319 /* CSStreamHandle.m in Sources */,
-				1B23E5E11198BC2000620319 /* CSSubHandle.m in Sources */,
-				1B23E5E21198BC2000620319 /* CSZlibHandle.m in Sources */,
-				1B23E5E31198BC2000620319 /* LzmaDec.c in Sources */,
-				1B23E5E41198BC2000620319 /* XADZipShrinkHandle.m in Sources */,
-				1B23E7601199CB9200620319 /* XADRAR20Handle.m in Sources */,
-				1B4CFD0E119CD1B900CDACC1 /* XADRAR30Handle.m in Sources */,
-				1B4CFDB6119F570800CDACC1 /* XADRARVirtualMachine.m in Sources */,
-				1B4CFEB811A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
-				1B4CFFFF11AF109300CDACC1 /* LZSS.c in Sources */,
-				1B4C025911B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */,
-				1B4C03AD11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
-				1B349EF811BACA4F00396C26 /* XADUnarchiverWindows.m in Sources */,
-				1B34A0BA11BB293A00396C26 /* regex.c in Sources */,
-				1B34A10211BBD2B100396C26 /* NSStringXAD.m in Sources */,
-				1B34A55811BDC1AC00396C26 /* RARAudioDecoder.c in Sources */,
-				1B34A65111C01A6200396C26 /* XADRAR15Handle.m in Sources */,
-				1B34A7B311C2D97500396C26 /* XADRAR15CryptHandle.m in Sources */,
-				1B34A7EC11C2E0E800396C26 /* XADRAR13CryptHandle.m in Sources */,
+				1B34A97D11C2FE1700396C26 /* XADArchive.m in Sources */,
+				1B34A97E11C2FE1900396C26 /* XADException.m in Sources */,
+				1B34A97F11C2FE1B00396C26 /* XADPath.m in Sources */,
+				1B34A98011C2FE1C00396C26 /* XADString.m in Sources */,
+				1B34A98111C2FE1C00396C26 /* XADUnarchiver.m in Sources */,
+				1B34A98211C2FE1F00396C26 /* XADUnarchiverMacOSX.m in Sources */,
+				1B34A98311C2FE2700396C26 /* XADArchiveParser.m in Sources */,
+				1B34A98411C2FE2A00396C26 /* XADMacArchiveParser.m in Sources */,
+				1B34A98511C2FE2E00396C26 /* XADDeflateHandle.m in Sources */,
+				1B34A98611C2FE2F00396C26 /* XADWinZipAESHandle.m in Sources */,
+				1B34A98711C2FE3000396C26 /* XADZipCryptHandle.m in Sources */,
+				1B34A98811C2FE3100396C26 /* XADZipImplodeHandle.m in Sources */,
+				1B34A98911C2FE3200396C26 /* XADZipParser.m in Sources */,
+				1B34A98A11C2FE3400396C26 /* XADZipSFXParsers.m in Sources */,
+				1B34A98B11C2FE3600396C26 /* XADZipShrinkHandle.m in Sources */,
+				1B34A98F11C2FE6800396C26 /* XADRAR13CryptHandle.m in Sources */,
+				1B34A99011C2FE6900396C26 /* XADRAR15CryptHandle.m in Sources */,
+				1B34A99111C2FE6E00396C26 /* XADRAR15Handle.m in Sources */,
+				1B34A99211C2FE7700396C26 /* XADRAR20CryptHandle.m in Sources */,
+				1B34A99311C2FE7B00396C26 /* XADRAR20Handle.m in Sources */,
+				1B34A99411C2FE7D00396C26 /* XADRAR30Filter.m in Sources */,
+				1B34A9A311C2FF2400396C26 /* RARAudioDecoder.c in Sources */,
+				1B34A9A411C2FF2800396C26 /* RARVirtualMachine.c in Sources */,
+				1B34A9A511C2FF3300396C26 /* XADRAR30Handle.m in Sources */,
+				1B34A9A611C2FF3500396C26 /* XADRARAESHandle.m in Sources */,
+				1B34A9A811C2FF3B00396C26 /* XADRARParser.m in Sources */,
+				1B34A9A911C2FF3D00396C26 /* XADRARVirtualMachine.m in Sources */,
+				1B34A9AA11C2FF4500396C26 /* Bra.c in Sources */,
+				1B34A9AB11C2FF4600396C26 /* Bra86.c in Sources */,
+				1B34A9AC11C2FF4800396C26 /* Lzma2Dec.c in Sources */,
+				1B34A9AD11C2FF4A00396C26 /* LzmaDec.c in Sources */,
+				1B34A9AE11C2FF4D00396C26 /* XAD7ZipBCJ2Handle.m in Sources */,
+				1B34A9AF11C2FF4E00396C26 /* XAD7ZipBranchHandles.m in Sources */,
+				1B34A9B011C2FF5000396C26 /* XAD7ZipParser.m in Sources */,
+				1B34A9B111C2FF5400396C26 /* XADLZMA2Handle.m in Sources */,
+				1B34A9B211C2FF5600396C26 /* XADLZMAHandle.m in Sources */,
+				1B34A9B311C2FF5A00396C26 /* PPMdContext.m in Sources */,
+				1B34A9B411C2FF5B00396C26 /* PPMdSubAllocatorBrimstone.m in Sources */,
+				1B34A9B511C2FF5D00396C26 /* PPMdSubAllocatorVariantG.m in Sources */,
+				1B34A9B611C2FF5E00396C26 /* PPMdSubAllocatorVariantH.m in Sources */,
+				1B34A9B711C2FF5F00396C26 /* PPMdSubAllocatorVariantI.m in Sources */,
+				1B34A9B811C2FF6100396C26 /* PPMdVariantG.m in Sources */,
+				1B34A9B911C2FF6200396C26 /* PPMdVariantH.m in Sources */,
+				1B34A9BA11C2FF6300396C26 /* PPMdVariantI.m in Sources */,
+				1B34A9BB11C2FF6500396C26 /* XADPPMdHandles.m in Sources */,
+				1B34A9BC11C2FF6700396C26 /* XADPPMdParser.m in Sources */,
+				1B34A9BE11C2FF6E00396C26 /* StuffItXUtilities.m in Sources */,
+				1B34A9BF11C2FF6F00396C26 /* XADBinHexParser.m in Sources */,
+				1B34A9C011C2FF7100396C26 /* XADCompactProLZHHandle.m in Sources */,
+				1B34A9C111C2FF7300396C26 /* XADCompactProParser.m in Sources */,
+				1B34A9C211C2FF7700396C26 /* XADCompactProRLEHandle.m in Sources */,
+				1B34A9C311C2FF7A00396C26 /* XADDiskDoublerADnHandle.m in Sources */,
+				1B34A9C411C2FF7C00396C26 /* XADDiskDoublerDDnHandle.m in Sources */,
+				1B34A9C511C2FF7F00396C26 /* XADDiskDoublerParser.m in Sources */,
+				1B34A9C611C2FF8100396C26 /* XADMacBinaryParser.m in Sources */,
+				1B34A9C711C2FF8200396C26 /* XADNowCompressParser.m in Sources */,
+				1B34A9C811C2FF8600396C26 /* XADPackItParser.m in Sources */,
+				1B34A9C911C2FF8900396C26 /* XADStuffIt13Handle.m in Sources */,
+				1B34A9CA11C2FF8C00396C26 /* XADStuffIt5Parser.m in Sources */,
+				1B34A9CB11C2FF8E00396C26 /* XADStuffItArsenicHandle.m in Sources */,
+				1B34A9CC11C2FF9000396C26 /* XADStuffItHuffmanHandle.m in Sources */,
+				1B34A9CD11C2FF9300396C26 /* XADStuffItOldHandles.m in Sources */,
+				1B34A9CE11C2FF9500396C26 /* XADStuffItParser.m in Sources */,
+				1B34A9CF11C2FF9700396C26 /* XADStuffItRLEHandle.m in Sources */,
+				1B34A9D011C2FF9900396C26 /* XADStuffItXBlendHandle.m in Sources */,
+				1B34A9D111C2FF9C00396C26 /* XADStuffItXBlockHandle.m in Sources */,
+				1B34A9D211C2FF9F00396C26 /* XADStuffItXCyanideHandle.m in Sources */,
+				1B34A9D311C2FFA000396C26 /* XADStuffItXDarkhorseHandle.m in Sources */,
+				1B34A9D411C2FFA300396C26 /* XADStuffItXEnglishHandle.m in Sources */,
+				1B34A9D511C2FFA500396C26 /* XADStuffItXIronHandle.m in Sources */,
+				1B34A9D611C2FFA700396C26 /* XADStuffItXParser.m in Sources */,
+				1B34A9F411C307BD00396C26 /* XADBzip2Parser.m in Sources */,
+				1B34A9F511C307BE00396C26 /* XADCompressHandle.m in Sources */,
+				1B34A9F611C307BF00396C26 /* XADCompressParser.m in Sources */,
+				1B34A9F711C307C000396C26 /* XADCpioParser.m in Sources */,
+				1B34A9F811C307C100396C26 /* XADGzipParser.m in Sources */,
+				1B34A9F911C307C200396C26 /* XADLZMAAloneParser.m in Sources */,
+				1B34A9FA11C307C600396C26 /* XADRPMParser.m in Sources */,
+				1B34A9FB11C307C700396C26 /* XADTarParser.m in Sources */,
+				1B34A9FC11C307C800396C26 /* XADTarSparseHandle.m in Sources */,
+				1B34A9FD11C307C900396C26 /* XADXARParser.m in Sources */,
+				1B34A9FE11C307CA00396C26 /* XADXZHandle.m in Sources */,
+				1B34A9FF11C307CC00396C26 /* XADXZParser.m in Sources */,
+				1B34AA0011C307CF00396C26 /* XADLZXHandle.m in Sources */,
+				1B34AA0111C307D000396C26 /* XADLZXParser.m in Sources */,
+				1B34AA0211C307D100396C26 /* XADPowerPackerParser.m in Sources */,
+				1B34AA0311C307D400396C26 /* XADALZipParser.m in Sources */,
+				1B34AA0411C307D500396C26 /* XADARJFastestHandle.m in Sources */,
+				1B34AA0511C307D600396C26 /* XADARJParser.m in Sources */,
+				1B34AA0611C307D800396C26 /* XADCABBlockHandle.m in Sources */,
+				1B34AA0711C307D800396C26 /* XADCABBlockReader.m in Sources */,
+				1B34AA0811C307D900396C26 /* XADCABParser.m in Sources */,
+				1B34AA0B11C307E100396C26 /* XADCFBFParser.m in Sources */,
+				1B34AA0C11C307E400396C26 /* XADLZHParser.m in Sources */,
+				1B34AA0D11C307E400396C26 /* XADLZHOldHandles.m in Sources */,
+				1B34AA0E11C307E500396C26 /* XADLZHDynamicHandle.m in Sources */,
+				1B34AA0F11C307E600396C26 /* XADLArcHandles.m in Sources */,
+				1B34AA1011C307EA00396C26 /* XADLZHSFXParsers.m in Sources */,
+				1B34AA1111C307EB00396C26 /* XADLZHStaticHandle.m in Sources */,
+				1B34AA1211C307EF00396C26 /* XADMSLZXHandle.m in Sources */,
+				1B34AA1311C307F000396C26 /* XADMSZipHandle.m in Sources */,
+				1B34AA1511C307F600396C26 /* XADNDSParser.m in Sources */,
+				1B34AA1611C307F700396C26 /* XADNSAParser.m in Sources */,
+				1B34AA1711C307FC00396C26 /* XADNSISBzip2Handle.m in Sources */,
+				1B34AA1811C3080100396C26 /* XADNSISParser.m in Sources */,
+				1B34AA1911C3080400396C26 /* XADQuantumHandle.m in Sources */,
+				1B34AA1A11C3080600396C26 /* XADSARParser.m in Sources */,
+				1B34AA1B11C3080700396C26 /* XADSplitFileParser.m in Sources */,
+				1B34AA1C11C3081100396C26 /* init.c in Sources */,
+				1B34AA1D11C3081700396C26 /* all.c in Sources */,
+				1B34AA1E11C3084C00396C26 /* XADLibXADIOHandle.m in Sources */,
+				1B34AA1F11C3084D00396C26 /* XADLibXADParser.m in Sources */,
+				1B34AA2011C3085200396C26 /* BWT.c in Sources */,
+				1B34AA2111C3085300396C26 /* CarrylessRangeCoder.m in Sources */,
+				1B34AA2211C3085500396C26 /* LZSS.c in Sources */,
+				1B34AA2311C3085600396C26 /* LZW.c in Sources */,
+				1B34AA2411C3085800396C26 /* XADFastLZSSHandle.m in Sources */,
+				1B34AA2511C3085800396C26 /* XADLZSSHandle.m in Sources */,
+				1B34AA2611C3085A00396C26 /* XADPrefixCode.m in Sources */,
+				1B34AA2711C3085E00396C26 /* CRC.m in Sources */,
+				1B34AA2811C3085F00396C26 /* NumberParsing.m in Sources */,
+				1B34AA2911C3086200396C26 /* XADBlockHandle.m in Sources */,
+				1B34AA2A11C3086300396C26 /* XADChecksumHandle.m in Sources */,
+				1B34AA2B11C3086400396C26 /* XADCRCHandle.m in Sources */,
+				1B34AA2C11C3086900396C26 /* XADCRCSuffixHandle.m in Sources */,
+				1B34AA2D11C3086A00396C26 /* XADDeltaHandle.m in Sources */,
+				1B34AA2E11C3086B00396C26 /* XADDigestHandle.m in Sources */,
+				1B34AA2F11C3086C00396C26 /* XADRC4Handle.m in Sources */,
+				1B34AA3011C3086E00396C26 /* XADRegex.m in Sources */,
+				1B34AA3111C3087100396C26 /* XADSkipHandle.m in Sources */,
+				1B34AA3211C3087200396C26 /* XADXORHandle.m in Sources */,
+				1B34AA3311C3087500396C26 /* Checksums.m in Sources */,
+				1B34AA3411C3087600396C26 /* CSHexDump.m in Sources */,
+				1B34AA3511C3087700396C26 /* NSDateXAD.m in Sources */,
+				1B34AA3611C3087800396C26 /* NSStringXAD.m in Sources */,
+				1B34AA3711C3087900396C26 /* Progress.m in Sources */,
+				1B34AA3811C3087A00396C26 /* Scanning.m in Sources */,
+				1B34AA3911C3087E00396C26 /* CSBlockStreamHandle.m in Sources */,
+				1B34AA3A11C3087F00396C26 /* CSByteStreamHandle.m in Sources */,
+				1B34AA3B11C3088000396C26 /* CSBzip2Handle.m in Sources */,
+				1B34AA3C11C3088000396C26 /* CSFileHandle.m in Sources */,
+				1B34AA3D11C3088100396C26 /* CSHandle.m in Sources */,
+				1B34AA3E11C3088200396C26 /* CSInputBuffer.m in Sources */,
+				1B34AA3F11C3088500396C26 /* CSMemoryHandle.m in Sources */,
+				1B34AA4011C3088500396C26 /* CSMultiHandle.m in Sources */,
+				1B34AA4111C3088700396C26 /* CSStreamHandle.m in Sources */,
+				1B34AA4211C3088700396C26 /* CSSubHandle.m in Sources */,
+				1B34AA4311C3088900396C26 /* CSZlibHandle.m in Sources */,
+				1B34AAAD11C30DFF00396C26 /* clients.c in Sources */,
+				1B34AAAE11C30E0200396C26 /* emulation.c in Sources */,
+				1B34AAB111C30E6A00396C26 /* RARBug.c in Sources */,
+				1B34AAC711C30F9A00396C26 /* BraIA64.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2863,6 +2557,16 @@
 			name = libUniversalDetector;
 			targetProxy = 1B23E1C01190F9AF00620319 /* PBXContainerItemProxy */;
 		};
+		1B34AA6511C309ED00396C26 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B34A97411C2FD0500396C26 /* libXADMaster */;
+			targetProxy = 1B34AA6411C309ED00396C26 /* PBXContainerItemProxy */;
+		};
+		1B34AA6B11C30A1400396C26 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B34A97411C2FD0500396C26 /* libXADMaster */;
+			targetProxy = 1B34AA6A11C30A1400396C26 /* PBXContainerItemProxy */;
+		};
 		1B3A6899101BA12C00AE25A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* XADMaster */;
@@ -2915,17 +2619,17 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Build/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
+					"-all_load",
+					"-ObjC",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = unar;
@@ -2945,18 +2649,18 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../Build/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
+					"-all_load",
+					"-ObjC",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = unar;
@@ -2965,91 +2669,53 @@
 			};
 			name = Release;
 		};
-		1B23E5ED1198BC2000620319 /* Debug */ = {
+		1B34A97811C2FD0700396C26 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = stabs;
-				EXECUTABLE_EXTENSION = exe;
-				FRAMEWORK_SEARCH_PATHS = /Developer/Cocotron/1.0/Windows/i386/Frameworks;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_OBJC_MODULE_STATIC_INITIALIZER = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION_i386 = "";
-				GCC_VERSION_ppc = "";
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
-				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Windows/lib\"",
-					"\"$(DEVELOPER_DIR)/Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib\"",
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
 				);
-				MACOSX_DEPLOYMENT_TARGET = "";
-				MACOSX_DEPLOYMENT_TARGET_i386 = "";
-				MACOSX_DEPLOYMENT_TARGET_ppc = "";
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
-				OTHER_CFLAGS = "-Wno-multichar";
-				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = unar.exe;
-				SDKROOT = "";
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
-				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
-				USER_HEADER_SEARCH_PATHS = "";
+				PRODUCT_NAME = XADMaster;
 			};
 			name = Debug;
 		};
-		1B23E5EE1198BC2000620319 /* Release */ = {
+		1B34A97911C2FD0700396C26 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = stabs;
-				EXECUTABLE_EXTENSION = "";
-				EXECUTABLE_SUFFIX = "";
-				FRAMEWORK_SEARCH_PATHS = /Developer/Cocotron/1.0/Windows/i386/Frameworks;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_OBJC_MODULE_STATIC_INITIALIZER = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION_i386 = "";
-				GCC_VERSION_ppc = "";
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
-				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Windows/lib\"",
-					"\"$(DEVELOPER_DIR)/Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib\"",
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
 				);
-				MACOSX_DEPLOYMENT_TARGET = "";
-				MACOSX_DEPLOYMENT_TARGET_i386 = "";
-				MACOSX_DEPLOYMENT_TARGET_ppc = "";
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
-				OTHER_CFLAGS = "-Wno-multichar";
-				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = unar.exe;
-				SDKROOT = "";
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
-				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
-				USER_HEADER_SEARCH_PATHS = "";
+				PRODUCT_NAME = XADMaster;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3270,6 +2936,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"\"$(SRCROOT)/../../Build/Debug\"",
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
@@ -3281,8 +2948,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = 4.2;
-				"GCC_VERSION[arch=x86_64]" = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -3308,6 +2974,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"\"$(SRCROOT)/../../Build/Debug\"",
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
@@ -3401,11 +3068,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1B23E5EC1198BC2000620319 /* Build configuration list for PBXNativeTarget "unar.exe" */ = {
+		1B34A97A11C2FD2500396C26 /* Build configuration list for PBXNativeTarget "libXADMaster" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1B23E5ED1198BC2000620319 /* Debug */,
-				1B23E5EE1198BC2000620319 /* Release */,
+				1B34A97811C2FD0700396C26 /* Debug */,
+				1B34A97911C2FD0700396C26 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

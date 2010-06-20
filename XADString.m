@@ -116,7 +116,7 @@
 		if([data length]<length) return NO;
 
 		const uint8_t *bytes=[data bytes];
-		for(int i=0;i<length;i++) if(bytes[i]!=[string characterAtIndex:i]) return NO;
+		for(int i=0;i<length;i++) if(bytes[i]!=[asciiprefix characterAtIndex:i]) return NO;
 
 		return YES;
 	}

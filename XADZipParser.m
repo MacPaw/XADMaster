@@ -864,6 +864,7 @@ isLastEntry:(BOOL)islastentry
 	int compressionmethod=[[dict objectForKey:@"ZipCompressionMethod"] intValue];
 	int flags=[[dict objectForKey:@"ZipFlags"] intValue];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
+	BOOL wrapchecksum=NO;
 
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
 	if(enc&&[enc boolValue])
@@ -889,8 +890,7 @@ isLastEntry:(BOOL)islastentry
 				case 3: keybytes=32; break;
 			}
 
-			// TODO: handle checksums for WinZip AES files!
-			if(version==2) checksum=NO;
+			if(version==2) wrapchecksum=YES;
 
 			fh=[[[XADWinZipAESHandle alloc] initWithHandle:fh length:compsize
 			password:[self encodedPassword] keyLength:keybytes] autorelease];
@@ -913,9 +913,16 @@ isLastEntry:(BOOL)islastentry
 
 	if(checksum)
 	{
-		NSNumber *crc=[dict objectForKey:@"ZipCRC32"];
-		if(crc) return [XADCRCHandle IEEECRC32HandleWithHandle:handle
-		length:[handle fileSize] correctCRC:[crc unsignedIntValue] conditioned:YES];
+		if(wrapchecksum)
+		{
+			return [[[CSChecksumWrapperHandle alloc] initWithHandle:handle checksumHandle:fh] autorelease];
+		}
+		else
+		{
+			NSNumber *crc=[dict objectForKey:@"ZipCRC32"];
+			return [XADCRCHandle IEEECRC32HandleWithHandle:handle
+			length:[handle fileSize] correctCRC:[crc unsignedIntValue] conditioned:YES];
+		}
 	}
 
 	return handle;

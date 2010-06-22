@@ -14,7 +14,9 @@
 #import "NSDateXAD.h"
 #import "Scanning.h"
 
+#ifdef SUPPORT_OFFICIAL_UNRAR
 #import "../BadLicense/XADRAROfficialHandle.h"
+#endif
 
 #define RARFLAG_SKIP_IF_UNKNOWN 0x4000
 #define RARFLAG_LONG_BLOCK    0x8000

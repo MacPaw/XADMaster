@@ -2,6 +2,7 @@
 #import "NSDateXAD.h"
 
 #import <fcntl.h>
+#import <unistd.h>
 #import <sys/stat.h>
 #import <sys/time.h>
 

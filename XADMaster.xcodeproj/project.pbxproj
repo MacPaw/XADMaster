@@ -202,7 +202,6 @@
 		1B34AA3311C3087500396C26 /* Checksums.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89C9D0EDCAA51006B47FE /* Checksums.m */; };
 		1B34AA3411C3087600396C26 /* CSHexDump.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A650110154DCE00AE25A8 /* CSHexDump.m */; };
 		1B34AA3511C3087700396C26 /* NSDateXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */; };
-		1B34AA3611C3087800396C26 /* NSStringXAD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringXAD.m */; };
 		1B34AA3711C3087900396C26 /* Progress.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A740F8E8ADE001207C9 /* Progress.m */; };
 		1B34AA3811C3087A00396C26 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
 		1B34AA3911C3087E00396C26 /* CSBlockStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFB0EC3859F006D2F06 /* CSBlockStreamHandle.m */; };
@@ -233,6 +232,10 @@
 		1B34AAC711C30F9A00396C26 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61550EF349EE00D86C43 /* BraIA64.c */; };
 		1B34AB2D11C3196800396C26 /* StuffItXEnglishDictionary.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */; };
 		1B34AB2E11C3196800396C26 /* StuffItXEnglishDictionary.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */; };
+		1B34AC0F11CED29A00396C26 /* CSCommandLineParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */; };
+		1B34AC1111CED29A00396C26 /* CSCommandLineParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */; };
+		1B34AC1311CED9E900396C26 /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
+		1B34AC1411CED9F100396C26 /* CSCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */; };
 		1B3A64B61015030700AE25A8 /* XADLZHSFXParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */; };
 		1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
 		1B3A64C810150DB600AE25A8 /* XADLZHOldHandles.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */; };
@@ -703,8 +706,8 @@
 		1B34A06611BB21A900396C26 /* libwinmm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libwinmm.a; path = "Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib/libwinmm.a"; sourceTree = DEVELOPER_DIR; };
 		1B34A08E11BB254800396C26 /* libstdc++.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstdc++.a"; path = "Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib/libstdc++.a"; sourceTree = DEVELOPER_DIR; };
 		1B34A0B911BB293A00396C26 /* regex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regex.c; path = Windows/regex.c; sourceTree = "<group>"; };
-		1B34A10011BBD2B100396C26 /* NSStringXAD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringXAD.h; sourceTree = "<group>"; };
-		1B34A10111BBD2B100396C26 /* NSStringXAD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringXAD.m; sourceTree = "<group>"; };
+		1B34A10011BBD2B100396C26 /* NSStringPrinting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringPrinting.h; sourceTree = "<group>"; };
+		1B34A10111BBD2B100396C26 /* NSStringPrinting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringPrinting.m; sourceTree = "<group>"; };
 		1B34A55611BDC1AC00396C26 /* RARAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARAudioDecoder.h; sourceTree = "<group>"; };
 		1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RARAudioDecoder.c; sourceTree = "<group>"; };
 		1B34A7B011C2D97500396C26 /* XADRAR15CryptHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR15CryptHandle.h; sourceTree = "<group>"; };
@@ -715,6 +718,8 @@
 		1B34AA8411C30BC100396C26 /* UniversalDetector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniversalDetector.framework; path = ../../Build/Debug/UniversalDetector.framework; sourceTree = SOURCE_ROOT; };
 		1B34AABB11C30F5400396C26 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "/usr/lib/libstdc++.6.dylib"; sourceTree = "<absolute>"; };
 		1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StuffItXEnglishDictionary.c; sourceTree = "<group>"; };
+		1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSCommandLineParser.h; sourceTree = "<group>"; };
+		1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSCommandLineParser.m; sourceTree = "<group>"; };
 		1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHSFXParsers.h; sourceTree = "<group>"; };
 		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
 		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
@@ -1303,6 +1308,10 @@
 			isa = PBXGroup;
 			children = (
 				1B23DDC91185EBD600620319 /* unar.m */,
+				1B34A10011BBD2B100396C26 /* NSStringPrinting.h */,
+				1B34A10111BBD2B100396C26 /* NSStringPrinting.m */,
+				1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */,
+				1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */,
 			);
 			name = unar;
 			sourceTree = "<group>";
@@ -1684,8 +1693,6 @@
 			children = (
 				1B3FAD7E0EC6826E006D2F06 /* NSDateXAD.h */,
 				1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */,
-				1B34A10011BBD2B100396C26 /* NSStringXAD.h */,
-				1B34A10111BBD2B100396C26 /* NSStringXAD.m */,
 				1BC89C9E0EDCAA51006B47FE /* Checksums.h */,
 				1BC89C9D0EDCAA51006B47FE /* Checksums.m */,
 				1B216A730F8E8ADE001207C9 /* Progress.h */,
@@ -1838,6 +1845,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B34AC0F11CED29A00396C26 /* CSCommandLineParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1991,6 +1999,7 @@
 				1B34A55A11BDC1AD00396C26 /* RARAudioDecoder.h in Headers */,
 				1B34A7B411C2D97500396C26 /* XADRAR15CryptHandle.h in Headers */,
 				1B34A7ED11C2E0E800396C26 /* XADRAR13CryptHandle.h in Headers */,
+				1B34AC1111CED29A00396C26 /* CSCommandLineParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2192,6 +2201,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B34AA9F11C30C0400396C26 /* unar.m in Sources */,
+				1B34AC1311CED9E900396C26 /* NSStringPrinting.m in Sources */,
+				1B34AC1411CED9F100396C26 /* CSCommandLineParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2333,7 +2344,6 @@
 				1B34AA3311C3087500396C26 /* Checksums.m in Sources */,
 				1B34AA3411C3087600396C26 /* CSHexDump.m in Sources */,
 				1B34AA3511C3087700396C26 /* NSDateXAD.m in Sources */,
-				1B34AA3611C3087800396C26 /* NSStringXAD.m in Sources */,
 				1B34AA3711C3087900396C26 /* Progress.m in Sources */,
 				1B34AA3811C3087A00396C26 /* Scanning.m in Sources */,
 				1B34AA3911C3087E00396C26 /* CSBlockStreamHandle.m in Sources */,

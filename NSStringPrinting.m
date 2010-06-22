@@ -1,10 +1,10 @@
-#import "NSStringXAD.h"
+#import "NSStringPrinting.h"
 
 #ifdef __MINGW32__
 #include <windows.h>
 #endif
 
-@implementation NSString (XAD)
+@implementation NSString (Printing)
 
 -(void)print
 {

@@ -1,9 +1,6 @@
 #import "XADUnarchiver.h"
-#import "NSStringXAD.h"
-
-#ifdef __MINGW32__
-#import <windows.h>
-#endif
+#import "NSStringPrinting.h"
+#import "CSCommandLineParser.h"
 
 #define VERSION_STRING @"v0.2"
 
@@ -136,53 +133,44 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 
 
 
-NSArray *CommandLineArguments(int argc,const char **argv)
-{
-	NSMutableArray *arguments=[NSMutableArray array];
-
-	#ifdef __MINGW32__
-
-	int wargc;
-	wchar_t **wargv=CommandLineToArgvW(GetCommandLineW(),&wargc);
-
-	for(int i=0;i<wargc;i++) [arguments addObject:
-	[NSString stringWithCharacters:wargv[i] length:wcslen(wargv[i])]];
-
-	#else
-
-	for(int i=0;i<argc;i++) [arguments addObject:[NSString stringWithUTF8String:argv[i]]];
-
-	#endif
-
-	return arguments;
-}
-
-void PrintUsage(NSString *name)
-{
-	[[NSString stringWithFormat:
-	@"unar " VERSION_STRING @" (" @__DATE__ @")\n"
-	@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
-	name] printToFile:stderr];
-}
 
 int main(int argc,const char **argv)
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
-	NSArray *arguments=CommandLineArguments(argc,argv);
-	int numfiles=[arguments count]-1;
+	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
 
-	if(numfiles==0)
-	{
-		PrintUsage([arguments objectAtIndex:0]);
-		return 0;
-	}
+	[cmdline setUsageHeader:@"unar " VERSION_STRING @" (" @__DATE__ @")\n"];
+
+	[cmdline addStringOption:@"password" description:
+	@"The password to use for decrypting protected archives."];
+	[cmdline addAlias:@"p" forOption:@"password"];
+
+	[cmdline addStringOption:@"encoding" description:
+	@"The encoding to use for filenames in the archive, when it is not known. "
+	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."];
+	[cmdline addAlias:@"e" forOption:@"encoding"];
+
+	[cmdline addSwitchOption:@"no-recursion" description:
+	@"Do not attempt to extract archives contained in other archives. For instance, "
+	@"when unpacking a .tar.gz file, only unpack the .tar file and not its contents."];
+	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
+
+	[cmdline addSwitchOption:@"no-directory" description:
+	@"Do not automatically create a directory for the contents of the unpacked archive."];
+	[cmdline addAlias:@"nd" forOption:@"no-directory"];
+
+	//@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
+	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
+
+	NSArray *files=[cmdline stringArrayValueForOption:@"files"];
+	int numfiles=[files count];
 
 	NSString *destination=nil;
 
 	if(numfiles>1)
 	{
-		NSString *path=[arguments lastObject];
+		NSString *path=[files lastObject];
 		BOOL isdir;
 		if(![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isdir]||isdir)
 		{
@@ -195,7 +183,7 @@ int main(int argc,const char **argv)
 	{
 		NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 
-		NSString *filename=[arguments objectAtIndex:i+1];
+		NSString *filename=[files objectAtIndex:i];
 
 		[@"Extracting " print];
 		[filename print];
@@ -208,7 +196,7 @@ int main(int argc,const char **argv)
 		if(unarchiver)
 		{
 			[@"\n" print];
-//[unarchiver setMacResourceForkStyle:XADVisibleAppleDoubleForkStyle];
+			//[unarchiver setMacResourceForkStyle:XADVisibleAppleDoubleForkStyle];
 			if(destination) [unarchiver setDestination:destination];
 
 			[unarchiver setDelegate:[[[Unarchiver alloc] initWithIndentLevel:2] autorelease]];

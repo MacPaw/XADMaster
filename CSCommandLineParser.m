@@ -13,7 +13,6 @@ static NSString *DefaultValueKey=@"DefaultValueKey";
 static NSString *OptionTypeKey=@"OptionType";
 static NSString *DescriptionKey=@"DescriptionKey";
 static NSString *AliasTargetKey=@"AliasTargetKey";
-static NSString *IsRequiredKey=@"IsRequiredKey";
 static NSString *RequiredOptionsKey=@"RequiredOptionsKey";
 
 static NSString *NumberValueKey=@"NumberValue";
@@ -38,6 +37,9 @@ static NSString *AliasOptionType=@"AliasOptionType";
 	{
 		options=[NSMutableDictionary new];
 		optionordering=[NSMutableArray new];
+		alwaysrequiredoptions=[NSMutableArray new];
+
+		remainingargumentarray=nil;
 
 		programname=nil;
 		usageheader=nil;
@@ -48,9 +50,16 @@ static NSString *AliasOptionType=@"AliasOptionType";
 
 -(void)dealloc
 {
+	[options release];
+	[optionordering release];
+	[alwaysrequiredoptions release];
+
+	[remainingargumentarray release];
+
 	[programname release];
 	[usageheader release];
 	[usagefooter release];
+
 	[super dealloc];
 }
 
@@ -234,10 +243,9 @@ static NSString *AliasOptionType=@"AliasOptionType";
 
 -(void)addRequiredOption:(NSString *)requiredoption
 {
-	NSMutableDictionary *dict=[options objectForKey:requiredoption];
-	if(!dict) [self _raiseUnknownOption:requiredoption];
+	if(![options objectForKey:requiredoption]) [self _raiseUnknownOption:requiredoption];
 
-	[dict setObject:[NSNumber numberWithBool:YES] forKey:IsRequiredKey];
+	[alwaysrequiredoptions addObject:requiredoption];
 }
 
 -(void)addRequiredOptionsArray:(NSArray *)requiredoptions
@@ -298,9 +306,6 @@ static NSString *AliasOptionType=@"AliasOptionType";
 	[self _parseRemainingArguments:remainingarguments errors:errors];
 	[self _enforceRequirementsWithErrors:errors];
 
-[[options description] print];
-[@"\n" print];
-
 	if([errors count])
 	{
 		[self _reportErrors:errors];
@@ -350,7 +355,7 @@ errors:(NSMutableArray *)errors
 			NSMutableDictionary *dict=[options objectForKey:option];
 			if(!dict)
 			{
-				[errors addObject:[NSString stringWithFormat:@"Unknown option \"%@\".",argument]];
+				[errors addObject:[NSString stringWithFormat:@"Unknown option %@.",argument]];
 				continue;
 			}
 
@@ -378,7 +383,7 @@ errors:(NSMutableArray *)errors
 				value=[enumerator nextObject];
 				if(!value)
 				{
-					[errors addObject:[NSString stringWithFormat:@"The option \"%@\" requires a value.",option]];
+					[errors addObject:[NSString stringWithFormat:@"The option -%@ requires a value.",option]];
 					continue;
 				}
 			}
@@ -434,7 +439,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 		if(!success)
 		{
-			[errors addObject:[NSString stringWithFormat:@"The option \"%@\" requires an "
+			[errors addObject:[NSString stringWithFormat:@"The option -%@ requires an "
 			@"integer number value.",option]];
 			return;
 		}
@@ -449,7 +454,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 		if(!success)
 		{
-			[errors addObject:[NSString stringWithFormat:@"The option \"%@\" requires a "
+			[errors addObject:[NSString stringWithFormat:@"The option -%@ requires a "
 			@"floating-point number value.",option]];
 			return;
 		}
@@ -496,16 +501,78 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 -(void)_parseRemainingArguments:(NSArray *)remainingarguments errors:(NSMutableArray *)errors
 {
+	[remainingargumentarray autorelease];
+	remainingargumentarray=[remainingarguments retain];
 }
 
 -(void)_enforceRequirementsWithErrors:(NSMutableArray *)errors
 {
+	if([alwaysrequiredoptions count]) [self _requireOptionsInArray:alwaysrequiredoptions when:@"" errors:errors];
+
+	NSEnumerator *enumerator=[options objectEnumerator];
+	NSDictionary *dict;
+	while(dict=[enumerator nextObject])
+	{
+		NSArray *names=[dict objectForKey:NamesKey];
+		NSString *name=[names objectAtIndex:0];
+		NSArray *requiredoptions=[dict objectForKey:RequiredOptionsKey];
+
+		if(requiredoptions)
+		if([self _isOptionDefined:name])
+		{
+			[self _requireOptionsInArray:requiredoptions
+			when:[NSString stringWithFormat:@" when the option %@ is used",[self _describeOption:name]]
+			errors:errors];
+		}
+	}
+}
+
+-(void)_requireOptionsInArray:(NSArray *)requiredoptions when:(NSString *)when errors:(NSMutableArray *)errors
+{
+	NSMutableSet *set=[NSMutableSet new];
+
+	NSEnumerator *enumerator=[requiredoptions objectEnumerator];
+	NSString *requiredoption;
+	while(requiredoption=[enumerator nextObject])
+	{
+		if(![self _isOptionDefined:requiredoption]) [set addObject:requiredoption];
+	}
+
+	if([set count]==0) return;
+
+	NSMutableArray *array=[NSMutableArray array];
+
+	enumerator=[optionordering objectEnumerator];
+	NSString *option;
+	while(option=[enumerator nextObject])
+	{
+		if([set containsObject:option]) [array addObject:[self _describeOption:option]];
+	}
+
+	if([array count]==1)
+	{
+		[errors addObject:[NSString stringWithFormat:@"The option %@ is required%@.",[array objectAtIndex:0],when]];
+	}
+	else
+	{
+		[errors addObject:[NSString stringWithFormat:@"The options %@ and %@ are required%@.",[array objectAtIndex:0],
+		[[array subarrayWithRange:NSMakeRange(0,[array count]-1)] componentsJoinedByString:@", "],when]];
+	}
 }
 
 -(BOOL)_isOptionDefined:(NSString *)option
 {
 	NSDictionary *dict=[options objectForKey:option];
 	return [dict objectForKey:StringValueKey]||[dict objectForKey:NumberValueKey]||[dict objectForKey:ArrayValueKey];
+}
+
+-(NSString *)_describeOption:(NSString *)name
+{
+	NSDictionary *dict=[options objectForKey:name];
+	NSArray *names=[dict objectForKey:NamesKey];
+	if([names count]==1) return [names objectAtIndex:0];
+	else return [NSString stringWithFormat:@"-%@ (-%@)",[names objectAtIndex:0],
+	[[names subarrayWithRange:NSMakeRange(1,[names count]-1)] componentsJoinedByString:@", -"]];
 }
 
 -(void)_reportErrors:(NSArray *)errors
@@ -521,22 +588,50 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 
 
-
 -(void)printUsage
 {
 	[usageheader print];
 
-	NSEnumerator *enumerator=[optionordering objectEnumerator];
-	NSString *option;
-	while(option=[enumerator nextObject])
+	int terminalwidth=[NSString terminalWidth];
+	int count=[optionordering count];
+	int maxlength=0;
+
+	NSMutableArray *optiondescriptions=[NSMutableArray array];
+
+	for(int i=0;i<count;i++)
 	{
+		NSString *option=[optionordering objectAtIndex:i];
+
+		NSString *description=[self _describeOption:option];
+		[optiondescriptions addObject:description];
+
+		int length=[description length];
+		if(length>maxlength) maxlength=length;
+	}
+
+	int columnwidth1=maxlength+2;
+	int columnwidth2=terminalwidth-columnwidth1;
+
+	for(int i=0;i<count;i++)
+	{
+		NSString *option=[optionordering objectAtIndex:i];
+		NSString *optiondescription=[optiondescriptions objectAtIndex:i];
 		NSDictionary *dict=[options objectForKey:option];
 
-		[@"-" print];
-		[option print];
-		[@"   " print];
-		[[dict objectForKey:DescriptionKey] print];
-		[@"\n" print];
+		[optiondescription print];
+
+		for(int i=[optiondescription length];i<columnwidth1;i++)
+		[@" " print];
+
+		NSArray *lines=[[dict objectForKey:DescriptionKey] linesWrappedToWidth:columnwidth2];
+
+		int numlines=[lines count];
+		for(int i=0;i<numlines;i++)
+		{
+			if(i!=0) for(int j=0;j<columnwidth1;j++) [@" " print];
+			[[lines objectAtIndex:i] print];
+			[@"\n" print];
+		}
 	}
 
 	[usagefooter print];
@@ -572,6 +667,14 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 -(BOOL)boolValueForOption:(NSString *)option
 {
 	return [[[options objectForKey:option] objectForKey:NumberValueKey] boolValue];
+}
+
+
+
+
+-(NSArray *)remainingArguments
+{
+	return remainingargumentarray;
 }
 
 

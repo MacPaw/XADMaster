@@ -4,6 +4,9 @@
 {
 	NSMutableDictionary *options;
 	NSMutableArray *optionordering;
+	NSMutableArray *alwaysrequiredoptions;
+
+	NSArray *remainingargumentarray;
 
 	NSString *programname,*usageheader,*usagefooter;
 }
@@ -46,7 +49,9 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors;
 -(void)_setDefaultValues;
 -(void)_parseRemainingArguments:(NSArray *)remainingarguments errors:(NSMutableArray *)errors;
 -(void)_enforceRequirementsWithErrors:(NSMutableArray *)errors;
+-(void)_requireOptionsInArray:(NSArray *)requiredoptions when:(NSString *)when errors:(NSMutableArray *)errors;
 -(BOOL)_isOptionDefined:(NSString *)option;
+-(NSString *)_describeOption:(NSString *)name;
 -(void)_reportErrors:(NSArray *)errors;
 
 -(void)printUsage;
@@ -57,6 +62,8 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors;
 -(float)floatValueForOption:(NSString *)option;
 -(double)doubleValueForOption:(NSString *)option;
 -(BOOL)boolValueForOption:(NSString *)option;
+
+-(NSArray *)remainingArguments; // TODO: figure out something better than this.
 
 -(void)_assertOptionNameIsUnique:(NSString *)option;
 -(void)_raiseUnknownOption:(NSString *)option;

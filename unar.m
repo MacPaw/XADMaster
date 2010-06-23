@@ -140,7 +140,10 @@ int main(int argc,const char **argv)
 
 	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
 
-	[cmdline setUsageHeader:@"unar " VERSION_STRING @" (" @__DATE__ @")\n"];
+	[cmdline setUsageHeader:
+	@"unar " VERSION_STRING @" (" @__DATE__ @")\n"
+	@"\n"
+	@"Available options:\n"];
 
 	[cmdline addStringOption:@"password" description:
 	@"The password to use for decrypting protected archives."];
@@ -159,6 +162,8 @@ int main(int argc,const char **argv)
 	[cmdline addSwitchOption:@"no-directory" description:
 	@"Do not automatically create a directory for the contents of the unpacked archive."];
 	[cmdline addAlias:@"nd" forOption:@"no-directory"];
+
+	[cmdline addHelpOption];
 
 	//@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);

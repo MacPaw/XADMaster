@@ -77,7 +77,29 @@
 {
 	if(data) return data;
 
-	return [string dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+	int length=[string length];
+	NSMutableData *data=[NSMutableData dataWithCapacity:length];
+
+	for(int i=0;i<length;i++)
+	{
+		uint8_t bytes[8];
+		unichar c=[string characterAtIndex:i];
+		if(c<0x80)
+		{
+			bytes[0]=c;
+			[data appendBytes:bytes length:1];
+		}
+		else
+		{
+			sprintf(bytes,"%%u%04x",c&0xffff);
+			[data appendBytes:bytes length:6];
+		}
+	}
+
+	return [NSData dataWithData:data];
+
+	// Do not use this because Cocotron doesn't support it.
+	//return [string dataUsingEncoding:NSNonLossyASCIIStringEncoding];
 }
 
 
@@ -124,8 +146,19 @@
 
 -(XADString *)XADStringByStrippingASCIIPrefixOfLength:(int)length
 {
-	if(string) return [[[XADString alloc] initWithString:[string substringFromIndex:length]] autorelease];
-	else return [[[XADString alloc] initWithData:[data subdataWithRange:NSMakeRange(length,[data length]-length)] source:source] autorelease];
+	if(string)
+	{
+		return [[[XADString alloc]
+		initWithString:[string substringFromIndex:length]]
+		autorelease];
+	}
+	else
+	{
+		return [[[XADString alloc]
+		initWithData:[data subdataWithRange:
+		NSMakeRange(length,[data length]-length)]
+		source:source] autorelease];
+	}
 }
 
 
@@ -140,11 +173,6 @@
 		if(string&&xadstr->string) return [string isEqual:xadstr->string];
 		else if(data&&xadstr->data&&source==xadstr->source) return [data isEqual:xadstr->data];
 		else return NO;
-
-/*		if(string) return [string isEqual:[xadstr string]];
-		else if(xadstr->string) return [xadstr->string isEqual:[self string]];
-		else if(source==xadstr->source||[source encoding]==[xadstr->source encoding]) return [data isEqual:xadstr->data];
-		else return [[self string] isEqual:[xadstr string]];*/
 	}
 	else return NO;
 }

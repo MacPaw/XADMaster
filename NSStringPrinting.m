@@ -64,9 +64,15 @@
 
 +(int)terminalWidth
 {
-    struct ttysize ts;
-    ioctl(0,TIOCGSIZE,&ts);
+	#ifdef TIOCGSIZE
+	struct ttysize ts;
+	ioctl(0,TIOCGSIZE,&ts);
 	return ts.ts_cols;
+	#else
+	struct winsize ws;
+	ioctl(0,TIOCGWINSZ,&ws);
+	return ws.ws_col;
+	#endif
 }
 
 -(void)printToFile:(FILE *)fh

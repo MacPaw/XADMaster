@@ -78,7 +78,7 @@
 	if(data) return data;
 
 	int length=[string length];
-	NSMutableData *data=[NSMutableData dataWithCapacity:length];
+	NSMutableData *encdata=[NSMutableData dataWithCapacity:length];
 
 	for(int i=0;i<length;i++)
 	{
@@ -87,16 +87,16 @@
 		if(c<0x80)
 		{
 			bytes[0]=c;
-			[data appendBytes:bytes length:1];
+			[encdata appendBytes:bytes length:1];
 		}
 		else
 		{
 			sprintf(bytes,"%%u%04x",c&0xffff);
-			[data appendBytes:bytes length:6];
+			[encdata appendBytes:bytes length:6];
 		}
 	}
 
-	return [NSData dataWithData:data];
+	return [NSData dataWithData:encdata];
 
 	// Do not use this because Cocotron doesn't support it.
 	//return [string dataUsingEncoding:NSNonLossyASCIIStringEncoding];

@@ -449,8 +449,13 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 		NSScanner *scanner=[NSScanner scannerWithString:value];
 		double floatval;
 		BOOL success;
+
+		#ifndef __COCOTRON__
 		if([value hasPrefix:@"0x"]||[value hasPrefix:@"0X"]) success=[scanner scanHexDouble:&floatval];
 		else success=[scanner scanDouble:&floatval];
+		#else
+		success=[scanner scanDouble:&floatval];
+		#endif
 
 		if(!success)
 		{

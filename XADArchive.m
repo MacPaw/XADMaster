@@ -1367,10 +1367,8 @@ static double XADGetTime()
 -(NSStringEncoding)archive:(XADArchive *)archive encodingForData:(NSData *)data guess:(NSStringEncoding)guess confidence:(float)confidence
 {
 	// Default implementation calls old method
-NSLog(@">>> %@ %d",data,[data length]);
 	NSMutableData *terminateddata=[[NSMutableData alloc] initWithData:data];
 	[terminateddata increaseLengthBy:1]; // append a 0 byte
-NSLog(@">>> %@ %s",terminateddata,[terminateddata bytes]);
 	NSStringEncoding enc=[self archive:archive encodingForName:[terminateddata bytes] guess:guess confidence:confidence];
 	[terminateddata release];
 	return enc;

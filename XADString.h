@@ -34,11 +34,11 @@
 -(void)dealloc;
 
 -(NSString *)string;
--(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
+-(NSString *)stringWithEncodingname:(NSString *)encoding;
 -(NSData *)data;
 
 -(BOOL)encodingIsKnown;
--(NSStringEncoding)encoding;
+-(NSString *)encodingName;
 -(float)confidence;
 
 -(XADStringSource *)source;
@@ -52,15 +52,33 @@
 -(NSString *)description;
 -(id)copyWithZone:(NSZone *)zone;
 
+#ifdef __APPLE__
+-(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
+-(NSStringEncoding)encoding;
+#endif
+
 @end
+
+@interface XADString (PlatformEncoding)
+
++(NSString *)stringForData:(NSData *)data encodingName:(NSString *)encoding;
++(NSData *)dataForString:(NSString *)string encodingName:(NSString *)encoding;
++(NSArray *)availableEncodingNames;
+
+@end
+
 
 
 
 @interface XADStringSource:NSObject
 {
 	UniversalDetector *detector;
-	NSStringEncoding fixedencoding;
+	NSString *fixedencodingname;
 	BOOL mac;
+
+	#ifdef __APPLE__
+	NSStringEncoding fixedencoding;
+	#endif
 }
 
 -(id)init;
@@ -68,12 +86,17 @@
 
 -(BOOL)analyzeDataAndCheckForASCII:(NSData *)data;
 
--(NSStringEncoding)encoding;
+-(NSString *)encodingName;
 -(float)confidence;
 -(UniversalDetector *)detector;
 
--(void)setFixedEncoding:(NSStringEncoding)encoding;
+-(void)setFixedEncodingName:(NSString *)encodingname;
 -(BOOL)hasFixedEncoding;
 -(void)setPrefersMacEncodings:(BOOL)prefermac;
+
+#ifdef __APPLE__
+-(NSStringEncoding)encoding;
+-(void)setFixedEncoding:(NSStringEncoding)encoding;
+#endif
 
 @end

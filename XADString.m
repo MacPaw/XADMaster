@@ -49,14 +49,14 @@
 
 -(NSString *)string
 {
-	return [self stringWithEncoding:[source encoding]];
+	return [self stringWithEncodingName:[source encodingName]];
 }
 
--(NSString *)stringWithEncoding:(NSStringEncoding)encoding
+-(NSString *)stringWithEncodingName:(NSString *)encoding
 {
 	if(string) return string;
 
-	NSString *decstr=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+	NSString *decstr=[XADString stringForData:data encodingName:encoding];
 	if(decstr) return decstr;
 
 	// Fall back on escaped ASCII if the encoding was unusable
@@ -111,10 +111,10 @@
 	return NO;
 }
 
--(NSStringEncoding)encoding
+-(NSString *)encodingName
 {
-	if(!source) return NSUTF8StringEncoding; // TODO: what should this really return?
-	return [source encoding];
+	if(!source) return "utf-8"; // TODO: what should this really return?
+	return [source encodingName];
 }
 
 -(float)confidence
@@ -197,6 +197,36 @@
 	else return [[XADString allocWithZone:zone] initWithData:data source:source];
 }
 
+
+#ifdef __APPLE__
+-(NSString *)stringWithEncoding:(NSStringEncoding)encoding
+{
+	if(string) return string;
+
+	NSString *decstr=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+	if(decstr) return decstr;
+
+	// Fall back on escaped ASCII if the encoding was unusable
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+	NSMutableString *str=[NSMutableString stringWithCapacity:length];
+
+	for(int i=0;i<length;i++)
+	{
+		if(bytes[i]<0x80) [str appendFormat:@"%c",bytes[i]];
+		else [str appendFormat:@"%%%02x",bytes[i]];
+	}
+
+	return [NSString stringWithString:str];
+}
+
+-(NSStringEncoding)encoding
+{
+	if(!source) return NSUTF8StringEncoding; // TODO: what should this really return?
+	return [source encoding];
+}
+#endif
+
 @end
 
 
@@ -208,7 +238,8 @@
 	if(self=[super init])
 	{
 		detector=[UniversalDetector new]; // can return nil if UniversalDetector is not found
-		fixedencoding=0;
+		fixedencodingname=nil;
+//		fixedencoding=0;
 		mac=NO;
 	}
 	return self;
@@ -217,6 +248,7 @@
 -(void)dealloc
 {
 	[detector release];
+	[fixedencodingname release];
 	[super dealloc];
 }
 
@@ -232,6 +264,64 @@
 	return YES;
 }
 
+-(NSString *)encodingName
+{
+	if(fixedencodingname) return fixedencodingname;
+//	if(!detector) return NSWindowsCP1252StringEncoding;
+
+	NSString *encoding=[detector encodingName];
+//	if(!encoding) encoding=NSWindowsCP1252StringEncoding;
+
+	// Kludge to use Mac encodings instead of the similar Windows encodings for Mac archives
+	// TODO: improve
+/*	#ifdef __APPLE__
+	if(mac)
+	{
+		if(encoding==NSWindowsCP1252StringEncoding) return NSMacOSRomanStringEncoding;
+
+		NSStringEncoding macjapanese=CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
+		if(encoding==NSShiftJISStringEncoding) return macjapanese;
+		//else if(encoding!=NSUTF8StringEncoding&&encoding!=macjapanese) encoding=NSMacOSRomanStringEncoding;
+	}
+	#endif*/
+
+	return encoding;
+}
+
+-(float)confidence
+{
+	if(fixedencodingname) return 1;
+//	if(fixedencoding) return 1;
+	if(!detector) return 0;
+	NSStringEncoding encoding=[detector encodingName];
+	if(!encoding) return 0;
+	return [detector confidence];
+}
+
+-(UniversalDetector *)detector
+{
+	return detector;
+}
+
+-(void)setFixedEncodingname:(NSString *)encoding
+{
+	[fixedencodingname autorelease];
+	fixedencodingname=[encoding retain];
+}
+
+-(BOOL)hasFixedEncoding
+{
+	return fixedencodingname!=nil;
+}
+
+-(void)setPrefersMacEncodings:(BOOL)prefermac
+{
+	mac=prefermac;
+}
+
+
+
+#ifdef __APPLE__
 -(NSStringEncoding)encoding
 {
 	if(fixedencoding) return fixedencoding;
@@ -256,33 +346,10 @@
 	return encoding;
 }
 
--(float)confidence
-{
-	if(fixedencoding) return 1;
-	if(!detector) return 0;
-	NSStringEncoding encoding=[detector encoding];
-	if(!encoding) return 0;
-	return [detector confidence];
-}
-
--(UniversalDetector *)detector
-{
-	return detector;
-}
-
 -(void)setFixedEncoding:(NSStringEncoding)encoding
 {
 	fixedencoding=encoding;
 }
-
--(BOOL)hasFixedEncoding
-{
-	return fixedencoding!=0;
-}
-
--(void)setPrefersMacEncodings:(BOOL)prefermac
-{
-	mac=prefermac;
-}
+#endif
 
 @end

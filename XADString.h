@@ -67,7 +67,7 @@ extern NSString *XADUTF8StringEncodingName;
 
 @end
 
-@interface XADString (PlatformEncoding)
+@interface XADString (PlatformSpecific)
 
 +(NSString *)stringForData:(NSData *)data encodingName:(NSString *)encoding;
 +(NSData *)dataForString:(NSString *)string encodingName:(NSString *)encoding;

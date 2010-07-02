@@ -11,6 +11,8 @@ foreach my $i (0..$#ARGV)
 	$output=$ARGV[$i+1] if $ARGV[$i] eq "-o";
 }
 
+unlink $output;
+
 open LIST,$filelist or die;
 my @files=<LIST>;
 close LIST;

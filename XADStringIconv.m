@@ -1,6 +1,6 @@
 #import "XADString.h"
 
-@implementation XADString (PlatformEncoding)
+@implementation XADString (PlatformSpecific)
 
 +(NSString *)stringForData:(NSData *)data encodingName:(NSString *)encoding
 {

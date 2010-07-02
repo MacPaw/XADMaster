@@ -331,8 +331,6 @@
 		1B91CCC311D97E7C0081E40A /* XADException.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C330DDBC8BF005B0F68 /* XADException.m */; };
 		1B91CCC411D97E7C0081E40A /* XADPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA266DD0FC78BF600279E95 /* XADPath.m */; };
 		1B91CCC511D97E7C0081E40A /* XADString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5BA0DDA67E000D9C000 /* XADString.m */; };
-		1B91CCC611D97E7C0081E40A /* XADUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */; };
-		1B91CCC811D97E7C0081E40A /* XADArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */; };
 		1B91CCC911D97E7C0081E40A /* XADMacArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */; };
 		1B91CCCA11D97E7C0081E40A /* XADDeflateHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89F120EE0CD71006B47FE /* XADDeflateHandle.m */; };
 		1B91CCCB11D97E7C0081E40A /* XADWinZipAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC885CC0ECD11CF006B47FE /* XADWinZipAESHandle.m */; };
@@ -478,7 +476,6 @@
 		1B91CD5711D97E7C0081E40A /* RARBug.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD65510EF8164900D86C43 /* RARBug.c */; };
 		1B91CD5811D97E7C0081E40A /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD61550EF349EE00D86C43 /* BraIA64.c */; };
 		1B91CD5911D97E7C0081E40A /* StuffItXEnglishDictionary.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */; };
-		1B91CD8811D980C50081E40A /* XADUnarchiverWindows.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */; };
 		1B91CD9C11D981E20081E40A /* unar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DDC91185EBD600620319 /* unar.m */; };
 		1B91CD9D11D981E20081E40A /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
 		1B91CD9E11D981E20081E40A /* CSCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */; };
@@ -494,6 +491,9 @@
 		1B91CF7011DCF40C0081E40A /* XADStringIconv.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91CF6F11DCF40C0081E40A /* XADStringIconv.m */; };
 		1B91CF7111DCF40C0081E40A /* XADStringIconv.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91CF6F11DCF40C0081E40A /* XADStringIconv.m */; };
 		1B91CF7311DCF4140081E40A /* XADStringWindows.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91CF7211DCF4140081E40A /* XADStringWindows.m */; };
+		1B91D03511DE925B0081E40A /* XADArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */; };
+		1B91D03611DE925F0081E40A /* XADUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */; };
+		1B91D03711DE92620081E40A /* XADUnarchiverWindows.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */; };
 		1B95B42E1010D906009FA09E /* XADARJParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B42C1010D906009FA09E /* XADARJParser.h */; };
 		1B95B42F1010D906009FA09E /* XADARJParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B42D1010D906009FA09E /* XADARJParser.m */; };
 		1B95B516101119A5009FA09E /* XADXORHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B514101119A5009FA09E /* XADXORHandle.h */; };
@@ -2691,8 +2691,6 @@
 				1B91CCC311D97E7C0081E40A /* XADException.m in Sources */,
 				1B91CCC411D97E7C0081E40A /* XADPath.m in Sources */,
 				1B91CCC511D97E7C0081E40A /* XADString.m in Sources */,
-				1B91CCC611D97E7C0081E40A /* XADUnarchiver.m in Sources */,
-				1B91CCC811D97E7C0081E40A /* XADArchiveParser.m in Sources */,
 				1B91CCC911D97E7C0081E40A /* XADMacArchiveParser.m in Sources */,
 				1B91CCCA11D97E7C0081E40A /* XADDeflateHandle.m in Sources */,
 				1B91CCCB11D97E7C0081E40A /* XADWinZipAESHandle.m in Sources */,
@@ -2838,9 +2836,11 @@
 				1B91CD5711D97E7C0081E40A /* RARBug.c in Sources */,
 				1B91CD5811D97E7C0081E40A /* BraIA64.c in Sources */,
 				1B91CD5911D97E7C0081E40A /* StuffItXEnglishDictionary.c in Sources */,
-				1B91CD8811D980C50081E40A /* XADUnarchiverWindows.m in Sources */,
 				1B91CE5211D984F20081E40A /* regex.c in Sources */,
 				1B91CF7311DCF4140081E40A /* XADStringWindows.m in Sources */,
+				1B91D03511DE925B0081E40A /* XADArchiveParser.m in Sources */,
+				1B91D03611DE925F0081E40A /* XADUnarchiver.m in Sources */,
+				1B91D03711DE92620081E40A /* XADUnarchiverWindows.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3424,10 +3424,11 @@
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
+					"-Wl,--whole-archive",
 					"-lXADMaster",
+					"-lUniversalDetector",
+					"-Wl,--no-whole-archive",
 					"-Wl,--enable-auto-import",
-					"-all_load",
-					"-ObjC",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = unar.exe;
@@ -3475,10 +3476,11 @@
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
+					"-Wl,--whole-archive",
 					"-lXADMaster",
+					"-lUniversalDetector",
+					"-Wl,--no-whole-archive",
 					"-Wl,--enable-auto-import",
-					"-all_load",
-					"-ObjC",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = unar.exe;

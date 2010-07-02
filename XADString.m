@@ -4,7 +4,49 @@
 
 
 
-NSString *XADUTF8StringEncodingName=@"XADUTF8StringEncodingName";
+NSString *XADUTF8StringEncodingName=@"utf-8";
+
+NSString *XADISOLatin1StringEncodingName=@"iso-8859-1";
+NSString *XADISOLatin2StringEncodingName=@"iso-8859-2";
+NSString *XADISOLatin3StringEncodingName=@"iso-8859-3";
+NSString *XADISOLatin4StringEncodingName=@"iso-8859-4";
+NSString *XADISOLatin5StringEncodingName=@"iso-8859-5";
+NSString *XADISOLatin6StringEncodingName=@"iso-8859-6";
+NSString *XADISOLatin7StringEncodingName=@"iso-8859-7";
+NSString *XADISOLatin8StringEncodingName=@"iso-8859-8";
+NSString *XADISOLatin9StringEncodingName=@"iso-8859-9";
+NSString *XADISOLatin10StringEncodingName=@"iso-8859-10";
+NSString *XADISOLatin11StringEncodingName=@"iso-8859-11";
+NSString *XADISOLatin12StringEncodingName=@"iso-8859-12";
+NSString *XADISOLatin13StringEncodingName=@"iso-8859-13";
+NSString *XADISOLatin14StringEncodingName=@"iso-8859-14";
+NSString *XADISOLatin15StringEncodingName=@"iso-8859-15";
+NSString *XADISOLatin16StringEncodingName=@"iso-8859-16";
+
+NSString *XADShiftJISStringEncodingName=@"shift_jis";
+
+NSString *XADWindowsCP1250StringEncodingName=@"windows-1250";
+NSString *XADWindowsCP1251StringEncodingName=@"windows-1251";
+NSString *XADWindowsCP1252StringEncodingName=@"windows-1252";
+NSString *XADWindowsCP1253StringEncodingName=@"windows-1253";
+NSString *XADWindowsCP1254StringEncodingName=@"windows-1254";
+
+NSString *XADMacOSRomanStringEncodingName=@"macintosh";
+NSString *XADMacOSJapaneseStringEncodingName=@"x-mac-japanese";
+NSString *XADMacOSTraditionalChineseStringEncodingName=@"x-mac-trad-chinese";
+NSString *XADMacOSKoreanStringEncodingName=@"x-mac-korean";
+NSString *XADMacOSArabicStringEncodingName=@"x-mac-arabic";
+NSString *XADMacOSHebrewStringEncodingName=@"x-mac-hebrew";
+NSString *XADMacOSGreekStringEncodingName=@"x-mac-greek";
+NSString *XADMacOSCyrillicStringEncodingName=@"x-mac-cyrillic";
+NSString *XADMacOSSimplifiedChineseStringEncodingName=@"x-mac-simp-chinese";
+NSString *XADMacOSRomanianStringEncodingName=@"x-mac-romanian";
+NSString *XADMacOSUkranianStringEncodingName=@"x-mac-ukrainian";
+NSString *XADMacOSThaiStringEncodingName=@"x-mac-thai";
+NSString *XADMacOSCentralEuropeanRomanStringEncodingName=@"x-mac-centraleurroman";
+NSString *XADMacOSIcelandicStringEncodingName=@"x-mac-icelandic";
+NSString *XADMacOSTurkishStringEncodingName=@"x-mac-turkish";
+NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 
 
 
@@ -240,7 +282,6 @@ NSString *XADUTF8StringEncodingName=@"XADUTF8StringEncodingName";
 	{
 		detector=[UniversalDetector new]; // can return nil if UniversalDetector is not found
 		fixedencodingname=nil;
-//		fixedencoding=0;
 		mac=NO;
 	}
 	return self;
@@ -268,23 +309,24 @@ NSString *XADUTF8StringEncodingName=@"XADUTF8StringEncodingName";
 -(NSString *)encodingName
 {
 	if(fixedencodingname) return fixedencodingname;
-//	if(!detector) return NSWindowsCP1252StringEncoding;
+	if(!detector) return XADWindowsCP1252StringEncodingName;
 
 	NSString *encoding=[detector MIMECharset];
-//	if(!encoding) encoding=NSWindowsCP1252StringEncoding;
+	if(!encoding) encoding=XADWindowsCP1252StringEncodingName;
 
 	// Kludge to use Mac encodings instead of the similar Windows encodings for Mac archives
 	// TODO: improve
-/*	#ifdef __APPLE__
 	if(mac)
 	{
-		if(encoding==NSWindowsCP1252StringEncoding) return NSMacOSRomanStringEncoding;
+		static NSDictionary *macalternatives=nil;
+		if(!macalternatives) macalternatives=[[NSDictionary alloc] initWithObjectsAndKeys:
+			XADMacOSRomanStringEncodingName,XADWindowsCP1252StringEncodingName,
+			XADMacOSJapaneseStringEncodingName,XADShiftJISStringEncodingName,
+		nil];
 
-		NSStringEncoding macjapanese=CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
-		if(encoding==NSShiftJISStringEncoding) return macjapanese;
-		//else if(encoding!=NSUTF8StringEncoding&&encoding!=macjapanese) encoding=NSMacOSRomanStringEncoding;
+		NSString *macalternative=[macalternatives objectForKey:[encoding lowercaseString]];
+		if(macalternative) return macalternative;
 	}
-	#endif*/
 
 	return encoding;
 }

@@ -286,7 +286,7 @@ static NSString *AliasOptionType=@"AliasOptionType";
 	#ifdef __MINGW32__
 	int wargc;
 	wchar_t **wargv=CommandLineToArgvW(GetCommandLineW(),&wargc);
-	for(int i=0;i<wargc;i++) [arguments addObject:[NSString stringWithCharacters:wargv[i] length:wcslen(wargv[i])]];
+	for(int i=1;i<wargc;i++) [arguments addObject:[NSString stringWithCharacters:wargv[i] length:wcslen(wargv[i])]];
 	if(!programname) [self setProgramName:[NSString stringWithCharacters:wargv[0] length:wcslen(wargv[0])]];
 	#else
 	for(int i=1;i<argc;i++) [arguments addObject:[NSString stringWithUTF8String:argv[i]]];

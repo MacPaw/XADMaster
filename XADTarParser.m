@@ -272,10 +272,10 @@
 
 		// User/Group ids/names.
 		else if( strcmp( key, "uname" ) == 0 ) {
-			[dict setObject:[self XADStringWithCString:value encoding:NSUTF8StringEncoding] forKey:XADPosixUserNameKey];
+			[dict setObject:[self XADStringWithCString:value encodingName:XADUTF8StringEncodingName] forKey:XADPosixUserNameKey];
 		}
 		else if( strcmp( key, "gname" ) == 0 ) {
-			[dict setObject:[self XADStringWithCString:value encoding:NSUTF8StringEncoding] forKey:XADPosixGroupNameKey];
+			[dict setObject:[self XADStringWithCString:value encodingName:XADUTF8StringEncodingName] forKey:XADPosixGroupNameKey];
 		}
 		else if( strcmp( key, "uid" ) == 0 ) {
 			[dict setObject:[NSNumber numberWithInt:[XADTarParser longFromCString:value]] forKey:XADPosixUserKey];
@@ -286,10 +286,10 @@
 		
 		// File path and link path.
 		else if( strcmp( key, "path" ) == 0 ) {
-			[dict setObject:[self XADPathWithCString:value encoding:NSUTF8StringEncoding separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+			[dict setObject:[self XADPathWithCString:value encodingName:XADUTF8StringEncodingName separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 		}
 		else if( strcmp( key, "linkpath" ) == 0 ) {
-			[dict setObject:[self XADStringWithCString:value encoding:NSUTF8StringEncoding] forKey:XADLinkDestinationKey];
+			[dict setObject:[self XADStringWithCString:value encodingName:XADUTF8StringEncodingName] forKey:XADLinkDestinationKey];
 		}
 
 		// File size.
@@ -299,7 +299,7 @@
 
 		// Comment.
 		else if( strcmp( key, "comment" ) == 0 ) {
-			[dict setObject:[self XADStringWithCString:value encoding:NSUTF8StringEncoding] forKey:XADCommentKey];
+			[dict setObject:[self XADStringWithCString:value encodingName:XADUTF8StringEncodingName] forKey:XADCommentKey];
 		}
 
 		// Continue after the pair.

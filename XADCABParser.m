@@ -172,7 +172,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 			NSDictionary *folder=[folders objectAtIndex:folderindex];
 
 			XADPath *name;
-			if(attribs&0x80) name=[self XADPathWithData:namedata encoding:NSUTF8StringEncoding separators:XADWindowsPathSeparator];
+			if(attribs&0x80) name=[self XADPathWithData:namedata encodingName:XADUTF8StringEncodingName separators:XADWindowsPathSeparator];
 			else name=[self XADPathWithData:namedata separators:XADWindowsPathSeparator];
 
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:

@@ -52,18 +52,18 @@ static inline BOOL IsSeparator(char c,const char *separators)
 }
 
 -(id)initWithBytes:(const char *)bytes length:(int)length
-encoding:(NSStringEncoding)encoding separators:(const char *)separators
+encodingName:(NSString *)encoding separators:(const char *)separators
 {
-	return [self initWithBytes:bytes length:length encoding:encoding separators:separators source:nil];
+	return [self initWithBytes:bytes length:length encodingName:encoding separators:separators source:nil];
 }
 
 -(id)initWithBytes:(const char *)bytes length:(int)length
 separators:(const char *)separators source:(XADStringSource *)stringsource
 {
-	return [self initWithBytes:bytes length:length encoding:0 separators:separators source:stringsource];
+	return [self initWithBytes:bytes length:length encodingName:nil separators:separators source:stringsource];
 }
 
--(id)initWithBytes:(const char *)bytes length:(int)length encoding:(NSStringEncoding)encoding
+-(id)initWithBytes:(const char *)bytes length:(int)length encodingName:(NSString *)encoding
 separators:(const char *)separators source:(XADStringSource *)stringsource
 {
 	if(self=[super init])
@@ -87,10 +87,12 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 				if(encoding)
 				{
-					NSString *string=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
-					[array addObject:[[[XADString alloc] initWithString:string] autorelease]];
+					[array addObject:[[[XADString alloc] initWithData:data encodingName:encoding] autorelease]];
 				}
-				else [array addObject:[[[XADString alloc] initWithData:data source:stringsource] autorelease]];
+				else
+				{
+					[array addObject:[[[XADString alloc] initWithData:data source:stringsource] autorelease]];
+				}
 			}
 		}
 
@@ -213,10 +215,10 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 -(NSString *)string
 {
-	return [self stringWithEncoding:[source encoding]];
+	return [self stringWithEncodingName:[source encodingName]];
 }
 
--(NSString *)stringWithEncoding:(NSStringEncoding)encoding
+-(NSString *)stringWithEncodingName:(NSString *)encoding
 {
 	NSMutableString *string=[NSMutableString string];
 
@@ -229,7 +231,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	{
 		if(i!=0) [string appendString:@"/"];
 
-		NSString *compstring=[[components objectAtIndex:i] stringWithEncoding:encoding];
+		NSString *compstring=[[components objectAtIndex:i] stringWithEncodingName:encoding];
 
 		if([compstring rangeOfString:@"/"].location==NSNotFound) [string appendString:compstring];
 		else
@@ -277,10 +279,10 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	return NO;
 }
 
--(NSStringEncoding)encoding
+-(NSString *)encodingName
 {
-	if(!source) return NSUTF8StringEncoding; // TODO: what should this really return?
-	return [source encoding];
+	if(!source) return XADUTF8StringEncodingName; // TODO: what should this really return?
+	return [source encodingName];
 }
 
 -(float)confidence
@@ -311,5 +313,22 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 }
 
 -(id)copyWithZone:(NSZone *)zone { return [self retain]; } // class is immutable, so just return self
+
+
+
+
+#ifdef __APPLE__
+-(NSString *)stringWithEncoding:(NSStringEncoding)encoding
+{
+	return [self stringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
+	CFStringConvertNSStringEncodingToEncoding(encoding))];
+}
+
+-(NSStringEncoding)encoding
+{
+	if(!source) return NSUTF8StringEncoding; // TODO: what should this really return?
+	return [source encoding];
+}
+#endif
 
 @end

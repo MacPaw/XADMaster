@@ -4,6 +4,10 @@
 
 
 
+NSString *XADUTF8StringEncodingName=@"XADUTF8StringEncodingName";
+
+
+
 @implementation XADString
 
 +(XADString *)XADStringWithString:(NSString *)knownstring
@@ -22,6 +26,18 @@
 		data=[bytedata retain];
 		string=nil;
 		source=[stringsource retain];
+	}
+	return self;
+}
+
+-(id)initWithData:(NSData *)bytedata encodingName:(NSString *)encoding
+{
+	if(self=[super init])
+	{
+		// TODO: handle decoding failures
+		string=[XADString stringForData:bytedata encodingName:encoding];
+		data=nil;
+		source=nil;
 	}
 	return self;
 }
@@ -82,7 +98,7 @@
 
 	for(int i=0;i<length;i++)
 	{
-		uint8_t bytes[8];
+		char bytes[8];
 		unichar c=[string characterAtIndex:i];
 		if(c<0x80)
 		{
@@ -113,7 +129,7 @@
 
 -(NSString *)encodingName
 {
-	if(!source) return "utf-8"; // TODO: what should this really return?
+	if(!source) return XADUTF8StringEncodingName; // TODO: what should this really return?
 	return [source encodingName];
 }
 
@@ -201,23 +217,8 @@
 #ifdef __APPLE__
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding
 {
-	if(string) return string;
-
-	NSString *decstr=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
-	if(decstr) return decstr;
-
-	// Fall back on escaped ASCII if the encoding was unusable
-	const uint8_t *bytes=[data bytes];
-	int length=[data length];
-	NSMutableString *str=[NSMutableString stringWithCapacity:length];
-
-	for(int i=0;i<length;i++)
-	{
-		if(bytes[i]<0x80) [str appendFormat:@"%c",bytes[i]];
-		else [str appendFormat:@"%%%02x",bytes[i]];
-	}
-
-	return [NSString stringWithString:str];
+	return [self stringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
+	CFStringConvertNSStringEncodingToEncoding(encoding))];
 }
 
 -(NSStringEncoding)encoding
@@ -269,7 +270,7 @@
 	if(fixedencodingname) return fixedencodingname;
 //	if(!detector) return NSWindowsCP1252StringEncoding;
 
-	NSString *encoding=[detector encodingName];
+	NSString *encoding=[detector MIMECharset];
 //	if(!encoding) encoding=NSWindowsCP1252StringEncoding;
 
 	// Kludge to use Mac encodings instead of the similar Windows encodings for Mac archives
@@ -291,10 +292,8 @@
 -(float)confidence
 {
 	if(fixedencodingname) return 1;
-//	if(fixedencoding) return 1;
 	if(!detector) return 0;
-	NSStringEncoding encoding=[detector encodingName];
-	if(!encoding) return 0;
+	if(![detector MIMECharset]) return 0;
 	return [detector confidence];
 }
 
@@ -303,7 +302,7 @@
 	return detector;
 }
 
--(void)setFixedEncodingname:(NSString *)encoding
+-(void)setFixedEncodingName:(NSString *)encoding
 {
 	[fixedencodingname autorelease];
 	fixedencodingname=[encoding retain];
@@ -324,31 +323,18 @@
 #ifdef __APPLE__
 -(NSStringEncoding)encoding
 {
-	if(fixedencoding) return fixedencoding;
-	if(!detector) return NSWindowsCP1252StringEncoding;
+	NSString *encodingname=[self encodingName];
+	if(!encodingname) return 0;
 
-	NSStringEncoding encoding=[detector encoding];
-	if(!encoding) encoding=NSWindowsCP1252StringEncoding;
+	CFStringEncoding cfenc=CFStringConvertIANACharSetNameToEncoding((CFStringRef)encodingname);
+	if(cfenc==kCFStringEncodingInvalidId) return 0;
 
-	// Kludge to use Mac encodings instead of the similar Windows encodings for Mac archives
-	// TODO: improve
-	#ifdef __APPLE__
-	if(mac)
-	{
-		if(encoding==NSWindowsCP1252StringEncoding) return NSMacOSRomanStringEncoding;
-
-		NSStringEncoding macjapanese=CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingMacJapanese);
-		if(encoding==NSShiftJISStringEncoding) return macjapanese;
-		//else if(encoding!=NSUTF8StringEncoding&&encoding!=macjapanese) encoding=NSMacOSRomanStringEncoding;
-	}
-	#endif
-
-	return encoding;
+	return CFStringConvertEncodingToNSStringEncoding(cfenc);
 }
 
 -(void)setFixedEncoding:(NSStringEncoding)encoding
 {
-	fixedencoding=encoding;
+	[self setFixedEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(encoding)];
 }
 #endif
 

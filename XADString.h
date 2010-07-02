@@ -3,18 +3,25 @@
 @class XADStringSource,UniversalDetector;
 
 
+extern NSString *XADUTF8StringEncodingName;
+
 
 @protocol XADString <NSObject>
 
 -(NSString *)string;
--(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
+-(NSString *)stringWithEncodingName:(NSString *)encoding;
 -(NSData *)data;
 
 -(BOOL)encodingIsKnown;
--(NSStringEncoding)encoding;
+-(NSString *)encodingName;
 -(float)confidence;
 
 -(XADStringSource *)source;
+
+#ifdef __APPLE__
+-(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
+-(NSStringEncoding)encoding;
+#endif
 
 @end
 
@@ -30,11 +37,12 @@
 +(XADString *)XADStringWithString:(NSString *)knownstring;
 
 -(id)initWithData:(NSData *)bytedata source:(XADStringSource *)stringsource;
+-(id)initWithData:(NSData *)bytedata encodingName:(NSString *)encoding;
 -(id)initWithString:(NSString *)knownstring;
 -(void)dealloc;
 
 -(NSString *)string;
--(NSString *)stringWithEncodingname:(NSString *)encoding;
+-(NSString *)stringWithEncodingName:(NSString *)encoding;
 -(NSData *)data;
 
 -(BOOL)encodingIsKnown;

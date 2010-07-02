@@ -15,10 +15,10 @@
 -(id)initWithComponents:(NSArray *)pathcomponents;
 -(id)initWithString:(NSString *)pathstring;
 -(id)initWithBytes:(const char *)bytes length:(int)length
-encoding:(NSStringEncoding)encoding separators:(const char *)separators;
+encodingName:(NSString *)encoding separators:(const char *)separators;
 -(id)initWithBytes:(const char *)bytes length:(int)length
 separators:(const char *)separators source:(XADStringSource *)stringsource;
--(id)initWithBytes:(const char *)bytes length:(int)length encoding:(NSStringEncoding)encoding
+-(id)initWithBytes:(const char *)bytes length:(int)length encodingName:(NSString *)encoding
 separators:(const char *)separators source:(XADStringSource *)stringsource;
 
 -(void)dealloc;
@@ -38,12 +38,12 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 -(BOOL)hasPrefix:(XADPath *)other;
 
 -(NSString *)string;
--(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
+-(NSString *)stringWithEncodingName:(NSString *)encoding;
 -(NSData *)data; // NOTE: not guaranteed to be safe for usage as a filesystem path, only for display!
 -(int)depth;
 
 -(BOOL)encodingIsKnown;
--(NSStringEncoding)encoding;
+-(NSString *)encodingName;
 -(float)confidence;
 
 -(XADStringSource *)source;
@@ -51,5 +51,10 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 -(BOOL)isEqual:(id)other;
 -(NSUInteger)hash;
 -(id)copyWithZone:(NSZone *)zone;
+
+#ifdef __APPLE__
+-(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
+-(NSStringEncoding)encoding;
+#endif
 
 @end

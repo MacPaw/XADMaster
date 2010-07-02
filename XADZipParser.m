@@ -630,7 +630,7 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 				XADCRCTable_edb88320)^0xffffffff)==crc)
 				{
 					[dict setObject:[dict objectForKey:XADFileNameKey] forKey:@"ZipRegularFilename"];
-					[dict setObject:[self XADPathWithData:unicodedata encoding:NSUTF8StringEncoding
+					[dict setObject:[self XADPathWithData:unicodedata encodingName:XADUTF8StringEncodingName
 					separators:XADEitherPathSeparator] forKey:XADFileNameKey];
 					// Apparently at least some files use Windows path separators instead of the
 					// usual Unix. Not sure what to expect here, so using both.
@@ -743,7 +743,7 @@ isLastEntry:(BOOL)islastentry
 		int namelength=[namedata length];
 
 		if(flags&0x800)
-		[dict setObject:[self XADPathWithData:namedata encoding:NSUTF8StringEncoding separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+		[dict setObject:[self XADPathWithData:namedata encodingName:XADUTF8StringEncodingName separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 		else
 		[dict setObject:[self XADPathWithData:namedata separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 
@@ -794,7 +794,7 @@ isLastEntry:(BOOL)islastentry
 	if(commentdata)
 	{
 		if(flags&0x800)
-		[dict setObject:[self XADStringWithData:commentdata encoding:NSUTF8StringEncoding] forKey:XADCommentKey];
+		[dict setObject:[self XADStringWithData:commentdata encodingName:XADUTF8StringEncodingName] forKey:XADCommentKey];
 		else
 		[dict setObject:[self XADStringWithData:commentdata] forKey:XADCommentKey];
 	}

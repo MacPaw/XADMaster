@@ -552,7 +552,7 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 		int n=0;
 		while(n<length&&bytes[n]) n++;
 
-		if(n==length) return [self XADPathWithData:data encoding:NSUTF8StringEncoding separators:XADWindowsPathSeparator];
+		if(n==length) return [self XADPathWithData:data encodingName:XADUTF8StringEncodingName separators:XADWindowsPathSeparator];
 
 		int num=length-n-1;
 		if(num<=1) return [self XADPathWithCString:(const char *)bytes separators:XADWindowsPathSeparator];
@@ -599,7 +599,7 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 
 		// TODO: avoid re-encoding
 		return [self XADPathWithData:[str dataUsingEncoding:NSUTF8StringEncoding]
-		encoding:NSUTF8StringEncoding separators:XADWindowsPathSeparator];
+		encodingName:XADUTF8StringEncodingName separators:XADWindowsPathSeparator];
 	}
 	else return [self XADPathWithData:data separators:XADWindowsPathSeparator];
 }

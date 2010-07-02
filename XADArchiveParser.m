@@ -654,10 +654,9 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
 }
 
--(XADString *)XADStringWithData:(NSData *)data encoding:(NSStringEncoding)encoding
+-(XADString *)XADStringWithData:(NSData *)data encodingName:(NSString *)encoding
 {
-	NSString *string=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
-	return [[[XADString alloc] initWithString:string] autorelease];
+	return [[[XADString alloc] initWithData:data encodingName:encoding] autorelease];
 }
 
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length
@@ -666,11 +665,10 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
 }
 
--(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding
+-(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encodingName:(NSString *)encoding
 {
 	NSData *data=[NSData dataWithBytes:bytes length:length];
-	NSString *string=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
-	return [[[XADString alloc] initWithString:string] autorelease];
+	return [[[XADString alloc] initWithData:data encodingName:encoding] autorelease];
 }
 
 -(XADString *)XADStringWithCString:(const char *)cstring
@@ -679,11 +677,10 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
 }
 
--(XADString *)XADStringWithCString:(const char *)cstring encoding:(NSStringEncoding)encoding
+-(XADString *)XADStringWithCString:(const char *)cstring encodingName:(NSString *)encoding
 {
 	NSData *data=[NSData dataWithBytes:cstring length:strlen(cstring)];
-	NSString *string=[[[NSString alloc] initWithData:data encoding:encoding] autorelease];
-	return [[[XADString alloc] initWithString:string] autorelease];
+	return [[[XADString alloc] initWithData:data encodingName:encoding] autorelease];
 }
 
 
@@ -709,10 +706,10 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	separators:separators source:stringsource] autorelease];
 }
 
--(XADPath *)XADPathWithData:(NSData *)data encoding:(NSStringEncoding)encoding separators:(const char *)separators
+-(XADPath *)XADPathWithData:(NSData *)data encodingName:(NSString *)encoding separators:(const char *)separators
 {
 	return [[[XADPath alloc] initWithBytes:[data bytes] length:[data length]
-	encoding:encoding separators:separators] autorelease];
+	encodingName:encoding separators:separators] autorelease];
 }
 
 -(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length separators:(const char *)separators
@@ -720,9 +717,9 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	return [[[XADPath alloc] initWithBytes:bytes length:length separators:separators source:stringsource] autorelease];
 }
 
--(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length encoding:(NSStringEncoding)encoding separators:(const char *)separators
+-(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length encodingName:(NSString *)encoding separators:(const char *)separators
 {
-	return [[[XADPath alloc] initWithBytes:bytes length:length encoding:encoding separators:separators] autorelease];
+	return [[[XADPath alloc] initWithBytes:bytes length:length encodingName:encoding separators:separators] autorelease];
 }
 
 -(XADPath *)XADPathWithCString:(const char *)cstring separators:(const char *)separators
@@ -731,17 +728,17 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	separators:separators source:stringsource] autorelease];
 }
 
--(XADPath *)XADPathWithCString:(const char *)cstring encoding:(NSStringEncoding)encoding separators:(const char *)separators
+-(XADPath *)XADPathWithCString:(const char *)cstring encodingName:(NSString *)encoding separators:(const char *)separators
 {
 	return [[[XADPath alloc] initWithBytes:cstring length:strlen(cstring)
-	encoding:encoding separators:separators] autorelease];
+	encodingName:encoding separators:separators] autorelease];
 }
 
 
 
 -(NSData *)encodedPassword
 {
-	return [[self password] dataUsingEncoding:[stringsource encoding]];
+	return [XADString dataForString:[self password] encodingName:[stringsource encodingName]];
 }
 
 -(const char *)encodedCStringPassword

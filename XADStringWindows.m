@@ -42,7 +42,7 @@ static int IANACharSetNameToWindowsCodePage(NSString *name);
 	uint8_t *bytebuf=malloc(numbytes);
 	WideCharToMultiByte(codepage,MB_ERR_INVALID_CHARS,charbuf,numchars,bytebuf,numbytes,NULL,NULL);
 
-	return [[[NSData alloc] initWithBytesNoCopy:bytebuf length:numbytes freeWhenDone:YES] autorelease];
+	return [NSData dataWithBytesNoCopy:bytebuf length:numbytes freeWhenDone:YES];
 }
 
 +(NSArray *)availableEncodingNames
@@ -82,8 +82,10 @@ static int IANACharSetNameToWindowsCodePage(NSString *name)
 	[NSNumber numberWithInt:874],@"windows-874", // ANSI/OEM Thai (same as 28605, ISO 8859-15); Thai (Windows)
 	//[NSNumber numberWithInt:875],@"cp875", // IBM EBCDIC Greek Modern
 	[NSNumber numberWithInt:932],@"shift_jis", // ANSI/OEM Japanese; Japanese (Shift-JIS)
+	[NSNumber numberWithInt:932],@"shift-jis", // ANSI/OEM Japanese; Japanese (Shift-JIS)
 	[NSNumber numberWithInt:936],@"gb2312", // ANSI/OEM Simplified Chinese (PRC, Singapore); Chinese Simplified (GB2312)
 	[NSNumber numberWithInt:936],@"euc-cn", // ANSI/OEM Simplified Chinese (PRC, Singapore); Chinese Simplified (GB2312)
+	[NSNumber numberWithInt:936],@"euc_cn", // ANSI/OEM Simplified Chinese (PRC, Singapore); Chinese Simplified (GB2312)
 	[NSNumber numberWithInt:936],@"euccn", // ANSI/OEM Simplified Chinese (PRC, Singapore); Chinese Simplified (GB2312)
 	[NSNumber numberWithInt:936],@"cn-gb", // ANSI/OEM Simplified Chinese (PRC, Singapore); Chinese Simplified (GB2312)
 	[NSNumber numberWithInt:949],@"ks_c_5601-1987", // ANSI/OEM Korean (Unified Hangul Code)
@@ -182,7 +184,7 @@ static int IANACharSetNameToWindowsCodePage(NSString *name)
 	[NSNumber numberWithInt:20880],@"ibm880", // IBM EBCDIC Cyrillic Russian
 	[NSNumber numberWithInt:20905],@"ibm905", // IBM EBCDIC Turkish
 	[NSNumber numberWithInt:20924],@"ibm00924", // IBM EBCDIC Latin 1/Open System (1047 + Euro symbol)
-	[NSNumber numberWithInt:20932],@"euc-jp", // Japanese (JIS 0208-1990 and 0121-1990)
+	//[NSNumber numberWithInt:20932],@"euc-jp", // Japanese (JIS 0208-1990 and 0121-1990)
 	[NSNumber numberWithInt:20936],@"x-cp20936", // Simplified Chinese (GB2312); Chinese Simplified (GB2312-80)
 	[NSNumber numberWithInt:20949],@"x-cp20949", // Korean Wansung
 	//[NSNumber numberWithInt:21025],@"cp1025", // IBM EBCDIC Cyrillic Serbian-Bulgarian
@@ -215,10 +217,13 @@ static int IANACharSetNameToWindowsCodePage(NSString *name)
 	//[NSNumber numberWithInt:50937],@"", // EBCDIC US-Canada and Traditional Chinese
 	//[NSNumber numberWithInt:50939],@"", // EBCDIC Japanese (Latin) Extended and Japanese
 	[NSNumber numberWithInt:51932],@"euc-jp", // EUC Japanese
+	[NSNumber numberWithInt:51932],@"euc_jp", // EUC Japanese
 	[NSNumber numberWithInt:51932],@"eucjp", // EUC Japanese
 	[NSNumber numberWithInt:51936],@"euc-cn", // EUC Simplified Chinese; Chinese Simplified (EUC)
+	[NSNumber numberWithInt:51936],@"euc_cn", // EUC Simplified Chinese; Chinese Simplified (EUC)
 	[NSNumber numberWithInt:51936],@"euccn", // EUC Simplified Chinese; Chinese Simplified (EUC)
 	[NSNumber numberWithInt:51949],@"euc-kr", // EUC Korean
+	[NSNumber numberWithInt:51949],@"euc_kr", // EUC Korean
 	[NSNumber numberWithInt:51949],@"euckr", // EUC Korean
 	//[NSNumber numberWithInt:51950],@"", // EUC Traditional Chinese
 	[NSNumber numberWithInt:52936],@"hz-gb-2312", // HZ-GB2312 Simplified Chinese; Chinese Simplified (HZ)

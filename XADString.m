@@ -77,7 +77,7 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 	if(self=[super init])
 	{
 		// TODO: handle decoding failures
-		string=[XADString stringForData:bytedata encodingName:encoding];
+		string=[[XADString stringForData:bytedata encodingName:encoding] retain];
 		data=nil;
 		source=nil;
 	}

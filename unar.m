@@ -167,14 +167,6 @@ int main(int argc,const char **argv)
 
 	//@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
-NSLog(@"a");
-NSLog(@"%@",[XADUnarchiver class]);
-NSLog(@"%@",[XADException class]);
-NSLog(@"%@",[XADString class]);
-NSLog(@"%@",[XADArchiveParser class]);
-NSLog(@"%@",[XADPath class]);
-NSLog(@"%@",[CSHandle class]);
-NSLog(@"%@",[XADRegex class]);
 
 //	NSArray *files=[cmdline stringArrayValueForOption:@"files"];
 	NSArray *files=[cmdline remainingArguments];
@@ -206,15 +198,6 @@ NSLog(@"%@",[XADRegex class]);
 		fflush(stdout);
 
 		XADUnarchiver *unarchiver=[XADUnarchiver unarchiverForPath:filename];
-
-NSLog(@"a");
-NSLog(@"%@",[XADUnarchiver class]);
-NSLog(@"%@",[XADException class]);
-NSLog(@"%@",[XADString class]);
-NSLog(@"%@",[XADArchiveParser class]);
-NSLog(@"%@",[XADPath class]);
-NSLog(@"%@",[CSHandle class]);
-NSLog(@"%@",[XADRegex class]);
 
 		if(unarchiver)
 		{

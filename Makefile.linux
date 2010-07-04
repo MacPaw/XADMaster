@@ -166,7 +166,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADSkipHandle.m \
 			XADSplitFileParser.m \
 			XADString.m \
-			XADStringIconv.m \
+			XADStringICU.m \
 			XADStuffIt13Handle.m \
 			XADStuffIt5Parser.m \
 			XADStuffItArsenicHandle.m \

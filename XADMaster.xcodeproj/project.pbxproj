@@ -1031,6 +1031,7 @@
 		1B91CF6F11DCF40C0081E40A /* XADStringIconv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringIconv.m; sourceTree = "<group>"; };
 		1B91CF7211DCF4140081E40A /* XADStringWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringWindows.m; sourceTree = "<group>"; };
 		1B91D0AC11DFC0480081E40A /* XADStringCFString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringCFString.m; sourceTree = "<group>"; };
+		1B91D11211E11A0F0081E40A /* XADStringICU.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringICU.m; sourceTree = "<group>"; };
 		1B95B42C1010D906009FA09E /* XADARJParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADARJParser.h; sourceTree = "<group>"; };
 		1B95B42D1010D906009FA09E /* XADARJParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADARJParser.m; sourceTree = "<group>"; };
 		1B95B514101119A5009FA09E /* XADXORHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADXORHandle.h; sourceTree = "<group>"; };
@@ -1378,6 +1379,7 @@
 				1B06D5BA0DDA67E000D9C000 /* XADString.m */,
 				1B91D0AC11DFC0480081E40A /* XADStringCFString.m */,
 				1B91CF7211DCF4140081E40A /* XADStringWindows.m */,
+				1B91D11211E11A0F0081E40A /* XADStringICU.m */,
 				1B91CF6F11DCF40C0081E40A /* XADStringIconv.m */,
 				1BA266DC0FC78BF600279E95 /* XADPath.h */,
 				1BA266DD0FC78BF600279E95 /* XADPath.m */,

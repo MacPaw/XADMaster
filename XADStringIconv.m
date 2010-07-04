@@ -1,3 +1,7 @@
+/*
+ * This implementation does not really work much at all, because iconv is horrible. Use ICU instead.
+ */
+
 #import "XADString.h"
 
 #import <iconv.h>

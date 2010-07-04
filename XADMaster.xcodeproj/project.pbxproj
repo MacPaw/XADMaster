@@ -1028,7 +1028,6 @@
 		1B91CD5E11D97E7C0081E40A /* libXADMaster.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libXADMaster.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B91CDAC11D981E20081E40A /* unar.exe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unar.exe; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B91CDBB11D983760081E40A /* libUniversalDetector.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUniversalDetector.a; path = ../Windows/Debug/libUniversalDetector.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B91CF6F11DCF40C0081E40A /* XADStringIconv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringIconv.m; sourceTree = "<group>"; };
 		1B91CF7211DCF4140081E40A /* XADStringWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringWindows.m; sourceTree = "<group>"; };
 		1B91D0AC11DFC0480081E40A /* XADStringCFString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringCFString.m; sourceTree = "<group>"; };
 		1B91D11211E11A0F0081E40A /* XADStringICU.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringICU.m; sourceTree = "<group>"; };
@@ -1380,7 +1379,6 @@
 				1B91D0AC11DFC0480081E40A /* XADStringCFString.m */,
 				1B91CF7211DCF4140081E40A /* XADStringWindows.m */,
 				1B91D11211E11A0F0081E40A /* XADStringICU.m */,
-				1B91CF6F11DCF40C0081E40A /* XADStringIconv.m */,
 				1BA266DC0FC78BF600279E95 /* XADPath.h */,
 				1BA266DD0FC78BF600279E95 /* XADPath.m */,
 				1B578C320DDBC8BF005B0F68 /* XADException.h */,

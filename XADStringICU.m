@@ -8,8 +8,8 @@
 {
 	if([data length]==0) return @"";
 
-	UErrorCode err;
-	UConverter *conv=ucnv_open(,&err);
+	UErrorCode err=U_ZERO_ERROR;
+	UConverter *conv=ucnv_open([encoding UTF8String],&err);
 	if(!conv) return nil;
 
 	int numbytes=[data length];
@@ -42,8 +42,8 @@
 {
 	if([string length]==0) return [NSData data];
 
-	UErrorCode err;
-	UConverter *conv=ucnv_open(,&err);
+	UErrorCode err=U_ZERO_ERROR;
+	UConverter *conv=ucnv_open([encoding UTF8String],&err);
 	if(!conv) return nil;
 
 	ucnv_setFromUCallBack(conv,UCNV_FROM_U_CALLBACK_STOP,NULL,NULL,NULL,&err);
@@ -51,14 +51,14 @@
 
 	int numchars=[string length];
 	unichar charbuf[numchars];
-	[string getCharacters:chars range:NSMakeRange(0,numchars)];
+	[string getCharacters:charbuf range:NSMakeRange(0,numchars)];
 
 	int numbytes=ucnv_fromUChars(conv,NULL,0,charbuf,numchars,&err);
 	if(err!=U_BUFFER_OVERFLOW_ERROR) { ucnv_close(conv); return nil; }
 
 	err=U_ZERO_ERROR;
 	char *bytebuf=malloc(numbytes);
-	ucnv_toUChars(conv,bytebuf,numbytes,charbuf,numchars,&err);
+	ucnv_fromUChars(conv,bytebuf,numbytes,charbuf,numchars,&err);
 
 	ucnv_close(conv);
 

@@ -48,6 +48,7 @@ LIBS =	-Wl,--no-whole-archive \
 	-lgnustep-base \
 	-lcrypto \
 	-lbz2 \
+	-licuuc \
 	-lobjc \
 	-lstdc++ \
 	-lm
@@ -300,6 +301,7 @@ LIBRARY_FILES = 	libXADMaster.a
 all: unar XADTest2 XADTest3 XADTest4
 
 libXADMaster.a: $(LIBRARY_OBJS)
+	rm $@
 	$(AR) rcs $@ $^
 
 ../UniversalDetector/libUniversalDetector.a:

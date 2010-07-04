@@ -359,7 +359,7 @@ XADSplitFileParser.o: XADSplitFileParser.m XADSplitFileParser.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h
 XADString.o: XADString.m XADString.h \
  ../UniversalDetector/UniversalDetector.h
-XADStringIconv.o: XADStringIconv.m XADString.h
+XADStringICU.o: XADStringICU.m XADString.h
 XADStuffIt13Handle.o: XADStuffIt13Handle.m XADStuffIt13Handle.h \
  XADLZSSHandle.h CSByteStreamHandle.h CSStreamHandle.h CSHandle.h \
  CSInputBuffer.h XADPrefixCode.h XADException.h

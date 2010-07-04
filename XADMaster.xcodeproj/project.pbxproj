@@ -495,6 +495,7 @@
 		1B91D03711DE92620081E40A /* XADUnarchiverWindows.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */; };
 		1B91D0AD11DFC0480081E40A /* XADStringCFString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D0AC11DFC0480081E40A /* XADStringCFString.m */; };
 		1B91D0AE11DFC05D0081E40A /* XADStringCFString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D0AC11DFC0480081E40A /* XADStringCFString.m */; };
+		1B91D0E411E0EBC00081E40A /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91D0E011E0EBAB0081E40A /* libiconv.dylib */; };
 		1B95B42E1010D906009FA09E /* XADARJParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B42C1010D906009FA09E /* XADARJParser.h */; };
 		1B95B42F1010D906009FA09E /* XADARJParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B42D1010D906009FA09E /* XADARJParser.m */; };
 		1B95B516101119A5009FA09E /* XADXORHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B514101119A5009FA09E /* XADXORHandle.h */; };
@@ -1031,6 +1032,7 @@
 		1B91CF6F11DCF40C0081E40A /* XADStringIconv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringIconv.m; sourceTree = "<group>"; };
 		1B91CF7211DCF4140081E40A /* XADStringWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringWindows.m; sourceTree = "<group>"; };
 		1B91D0AC11DFC0480081E40A /* XADStringCFString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringCFString.m; sourceTree = "<group>"; };
+		1B91D0E011E0EBAB0081E40A /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = /usr/lib/libiconv.dylib; sourceTree = "<absolute>"; };
 		1B95B42C1010D906009FA09E /* XADARJParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADARJParser.h; sourceTree = "<group>"; };
 		1B95B42D1010D906009FA09E /* XADARJParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADARJParser.m; sourceTree = "<group>"; };
 		1B95B514101119A5009FA09E /* XADXORHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADXORHandle.h; sourceTree = "<group>"; };
@@ -1226,6 +1228,7 @@
 				1B34AAA811C30DA400396C26 /* libXADMaster.a in Frameworks */,
 				1B34AAB811C30EDB00396C26 /* libz.dylib in Frameworks */,
 				1B34AABC11C30F5400396C26 /* libstdc++.6.dylib in Frameworks */,
+				1B91D0E411E0EBC00081E40A /* libiconv.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1351,6 +1354,7 @@
 				1B3FABA20EC52505006D2F06 /* libcrypto.dylib */,
 				1B3FABA70EC52532006D2F06 /* libz.dylib */,
 				1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */,
+				1B91D0E011E0EBAB0081E40A /* libiconv.dylib */,
 				1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */,
 				1B216A7F0F8E9D9E001207C9 /* Carbon.framework */,
 				1B34AA8411C30BC100396C26 /* UniversalDetector.framework */,

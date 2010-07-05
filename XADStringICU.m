@@ -84,20 +84,7 @@
 	{
 		const char *name=ucnv_getAvailableName(i);
 
-/*		NSMutableArray *encodingarray=[NSMutableArray arrayWithObjects:
-		@"",[NSString stringWithUTF8String:name],nil];
-
-		err=U_ZERO_ERROR;
-		int numaliases=ucnv_countAliases(name,&err);
-		for(int j=0;j<numaliases;j++)
-		{
-			err=U_ZERO_ERROR;
-			const char *alias=ucnv_getAlias(name,j,&err);
-			[encodingarray addObject:[NSString stringWithUTF8String:alias]];
-		}*/
-
-		NSMutableArray *encodingarray=[NSMutableArray arrayWithObjects:
-		@"",nil];
+		NSMutableArray *encodingarray=[NSMutableArray arrayWithObject:@""];
 
 		err=U_ZERO_ERROR;
 		UEnumeration *enumeration=ucnv_openStandardNames(name,"IANA",&err);
@@ -108,8 +95,7 @@
 		}
 		uenum_close(enumeration);
 
-		if([encodingarray count]==1)
-		[encodingarray addObject:[NSString stringWithUTF8String:name]];
+		if([encodingarray count]==1) [encodingarray addObject:[NSString stringWithUTF8String:name]];
 
 		[array addObject:encodingarray];
 	}

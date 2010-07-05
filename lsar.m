@@ -1,6 +1,7 @@
 #import "XADUnarchiver.h"
 #import "NSStringPrinting.h"
 #import "CSCommandLineParser.h"
+#import "CSJSONPrinter.h"
 #import "CommandLineCommon.h"
 
 #define VERSION_STRING @"v0.1"
@@ -65,19 +66,17 @@
 
 @interface JSONLister:NSObject
 {
-	int indent;
-	BOOL asciimode;
+	CSJSONPrinter *printer;
 }
 @end
 
 @implementation JSONLister
 
--(id)initWithASCIIEncoding:(BOOL)ascii
+-(id)initWithJSONPrinter:(CSJSONPrinter *)json
 {
 	if(self=[super init])
 	{
-		indent=0;
-		asciimode=ascii;
+		printer=[json retain];
 	}
 	return self;
 }
@@ -90,8 +89,7 @@
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
-//	for(int i=0;i<indent;i++) [@" " print];
-
+	[printer printArrayObject:dict];
 }
 
 @end
@@ -158,15 +156,30 @@ int main(int argc,const char **argv)
 		return 1;
 	}
 
+	BOOL json=[cmdline boolValueForOption:@"json"];
+	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
+	CSJSONPrinter *printer=nil;
+
+	if(json||jsonascii)
+	{
+		printer=[CSJSONPrinter new];
+		[printer setIndentString:@"  "];
+		[printer setASCIIMode:jsonascii];
+		[printer startPrintingArray];
+	}
+
 	for(int i=0;i<numfiles;i++)
 	{
 		NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 
 		NSString *filename=[files objectAtIndex:i];
 
-		[@"Listing " print];
-		[filename print];
-		[@"..." print];
+		if(!printer)
+		{
+			[@"Listing " print];
+			[filename print];
+			[@"..." print];
+		}
 
 		fflush(stdout);
 
@@ -174,32 +187,39 @@ int main(int argc,const char **argv)
 
 		if(parser)
 		{
-			[@"\n" print];
-
-			if([cmdline boolValueForOption:@"json-ascii"])
-			{
-				[parser setDelegate:[[[JSONLister alloc] initWithASCIIEncoding:YES] autorelease]];
-			}
-			else if([cmdline boolValueForOption:@"json"])
-			{
-				[parser setDelegate:[[[JSONLister alloc] initWithASCIIEncoding:NO] autorelease]];
-			}
-			else
-			{
-				[parser setDelegate:[[[Lister alloc] initWithIndentLevel:2] autorelease]];
-			}
+			if(!printer) [@"\n" print];
 
 			NSString *password=[cmdline stringValueForOption:@"password"];
 			if(password) [parser setPassword:password];
 
-			[parser parse];
+			if(printer)
+			{
+				[printer startPrintingArrayObject];
+				[printer startPrintingArray];
+				[parser setDelegate:[[[JSONLister alloc] initWithJSONPrinter:printer] autorelease]];
+				[parser parse];
+				[printer endPrintingArray];
+				[printer endPrintingArrayObject];
+			}
+			else
+			{
+				[parser setDelegate:[[[Lister alloc] initWithIndentLevel:2] autorelease]];
+				[parser parse];
+			}
 		}
 		else
 		{
-			[@" Couldn't open archive.\n" print];
+			if(printer) [printer printArrayObject:@"Couldn't open archive."];
+			else [@" Couldn't open archive.\n" print];
 		}
 
 		[pool release];
+	}
+
+	if(printer)
+	{
+		[printer endPrintingArray];
+		[@";\n" print];
 	}
 
 	[pool release];

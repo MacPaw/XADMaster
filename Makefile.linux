@@ -224,7 +224,8 @@ XADTEST4_FILES =	XADTest4.m
 
 UNAR_FILES =		unar.m
 
-LSAR_FILES =		lsar.m
+LSAR_FILES =		lsar.m \
+			CSJSONPrinter.m
 
 CMDLINE_FILES =		CSCommandLineParser.m \
 			CommandLineCommon.m \

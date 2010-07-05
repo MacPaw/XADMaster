@@ -507,6 +507,10 @@
 		1B91D18A11E1677B0081E40A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA70EC52532006D2F06 /* libz.dylib */; };
 		1B91D18B11E1677B0081E40A /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34AABB11C30F5400396C26 /* libstdc++.6.dylib */; };
 		1B91D19511E167B60081E40A /* lsar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D17711E167720081E40A /* lsar.m */; };
+		1B91D1A111E237AD0081E40A /* CommandLineCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1A011E237AD0081E40A /* CommandLineCommon.m */; };
+		1B91D1A211E237AD0081E40A /* CommandLineCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1A011E237AD0081E40A /* CommandLineCommon.m */; };
+		1B91D1A311E237AD0081E40A /* CommandLineCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1A011E237AD0081E40A /* CommandLineCommon.m */; };
+		1B91D1B311E258210081E40A /* CSJSONPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1B211E258210081E40A /* CSJSONPrinter.m */; };
 		1B95B42E1010D906009FA09E /* XADARJParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B42C1010D906009FA09E /* XADARJParser.h */; };
 		1B95B42F1010D906009FA09E /* XADARJParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B42D1010D906009FA09E /* XADARJParser.m */; };
 		1B95B516101119A5009FA09E /* XADXORHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B514101119A5009FA09E /* XADXORHandle.h */; };
@@ -1066,6 +1070,10 @@
 		1B91D11211E11A0F0081E40A /* XADStringICU.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringICU.m; sourceTree = "<group>"; };
 		1B91D17711E167720081E40A /* lsar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lsar.m; sourceTree = "<group>"; };
 		1B91D18F11E1677B0081E40A /* lsar */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lsar; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B91D19F11E237AD0081E40A /* CommandLineCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineCommon.h; sourceTree = "<group>"; };
+		1B91D1A011E237AD0081E40A /* CommandLineCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandLineCommon.m; sourceTree = "<group>"; };
+		1B91D1B111E258210081E40A /* CSJSONPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSJSONPrinter.h; sourceTree = "<group>"; };
+		1B91D1B211E258210081E40A /* CSJSONPrinter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSJSONPrinter.m; sourceTree = "<group>"; };
 		1B95B42C1010D906009FA09E /* XADARJParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADARJParser.h; sourceTree = "<group>"; };
 		1B95B42D1010D906009FA09E /* XADARJParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADARJParser.m; sourceTree = "<group>"; };
 		1B95B514101119A5009FA09E /* XADXORHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADXORHandle.h; sourceTree = "<group>"; };
@@ -1604,10 +1612,14 @@
 			children = (
 				1B23DDC91185EBD600620319 /* unar.m */,
 				1B91D17711E167720081E40A /* lsar.m */,
+				1B91D19F11E237AD0081E40A /* CommandLineCommon.h */,
+				1B91D1A011E237AD0081E40A /* CommandLineCommon.m */,
 				1B34A10011BBD2B100396C26 /* NSStringPrinting.h */,
 				1B34A10111BBD2B100396C26 /* NSStringPrinting.m */,
 				1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */,
 				1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */,
+				1B91D1B111E258210081E40A /* CSJSONPrinter.h */,
+				1B91D1B211E258210081E40A /* CSJSONPrinter.m */,
 			);
 			name = "Command Line Tools";
 			sourceTree = "<group>";
@@ -2581,6 +2593,7 @@
 				1B34AA9F11C30C0400396C26 /* unar.m in Sources */,
 				1B34AC1311CED9E900396C26 /* NSStringPrinting.m in Sources */,
 				1B34AC1411CED9F100396C26 /* CSCommandLineParser.m in Sources */,
+				1B91D1A311E237AD0081E40A /* CommandLineCommon.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2928,6 +2941,7 @@
 				1B91CD9D11D981E20081E40A /* NSStringPrinting.m in Sources */,
 				1B91CD9E11D981E20081E40A /* CSCommandLineParser.m in Sources */,
 				1B91D17811E167720081E40A /* lsar.m in Sources */,
+				1B91D1A111E237AD0081E40A /* CommandLineCommon.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2938,6 +2952,8 @@
 				1B91D18011E1677B0081E40A /* NSStringPrinting.m in Sources */,
 				1B91D18111E1677B0081E40A /* CSCommandLineParser.m in Sources */,
 				1B91D19511E167B60081E40A /* lsar.m in Sources */,
+				1B91D1A211E237AD0081E40A /* CommandLineCommon.m in Sources */,
+				1B91D1B311E258210081E40A /* CSJSONPrinter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3612,8 +3628,8 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\\\"$(SRCROOT)/../../Build/Debug\\\"",
-					"\\\"$(SRCROOT)/Windows/lib\\\"",
+					"\"$(SRCROOT)/../../Build/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
@@ -3642,8 +3658,8 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\\\"$(SRCROOT)/../../Build/Debug\\\"",
-					"\\\"$(SRCROOT)/Windows/lib\\\"",
+					"\"$(SRCROOT)/../../Build/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "";

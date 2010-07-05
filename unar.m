@@ -1,21 +1,9 @@
 #import "XADUnarchiver.h"
 #import "NSStringPrinting.h"
 #import "CSCommandLineParser.h"
+#import "CommandLineCommon.h"
 
 #define VERSION_STRING @"v0.2"
-
-NSString *EscapeString(NSString *str)
-{
-	NSMutableString *res=[NSMutableString string];
-	int length=[str length];
-	for(int i=0;i<length;i++)
-	{
-		unichar c=[str characterAtIndex:i];
-		if(c<32) [res appendFormat:@"^%c",c+64];
-		else [res appendFormat:@"%C",c];
-	}
-	return res;
-}
 
 @interface Unarchiver:NSObject
 {
@@ -58,7 +46,7 @@ NSString *EscapeString(NSString *str)
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 
-	NSString *name=EscapeString([[dict objectForKey:XADFileNameKey] string]);
+	NSString *name=[[[dict objectForKey:XADFileNameKey] string] stringByEscapingControlCharacters];
 	[name print];
 	[@" (" print];
 
@@ -172,40 +160,7 @@ int main(int argc,const char **argv)
 	if([encoding isEqual:@"list"]||[encoding isEqual:@"help"])
 	{
 		[@"Available encodings are:\n" print];
-
-		NSEnumerator *enumerator=[[XADString availableEncodingNames] objectEnumerator];
-		NSArray *encodingarray;
-		while(encodingarray=[enumerator nextObject])
-		{
-			NSString *description=[encodingarray objectAtIndex:0];
-			if((id)description==[NSNull null]||[description length]==0) description=nil;
-
-			NSString *encoding=[encodingarray objectAtIndex:1];
-
-			NSString *aliases=nil;
-			if([encodingarray count]>2) aliases=[[encodingarray subarrayWithRange:
-			NSMakeRange(2,[encodingarray count]-2)] componentsJoinedByString:@", "];
-
-			[@"  * " print];
-
-			[encoding print];
-
-			if(aliases)
-			{
-				[@" (" print];
-				[aliases print];
-				[@")" print];
-			}
-
-			if(description)
-			{
-				[@": " print];
-				[description print];
-			}
-
-			[@"\n" print];
-		}
-
+		PrintEncodingList();
 		return 0;
 	}
 
@@ -248,8 +203,8 @@ int main(int argc,const char **argv)
 
 			[unarchiver setDelegate:[[[Unarchiver alloc] initWithIndentLevel:2] autorelease]];
 
-			//char *pass=getenv("XADTestPassword");
-			//if(pass) [parser setPassword:[NSString stringWithUTF8String:pass]];
+//			NSString *password=[cmdline stringArrayValueForOption:@"password"];
+//			if(pass) [parser setPassword:pass];
 
 			[unarchiver parseAndUnarchive];
 		}

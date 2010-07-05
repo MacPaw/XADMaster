@@ -11,6 +11,19 @@
 	[self printToFile:stdout];
 }
 
+-(NSString *)stringByEscapingControlCharacters
+{
+	NSMutableString *res=[NSMutableString string];
+	int length=[self length];
+	for(int i=0;i<length;i++)
+	{
+		unichar c=[self characterAtIndex:i];
+		if(c<32) [res appendFormat:@"^%c",c+64];
+		else [res appendFormat:@"%C",c];
+	}
+	return res;
+}
+
 -(NSArray *)linesWrappedToWidth:(int)width
 {
 	int length=[self length];
@@ -36,6 +49,9 @@
 
 	return wrapped;
 }
+
+
+
 
 #ifdef __MINGW32__
 

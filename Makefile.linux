@@ -227,6 +227,7 @@ UNAR_FILES =		unar.m
 LSAR_FILES =		lsar.m
 
 CMDLINE_FILES =		CSCommandLineParser.m \
+			CommandLineCommon.m \
 			NSStringPrinting.m
 
 ALL_OBJC_FILES =	$(LIBRARY_OBJC_FILES) \

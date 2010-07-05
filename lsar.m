@@ -1,29 +1,17 @@
 #import "XADUnarchiver.h"
 #import "NSStringPrinting.h"
 #import "CSCommandLineParser.h"
+#import "CommandLineCommon.h"
 
 #define VERSION_STRING @"v0.1"
 
-/*NSString *EscapeString(NSString *str)
-{
-	NSMutableString *res=[NSMutableString string];
-	int length=[str length];
-	for(int i=0;i<length;i++)
-	{
-		unichar c=[str characterAtIndex:i];
-		if(c<32) [res appendFormat:@"^%c",c+64];
-		else [res appendFormat:@"%C",c];
-	}
-	return res;
-}
-
-@interface Unarchiver:NSObject
+@interface Lister:NSObject
 {
 	int indent;
 }
 @end
 
-@implementation Unarchiver
+@implementation Lister
 
 -(id)initWithIndentLevel:(int)indentlevel
 {
@@ -34,21 +22,11 @@
 	return self;
 }
 
--(void)unarchiverNeedsPassword:(XADUnarchiver *)unarchiver
+-(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
 {
 }
 
--(NSString *)unarchiver:(XADUnarchiver *)unarchiver pathForExtractingEntryWithDictionary:(NSDictionary *)dict
-{
-	return nil;
-}
-
--(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
-{
-	return YES;
-}
-
--(void)unarchiver:(XADUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
+-(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
 	for(int i=0;i<indent;i++) [@" " print];
 
@@ -58,9 +36,9 @@
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 
-	NSString *name=EscapeString([[dict objectForKey:XADFileNameKey] string]);
+	NSString *name=[[[dict objectForKey:XADFileNameKey] string] stringByEscapingControlCharacters];
 	[name print];
-	[@" (" print];
+/*	[@" (" print];
 
 	if(dir&&[dir boolValue])
 	{
@@ -76,62 +54,48 @@
 	if(rsrc&&[rsrc boolValue]) [@", rsrc" print];
 
 	[@")..." print];
-	fflush(stdout);
-}
-
--(void)unarchiver:(XADUnarchiver *)unarchiver finishedExtractingEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
-{
-}
-
--(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
-{
-	if(!error) [@" OK.\n" print];
-	else
-	{
-		[@" Failed! (" print];
-		[[XADException describeXADError:error] print];
-		[@")\n" print];
-	}
-}
-
--(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory
-{
-	return YES;
-}
-
--(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
-{
-	return YES;
-}
-
--(void)unarchiver:(XADUnarchiver *)unarchiver willExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path
-{
-	indent+=2;
-}
-
--(void)unarchiver:(XADUnarchiver *)unarchiver didExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path error:(XADError)error
-{
-	indent-=2;
-}
-
--(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path
-{
-	return nil;
-}
-
--(BOOL)extractionShouldStopForUnarchiver:(XADUnarchiver *)unarchiver
-{
-	return NO;
-}
-
--(void)unarchiver:(XADUnarchiver *)unarchiver extractionProgressForEntryWithDictionary:(NSDictionary *)dict
-fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
-{
+	fflush(stdout);*/
+	[@"\n" print];
 }
 
 @end
 
-*/
+
+
+
+@interface JSONLister:NSObject
+{
+	int indent;
+	BOOL asciimode;
+}
+@end
+
+@implementation JSONLister
+
+-(id)initWithASCIIEncoding:(BOOL)ascii
+{
+	if(self=[super init])
+	{
+		indent=0;
+		asciimode=ascii;
+	}
+	return self;
+}
+
+-(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
+{
+	// TODO: report useful error
+	exit(1);
+}
+
+-(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
+{
+//	for(int i=0;i<indent;i++) [@" " print];
+
+}
+
+@end
+
 
 
 int main(int argc,const char **argv)
@@ -163,6 +127,14 @@ int main(int argc,const char **argv)
 	@"when unpacking a .tar.gz file, only unpack the .tar file and not its contents."];
 	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
 
+	[cmdline addSwitchOption:@"json" description:
+	@"Print the listing in JSON format."];
+	[cmdline addAlias:@"j" forOption:@"json"];
+
+	[cmdline addSwitchOption:@"json-ascii" description:
+	@"Print the listing in JSON format, encoded as pure ASCII text.."];
+	[cmdline addAlias:@"ja" forOption:@"json-ascii"];
+
 	[cmdline addHelpOption];
 
 	//@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
@@ -172,58 +144,18 @@ int main(int argc,const char **argv)
 	if([encoding isEqual:@"list"]||[encoding isEqual:@"help"])
 	{
 		[@"Available encodings are:\n" print];
-
-		NSEnumerator *enumerator=[[XADString availableEncodingNames] objectEnumerator];
-		NSArray *encodingarray;
-		while(encodingarray=[enumerator nextObject])
-		{
-			NSString *description=[encodingarray objectAtIndex:0];
-			if((id)description==[NSNull null]||[description length]==0) description=nil;
-
-			NSString *encoding=[encodingarray objectAtIndex:1];
-
-			NSString *aliases=nil;
-			if([encodingarray count]>2) aliases=[[encodingarray subarrayWithRange:
-			NSMakeRange(2,[encodingarray count]-2)] componentsJoinedByString:@", "];
-
-			[@"  * " print];
-
-			[encoding print];
-
-			if(aliases)
-			{
-				[@" (" print];
-				[aliases print];
-				[@")" print];
-			}
-
-			if(description)
-			{
-				[@": " print];
-				[description print];
-			}
-
-			[@"\n" print];
-		}
-
+		PrintEncodingList();
 		return 0;
 	}
 
 //	NSArray *files=[cmdline stringArrayValueForOption:@"files"];
-/*	NSArray *files=[cmdline remainingArguments];
+	NSArray *files=[cmdline remainingArguments];
 	int numfiles=[files count];
 
-	NSString *destination=nil;
-
-	if(numfiles>1)
+	if(numfiles==0)
 	{
-		NSString *path=[files lastObject];
-		BOOL isdir;
-		if(![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isdir]||isdir)
-		{
-			destination=path;
-			numfiles--;
-		}
+		[cmdline printUsage];
+		return 1;
 	}
 
 	for(int i=0;i<numfiles;i++)
@@ -232,26 +164,35 @@ int main(int argc,const char **argv)
 
 		NSString *filename=[files objectAtIndex:i];
 
-		[@"Extracting " print];
+		[@"Listing " print];
 		[filename print];
 		[@"..." print];
 
 		fflush(stdout);
 
-		XADUnarchiver *unarchiver=[XADUnarchiver unarchiverForPath:filename];
+		XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
 
-		if(unarchiver)
+		if(parser)
 		{
 			[@"\n" print];
-			//[unarchiver setMacResourceForkStyle:XADVisibleAppleDoubleForkStyle];
-			if(destination) [unarchiver setDestination:destination];
 
-			[unarchiver setDelegate:[[[Unarchiver alloc] initWithIndentLevel:2] autorelease]];
+			if([cmdline boolValueForOption:@"json-ascii"])
+			{
+				[parser setDelegate:[[[JSONLister alloc] initWithASCIIEncoding:YES] autorelease]];
+			}
+			else if([cmdline boolValueForOption:@"json"])
+			{
+				[parser setDelegate:[[[JSONLister alloc] initWithASCIIEncoding:NO] autorelease]];
+			}
+			else
+			{
+				[parser setDelegate:[[[Lister alloc] initWithIndentLevel:2] autorelease]];
+			}
 
-			//char *pass=getenv("XADTestPassword");
-			//if(pass) [parser setPassword:[NSString stringWithUTF8String:pass]];
+			NSString *password=[cmdline stringValueForOption:@"password"];
+			if(password) [parser setPassword:password];
 
-			[unarchiver parseAndUnarchive];
+			[parser parse];
 		}
 		else
 		{
@@ -259,9 +200,10 @@ int main(int argc,const char **argv)
 		}
 
 		[pool release];
-	}*/
+	}
 
 	[pool release];
 
 	return 0;
 }
+

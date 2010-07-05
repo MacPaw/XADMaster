@@ -7,6 +7,8 @@
 -(void)print;
 -(void)printToFile:(FILE *)fh;
 
+-(NSString *)stringByEscapingControlCharacters;
+
 -(NSArray *)linesWrappedToWidth:(int)width;
 
 @end

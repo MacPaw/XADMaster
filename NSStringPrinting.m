@@ -76,7 +76,7 @@
 
 -(void)printToFile:(FILE *)fh
 {
-	int length=[self lengthOfBytesUsingEncoding:NSUTF8StringEncoding]+1;
+	int length=[self lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 	char buffer[length+1];
 	[self getCString:buffer maxLength:length+1 encoding:NSUTF8StringEncoding];
 

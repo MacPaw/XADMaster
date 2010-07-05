@@ -501,8 +501,9 @@ unar.o: unar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
  CommandLineCommon.h
 lsar.o: lsar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
- CSSubHandle.h NSStringPrinting.h CSCommandLineParser.h \
+ CSSubHandle.h NSStringPrinting.h CSCommandLineParser.h CSJSONPrinter.h \
  CommandLineCommon.h
+CSJSONPrinter.o: CSJSONPrinter.m CSJSONPrinter.h NSStringPrinting.h
 CSCommandLineParser.o: CSCommandLineParser.m CSCommandLineParser.h \
  NSStringPrinting.h
 CommandLineCommon.o: CommandLineCommon.m CommandLineCommon.h XADString.h \

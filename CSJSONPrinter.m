@@ -41,6 +41,7 @@
 	else if([object isKindOfClass:[NSNumber class]]) [self printNumber:object];
 	else if([object isKindOfClass:[NSString class]]) [self printString:object];
 	else if([object isKindOfClass:[NSData class]]) [self printData:object];
+	else if([object isKindOfClass:[NSValue class]]) [self printValue:object];
 	else if([object isKindOfClass:[NSArray class]]) [self printArray:object];
 	else if([object isKindOfClass:[NSDictionary class]]) [self printDictionary:object];
 	else [self printString:[object description]];
@@ -74,7 +75,19 @@
 -(void)printData:(NSData *)data
 {
 	[@"\"" print];
-	[[self stringByEncodingData:data] print];
+	[[self stringByEncodingBytes:[data bytes] length:[data length]] print];
+	[@"\"" print];
+}
+
+-(void)printValue:(NSValue *)value
+{
+	NSUInteger length;
+	NSGetSizeAndAlignment([value objCType],&length,NULL);
+	uint8_t bytes[length];
+	[value getValue:bytes];
+
+	[@"\"" print];
+	[[self stringByEncodingBytes:bytes length:length] print];
 	[@"\"" print];
 }
 
@@ -208,10 +221,8 @@
 	return res;
 }
 
--(NSString *)stringByEncodingData:(NSData *)data
+-(NSString *)stringByEncodingBytes:(const uint8_t *)bytes length:(int)length
 {
-	int length=[data length];
-	const uint8_t *bytes=[data bytes];
 	NSMutableString *res=[NSMutableString stringWithCapacity:length*6];
 
 	for(int i=0;i<length;i++) [res appendFormat:@"\\u%04x",bytes[i]];

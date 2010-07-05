@@ -103,7 +103,8 @@ int main(int argc,const char **argv)
 	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
 
 	[cmdline setUsageHeader:
-	@"lsar " VERSION_STRING @" (" @__DATE__ @")\n"
+	@"lsar " VERSION_STRING @" (" @__DATE__ @"), a tool for listing the contents of archive files.\n"
+	@"Usage: lsar [options] archive...\n"
 	@"\n"
 	@"Available options:\n"];
 
@@ -135,7 +136,6 @@ int main(int argc,const char **argv)
 
 	[cmdline addHelpOption];
 
-	//@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
 
 	NSString *encoding=[[cmdline stringValueForOption:@"encoding"] lowercaseString];
@@ -146,7 +146,6 @@ int main(int argc,const char **argv)
 		return 0;
 	}
 
-//	NSArray *files=[cmdline stringArrayValueForOption:@"files"];
 	NSArray *files=[cmdline remainingArguments];
 	int numfiles=[files count];
 
@@ -158,9 +157,11 @@ int main(int argc,const char **argv)
 
 	BOOL json=[cmdline boolValueForOption:@"json"];
 	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
+	if(jsonascii) json=YES;
+
 	CSJSONPrinter *printer=nil;
 
-	if(json||jsonascii)
+	if(json)
 	{
 		printer=[CSJSONPrinter new];
 		[printer setIndentString:@"  "];
@@ -174,7 +175,7 @@ int main(int argc,const char **argv)
 
 		NSString *filename=[files objectAtIndex:i];
 
-		if(!printer)
+		if(!json)
 		{
 			[@"Listing " print];
 			[filename print];
@@ -187,12 +188,15 @@ int main(int argc,const char **argv)
 
 		if(parser)
 		{
-			if(!printer) [@"\n" print];
+			if(!json) [@"\n" print];
 
 			NSString *password=[cmdline stringValueForOption:@"password"];
 			if(password) [parser setPassword:password];
 
-			if(printer)
+			NSString *encoding=[cmdline stringValueForOption:@"encoding"];
+			if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
+
+			if(json)
 			{
 				[printer startPrintingArrayObject];
 				[printer startPrintingArray];
@@ -216,7 +220,7 @@ int main(int argc,const char **argv)
 		[pool release];
 	}
 
-	if(printer)
+	if(json)
 	{
 		[printer endPrintingArray];
 		[@";\n" print];

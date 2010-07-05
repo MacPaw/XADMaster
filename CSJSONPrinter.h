@@ -20,6 +20,7 @@
 -(void)printNumber:(NSNumber *)number;
 -(void)printString:(NSString *)string;
 -(void)printData:(NSData *)data;
+-(void)printValue:(NSValue *)value;
 -(void)printArray:(NSArray *)array;
 -(void)printDictionary:(NSDictionary *)dictionary;
 
@@ -39,6 +40,6 @@
 -(void)startNewLine;
 
 -(NSString *)stringByEscapingString:(NSString *)string;
--(NSString *)stringByEncodingData:(NSData *)data;
+-(NSString *)stringByEncodingBytes:(const uint8_t *)bytes length:(int)length;
 
 @end

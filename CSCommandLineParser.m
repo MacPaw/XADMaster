@@ -208,16 +208,18 @@ static NSString *AliasOptionType=@"AliasOptionType";
 
 -(void)addHelpOption
 {
-	[self addHelpOptionNamed:@"help"];
+	[self addHelpOptionNamed:@"help" description:@"Display this information."];
 	[self addAlias:@"h" forOption:@"help"];
 }
 
--(void)addHelpOptionNamed:(NSString *)helpoption
+-(void)addHelpOptionNamed:(NSString *)helpoption description:(NSString *)description
 {
 	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSMutableArray arrayWithObject:helpoption],NamesKey,
 		HelpOptionType,OptionTypeKey,
+		description,DescriptionKey,
 	nil] forKey:helpoption];
+	[optionordering addObject:helpoption];
 }
 
 

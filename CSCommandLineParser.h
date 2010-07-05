@@ -30,7 +30,7 @@
 -(void)addDoubleOption:(NSString *)option defaultValue:(double)defaultvalue description:(NSString *)description;
 -(void)addSwitchOption:(NSString *)option description:(NSString *)description;
 -(void)addHelpOption;
--(void)addHelpOptionNamed:(NSString *)helpoption;
+-(void)addHelpOptionNamed:(NSString *)helpoption description:(NSString *)description;
 
 -(void)addAlias:(NSString *)alias forOption:(NSString *)option;
 

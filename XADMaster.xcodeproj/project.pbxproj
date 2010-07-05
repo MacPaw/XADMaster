@@ -494,6 +494,19 @@
 		1B91D03711DE92620081E40A /* XADUnarchiverWindows.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */; };
 		1B91D0AE11DFC05D0081E40A /* XADStringCFString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D0AC11DFC0480081E40A /* XADStringCFString.m */; };
 		1B91D10B11E0F1160081E40A /* XADStringCFString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D0AC11DFC0480081E40A /* XADStringCFString.m */; };
+		1B91D17811E167720081E40A /* lsar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D17711E167720081E40A /* lsar.m */; };
+		1B91D18011E1677B0081E40A /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
+		1B91D18111E1677B0081E40A /* CSCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */; };
+		1B91D18311E1677B0081E40A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA20EC52505006D2F06 /* libcrypto.dylib */; };
+		1B91D18411E1677B0081E40A /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */; };
+		1B91D18511E1677B0081E40A /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03C11BB1CD900396C26 /* libbz2.a */; };
+		1B91D18611E1677B0081E40A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
+		1B91D18711E1677B0081E40A /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B216A7F0F8E9D9E001207C9 /* Carbon.framework */; };
+		1B91D18811E1677B0081E40A /* libUniversalDetector.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B23E1B11190F8CC00620319 /* libUniversalDetector.a */; };
+		1B91D18911E1677B0081E40A /* libXADMaster.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A97511C2FD0500396C26 /* libXADMaster.a */; };
+		1B91D18A11E1677B0081E40A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA70EC52532006D2F06 /* libz.dylib */; };
+		1B91D18B11E1677B0081E40A /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34AABB11C30F5400396C26 /* libstdc++.6.dylib */; };
+		1B91D19511E167B60081E40A /* lsar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D17711E167720081E40A /* lsar.m */; };
 		1B95B42E1010D906009FA09E /* XADARJParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B42C1010D906009FA09E /* XADARJParser.h */; };
 		1B95B42F1010D906009FA09E /* XADARJParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B42D1010D906009FA09E /* XADARJParser.m */; };
 		1B95B516101119A5009FA09E /* XADXORHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B514101119A5009FA09E /* XADXORHandle.h */; };
@@ -758,6 +771,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1B91CBB711D821A70081E40A;
 			remoteInfo = "libUniversalDetector (Windows)";
+		};
+		1B91D17B11E1677B0081E40A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B34A97411C2FD0500396C26;
+			remoteInfo = libXADMaster;
+		};
+		1B91D17D11E1677B0081E40A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B23E0861190F29400620319;
+			remoteInfo = libUniversalDetector;
+		};
+		1B91D19311E1677E0081E40A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B91D17911E1677B0081E40A /* unar copy */;
+			remoteInfo = "unar copy";
 		};
 		1BBAB6810EC274A3007FE6A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1030,6 +1064,8 @@
 		1B91CF7211DCF4140081E40A /* XADStringWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringWindows.m; sourceTree = "<group>"; };
 		1B91D0AC11DFC0480081E40A /* XADStringCFString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringCFString.m; sourceTree = "<group>"; };
 		1B91D11211E11A0F0081E40A /* XADStringICU.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringICU.m; sourceTree = "<group>"; };
+		1B91D17711E167720081E40A /* lsar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lsar.m; sourceTree = "<group>"; };
+		1B91D18F11E1677B0081E40A /* lsar */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lsar; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B95B42C1010D906009FA09E /* XADARJParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADARJParser.h; sourceTree = "<group>"; };
 		1B95B42D1010D906009FA09E /* XADARJParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADARJParser.m; sourceTree = "<group>"; };
 		1B95B514101119A5009FA09E /* XADXORHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADXORHandle.h; sourceTree = "<group>"; };
@@ -1274,6 +1310,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1B91D18211E1677B0081E40A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B91D18311E1677B0081E40A /* libcrypto.dylib in Frameworks */,
+				1B91D18411E1677B0081E40A /* libbz2.dylib in Frameworks */,
+				1B91D18511E1677B0081E40A /* libbz2.a in Frameworks */,
+				1B91D18611E1677B0081E40A /* Foundation.framework in Frameworks */,
+				1B91D18711E1677B0081E40A /* Carbon.framework in Frameworks */,
+				1B91D18811E1677B0081E40A /* libUniversalDetector.a in Frameworks */,
+				1B91D18911E1677B0081E40A /* libXADMaster.a in Frameworks */,
+				1B91D18A11E1677B0081E40A /* libz.dylib in Frameworks */,
+				1B91D18B11E1677B0081E40A /* libstdc++.6.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BBAB6840EC274A3007FE6A2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1317,6 +1369,7 @@
 				1B3A68A2101BA12C00AE25A8 /* XADTest4 */,
 				1B34A97511C2FD0500396C26 /* libXADMaster.a */,
 				1B23DDC01185EBA300620319 /* unar */,
+				1B91D18F11E1677B0081E40A /* lsar */,
 				1B91CD5E11D97E7C0081E40A /* libXADMaster.a */,
 				1B91CDAC11D981E20081E40A /* unar.exe */,
 			);
@@ -1334,7 +1387,7 @@
 				1B06D6100DDCBE4400D9C000 /* CSHandle */,
 				56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */,
 				1B5A7BA50A24F9E300B189EB /* XADTest */,
-				1B23DDC41185EBC200620319 /* unar */,
+				1B23DDC41185EBC200620319 /* Command Line Tools */,
 				1B91CBA911D803920081E40A /* Windows Sources */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -1546,16 +1599,17 @@
 			name = CSHandle;
 			sourceTree = "<group>";
 		};
-		1B23DDC41185EBC200620319 /* unar */ = {
+		1B23DDC41185EBC200620319 /* Command Line Tools */ = {
 			isa = PBXGroup;
 			children = (
 				1B23DDC91185EBD600620319 /* unar.m */,
+				1B91D17711E167720081E40A /* lsar.m */,
 				1B34A10011BBD2B100396C26 /* NSStringPrinting.h */,
 				1B34A10111BBD2B100396C26 /* NSStringPrinting.m */,
 				1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */,
 				1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */,
 			);
-			name = unar;
+			name = "Command Line Tools";
 			sourceTree = "<group>";
 		};
 		1B2F183D0EE965720000DAFF /* Amiga */ = {
@@ -2274,6 +2328,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				1B91D19411E1677E0081E40A /* PBXTargetDependency */,
 				1B34AA6B11C30A1400396C26 /* PBXTargetDependency */,
 				1B23E1C11190F9AF00620319 /* PBXTargetDependency */,
 			);
@@ -2371,6 +2426,24 @@
 			productReference = 1B91CDAC11D981E20081E40A /* unar.exe */;
 			productType = "com.apple.product-type.tool";
 		};
+		1B91D17911E1677B0081E40A /* lsar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B91D18C11E1677B0081E40A /* Build configuration list for PBXNativeTarget "lsar" */;
+			buildPhases = (
+				1B91D17E11E1677B0081E40A /* Sources */,
+				1B91D18211E1677B0081E40A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1B91D17A11E1677B0081E40A /* PBXTargetDependency */,
+				1B91D17C11E1677B0081E40A /* PBXTargetDependency */,
+			);
+			name = lsar;
+			productName = unar;
+			productReference = 1B91D18F11E1677B0081E40A /* lsar */;
+			productType = "com.apple.product-type.tool";
+		};
 		1BBAB67F0EC274A3007FE6A2 /* XADTest2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1BBAB6880EC274A3007FE6A2 /* Build configuration list for PBXNativeTarget "XADTest2" */;
@@ -2451,6 +2524,7 @@
 				1B3A6898101BA12C00AE25A8 /* XADTest4 */,
 				1B34A97411C2FD0500396C26 /* libXADMaster.a */,
 				1B23DDBF1185EBA300620319 /* unar */,
+				1B91D17911E1677B0081E40A /* lsar */,
 				1B91CCBE11D97E7C0081E40A /* libXADMaster.a (Windows) */,
 				1B91CD9611D981E20081E40A /* unar.exe (Windows) */,
 			);
@@ -2853,6 +2927,17 @@
 				1B91CD9C11D981E20081E40A /* unar.m in Sources */,
 				1B91CD9D11D981E20081E40A /* NSStringPrinting.m in Sources */,
 				1B91CD9E11D981E20081E40A /* CSCommandLineParser.m in Sources */,
+				1B91D17811E167720081E40A /* lsar.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1B91D17E11E1677B0081E40A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B91D18011E1677B0081E40A /* NSStringPrinting.m in Sources */,
+				1B91D18111E1677B0081E40A /* CSCommandLineParser.m in Sources */,
+				1B91D19511E167B60081E40A /* lsar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3074,6 +3159,21 @@
 			isa = PBXTargetDependency;
 			name = "libUniversalDetector (Windows)";
 			targetProxy = 1B91CDC711D983DD0081E40A /* PBXContainerItemProxy */;
+		};
+		1B91D17A11E1677B0081E40A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B34A97411C2FD0500396C26 /* libXADMaster.a */;
+			targetProxy = 1B91D17B11E1677B0081E40A /* PBXContainerItemProxy */;
+		};
+		1B91D17C11E1677B0081E40A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libUniversalDetector;
+			targetProxy = 1B91D17D11E1677B0081E40A /* PBXContainerItemProxy */;
+		};
+		1B91D19411E1677E0081E40A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B91D17911E1677B0081E40A /* lsar */;
+			targetProxy = 1B91D19311E1677E0081E40A /* PBXContainerItemProxy */;
 		};
 		1BBAB6800EC274A3007FE6A2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3495,6 +3595,69 @@
 			};
 			name = Release;
 		};
+		1B91D18D11E1677B0081E40A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\\\"$(SRCROOT)/../../Build/Debug\\\"",
+					"\\\"$(SRCROOT)/Windows/lib\\\"",
+				);
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = lsar;
+			};
+			name = Debug;
+		};
+		1B91D18E11E1677B0081E40A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\\\"$(SRCROOT)/../../Build/Debug\\\"",
+					"\\\"$(SRCROOT)/Windows/lib\\\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = lsar;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		1BBAB6890EC274A3007FE6A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3782,6 +3945,15 @@
 			buildConfigurations = (
 				1B91CDAA11D981E20081E40A /* Debug */,
 				1B91CDAB11D981E20081E40A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1B91D18C11E1677B0081E40A /* Build configuration list for PBXNativeTarget "lsar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B91D18D11E1677B0081E40A /* Debug */,
+				1B91D18E11E1677B0081E40A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

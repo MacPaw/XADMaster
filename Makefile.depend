@@ -498,6 +498,9 @@ XADTest4.o: XADTest4.m XADArchiveParser.h XADException.h XADString.h \
 unar.o: unar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
  CSSubHandle.h NSStringPrinting.h CSCommandLineParser.h
+lsar.o: lsar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
+ XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
+ CSSubHandle.h NSStringPrinting.h CSCommandLineParser.h
 CSCommandLineParser.o: CSCommandLineParser.m CSCommandLineParser.h \
  NSStringPrinting.h
 NSStringPrinting.o: NSStringPrinting.m NSStringPrinting.h

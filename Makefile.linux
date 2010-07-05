@@ -224,6 +224,8 @@ XADTEST4_FILES =	XADTest4.m
 
 UNAR_FILES =		unar.m
 
+LSAR_FILES =		lsar.m
+
 CMDLINE_FILES =		CSCommandLineParser.m \
 			NSStringPrinting.m
 
@@ -232,6 +234,7 @@ ALL_OBJC_FILES =	$(LIBRARY_OBJC_FILES) \
 			$(XADTEST3_FILES) \
 			$(XADTEST4_FILES) \
 			$(UNAR_FILES) \
+			$(LSAR_FILES) \
 			$(CMDLINE_FILES)
 
 ALL_C_FILES = 		$(LIBRARY_C_FILES)
@@ -259,6 +262,8 @@ XADTEST4_OBJS =		$(XADTEST4_FILES:.m=.o)
 
 UNAR_OBJS =		$(UNAR_FILES:.m=.o)
 
+LSAR_OBJS =		$(LSAR_FILES:.m=.o)
+
 CMDLINE_OBJS=		$(CMDLINE_FILES:.m=.o)
 
 ALL_OBJS = 		$(LIBRARY_OBJS) \
@@ -266,6 +271,7 @@ ALL_OBJS = 		$(LIBRARY_OBJS) \
 			$(XADTEST3_OBJS) \
 			$(XADTEST4_OBJS) \
 			$(UNAR_OBJS) \
+			$(LSAR_OBJS) \
 			$(CMDLINE_OBJS)
 
 
@@ -274,7 +280,8 @@ ALL_OBJS = 		$(LIBRARY_OBJS) \
 EXECUTABLE_FILES =	XADTest2 \
 			XADTest3 \
 			XADTest4 \
-			unar
+			unar \
+			lsar
 
 LIBRARY_FILES = 	libXADMaster.a
 
@@ -298,7 +305,7 @@ LIBRARY_FILES = 	libXADMaster.a
 
 # Compilation rules
 
-all: unar XADTest2 XADTest3 XADTest4
+all: unar lsar XADTest2 XADTest3 XADTest4
 
 libXADMaster.a: $(LIBRARY_OBJS)
 	rm $@
@@ -317,6 +324,9 @@ XADTest4: $(XADTEST4_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetec
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 unar: $(UNAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 clean:

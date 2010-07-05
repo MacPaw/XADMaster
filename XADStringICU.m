@@ -76,6 +76,26 @@
 
 +(NSArray *)availableEncodingNames
 {
+	int numencodings=ucnv_countAvailable();
+	NSMutableArray *array=[NSMutableArray arrayWithCapacity:count];
+
+	for(int i=0;i<numencodings;i++)
+	{
+		const char *name=ucnv_getAvailableName(i);
+
+		NSMutableArray *encodingarray=[NSMutableArray arrayWithObjects:
+		@"",[NSString stringWithUTF8String:name],nil]
+
+		int numaliases=ucnv_countAliases(name,NULL);
+		for(int j=0;j<numaliases;j++)
+		{
+			const char *alias=ucnv_getAlias(name,j,NULL);
+			[encodingarray addObject:[NSString stringWithUTF8String:alias]];
+		}
+		[array addObject:encodingarray];
+	}
+
+	return array;
 }
 
 @end

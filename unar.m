@@ -168,6 +168,47 @@ int main(int argc,const char **argv)
 	//@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
 
+	NSString *encoding=[[cmdline stringValueForOption:@"encoding"] lowercaseString];
+	if([encoding isEqual:@"list"]||[encoding isEqual:@"help"])
+	{
+		[@"Available encodings are:\n" print];
+
+		NSEnumerator *enumerator=[[XADString availableEncodingNames] objectEnumerator];
+		NSArray *encodingarray;
+		while(encodingarray=[enumerator nextObject])
+		{
+			NSString *description=[encodingarray objectAtIndex:0];
+			if((id)description==[NSNull null]||[description length]==0) description=nil;
+
+			NSString *encoding=[encodingarray objectAtIndex:1];
+
+			NSString *aliases=nil;
+			if([encodingarray count]>2) aliases=[[encodingarray subarrayWithRange:
+			NSMakeRange(2,[encodingarray count]-2)] componentsJoinedByString:@", "];
+
+			[@"  * " print];
+
+			[encoding print];
+
+			if(aliases)
+			{
+				[@" (" print];
+				[aliases print];
+				[@")" print];
+			}
+
+			if(description)
+			{
+				[@": " print];
+				[description print];
+			}
+
+			[@"\n" print];
+		}
+
+		return 0;
+	}
+
 //	NSArray *files=[cmdline stringArrayValueForOption:@"files"];
 	NSArray *files=[cmdline remainingArguments];
 	int numfiles=[files count];

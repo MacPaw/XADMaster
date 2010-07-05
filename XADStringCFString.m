@@ -29,6 +29,22 @@
 
 +(NSArray *)availableEncodingNames
 {
+	NSMutableArray *array=[NSMutableArray array];
+
+	const CFStringEncoding *encodings=CFStringGetListOfAvailableEncodings();
+
+	while(*encodings!=kCFStringEncodingInvalidId)
+	{
+		NSString *name=(NSString *)CFStringConvertEncodingToIANACharSetName(*encodings);
+		NSString *description=[NSString localizedNameOfStringEncoding:CFStringConvertEncodingToNSStringEncoding(*encodings)];
+		if(name)
+		{
+			[array addObject:[NSArray arrayWithObjects:description,name,nil]];
+		}
+		encodings++;
+	}
+
+	return array;
 }
 
 @end

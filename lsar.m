@@ -70,6 +70,22 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 	}
 }
 
+static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *parser,NSDictionary *dict,id delegate)
+{
+	// TODO: handle exceptions
+	CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:test];
+	if(!handle) return nil;
+
+	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle
+	name:[[dict objectForKey:XADFileNameKey] string]];
+	if(!subparser) return nil;
+
+	if(password) [subparser setPassword:password];
+	if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
+	[subparser setDelegate:delegate];
+
+	return subparser;
+}
 
 
 
@@ -96,7 +112,7 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
-	for(int i=0;i<indent;i++) [@" " print];
+	for(int i=0;i<indent;i++) [@"  " print];
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
@@ -109,8 +125,7 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 	BOOL islink=link&&[link boolValue];
 	BOOL isarchive=archive&&[archive boolValue];
 
-	NSString *filename=[[dict objectForKey:XADFileNameKey] string];
-	NSString *displayname=[filename stringByEscapingControlCharacters];
+	NSString *displayname=[[[dict objectForKey:XADFileNameKey] string] stringByEscapingControlCharacters];
 	[displayname print];
 
 /*	[@" (" print];
@@ -135,28 +150,25 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 
 	if(recurse&&isarchive)
 	{
-		//NSAutoreleasePool *pool=[NSAutoreleasePool new];
+		XADArchiveParser *subparser=ArchiveParserForEntryWithDelegate(parser,dict,self);
 
-		handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
-		if(!handle) return;
-
-		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle name:filename]; // TODO: provide a name?
 		if(subparser)
 		{
-			if(password) [subparser setPassword:password];
-			if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
-			[subparser setDelegate:self];
+			[@":\n" print];
+			indent++;
+			[subparser parse]; // TODO: handle exceptions
+			indent--;
 
-			[@"\n" print];
-
-			indent+=2;
-			[subparser parse];
-			indent-=2;
+			if(test) for(int i=0;i<indent;i++) [@"  " print];
 		}
-
-		//[pool release];
-
-		if(test) for(int i=0;i<indent;i++) [@" " print];
+		else
+		{
+			[@" (Failed to extract!) " print];
+		}
+	}
+	else
+	{
+		if(test) [@" " print];
 	}
 
 	if(test)
@@ -164,11 +176,11 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 		switch(TestEntry(parser,dict,handle))
 		{
 			case EntryDoesNotNeedTestingResult: break;
-			case EntryIsNotSupportedResult: [@" (Unsupported!)" print]; break;
-			case EntrySizeIsWrongResult: [@" (Wrong size!)" print]; break;
-			case EntryHasNoChecksumResult: [@" (Unknown)" print]; break;
-			case EntryChecksumIsIncorrectResult: [@" (Checksum failed!)" print]; break;
-			case EntryIsOkResult: [@" (Ok)" print]; break;
+			case EntryIsNotSupportedResult: [@"(Unsupported!)" print]; break;
+			case EntrySizeIsWrongResult: [@"(Wrong size!)" print]; break;
+			case EntryHasNoChecksumResult: [@"(Unknown)" print]; break;
+			case EntryChecksumIsIncorrectResult: [@"(Checksum failed!)" print]; break;
+			case EntryIsOkResult: [@"(Ok)" print]; break;
 		}
 	}
 

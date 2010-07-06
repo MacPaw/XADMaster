@@ -8,8 +8,70 @@
 
 
 
-BOOL recurse,verify;
+BOOL recurse,test;
 NSString *password,*encoding;
+
+
+
+#define EntryDoesNotNeedTestingResult 0
+#define EntryIsNotSupportedResult 1
+#define EntrySizeIsWrongResult 2
+#define EntryHasNoChecksumResult 3
+#define EntryChecksumIsIncorrectResult 4
+#define EntryIsOkResult 5
+
+static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handle)
+{
+	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
+	NSNumber *link=[dict objectForKey:XADIsLinkKey];
+	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
+	NSNumber *size=[dict objectForKey:XADFileSizeKey];
+
+	BOOL isdir=dir&&[dir boolValue];
+	BOOL islink=link&&[link boolValue];
+	BOOL isarchive=archive&&[archive boolValue];
+
+	if(isdir||islink) return EntryDoesNotNeedTestingResult;
+
+	if(!handle) handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
+
+	if(!handle)
+	{
+		return EntryIsNotSupportedResult;
+	}
+
+	[handle seekToEndOfFile];
+
+	if(![handle hasChecksum])
+	{
+		if(size&&[size longLongValue]!=[handle offsetInFile])
+		{
+			return EntrySizeIsWrongResult;
+		}
+		else
+		{
+			return EntryHasNoChecksumResult;
+		}
+	}
+	else
+	{
+		if(![handle isChecksumCorrect])
+		{
+			return EntryChecksumIsIncorrectResult;
+		}
+		else if(size&&[size longLongValue]!=[handle offsetInFile])
+		{
+			return EntrySizeIsWrongResult; // Unlikely to happen
+		}
+		else
+		{
+			return EntryIsOkResult;
+		}
+	}
+}
+
+
+
 
 @interface Lister:NSObject
 {
@@ -38,14 +100,19 @@ NSString *password,*encoding;
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
+	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
 //	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
-	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
+
+	BOOL isdir=dir&&[dir boolValue];
+	BOOL islink=link&&[link boolValue];
+	BOOL isarchive=archive&&[archive boolValue];
 
 	NSString *filename=[[dict objectForKey:XADFileNameKey] string];
 	NSString *displayname=[filename stringByEscapingControlCharacters];
 	[displayname print];
+
 /*	[@" (" print];
 
 	if(dir&&[dir boolValue])
@@ -63,13 +130,14 @@ NSString *password,*encoding;
 
 	[@")..." print];
 	fflush(stdout);*/
-	[@"\n" print];
 
-	if(recurse&&archive&&[archive boolValue])
+	CSHandle *handle=nil;
+
+	if(recurse&&isarchive)
 	{
-		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+		//NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
-		CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
+		handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
 		if(!handle) return;
 
 		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle name:filename]; // TODO: provide a name?
@@ -79,17 +147,32 @@ NSString *password,*encoding;
 			if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
 			[subparser setDelegate:self];
 
+			[@"\n" print];
+
 			indent+=2;
 			[subparser parse];
 			indent-=2;
 		}
 
-		[pool release];
+		//[pool release];
+
+		if(test) for(int i=0;i<indent;i++) [@" " print];
 	}
 
-	if(verify)
+	if(test)
 	{
+		switch(TestEntry(parser,dict,handle))
+		{
+			case EntryDoesNotNeedTestingResult: break;
+			case EntryIsNotSupportedResult: [@" (Unsupported!)" print]; break;
+			case EntrySizeIsWrongResult: [@" (Wrong size!)" print]; break;
+			case EntryHasNoChecksumResult: [@" (Unknown)" print]; break;
+			case EntryChecksumIsIncorrectResult: [@" (Checksum failed!)" print]; break;
+			case EntryIsOkResult: [@" (Ok)" print]; break;
+		}
 	}
+
+	[@"\n" print];
 }
 
 @end
@@ -190,7 +273,7 @@ int main(int argc,const char **argv)
 
 	password=[cmdline stringValueForOption:@"password"];
 	encoding=[cmdline stringValueForOption:@"encoding"];
-	verify=[cmdline boolValueForOption:@"verify"];
+	test=[cmdline boolValueForOption:@"test"];
 	recurse=![cmdline boolValueForOption:@"no-recursion"];
 
 	BOOL json=[cmdline boolValueForOption:@"json"];
@@ -239,6 +322,7 @@ int main(int argc,const char **argv)
 			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 			NSString *filename=[files objectAtIndex:i];
 
+			if(i!=0) [@"\n" print];
 			[filename print];
 			[@":" print];
 			fflush(stdout);

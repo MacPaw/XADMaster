@@ -6,6 +6,11 @@
 
 #define VERSION_STRING @"v0.1"
 
+
+
+BOOL recurse,verify;
+NSString *password,*encoding;
+
 @interface Lister:NSObject
 {
 	int indent;
@@ -14,11 +19,11 @@
 
 @implementation Lister
 
--(id)initWithIndentLevel:(int)indentlevel
+-(id)init
 {
 	if(self=[super init])
 	{
-		indent=indentlevel;
+		indent=0;
 	}
 	return self;
 }
@@ -36,9 +41,11 @@
 //	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
+	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
 
-	NSString *name=[[[dict objectForKey:XADFileNameKey] string] stringByEscapingControlCharacters];
-	[name print];
+	NSString *filename=[[dict objectForKey:XADFileNameKey] string];
+	NSString *displayname=[filename stringByEscapingControlCharacters];
+	[displayname print];
 /*	[@" (" print];
 
 	if(dir&&[dir boolValue])
@@ -57,6 +64,32 @@
 	[@")..." print];
 	fflush(stdout);*/
 	[@"\n" print];
+
+	if(recurse&&archive&&[archive boolValue])
+	{
+		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+		CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
+		if(!handle) return;
+
+		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle name:filename]; // TODO: provide a name?
+		if(subparser)
+		{
+			if(password) [subparser setPassword:password];
+			if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
+			[subparser setDelegate:self];
+
+			indent+=2;
+			[subparser parse];
+			indent-=2;
+		}
+
+		[pool release];
+	}
+
+	if(verify)
+	{
+	}
 }
 
 @end
@@ -122,8 +155,8 @@ int main(int argc,const char **argv)
 	[cmdline addAlias:@"t" forOption:@"test"];
 
 	[cmdline addSwitchOption:@"no-recursion" description:
-	@"Do not attempt to extract archives contained in other archives. For instance, "
-	@"when unpacking a .tar.gz file, only unpack the .tar file and not its contents."];
+	@"Do not attempt to list the contents of archives contained in other archives. "
+	@"For instance, when listing a .tar.gz file, only list the .tar file and not its contents."];
 	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
 
 	[cmdline addSwitchOption:@"json" description:
@@ -155,49 +188,32 @@ int main(int argc,const char **argv)
 		return 1;
 	}
 
+	password=[cmdline stringValueForOption:@"password"];
+	encoding=[cmdline stringValueForOption:@"encoding"];
+	verify=[cmdline boolValueForOption:@"verify"];
+	recurse=![cmdline boolValueForOption:@"no-recursion"];
+
 	BOOL json=[cmdline boolValueForOption:@"json"];
 	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
-	if(jsonascii) json=YES;
 
-	CSJSONPrinter *printer=nil;
-
-	if(json)
+	if(json||jsonascii)
 	{
-		printer=[CSJSONPrinter new];
+		CSJSONPrinter *printer=[CSJSONPrinter new];
 		[printer setIndentString:@"  "];
 		[printer setASCIIMode:jsonascii];
 		[printer startPrintingArray];
-	}
 
-	for(int i=0;i<numfiles;i++)
-	{
-		NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-
-		NSString *filename=[files objectAtIndex:i];
-
-		if(!json)
+		for(int i=0;i<numfiles;i++)
 		{
-			[@"Listing " print];
-			[filename print];
-			[@"..." print];
-		}
+			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
+			NSString *filename=[files objectAtIndex:i];
+			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
 
-		fflush(stdout);
-
-		XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
-
-		if(parser)
-		{
-			if(!json) [@"\n" print];
-
-			NSString *password=[cmdline stringValueForOption:@"password"];
-			if(password) [parser setPassword:password];
-
-			NSString *encoding=[cmdline stringValueForOption:@"encoding"];
-			if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
-
-			if(json)
+			if(parser)
 			{
+				if(password) [parser setPassword:password];
+				if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
+
 				[printer startPrintingArrayObject];
 				[printer startPrintingArray];
 				[parser setDelegate:[[[JSONLister alloc] initWithJSONPrinter:printer] autorelease]];
@@ -207,23 +223,45 @@ int main(int argc,const char **argv)
 			}
 			else
 			{
-				[parser setDelegate:[[[Lister alloc] initWithIndentLevel:2] autorelease]];
-				[parser parse];
+				[printer printArrayObject:@"Couldn't open archive."];
 			}
-		}
-		else
-		{
-			if(printer) [printer printArrayObject:@"Couldn't open archive."];
-			else [@" Couldn't open archive.\n" print];
+
+			[pool release];
 		}
 
-		[pool release];
-	}
-
-	if(json)
-	{
 		[printer endPrintingArray];
 		[@";\n" print];
+	}
+	else
+	{
+		for(int i=0;i<numfiles;i++)
+		{
+			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
+			NSString *filename=[files objectAtIndex:i];
+
+			[filename print];
+			[@":" print];
+			fflush(stdout);
+
+			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
+
+			if(parser)
+			{
+				[@"\n" print];
+
+				if(password) [parser setPassword:password];
+				if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
+
+				[parser setDelegate:[[[Lister alloc] init] autorelease]];
+				[parser parse];
+			}
+			else
+			{
+				[@" Couldn't open archive.\n" print];
+			}
+
+			[pool release];
+		}
 	}
 
 	[pool release];

@@ -414,7 +414,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 		if(index==NSNotFound)
 		{
 			[errors addObject:[NSString stringWithFormat:@"\"%@\" is not a valid "
-			@"value for option \"%@\". (Valid values are: %@)",value,option,
+			@"value for option \"%@\". (Valid values are: %@.)",value,option,
 			[allowedvalues componentsJoinedByString:@", "]]];
 			return;
 		}

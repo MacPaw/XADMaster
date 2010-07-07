@@ -7,7 +7,6 @@
 
 
 BOOL recurse;
-NSString *password,*encoding;
 
 
 
@@ -44,7 +43,7 @@ NSString *password,*encoding;
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	for(int i=0;i<indent;i++) [@" " print];
+	for(int i=0;i<indent;i++) [@"  " print];
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
@@ -95,17 +94,17 @@ NSString *password,*encoding;
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	return YES;
+	return recurse;
 }
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path
 {
-	indent+=2;
+	indent++;
 }
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path error:(XADError)error
 {
-	indent-=2;
+	indent--;
 }
 
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path
@@ -160,14 +159,22 @@ int main(int argc,const char **argv)
 
 	[cmdline addMultipleChoiceOption:@"forks"
 	#ifdef __APPLE__
-	allowedValues:[NSArray arrayWithObjects:@"fork",@"visible",@"invisible",@"skip",nil]
+	allowedValues:[NSArray arrayWithObjects:@"fork",@"visible",@"hidden",@"skip",nil]
 	defaultValue:@"fork"
 	#else
-	allowedValues:[NSArray arrayWithObjects:@"visible",@"invisible",@"skip",nil]
+	allowedValues:[NSArray arrayWithObjects:@"visible",@"hidden",@"skip",nil]
 	defaultValue:@"visible"
 	#endif
 	description:@"How to handle Mac OS resource forks."];
  	[cmdline addAlias:@"f" forOption:@"forks"];
+
+	#ifdef __APPLE__
+	int forkvalues[]={XADMacOSXForkStyle,XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADIgnoredForkStyle};
+	#else
+	int forkvalues[]={XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADIgnoredForkStyle};
+	#endif
+
+
 
 	[cmdline addHelpOption];
 
@@ -175,9 +182,11 @@ int main(int argc,const char **argv)
 
 
 
-	password=[cmdline stringValueForOption:@"password"];
-	encoding=[cmdline stringValueForOption:@"encoding"];
 	recurse=![cmdline boolValueForOption:@"no-recursion"];
+
+	NSString *password=[cmdline stringValueForOption:@"password"];
+	NSString *encoding=[cmdline stringValueForOption:@"encoding"];
+	int forkstyle=forkvalues[[cmdline intValueForOption:@"forks"]];
 
 	if(encoding&&([encoding caseInsensitiveCompare:@"list"]==NSOrderedSame||[encoding caseInsensitiveCompare:@"help"]==NSOrderedSame))
 	{
@@ -228,14 +237,14 @@ int main(int argc,const char **argv)
 
 		if(unarchiver)
 		{
-			[@"\n" print];
-			//[unarchiver setMacResourceForkStyle:XADVisibleAppleDoubleForkStyle];
 			if(destination) [unarchiver setDestination:destination];
+			if(password) [[unarchiver archiveParser] setPassword:password];
+			if(encoding) [[[unarchiver archiveParser] stringSource] setFixedEncodingName:encoding];
+			[unarchiver setMacResourceForkStyle:forkstyle];
 
 			[unarchiver setDelegate:[[[Unarchiver alloc] initWithIndentLevel:2] autorelease]];
-
-//			NSString *password=[cmdline stringArrayValueForOption:@"password"];
-//			if(pass) [parser setPassword:pass];
+			
+			[@"\n" print];
 
 			[unarchiver parseAndUnarchive];
 		}

@@ -312,13 +312,24 @@ int main(int argc,const char **argv)
 
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
 
-	NSString *encoding=[[cmdline stringValueForOption:@"encoding"] lowercaseString];
-	if([encoding isEqual:@"list"]||[encoding isEqual:@"help"])
+
+
+	password=[cmdline stringValueForOption:@"password"];
+	encoding=[cmdline stringValueForOption:@"encoding"];
+	test=[cmdline boolValueForOption:@"test"];
+	recurse=![cmdline boolValueForOption:@"no-recursion"];
+
+	BOOL json=[cmdline boolValueForOption:@"json"];
+	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
+
+	if(encoding&&([encoding caseInsensitiveCompare:@"list"]==NSOrderedSame||[encoding caseInsensitiveCompare:@"help"]==NSOrderedSame))
 	{
 		[@"Available encodings are:\n" print];
 		PrintEncodingList();
 		return 0;
 	}
+
+
 
 	NSArray *files=[cmdline remainingArguments];
 	int numfiles=[files count];
@@ -329,13 +340,7 @@ int main(int argc,const char **argv)
 		return 1;
 	}
 
-	password=[cmdline stringValueForOption:@"password"];
-	encoding=[cmdline stringValueForOption:@"encoding"];
-	test=[cmdline boolValueForOption:@"test"];
-	recurse=![cmdline boolValueForOption:@"no-recursion"];
 
-	BOOL json=[cmdline boolValueForOption:@"json"];
-	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
 
 	if(json||jsonascii)
 	{

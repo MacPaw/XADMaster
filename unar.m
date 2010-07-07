@@ -5,6 +5,12 @@
 
 #define VERSION_STRING @"v0.2"
 
+
+BOOL recurse;
+NSString *password,*encoding;
+
+
+
 @interface Unarchiver:NSObject
 {
 	int indent;
@@ -129,7 +135,8 @@ int main(int argc,const char **argv)
 	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
 
 	[cmdline setUsageHeader:
-	@"unar " VERSION_STRING @" (" @__DATE__ @")\n"
+	@"unar " VERSION_STRING @" (" @__DATE__ @"), a tool for extracting the contents of archive files.\n"
+	@"Usage: unar [options] archive... [destination]\n"
 	@"\n"
 	@"Available options:\n"];
 
@@ -151,25 +158,47 @@ int main(int argc,const char **argv)
 	@"Do not automatically create a directory for the contents of the unpacked archive."];
 	[cmdline addAlias:@"nd" forOption:@"no-directory"];
 
+	[cmdline addMultipleChoiceOption:@"forks"
+	#ifdef __APPLE__
+	allowedValues:[NSArray arrayWithObjects:@"fork",@"visible",@"invisible",@"skip",nil]
+	defaultValue:@"fork"
+	#else
+	allowedValues:[NSArray arrayWithObjects:@"visible",@"invisible",@"skip",nil]
+	defaultValue:@"visible"
+	#endif
+	description:@"How to handle Mac OS resource forks."];
+ 	[cmdline addAlias:@"f" forOption:@"forks"];
+
 	[cmdline addHelpOption];
 
-	//@"Usage: %@ archive [ archive2 ... ] [ destination_directory ]\n",
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
 
-	NSString *encoding=[[cmdline stringValueForOption:@"encoding"] lowercaseString];
-	if([encoding isEqual:@"list"]||[encoding isEqual:@"help"])
+
+
+	password=[cmdline stringValueForOption:@"password"];
+	encoding=[cmdline stringValueForOption:@"encoding"];
+	recurse=![cmdline boolValueForOption:@"no-recursion"];
+
+	if(encoding&&([encoding caseInsensitiveCompare:@"list"]==NSOrderedSame||[encoding caseInsensitiveCompare:@"help"]==NSOrderedSame))
 	{
 		[@"Available encodings are:\n" print];
 		PrintEncodingList();
 		return 0;
 	}
 
+
+
 //	NSArray *files=[cmdline stringArrayValueForOption:@"files"];
 	NSArray *files=[cmdline remainingArguments];
 	int numfiles=[files count];
 
-	NSString *destination=nil;
+	if(numfiles==0)
+	{
+		[cmdline printUsage];
+		exit(1);
+	}
 
+	NSString *destination=nil;
 	if(numfiles>1)
 	{
 		NSString *path=[files lastObject];
@@ -180,6 +209,8 @@ int main(int argc,const char **argv)
 			numfiles--;
 		}
 	}
+
+
 
 	for(int i=0;i<numfiles;i++)
 	{

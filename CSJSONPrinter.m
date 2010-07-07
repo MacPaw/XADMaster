@@ -94,26 +94,14 @@
 -(void)printArray:(NSArray *)array
 {
 	[self startPrintingArray];
-
-	NSEnumerator *enumerator=[array objectEnumerator];
-	id object;
-	while(object=[enumerator nextObject]) [self printArrayObject:object];
-
+	[self printArrayObjects:array];
 	[self endPrintingArray];
 }
 
 -(void)printDictionary:(NSDictionary *)dictionary
 {
 	[self startPrintingDictionary];
-
-	NSEnumerator *enumerator=[dictionary keyEnumerator];
-	id key;
-	while(key=[enumerator nextObject])
-	{
-		[self printDictionaryKey:key];
-		[self printDictionaryObject:[dictionary objectForKey:key]];
-	}
-
+	[self printDictionaryKeysAndObjects:dictionary];
 	[self endPrintingDictionary];
 }
 
@@ -125,20 +113,6 @@
 	indentlevel++;
 }
 
--(void)printArrayObject:(id)object
-{
-	[self startPrintingArrayObject];
-	[self printObject:object];
-	[self endPrintingArrayObject];
-}
-
--(void)endPrintingArray
-{
-	indentlevel--;
-	[self startNewLine];
-	[@"]" print];
-}
-
 -(void)startPrintingArrayObject
 {
 	[self startNewLine];
@@ -148,6 +122,28 @@
 {
 	[@"," print];
 }
+
+-(void)endPrintingArray
+{
+	indentlevel--;
+	[self startNewLine];
+	[@"]" print];
+}
+
+-(void)printArrayObject:(id)object
+{
+	[self startPrintingArrayObject];
+	[self printObject:object];
+	[self endPrintingArrayObject];
+}
+
+-(void)printArrayObjects:(NSArray *)array
+{
+	NSEnumerator *enumerator=[array objectEnumerator];
+	id object;
+	while(object=[enumerator nextObject]) [self printArrayObject:object];
+}
+
 
 
 
@@ -166,11 +162,13 @@
 	[@"\": " print];
 }
 
--(void)printDictionaryObject:(id)object
+-(void)startPrintingDictionaryObject
 {
-	[self startPrintingDictionaryObject];
-	[self printObject:object];
-	[self endPrintingDictionaryObject];
+}
+
+-(void)endPrintingDictionaryObject
+{
+	[@"," print];
 }
 
 -(void)endPrintingDictionary
@@ -180,14 +178,24 @@
 	[@"}" print];
 }
 
--(void)startPrintingDictionaryObject
+-(void)printDictionaryObject:(id)object
 {
+	[self startPrintingDictionaryObject];
+	[self printObject:object];
+	[self endPrintingDictionaryObject];
 }
 
--(void)endPrintingDictionaryObject
+-(void)printDictionaryKeysAndObjects:(NSDictionary *)dictionary
 {
-	[@"," print];
+	NSEnumerator *enumerator=[dictionary keyEnumerator];
+	id key;
+	while(key=[enumerator nextObject])
+	{
+		[self printDictionaryKey:key];
+		[self printDictionaryObject:[dictionary objectForKey:key]];
+	}
 }
+
 
 
 

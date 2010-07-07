@@ -108,6 +108,8 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 
 -(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
 {
+	[@"This archive requires a password to unpack. Use the -p option to provide one.\n" print];
+	exit(1);
 }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
@@ -160,6 +162,7 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 			indent--;
 
 			if(test) for(int i=0;i<indent;i++) [@"  " print];
+			handle=[subparser handle];
 		}
 		else
 		{
@@ -211,13 +214,56 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 
 -(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
 {
-	// TODO: report useful error
+	// TODO: be useful
+	[printer printArrayObject:@"password_required"];
 	exit(1);
 }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
-	[printer printArrayObject:dict];
+	[printer startPrintingArrayObject];
+	[printer startPrintingDictionary];
+
+	[printer printDictionaryKeysAndObjects:dict];
+
+	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
+	BOOL isarchive=archive&&[archive boolValue];
+
+	CSHandle *handle=nil;
+
+	if(recurse&&isarchive)
+	{
+		XADArchiveParser *subparser=ArchiveParserForEntryWithDelegate(parser,dict,self);
+
+		if(subparser)
+		{
+			[printer printDictionaryKey:@"lsarContents"];
+			[printer startPrintingDictionaryObject];
+			[printer startPrintingArray];
+			[subparser parse]; // TODO: handle exceptions
+			[printer endPrintingArray];
+			[printer endPrintingDictionaryObject];
+
+			handle=[subparser handle];
+		}
+	}
+
+	if(test)
+	{
+		[printer printDictionaryKey:@"lsarTestResult"];
+		switch(TestEntry(parser,dict,handle))
+		{
+			case EntryDoesNotNeedTestingResult: [printer printDictionaryObject:@"not_tested"]; break;
+			case EntryIsNotSupportedResult: [printer printDictionaryObject:@"not_supported"]; break;
+			case EntrySizeIsWrongResult: [printer printDictionaryObject:@"wrong_size"]; break;
+			case EntryHasNoChecksumResult: [printer printDictionaryObject:@"no_checksum"]; break;
+			case EntryChecksumIsIncorrectResult: [printer printDictionaryObject:@"wrong_checksum"]; break;
+			case EntryIsOkResult: [printer printDictionaryObject:@"ok"]; break;
+		}
+	}
+
+	[printer endPrintingDictionary];
+	[printer endPrintingArrayObject];
 }
 
 @end

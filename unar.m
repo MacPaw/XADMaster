@@ -18,17 +18,19 @@ BOOL recurse;
 
 @implementation Unarchiver
 
--(id)initWithIndentLevel:(int)indentlevel
+-(id)init
 {
 	if(self=[super init])
 	{
-		indent=indentlevel;
+		indent=1;
 	}
 	return self;
 }
 
 -(void)unarchiverNeedsPassword:(XADUnarchiver *)unarchiver
 {
+	[@"This archive requires a password to unpack. Use the -p option to provide one.\n" print];
+	exit(1);
 }
 
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver pathForExtractingEntryWithDictionary:(NSDictionary *)dict
@@ -153,9 +155,9 @@ int main(int argc,const char **argv)
 	@"when unpacking a .tar.gz file, only unpack the .tar file and not its contents."];
 	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
 
-	[cmdline addSwitchOption:@"no-directory" description:
+/*	[cmdline addSwitchOption:@"no-directory" description:
 	@"Do not automatically create a directory for the contents of the unpacked archive."];
-	[cmdline addAlias:@"nd" forOption:@"no-directory"];
+	[cmdline addAlias:@"nd" forOption:@"no-directory"];*/
 
 	[cmdline addMultipleChoiceOption:@"forks"
 	#ifdef __APPLE__
@@ -242,7 +244,7 @@ int main(int argc,const char **argv)
 			if(encoding) [[[unarchiver archiveParser] stringSource] setFixedEncodingName:encoding];
 			[unarchiver setMacResourceForkStyle:forkstyle];
 
-			[unarchiver setDelegate:[[[Unarchiver alloc] initWithIndentLevel:2] autorelease]];
+			[unarchiver setDelegate:[[[Unarchiver alloc] init] autorelease]];
 			
 			[@"\n" print];
 

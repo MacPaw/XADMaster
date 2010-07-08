@@ -18,17 +18,43 @@
 -(void)setUsageHeader:(NSString *)header;
 -(void)setUsageFooter:(NSString *)footer;
 
--(void)addStringOption:(NSString *)option description:(NSString *)description;
--(void)addStringOption:(NSString *)option defaultValue:(NSString *)defaultvalue description:(NSString *)description;
--(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues description:(NSString *)description;
--(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues defaultValue:(NSString *)defaultvalue description:(NSString *)description;
--(void)addIntOption:(NSString *)option description:(NSString *)description;
--(void)addIntOption:(NSString *)option defaultValue:(int)defaultvalue description:(NSString *)description;
--(void)addFloatOption:(NSString *)option description:(NSString *)description;
--(void)addFloatOption:(NSString *)option defaultValue:(float)defaultvalue description:(NSString *)description;
--(void)addDoubleOption:(NSString *)option description:(NSString *)description;
--(void)addDoubleOption:(NSString *)option defaultValue:(double)defaultvalue description:(NSString *)description;
+-(void)addStringOption:(NSString *)option
+description:(NSString *)description;
+-(void)addStringOption:(NSString *)option defaultValue:(NSString *)defaultvalue
+description:(NSString *)description;
+-(void)addStringOption:(NSString *)option
+description:(NSString *)description argumentDescription:(NSString *)argdescription;
+-(void)addStringOption:(NSString *)option defaultValue:(NSString *)defaultvalue
+description:(NSString *)description argumentDescription:(NSString *)argdescription;
+-(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues
+description:(NSString *)description;
+-(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues defaultValue:(NSString *)defaultvalue
+description:(NSString *)description;
+-(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues
+description:(NSString *)description argumentDescription:(NSString *)argdescription;
+-(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues defaultValue:(NSString *)defaultvalue
+description:(NSString *)description argumentDescription:(NSString *)argdescription;
+
+-(void)addIntegerOption:(NSString *)option
+description:(NSString *)description;
+-(void)addIntegerOption:(NSString *)option
+description:(NSString *)description argumentDescription:(NSString *)argdescription;
+-(void)addIntegerOption:(NSString *)option defaultValue:(int)defaultvalue
+description:(NSString *)description;
+-(void)addIntegerOption:(NSString *)option defaultValue:(int)defaultvalue
+description:(NSString *)description argumentDescription:(NSString *)argdescription;
+
+-(void)addFloatingPointOption:(NSString *)option
+description:(NSString *)description;
+-(void)addFloatingPointOption:(NSString *)option
+description:(NSString *)description argumentDescription:(NSString *)argdescription;
+-(void)addFloatingPointOption:(NSString *)option defaultValue:(double)defaultvalue
+description:(NSString *)description;
+-(void)addFloatingPointOption:(NSString *)option defaultValue:(double)defaultvalue
+description:(NSString *)description argumentDescription:(NSString *)argdescription;
+
 -(void)addSwitchOption:(NSString *)option description:(NSString *)description;
+
 -(void)addHelpOption;
 -(void)addHelpOptionNamed:(NSString *)helpoption description:(NSString *)description;
 
@@ -52,6 +78,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors;
 -(void)_requireOptionsInArray:(NSArray *)requiredoptions when:(NSString *)when errors:(NSMutableArray *)errors;
 -(BOOL)_isOptionDefined:(NSString *)option;
 -(NSString *)_describeOption:(NSString *)name;
+-(NSString *)_describeOptionAndArgument:(NSString *)name;
 -(void)_reportErrors:(NSArray *)errors;
 
 -(void)printUsage;

@@ -288,7 +288,8 @@ int main(int argc,const char **argv)
 
 	[cmdline addStringOption:@"encoding" description:
 	@"The encoding to use for filenames in the archive, when it is not known. "
-	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."];
+	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."
+	argumentDescription:@"encoding name"];
 	[cmdline addAlias:@"e" forOption:@"encoding"];
 
 	[cmdline addSwitchOption:@"test" description:

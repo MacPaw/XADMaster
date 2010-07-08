@@ -12,6 +12,7 @@ static NSString *AllowedValuesKey=@"AllowedValuesKey";
 static NSString *DefaultValueKey=@"DefaultValueKey";
 static NSString *OptionTypeKey=@"OptionType";
 static NSString *DescriptionKey=@"DescriptionKey";
+static NSString *ArgumentDescriptionKey=@"ArgumentDescriptionKey";
 static NSString *AliasTargetKey=@"AliasTargetKey";
 static NSString *RequiredOptionsKey=@"RequiredOptionsKey";
 
@@ -86,114 +87,193 @@ static NSString *AliasOptionType=@"AliasOptionType";
 
 
 
+-(void)addStringOption:(NSString *)option
+description:(NSString *)description
+{
+	[self addStringOption:option defaultValue:nil description:description argumentDescription:@"string"];
+}
 
--(void)addStringOption:(NSString *)option description:(NSString *)description
+-(void)addStringOption:(NSString *)option defaultValue:(NSString *)defaultvalue
+description:(NSString *)description
+{
+	[self addStringOption:option defaultValue:defaultvalue description:description argumentDescription:@"string"];
+}
+
+-(void)addStringOption:(NSString *)option
+description:(NSString *)description argumentDescription:(NSString *)argdescription
+{
+	[self addStringOption:option defaultValue:nil description:description argumentDescription:argdescription];
+}
+
+-(void)addStringOption:(NSString *)option defaultValue:(NSString *)defaultvalue
+description:(NSString *)description argumentDescription:(NSString *)argdescription
 {
 	[self _assertOptionNameIsUnique:option];
-	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSMutableArray arrayWithObject:option],NamesKey,
 		StringOptionType,OptionTypeKey,
 		description,DescriptionKey,
-	nil] forKey:option];
+		argdescription,ArgumentDescriptionKey,
+	nil];
+	if(defaultvalue) [dict setObject:defaultvalue forKey:DefaultValueKey];
+
+	[options setObject:dict forKey:option];
 	[optionordering addObject:option];
 }
 
--(void)addStringOption:(NSString *)option defaultValue:(NSString *)defaultvalue description:(NSString *)description
+
+
+
+-(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues
+description:(NSString *)description
 {
-	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[NSMutableArray arrayWithObject:option],NamesKey,
-		defaultvalue,DefaultValueKey,
-		StringOptionType,OptionTypeKey,
-		description,DescriptionKey,
-	nil] forKey:option];
-	[optionordering addObject:option];
+	[self addMultipleChoiceOption:option allowedValues:allowedvalues defaultValue:nil
+	description:description argumentDescription:[allowedvalues componentsJoinedByString:@"|"]];
 }
 
--(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues description:(NSString *)description
+-(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues defaultValue:(NSString *)defaultvalue
+description:(NSString *)description
+{
+	[self addMultipleChoiceOption:option allowedValues:allowedvalues defaultValue:defaultvalue
+	description:description argumentDescription:[allowedvalues componentsJoinedByString:@"|"]];
+}
+
+-(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues
+description:(NSString *)description argumentDescription:(NSString *)argdescription
+{
+	[self addMultipleChoiceOption:option allowedValues:allowedvalues defaultValue:nil
+	description:description argumentDescription:argdescription];
+}
+
+-(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues defaultValue:(NSString *)defaultvalue
+description:(NSString *)description argumentDescription:(NSString *)argdescription
 {
 	[self _assertOptionNameIsUnique:option];
-	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSMutableArray arrayWithObject:option],NamesKey,
 		allowedvalues,AllowedValuesKey,
 		MultipleChoiceOptionType,OptionTypeKey,
 		description,DescriptionKey,
-	nil] forKey:option];
+		argdescription,ArgumentDescriptionKey,
+	nil];
+	if(defaultvalue)
+	{
+		NSUInteger index=[allowedvalues indexOfObject:[defaultvalue lowercaseString]];
+		if(index==NSNotFound) [NSException raise:NSInvalidArgumentException format:
+		@"Default value \"%@\" is not in the array of allowed values.",defaultvalue];
+		[dict setObject:[NSNumber numberWithUnsignedInteger:index] forKey:DefaultValueKey];
+	}
+
+	[options setObject:dict forKey:option];
 	[optionordering addObject:option];
 }
 
--(void)addMultipleChoiceOption:(NSString *)option allowedValues:(NSArray *)allowedvalues defaultValue:(NSString *)defaultvalue description:(NSString *)description
+
+
+
+-(void)addIntegerOption:(NSString *)option
+description:(NSString *)description
 {
-	NSUInteger index=[allowedvalues indexOfObject:[defaultvalue lowercaseString]];
-	if(index==NSNotFound) [NSException raise:NSInvalidArgumentException format:
-	@"Default value \"%@\" is not in the array of allowed values.",defaultvalue];
-
-	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[NSMutableArray arrayWithObject:option],NamesKey,
-		allowedvalues,AllowedValuesKey,
-		[NSNumber numberWithUnsignedInteger:index],DefaultValueKey,
-		MultipleChoiceOptionType,OptionTypeKey,
-		description,DescriptionKey,
-	nil] forKey:option];
-	[optionordering addObject:option];
+	[self addIntegerOption:option
+	description:description argumentDescription:@"integer"];
 }
 
--(void)addIntOption:(NSString *)option description:(NSString *)description
+-(void)addIntegerOption:(NSString *)option
+description:(NSString *)description argumentDescription:(NSString *)argdescription
 {
 	[self _assertOptionNameIsUnique:option];
-	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSMutableArray arrayWithObject:option],NamesKey,
 		IntegerOptionType,OptionTypeKey,
 		description,DescriptionKey,
-	nil] forKey:option];
+		argdescription,ArgumentDescriptionKey,
+	nil];
+
+	[options setObject:dict forKey:option];
 	[optionordering addObject:option];
 }
 
--(void)addIntOption:(NSString *)option defaultValue:(int)defaultvalue description:(NSString *)description
+-(void)addIntegerOption:(NSString *)option defaultValue:(int)defaultvalue
+description:(NSString *)description
+{
+	[self addIntegerOption:option defaultValue:defaultvalue
+	description:description argumentDescription:@"integer"];
+}
+
+-(void)addIntegerOption:(NSString *)option defaultValue:(int)defaultvalue
+description:(NSString *)description argumentDescription:(NSString *)argdescription
 {
 	[self _assertOptionNameIsUnique:option];
-	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSMutableArray arrayWithObject:option],NamesKey,
 		[NSNumber numberWithInt:defaultvalue],DefaultValueKey,
 		IntegerOptionType,OptionTypeKey,
 		description,DescriptionKey,
-	nil] forKey:option];
+		argdescription,ArgumentDescriptionKey,
+	nil];
+
+	[options setObject:dict forKey:option];
 	[optionordering addObject:option];
 }
 
 // Int options with range?
 
--(void)addFloatOption:(NSString *)option description:(NSString *)description
+
+
+
+-(void)addFloatingPointOption:(NSString *)option
+description:(NSString *)description
 {
-	[self addDoubleOption:option description:description];
+	[self addFloatingPointOption:option
+	description:description argumentDescription:@"number"];
 }
 
--(void)addFloatOption:(NSString *)option defaultValue:(float)defaultvalue description:(NSString *)description
-{
-	[self addDoubleOption:option defaultValue:defaultvalue description:description];
-}
-
--(void)addDoubleOption:(NSString *)option description:(NSString *)description
+-(void)addFloatingPointOption:(NSString *)option
+description:(NSString *)description argumentDescription:(NSString *)argdescription
 {
 	[self _assertOptionNameIsUnique:option];
-	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSMutableArray arrayWithObject:option],NamesKey,
 		FloatingPointOptionType,OptionTypeKey,
 		description,DescriptionKey,
-	nil] forKey:option];
+		argdescription,ArgumentDescriptionKey,
+	nil];
+
+	[options setObject:dict forKey:option];
 	[optionordering addObject:option];
 }
 
--(void)addDoubleOption:(NSString *)option defaultValue:(double)defaultvalue description:(NSString *)description
+-(void)addFloatingPointOption:(NSString *)option defaultValue:(double)defaultvalue
+description:(NSString *)description
+{
+	[self addFloatingPointOption:option defaultValue:defaultvalue
+	description:description argumentDescription:@"number"];
+}
+
+-(void)addFloatingPointOption:(NSString *)option defaultValue:(double)defaultvalue
+description:(NSString *)description argumentDescription:(NSString *)argdescription
 {
 	[self _assertOptionNameIsUnique:option];
-	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[NSMutableArray arrayWithObject:option],NamesKey,
 		[NSNumber numberWithDouble:defaultvalue],DefaultValueKey,
 		FloatingPointOptionType,OptionTypeKey,
 		description,DescriptionKey,
-	nil] forKey:option];
+		argdescription,ArgumentDescriptionKey,
+	nil];
+
+	[options setObject:dict forKey:option];
 	[optionordering addObject:option];
 }
+
+
+
 
 -(void)addSwitchOption:(NSString *)option description:(NSString *)description
 {
@@ -205,6 +285,9 @@ static NSString *AliasOptionType=@"AliasOptionType";
 	nil] forKey:option];
 	[optionordering addObject:option];
 }
+
+
+
 
 -(void)addHelpOption
 {
@@ -582,6 +665,15 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 	[[names subarrayWithRange:NSMakeRange(1,[names count]-1)] componentsJoinedByString:@", -"]];
 }
 
+-(NSString *)_describeOptionAndArgument:(NSString *)name
+{
+	NSDictionary *dict=[options objectForKey:name];
+	NSString *argdescription=[dict objectForKey:ArgumentDescriptionKey];
+
+	if(argdescription) return [NSString stringWithFormat:@"%@ <%@>",[self _describeOption:name],argdescription];
+	else return [self _describeOption:name];
+}
+
 -(void)_reportErrors:(NSArray *)errors
 {
 	NSEnumerator *enumerator=[errors objectEnumerator];
@@ -609,7 +701,8 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 	{
 		NSString *option=[optionordering objectAtIndex:i];
 
-		NSString *description=[self _describeOption:option];
+		NSString *description=[self _describeOptionAndArgument:option];
+
 		[optiondescriptions addObject:description];
 
 		int length=[description length];

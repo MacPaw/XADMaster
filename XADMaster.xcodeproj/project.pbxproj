@@ -790,13 +790,6 @@
 			remoteGlobalIDString = 1B23E0861190F29400620319;
 			remoteInfo = libUniversalDetector;
 		};
-		1B91D19311E1677E0081E40A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1B91D17911E1677B0081E40A /* unar copy */;
-			remoteInfo = "unar copy";
-		};
 		1BBAB6810EC274A3007FE6A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2340,7 +2333,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				1B91D19411E1677E0081E40A /* PBXTargetDependency */,
 				1B34AA6B11C30A1400396C26 /* PBXTargetDependency */,
 				1B23E1C11190F9AF00620319 /* PBXTargetDependency */,
 			);
@@ -3185,11 +3177,6 @@
 			isa = PBXTargetDependency;
 			name = libUniversalDetector;
 			targetProxy = 1B91D17D11E1677B0081E40A /* PBXContainerItemProxy */;
-		};
-		1B91D19411E1677E0081E40A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1B91D17911E1677B0081E40A /* lsar */;
-			targetProxy = 1B91D19311E1677E0081E40A /* PBXContainerItemProxy */;
 		};
 		1BBAB6800EC274A3007FE6A2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

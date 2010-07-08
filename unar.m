@@ -147,7 +147,8 @@ int main(int argc,const char **argv)
 
 	[cmdline addStringOption:@"encoding" description:
 	@"The encoding to use for filenames in the archive, when it is not known. "
-	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."];
+	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."
+	argumentDescription:@"encoding name"];
 	[cmdline addAlias:@"e" forOption:@"encoding"];
 
 	[cmdline addSwitchOption:@"no-recursion" description:
@@ -161,13 +162,19 @@ int main(int argc,const char **argv)
 
 	[cmdline addMultipleChoiceOption:@"forks"
 	#ifdef __APPLE__
-	allowedValues:[NSArray arrayWithObjects:@"fork",@"visible",@"hidden",@"skip",nil]
-	defaultValue:@"fork"
+	allowedValues:[NSArray arrayWithObjects:@"fork",@"visible",@"hidden",@"skip",nil] defaultValue:@"fork"
+	description:@"How to handle Mac OS resource forks. "
+	@"\"fork\" creates regular resource forks, "
+	@"\"visible\" creates AppleDouble files with the extension \".rsrc\", "
+	@"\"hidden\" creates AppleDouble files with the prefix \"._\", "
+	@"and \"skip\" discards all resource forks."];
 	#else
-	allowedValues:[NSArray arrayWithObjects:@"visible",@"hidden",@"skip",nil]
-	defaultValue:@"visible"
+	allowedValues:[NSArray arrayWithObjects:@"visible",@"hidden",@"skip",nil] defaultValue:@"visible"
+	description:@"How to handle Mac OS resource forks. "
+	@"\"visible\" creates AppleDouble files with the extension \".rsrc\", "
+	@"\"hidden\" creates AppleDouble files with the prefix \"._\", "
+	@"and \"skip\" discards all resource forks."];
 	#endif
-	description:@"How to handle Mac OS resource forks."];
  	[cmdline addAlias:@"f" forOption:@"forks"];
 
 	#ifdef __APPLE__

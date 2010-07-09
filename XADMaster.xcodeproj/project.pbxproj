@@ -494,7 +494,6 @@
 		1B91D03711DE92620081E40A /* XADUnarchiverWindows.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */; };
 		1B91D0AE11DFC05D0081E40A /* XADStringCFString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D0AC11DFC0480081E40A /* XADStringCFString.m */; };
 		1B91D10B11E0F1160081E40A /* XADStringCFString.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D0AC11DFC0480081E40A /* XADStringCFString.m */; };
-		1B91D17811E167720081E40A /* lsar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D17711E167720081E40A /* lsar.m */; };
 		1B91D18011E1677B0081E40A /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
 		1B91D18111E1677B0081E40A /* CSCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */; };
 		1B91D18311E1677B0081E40A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA20EC52505006D2F06 /* libcrypto.dylib */; };
@@ -511,6 +510,19 @@
 		1B91D1A211E237AD0081E40A /* CommandLineCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1A011E237AD0081E40A /* CommandLineCommon.m */; };
 		1B91D1A311E237AD0081E40A /* CommandLineCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1A011E237AD0081E40A /* CommandLineCommon.m */; };
 		1B91D1B311E258210081E40A /* CSJSONPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1B211E258210081E40A /* CSJSONPrinter.m */; };
+		1B91D2DD11E694860081E40A /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
+		1B91D2DE11E694860081E40A /* CSCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */; };
+		1B91D2DF11E694860081E40A /* lsar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D17711E167720081E40A /* lsar.m */; };
+		1B91D2E011E694860081E40A /* CommandLineCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1A011E237AD0081E40A /* CommandLineCommon.m */; };
+		1B91D2E211E694860081E40A /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03C11BB1CD900396C26 /* libbz2.a */; };
+		1B91D2E311E694860081E40A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
+		1B91D2E411E694860081E40A /* libXADMaster.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CD5E11D97E7C0081E40A /* libXADMaster.a */; };
+		1B91D2E511E694860081E40A /* libUniversalDetector.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CDBB11D983760081E40A /* libUniversalDetector.a */; };
+		1B91D2E611E694860081E40A /* libeay32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A04411BB1F2000396C26 /* libeay32.a */; };
+		1B91D2E711E694860081E40A /* libstdc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A08E11BB254800396C26 /* libstdc++.a */; };
+		1B91D2E811E694860081E40A /* libwinmm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A06611BB21A900396C26 /* libwinmm.a */; };
+		1B91D2E911E694860081E40A /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03E11BB1CD900396C26 /* libz.a */; };
+		1B91D2F211E694B70081E40A /* CSJSONPrinter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1B211E258210081E40A /* CSJSONPrinter.m */; };
 		1B95B42E1010D906009FA09E /* XADARJParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B42C1010D906009FA09E /* XADARJParser.h */; };
 		1B95B42F1010D906009FA09E /* XADARJParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B95B42D1010D906009FA09E /* XADARJParser.m */; };
 		1B95B516101119A5009FA09E /* XADXORHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B95B514101119A5009FA09E /* XADXORHandle.h */; };
@@ -696,6 +708,14 @@
 			outputFiles = (
 			);
 		};
+		1B91D2EA11E694860081E40A /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = org.cocotron.1.0.windows.i386.gcc.default;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
@@ -789,6 +809,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1B23E0861190F29400620319;
 			remoteInfo = libUniversalDetector;
+		};
+		1B91D2D811E694860081E40A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B91CCBE11D97E7C0081E40A;
+			remoteInfo = "libXADMaster.a (Windows)";
+		};
+		1B91D2DA11E694860081E40A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B91CBB711D821A70081E40A;
+			remoteInfo = "libUniversalDetector (Windows)";
 		};
 		1BBAB6810EC274A3007FE6A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1067,6 +1101,7 @@
 		1B91D1A011E237AD0081E40A /* CommandLineCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandLineCommon.m; sourceTree = "<group>"; };
 		1B91D1B111E258210081E40A /* CSJSONPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSJSONPrinter.h; sourceTree = "<group>"; };
 		1B91D1B211E258210081E40A /* CSJSONPrinter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSJSONPrinter.m; sourceTree = "<group>"; };
+		1B91D2EE11E694860081E40A /* lsar.exe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lsar.exe; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B95B42C1010D906009FA09E /* XADARJParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADARJParser.h; sourceTree = "<group>"; };
 		1B95B42D1010D906009FA09E /* XADARJParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADARJParser.m; sourceTree = "<group>"; };
 		1B95B514101119A5009FA09E /* XADXORHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADXORHandle.h; sourceTree = "<group>"; };
@@ -1327,6 +1362,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1B91D2E111E694860081E40A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B91D2E211E694860081E40A /* libbz2.a in Frameworks */,
+				1B91D2E311E694860081E40A /* Foundation.framework in Frameworks */,
+				1B91D2E411E694860081E40A /* libXADMaster.a in Frameworks */,
+				1B91D2E511E694860081E40A /* libUniversalDetector.a in Frameworks */,
+				1B91D2E611E694860081E40A /* libeay32.a in Frameworks */,
+				1B91D2E711E694860081E40A /* libstdc++.a in Frameworks */,
+				1B91D2E811E694860081E40A /* libwinmm.a in Frameworks */,
+				1B91D2E911E694860081E40A /* libz.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BBAB6840EC274A3007FE6A2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1373,6 +1423,7 @@
 				1B91D18F11E1677B0081E40A /* lsar */,
 				1B91CD5E11D97E7C0081E40A /* libXADMaster.a */,
 				1B91CDAC11D981E20081E40A /* unar.exe */,
+				1B91D2EE11E694860081E40A /* lsar.exe */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2448,6 +2499,25 @@
 			productReference = 1B91D18F11E1677B0081E40A /* lsar */;
 			productType = "com.apple.product-type.tool";
 		};
+		1B91D2D611E694860081E40A /* lsar.exe (Windows) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B91D2EB11E694860081E40A /* Build configuration list for PBXNativeTarget "lsar.exe (Windows)" */;
+			buildPhases = (
+				1B91D2DB11E694860081E40A /* Sources */,
+				1B91D2E111E694860081E40A /* Frameworks */,
+			);
+			buildRules = (
+				1B91D2EA11E694860081E40A /* PBXBuildRule */,
+			);
+			dependencies = (
+				1B91D2D711E694860081E40A /* PBXTargetDependency */,
+				1B91D2D911E694860081E40A /* PBXTargetDependency */,
+			);
+			name = "lsar.exe (Windows)";
+			productName = unar;
+			productReference = 1B91D2EE11E694860081E40A /* lsar.exe */;
+			productType = "com.apple.product-type.tool";
+		};
 		1BBAB67F0EC274A3007FE6A2 /* XADTest2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1BBAB6880EC274A3007FE6A2 /* Build configuration list for PBXNativeTarget "XADTest2" */;
@@ -2531,6 +2601,7 @@
 				1B91D17911E1677B0081E40A /* lsar */,
 				1B91CCBE11D97E7C0081E40A /* libXADMaster.a (Windows) */,
 				1B91CD9611D981E20081E40A /* unar.exe (Windows) */,
+				1B91D2D611E694860081E40A /* lsar.exe (Windows) */,
 			);
 		};
 /* End PBXProject section */
@@ -2932,7 +3003,6 @@
 				1B91CD9C11D981E20081E40A /* unar.m in Sources */,
 				1B91CD9D11D981E20081E40A /* NSStringPrinting.m in Sources */,
 				1B91CD9E11D981E20081E40A /* CSCommandLineParser.m in Sources */,
-				1B91D17811E167720081E40A /* lsar.m in Sources */,
 				1B91D1A111E237AD0081E40A /* CommandLineCommon.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2946,6 +3016,18 @@
 				1B91D19511E167B60081E40A /* lsar.m in Sources */,
 				1B91D1A211E237AD0081E40A /* CommandLineCommon.m in Sources */,
 				1B91D1B311E258210081E40A /* CSJSONPrinter.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1B91D2DB11E694860081E40A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B91D2DD11E694860081E40A /* NSStringPrinting.m in Sources */,
+				1B91D2DE11E694860081E40A /* CSCommandLineParser.m in Sources */,
+				1B91D2DF11E694860081E40A /* lsar.m in Sources */,
+				1B91D2E011E694860081E40A /* CommandLineCommon.m in Sources */,
+				1B91D2F211E694B70081E40A /* CSJSONPrinter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3177,6 +3259,16 @@
 			isa = PBXTargetDependency;
 			name = libUniversalDetector;
 			targetProxy = 1B91D17D11E1677B0081E40A /* PBXContainerItemProxy */;
+		};
+		1B91D2D711E694860081E40A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B91CCBE11D97E7C0081E40A /* libXADMaster.a (Windows) */;
+			targetProxy = 1B91D2D811E694860081E40A /* PBXContainerItemProxy */;
+		};
+		1B91D2D911E694860081E40A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libUniversalDetector (Windows)";
+			targetProxy = 1B91D2DA11E694860081E40A /* PBXContainerItemProxy */;
 		};
 		1BBAB6800EC274A3007FE6A2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3661,6 +3753,111 @@
 			};
 			name = Release;
 		};
+		1B91D2EC11E694860081E40A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = i386;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
+					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_FAST_OBJC_DISPATCH = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = "";
+				GCC_VERSION_i386 = "";
+				GCC_VERSION_ppc = "";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Build/Windows/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
+					"\"$(DEVELOPER_DIR)/Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "";
+				MACOSX_DEPLOYMENT_TARGET_i386 = "";
+				MACOSX_DEPLOYMENT_TARGET_ppc = "";
+				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Wl,--whole-archive",
+					"-lXADMaster",
+					"-lUniversalDetector",
+					"-Wl,--no-whole-archive",
+					"-Wl,--enable-auto-import",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = lsar.exe;
+				SDKROOT = "";
+				SDKROOT_i386 = "";
+				SDKROOT_ppc = "";
+				SDKROOT_x86_64 = "";
+				SYMROOT = /Users/dag/Code/Build/Windows;
+			};
+			name = Debug;
+		};
+		1B91D2ED11E694860081E40A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = i386;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
+					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_FAST_OBJC_DISPATCH = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = "";
+				GCC_VERSION_i386 = "";
+				GCC_VERSION_ppc = "";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Build/Windows/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
+					"\"$(DEVELOPER_DIR)/Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "";
+				MACOSX_DEPLOYMENT_TARGET_i386 = "";
+				MACOSX_DEPLOYMENT_TARGET_ppc = "";
+				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Wl,--whole-archive",
+					"-lXADMaster",
+					"-lUniversalDetector",
+					"-Wl,--no-whole-archive",
+					"-Wl,--enable-auto-import",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = lsar.exe;
+				SDKROOT = "";
+				SDKROOT_i386 = "";
+				SDKROOT_ppc = "";
+				SDKROOT_x86_64 = "";
+				SYMROOT = /Users/dag/Code/Build/Windows;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		1BBAB6890EC274A3007FE6A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3957,6 +4154,15 @@
 			buildConfigurations = (
 				1B91D18D11E1677B0081E40A /* Debug */,
 				1B91D18E11E1677B0081E40A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1B91D2EB11E694860081E40A /* Build configuration list for PBXNativeTarget "lsar.exe (Windows)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B91D2EC11E694860081E40A /* Debug */,
+				1B91D2ED11E694860081E40A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

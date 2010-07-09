@@ -57,7 +57,7 @@
 
 +(int)terminalWidth
 {
-	return 80;
+	return 79; // Gah, too lazy to fix the weird Windos printing behaviour.
 }
 
 -(void)printToFile:(FILE *)fh

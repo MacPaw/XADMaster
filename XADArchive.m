@@ -992,6 +992,7 @@ static double XADGetTime()
 			if(delegate&&[delegate archiveExtractionShouldStop:self]) [XADException raiseExceptionWithXADError:XADBreakError];
 
 			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
+			if(actual)
 			if(write(fh,buf,actual)!=actual)
 			{
 				lasterror=XADOutputError;

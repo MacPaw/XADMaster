@@ -1,5 +1,8 @@
 #import "XADPath.h"
 
+static BOOL HasDotPaths(NSArray *array);
+static void StripDotPaths(NSMutableArray *components);
+
 @implementation XADPath
 
 -(id)init
@@ -16,7 +19,17 @@
 {
 	if(self=[super init])
 	{
-		components=[pathcomponents retain];
+		if(HasDotPaths(pathcomponents))
+		{
+			NSMutableArray *tmp=[NSMutableArray arrayWithArray:pathcomponents];
+			StripDotPaths(tmp);
+			components=[tmp copy];
+		}
+		else
+		{
+			components=[pathcomponents retain];
+		}
+
 		source=nil;
 
 		NSEnumerator *enumerator=[components objectEnumerator];
@@ -40,6 +53,7 @@
 			[array addObject:[XADString XADStringWithString:[stringcomps objectAtIndex:i]]];
 		}
 
+		StripDotPaths(array);
 		components=[array copy];
 		source=nil;
 	}
@@ -96,6 +110,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 			}
 		}
 
+		StripDotPaths(array);
 		components=[array copy];
 		source=[stringsource retain];
 	}
@@ -122,24 +137,30 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 
 
-// TODO: check for short paths for the following four?
+-(XADString *)lastPathComponent
+{
+	if([components count]) return [components lastObject];
+	else return [XADString XADStringWithString:@""];
+}
 
--(XADString *)lastPathComponent { return [components lastObject]; }
-
--(XADString *)firstPathComponent { return [components objectAtIndex:0]; }
+-(XADString *)firstPathComponent
+{
+	if([components count]) return [components objectAtIndex:0];
+	else return [XADString XADStringWithString:@""];
+}
 
 -(XADPath *)pathByDeletingLastPathComponent
 {
-	return [[[XADPath alloc] initWithComponents:
-	[components subarrayWithRange:NSMakeRange(0,[components count]-1)]]
-	autorelease];
+	int count=[components count];
+	if(count) return [[[XADPath alloc] initWithComponents:[components subarrayWithRange:NSMakeRange(0,count-1)]] autorelease];
+	else return [[XADPath new] autorelease];
 }
 
 -(XADPath *)pathByDeletingFirstPathComponent
 {
-	return [[[XADPath alloc] initWithComponents:
-	[components subarrayWithRange:NSMakeRange(1,[components count]-1)]]
-	autorelease];
+	int count=[components count];
+	if(count) return [[[XADPath alloc] initWithComponents:[components subarrayWithRange:NSMakeRange(1,count-1)]] autorelease];
+	else return [[XADPath new] autorelease];
 }
 
 -(XADPath *)pathByAppendingPathComponent:(XADString *)component
@@ -154,29 +175,20 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 -(XADPath *)safePath
 {
-	NSMutableArray *safecomponents=[NSMutableArray arrayWithArray:components];
+	int count=[components count];
+	int first=0;
 
-	// Drop . anywhere in the path
-	for(int i=0;i<[safecomponents count];)
+	// Drop slashes and .. at the start of the path
+	while(first<count)
 	{
-		XADString *comp=[safecomponents objectAtIndex:i];
-		if([comp isEqual:@"."]) [safecomponents removeObjectAtIndex:i];
-		else i++;
+		NSString *component=[components objectAtIndex:first];
+		if(![component isEqual:@".."]&&![component isEqual:@"/"]) break;
 	}
 
-	// Drop all .. that can be dropped
-	for(int i=1;i<[safecomponents count];)
-	{
-		XADString *comp1=[safecomponents objectAtIndex:i-1];
-		XADString *comp2=[safecomponents objectAtIndex:i];
-		if(![comp1 isEqual:@".."]&&[comp2 isEqual:@".."])
-		{
-			[safecomponents removeObjectAtIndex:i];
-			[safecomponents removeObjectAtIndex:i-1];
-			if(i>1) i--;
-		}
-		else i++;
-	}
+	if(first==0) return self;
+	else return [[[XADPath alloc] initWithComponents:[components subarrayWithRange:NSMakeRange(first,count-first)]] autorelease];
+
+/*	NSMutableArray *safecomponents=[NSMutableArray arrayWithArray:components];
 
 	// Drop slashes and .. at the start of the path
 	while([safecomponents count])
@@ -186,7 +198,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 		else break;
 	}
 
-	return [[[XADPath alloc] initWithComponents:safecomponents] autorelease];
+	return [[[XADPath alloc] initWithComponents:safecomponents] autorelease];*/
 }
 
 
@@ -223,8 +235,9 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	NSMutableString *string=[NSMutableString string];
 
 	int count=[components count];
-	int i=0;
+	if(count==0) return @".";
 
+	int i=0;
 	if(count>1&&[[components objectAtIndex:0] isEqual:@"/"]) i++;
 
 	for(;i<count;i++)
@@ -303,7 +316,11 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	return [self string];
 }
 
--(BOOL)isEqual:(id)other { return [other isKindOfClass:[XADPath class]]&&[components isEqual:((XADPath *)other)->components]; }
+-(BOOL)isEqual:(id)other
+{
+	if(![other isKindOfClass:[XADPath class]]) return NO;
+	return [components isEqual:((XADPath *)other)->components];
+}
 
 -(NSUInteger)hash
 {
@@ -332,3 +349,37 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 #endif
 
 @end
+
+
+
+static BOOL HasDotPaths(NSArray *array)
+{
+	if([array indexOfObject:@"."]!=NSNotFound) return YES;
+	if([array indexOfObject:@".."]!=NSNotFound) return YES;
+	return NO;
+}
+
+static void StripDotPaths(NSMutableArray *components)
+{
+	// Drop . anywhere in the path
+	for(int i=0;i<[components count];)
+	{
+		XADString *comp=[components objectAtIndex:i];
+		if([comp isEqual:@"."]) [components removeObjectAtIndex:i];
+		else i++;
+	}
+
+	// Drop all .. that can be dropped
+	for(int i=1;i<[components count];)
+	{
+		XADString *comp1=[components objectAtIndex:i-1];
+		XADString *comp2=[components objectAtIndex:i];
+		if(![comp1 isEqual:@".."]&&[comp2 isEqual:@".."])
+		{
+			[components removeObjectAtIndex:i];
+			[components removeObjectAtIndex:i-1];
+			if(i>1) i--;
+		}
+		else i++;
+	}
+}

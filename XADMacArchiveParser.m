@@ -137,7 +137,7 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 	if(![last hasASCIIPrefix:@"._"]) return NO;
 	XADString *newlast=[last XADStringByStrippingASCIIPrefixOfLength:2];
 
-	if([first isEqual:@"__MACOSX"]||[first isEqual:@"."]) basepath=[basepath pathByDeletingFirstPathComponent];
+	if([first isEqual:@"__MACOSX"]) basepath=[basepath pathByDeletingFirstPathComponent];
 
 	XADPath *origname=[basepath pathByAppendingPathComponent:newlast];
 

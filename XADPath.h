@@ -23,8 +23,6 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 
 -(void)dealloc;
 
--(void)_updateStringSourceWithString:(XADString *)string;
-
 -(XADString *)lastPathComponent;
 -(XADString *)firstPathComponent;
 

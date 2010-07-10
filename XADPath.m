@@ -34,7 +34,20 @@ static void StripDotPaths(NSMutableArray *components);
 
 		NSEnumerator *enumerator=[components objectEnumerator];
 		XADString *string;
-		while(string=[enumerator nextObject]) [self _updateStringSourceWithString:string];
+		while(string=[enumerator nextObject])
+		{
+			XADStringSource *othersource=[string source];
+			if(othersource)
+			{
+				if(source)
+				{
+					if(othersource!=source)
+					[NSException raise:NSInvalidArgumentException format:@"Attempted to use XADStrings with different string sources in XADPath"];
+				}
+				else source=[othersource retain];
+			}
+		}
+
 	}
 	return self;
 }
@@ -55,6 +68,7 @@ static void StripDotPaths(NSMutableArray *components);
 
 		StripDotPaths(array);
 		components=[array copy];
+
 		source=nil;
 	}
 	return self;
@@ -84,6 +98,8 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	{
 		NSMutableArray *array=[NSMutableArray array];
 
+		source=nil;
+
 		if(length>0)
 		{
 			if(IsSeparator(bytes[0],separators)) [array addObject:[XADString XADStringWithString:@"/"]];
@@ -101,18 +117,24 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 				if(encoding)
 				{
-					[array addObject:[[[XADString alloc] initWithData:data encodingName:encoding] autorelease]];
+					XADString *string=[[[XADString alloc] initWithData:data encodingName:encoding] autorelease];
+					[array addObject:string];
 				}
 				else
 				{
-					[array addObject:[[[XADString alloc] initWithData:data source:stringsource] autorelease]];
+					XADString *string=[[[XADString alloc] initWithData:data source:stringsource] autorelease];
+					[array addObject:string];
+
+					if(!source)
+					{
+						if([string source]) source=[stringsource retain];
+					}
 				}
 			}
 		}
 
 		StripDotPaths(array);
 		components=[array copy];
-		source=[stringsource retain];
 	}
 	return self;
 }
@@ -124,16 +146,6 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	[super dealloc];
 }
 
--(void)_updateStringSourceWithString:(XADString *)string
-{
-	XADStringSource *othersource=[string source];
-	if(source)
-	{
-		if(othersource&&othersource!=source)
-		[NSException raise:@"XADPathSourceMismatchException" format:@"Attempted to use XADStrings with different string sources in XADPath"];
-	}
-	else source=[othersource retain];
-}
 
 
 

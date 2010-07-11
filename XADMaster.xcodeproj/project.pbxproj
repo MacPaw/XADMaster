@@ -6,6 +6,26 @@
 	objectVersion = 44;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		1B433E2611E945D300DA1EFB /* Everything */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 1B433E4211E9460100DA1EFB /* Build configuration list for PBXAggregateTarget "Everything" */;
+			buildPhases = (
+			);
+			dependencies = (
+				1B433E2E11E945E200DA1EFB /* PBXTargetDependency */,
+				1B433E2C11E945E200DA1EFB /* PBXTargetDependency */,
+				1B433E2A11E945E200DA1EFB /* PBXTargetDependency */,
+				1B433E3211E945E800DA1EFB /* PBXTargetDependency */,
+				1B433E3011E945E800DA1EFB /* PBXTargetDependency */,
+				1B433E3611E945EB00DA1EFB /* PBXTargetDependency */,
+				1B433E3411E945EB00DA1EFB /* PBXTargetDependency */,
+			);
+			name = Everything;
+			productName = Everything;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1B06D5570DDA624400D9C000 /* all.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D4EF0DDA623800D9C000 /* all.c */; };
 		1B06D5580DDA625100D9C000 /* clients.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D52E0DDA623800D9C000 /* clients.c */; };
@@ -767,6 +787,55 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = XADMaster;
+		};
+		1B433E2911E945E200DA1EFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B3A6898101BA12C00AE25A8 /* XADTest4 */;
+			remoteInfo = XADTest4;
+		};
+		1B433E2B11E945E200DA1EFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1BC893190ED6F283006B47FE /* XADTest3 */;
+			remoteInfo = XADTest3;
+		};
+		1B433E2D11E945E200DA1EFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1BBAB67F0EC274A3007FE6A2 /* XADTest2 */;
+			remoteInfo = XADTest2;
+		};
+		1B433E2F11E945E800DA1EFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B91D17911E1677B0081E40A /* lsar */;
+			remoteInfo = lsar;
+		};
+		1B433E3111E945E800DA1EFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B23DDBF1185EBA300620319 /* unar */;
+			remoteInfo = unar;
+		};
+		1B433E3311E945EB00DA1EFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B91D2D611E694860081E40A /* lsar.exe (Windows) */;
+			remoteInfo = "lsar.exe (Windows)";
+		};
+		1B433E3511E945EB00DA1EFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B91CD9611D981E20081E40A /* unar.exe (Windows) */;
+			remoteInfo = "unar.exe (Windows)";
 		};
 		1B5A7BBB0A24FB2400B189EB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2602,6 +2671,7 @@
 				1B91CCBE11D97E7C0081E40A /* libXADMaster.a (Windows) */,
 				1B91CD9611D981E20081E40A /* unar.exe (Windows) */,
 				1B91D2D611E694860081E40A /* lsar.exe (Windows) */,
+				1B433E2611E945D300DA1EFB /* Everything */,
 			);
 		};
 /* End PBXProject section */
@@ -3235,6 +3305,41 @@
 			target = 8DC2EF4F0486A6940098B216 /* XADMaster */;
 			targetProxy = 1B3A689A101BA12C00AE25A8 /* PBXContainerItemProxy */;
 		};
+		1B433E2A11E945E200DA1EFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B3A6898101BA12C00AE25A8 /* XADTest4 */;
+			targetProxy = 1B433E2911E945E200DA1EFB /* PBXContainerItemProxy */;
+		};
+		1B433E2C11E945E200DA1EFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1BC893190ED6F283006B47FE /* XADTest3 */;
+			targetProxy = 1B433E2B11E945E200DA1EFB /* PBXContainerItemProxy */;
+		};
+		1B433E2E11E945E200DA1EFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1BBAB67F0EC274A3007FE6A2 /* XADTest2 */;
+			targetProxy = 1B433E2D11E945E200DA1EFB /* PBXContainerItemProxy */;
+		};
+		1B433E3011E945E800DA1EFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B91D17911E1677B0081E40A /* lsar */;
+			targetProxy = 1B433E2F11E945E800DA1EFB /* PBXContainerItemProxy */;
+		};
+		1B433E3211E945E800DA1EFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B23DDBF1185EBA300620319 /* unar */;
+			targetProxy = 1B433E3111E945E800DA1EFB /* PBXContainerItemProxy */;
+		};
+		1B433E3411E945EB00DA1EFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B91D2D611E694860081E40A /* lsar.exe (Windows) */;
+			targetProxy = 1B433E3311E945EB00DA1EFB /* PBXContainerItemProxy */;
+		};
+		1B433E3611E945EB00DA1EFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B91CD9611D981E20081E40A /* unar.exe (Windows) */;
+			targetProxy = 1B433E3511E945EB00DA1EFB /* PBXContainerItemProxy */;
+		};
 		1B5A7BBC0A24FB2400B189EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* XADMaster */;
@@ -3368,6 +3473,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -3390,6 +3496,7 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -3451,6 +3558,27 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = XADTest3;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		1B433E2711E945D300DA1EFB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = Everything;
+			};
+			name = Debug;
+		};
+		1B433E2811E945D300DA1EFB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = Everything;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -4112,6 +4240,15 @@
 			buildConfigurations = (
 				1B3A68A0101BA12C00AE25A8 /* Debug */,
 				1B3A68A1101BA12C00AE25A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1B433E4211E9460100DA1EFB /* Build configuration list for PBXAggregateTarget "Everything" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1B433E2711E945D300DA1EFB /* Debug */,
+				1B433E2811E945D300DA1EFB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

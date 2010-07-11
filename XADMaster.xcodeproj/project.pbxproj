@@ -792,49 +792,49 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1B3A6898101BA12C00AE25A8 /* XADTest4 */;
+			remoteGlobalIDString = 1B3A6898101BA12C00AE25A8;
 			remoteInfo = XADTest4;
 		};
 		1B433E2B11E945E200DA1EFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1BC893190ED6F283006B47FE /* XADTest3 */;
+			remoteGlobalIDString = 1BC893190ED6F283006B47FE;
 			remoteInfo = XADTest3;
 		};
 		1B433E2D11E945E200DA1EFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1BBAB67F0EC274A3007FE6A2 /* XADTest2 */;
+			remoteGlobalIDString = 1BBAB67F0EC274A3007FE6A2;
 			remoteInfo = XADTest2;
 		};
 		1B433E2F11E945E800DA1EFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1B91D17911E1677B0081E40A /* lsar */;
+			remoteGlobalIDString = 1B91D17911E1677B0081E40A;
 			remoteInfo = lsar;
 		};
 		1B433E3111E945E800DA1EFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1B23DDBF1185EBA300620319 /* unar */;
+			remoteGlobalIDString = 1B23DDBF1185EBA300620319;
 			remoteInfo = unar;
 		};
 		1B433E3311E945EB00DA1EFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1B91D2D611E694860081E40A /* lsar.exe (Windows) */;
+			remoteGlobalIDString = 1B91D2D611E694860081E40A;
 			remoteInfo = "lsar.exe (Windows)";
 		};
 		1B433E3511E945EB00DA1EFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 1B91CD9611D981E20081E40A /* unar.exe (Windows) */;
+			remoteGlobalIDString = 1B91CD9611D981E20081E40A;
 			remoteInfo = "unar.exe (Windows)";
 		};
 		1B5A7BBB0A24FB2400B189EB /* PBXContainerItemProxy */ = {
@@ -1069,7 +1069,7 @@
 		1B3A650110154DCE00AE25A8 /* CSHexDump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHexDump.m; sourceTree = "<group>"; };
 		1B3A66D51017B7E000AE25A8 /* XADNSISParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSISParser.h; sourceTree = "<group>"; };
 		1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSISParser.m; sourceTree = "<group>"; };
-		1B3A68A2101BA12C00AE25A8 /* XADTest3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest3; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B3A68A2101BA12C00AE25A8 /* XADTest4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest4; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B3A68A9101BA14A00AE25A8 /* XADTest4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest4.m; sourceTree = "<group>"; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
@@ -1486,7 +1486,7 @@
 				1B5A7BA30A24F9B400B189EB /* XADTest */,
 				1BBAB68B0EC274A3007FE6A2 /* XADTest2 */,
 				1BC8931A0ED6F283006B47FE /* XADTest3 */,
-				1B3A68A2101BA12C00AE25A8 /* XADTest3 */,
+				1B3A68A2101BA12C00AE25A8 /* XADTest4 */,
 				1B34A97511C2FD0500396C26 /* libXADMaster.a */,
 				1B23DDC01185EBA300620319 /* unar */,
 				1B91D18F11E1677B0081E40A /* lsar */,
@@ -2493,7 +2493,7 @@
 			);
 			name = XADTest4;
 			productName = XADTest3;
-			productReference = 1B3A68A2101BA12C00AE25A8 /* XADTest3 */;
+			productReference = 1B3A68A2101BA12C00AE25A8 /* XADTest4 */;
 			productType = "com.apple.product-type.tool";
 		};
 		1B5A7BA20A24F9B400B189EB /* XADTest */ = {

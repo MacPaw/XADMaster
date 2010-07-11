@@ -528,6 +528,7 @@
 		}
 
 		// Read next header.
+		if([handle atEndOfFile]) break;
 		header = [handle readDataOfLength:512];
 		
 		// See if the first byte is \0. This should mean that the archive is now over.

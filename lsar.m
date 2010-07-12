@@ -24,12 +24,10 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 {
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
-	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
 
 	BOOL isdir=dir&&[dir boolValue];
 	BOOL islink=link&&[link boolValue];
-	BOOL isarchive=archive&&[archive boolValue];
 
 	if(isdir||islink) return EntryDoesNotNeedTestingResult;
 
@@ -116,15 +114,15 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 {
 	for(int i=0;i<indent;i++) [@"  " print];
 
-	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
-	NSNumber *link=[dict objectForKey:XADIsLinkKey];
+//	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
+//	NSNumber *link=[dict objectForKey:XADIsLinkKey];
 	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
 //	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
-	NSNumber *size=[dict objectForKey:XADFileSizeKey];
-	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
+//	NSNumber *size=[dict objectForKey:XADFileSizeKey];
+//	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 
-	BOOL isdir=dir&&[dir boolValue];
-	BOOL islink=link&&[link boolValue];
+//	BOOL isdir=dir&&[dir boolValue];
+//	BOOL islink=link&&[link boolValue];
 	BOOL isarchive=archive&&[archive boolValue];
 
 	NSString *displayname=[[[dict objectForKey:XADFileNameKey] string] stringByEscapingControlCharacters];

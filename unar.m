@@ -27,6 +27,11 @@ BOOL recurse;
 	return self;
 }
 
+-(void)printIndention
+{
+	for(int i=0;i<indent;i++) [@"  " print];
+}
+
 -(void)unarchiverNeedsPassword:(XADUnarchiver *)unarchiver
 {
 	[@"This archive requires a password to unpack. Use the -p option to provide one.\n" print];
@@ -45,7 +50,7 @@ BOOL recurse;
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	for(int i=0;i<indent;i++) [@"  " print];
+	[self printIndention];
 
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
@@ -70,7 +75,7 @@ BOOL recurse;
 
 	if(rsrc&&[rsrc boolValue]) [@", rsrc" print];
 
-	[@")..." print];
+	[@")... " print];
 	fflush(stdout);
 }
 
@@ -80,10 +85,10 @@ BOOL recurse;
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
 {
-	if(!error) [@" OK.\n" print];
+	if(!error) [@"OK.\n" print];
 	else
 	{
-		[@" Failed! (" print];
+		[@"Failed! (" print];
 		[[XADException describeXADError:error] print];
 		[@")\n" print];
 	}
@@ -102,11 +107,13 @@ BOOL recurse;
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path
 {
 	indent++;
+	[@"\n" print];
 }
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path error:(XADError)error
 {
 	indent--;
+	[self printIndention];
 }
 
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path
@@ -255,7 +262,13 @@ int main(int argc,const char **argv)
 			
 			[@"\n" print];
 
-			[unarchiver parseAndUnarchive];
+			XADError parseerror=[unarchiver parseAndUnarchive];
+			if(parseerror)
+			{
+				[@"Failed! (" print];
+				[[XADException describeXADError:parseerror] print];
+				[@")\n" print];
+			}
 		}
 		else
 		{

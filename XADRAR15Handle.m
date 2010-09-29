@@ -310,7 +310,7 @@ static void EmitLiteral(XADRAR15Handle *self,off_t *posptr)
 				int offset=CSInputNextSymbolUsingCode(self->input,self->huffmancode2)<<5;
 				offset|=CSInputNextBitString(self->input,5);
 
-				XADLZSSMatch(self,offset,length,posptr);
+				XADEmitLZSSMatch(self,offset,length,posptr);
 				return;
 			}
 		}
@@ -333,7 +333,7 @@ static void EmitLiteral(XADRAR15Handle *self,off_t *posptr)
 	}
 
 	uint8_t byte=LookupByte(self->literaltable,self->literalreverse,0xa1,index);
-	XADLZSSLiteral(self,byte,posptr);
+	XADEmitLZSSLiteral(self,byte,posptr);
 }
 
 static void EmitLongMatch(XADRAR15Handle *self,off_t *posptr)
@@ -399,7 +399,7 @@ static void EmitLongMatch(XADRAR15Handle *self,off_t *posptr)
 	self->lastoffset=self->oldoffset[self->oldoffsetindex++&3]=offset;
 	self->lastlength=length;
 
-	XADLZSSMatch(self,self->lastoffset,self->lastlength,posptr);
+	XADEmitLZSSMatch(self,self->lastoffset,self->lastlength,posptr);
 }
 
 static void EmitShortMatch(XADRAR15Handle *self,off_t *posptr)
@@ -410,7 +410,7 @@ static void EmitShortMatch(XADRAR15Handle *self,off_t *posptr)
 	{
 		if(CSInputNextBit(self->input))
 		{
-			XADLZSSMatch(self,self->lastoffset,self->lastlength,posptr);
+			XADEmitLZSSMatch(self,self->lastoffset,self->lastlength,posptr);
 			return;
 		}
 		else self->numrepeatedlastmatches=0;
@@ -450,13 +450,13 @@ static void EmitShortMatch(XADRAR15Handle *self,off_t *posptr)
 		self->lastoffset=self->oldoffset[self->oldoffsetindex++&3]=offset;
 		self->lastlength=length;
 
-		XADLZSSMatch(self,offset,length,posptr);
+		XADEmitLZSSMatch(self,offset,length,posptr);
 	}
 	else if(selector==9)
     {
 		self->numrepeatedlastmatches++;
 
-		XADLZSSMatch(self,self->lastoffset,self->lastlength,posptr);
+		XADEmitLZSSMatch(self,self->lastoffset,self->lastlength,posptr);
     }
 	else if(selector<14)
 	{
@@ -477,7 +477,7 @@ static void EmitShortMatch(XADRAR15Handle *self,off_t *posptr)
 		self->lastoffset=self->oldoffset[self->oldoffsetindex++&3]=offset;
 		self->lastlength=length;
 
-		XADLZSSMatch(self,offset,length,posptr);
+		XADEmitLZSSMatch(self,offset,length,posptr);
 	}
 	else //if(length==14)
 	{
@@ -489,7 +489,7 @@ static void EmitShortMatch(XADRAR15Handle *self,off_t *posptr)
 		self->lastoffset=offset;
 		self->lastlength=length;
 
-		XADLZSSMatch(self,offset,length,posptr);
+		XADEmitLZSSMatch(self,offset,length,posptr);
 	}
 }
 

@@ -3,6 +3,7 @@
 #import "XADCompactProRLEHandle.h"
 #import "XADCompactProLZHHandle.h"
 #import "XADStuffItHuffmanHandle.h"
+#import "XADStacLZSHandle.h"
 #import "XADDiskDoublerADnHandle.h"
 #import "XADDiskDoublerDDnHandle.h"
 #import "XADXORHandle.h"
@@ -333,10 +334,12 @@
 	{
 		case 0: return @"None";
 		case 1: return @"Compress";
+		//case 2: return @"Something";
 		case 3: return @"RLE";
 		case 4: return @"Huffman"; // packit?
+		//case 5: return @"Same as 2";
 		case 6: return @"ADS/AD2";
-		case 7: return @"LZS (Stacker)";
+		case 7: return @"LZ1 (Stacker)";
 		case 8: return @"Compact Pro";
 		case 9: return @"AD/AD1";
 		case 10: return @"DDn";
@@ -397,6 +400,18 @@
 				handle=[[[XADChecksumHandle alloc] initWithHandle:handle length:size
 				correctChecksum:correctchecksum mask:0xffff] autorelease];
 			}
+		}
+		break;
+
+		case 7: // Stac LZ1
+		{
+			//handle=[[[XADStacLZSHandle alloc] initWithHandle:handle length:size] autorelease];
+
+/*			if(checksum)
+			{
+				handle=[XADCRCHandle IBMCRC16HandleWithHandle:handle length:size
+				correctCRC:correctchecksum conditioned:NO];
+			}*/
 		}
 		break;
 

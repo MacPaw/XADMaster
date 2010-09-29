@@ -61,8 +61,8 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 	{
 		if(CSInputNextBitLE(input))
 		{
-			if(literals) XADLZSSLiteral(self,CSInputNextSymbolUsingCodeLE(input,literalcode),NULL);
-			else XADLZSSLiteral(self,CSInputNextBitStringLE(input,8),NULL);
+			if(literals) XADEmitLZSSLiteral(self,CSInputNextSymbolUsingCodeLE(input,literalcode),NULL);
+			else XADEmitLZSSLiteral(self,CSInputNextBitStringLE(input,8),NULL);
 		}
 		else
 		{
@@ -74,7 +74,7 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 			if(length==65) length+=CSInputNextBitStringLE(input,8);
 			if(literals) length++;
 
-			XADLZSSMatch(self,offset,length,NULL);
+			XADEmitLZSSMatch(self,offset,length,NULL);
 		}
 	}
 }

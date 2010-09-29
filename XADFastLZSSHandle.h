@@ -36,7 +36,7 @@ static inline BOOL XADLZSSShouldKeepExpanding(XADFastLZSSHandle *self)
 	return LZSSPosition(&self->lzss)<self->bufferend;
 }
 
-static inline void XADLZSSLiteral(XADFastLZSSHandle *self,uint8_t byte,off_t *pos)
+static inline void XADEmitLZSSLiteral(XADFastLZSSHandle *self,uint8_t byte,off_t *pos)
 {
 	if(LZSSPosition(&self->lzss)==self->flushbarrier) XADLZSSFlushToBuffer(self);
 
@@ -44,7 +44,7 @@ static inline void XADLZSSLiteral(XADFastLZSSHandle *self,uint8_t byte,off_t *po
 	if(pos) *pos=LZSSPosition(&self->lzss);
 }
 
-static inline void XADLZSSMatch(XADFastLZSSHandle *self,int offset,int length,off_t *pos)
+static inline void XADEmitLZSSMatch(XADFastLZSSHandle *self,int offset,int length,off_t *pos)
 {
 	if(LZSSPosition(&self->lzss)+length>self->flushbarrier) XADLZSSFlushToBuffer(self);
 

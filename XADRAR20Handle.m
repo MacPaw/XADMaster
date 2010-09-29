@@ -103,7 +103,7 @@
 				channel++;
 				if(channel==numchannels) channel=0;
 
-				XADLZSSLiteral(self,byte,&pos);
+				XADEmitLZSSLiteral(self,byte,&pos);
 				//return byte;
 			}
 		}
@@ -115,7 +115,7 @@
 //			if(symbol<256) return symbol;
 			if(symbol<256)
 			{
-				XADLZSSLiteral(self,symbol,&pos);
+				XADEmitLZSSLiteral(self,symbol,&pos);
 				continue;
 			}
 			else if(symbol==256)
@@ -168,7 +168,7 @@
 //			*length=len;
 //
 //			return XADLZSSMatch;
-			XADLZSSMatch(self,offs,len,&pos);
+			XADEmitLZSSMatch(self,offs,len,&pos);
 		}
 	}
 }

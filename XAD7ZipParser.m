@@ -79,7 +79,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 {
 	NSArray *matches;
 
-	if(matches=[name substringsCapturedByPattern:@"^(.*\\.7z)\\.([0-9]+)$" options:REG_ICASE])
+	if((matches=[name substringsCapturedByPattern:@"^(.*\\.7z)\\.([0-9]+)$" options:REG_ICASE]))
 	{
 		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.([0-9]+)$",

@@ -336,8 +336,8 @@
 		case 3: return @"RLE";
 		case 4: return @"Huffman"; // packit?
 		case 6: return @"ADS/AD2";
-		case 7: return @"LZSS";
-		case 8: return @"Compact Pro"; // Compact Pro
+		case 7: return @"LZS (Stacker)";
+		case 8: return @"Compact Pro";
 		case 9: return @"AD/AD1";
 		case 10: return @"DDn";
 		default: return [NSString stringWithFormat:@"Method %d",method&0x7f];
@@ -400,7 +400,7 @@
 		}
 		break;
 
-		case 8:
+		case 8: // Compact Pro
 		{
 			int sub=0;
 			for(int i=0;i<16;i++) sub+=[handle readUInt8];
@@ -417,13 +417,13 @@
 		break;
 
 		case 6:
-		case 9:
+		case 9: // DiskDoubler AD
 		{
 			handle=[[[XADDiskDoublerADnHandle alloc] initWithHandle:handle length:size] autorelease];
 		}
 		break;
 
-		case 10:
+		case 10: // DiskDoubler DD
 		{
 			handle=[[[XADDiskDoublerDDnHandle alloc] initWithHandle:handle length:size] autorelease];
 		}

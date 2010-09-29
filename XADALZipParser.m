@@ -51,7 +51,7 @@ static void CalculateSillyTable(int *table,int param)
 {
 	NSArray *matches;
 
-	if(matches=[name substringsCapturedByPattern:@"^(.*)\\.(alz|a[0-9]{2}|b[0-9]{2})$" options:REG_ICASE])
+	if((matches=[name substringsCapturedByPattern:@"^(.*)\\.(alz|a[0-9]{2}|b[0-9]{2})$" options:REG_ICASE]))
 	{
 		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(alz|a[0-9]{2}|b[0-9]{2})$",

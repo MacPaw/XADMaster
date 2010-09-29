@@ -22,7 +22,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 	va_list va;
 
 	va_start(va,firsthandle);
-	while(handle=va_arg(va,CSHandle *)) [array addObject:handle];
+	while((handle=va_arg(va,CSHandle *))) [array addObject:handle];
 	va_end(va);
 
 	return [self multiHandleWithHandleArray:array];

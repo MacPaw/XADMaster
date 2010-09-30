@@ -179,7 +179,7 @@ XADDiskDoublerParser.o: XADDiskDoublerParser.m XADDiskDoublerParser.h \
  XADFastLZSSHandle.h LZSS.h XADDiskDoublerADnHandle.h \
  CSBlockStreamHandle.h XADDiskDoublerDDnHandle.h XADXORHandle.h \
  XADDeltaHandle.h XADCRCHandle.h Progress.h CSZlibHandle.h \
- CSBzip2Handle.h CRC.h XADChecksumHandle.h NSDateXAD.h
+ CSBzip2Handle.h CRC.h XADChecksumHandle.h XADXORSumHandle.h NSDateXAD.h
 XADException.o: XADException.m XADException.h CSFileHandle.h CSHandle.h \
  CSZlibHandle.h CSStreamHandle.h CSInputBuffer.h CSBzip2Handle.h
 XADFastLZSSHandle.o: XADFastLZSSHandle.m XADFastLZSSHandle.h \
@@ -310,14 +310,14 @@ XADRAR13CryptHandle.o: XADRAR13CryptHandle.m XADRAR13CryptHandle.h \
 XADRAR15CryptHandle.o: XADRAR15CryptHandle.m XADRAR15CryptHandle.h \
  CSByteStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h CRC.h
 XADRAR15Handle.o: XADRAR15Handle.m XADRAR15Handle.h XADFastLZSSHandle.h \
- CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h XADRARParser.h \
- XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h XADException.h \
+ XADRARParser.h XADArchiveParser.h XADString.h XADPath.h XADRegex.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h XADPrefixCode.h
 XADRAR20CryptHandle.o: XADRAR20CryptHandle.m XADRAR20CryptHandle.h \
  CSBlockStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h CRC.h
 XADRAR20Handle.o: XADRAR20Handle.m XADRAR20Handle.h XADFastLZSSHandle.h \
- CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h XADRARParser.h \
- XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h XADException.h \
+ XADRARParser.h XADArchiveParser.h XADString.h XADPath.h XADRegex.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h XADPrefixCode.h \
  RARAudioDecoder.h
 XADRAR30Handle.o: XADRAR30Handle.m XADRAR30Handle.h CSBlockStreamHandle.h \
@@ -360,7 +360,7 @@ XADSplitFileParser.o: XADSplitFileParser.m XADSplitFileParser.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h
 XADStacLZSHandle.o: XADStacLZSHandle.m XADStacLZSHandle.h \
  XADFastLZSSHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h \
- XADPrefixCode.h XADException.h
+ XADException.h XADPrefixCode.h
 XADString.o: XADString.m XADString.h \
  ../UniversalDetector/UniversalDetector.h
 XADStringICU.o: XADStringICU.m XADString.h
@@ -456,6 +456,9 @@ XADXARParser.o: XADXARParser.m XADXARParser.h XADArchiveParser.h \
  CSStreamHandle.h CSInputBuffer.h CSBzip2Handle.h XADLZMAHandle.h \
  lzma/LzmaDec.h lzma/Types.h XADDigestHandle.h Progress.h XADXZHandle.h
 XADXORHandle.o: XADXORHandle.m XADXORHandle.h CSHandle.h
+XADXORSumHandle.o: XADXORSumHandle.m XADXORSumHandle.h CSStreamHandle.h \
+ CSHandle.h CSInputBuffer.h Checksums.h CSSubHandle.h Progress.h \
+ CSZlibHandle.h CSBzip2Handle.h
 XADXZHandle.o: XADXZHandle.m XADXZHandle.h CSStreamHandle.h CSHandle.h \
  CSInputBuffer.h XADLZMA2Handle.h lzma/Lzma2Dec.h lzma/LzmaDec.h \
  lzma/Types.h XAD7ZipBranchHandles.h CSBlockStreamHandle.h \
@@ -470,7 +473,7 @@ XADZipCryptHandle.o: XADZipCryptHandle.m XADZipCryptHandle.h \
  XADException.h CRC.h
 XADZipImplodeHandle.o: XADZipImplodeHandle.m XADZipImplodeHandle.h \
  XADFastLZSSHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h \
- XADPrefixCode.h XADException.h
+ XADException.h XADPrefixCode.h
 XADZipParser.o: XADZipParser.m XADZipParser.h XADMacArchiveParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h CSStreamHandle.h \

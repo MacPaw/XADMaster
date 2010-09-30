@@ -190,6 +190,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADWinZipAESHandle.m \
 			XADXARParser.m \
 			XADXORHandle.m \
+			XADXORSumHandle.m \
 			XADXZHandle.m \
 			XADXZParser.m \
 			XADZipCryptHandle.m \

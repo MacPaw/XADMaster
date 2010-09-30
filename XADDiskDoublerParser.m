@@ -10,6 +10,7 @@
 #import "XADDeltaHandle.h"
 #import "XADCRCHandle.h"
 #import "XADChecksumHandle.h"
+#import "XADXORSumHandle.h"
 #import "NSDateXAD.h"
 
 @implementation XADDiskDoublerParser
@@ -425,11 +426,12 @@
 			handle=[[[XADXORHandle alloc] initWithHandle:handle
 			password:[NSData dataWithBytes:"\377" length:1]] autorelease];
 
-/*			if(checksum)
+			if(checksum)
 			{
-				handle=[XADCRCHandle IBMCRC16HandleWithHandle:handle length:size
-				correctCRC:correctchecksum conditioned:NO];
-			}*/
+				if((size&1)==0) correctchecksum^=0xff;
+				handle=[[[XADXORSumHandle alloc] initWithHandle:handle length:size
+				correctChecksum:correctchecksum] autorelease];
+			}
 		}
 		break;
 

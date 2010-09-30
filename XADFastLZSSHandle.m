@@ -1,5 +1,4 @@
 #import "XADFastLZSSHandle.h"
-#import "XADException.h"
 
 // TODO: Seeking
 

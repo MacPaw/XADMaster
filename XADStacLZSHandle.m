@@ -1,7 +1,10 @@
 #import "XADStacLZSHandle.h"
 #import "XADException.h"
 
-// Not actually used. Implemented by mistake, and untested, but might work.
+// Stac LZS. Originally used in Stacker, also used in hardware-accelerated DiskDoubler,
+// and communication protocols.
+// Very simple LZSS with 2k window. However, match lengths are unbounded and can be longer
+// than the window.
 
 @implementation XADStacLZSHandle
 
@@ -33,10 +36,30 @@
 	[super dealloc];
 }
 
+-(void)resetLZSSHandle
+{
+	extralength=0;
+}
+
 -(void)expandFromPosition:(off_t)pos
 {
 	while(XADLZSSShouldKeepExpanding(self))
 	{
+		if(extralength)
+		{
+			if(extralength>2048)
+			{
+				XADEmitLZSSMatch(self,extraoffset,2048,&pos);
+				extralength-=2048;
+			}
+			else
+			{
+				XADEmitLZSSMatch(self,extraoffset,extralength,&pos);
+				extralength=0;
+			}
+			continue;
+		}
+
 		if(CSInputNextBit(input)==0)
 		{
 			int byte=CSInputNextBitString(input,8);
@@ -56,7 +79,6 @@
 				}
 
 				offset=(offsethigh<<4)|CSInputNextBitString(input,4);
-				//offset=CSInputNextBitString(input,11);
 			}
 
 			int length=CSInputNextSymbolUsingCode(input,lengthcode);
@@ -72,9 +94,17 @@
 			}
 
 			if(offset>pos) [XADException raiseDecrunchException];
-			if(length>2048) {NSLog(@"%d",length);[XADException raiseDecrunchException];}
 
-			XADEmitLZSSMatch(self,offset,length,&pos);
+			if(length<=2048)
+			{
+				XADEmitLZSSMatch(self,offset,length,&pos);
+			}
+			else
+			{
+				XADEmitLZSSMatch(self,offset,2048,&pos);
+				extralength=length-2048;
+				extraoffset=offset;
+			}
 		}
 	}
 }

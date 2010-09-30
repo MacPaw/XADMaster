@@ -71,7 +71,8 @@
 				}
 			}
 
-			if(length>2048) [XADException raiseDecrunchException];
+			if(offset>pos) [XADException raiseDecrunchException];
+			if(length>2048) {NSLog(@"%d",length);[XADException raiseDecrunchException];}
 
 			XADEmitLZSSMatch(self,offset,length,&pos);
 		}

@@ -55,7 +55,13 @@
 	CSHandle *fh=[self handle];
 	uint32_t magic=[fh readID];
 
-	if(magic==0xabcd0054) [self parseFileHeaderWithHandle:fh name:[self XADPathWithUnseparatedString:[self name]]];
+	if(magic==0xabcd0054)
+	{
+		NSString *name=[self name];
+		if([[name pathExtension] isEqual:@"dd"]) name=[name stringByDeletingPathExtension];
+		XADPath *xadname=[self XADPathWithUnseparatedString:name];
+		[self parseFileHeaderWithHandle:fh name:xadname];
+	}
 	else if(magic=='DDAR') [self parseArchive];
 	else if(magic=='DDA2') [self parseArchive2];
 }
@@ -334,12 +340,12 @@
 	{
 		case 0: return @"None";
 		case 1: return @"Compress";
-		//case 2: return @"Something";
-		case 3: return @"RLE";
-		case 4: return @"Huffman"; // packit?
-		//case 5: return @"Same as 2";
+		//case 2: return @"Something"; // No support or testcases
+		case 3: return @"RLE"; // No support or testcases
+		case 4: return @"Huffman"; // packit? - No support or testcases
+		//case 5: return @"Same as 2"; // No support or testcases
 		case 6: return @"ADS/AD2";
-		case 7: return @"LZ1 (Stacker)";
+		case 7: return @"Stac LZS";
 		case 8: return @"Compact Pro";
 		case 9: return @"AD/AD1";
 		case 10: return @"DDn";
@@ -403,9 +409,21 @@
 		}
 		break;
 
-		case 7: // Stac LZ1
+		case 7: // Stac LZS
 		{
-			//handle=[[[XADStacLZSHandle alloc] initWithHandle:handle length:size] autorelease];
+			[handle skipBytes:6];
+			uint32_t numentries=[handle readUInt32BE];
+
+			[handle skipBytes:8+2*numentries];
+
+			handle=[[[XADXORHandle alloc] initWithHandle:handle
+			password:[NSData dataWithBytes:"\377" length:1]] autorelease];
+
+			handle=[[[XADStacLZSHandle alloc] initWithHandle:handle
+			length:size] autorelease];
+
+			handle=[[[XADXORHandle alloc] initWithHandle:handle
+			password:[NSData dataWithBytes:"\377" length:1]] autorelease];
 
 /*			if(checksum)
 			{

@@ -30,6 +30,7 @@
 		if(CSUInt32BE(bytes)==0xabcd0054)
 		if(XADCalculateCRC(0,bytes,82,XADCRCReverseTable_1021)==
 		XADUnReverseCRC16(CSUInt16BE(bytes+82))) return YES;
+		if(CSUInt16BE(bytes+82)==0) return YES; // Really old files have 0000 instead of a CRC.
 	}
 
 	if(length>=78)

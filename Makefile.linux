@@ -166,6 +166,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADSARParser.m \
 			XADSkipHandle.m \
 			XADSplitFileParser.m \
+			XADStacLZSHandle.m \
 			XADString.m \
 			XADStringICU.m \
 			XADStuffIt13Handle.m \
@@ -341,11 +342,11 @@ clean:
 	make -C ../UniversalDetector -f Makefile.linux clean
 
 depend:
-	$(OBJCC) -MM $(OBJCFLAGS) $(ALL_OBJC_FILES) >Makefile.dependtmp
-	$(CC) -MM $(CFLAGS) $(ALL_C_FILES) >>Makefile.dependtmp
-	#$(CXX) -MM $(CXXFLAGS) $(ALL_CXX_FILES) >>Makefile.dependtmp
-	sed 's/.*: *\([^ ]*\)\.\([^ ]*\)/\1.o: \1.\2/g' <Makefile.dependtmp >Makefile.depend
-	rm Makefile.dependtmp
+	$(OBJCC) -MM $(OBJCFLAGS) $(ALL_OBJC_FILES) >Dependencies.linux.tmp
+	$(CC) -MM $(CFLAGS) $(ALL_C_FILES) >>Dependencies.linux.tmp
+	#$(CXX) -MM $(CXXFLAGS) $(ALL_CXX_FILES) >>Dependencies.linux.tmp
+	sed 's/.*: *\([^ ]*\)\.\([^ ]*\)/\1.o: \1.\2/g' <Dependencies.linux.tmp >Dependencies.linux
+	rm Dependencies.linux.tmp
 
-include Makefile.depend
+include Dependencies.linux
 

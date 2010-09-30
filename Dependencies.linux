@@ -175,7 +175,8 @@ XADDiskDoublerParser.o: XADDiskDoublerParser.m XADDiskDoublerParser.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h XADCompressHandle.h \
  CSByteStreamHandle.h CSStreamHandle.h CSInputBuffer.h LZW.h \
  XADCompactProRLEHandle.h XADCompactProLZHHandle.h XADLZSSHandle.h \
- XADPrefixCode.h XADStuffItHuffmanHandle.h XADDiskDoublerADnHandle.h \
+ XADPrefixCode.h XADStuffItHuffmanHandle.h XADStacLZSHandle.h \
+ XADFastLZSSHandle.h LZSS.h XADDiskDoublerADnHandle.h \
  CSBlockStreamHandle.h XADDiskDoublerDDnHandle.h XADXORHandle.h \
  XADDeltaHandle.h XADCRCHandle.h Progress.h CSZlibHandle.h \
  CSBzip2Handle.h CRC.h XADChecksumHandle.h NSDateXAD.h
@@ -357,6 +358,9 @@ XADSkipHandle.o: XADSkipHandle.m XADSkipHandle.h CSHandle.h \
 XADSplitFileParser.o: XADSplitFileParser.m XADSplitFileParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h
+XADStacLZSHandle.o: XADStacLZSHandle.m XADStacLZSHandle.h \
+ XADFastLZSSHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h LZSS.h \
+ XADPrefixCode.h XADException.h
 XADString.o: XADString.m XADString.h \
  ../UniversalDetector/UniversalDetector.h
 XADStringICU.o: XADStringICU.m XADString.h

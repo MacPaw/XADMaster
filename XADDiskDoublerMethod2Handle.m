@@ -56,44 +56,33 @@
 	uint16_t *oddtable=contexts[currcontext].oddtable;
 
 	int val=byte+0x100;
-	do
+	for(;;)
 	{
-		int d5=sometable[val];
-		if(d5==1)
+		int a=sometable[val];
+		if(a==1) break;
+
+		int newval=sometable[a];
+
+		int b=eventable[newval];
+		if(b!=a)
 		{
-			val=d5;
+			eventable[newval]=val;
 		}
 		else
 		{
-			int d4=sometable[d5];
-			int d6=eventable[d4];
-
-			if(d6!=d5)
-			{
-				eventable[d4]=val;
-			}
-			else
-			{
-				d6=oddtable[d4];
-				oddtable[d4]=val;
-			}
-
-			if(eventable[d5]!=val)
-			{
-				oddtable[d5]=d6;
-			}
-			else
-			{
-				eventable[d5]=d6;
-			}
-
-			sometable[val]=d4;
-			sometable[d6]=d5;
-
-			val=d4;
+			b=oddtable[newval];
+			oddtable[newval]=val;
 		}
+
+		if(eventable[a]!=val) oddtable[a]=b;
+		else eventable[a]=b;
+
+		sometable[val]=newval;
+		sometable[b]=a;
+
+		val=newval;
+		if(val==1) break;
 	}
-	while(val!=1);
 
 	currcontext=byte%numcontexts;
 }

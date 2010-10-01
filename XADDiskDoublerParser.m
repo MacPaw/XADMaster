@@ -1,16 +1,22 @@
 #import "XADDiskDoublerParser.h"
+
 #import "XADCompressHandle.h"
-#import "XADCompactProRLEHandle.h"
+#import "XADDiskDoublerMethod2Handle.h"
 #import "XADCompactProLZHHandle.h"
 #import "XADStuffItHuffmanHandle.h"
 #import "XADStacLZSHandle.h"
+#import "XADCompactProRLEHandle.h"
+#import "XADCompactProLZHHandle.h"
 #import "XADDiskDoublerADnHandle.h"
 #import "XADDiskDoublerDDnHandle.h"
+
 #import "XADXORHandle.h"
 #import "XADDeltaHandle.h"
+
 #import "XADCRCHandle.h"
 #import "XADChecksumHandle.h"
 #import "XADXORSumHandle.h"
+
 #import "NSDateXAD.h"
 
 @implementation XADDiskDoublerParser
@@ -381,9 +387,11 @@
 			int m2=[handle readUInt8]^xor;
 			int flags=[handle readUInt8]^xor;
 
-			handle=[[[XADCompressHandle alloc] initWithHandle:handle length:size flags:flags] autorelease];
+			handle=[[[XADCompressHandle alloc] initWithHandle:handle
+			length:size flags:flags] autorelease];
+
 			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:"Z" length:1]] autorelease];
+			password:[NSData dataWithBytes:(uint8_t[]){xor} length:1]] autorelease];
 
 			if(checksum)
 			{
@@ -394,14 +402,48 @@
 		}
 		break;
 
-		case 2: // Untested!
+		case 2: // Method 2
+		case 5: // Method 5 - Untested!
 		{
 			int xor=0;
 			if(info1>=0x2a&&(info2&0x80)==0) xor=0x5a;
 
-			handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:size] autorelease];
+			int numcontexts;
+
+			if((method&0x7f)==5)
+			{
+				numcontexts=[handle readUInt8];
+				if(numcontexts==0) numcontexts=256;
+			}
+			else
+			{
+				numcontexts=256;
+			}
+
+			handle=[[[XADDiskDoublerMethod2Handle alloc]
+			initWithHandle:handle length:size numberOfContexts:numcontexts] autorelease];
+
 			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:"Z" length:1]] autorelease];
+			password:[NSData dataWithBytes:(uint8_t[]){xor} length:1]] autorelease];
+
+			if(checksum)
+			{
+				handle=[[[XADChecksumHandle alloc] initWithHandle:handle length:size
+				correctChecksum:correctchecksum mask:0xffff] autorelease];
+			}
+		}
+		break;
+
+		case 4: // Huffman - Untested!
+		{
+			int xor=0;
+			if(info1>=0x2a&&(info2&0x80)==0) xor=0x5a;
+
+			handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle
+			length:size] autorelease];
+
+			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
+			password:[NSData dataWithBytes:(uint8_t[]){xor}length:1]] autorelease];
 
 			if(checksum)
 			{
@@ -419,13 +461,13 @@
 			[handle skipBytes:8+2*numentries];
 
 			handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:"\377" length:1]] autorelease];
+			password:[NSData dataWithBytes:(uint8_t[]){0xff} length:1]] autorelease];
 
 			handle=[[[XADStacLZSHandle alloc] initWithHandle:handle
 			length:size] autorelease];
 
 			handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:"\377" length:1]] autorelease];
+			password:[NSData dataWithBytes:(uint8_t[]){0xff} length:1]] autorelease];
 
 			if(checksum)
 			{
@@ -441,8 +483,11 @@
 			int sub=0;
 			for(int i=0;i<16;i++) sub+=[handle readUInt8];
 
-			if(sub==0) handle=[[[XADCompactProLZHHandle alloc] initWithHandle:handle blockSize:0xfff0] autorelease];
-			handle=[[[XADCompactProRLEHandle alloc] initWithHandle:handle length:size] autorelease];
+			if(sub==0) handle=[[[XADCompactProLZHHandle alloc]
+			initWithHandle:handle blockSize:0xfff0] autorelease];
+
+			handle=[[[XADCompactProRLEHandle alloc] initWithHandle:handle
+			length:size] autorelease];
 
 			if(checksum)
 			{

@@ -708,6 +708,18 @@
 		1BD3822312539ABC00FE08BD /* XADStacLZSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3821F12539ABC00FE08BD /* XADStacLZSHandle.m */; };
 		1BD3822412539ABC00FE08BD /* XADStacLZSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD3821E12539ABC00FE08BD /* XADStacLZSHandle.h */; };
 		1BD3822512539ABC00FE08BD /* XADStacLZSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3821F12539ABC00FE08BD /* XADStacLZSHandle.m */; };
+		1BD382F41254EA2800FE08BD /* XADXORSumHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD382F31254EA2800FE08BD /* XADXORSumHandle.h */; };
+		1BD382F51254EA2800FE08BD /* XADXORSumHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD382F31254EA2800FE08BD /* XADXORSumHandle.h */; };
+		1BD382F61254EA2800FE08BD /* XADXORSumHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD382F31254EA2800FE08BD /* XADXORSumHandle.h */; };
+		1BD382F81254EA3600FE08BD /* XADXORSumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD382F71254EA3600FE08BD /* XADXORSumHandle.m */; };
+		1BD382F91254EA3600FE08BD /* XADXORSumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD382F71254EA3600FE08BD /* XADXORSumHandle.m */; };
+		1BD382FA1254EA3600FE08BD /* XADXORSumHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD382F71254EA3600FE08BD /* XADXORSumHandle.m */; };
+		1BD3832F125610C200FE08BD /* XADDiskDoublerMethod2Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD3832D125610C200FE08BD /* XADDiskDoublerMethod2Handle.h */; };
+		1BD38330125610C200FE08BD /* XADDiskDoublerMethod2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3832E125610C200FE08BD /* XADDiskDoublerMethod2Handle.m */; };
+		1BD38331125610C200FE08BD /* XADDiskDoublerMethod2Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD3832D125610C200FE08BD /* XADDiskDoublerMethod2Handle.h */; };
+		1BD38332125610C200FE08BD /* XADDiskDoublerMethod2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3832E125610C200FE08BD /* XADDiskDoublerMethod2Handle.m */; };
+		1BD38333125610C200FE08BD /* XADDiskDoublerMethod2Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD3832D125610C200FE08BD /* XADDiskDoublerMethod2Handle.h */; };
+		1BD38334125610C200FE08BD /* XADDiskDoublerMethod2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3832E125610C200FE08BD /* XADDiskDoublerMethod2Handle.m */; };
 		1BE07E6A10C9953400B17F91 /* XADCABBlockReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE07E6810C9953400B17F91 /* XADCABBlockReader.h */; };
 		1BE07E6B10C9953400B17F91 /* XADCABBlockReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */; };
 		1BE785C610AF78D0007EA6F6 /* XADNSAParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE785C410AF78D0007EA6F6 /* XADNSAParser.h */; };
@@ -1075,7 +1087,7 @@
 		1B3A650110154DCE00AE25A8 /* CSHexDump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSHexDump.m; sourceTree = "<group>"; };
 		1B3A66D51017B7E000AE25A8 /* XADNSISParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSISParser.h; sourceTree = "<group>"; };
 		1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSISParser.m; sourceTree = "<group>"; };
-		1B3A68A2101BA12C00AE25A8 /* XADTest4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest4; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B3A68A2101BA12C00AE25A8 /* XADTest3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest3; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B3A68A9101BA14A00AE25A8 /* XADTest4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest4.m; sourceTree = "<group>"; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
@@ -1348,6 +1360,10 @@
 		1BCD65510EF8164900D86C43 /* RARBug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RARBug.c; sourceTree = "<group>"; };
 		1BD3821E12539ABC00FE08BD /* XADStacLZSHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStacLZSHandle.h; sourceTree = "<group>"; };
 		1BD3821F12539ABC00FE08BD /* XADStacLZSHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStacLZSHandle.m; sourceTree = "<group>"; };
+		1BD382F31254EA2800FE08BD /* XADXORSumHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADXORSumHandle.h; sourceTree = "<group>"; };
+		1BD382F71254EA3600FE08BD /* XADXORSumHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADXORSumHandle.m; sourceTree = "<group>"; };
+		1BD3832D125610C200FE08BD /* XADDiskDoublerMethod2Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDiskDoublerMethod2Handle.h; sourceTree = "<group>"; };
+		1BD3832E125610C200FE08BD /* XADDiskDoublerMethod2Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADDiskDoublerMethod2Handle.m; sourceTree = "<group>"; };
 		1BE07E6810C9953400B17F91 /* XADCABBlockReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCABBlockReader.h; sourceTree = "<group>"; };
 		1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCABBlockReader.m; sourceTree = "<group>"; };
 		1BE785C410AF78D0007EA6F6 /* XADNSAParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSAParser.h; sourceTree = "<group>"; };
@@ -1494,7 +1510,7 @@
 				1B5A7BA30A24F9B400B189EB /* XADTest */,
 				1BBAB68B0EC274A3007FE6A2 /* XADTest2 */,
 				1BC8931A0ED6F283006B47FE /* XADTest3 */,
-				1B3A68A2101BA12C00AE25A8 /* XADTest4 */,
+				1B3A68A2101BA12C00AE25A8 /* XADTest3 */,
 				1B34A97511C2FD0500396C26 /* libXADMaster.a */,
 				1B23DDC01185EBA300620319 /* unar */,
 				1B91D18F11E1677B0081E40A /* lsar */,
@@ -1847,12 +1863,14 @@
 			children = (
 				1BC88D7B0ED31ED9006B47FE /* XADDiskDoublerParser.h */,
 				1BC88D7C0ED31ED9006B47FE /* XADDiskDoublerParser.m */,
+				1BD3832D125610C200FE08BD /* XADDiskDoublerMethod2Handle.h */,
+				1BD3832E125610C200FE08BD /* XADDiskDoublerMethod2Handle.m */,
+				1BD3821E12539ABC00FE08BD /* XADStacLZSHandle.h */,
+				1BD3821F12539ABC00FE08BD /* XADStacLZSHandle.m */,
 				1BC574B510EEDA700056F44C /* XADDiskDoublerADnHandle.h */,
 				1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */,
 				1BC5753710F0F62B0056F44C /* XADDiskDoublerDDnHandle.h */,
 				1BC5753810F0F62B0056F44C /* XADDiskDoublerDDnHandle.m */,
-				1BD3821E12539ABC00FE08BD /* XADStacLZSHandle.h */,
-				1BD3821F12539ABC00FE08BD /* XADStacLZSHandle.m */,
 			);
 			name = DiskDoubler;
 			sourceTree = "<group>";
@@ -1999,6 +2017,8 @@
 				1BCD64260EF6CA3F00D86C43 /* XADCRCSuffixHandle.m */,
 				1B3E39F20F45F62F003EEF98 /* XADChecksumHandle.h */,
 				1B3E39F30F45F62F003EEF98 /* XADChecksumHandle.m */,
+				1BD382F31254EA2800FE08BD /* XADXORSumHandle.h */,
+				1BD382F71254EA3600FE08BD /* XADXORSumHandle.m */,
 				1BCD64320EF6CB5200D86C43 /* XADDigestHandle.h */,
 				1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */,
 				1B3E2BF10F28D715003EEF98 /* XADRC4Handle.h */,
@@ -2286,6 +2306,8 @@
 			files = (
 				1B34AC0F11CED29A00396C26 /* CSCommandLineParser.h in Headers */,
 				1BD3822212539ABC00FE08BD /* XADStacLZSHandle.h in Headers */,
+				1BD382F51254EA2800FE08BD /* XADXORSumHandle.h in Headers */,
+				1BD38333125610C200FE08BD /* XADDiskDoublerMethod2Handle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2295,6 +2317,8 @@
 			files = (
 				1B91CCC011D97E7C0081E40A /* CSCommandLineParser.h in Headers */,
 				1BD3822412539ABC00FE08BD /* XADStacLZSHandle.h in Headers */,
+				1BD382F61254EA2800FE08BD /* XADXORSumHandle.h in Headers */,
+				1BD38331125610C200FE08BD /* XADDiskDoublerMethod2Handle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2450,6 +2474,8 @@
 				1B34A7ED11C2E0E800396C26 /* XADRAR13CryptHandle.h in Headers */,
 				1B34AC1111CED29A00396C26 /* CSCommandLineParser.h in Headers */,
 				1BD3822012539ABC00FE08BD /* XADStacLZSHandle.h in Headers */,
+				1BD382F41254EA2800FE08BD /* XADXORSumHandle.h in Headers */,
+				1BD3832F125610C200FE08BD /* XADDiskDoublerMethod2Handle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2506,7 +2532,7 @@
 			);
 			name = XADTest4;
 			productName = XADTest3;
-			productReference = 1B3A68A2101BA12C00AE25A8 /* XADTest4 */;
+			productReference = 1B3A68A2101BA12C00AE25A8 /* XADTest3 */;
 			productType = "com.apple.product-type.tool";
 		};
 		1B5A7BA20A24F9B400B189EB /* XADTest */ = {
@@ -2901,6 +2927,8 @@
 				1B34AB2D11C3196800396C26 /* StuffItXEnglishDictionary.c in Sources */,
 				1B91D10B11E0F1160081E40A /* XADStringCFString.m in Sources */,
 				1BD3822312539ABC00FE08BD /* XADStacLZSHandle.m in Sources */,
+				1BD382F91254EA3600FE08BD /* XADXORSumHandle.m in Sources */,
+				1BD38334125610C200FE08BD /* XADDiskDoublerMethod2Handle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3078,6 +3106,8 @@
 				1B91D03611DE925F0081E40A /* XADUnarchiver.m in Sources */,
 				1B91D03711DE92620081E40A /* XADUnarchiverWindows.m in Sources */,
 				1BD3822512539ABC00FE08BD /* XADStacLZSHandle.m in Sources */,
+				1BD382FA1254EA3600FE08BD /* XADXORSumHandle.m in Sources */,
+				1BD38332125610C200FE08BD /* XADDiskDoublerMethod2Handle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3295,6 +3325,8 @@
 				1B34AB2E11C3196800396C26 /* StuffItXEnglishDictionary.c in Sources */,
 				1B91D0AE11DFC05D0081E40A /* XADStringCFString.m in Sources */,
 				1BD3822112539ABC00FE08BD /* XADStacLZSHandle.m in Sources */,
+				1BD382F81254EA3600FE08BD /* XADXORSumHandle.m in Sources */,
+				1BD38330125610C200FE08BD /* XADDiskDoublerMethod2Handle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

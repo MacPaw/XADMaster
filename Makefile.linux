@@ -116,6 +116,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADDigestHandle.m \
 			XADDiskDoublerADnHandle.m \
 			XADDiskDoublerDDnHandle.m \
+			XADDiskDoublerMethod2Handle.m \
 			XADDiskDoublerParser.m \
 			XADException.m \
 			XADFastLZSSHandle.m \

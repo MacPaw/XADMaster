@@ -348,10 +348,10 @@
 	{
 		case 0: return @"None";
 		case 1: return @"Compress";
-		//case 2: return @"Something"; // No support or testcases
+		case 2: return @"Method 2"; // Name unknown
 		case 3: return @"RLE"; // No support or testcases
 		case 4: return @"Huffman"; // packit? - No support or testcases
-		//case 5: return @"Same as 2"; // No support or testcases
+		case 5: return @"Method 5"; // Almost same as method 2, but untested.
 		case 6: return @"ADS/AD2";
 		case 7: return @"Stac LZS";
 		case 8: return @"Compact Pro";

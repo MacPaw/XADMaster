@@ -140,6 +140,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADMSLZXHandle.m \
 			XADMSZipHandle.m \
 			XADNDSParser.m \
+			XADNowCompressHandle.m \
 			XADNowCompressParser.m \
 			XADNSAParser.m \
 			XADNSISBzip2Handle.m \

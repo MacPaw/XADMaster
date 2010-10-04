@@ -1,4 +1,5 @@
 #import "XADNowCompressParser.h"
+#import "XADNowCompressHandle.h"
 #import "NSDateXAD.h"
 
 
@@ -170,7 +171,12 @@
 {
 	off_t offs=[[obj objectForKey:@"Offset"] longLongValue];
 	off_t len=[[obj objectForKey:@"Length"] longLongValue];
-	CSHandle *handle=[[self handle] nonCopiedSubHandleFrom:offs length:len];
+//	CSHandle *handle=[[self handle] nonCopiedSubHandleFrom:offs length:len];
+
+	CSHandle *handle=[self handle];
+	[handle seekToFileOffset:offs];
+
+	handle=[[[XADNowCompressHandle alloc] initWithHandle:handle length:CSHandleMaxLength] autorelease];
 
 	return handle;
 }

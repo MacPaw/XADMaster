@@ -170,16 +170,20 @@ XADDiskDoublerDDnHandle.o: XADDiskDoublerDDnHandle.m \
  XADDiskDoublerDDnHandle.h XADLZSSHandle.h CSByteStreamHandle.h \
  CSStreamHandle.h CSHandle.h CSInputBuffer.h XADPrefixCode.h \
  XADException.h
+XADDiskDoublerMethod2Handle.o: XADDiskDoublerMethod2Handle.m \
+ XADDiskDoublerMethod2Handle.h CSByteStreamHandle.h CSStreamHandle.h \
+ CSHandle.h CSInputBuffer.h XADException.h
 XADDiskDoublerParser.o: XADDiskDoublerParser.m XADDiskDoublerParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h XADCompressHandle.h \
  CSByteStreamHandle.h CSStreamHandle.h CSInputBuffer.h LZW.h \
- XADCompactProRLEHandle.h XADCompactProLZHHandle.h XADLZSSHandle.h \
+ XADDiskDoublerMethod2Handle.h XADCompactProLZHHandle.h XADLZSSHandle.h \
  XADPrefixCode.h XADStuffItHuffmanHandle.h XADStacLZSHandle.h \
- XADFastLZSSHandle.h LZSS.h XADDiskDoublerADnHandle.h \
- CSBlockStreamHandle.h XADDiskDoublerDDnHandle.h XADXORHandle.h \
- XADDeltaHandle.h XADCRCHandle.h Progress.h CSZlibHandle.h \
- CSBzip2Handle.h CRC.h XADChecksumHandle.h XADXORSumHandle.h NSDateXAD.h
+ XADFastLZSSHandle.h LZSS.h XADCompactProRLEHandle.h \
+ XADDiskDoublerADnHandle.h CSBlockStreamHandle.h \
+ XADDiskDoublerDDnHandle.h XADXORHandle.h XADDeltaHandle.h XADCRCHandle.h \
+ Progress.h CSZlibHandle.h CSBzip2Handle.h CRC.h XADChecksumHandle.h \
+ XADXORSumHandle.h NSDateXAD.h
 XADException.o: XADException.m XADException.h CSFileHandle.h CSHandle.h \
  CSZlibHandle.h CSStreamHandle.h CSInputBuffer.h CSBzip2Handle.h
 XADFastLZSSHandle.o: XADFastLZSSHandle.m XADFastLZSSHandle.h \
@@ -256,9 +260,14 @@ XADMSZipHandle.o: XADMSZipHandle.m XADMSZipHandle.h XADCABBlockHandle.h \
 XADNDSParser.o: XADNDSParser.m XADNDSParser.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h CSMemoryHandle.h CRC.h
+XADNowCompressHandle.o: XADNowCompressHandle.m XADNowCompressHandle.h \
+ CSBlockStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
+ XADException.h
 XADNowCompressParser.o: XADNowCompressParser.m XADNowCompressParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
- CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h NSDateXAD.h
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h \
+ XADNowCompressHandle.h CSBlockStreamHandle.h CSStreamHandle.h \
+ CSInputBuffer.h NSDateXAD.h
 XADNSAParser.o: XADNSAParser.m XADNSAParser.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h XADLZSSHandle.h \

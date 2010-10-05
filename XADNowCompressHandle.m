@@ -55,8 +55,6 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 		NSLog(@"%08x %04x %04x",blocks[i].offs,blocks[i].flags,blocks[i].padding);
 	}
 
-	NSLog(@"%x",[parent readUInt32BE]);
-
 	nextblock=0;
 
 	[self setBlockPointer:outblock];
@@ -80,9 +78,6 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 		if(flags&0x1f) // LZSS and Huffman.
 		{
 			[parent readBytes:length toBuffer:outblock];
-NSLog(@"%08x",[parent readUInt32BE]);
-int sum1=0;
-for(int i=0;i<length;i++) sum1+=outblock[i];
 
 			int outlength1=UnpackHuffman(outblock,outblock+length,inblock,inblock+sizeof(inblock));
 			if(!outlength1) [XADException raiseDecrunchException];
@@ -90,17 +85,11 @@ for(int i=0;i<length;i++) sum1+=outblock[i];
 			int outlength2=UnpackLZSS(inblock,inblock+outlength1,outblock,outblock+sizeof(outblock));
 			if(!outlength2) [XADException raiseDecrunchException];
 
-int sum2=0;
-for(int i=0;i<outlength2;i++) sum2+=outblock[i];
-
-NSLog(@"%08x %08x",sum1,sum2);
-
 			return outlength2;
 		}
 		else // Huffman only.
 		{
 			[parent readBytes:length toBuffer:inblock];
-NSLog(@"%08x",[parent readUInt32BE]);
 
 			int outlength=UnpackHuffman(inblock,inblock+length,outblock,outblock+sizeof(outblock));
 			if(!outlength) [XADException raiseDecrunchException];
@@ -117,7 +106,6 @@ NSLog(@"%08x",[parent readUInt32BE]);
 		if(flags&0x1f) // LZSS only.
 		{
 			[parent readBytes:length toBuffer:inblock];
-NSLog(@"%08x",[parent readUInt32BE]);
 
 			int outlength=UnpackLZSS(inblock,inblock+length,outblock,outblock+sizeof(outblock));
 			if(!outlength) [XADException raiseDecrunchException];
@@ -127,7 +115,6 @@ NSLog(@"%08x",[parent readUInt32BE]);
 		else // No compression.
 		{
 			[parent readBytes:length toBuffer:outblock];
-NSLog(@"%08x",[parent readUInt32BE]);
 			return length;
 		}
 	}
@@ -156,11 +143,11 @@ uint8_t *destinationstart,uint8_t *destinationend)
 	uint8_t *destination=destinationstart;
 	while(CSInputBufferBitOffset(buf)<numbits)
 	{
-NSLog(@"%qd %d",CSInputBufferBitOffset(buf),numbits);
 		if(destination>=destinationend) [XADException raiseDecrunchException];//return 0;
 		*destination++=CSInputNextSymbolUsingCode(buf,code);
 	}
-NSLog(@"%qd %d",CSInputBufferBitOffset(buf),numbits);
+
+	if(CSInputBufferBitOffset(buf)!=numbits) [XADException raiseDecrunchException];//return 0;
 
 	[code release];
 
@@ -231,7 +218,6 @@ static XADPrefixCode *AllocAndReadCode(uint8_t *sourcestart,uint8_t *sourceend,i
 
 	if(source>=sourceend) return 0;
 	int extralengths=*source++;
-
 	for(int i=0;i<extralengths;i++)
 	{
 		if(source>=sourceend) return 0;

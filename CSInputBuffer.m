@@ -132,7 +132,7 @@ off_t CSInputFileOffset(CSInputBuffer *self)
 
 off_t CSInputBufferBitOffset(CSInputBuffer *self)
 {
-	return CSInputBufferOffset(self)*8-(-self->numbits&7);
+	return CSInputBufferOffset(self)*8-(self->numbits&7);
 }
 
 

@@ -1,10 +1,14 @@
 #import "XADNowCompressHandle.h"
 #import "XADException.h"
+#import "XADPrefixCode.h"
 
-static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
-{
-	for(int i=0;i<length;i++) dest[i]=src[i];
-}
+static int UnpackHuffman(uint8_t *sourcestart,uint8_t *sourceend,
+uint8_t *destinationstart,uint8_t *destinationend);
+static int UnpackLZSS(uint8_t *sourcestart,uint8_t *sourceend,
+uint8_t *destinationstart,uint8_t *destinationend);
+
+static XADPrefixCode *AllocAndReadCode(uint8_t *source,uint8_t *sourceend,int numentries,uint8_t **newsource);
+static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 
 @implementation XADNowCompressHandle
 
@@ -30,7 +34,7 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
 {
 	[parent seekToFileOffset:startoffset];
 
-	off_t datastart=[parent readUInt32BE];
+	uint32_t datastart=[parent readUInt32BE];
 
 	int numentries=(datastart-startoffset-12)/8;
 
@@ -64,118 +68,185 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
 
 	[parent seekToFileOffset:blocks[nextblock].offs];
 
-	uint32_t length=blocks[nextblock+1].offs-blocks[nextblock].offs;
 	int flags=blocks[nextblock].flags;
 	int padding=blocks[nextblock].padding;
+	uint32_t length=blocks[nextblock+1].offs-blocks[nextblock].offs-padding-4;
 	nextblock++;
 
 	if(length>sizeof(inblock)) [XADException raiseDecrunchException];
 
-	[parent readBytes:length toBuffer:inblock];
-
-			memcpy(outblock,inblock,length);
-			return length;
-
 	if(flags&0x20)
 	{
-		if(flags&0x1f)
+		if(flags&0x1f) // LZSS and Huffman.
 		{
-			// huffman + lzss
+			[parent readBytes:length toBuffer:outblock];
+NSLog(@"%08x",[parent readUInt32BE]);
+int sum1=0;
+for(int i=0;i<length;i++) sum1+=outblock[i];
+
+			int outlength1=UnpackHuffman(outblock,outblock+length,inblock,inblock+sizeof(inblock));
+			if(!outlength1) [XADException raiseDecrunchException];
+
+			int outlength2=UnpackLZSS(inblock,inblock+outlength1,outblock,outblock+sizeof(outblock));
+			if(!outlength2) [XADException raiseDecrunchException];
+
+int sum2=0;
+for(int i=0;i<outlength2;i++) sum2+=outblock[i];
+
+NSLog(@"%08x %08x",sum1,sum2);
+
+			return outlength2;
 		}
-		else
+		else // Huffman only.
 		{
-			// huffman?
+			[parent readBytes:length toBuffer:inblock];
+NSLog(@"%08x",[parent readUInt32BE]);
+
+			int outlength=UnpackHuffman(inblock,inblock+length,outblock,outblock+sizeof(outblock));
+			if(!outlength) [XADException raiseDecrunchException];
+
+			return outlength;
 		}
 	}
-	else if(flags&0x40)
+	else if(flags&0x40) // ?
 	{
 		[XADException raiseNotSupportedException];
 	}
 	else
 	{
-		if(flags&0x1f)
+		if(flags&0x1f) // LZSS only.
 		{
-			// lzss
+			[parent readBytes:length toBuffer:inblock];
+NSLog(@"%08x",[parent readUInt32BE]);
+
+			int outlength=UnpackLZSS(inblock,inblock+length,outblock,outblock+sizeof(outblock));
+			if(!outlength) [XADException raiseDecrunchException];
+
+			return outlength;
 		}
-		else
+		else // No compression.
 		{
-			memcpy(outblock,inblock,length);
+			[parent readBytes:length toBuffer:outblock];
+NSLog(@"%08x",[parent readUInt32BE]);
 			return length;
 		}
 	}
 
 	return 1;
-
-/*	uint8_t headxor=0;
-
-	int compsize=CSInputNextUInt16BE(input);
-	//if(compsize>0x2000) [XADException raiseIllegalDataException];
-	headxor^=compsize^(compsize>>8);
-
-	int uncompsize=CSInputNextUInt16BE(input);
-	if(uncompsize>0x2000) [XADException raiseIllegalDataException];
-	headxor^=uncompsize^(uncompsize>>8);
-
-	for(int i=0;i<4;i++) headxor^=CSInputNextByte(input);
-
-	int datacorrectxor=CSInputNextByte(input);
-	headxor^=datacorrectxor;
-
-	int flags=CSInputNextByte(input);
-	headxor^=flags;
-
-	headxor^=CSInputNextByte(input);
-
-	int headcorrectxor=CSInputNextByte(input);
-	if(headxor!=headcorrectxor) [XADException raiseIllegalDataException];
-
-	off_t nextblock=CSInputBufferOffset(input)+compsize;
-
-	if(flags&1)
-	{
-		// Uncompressed block
-		for(int i=0;i<uncompsize;i++) outbuffer[i]=CSInputNextByte(input);
-	}
-	else
-	{
-		int currpos=0;
-		while(currpos<uncompsize)
-		{
-			int ismatch=CSInputNextBit(input);
-
-			if(!ismatch) outbuffer[currpos++]=CSInputNextBitString(input,8);
-			else
-			{
-				int isfar=CSInputNextBit(input);
-				int offset=CSInputNextBitString(input,isfar?12:8);
-				if(offset>currpos) [XADException raiseIllegalDataException];
-
-				int length;
-				if(CSInputNextBit(input)==0) length=2;
-				else
-				{
-					if(CSInputNextBit(input)==0)
-					{
-						if(CSInputNextBit(input)==0) length=3;
-						else length=4;
-					}
-					else length=CSInputNextBitString(input,4)+5;
-				}
-
-				if(currpos+length>uncompsize) length=uncompsize-currpos;
-				if(length>offset) [XADException raiseIllegalDataException];
-
-				CopyBytesWithRepeat(&outbuffer[currpos],&outbuffer[currpos-offset],length);
-				currpos+=length;
-			}
-		}
-	}
-
-	CSInputSeekToBufferOffset(input,nextblock);
-
-	[self setBlockPointer:outbuffer];
-	return uncompsize;
-	*/
 }
 
 @end
+
+static int UnpackHuffman(uint8_t *sourcestart,uint8_t *sourceend,
+uint8_t *destinationstart,uint8_t *destinationend)
+{
+	uint8_t *source=sourcestart;
+
+	if(source>=sourceend) [XADException raiseDecrunchException];//return 0;
+	int endbits=*source++;
+
+	XADPrefixCode *code=AllocAndReadCode(source,sourceend,256,&source);
+	if(!code) return 0;
+
+	CSInputBuffer *buf=CSInputBufferAllocWithBuffer(source,sourceend-source,0);
+
+	int numbits=(sourceend-source)*8;
+	if(endbits) numbits-=16-endbits;
+
+	uint8_t *destination=destinationstart;
+	while(CSInputBufferBitOffset(buf)<numbits)
+	{
+NSLog(@"%qd %d",CSInputBufferBitOffset(buf),numbits);
+		if(destination>=destinationend) [XADException raiseDecrunchException];//return 0;
+		*destination++=CSInputNextSymbolUsingCode(buf,code);
+	}
+NSLog(@"%qd %d",CSInputBufferBitOffset(buf),numbits);
+
+	[code release];
+
+	return destination-destinationstart;
+}
+
+static int UnpackLZSS(uint8_t *sourcestart,uint8_t *sourceend,
+uint8_t *destinationstart,uint8_t *destinationend)
+{
+	uint8_t *source=sourcestart+2;
+	uint8_t *destination=destinationstart;
+
+	int bits,numbits=0;
+	while(source<sourceend)
+	{
+		if(!numbits)
+		{
+			bits=*source++;
+			numbits=8;
+		}
+
+		if(bits&0x80)
+		{
+			if(destination>=destinationend) [XADException raiseDecrunchException];//return 0;
+			*destination++=*source++;
+		}
+		else
+		{
+			int b1=*source++;
+			int b2=*source++;
+
+			int offset=((b1&0xf8)<<5)|b2;
+
+			int length=b1&0x07;
+			if(!length) length=*source++;
+			length+=2;
+
+			if(destination-offset<destinationstart) [XADException raiseDecrunchException];//return 0;
+
+			for(int i=0;i<length;i++)
+			{
+				if(destination>=destinationend) [XADException raiseDecrunchException];//return 0;
+				destination[0]=destination[-offset];
+				destination++;
+			}
+		}
+
+		bits<<=1;
+		numbits--;
+	}
+
+	return destination-destinationstart;
+}
+
+static XADPrefixCode *AllocAndReadCode(uint8_t *sourcestart,uint8_t *sourceend,int numentries,uint8_t **newsource)
+{
+	uint8_t *source=sourcestart;
+
+	int lengths[numentries];
+	for(int i=0;i<numentries/2;i++)
+	{
+		if(source>=sourceend) return 0;
+		uint8_t val=*source++;
+
+		lengths[2*i]=val>>4;
+		lengths[2*i+1]=val&0x0f;
+	}
+
+	if(source>=sourceend) return 0;
+	int extralengths=*source++;
+
+	for(int i=0;i<extralengths;i++)
+	{
+		if(source>=sourceend) return 0;
+		lengths[*source++]+=16;
+	}
+
+	// TODO: padding?
+
+	if(newsource) *newsource=source;
+
+	return [[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:numentries
+	maximumLength:32 shortestCodeIsZeros:YES];
+}
+
+static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
+{
+	for(int i=0;i<length;i++) dest[i]=src[i];
+}

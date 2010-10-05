@@ -38,6 +38,7 @@ void CSInputSeekToBufferOffset(CSInputBuffer *self,off_t offset);
 void CSInputSetStartOffset(CSInputBuffer *self,off_t offset);
 off_t CSInputBufferOffset(CSInputBuffer *self);
 off_t CSInputFileOffset(CSInputBuffer *self);
+off_t CSInputBufferBitOffset(CSInputBuffer *self);
 
 void _CSInputFillBuffer(CSInputBuffer *self);
 

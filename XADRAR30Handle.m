@@ -70,6 +70,7 @@
 	{
 		CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:NULL];
 		[self setInputBuffer:buf];
+		if(ppmblock) ppmd.core.coder.input=buf; // TODO: Ew, what an ugly kludge.
 
 		if(startnewtable) [self allocAndParseCodes];
 
@@ -149,8 +150,8 @@
 
 		lastend=actualend;
 
-		// Check if we immediately hit a new filter, and try again.
-		if(actualend==start && actualend==filterstart) return [self produceBlockAtOffset:pos];
+		// Check if we immediately hit a new filter or file edge, and try again.
+		if(actualend==start) return [self produceBlockAtOffset:pos];
 		else return actualend-start;
 	}
 }
@@ -197,6 +198,7 @@
 					break;
 
 					case 2:
+						startnewpart=YES;
 						return LZSSPosition(&lzss);
 					break;
 

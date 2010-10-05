@@ -12,7 +12,7 @@
 		int flags,padding;
 	} *blocks;
 
-	uint8_t inblock[0x4000],outblock[0x8000];
+	uint8_t inblock[0x8000],outblock[0x8000];
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;

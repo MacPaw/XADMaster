@@ -126,11 +126,10 @@
 			{
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					[NSNumber numberWithUnsignedInt:datasize],XADFileSizeKey,
-					//[self XADStringWithString:[self nameForMethod:0]],XADCompressionNameKey,
+					[self XADStringWithString:@"Now Compress"],XADCompressionNameKey,
 					soliddict,XADSolidObjectKey,
 					[NSNumber numberWithLongLong:0],XADSolidOffsetKey,
-//					[NSNumber numberWithUnsignedInt:datasize],XADSolidLengthKey,
-					[NSNumber numberWithUnsignedInt:256],XADSolidLengthKey,
+					[NSNumber numberWithUnsignedInt:datasize],XADSolidLengthKey,
 				nil];
 
 				[dict addEntriesFromDictionary:shareddict];
@@ -147,10 +146,10 @@
 					[NSNumber numberWithBool:YES],XADIsResourceForkKey,
 					[NSNumber numberWithUnsignedInt:rsrcsize],XADFileSizeKey,
 					[NSNumber numberWithUnsignedInt:(dataend-datastart)*rsrcsize/(datasize+rsrcsize)],XADCompressedSizeKey,
-					//[self XADStringWithString:[self nameForMethod:0]],XADCompressionNameKey,
+					[self XADStringWithString:@"Now Compress"],XADCompressionNameKey,
 					soliddict,XADSolidObjectKey,
-					[NSNumber numberWithLongLong:0],XADSolidOffsetKey,
-					[NSNumber numberWithUnsignedInt:256],XADSolidLengthKey,
+					[NSNumber numberWithLongLong:datasize],XADSolidOffsetKey,
+					[NSNumber numberWithUnsignedInt:rsrcsize],XADSolidLengthKey,
 				nil];
 
 				[dict addEntriesFromDictionary:shareddict];

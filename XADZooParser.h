@@ -1,5 +1,6 @@
 #import "XADArchiveParser.h"
 #import "CSByteStreamHandle.h"
+#import "LZW.h"
 
 @interface XADZooParser:XADArchiveParser
 {
@@ -16,8 +17,19 @@
 
 @interface XADZooMethod1Handle:CSByteStreamHandle
 {
+	BOOL blockmode;
+
+	LZW *lzw;
+	int symbolsize,symbolcounter;
+
+	uint8_t *buffer;
+	int bufsize,currbyte;
+
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
+
+-(void)resetByteStream;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end

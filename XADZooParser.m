@@ -188,8 +188,8 @@
 		break;
 
 		case 1:
-			return nil;
-			//return [[[XADZooMethod1Handle alloc] initWithHandle:handle length:length] autorelease];
+			handle=[[[XADZooMethod1Handle alloc] initWithHandle:handle length:length] autorelease];
+		break;
 
 		case 2:
 			handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:length windowBits:13] autorelease];
@@ -213,7 +213,69 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [super initWithHandle:handle length:length];
+	if(self=[super initWithHandle:handle length:length])
+	{
+		blockmode=compressflags&0x80;
+		lzw=AllocLZW(1<<(compressflags&0x1f),blockmode?1:0);
+		bufsize=1024;
+		buffer=malloc(bufsize);
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	FreeLZW(lzw);
+	free(buffer);
+	[super dealloc];
+}
+
+-(void)resetByteStream
+{
+	ClearLZWTable(lzw);
+	symbolsize=9;
+	symbolcounter=0;
+	currbyte=0;
+}
+
+-(uint8_t)produceByteAtOffset:(off_t)pos
+{
+	if(!currbyte)
+	{
+		int symbol;
+		for(;;)
+		{
+			if(CSInputAtEOF(input)) CSByteStreamEOF(self);
+
+			symbol=CSInputNextBitStringLE(input,symbolsize);
+			symbolcounter++;
+
+			if(symbol==257)
+			{
+				CSByteStreamEOF(self);
+			}
+			else if(symbol==256)
+			{
+				ClearLZWTable(lzw);
+				symbolsize=9;
+				symbolcounter=0;
+			}
+			else break;
+		}
+
+		if(NextLZWSymbol(lzw,symbol)==LZWInvalidCodeError) [XADException raiseDecrunchException];
+
+		currbyte=LZWOutputLength(lzw);
+		if(currbyte>bufsize) buffer=reallocf(buffer,bufsize*=2);
+
+		LZWReverseOutputToBuffer(lzw,buffer);
+
+		int numsymbols=LZWSymbolCount(lzw);
+		if(!LZWSymbolListFull(lzw))
+		if((numsymbols&numsymbols-1)==0) symbolsize++;
+	}
+
+	return buffer[--currbyte];
 }
 
 

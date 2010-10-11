@@ -57,7 +57,6 @@
 		NSData *shortnamedata=[NSData dataWithBytes:shortnamebuf length:shortnamelength];
 
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-			[NSDate XADDateWithMSDOSDate:date time:time],XADLastModificationDateKey,
 			[NSNumber numberWithUnsignedLong:uncompsize],XADFileSizeKey,
 			[NSNumber numberWithUnsignedLong:compsize],XADCompressedSizeKey,
 			[NSNumber numberWithUnsignedLong:dataoffset],XADDataOffsetKey,
@@ -82,14 +81,17 @@
 		if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 
 		XADPath *path=nil;
+		NSTimeZone *timezone=nil;
 
 		if(type==2)
 		{
 			int varlength=[fh readUInt16LE];
-			int timezone=[fh readUInt8];
+			int tzoffs=[fh readUInt8];
 			/*int crcent=*/[fh readUInt16LE];
 
-			[dict setObject:[NSNumber numberWithInt:timezone] forKey:@"ZooTimeZone"];
+			if(tzoffs<128) timezone=[NSTimeZone timeZoneForSecondsFromGMT:tzoffs*15*60];
+			else timezone=[NSTimeZone timeZoneForSecondsFromGMT:(tzoffs-256)*15*60];
+			[dict setObject:[NSNumber numberWithInt:tzoffs] forKey:@"ZooTimeZone"];
 
 			NSData *longnamedata=nil,*dirdata=nil;
 			int longnamelength=0,dirlength=0;
@@ -161,6 +163,9 @@
 
 		if(path) [dict setObject:path forKey:XADFileNameKey];
 		else [dict setObject:[self XADPathWithData:shortnamedata separators:XADNoPathSeparator] forKey:XADFileNameKey];
+
+		[dict setObject:[NSDate XADDateWithMSDOSDate:date time:time timeZone:timezone]
+		forKey:XADLastModificationDateKey];
 
 		if(commentoffset&&commentlength)
 		{

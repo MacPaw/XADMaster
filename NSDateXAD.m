@@ -20,10 +20,20 @@
 
 +(NSDate *)XADDateWithMSDOSDate:(uint16_t)date time:(uint16_t)time
 {
-	return [self XADDateWithMSDOSDateTime:((uint32_t)date<<16)|(uint32_t)time];
+	return [self XADDateWithMSDOSDate:date time:time timeZone:nil];
+}
+
++(NSDate *)XADDateWithMSDOSDate:(uint16_t)date time:(uint16_t)time timeZone:(NSTimeZone *)tz
+{
+	return [self XADDateWithMSDOSDateTime:((uint32_t)date<<16)|(uint32_t)time timeZone:tz];
 }
 
 +(NSDate *)XADDateWithMSDOSDateTime:(uint32_t)msdos
+{
+	return [self XADDateWithMSDOSDateTime:msdos timeZone:nil];
+}
+
++(NSDate *)XADDateWithMSDOSDateTime:(uint32_t)msdos timeZone:(NSTimeZone *)tz
 {
 	int second=(msdos&31)*2;
 	int minute=(msdos>>5)&63;
@@ -31,7 +41,7 @@
 	int day=(msdos>>16)&31;
 	int month=(msdos>>21)&15;
 	int year=1980+(msdos>>25);
-	return [NSCalendarDate dateWithYear:year month:month day:day hour:hour minute:minute second:second timeZone:nil];
+	return [NSCalendarDate dateWithYear:year month:month day:day hour:hour minute:minute second:second timeZone:tz];
 }
 
 +(NSDate *)XADDateWithWindowsFileTime:(uint64_t)filetime

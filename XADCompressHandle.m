@@ -29,7 +29,6 @@
 -(void)resetByteStream
 {
 	ClearLZWTable(lzw);
-	symbolsize=9;
 	symbolcounter=0;
 	buffer=bufferend=NULL;
 }
@@ -43,14 +42,14 @@
 		{
 			if(CSInputAtEOF(input)) CSByteStreamEOF(self);
 
-			symbol=CSInputNextBitStringLE(input,symbolsize);
+			symbol=CSInputNextBitStringLE(input,LZWSuggestedSymbolSize(lzw));
 			symbolcounter++;
 			if(symbol==256&&blockmode)
 			{
 				// Skip garbage data after a clear. God damn, this is dumb.
+				int symbolsize=LZWSuggestedSymbolSize(lzw);
 				if(symbolcounter%8) CSInputSkipBitsLE(input,symbolsize*(8-symbolcounter%8));
 				ClearLZWTable(lzw);
-				symbolsize=9;
 				symbolcounter=0;
 			}
 			else break;
@@ -61,10 +60,6 @@
 		int n=LZWOutputToInternalBuffer(lzw);
 		buffer=LZWInternalBuffer(lzw);
 		bufferend=buffer+n;
-
-		int numsymbols=LZWSymbolCount(lzw);
-		if(!LZWSymbolListFull(lzw))
-		if((numsymbols&numsymbols-1)==0) symbolsize++;
 	}
 
 	return *buffer++;

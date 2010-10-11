@@ -18,7 +18,6 @@
 @interface XADZooMethod1Handle:CSByteStreamHandle
 {
 	LZW *lzw;
-	int symbolsize;
 
 	int currbyte;
 	uint8_t buffer[8192];

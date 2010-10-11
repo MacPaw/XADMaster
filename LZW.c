@@ -37,6 +37,7 @@ void ClearLZWTable(LZW *self)
 {
 	self->numsymbols=256+self->reservedsymbols;
 	self->prevsymbol=-1;
+	self->symbolsize=9; // TODO: technically this depends on reservedsymbols
 }
 
 static uint8_t FindFirstByte(LZWTreeNode *nodes,int symbol)
@@ -69,7 +70,9 @@ int NextLZWSymbol(LZW *self,int symbol)
 		self->prevsymbol=symbol;
 	}
 
-	if(self->numsymbols==self->maxsymbols) return LZWTooManyCodesError;
+	if(LZWSymbolListFull(self)) return LZWTooManyCodesError;
+
+	if((self->numsymbols&self->numsymbols-1)==0) self->symbolsize++;
 
 	return LZWNoError;
 }

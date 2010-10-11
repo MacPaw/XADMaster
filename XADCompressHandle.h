@@ -6,7 +6,7 @@
 	BOOL blockmode;
 
 	LZW *lzw;
-	int symbolsize,symbolcounter;
+	int symbolcounter;
 
 	uint8_t *buffer,*bufferend;
 }

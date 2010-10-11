@@ -229,7 +229,6 @@
 -(void)resetByteStream
 {
 	ClearLZWTable(lzw);
-	symbolsize=9;
 	currbyte=0;
 }
 
@@ -240,11 +239,10 @@
 		int symbol;
 		for(;;)
 		{
-			symbol=CSInputNextBitStringLE(input,symbolsize);
+			symbol=CSInputNextBitStringLE(input,LZWSuggestedSymbolSize(lzw));
 			if(symbol==256)
 			{
 				ClearLZWTable(lzw);
-				symbolsize=9;
 			}
 			else if(symbol==257)
 			{
@@ -255,10 +253,6 @@
 
 		if(NextLZWSymbol(lzw,symbol)==LZWInvalidCodeError) [XADException raiseDecrunchException];
 		currbyte=LZWReverseOutputToBuffer(lzw,buffer);
-
-		int numsymbols=LZWSymbolCount(lzw);
-		if(!LZWSymbolListFull(lzw))
-		if((numsymbols&numsymbols-1)==0) symbolsize++;
 	}
 
 	return buffer[--currbyte];

@@ -632,7 +632,7 @@ XADGETINFO(Zoo)
             &fi->xfi_Date, TAG_DONE);
 
             if(!err)
-              err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, EndGetI32(zd.NextDir), TAG_DONE);
+              err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, (xadSignSize)EndGetI32(zd.NextDir), TAG_DONE);
             else
               xadFreeObjectA(XADM fi, 0);
           }

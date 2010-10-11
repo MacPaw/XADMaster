@@ -200,6 +200,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADZipParser.m \
 			XADZipSFXParsers.m \
 			XADZipShrinkHandle.m \
+			XADZooParser.m
 
 LIBRARY_C_FILES =	BWT.c \
 			LZSS.c \

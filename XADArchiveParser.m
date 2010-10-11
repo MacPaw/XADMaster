@@ -32,6 +32,7 @@
 #import "XADLZHParser.h"
 #import "XADLZHSFXParsers.h"
 #import "XADARJParser.h"
+#import "XADZooParser.h"
 #import "XADNSISParser.h"
 #import "XADCABParser.h"
 #import "XADCFBFParser.h"
@@ -139,6 +140,7 @@ static int maxheader=0;
 		[XADLZHAmigaSFXParser class],
 		[XADLZHCommodore64SFXParser class],
 		[XADLZHSFXParser class],
+		[XADZooParser class],
 		[XADLZXParser class],
 		[XADPowerPackerParser class],
 		[XADNDSParser class],

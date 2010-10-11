@@ -38,7 +38,7 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 
 -(void)resetBlockStream
 {
-	memset(outblock,0,sizeof(outblock));
+	memset(dictionarycache,0,sizeof(dictionarycache));
 
 	nextfile=0;
 	numblocks=0;
@@ -63,22 +63,26 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 	}
 
 	numblocks=0;
+	BOOL nextisstart=YES;
 	for(int i=0;i<numentries;i++)
 	{
 		int flags=[parent readUInt16BE];
 		int padding=[parent readUInt16BE];
 		uint32_t nextoffset=[parent readUInt32BE];
 
-//NSLog(@"%08x %04x %04x",nextoffset,flags,padding);
-
-		if(nextoffset==lastoffset) continue;
+		if(nextoffset==lastoffset)
+		{
+			nextisstart=YES;
+			continue;
+		}
 
 		blocks[numblocks].offset=lastoffset;
 		blocks[numblocks].length=nextoffset-lastoffset-padding-4;
-		blocks[numblocks].flags=flags;
+		blocks[numblocks].flags=flags|(nextisstart?0x10000:0); // Mark block as the first in a stream if it is.
 		numblocks++;
 
 		lastoffset=nextoffset;
+		nextisstart=NO;
 	}
 
 	nextfile++;
@@ -98,6 +102,9 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 	int flags=blocks[nextblock].flags;
 	uint32_t length=blocks[nextblock].length;
 	nextblock++;
+
+	// This is kind of absurd. Can this really be how it is supposed to work?
+	if(flags&0x10000) memcpy(outblock,dictionarycache,0x8000);
 
 	if(length>sizeof(inblock)) [XADException raiseDecrunchException];
 
@@ -152,6 +159,8 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 	if(flags&0x100)
 	{
 		memmove(outblock,outblock+outlength,0x8000);
+		// Absurdity, part 2.
+ 		if(flags&0x10000) memcpy(dictionarycache,outblock,0x8000);
 		[self setBlockPointer:outstart-outlength];
 	}
 	else
@@ -315,10 +324,6 @@ uint8_t *destinationbase,uint8_t *destinationstart,uint8_t *destinationend)
 
 	source+=headersize;
 	WordAlign(sourcestart,&source);
-
-//	NSLog(@"%@",[NSData dataWithBytes:sourcestart length:source-sourcestart]);
-//	NSLog(@"%@",[NSData dataWithBytes:header length:length]);
-//	NSLog(@"%@",[NSData dataWithBytes:source length:sourceend-source]);
 
 	XADPrefixCode *maincode=nil,*offsetcode=nil;
 	CSInputBuffer *buf=NULL;

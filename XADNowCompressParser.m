@@ -2,6 +2,7 @@
 #import "XADNowCompressHandle.h"
 #import "NSDateXAD.h"
 
+#import "XADCRCHandle.h"
 
 
 @implementation XADNowCompressParser
@@ -167,6 +168,22 @@
 {
 	if([dict objectForKey:XADIsDirectoryKey]) return nil;
 	return [self subHandleFromSolidStreamForEntryWithDictionary:dict];
+
+/*	CSHandle *handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
+
+	if([[[dict objectForKey:XADFileNameKey] lastPathComponent] isEqual:@"test5"])
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle correctCRC:0x4fa8ca5a conditioned:YES];
+
+	else if([[[dict objectForKey:XADFileNameKey] lastPathComponent] isEqual:@"test6"])
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle correctCRC:0x4dee978f conditioned:YES];
+
+	else if([[[dict objectForKey:XADFileNameKey] lastPathComponent] isEqual:@"test7"])
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle correctCRC:0xaab9ef52 conditioned:YES];
+
+	else if([[[dict objectForKey:XADFileNameKey] lastPathComponent] isEqual:@"test8"])
+	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle correctCRC:0x23dcbf69 conditioned:YES];
+
+	return handle;*/
 }
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum

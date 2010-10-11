@@ -48,6 +48,8 @@
 
 	currentries=0;
 	entries=[NSMutableArray array];
+	filesarray=[NSMutableArray array];
+	solidoffset=0;
 
 	[self parseDirectoryWithParent:[self XADPath] numberOfEntries:INT_MAX];
 
@@ -117,18 +119,34 @@
 		}
 		else
 		{
-			NSDictionary *soliddict=[NSDictionary dictionaryWithObjectsAndKeys:
-				[NSNumber numberWithUnsignedInt:datastart],@"Offset",
-				[NSNumber numberWithUnsignedInt:dataend-datastart],@"Length",
-			nil];
+			[filesarray addObject:[NSNumber numberWithUnsignedInt:datastart]];
+
+			if(rsrcsize)
+			{
+				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+					[NSNumber numberWithBool:YES],XADIsResourceForkKey,
+					[NSNumber numberWithUnsignedInt:rsrcsize],XADFileSizeKey,
+					[NSNumber numberWithUnsignedInt:(dataend-datastart)*rsrcsize/(datasize+rsrcsize)],XADCompressedSizeKey,
+					[self XADStringWithString:@"Now Compress"],XADCompressionNameKey,
+					filesarray,XADSolidObjectKey,
+					[NSNumber numberWithLongLong:solidoffset],XADSolidOffsetKey,
+					[NSNumber numberWithUnsignedInt:rsrcsize],XADSolidLengthKey,
+				nil];
+
+				[dict addEntriesFromDictionary:shareddict];
+
+				[entries addObject:dict];
+
+				solidoffset+=rsrcsize;
+			}
 
 			if(datasize||!rsrcsize)
 			{
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					[NSNumber numberWithUnsignedInt:datasize],XADFileSizeKey,
 					[self XADStringWithString:@"Now Compress"],XADCompressionNameKey,
-					soliddict,XADSolidObjectKey,
-					[NSNumber numberWithLongLong:0],XADSolidOffsetKey,
+					filesarray,XADSolidObjectKey,
+					[NSNumber numberWithLongLong:solidoffset],XADSolidOffsetKey,
 					[NSNumber numberWithUnsignedInt:datasize],XADSolidLengthKey,
 				nil];
 
@@ -138,23 +156,8 @@
 				else [dict setObject:[NSNumber numberWithUnsignedInt:0] forKey:XADCompressedSizeKey];
 
 				[entries addObject:dict];
-			}
 
-			if(rsrcsize)
-			{
-				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-					[NSNumber numberWithBool:YES],XADIsResourceForkKey,
-					[NSNumber numberWithUnsignedInt:rsrcsize],XADFileSizeKey,
-					[NSNumber numberWithUnsignedInt:(dataend-datastart)*rsrcsize/(datasize+rsrcsize)],XADCompressedSizeKey,
-					[self XADStringWithString:@"Now Compress"],XADCompressionNameKey,
-					soliddict,XADSolidObjectKey,
-					[NSNumber numberWithLongLong:datasize],XADSolidOffsetKey,
-					[NSNumber numberWithUnsignedInt:rsrcsize],XADSolidLengthKey,
-				nil];
-
-				[dict addEntriesFromDictionary:shareddict];
-
-				[entries addObject:dict];
+				solidoffset+=datasize;
 			}
 		}
 	}
@@ -162,22 +165,13 @@
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-//	return nil;
+	if([dict objectForKey:XADIsDirectoryKey]) return nil;
 	return [self subHandleFromSolidStreamForEntryWithDictionary:dict];
 }
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
 {
-	off_t offs=[[obj objectForKey:@"Offset"] longLongValue];
-	off_t len=[[obj objectForKey:@"Length"] longLongValue];
-//	CSHandle *handle=[[self handle] nonCopiedSubHandleFrom:offs length:len];
-
-	CSHandle *handle=[self handle];
-	[handle seekToFileOffset:offs];
-
-	handle=[[[XADNowCompressHandle alloc] initWithHandle:handle length:CSHandleMaxLength] autorelease];
-
-	return handle;
+	return [[[XADNowCompressHandle alloc] initWithHandle:[self handle] files:obj] autorelease];
 }
 
 -(NSString *)formatName

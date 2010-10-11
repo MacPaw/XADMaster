@@ -3,7 +3,8 @@
 @interface XADNowCompressParser:XADArchiveParser
 {
 	int totalentries,currentries;
-	NSMutableArray *entries;
+	NSMutableArray *entries,*filesarray;
+	off_t solidoffset;
 }
 
 +(int)requiredHeaderSize;

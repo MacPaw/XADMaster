@@ -7,7 +7,7 @@ uint8_t *destinationstart,uint8_t *destinationend,int numvalues);
 static int UnpackLZSS(uint8_t *sourcestart,uint8_t *sourceend,
 uint8_t *destinationstart,uint8_t *destinationend);
 static int UnpackNewLZSS(uint8_t *sourcestart,uint8_t *sourceend,
-uint8_t *destinationstart,uint8_t *destinationend);
+uint8_t *destinationbase,uint8_t *destinationstart,uint8_t *destinationend);
 
 static XADPrefixCode *AllocAndReadCode(uint8_t *source,uint8_t *sourceend,int numentries,uint8_t **newsource);
 static void WordAlign(uint8_t *start,uint8_t **curr);
@@ -15,13 +15,16 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 
 @implementation XADNowCompressHandle
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length
+-(id)initWithHandle:(CSHandle *)handle files:(NSMutableArray *)filesarray
 {
-	if(self=[super initWithName:[handle name] length:length])
+	if(self=[super initWithName:[handle name]])
 	{
 		parent=[handle retain];
-		startoffset=[handle offsetInFile];
+
+		files=[filesarray retain];
+
 		blocks=NULL;
+		maxblocks=0;
 	}
 	return self;
 }
@@ -35,79 +38,100 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 
 -(void)resetBlockStream
 {
+	memset(outblock,0,sizeof(outblock));
+
+	nextfile=0;
+	numblocks=0;
+	nextblock=0;
+}
+
+-(BOOL)readNextFileHeader
+{
+	if(nextfile>=[files count]) return NO;
+
+	uint32_t startoffset=[[files objectAtIndex:nextfile] unsignedIntValue];
 	[parent seekToFileOffset:startoffset];
 
-	uint32_t datastart=[parent readUInt32BE];
+	uint32_t lastoffset=[parent readUInt32BE];
 
-	int numentries=(datastart-startoffset-12)/8;
-
-	numblocks=numentries-1;
-
-	free(blocks);
-	blocks=malloc(numentries*sizeof(blocks[0]));
-
-	NSLog(@"%x",datastart);
-	NSLog(@"%x",[parent readUInt32BE]);
-
-	for(int i=0;i<numentries;i++)
+	int numentries=(lastoffset-startoffset-12)/8;
+	if(maxblocks<numentries)
 	{
-		blocks[i].offs=[parent readUInt32BE];
-		blocks[i].flags=[parent readUInt16BE];
-		blocks[i].padding=[parent readUInt16BE];
-
-		NSLog(@"%08x %04x %04x",blocks[i].offs,blocks[i].flags,blocks[i].padding);
+		free(blocks);
+		blocks=malloc(numentries*sizeof(blocks[0]));
+		maxblocks=numentries;
 	}
 
+	numblocks=0;
+	for(int i=0;i<numentries;i++)
+	{
+		int flags=[parent readUInt16BE];
+		int padding=[parent readUInt16BE];
+		uint32_t nextoffset=[parent readUInt32BE];
+
+//NSLog(@"%08x %04x %04x",nextoffset,flags,padding);
+
+		if(nextoffset==lastoffset) continue;
+
+		blocks[numblocks].offset=lastoffset;
+		blocks[numblocks].length=nextoffset-lastoffset-padding-4;
+		blocks[numblocks].flags=flags;
+		numblocks++;
+
+		lastoffset=nextoffset;
+	}
+
+	nextfile++;
 	nextblock=0;
 
-	[self setBlockPointer:outblock];
+	return YES;
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	if(nextblock>=numblocks) return 0;
+	if(nextblock>=numblocks)
+	{
+		if(![self readNextFileHeader]) return 0;
+	}
 
-	[parent seekToFileOffset:blocks[nextblock].offs];
-
+	uint32_t offset=blocks[nextblock].offset;
 	int flags=blocks[nextblock].flags;
-	int padding=blocks[nextblock].padding;
-	uint32_t length=blocks[nextblock+1].offs-blocks[nextblock].offs-padding-4;
+	uint32_t length=blocks[nextblock].length;
 	nextblock++;
 
 	if(length>sizeof(inblock)) [XADException raiseDecrunchException];
+
+	[parent seekToFileOffset:offset];
+
+	uint8_t *outstart=outblock+0x8000;
+	int outlength;
 
 	if(flags&0x20)
 	{
 		if(flags&0x1f) // LZSS and Huffman.
 		{
-			[parent readBytes:length toBuffer:outblock];
+			[parent readBytes:length toBuffer:outstart];
 
-			int outlength1=UnpackHuffman(outblock,outblock+length,inblock,inblock+sizeof(inblock),0x100);
+			int outlength1=UnpackHuffman(outstart,outstart+length,inblock,inblock+sizeof(inblock),0x100);
 			if(!outlength1) [XADException raiseDecrunchException];
 
-			int outlength2=UnpackLZSS(inblock,inblock+outlength1,outblock,outblock+sizeof(outblock));
-			if(!outlength2) [XADException raiseDecrunchException];
-
-			return outlength2;
+			outlength=UnpackLZSS(inblock,inblock+outlength1,outstart,outblock+sizeof(outblock));
+			if(!outlength) [XADException raiseDecrunchException];
 		}
 		else // Huffman only.
 		{
 			[parent readBytes:length toBuffer:inblock];
 
-			int outlength=UnpackHuffman(inblock,inblock+length,outblock,outblock+sizeof(outblock),0x100);
+			outlength=UnpackHuffman(inblock,inblock+length,outstart,outblock+sizeof(outblock),0x100);
 			if(!outlength) [XADException raiseDecrunchException];
-
-			return outlength;
 		}
 	}
-	else if(flags&0x40) // ?
+	else if(flags&0x40) // New LZSS.
 	{
 		[parent readBytes:length toBuffer:inblock];
 
-		int outlength=UnpackNewLZSS(inblock,inblock+length,outblock,outblock+sizeof(outblock));
+		outlength=UnpackNewLZSS(inblock,inblock+length,outblock,outstart,outblock+sizeof(outblock));
 		if(!outlength) [XADException raiseDecrunchException];
-
-		return outlength;
 	}
 	else
 	{
@@ -115,19 +139,27 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 		{
 			[parent readBytes:length toBuffer:inblock];
 
-			int outlength=UnpackLZSS(inblock,inblock+length,outblock,outblock+sizeof(outblock));
+			outlength=UnpackLZSS(inblock,inblock+length,outstart,outblock+sizeof(outblock));
 			if(!outlength) [XADException raiseDecrunchException];
-
-			return outlength;
 		}
 		else // No compression.
 		{
-			[parent readBytes:length toBuffer:outblock];
-			return length;
+			[parent readBytes:length toBuffer:outstart];
+			outlength=length;
 		}
 	}
 
-	return 1;
+	if(flags&0x100)
+	{
+		memmove(outblock,outblock+outlength,0x8000);
+		[self setBlockPointer:outstart-outlength];
+	}
+	else
+	{
+		[self setBlockPointer:outstart];
+	}
+
+	return outlength;
 }
 
 @end
@@ -232,8 +264,42 @@ uint8_t *destinationstart,uint8_t *destinationend)
 }
 
 static int UnpackNewLZSS(uint8_t *sourcestart,uint8_t *sourceend,
-uint8_t *destinationstart,uint8_t *destinationend)
+uint8_t *destinationbase,uint8_t *destinationstart,uint8_t *destinationend)
 {
+	const static int lengthextrabits[0x22]={
+		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+		0x01,0x01,0x02,0x02,0x02,0x02,0x02,0x03,
+		0x03,0x03,0x04,0x04,0x04,0x04,0x05,0x05,
+		0x05,0x05,
+	};
+	const static int lengthbases[0x22]={
+		0x0000,0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,
+		0x0008,0x0009,0x000a,0x000b,0x000c,0x000d,0x000e,0x000f,
+		0x0010,0x0012,0x0014,0x0018,0x001c,0x0020,0x0024,0x0028,
+		0x0030,0x0038,0x0040,0x0050,0x0060,0x0070,0x0080,0x00a0,
+		0x00c0,0x00e0,
+	};
+
+	const static int offsetextrabits[0x38]={
+		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+		0x01,0x01,0x01,0x01,0x02,0x02,0x02,0x02,
+		0x03,0x03,0x03,0x03,0x04,0x04,0x04,0x04,
+		0x05,0x05,0x05,0x05,0x08,0x08,0x08,0x08,
+		0x08,0x08,0x08,0x08,0x09,0x09,0x09,0x09,
+		0x0A,0x0A,0x0A,0x0A,0x0B,0x0B,0x0B,0x0B,
+		0x0C,0x0C,0x0C,0x0C,0x0D,0x0D,0x0D,0x0D,
+	};
+	const static int offsetbases[0x38]={
+		0x0000,0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,
+		0x0008,0x000a,0x000c,0x000e,0x0010,0x0014,0x0018,0x001c,
+		0x0020,0x0028,0x0030,0x0038,0x0040,0x0050,0x0060,0x0070,
+		0x0080,0x00a0,0x00c0,0x00e0,0x0100,0x0200,0x0300,0x0400,
+		0x0500,0x0600,0x0700,0x0800,0x0900,0x0b00,0x0d00,0x0f00,
+		0x1100,0x1500,0x1900,0x1d00,0x2100,0x2900,0x3100,0x3900,
+		0x4100,0x5100,0x6100,0x7100,0x8100,0xa100,0xc100,0xe100,
+	};
+
 	uint8_t *source=sourcestart;
 	uint8_t *destination=destinationstart;
 
@@ -250,7 +316,9 @@ uint8_t *destinationstart,uint8_t *destinationend)
 	source+=headersize;
 	WordAlign(sourcestart,&source);
 
-//	NSLog(@"%@",[NSData dataWithBytes:buf length:length]);
+//	NSLog(@"%@",[NSData dataWithBytes:sourcestart length:source-sourcestart]);
+//	NSLog(@"%@",[NSData dataWithBytes:header length:length]);
+//	NSLog(@"%@",[NSData dataWithBytes:source length:sourceend-source]);
 
 	XADPrefixCode *maincode=nil,*offsetcode=nil;
 	CSInputBuffer *buf=NULL;
@@ -263,7 +331,7 @@ uint8_t *destinationstart,uint8_t *destinationend)
 		maincode=[[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:0x122
 		maximumLength:20 shortestCodeIsZeros:YES];
 
-		for(int i=0;i<0x38;i++) lengths[i]=header[i]?header[i]:0;
+		for(int i=0;i<0x38;i++) lengths[i]=header[i+0x122]?header[i+0x122]-2:0;
 		offsetcode=[[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:0x38
 		maximumLength:20 shortestCodeIsZeros:YES];
 
@@ -275,15 +343,30 @@ uint8_t *destinationstart,uint8_t *destinationend)
 		while(CSInputBufferBitOffset(buf)<numbits)
 		{
 			int symbol=CSInputNextSymbolUsingCode(buf,maincode);
-NSLog(@"%02x",symbol);
 			if(symbol<0x100)
 			{
-				if(destination>=destinationend) @throw @"Overrun";
+				if(destination>=destinationend) [XADException raiseDecrunchException];
 				*destination++=symbol;
 			}
 			else
 			{
-				[XADException raiseNotSupportedException];
+				int lengthselector=symbol-0x100;
+				int length=lengthbases[lengthselector];
+				if(lengthextrabits[lengthselector]) length+=CSInputNextBitString(buf,lengthextrabits[lengthselector]);
+				length+=2;
+
+				int offsetselector=CSInputNextSymbolUsingCode(buf,offsetcode);
+				int offset=offsetbases[offsetselector];
+				if(offsetextrabits[offsetselector]) offset+=CSInputNextBitString(buf,offsetextrabits[offsetselector]);
+
+				if(destination+length>destinationend) [XADException raiseDecrunchException];
+				if(destination-offset<destinationbase) [XADException raiseDecrunchException];
+
+				for(int i=0;i<length;i++)
+				{
+					destination[0]=destination[-offset];
+					destination++;
+				}
 			}
 		}
 	}
@@ -327,6 +410,7 @@ static XADPrefixCode *AllocAndReadCode(uint8_t *sourcestart,uint8_t *sourceend,i
 
 	if(newsource) *newsource=source;
 
+
 	return [[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:numentries
 	maximumLength:31 shortestCodeIsZeros:YES];
 }
@@ -334,9 +418,4 @@ static XADPrefixCode *AllocAndReadCode(uint8_t *sourcestart,uint8_t *sourceend,i
 static void WordAlign(uint8_t *start,uint8_t **curr)
 {
 	if(*curr-start&1) (*curr)++;
-}
-
-static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
-{
-	for(int i=0;i<length;i++) dest[i]=src[i];
 }

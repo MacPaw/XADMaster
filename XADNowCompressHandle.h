@@ -3,21 +3,25 @@
 @interface XADNowCompressHandle:CSBlockStreamHandle
 {
 	CSHandle *parent;
-	off_t startoffset;
 
-	int numblocks,nextblock;
+	NSMutableArray *files;
+	int nextfile;
+
 	struct
 	{
-		uint32_t offs;
-		int flags,padding;
+		uint32_t offset,length;
+		int flags;
 	} *blocks;
+	int maxblocks,numblocks,nextblock;
 
-	uint8_t inblock[0x8000],outblock[0x8000];
+	uint8_t inblock[0x8000],outblock[0x10000];
 }
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
+-(id)initWithHandle:(CSHandle *)handle files:(NSMutableArray *)filesarray;
 
 -(void)resetBlockStream;
+
+-(BOOL)readNextFileHeader;
 -(int)produceBlockAtOffset:(off_t)pos;
 
 @end

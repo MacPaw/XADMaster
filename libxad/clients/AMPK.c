@@ -2700,7 +2700,7 @@ XADGETINFO(ArcCBM)
                 blocksize = ((blocksize+253)/254)*254 + ai->xai_InPos - insize;
                 if(blocksize > ai->xai_InSize)
                   blocksize = ai->xai_InSize;
-                err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, blocksize, TAG_DONE);
+                err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, (xadSignSize)blocksize, TAG_DONE);
               }
               else
                 err = ArcCBMScanSize(ai, fi, data, xadMasterBase); /* also does addentry */

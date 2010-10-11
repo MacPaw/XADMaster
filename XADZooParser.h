@@ -17,14 +17,11 @@
 
 @interface XADZooMethod1Handle:CSByteStreamHandle
 {
-	BOOL blockmode;
-
 	LZW *lzw;
-	int symbolsize,symbolcounter;
+	int symbolsize;
 
-	uint8_t *buffer;
-	int bufsize,currbyte;
-
+	int currbyte;
+	uint8_t buffer[8192];
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;

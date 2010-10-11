@@ -68,7 +68,7 @@
 			[NSNumber numberWithInt:creatorversion],@"ZooCreatorVersion",
 			[NSNumber numberWithInt:minversion],@"ZooMinimumVersion",
 			[NSNumber numberWithInt:deleted],@"ZooIsDeleted",
-			[NSNumber numberWithInt:deleted],@"ZooStructure",
+			[NSNumber numberWithInt:structure],@"ZooStructure",
 			shortnamedata,@"ZooShortnameData",
 		nil];
 
@@ -76,7 +76,7 @@
 		switch(method)
 		{
 			case 0: methodname=@"None"; break;
-			case 1: methodname=@"LZD"; break;
+			case 1: methodname=@"LZW"; break;
 			case 2: methodname=@"LZH"; break;
 		}
 		if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
@@ -87,7 +87,7 @@
 		{
 			int varlength=[fh readUInt16LE];
 			int timezone=[fh readUInt8];
-			int crcent=[fh readUInt16LE];
+			/*int crcent=*/[fh readUInt16LE];
 
 			[dict setObject:[NSNumber numberWithInt:timezone] forKey:@"ZooTimeZone"];
 
@@ -215,10 +215,7 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		blockmode=compressflags&0x80;
-		lzw=AllocLZW(1<<(compressflags&0x1f),blockmode?1:0);
-		bufsize=1024;
-		buffer=malloc(bufsize);
+		lzw=AllocLZW(8192,2);
 	}
 	return self;
 }
@@ -226,7 +223,6 @@
 -(void)dealloc
 {
 	FreeLZW(lzw);
-	free(buffer);
 	[super dealloc];
 }
 
@@ -234,7 +230,6 @@
 {
 	ClearLZWTable(lzw);
 	symbolsize=9;
-	symbolcounter=0;
 	currbyte=0;
 }
 
@@ -245,30 +240,21 @@
 		int symbol;
 		for(;;)
 		{
-			if(CSInputAtEOF(input)) CSByteStreamEOF(self);
-
 			symbol=CSInputNextBitStringLE(input,symbolsize);
-			symbolcounter++;
-
-			if(symbol==257)
-			{
-				CSByteStreamEOF(self);
-			}
-			else if(symbol==256)
+			if(symbol==256)
 			{
 				ClearLZWTable(lzw);
 				symbolsize=9;
-				symbolcounter=0;
+			}
+			else if(symbol==257)
+			{
+				CSByteStreamEOF(self);
 			}
 			else break;
 		}
 
 		if(NextLZWSymbol(lzw,symbol)==LZWInvalidCodeError) [XADException raiseDecrunchException];
-
-		currbyte=LZWOutputLength(lzw);
-		if(currbyte>bufsize) buffer=reallocf(buffer,bufsize*=2);
-
-		LZWReverseOutputToBuffer(lzw,buffer);
+		currbyte=LZWReverseOutputToBuffer(lzw,buffer);
 
 		int numsymbols=LZWSymbolCount(lzw);
 		if(!LZWSymbolListFull(lzw))
@@ -277,7 +263,6 @@
 
 	return buffer[--currbyte];
 }
-
 
 @end
 

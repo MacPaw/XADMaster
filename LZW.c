@@ -10,6 +10,9 @@ LZW *AllocLZW(int maxsymbols,int reservedsymbols)
 	self->maxsymbols=maxsymbols;
 	self->reservedsymbols=reservedsymbols;
 
+	self->buffer=NULL;
+	self->buffersize=0;
+
 	for(int i=0;i<256;i++)
 	{
 		self->nodes[i].chr=i;
@@ -23,7 +26,11 @@ LZW *AllocLZW(int maxsymbols,int reservedsymbols)
 
 void FreeLZW(LZW *self)
 {
-	free(self);
+	if(self)
+	{
+		free(self->buffer);
+		free(self);
+	}
 }
 
 void ClearLZWTable(LZW *self)
@@ -111,12 +118,24 @@ int LZWReverseOutputToBuffer(LZW *self,uint8_t *buffer)
 	return n;
 }
 
-int LZWSymbolCount(LZW *self)
+int LZWOutputToInternalBuffer(LZW *self)
 {
-	return self->numsymbols;
-}
+	int symbol=self->prevsymbol;
+	int n=LZWOutputLength(self);
 
-int LZWSymbolListFull(LZW *self)
-{
-	return self->numsymbols==self->maxsymbols;
+	if(n>self->buffersize)
+	{
+		free(self->buffer);
+		self->buffersize+=1024;
+		self->buffer=malloc(self->buffersize);
+	}
+
+	uint8_t *buffer=self->buffer+n;
+	while(symbol>=0)
+	{
+		*--buffer=self->nodes[symbol].chr;
+		symbol=self->nodes[symbol].parent;
+	}
+
+	return n;
 }

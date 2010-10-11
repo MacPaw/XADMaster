@@ -2,6 +2,7 @@
 #define __LZW_H__
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define LZWNoError 0
 #define LZWInvalidCodeError 1
@@ -18,6 +19,9 @@ typedef struct LZW
 	LZWTreeNode *nodes;
 	int numsymbols,maxsymbols,reservedsymbols;
 	int prevsymbol;
+
+	uint8_t *buffer;
+	int buffersize;
 } LZW;
 
 LZW *AllocLZW(int maxsymbols,int reservedsymbols);
@@ -27,8 +31,22 @@ int NextLZWSymbol(LZW *self,int symbol);
 int LZWOutputLength(LZW *self);
 int LZWOutputToBuffer(LZW *self,uint8_t *buffer);
 int LZWReverseOutputToBuffer(LZW *self,uint8_t *buffer);
-int LZWSymbolCount(LZW *self);
-int LZWSymbolListFull(LZW *self);
+int LZWOutputToInternalBuffer(LZW *self);
+
+static inline uint8_t *LZWInternalBuffer(LZW *self)
+{
+	return self->buffer;
+}
+
+static inline int LZWSymbolCount(LZW *self)
+{
+	return self->numsymbols;
+}
+
+static inline bool LZWSymbolListFull(LZW *self)
+{
+	return self->numsymbols==self->maxsymbols;
+}
 
 #endif
 

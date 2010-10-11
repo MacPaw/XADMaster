@@ -14,10 +14,8 @@
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		blockmode=compressflags&0x80;
+		blockmode=(compressflags&0x80)!=0;
 		lzw=AllocLZW(1<<(compressflags&0x1f),blockmode?1:0);
-		bufsize=1024;
-		buffer=malloc(bufsize);
 	}
 	return self;
 }
@@ -25,7 +23,6 @@
 -(void)dealloc
 {
 	FreeLZW(lzw);
-	free(buffer);
 	[super dealloc];
 }
 
@@ -34,12 +31,12 @@
 	ClearLZWTable(lzw);
 	symbolsize=9;
 	symbolcounter=0;
-	currbyte=0;
+	buffer=bufferend=NULL;
 }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
-	if(!currbyte)
+	if(buffer>=bufferend)
 	{
 		int symbol;
 		for(;;)
@@ -59,20 +56,18 @@
 			else break;
 		}
 
-		if(NextLZWSymbol(lzw,symbol)==LZWInvalidCodeError)
-		[XADException raiseDecrunchException];
+		if(NextLZWSymbol(lzw,symbol)==LZWInvalidCodeError) [XADException raiseDecrunchException];
 
-		currbyte=LZWOutputLength(lzw);
-		if(currbyte>bufsize) buffer=reallocf(buffer,bufsize*=2);
-
-		LZWReverseOutputToBuffer(lzw,buffer);
+		int n=LZWOutputToInternalBuffer(lzw);
+		buffer=LZWInternalBuffer(lzw);
+		bufferend=buffer+n;
 
 		int numsymbols=LZWSymbolCount(lzw);
 		if(!LZWSymbolListFull(lzw))
 		if((numsymbols&numsymbols-1)==0) symbolsize++;
 	}
 
-	return buffer[--currbyte];
+	return *buffer++;
 }
 
 @end

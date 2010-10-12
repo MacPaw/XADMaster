@@ -195,6 +195,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	{
 		NSString *component=[components objectAtIndex:first];
 		if(![component isEqual:@".."]&&![component isEqual:@"/"]) break;
+		first++;
 	}
 
 	if(first==0) return self;

@@ -45,16 +45,14 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 	nextblock=0;
 }
 
--(BOOL)readNextFileHeader
+static inline int CheckSum32(uint32_t val) { return (val>>24)+((val>>16)&0xff)+((val>>8)&0xff)+(val&0xff); }
+static inline int CheckSum16(uint16_t val) { return (val>>8)+(val&0xff); }
+
+-(BOOL)parseAndCheckFileHeaderWithHeaderOffset:(uint32_t)headeroffset
+firstOffset:(uint32_t)firstoffset delta:(int32_t)delta
 {
-	if(nextfile>=[files count]) return NO;
+	int numentries=(firstoffset+delta-headeroffset-4)/8-1;
 
-	uint32_t startoffset=[[files objectAtIndex:nextfile] unsignedIntValue];
-	[parent seekToFileOffset:startoffset];
-
-	uint32_t lastoffset=[parent readUInt32BE];
-
-	int numentries=(lastoffset-startoffset-12)/8;
 	if(maxblocks<numentries)
 	{
 		free(blocks);
@@ -63,12 +61,20 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 	}
 
 	numblocks=0;
+
+	uint32_t lastoffset=firstoffset;
+	uint32_t checksum=CheckSum32(firstoffset);
 	BOOL nextisstart=YES;
+
 	for(int i=0;i<numentries;i++)
 	{
 		int flags=[parent readUInt16BE];
 		int padding=[parent readUInt16BE];
 		uint32_t nextoffset=[parent readUInt32BE];
+
+		checksum+=CheckSum16(flags);
+		checksum+=CheckSum16(padding);
+		checksum+=CheckSum32(nextoffset);
 
 		if(nextoffset==lastoffset)
 		{
@@ -76,13 +82,90 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 			continue;
 		}
 
-		blocks[numblocks].offset=lastoffset;
+		blocks[numblocks].offset=lastoffset+delta;
 		blocks[numblocks].length=nextoffset-lastoffset-padding-4;
 		blocks[numblocks].flags=flags|(nextisstart?0x10000:0); // Mark block as the first in a stream if it is.
 		numblocks++;
 
 		lastoffset=nextoffset;
 		nextisstart=NO;
+	}
+
+	for(int i=0;i<4;i++) checksum+=[parent readUInt8];
+
+	uint32_t correctchecksum=[parent readUInt32BE];
+
+	return checksum==correctchecksum;
+}
+
+-(int)findFileHeaderDeltaWithHeaderOffset:(uint32_t)headeroffset firstOffset:(uint32_t)firstoffset
+{
+	[parent seekToFileOffset:headeroffset];
+
+	uint32_t checksum=0;
+	for(int i=0;i<16;i++) checksum+=[parent readUInt8];
+
+	for(int n=2;n<0x2000;n++)
+	{
+		uint8_t buf[4];
+		[parent readBytes:4 toBuffer:buf];
+
+		if(CSUInt32BE(buf)==checksum) return headeroffset+n*8+4-firstoffset;
+
+		for(int i=0;i<4;i++) checksum+=buf[i];
+		for(int i=0;i<4;i++) checksum+=[parent readUInt8];
+	}
+
+	return 0;
+}
+
+-(BOOL)readNextFileHeader
+{
+	if(nextfile>=[files count]) return NO;
+
+	uint32_t headeroffset=[[files objectAtIndex:nextfile] unsignedIntValue];
+	[parent seekToFileOffset:headeroffset];
+
+	uint32_t firstoffset=[parent readUInt32BE];
+
+	// Sometimes, the offsets in the stream header are off. How to figure
+	// out the proper delta is unknown, so we just use a heuristic to detect
+	// the end of the header and use that if the offsets look suspicious,
+	// or if the checksum fails when trying with zero offset.
+	if(firstoffset<headeroffset+20)
+	{
+		// Offsets are obviously wrong, so don't even try, just estimate.
+		int32_t delta=[self findFileHeaderDeltaWithHeaderOffset:headeroffset
+		firstOffset:firstoffset];
+
+		[parent seekToFileOffset:headeroffset+4];
+		if(![self parseAndCheckFileHeaderWithHeaderOffset:headeroffset
+		firstOffset:firstoffset delta:delta])
+		[XADException raiseIllegalDataException];
+	}
+	else
+	{
+		// Try the easy way. Calculate the number of entries that fit in the
+		// header, and try parsing. If the checksum does not match or an 
+		// exception is thrown, try estimating instead.
+		BOOL success;
+		@try {
+			success=[self parseAndCheckFileHeaderWithHeaderOffset:headeroffset
+			firstOffset:firstoffset delta:0];
+		} @catch(id e) {
+			success=NO;
+		}
+
+		if(!success)
+		{
+			int32_t delta=[self findFileHeaderDeltaWithHeaderOffset:headeroffset
+			firstOffset:firstoffset];
+
+			[parent seekToFileOffset:headeroffset+4];
+			if(![self parseAndCheckFileHeaderWithHeaderOffset:headeroffset
+			firstOffset:firstoffset delta:delta])
+			[XADException raiseIllegalDataException];
+		}
 	}
 
 	nextfile++;
@@ -104,6 +187,7 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 	nextblock++;
 
 	// This is kind of absurd. Can this really be how it is supposed to work?
+	if(flags&0x100)
 	if(flags&0x10000) memcpy(outblock,dictionarycache,0x8000);
 
 	if(length>sizeof(inblock)) [XADException raiseDecrunchException];
@@ -414,7 +498,6 @@ static XADPrefixCode *AllocAndReadCode(uint8_t *sourcestart,uint8_t *sourceend,i
 	}
 
 	if(newsource) *newsource=source;
-
 
 	return [[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:numentries
 	maximumLength:31 shortestCodeIsZeros:YES];

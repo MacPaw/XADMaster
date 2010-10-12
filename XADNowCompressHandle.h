@@ -21,6 +21,9 @@
 
 -(void)resetBlockStream;
 
+-(BOOL)parseAndCheckFileHeaderWithHeaderOffset:(uint32_t)headeroffset
+firstOffset:(uint32_t)firstoffset delta:(int32_t)delta;
+-(int)findFileHeaderDeltaWithHeaderOffset:(uint32_t)headeroffset firstOffset:(uint32_t)firstoffset;
 -(BOOL)readNextFileHeader;
 -(int)produceBlockAtOffset:(off_t)pos;
 

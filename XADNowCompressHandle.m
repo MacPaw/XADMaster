@@ -187,7 +187,6 @@ firstOffset:(uint32_t)firstoffset delta:(int32_t)delta
 	nextblock++;
 
 	// This is kind of absurd. Can this really be how it is supposed to work?
-	if(flags&0x100)
 	if(flags&0x10000) memcpy(outblock,dictionarycache,0x8000);
 
 	if(length>sizeof(inblock)) [XADException raiseDecrunchException];
@@ -240,17 +239,10 @@ firstOffset:(uint32_t)firstoffset delta:(int32_t)delta
 		}
 	}
 
-	if(flags&0x100)
-	{
-		memmove(outblock,outblock+outlength,0x8000);
-		// Absurdity, part 2.
- 		if(flags&0x10000) memcpy(dictionarycache,outblock,0x8000);
-		[self setBlockPointer:outstart-outlength];
-	}
-	else
-	{
-		[self setBlockPointer:outstart];
-	}
+	memmove(outblock,outblock+outlength,0x8000);
+	// Absurdity, part 2.
+	if(flags&0x10000) memcpy(dictionarycache,outblock,0x8000);
+	[self setBlockPointer:outstart-outlength];
 
 	return outlength;
 }

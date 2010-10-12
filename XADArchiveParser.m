@@ -373,7 +373,6 @@ static int maxheader=0;
 -(NSData *)finderInfoForDictionary:(NSDictionary *)dict
 {
 	// Return a FinderInfo struct with extended info (32 bytes in size).
-
 	NSData *finderinfo=[dict objectForKey:XADFinderInfoKey];
 	if(finderinfo)
 	{
@@ -394,8 +393,8 @@ static int maxheader=0;
 		BOOL isdir=dirnum&&[dirnum boolValue];
 		if(!isdir)
 		{
-			NSNumber *typenum=[dict objectForKey:XADFinderFlagsKey];
-			NSNumber *creatornum=[dict objectForKey:XADFinderFlagsKey];
+			NSNumber *typenum=[dict objectForKey:XADFileTypeKey];
+			NSNumber *creatornum=[dict objectForKey:XADFileCreatorKey];
 
 			if(typenum) CSSetUInt32BE(&finderinfo[0],[typenum unsignedIntValue]);
 			if(creatornum) CSSetUInt32BE(&finderinfo[4],[creatornum unsignedIntValue]);

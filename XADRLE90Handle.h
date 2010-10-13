@@ -1,6 +1,6 @@
 #import "CSByteStreamHandle.h"
 
-@interface XADStuffItRLEHandle:CSByteStreamHandle
+@interface XADRLE90Handle:CSByteStreamHandle
 {
 	int byte,count;
 }

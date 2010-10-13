@@ -1,7 +1,7 @@
-#import "XADStuffItRLEHandle.h"
+#import "XADRLE90Handle.h"
 #import "XADException.h"
 
-@implementation XADStuffItRLEHandle
+@implementation XADRLE90Handle
 
 -(void)resetByteStream
 {

@@ -3,11 +3,11 @@
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
-#import "XADStuffItRLEHandle.h"
 #import "XADStuffItHuffmanHandle.h"
 #import "XADStuffItArsenicHandle.h"
 #import "XADStuffIt13Handle.h"
 #import "XADStuffItOldHandles.h"
+#import "XADRLE90Handle.h"
 #import "XADCompressHandle.h"
 #import "XADLZHDynamicHandle.h"
 
@@ -222,7 +222,7 @@
 	switch(compressionmethod&0x0f)
 	{
 		case 0: handle=fh; break;
-		case 1: handle=[[[XADStuffItRLEHandle alloc] initWithHandle:fh length:size] autorelease]; break;
+		case 1: handle=[[[XADRLE90Handle alloc] initWithHandle:fh length:size] autorelease]; break;
 		case 2: handle=[[[XADCompressHandle alloc] initWithHandle:fh length:size flags:0x8e] autorelease]; break;
 		case 3: handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:fh length:size] autorelease]; break;
 		//case 5: handle=[[[XADStuffItLZAHHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;

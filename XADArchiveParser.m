@@ -32,6 +32,7 @@
 #import "XADLZHParser.h"
 #import "XADLZHSFXParsers.h"
 #import "XADARJParser.h"
+#import "XADARCParser.h"
 #import "XADZooParser.h"
 #import "XADNSISParser.h"
 #import "XADCABParser.h"
@@ -160,6 +161,7 @@ static int maxheader=0;
 		// Over-eager detectors
 		[XADLZMAAloneParser class],
 		[XADCpioParser class],
+		[XADARCParser class],
 		[XADSplitFileParser class],
 
 		// LibXAD

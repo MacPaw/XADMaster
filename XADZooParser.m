@@ -53,7 +53,7 @@
 		uint8_t shortnamebuf[13];
 		[fh readBytes:13 toBuffer:shortnamebuf];
 		int shortnamelength=0;
-		while(shortnamelength<13 && shortnamebuf[shortnamelength]!=0) shortnamelength++;
+		while(shortnamelength<12 && shortnamebuf[shortnamelength]!=0) shortnamelength++;
 		NSData *shortnamedata=[NSData dataWithBytes:shortnamebuf length:shortnamelength];
 
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:

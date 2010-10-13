@@ -132,18 +132,18 @@
 
 		case 0x05: // Crunched
 			handle=[[[XADARCCrunchHandle alloc] initWithHandle:handle
-			length:length fast:NO] autorelease];
+			length:length useFastHash:NO] autorelease];
 		break;
 
 		case 0x06: // Crunched+packed
-			handle=[[[XADARCCrunchHandle alloc] initWithHandle:handle fast:NO] autorelease];
+			handle=[[[XADARCCrunchHandle alloc] initWithHandle:handle useFastHash:NO] autorelease];
 
 			handle=[[[XADRLE90Handle alloc] initWithHandle:handle
 			length:length] autorelease];
 		break;
 
 		case 0x07: // Crunched+packed (fast)
-			handle=[[[XADARCCrunchHandle alloc] initWithHandle:handle fast:YES] autorelease];
+			handle=[[[XADARCCrunchHandle alloc] initWithHandle:handle useFastHash:YES] autorelease];
 
 			handle=[[[XADRLE90Handle alloc] initWithHandle:handle
 			length:length] autorelease];
@@ -224,14 +224,14 @@
 
 
 
-@implementation XADARCCrushHandle
+@implementation XADARCCrunchHandle
 
--(void)initWithHandle:(CSHandle *)handle useFastHash:(BOOL)usefast
+-(id)initWithHandle:(CSHandle *)handle useFastHash:(BOOL)usefast
 {
 	return [self initWithHandle:handle length:CSHandleMaxLength useFastHash:usefast];
 }
 
--(void)initWithHandle:(CSHandle *)handle length:(off_t)length useFastHash:(BOOL)usefast
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length useFastHash:(BOOL)usefast
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
@@ -249,24 +249,26 @@
 	for(int i=0;i<256;i++) [self updateTableWithParent:-1 byteValue:i];
 
 /*    oldcode = xadIOGetBitsHigh(io,12);
-    finchar = ad->string_tab[oldcode].follower;
+    finchar = ad->table[oldcode].follower;
     xadIOPutChar(io, finchar);*/
 
-	lastcode=ARCNO_PRED;
+	lastcode=-1;
 }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	if(!sp)
 	{
+		if(CSInputAtEOF(input)) CSByteStreamEOF(self);
+
 		int code=CSInputNextBitString(input,12);
 
-		entry=&string_tab[code];
+		XADARCCrunchEntry *entry=&table[code];
 
 		if(!entry->used) /* if code isn't known */
 		{
-			entry=&string_tab[lastcode];
-			stack[sp++]=finchar;
+			entry=&table[lastcode];
+			stack[sp++]=lastbyte;
 		}
 
 		while(entry->parent!=-1)
@@ -274,18 +276,20 @@
 			if(sp>=4095) [XADException raiseDecrunchException];
 
 			stack[sp++]=entry->byte;
-			entry=&ad->string_tab[entry->parent];
+			entry=&table[entry->parent];
 		}
 
-		stack[sp++]=finchar=ep->follower;
+		uint8_t byte=entry->byte;
+		stack[sp++]=byte;
 
 		if(numfreecodes!=0)
 		{
-			[self updateTableWithParent:lastcode byteValue:finchar];
+			[self updateTableWithParent:lastcode byteValue:byte];
 			numfreecodes--;
 		}
 
 		lastcode=code;
+		lastbyte=byte;
 	}
 
 	return stack[--sp];
@@ -293,38 +297,35 @@
 
 -(void)updateTableWithParent:(int)parent byteValue:(int)byte
 {
-	int local;
-	if(fast) local=(((parent+byte)&0xffff)*15073)&0xfff;
+	// Find hash table position.
+	int index;
+	if(fast) index=(((parent+byte)&0xffff)*15073)&0xfff;
 	else
 	{
-		local=(parent+byte)|0x0800;
-		local=(local*local>>6)&0xfff;
+		index=(parent+byte)|0x0800;
+		index=(index*index>>6)&0xfff;
 	}
 
-	if(string_tab[local].used) /* a collision has occured */
+	if(table[index].used) // Check for collision.
 	{
-		while(ad->string_tab[local].next)      /* while more duplicates */
- 		local=ad->string_tab[local].next;
+		// Go through the list of already marked collisions.
+		while(table[index].next) index=table[index].next;
 
-		/* We must find an empty spot. We start looking 101 places down the table from the last duplicate. */
-		next=(local+101)&0xfff;
+		// Then skip ahead, and do a linear search for an unused index.
+		int next=(index+101)&0xfff;
+		while(table[next].used) next=(next+1)&0xfff;
 
-		while(string_tab[next]->used) next=(next+1)&0xfff;
+		// Save the new index so we can skip the process next time.
+		table[index].next=next;
 
-		/* local still has the pointer to the last duplicate, while
-		* tempnext has the pointer to the spot we found.  We use
-		* this to maintain the chain of pointers to duplicates. */
-		string_tab[local].next=next;
-
-		local=next;
+		index=next;
 	}
 
-	string_tab[local]->used=YES;
-	string_tab[local]->next=0;
-	string_tab[local]->parent=parent;
-	string_tab[local]->byte=byte;
+	table[index].used=YES;
+	table[index].next=0;
+	table[index].parent=parent;
+	table[index].byte=byte;
 }
-
 
 @end
 

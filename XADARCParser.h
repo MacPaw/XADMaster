@@ -15,8 +15,9 @@
 @end
 
 
-@interface XADARCPackHandle:CSByteStreamHandle
+@interface XADARCSqueezeHandle:CSByteStreamHandle
 {
+	int nodes[257*2];
 }
 
 -(void)resetByteStream;

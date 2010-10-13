@@ -123,12 +123,12 @@
 			length:length] autorelease];
 		break;
 
-/*		case 0x03: // Squeezed+packed
+		case 0x04: // Squeezed+packed
 			handle=[[[XADARCSqueezeHandle alloc] initWithHandle:handle] autorelease];
 
 			handle=[[[XADRLE90Handle alloc] initWithHandle:handle
 			length:length] autorelease];
-		break;*/
+		break;
 
 /*		case 0x05: // Crunched
 			handle=[[[XADARCCrunchHandle alloc] initWithHandle:handle
@@ -193,14 +193,30 @@
 
 
 
-@implementation XADARCPackHandle
+@implementation XADARCSqueezeHandle
 
 -(void)resetByteStream
 {
+	int numnodes=CSInputNextUInt16LE(input)*2;
+
+	if(numnodes>=257*2) [XADException raiseDecrunchException];
+
+	nodes[0]=nodes[1]=-(256+1);
+
+	for(int i=0;i<numnodes;i++) nodes[i]=CSInputNextInt16LE(input);
+	//if(nodes[i]>) [XADException raiseDecrunchException];
 }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
+	int val=0;
+	while(val>=0) val=nodes[2*val+CSInputNextBitLE(input)];
+
+	int output=-(val+1);
+
+	if(output==256) CSByteStreamEOF(self);
+
+	return output;
 }
 
 @end

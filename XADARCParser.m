@@ -59,8 +59,8 @@
 		NSData *namedata=[NSData dataWithBytes:namebuf length:namelength];
 
 		uint32_t compsize=[fh readUInt32LE];
-		uint32_t datetime=[fh readUInt32LE];
-//		int time=[fh readUInt16LE];
+		int date=[fh readUInt16LE];
+		int time=[fh readUInt16LE];
 		int crc16=[fh readUInt16LE];
 		uint32_t uncompsize=[fh readUInt32LE];
 
@@ -76,7 +76,7 @@
 			[NSNumber numberWithUnsignedLong:compsize],XADCompressedSizeKey,
 			[NSNumber numberWithUnsignedLongLong:dataoffset],XADDataOffsetKey,
 			[NSNumber numberWithUnsignedLong:compsize],XADDataLengthKey,
-			[NSDate XADDateWithMSDOSDateTime:datetime],XADLastModificationDateKey,
+			[NSDate XADDateWithMSDOSDate:date time:time],XADLastModificationDateKey,
 			[NSNumber numberWithInt:method],@"ARCMethod",
 			[NSNumber numberWithInt:crc16],@"ARCCRC16",
 		nil];
@@ -259,9 +259,6 @@
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
-if(pos==763)
-NSLog(@"whjat");
-
 	if(!sp)
 	{
 		if(CSInputAtEOF(input)) CSByteStreamEOF(self);
@@ -307,10 +304,10 @@ NSLog(@"whjat");
 	if(fast) index=(((parent+byte)&0xffff)*15073)&0xfff;
 	else
 	{
-		index=(parent+byte)|0x0800;
+		index=((parent+byte)|0x0800)&0xffff;
 		index=(index*index>>6)&0xfff;
 	}
-
+NSLog(@"%03x",index);
 	if(table[index].used) // Check for collision.
 	{
 		// Go through the list of already marked collisions.

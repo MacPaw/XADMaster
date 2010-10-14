@@ -41,6 +41,8 @@
 {
 	CSHandle *fh=[self handle];
 
+	XADPath *parent=[self XADPath];
+
 	for(;;)
 	{
 		int magic=[fh readUInt8];
@@ -62,44 +64,66 @@
 		int date=[fh readUInt16LE];
 		int time=[fh readUInt16LE];
 		int crc16=[fh readUInt16LE];
-		uint32_t uncompsize=[fh readUInt32LE];
+
+		uint32_t uncompsize;
+		if(method==1) uncompsize=compsize;
+		else uncompsize=[fh readUInt32LE];
 
 		off_t dataoffset=[fh offsetInFile];
 
 		XADString *name=[self XADStringWithData:namedata];
-		XADPath *parent=[self XADPath];
 		XADPath *path=[parent pathByAppendingPathComponent:name];
 
-		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-			path,XADFileNameKey,
-			[NSNumber numberWithUnsignedLong:uncompsize],XADFileSizeKey,
-			[NSNumber numberWithUnsignedLong:compsize],XADCompressedSizeKey,
-			[NSNumber numberWithUnsignedLongLong:dataoffset],XADDataOffsetKey,
-			[NSNumber numberWithUnsignedLong:compsize],XADDataLengthKey,
-			[NSDate XADDateWithMSDOSDate:date time:time],XADLastModificationDateKey,
-			[NSNumber numberWithInt:method],@"ARCMethod",
-			[NSNumber numberWithInt:crc16],@"ARCCRC16",
-		nil];
-
-		NSString *methodname=nil;
-		switch(method)
+		if(method==0x1e)
 		{
-			case 0x01: methodname=@"None (old)"; break;
-			case 0x02: methodname=@"None"; break;
-			case 0x03: methodname=@"Packed"; break;
-			case 0x04: methodname=@"Squeezed+packed"; break;
-			case 0x05: methodname=@"Crunched"; break;
-			case 0x06: methodname=@"Crunched+packed"; break;
-			case 0x07: methodname=@"Crunched+packed (fast)"; break;
-			case 0x08: methodname=@"Crunched+packed (LZW)"; break;
-			case 0x09: methodname=@"Squashed"; break;
-			case 0x0a: methodname=@"Crushed"; break;
-			case 0x0b: methodname=@"Distilled"; break;
-			case 0x7f: methodname=@"Compressed"; break;
-		}
-		if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
+			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+				path,XADFileNameKey,
+				[NSNumber numberWithBool:YES],XADIsDirectoryKey,
+				[NSDate XADDateWithMSDOSDate:date time:time],XADLastModificationDateKey,
+				[NSNumber numberWithInt:method],@"ARCMethod",
+			nil];
 
-		[self addEntryWithDictionary:dict];
+			[self addEntryWithDictionary:dict];
+
+			parent=path;
+		}
+		else if(method==0x1f)
+		{
+			parent=[parent pathByDeletingLastPathComponent];
+		}
+		else
+		{
+			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+				path,XADFileNameKey,
+				[NSNumber numberWithUnsignedLong:uncompsize],XADFileSizeKey,
+				[NSNumber numberWithUnsignedLong:compsize],XADCompressedSizeKey,
+				[NSNumber numberWithUnsignedLongLong:dataoffset],XADDataOffsetKey,
+				[NSNumber numberWithUnsignedLong:compsize],XADDataLengthKey,
+				[NSDate XADDateWithMSDOSDate:date time:time],XADLastModificationDateKey,
+				[NSNumber numberWithInt:method],@"ARCMethod",
+				[NSNumber numberWithInt:crc16],@"ARCCRC16",
+			nil];
+
+			NSString *methodname=nil;
+			switch(method)
+			{
+				case 0x01: methodname=@"None (old)"; break;
+				case 0x02: methodname=@"None"; break;
+				case 0x03: methodname=@"Packed"; break;
+				case 0x04: methodname=@"Squeezed+packed"; break;
+				case 0x05: methodname=@"Crunched"; break;
+				case 0x06: methodname=@"Crunched+packed"; break;
+				case 0x07: methodname=@"Crunched+packed (fast)"; break;
+				case 0x08: methodname=@"Crunched+packed (LZW)"; break;
+				case 0x09: methodname=@"Squashed"; break;
+				case 0x0a: methodname=@"Crushed"; break;
+				case 0x0b: methodname=@"Distilled"; break;
+				case 0x7f: methodname=@"Compressed"; break;
+			}
+			if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
+
+			[self addEntryWithDictionary:dict];
+		}
 
 		[fh seekToFileOffset:dataoffset+compsize];
 	}
@@ -307,7 +331,7 @@
 		index=((parent+byte)|0x0800)&0xffff;
 		index=(index*index>>6)&0xfff;
 	}
-NSLog(@"%03x",index);
+
 	if(table[index].used) // Check for collision.
 	{
 		// Go through the list of already marked collisions.

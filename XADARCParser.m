@@ -32,12 +32,10 @@
 	if(compsize>0x1000000) return NO; // Assume files are less than 16 megabytes.
 	if(compsize>uncompsize) return NO; // Assume files are always compressed or stored.
 
-NSLog(@"what %x %x %02x %02x %02x",0x1d+compsize,length,bytes[0x1c+compsize],bytes[0x1d+compsize],bytes[30+compsize]);
 	// Check next file, if it fits in the buffer.
 	// TODO: handle archimedes
 	if(length>=0x1d+compsize+1)
 	if(bytes[0x1d+compsize]!=0x1a) return NO;
-NSLog(@"what2");
 
 	return YES;
 }
@@ -74,12 +72,20 @@ NSLog(@"what2");
 		if(method==1) uncompsize=compsize;
 		else uncompsize=[fh readUInt32LE];
 
+		uint32_t loadaddress,execaddress,fileattrs;
+		if(method&0x80)
+		{
+			loadaddress=[fh readUInt32LE];
+			execaddress=[fh readUInt32LE];
+			fileattrs=[fh readUInt32LE];
+		}
+
 		off_t dataoffset=[fh offsetInFile];
 
 		XADString *name=[self XADStringWithData:namedata];
 		XADPath *path=[parent pathByAppendingPathComponent:name];
 
-		if(method==0x1e)
+		if(method==0x1e || (method==0x82&&((loadaddress&0xffffff00)==0xfffddc00)))
 		{
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				path,XADFileNameKey,
@@ -92,7 +98,7 @@ NSLog(@"what2");
 
 			parent=path;
 		}
-		else if(method==0x1f)
+		else if(method==0x1f || method==0x80)
 		{
 			parent=[parent pathByDeletingLastPathComponent];
 		}
@@ -127,21 +133,30 @@ NSLog(@"what2");
 			}
 			if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 
-			[self addEntryWithDictionary:dict];
-		}
+			if(method&0x80)
+			{
+				[dict setObject:[NSNumber numberWithUnsignedInt:loadaddress] forKey:@"ARCArchimedesLoadAddress"];
+				[dict setObject:[NSNumber numberWithUnsignedInt:execaddress] forKey:@"ARCArchimedesExecAddress"];
+				[dict setObject:[NSNumber numberWithUnsignedInt:fileattrs] forKey:@"ARCArchimedesFileAttributes"];
+			}
 
-		[fh seekToFileOffset:dataoffset+compsize];
+			[self addEntryWithDictionary:dict];
+
+			[fh seekToFileOffset:dataoffset+compsize];
+		}
 	}
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
+	if([dict objectForKey:XADIsDirectoryKey]) return nil;
+
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 	int method=[[dict objectForKey:@"ARCMethod"] intValue];
 	int crc=[[dict objectForKey:@"ARCCRC16"] intValue];
 	uint32_t length=[[dict objectForKey:XADFileSizeKey] unsignedIntValue];
 
-	switch(method)
+	switch(method&0x7f)
 	{
 		case 0x01: // Stored (untested)
 		case 0x02: // Stored

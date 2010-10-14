@@ -23,16 +23,21 @@
 	for(int i=0x02;i<0x0f && bytes[i]!=0;i++)
 	if((bytes[i]&0x7f)<32) return NO;
 
+	// Stop checking here if the file is an old-style uncompressed file.
+	if(bytes[0x01]==0x01) return YES;
+
 	// Check sizes.
 	uint32_t compsize=CSUInt32LE(&bytes[0x0f]);
 	uint32_t uncompsize=CSUInt32LE(&bytes[0x19]);
 	if(compsize>0x1000000) return NO; // Assume files are less than 16 megabytes.
 	if(compsize>uncompsize) return NO; // Assume files are always compressed or stored.
 
+NSLog(@"what %x %x %02x %02x %02x",0x1d+compsize,length,bytes[0x1c+compsize],bytes[0x1d+compsize],bytes[30+compsize]);
 	// Check next file, if it fits in the buffer.
 	// TODO: handle archimedes
 	if(length>=0x1d+compsize+1)
 	if(bytes[0x1d+compsize]!=0x1a) return NO;
+NSLog(@"what2");
 
 	return YES;
 }

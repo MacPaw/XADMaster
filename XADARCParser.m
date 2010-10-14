@@ -248,15 +248,20 @@
 
 	for(int i=0;i<256;i++) [self updateTableWithParent:-1 byteValue:i];
 
-/*    oldcode = xadIOGetBitsHigh(io,12);
-    finchar = ad->table[oldcode].follower;
-    xadIOPutChar(io, finchar);*/
+	int code=CSInputNextBitString(input,12);
+	int byte=table[code].byte;
 
-	lastcode=-1;
+	stack[sp++]=byte;
+
+	lastcode=code;
+	lastbyte=byte;
 }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
+if(pos==763)
+NSLog(@"whjat");
+
 	if(!sp)
 	{
 		if(CSInputAtEOF(input)) CSByteStreamEOF(self);
@@ -265,7 +270,7 @@
 
 		XADARCCrunchEntry *entry=&table[code];
 
-		if(!entry->used) /* if code isn't known */
+		if(!entry->used)
 		{
 			entry=&table[lastcode];
 			stack[sp++]=lastbyte;

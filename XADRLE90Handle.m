@@ -17,6 +17,8 @@
 	}
 	else
 	{
+		if(CSInputAtEOF(input)) CSByteStreamEOF(self);
+
 		uint8_t b=CSInputNextByte(input);
 
 		if(b!=0x90) return byte=b;

@@ -54,6 +54,12 @@
 		int method=[fh readUInt8];
 		if(method==0x00) break;
 
+		if(method==0x1f || method==0x80)
+		{
+			parent=[parent pathByDeletingLastPathComponent];
+			continue;
+		}
+
 		uint8_t namebuf[13];
 		[fh readBytes:13 toBuffer:namebuf];
 
@@ -97,10 +103,6 @@
 			[self addEntryWithDictionary:dict];
 
 			parent=path;
-		}
-		else if(method==0x1f || method==0x80)
-		{
-			parent=[parent pathByDeletingLastPathComponent];
 		}
 		else
 		{

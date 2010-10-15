@@ -33,6 +33,7 @@
 #import "XADLZHSFXParsers.h"
 #import "XADARJParser.h"
 #import "XADARCParser.h"
+#import "XADSqueezeParser.h"
 #import "XADZooParser.h"
 #import "XADNSISParser.h"
 #import "XADCABParser.h"
@@ -162,6 +163,7 @@ static int maxheader=0;
 		[XADLZMAAloneParser class],
 		[XADCpioParser class],
 		[XADARCParser class],
+		[XADSqueezeParser class],
 		[XADSplitFileParser class],
 
 		// LibXAD

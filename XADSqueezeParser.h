@@ -1,6 +1,6 @@
 #import "XADArchiveParser.h"
 
-@interface XADARCParser:XADArchiveParser
+@interface XADSqueezeParser:XADArchiveParser
 {
 }
 

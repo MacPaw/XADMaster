@@ -20,8 +20,7 @@
 
 	// Check file name.
 	if(bytes[0x02]==0) return NO;
-	for(int i=0x02;i<0x0f && bytes[i]!=0;i++)
-	if((bytes[i]&0x7f)<32) return NO;
+	for(int i=0x02;i<0x0f && bytes[i]!=0;i++) if(bytes[i]<32) return NO;
 
 	// Stop checking here if the file is an old-style uncompressed file.
 	if(bytes[0x01]==0x01) return YES;
@@ -32,10 +31,12 @@
 	if(compsize>0x1000000) return NO; // Assume files are less than 16 megabytes.
 	if(compsize>uncompsize) return NO; // Assume files are always compressed or stored.
 
-	// Check next file, if it fits in the buffer.
-	// TODO: handle archimedes
-	if(length>=0x1d+compsize+1)
-	if(bytes[0x1d+compsize]!=0x1a) return NO;
+	// Check next file or end marker, if it fits in the buffer.
+	uint32_t nextoffset=0x1d+compsize;
+	if(bytes[0x01]&0x80) nextoffset+=12;
+
+	if(length>=nextoffset+1)
+	if(bytes[nextoffset]!=0x1a) return NO;
 
 	return YES;
 }
@@ -46,16 +47,23 @@
 
 	XADPath *parent=[self XADPath];
 
-	for(;;)
+	while([self shouldKeepParsing] && ![fh atEndOfFile])
 	{
-		int magic=[fh readUInt8];
-		if(magic!=0x1a) [XADException raiseIllegalDataException];
+		// Scan for next header.
+		int n=0;
+		for(;;)
+		{
+			int magic=[fh readUInt8];
+			if(magic==0x1a) break;
+			if(++n>=64) [XADException raiseIllegalDataException];
+		}
 
 		int method=[fh readUInt8];
 		if(method==0x00) break;
 
 		if(method==0x1f || method==0x80)
 		{
+			if([parent depth]==0) break;
 			parent=[parent pathByDeletingLastPathComponent];
 			continue;
 		}
@@ -118,7 +126,7 @@
 			nil];
 
 			NSString *methodname=nil;
-			switch(method)
+			switch(method&0x7f)
 			{
 				case 0x01: methodname=@"None (old)"; break;
 				case 0x02: methodname=@"None"; break;
@@ -211,6 +219,9 @@
 		case 0x09: // Squashed
 			handle=[[[XADCompressHandle alloc] initWithHandle:handle
 			length:length flags:0x8d] autorelease];
+		break;
+
+		case 0x0a: // Distilled
 		break;
 
 		case 0x7f: // Compressed (untested)

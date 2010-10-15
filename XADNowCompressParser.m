@@ -55,7 +55,8 @@
 	[self parseDirectoryWithParent:[self XADPath] numberOfEntries:INT_MAX];
 
 	int numdicts=[entries count];
-	for(int i=0;i<numdicts;i++) [self addEntryWithDictionary:[entries objectAtIndex:i]];
+	for(int i=0;i<numdicts && [self shouldKeepParsing];i++)
+	[self addEntryWithDictionary:[entries objectAtIndex:i]];
 }
 
 -(void)parseDirectoryWithParent:(XADPath *)parent numberOfEntries:(int)numentries
@@ -64,6 +65,8 @@
 
 	for(int i=0;i<numentries && currentries<totalentries;i++,currentries++)
 	{
+		if(![self shouldKeepParsing]) break;
+
 		int namelen=[fh readUInt8];
 		NSData *namedata=[fh readDataOfLength:namelen];
 		[fh skipBytes:31-namelen];

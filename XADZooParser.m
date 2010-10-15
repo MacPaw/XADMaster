@@ -27,7 +27,7 @@
 
 	[fh seekToFileOffset:firstoffset];
 
-	for(;;)
+	while([self shouldKeepParsing])
 	{
 		uint32_t magic=[fh readUInt32LE];
 		if(magic!=0xfdc4a7dc) [XADException raiseIllegalDataException];

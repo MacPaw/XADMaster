@@ -123,11 +123,11 @@
 				case 0x01: methodname=@"None (old)"; break;
 				case 0x02: methodname=@"None"; break;
 				case 0x03: methodname=@"Packed"; break;
-				case 0x04: methodname=@"Squeezed+packed"; break;
-				case 0x05: methodname=@"Crunched"; break;
-				case 0x06: methodname=@"Crunched+packed"; break;
-				case 0x07: methodname=@"Crunched+packed (fast)"; break;
-				case 0x08: methodname=@"Crunched+packed (LZW)"; break;
+				case 0x04: methodname=@"Squeezed"; break;
+				case 0x05: methodname=@"Crunched (no packing)"; break;
+				case 0x06: methodname=@"Crunched"; break;
+				case 0x07: methodname=@"Crunched (fast)"; break;
+				case 0x08: methodname=@"Crunched (LZW)"; break;
 				case 0x09: methodname=@"Squashed"; break;
 				case 0x0a: methodname=@"Crushed"; break;
 				case 0x0b: methodname=@"Distilled"; break;
@@ -239,6 +239,8 @@
 
 @implementation XADARCSqueezeHandle
 
+// TODO: decode tree to a XADPrefixCode for speed.
+
 -(void)resetByteStream
 {
 	int numnodes=CSInputNextUInt16LE(input)*2;
@@ -254,7 +256,11 @@
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	int val=0;
-	while(val>=0) val=nodes[2*val+CSInputNextBitLE(input)];
+	while(val>=0)
+	{
+		if(!CSInputBitsLeftInBuffer(input)) CSByteStreamEOF(self);
+		val=nodes[2*val+CSInputNextBitLE(input)];
+	}
 
 	int output=-(val+1);
 

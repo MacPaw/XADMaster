@@ -136,11 +136,11 @@ int main(int argc,char **argv)
 		char *pass=getenv("XADTestPassword");
 		if(pass) [parser setPassword:[NSString stringWithUTF8String:pass]];
 
-		//@try {
+		@try {
 			[parser parse];
-		//} @catch(id e) {
-		//	printf("*** Exception: %s\n",[[e description] UTF8String]);
-		//}
+		} @catch(id e) {
+			printf("*** Exception: %s\n",[[e description] UTF8String]);
+		}
 
 		[pool release];
 	}

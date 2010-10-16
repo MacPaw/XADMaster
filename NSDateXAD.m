@@ -4,6 +4,7 @@
 
 #define SecondsFrom1904To1970 2082844800
 #define SecondsFrom1601To1970 11644473600
+#define SecondsFrom1970ToLastDayOf1978 283910400
 
 @implementation NSDate (XAD)
 
@@ -52,6 +53,17 @@
 +(NSDate *)XADDateWithWindowsFileTimeLow:(uint32_t)low high:(uint32_t)high
 {
 	return [NSDate XADDateWithWindowsFileTime:((uint64_t)high<<32)|(uint64_t)low];
+}
+
++(NSDate *)XADDateWithCPMDate:(uint16_t)date time:(uint16_t)time
+{
+	int second=(time&31)*2;
+	int minute=(time>>5)&63;
+	int hour=(time>>11)&31;
+
+	double seconds=second+minute*60+hour*3600+date*86400;
+
+	return [NSDate dateWithTimeIntervalSince1970:seconds+SecondsFrom1970ToLastDayOf1978];
 }
 
 

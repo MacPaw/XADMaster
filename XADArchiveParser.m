@@ -357,6 +357,11 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return password;
 }
 
+-(BOOL)hasPassword
+{
+	return password!=nil;
+}
+
 -(void)setPassword:(NSString *)newpassword
 {
 	[password autorelease];

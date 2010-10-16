@@ -435,8 +435,14 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 			if(actual==0) break;
 		}
 
-		if(sizenum&&done!=size) return XADDecrunchError; // kind of hacky
-		if([srchandle hasChecksum]&&![srchandle isChecksumCorrect]) return XADChecksumError;
+		if([srchandle hasChecksum])
+		{
+			if(![srchandle isChecksumCorrect]) return XADChecksumError;
+		}
+		else
+		{
+			if(sizenum&&done!=size) return XADDecrunchError; // kind of hacky
+		}
 	}
 	@catch(id e)
 	{

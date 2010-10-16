@@ -3,6 +3,7 @@
 #import "XADRLE90Handle.h"
 #import "XADCompressHandle.h"
 #import "XADCRCHandle.h"
+#import "XADXORHandle.h"
 #import "NSDateXAD.h"
 
 static BOOL IsLoaderARCName(const uint8_t *bytes)
@@ -193,6 +194,15 @@ name:(NSString *)name
 	int crc=[[dict objectForKey:@"ARCCRC16"] intValue];
 	uint32_t length=[[dict objectForKey:XADFileSizeKey] unsignedIntValue];
 
+	// TODO: We should somehow figure out if an ARC file is actually encrypted.
+	// However, there seems to be no way to do this, so the client has to
+	// explicitly set a password without being asked for one.
+	if([self hasPassword])
+	{
+		NSData *passdata=[self encodedPassword];
+		handle=[[[XADXORHandle alloc] initWithHandle:handle password:passdata] autorelease];
+	}
+
 	switch(method&0x7f)
 	{
 		case 0x01: // Stored (untested)
@@ -271,6 +281,7 @@ name:(NSString *)name
 -(NSString *)formatName { return @"ARC"; }
 
 @end
+
 
 
 

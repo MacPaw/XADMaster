@@ -99,6 +99,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 -(void)setDelegate:(id)newdelegate;
 
 -(NSString *)password;
+-(BOOL)hasPassword;
 -(void)setPassword:(NSString *)newpassword;
 
 -(XADStringSource *)stringSource;

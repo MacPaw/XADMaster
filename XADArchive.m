@@ -1028,8 +1028,14 @@ static double XADGetTime()
 			if(actual!=sizeof(buf)) break;
 		}
 
-		if(hassize&&done!=size) [XADException raiseDecrunchException]; // kind of hacky
-		if([srchandle hasChecksum]&&![srchandle isChecksumCorrect]) [XADException raiseChecksumException];
+		if([srchandle hasChecksum])
+		{
+			if(![srchandle isChecksumCorrect]) [XADException raiseChecksumException];
+		}
+		else
+		{
+			if(hassize&&done!=size) [XADException raiseDecrunchException]; // kind of hacky
+		}
 	}
 	@catch(id e)
 	{

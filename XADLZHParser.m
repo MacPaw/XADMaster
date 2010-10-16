@@ -6,9 +6,6 @@
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
-// TODO: Move the other really obscure algorithms over from libxad, and add support
-// for the other related formats, such as Zoo, Savage, and the SFX variants.
-
 @implementation XADLZHParser
 
 +(int)requiredHeaderSize { return 7; }

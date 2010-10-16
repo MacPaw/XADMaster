@@ -80,14 +80,13 @@ extern NSString *XADVolumesKey;
 }
 
 +(void)initialize;
-+(Class)archiveParserClassForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name;
++(Class)archiveParserClassForHandle:(CSHandle *)handle firstBytes:(NSData *)header
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename;
 
--(id)_initWithHandle:(CSHandle *)handle;
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name volumes:(NSArray *)volumes;
 -(void)dealloc;
 
 -(NSDictionary *)properties;
@@ -126,6 +125,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
 
 -(void)setObject:(id)object forPropertyKey:(NSString *)key;
+-(void)addPropertiesFromDictionary:(NSDictionary *)dict;
 -(void)setIsMacArchive:(BOOL)ismac;
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict;
@@ -158,8 +158,12 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 // Subclasses implement these:
 
 +(int)requiredHeaderSize;
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
-+(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
++(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name;
 
 -(void)parse;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;

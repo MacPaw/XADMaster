@@ -5,23 +5,36 @@
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
-@implementation XADARCParser
-
-+(int)requiredHeaderSize { return 0x1d; }
-
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
+static BOOL IsLoaderARCName(const uint8_t *bytes)
 {
-	const uint8_t *bytes=[data bytes];
-	int length=[data length];
+	return memcmp(&bytes[2]," unpacker ",11)==0;
+}
 
+static BOOL IsRegularARCName(const uint8_t *bytes)
+{
+	if(bytes[0]==0) return NO;
+	for(int i=0;i<0x0d && bytes[i]!=0;i++) if(bytes[i]<32) return NO;
+	return YES;
+}
+
+static BOOL IsARCHeader(const uint8_t *bytes,int length,BOOL acceptloader)
+{
 	if(length<0x1d) return NO;
 
 	// Check ID.
 	if(bytes[0x00]!=0x1a) return NO;
 
 	// Check file name.
-	if(bytes[0x02]==0) return NO;
-	for(int i=0x02;i<0x0f && bytes[i]!=0;i++) if(bytes[i]<32) return NO;
+	if(acceptloader)
+	{
+		if(!IsLoaderARCName(&bytes[2]))
+		if(!IsRegularARCName(&bytes[2])) return NO;
+	}
+	else
+	{
+		if(IsLoaderARCName(&bytes[2])) return NO;
+		if(!IsRegularARCName(&bytes[2])) return NO;
+	}
 
 	// Stop checking here if the file is an old-style uncompressed file.
 	if(bytes[0x01]==0x01) return YES;
@@ -40,6 +53,19 @@
 	if(bytes[nextoffset]!=0x1a) return NO;
 
 	return YES;
+}
+
+@implementation XADARCParser
+
++(int)requiredHeaderSize { return 0x1d; }
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name
+{
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+
+	return IsARCHeader(bytes,length,NO);
 }
 
 -(void)parse
@@ -245,6 +271,79 @@
 -(NSString *)formatName { return @"ARC"; }
 
 @end
+
+
+
+@implementation XADARCSFXParser
+
++(int)requiredHeaderSize { return 0x10000; }
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
+{
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+
+	// .COM executable, type ARC520.COM. Mangled first entry contains a jump
+	// to unpack code in first entry, which we skip.
+	if(IsARCHeader(&bytes[0],length,YES))
+	{
+		uint32_t datasize=CSUInt32LE(&bytes[0x0f]);
+		uint32_t nextoffs;
+		if(bytes[1]==1) nextoffs=datasize+0x19;
+		else nextoffs=datasize+0x1d;
+
+		[props setObject:[NSNumber numberWithInt:nextoffs] forKey:@"ARCSFXOffset"];
+		return YES;
+	}
+
+	// .COM executable, type ARC512.COM. Archive is preceeded by a three-byte
+	// jump to code in a (mangled?) first entry, which we skip.
+	if(IsARCHeader(&bytes[3],length-3,YES))
+	{
+		uint32_t datasize=CSUInt32LE(&bytes[0x0f+3]);
+
+		uint32_t nextoffs;
+		if(bytes[1+3]==1) nextoffs=datasize+0x19+3;
+		else nextoffs=datasize+0x1d+3;
+
+		[props setObject:[NSNumber numberWithInt:nextoffs] forKey:@"ARCSFXOffset"];
+		return YES;
+	}
+
+	// .EXE executable. Scan for an archive start.
+	if(length>2)
+	if(bytes[0]=='M'&&bytes[1]=='Z')
+	{
+		for(int i=2;i<=length-0x1d;i++)
+		{
+			if(IsARCHeader(&bytes[i],length-i,NO))
+			{
+				[props setObject:[NSNumber numberWithInt:i] forKey:@"ARCSFXOffset"];
+				return YES;
+			}
+		}
+	}
+
+	return NO;
+}
+
+-(void)parse
+{
+	CSHandle *fh=[self handle];
+
+	off_t offs=[[[self properties] objectForKey:@"ARCSFXOffset"] longLongValue];
+
+	[fh seekToFileOffset:offs];
+
+	[super parse];
+}
+
+
+-(NSString *)formatName { return @"Self-extracting ARC"; }
+
+@end
+
 
 
 

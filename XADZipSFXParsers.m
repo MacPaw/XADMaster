@@ -68,11 +68,6 @@
 	return NO;
 }
 
--(void)parse
-{
-	[super parse];
-}
-
 -(NSString *)formatName { return @"ZipIt SEA"; }
 
 @end

@@ -329,14 +329,22 @@ static int MatchCABSignature(const uint8_t *bytes,int available,off_t offset,voi
 
 +(int)requiredHeaderSize { return 65536; }
 
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
 	if(length<20000||bytes[0]!='M'||bytes[1]!='Z') return NO;
 
-	for(int i=8;i<length;i++) if(MatchCABSignature(&bytes[i],length-i,i,NULL)) return YES;
+	for(int i=8;i<length;i++)
+	{
+		if(MatchCABSignature(&bytes[i],length-i,i,NULL))
+		{
+			[props setObject:[NSNumber numberWithInt:i] forKey:@"CABSFXOffset"];
+			return YES;
+		}
+	}
 
 	return NO;
 }
@@ -345,11 +353,8 @@ static int MatchCABSignature(const uint8_t *bytes,int available,off_t offset,voi
 
 -(void)parse
 {
-	CSHandle *fh=[self handle];
-	off_t size=[fh fileSize];
-
-	if(![fh scanUsingMatchingFunction:MatchCABSignature maximumLength:3 context:&size])
-	[XADException raiseUnknownException];
+	off_t offs=[[[self properties] objectForKey:@"CABSFXOffset"] longLongValue];
+	[[self handle] seekToFileOffset:offs];
 
 	[super parse];
 }

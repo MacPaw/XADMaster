@@ -747,12 +747,18 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	return 0x80000;
 }
 
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
-	if(FindSignature(bytes,length)) return YES;
+	const uint8_t *header=FindSignature(bytes,length);
+	if(header)
+	{
+		[props setObject:[NSNumber numberWithLongLong:header-bytes] forKey:@"RAREmbedOffset"];
+		return YES;
+	}
 
 	return NO;
 }
@@ -787,16 +793,10 @@ encrypted:(BOOL)encrypted cryptoVersion:(int)version salt:(NSData *)salt
 	return nil;
 }
 
-static int MatchRarSignature(const uint8_t *bytes,int available,off_t offset,void *state)
-{
-	if(available<7) return NO;
-	return TestSignature(bytes);
-}
-
 -(void)parse
 {
-	if(![[self handle] scanUsingMatchingFunction:MatchRarSignature maximumLength:7])
-	[XADException raiseUnknownException];
+	off_t offs=[[[self properties] objectForKey:@"RAREmbedOffset"] longLongValue];
+	[[self handle] seekToFileOffset:offs];
 
 	[super parse];
 }

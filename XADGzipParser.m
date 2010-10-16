@@ -115,7 +115,8 @@
 
 +(int)requiredHeaderSize { return 5000; }
 
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
@@ -127,22 +128,20 @@
 
 	for(int i=2;i<length-3;i++)
 	{
-		if(bytes[i]==0x1f&&(bytes[i+1]==0x8b||bytes[i+1]==0x9e)&&bytes[i+2]==8) return YES;
+		if(bytes[i]==0x1f&&(bytes[i+1]==0x8b||bytes[i+1]==0x9e)&&bytes[i+2]==8)
+		{
+			[props setObject:[NSNumber numberWithInt:i] forKey:@"GzipSFXOffset"];
+			return YES;
+		}
     }
 
 	return NO;
 }
 
-static int MatchGzipSignature(const uint8_t *bytes,int available,off_t offset,void *state)
-{
-	if(available<3) return NO;
-	return bytes[0]==0x1f&&(bytes[1]==0x8b||bytes[1]==0x9e)&&bytes[2]==8;
-}
-
 -(void)parse
 {
-	if(![[self handle] scanUsingMatchingFunction:MatchGzipSignature maximumLength:3])
-	[XADException raiseUnknownException];
+	off_t offs=[[[self properties] objectForKey:@"GzipSFXOffset"] longLongValue];
+	[[self handle] seekToFileOffset:offs];
 
 	[super parse];
 }

@@ -148,3 +148,54 @@
 @end
 
 
+
+
+@implementation XADARCCrushHandle
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
+{
+        if(self=[super initWithHandle:handle length:length])
+        {
+                lzw=AllocLZW(8192,0);
+        }
+        return self;
+}
+
+-(void)dealloc
+{
+        FreeLZW(lzw);
+        [super dealloc];
+}
+
+-(void)resetByteStream
+{
+	ClearLZWTable(lzw);
+	symbolsize=0;
+	currbyte=0;
+}
+
+-(uint8_t)produceByteAtOffset:(off_t)pos
+{
+	if(!currbyte)
+	{
+		int symbol;
+		if(CSInputNextBitLE(input)) symbol=CSInputNextBitStringLE(input,symbolsize)+256;
+		else symbol=CSInputNextBitStringLE(input,8);
+NSLog(@"%x at len %d",symbol,symbolsize);
+
+if(symbol==256) CSByteStreamEOF(self);
+
+		if(NextLZWSymbol(lzw,symbol)!=LZWNoError) [XADException raiseDecrunchException];
+		currbyte=LZWReverseOutputToBuffer(lzw,buffer);
+
+int numsymbols=LZWSymbolCount(lzw)-256;
+if(numsymbols)
+if((numsymbols&numsymbols-1)==0) self->symbolsize++;
+NSLog(@"%d: %d",(int)pos,symbolsize);
+	}
+
+	return buffer[--currbyte];
+}
+@end
+
+

@@ -93,6 +93,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XAD7ZipParser.m \
 			XADALZipParser.m \
 			XADArchiveParser.m \
+			XADARCHandles.m \
 			XADARCParser.m \
 			XADARJFastestHandle.m \
 			XADARJParser.m \
@@ -123,6 +124,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADFastLZSSHandle.m \
 			XADGzipParser.m \
 			XADLArcHandles.m \
+			XADLBRParser.m \
 			XADLibXADIOHandle.m \
 			XADLibXADParser.m \
 			XADLZHDynamicHandle.m \
@@ -186,6 +188,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADStuffItXEnglishHandle.m \
 			XADStuffItXIronHandle.m \
 			XADStuffItXParser.m \
+			XADSqueezeParser.m \
 			XADTarParser.m \
 			XADTarSparseHandle.m \
 			XADUnarchiver.m \

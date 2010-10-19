@@ -42,7 +42,11 @@ typedef struct XADARCCrunchEntry
 @interface XADARCCrushHandle:CSByteStreamHandle
 {
 	LZW *lzw;
-	int symbolsize;
+	int symbolsize,nextsizebump;
+	BOOL useprefix;
+
+	int numrecentstrings,ringindex;
+	BOOL stringring[500];
 
 	int currbyte;
 	uint8_t buffer[8192];

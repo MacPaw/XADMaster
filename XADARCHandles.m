@@ -156,7 +156,7 @@
 {
         if(self=[super initWithHandle:handle length:length])
         {
-                lzw=AllocLZW(8192,0);
+                lzw=AllocLZW(8192,1);
         }
         return self;
 }
@@ -170,7 +170,14 @@
 -(void)resetByteStream
 {
 	ClearLZWTable(lzw);
-	symbolsize=0;
+	symbolsize=1;
+	nextsizebump=3;
+	useprefix=YES;
+
+	numrecentstrings=0;
+	ringindex=0;
+	memset(stringring,0,sizeof(stringring));
+
 	currbyte=0;
 }
 
@@ -179,19 +186,29 @@
 	if(!currbyte)
 	{
 		int symbol;
-		if(CSInputNextBitLE(input)) symbol=CSInputNextBitStringLE(input,symbolsize)+256;
-		else symbol=CSInputNextBitStringLE(input,8);
-NSLog(@"%x at len %d",symbol,symbolsize);
 
-if(symbol==256) CSByteStreamEOF(self);
+		if(useprefix)
+		{
+			if(CSInputNextBitLE(input)) symbol=CSInputNextBitStringLE(input,symbolsize)+256;
+			else symbol=CSInputNextBitStringLE(input,8);
+		}
+		else
+		{
+			symbol=CSInputNextBitStringLE(input,symbolsize);
+			//if(symbol<0x100) symbol^=0xff;
+		}
+		if(symbol==0x100) CSByteStreamEOF(self);
+
+		if(stringring[ringindex]) numrecentstrings--;
+		ringindex=(ringindex+1)%500;
+
+		if(symbol<0x100) stringring[ringindex]=NO;
+		else stringring[ringindex]=YES;
 
 		if(NextLZWSymbol(lzw,symbol)!=LZWNoError) [XADException raiseDecrunchException];
 		currbyte=LZWReverseOutputToBuffer(lzw,buffer);
 
-int numsymbols=LZWSymbolCount(lzw)-256;
-if(numsymbols)
-if((numsymbols&numsymbols-1)==0) self->symbolsize++;
-NSLog(@"%d: %d",(int)pos,symbolsize);
+		if(LZWSymbolCount(lzw)==nextsizebump) symbolsize++;
 	}
 
 	return buffer[--currbyte];

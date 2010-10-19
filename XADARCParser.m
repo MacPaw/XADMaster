@@ -258,8 +258,16 @@ name:(NSString *)name
 			length:length flags:0x8d] autorelease];
 		break;
 
-		case 0x0a: // Distilled
+		case 0x0a: // Crushed
 			handle=[[[XADARCCrushHandle alloc] initWithHandle:handle length:length] autorelease];
+
+			handle=[[[XADRLE90Handle alloc] initWithHandle:handle
+			length:length] autorelease];
+		break;
+
+		case 0x0b: // Distilled
+			// TODO: figure out and implement distill!
+			return nil;
 		break;
 
 		case 0x7f: // Compressed (untested)

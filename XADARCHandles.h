@@ -43,7 +43,7 @@ typedef struct XADARCCrunchEntry
 {
 	LZW *lzw;
 	int symbolsize,nextsizebump;
-	BOOL useprefix;
+	BOOL useliteralbit;
 
 	int numrecentstrings,ringindex;
 	BOOL stringring[500];

@@ -6,7 +6,6 @@ LZW *AllocLZW(int maxsymbols,int reservedsymbols)
 	LZW *self=(LZW *)malloc(sizeof(LZW)+sizeof(LZWTreeNode)*maxsymbols);
 	if(!self) return 0;
 
-	self->nodes=(LZWTreeNode *)&self[1];
 	self->maxsymbols=maxsymbols;
 	self->reservedsymbols=reservedsymbols;
 
@@ -50,29 +49,45 @@ int NextLZWSymbol(LZW *self,int symbol)
 {
 	if(self->prevsymbol<0)
 	{
-		if(symbol>=256+self->reservedsymbols) return LZWInvalidCodeError;
+		if(symbol>=self->numsymbols) return LZWInvalidCodeError;
 		self->prevsymbol=symbol;
+
+		return LZWNoError;
+	}
+
+	int postfixbyte;
+	if(symbol<self->numsymbols) postfixbyte=FindFirstByte(self->nodes,symbol);
+	else if(symbol==self->numsymbols) postfixbyte=FindFirstByte(self->nodes,self->prevsymbol);
+	else return LZWInvalidCodeError;
+
+	int parent=self->prevsymbol;
+	self->prevsymbol=symbol;
+
+	if(!LZWSymbolListFull(self))
+	{
+		self->nodes[self->numsymbols].parent=parent;
+		self->nodes[self->numsymbols].chr=postfixbyte;
+		self->numsymbols++;
+
+		if(!LZWSymbolListFull(self))
+		if((self->numsymbols&self->numsymbols-1)==0) self->symbolsize++;
+
+		return LZWNoError;
 	}
 	else
 	{
-		int postfixbyte;
-		if(symbol<self->numsymbols) postfixbyte=FindFirstByte(self->nodes,symbol);
-		else if(symbol==self->numsymbols) postfixbyte=FindFirstByte(self->nodes,self->prevsymbol);
-		else return LZWInvalidCodeError;
-
-		if(self->numsymbols<self->maxsymbols)
-		{
-			self->nodes[self->numsymbols].parent=self->prevsymbol;
-			self->nodes[self->numsymbols].chr=postfixbyte;
-			self->numsymbols++;
-		}
-
-		self->prevsymbol=symbol;
+		return LZWTooManyCodesError;
 	}
+}
 
-	if(LZWSymbolListFull(self)) return LZWTooManyCodesError;
+int ReplaceLZWSymbol(LZW *self,int oldsymbol,int symbol)
+{
+	if(symbol>=self->numsymbols) return LZWInvalidCodeError;
 
-	if((self->numsymbols&self->numsymbols-1)==0) self->symbolsize++;
+	self->nodes[oldsymbol].parent=self->prevsymbol;
+	self->nodes[oldsymbol].chr=FindFirstByte(self->nodes,symbol);
+
+	self->prevsymbol=symbol;
 
 	return LZWNoError;
 }

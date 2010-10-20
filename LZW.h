@@ -16,13 +16,14 @@ typedef struct LZWTreeNode
 
 typedef struct LZW
 {
-	LZWTreeNode *nodes;
 	int numsymbols,maxsymbols,reservedsymbols;
 	int prevsymbol;
 	int symbolsize;
 
 	uint8_t *buffer;
 	int buffersize;
+
+	LZWTreeNode nodes[0];
 } LZW;
 
 LZW *AllocLZW(int maxsymbols,int reservedsymbols);
@@ -30,6 +31,7 @@ void FreeLZW(LZW *self);
 void ClearLZWTable(LZW *self);
 
 int NextLZWSymbol(LZW *self,int symbol);
+int ReplaceLZWSymbol(LZW *self,int oldsymbol,int symbol);
 int LZWOutputLength(LZW *self);
 int LZWOutputToBuffer(LZW *self,uint8_t *buffer);
 int LZWReverseOutputToBuffer(LZW *self,uint8_t *buffer);
@@ -53,6 +55,11 @@ static inline int LZWSymbolCount(LZW *self)
 static inline bool LZWSymbolListFull(LZW *self)
 {
 	return self->numsymbols==self->maxsymbols;
+}
+
+static inline LZWTreeNode *LZWSymbols(LZW *self)
+{
+	return self->nodes;
 }
 
 #endif

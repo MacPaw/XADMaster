@@ -3,88 +3,88 @@
 
 @implementation XADDiskDoublerMethod2Handle
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length numberOfContexts:(int)num
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length numberOfTrees:(int)num
 {
 	if(self=[super initWithHandle:handle length:length])
 	{
-		numcontexts=num;
+		numtrees=num;
 	}
 	return self;
 }
 
 -(void)resetByteStream
 {
-	for(int i=0;i<numcontexts;i++)
+	for(int i=0;i<numtrees;i++)
 	{
 		for(int j=0;j<256;j++)
 		{
-			contexts[i].sometable[2*j]=j;
-			contexts[i].sometable[2*j+1]=j;
-			contexts[i].eventable[j]=j*2;
-			contexts[i].oddtable[j]=j*2+1;
+			trees[i].parents[2*j]=j;
+			trees[i].parents[2*j+1]=j;
+			trees[i].leftchildren[j]=j*2;
+			trees[i].rightchildren[j]=j*2+1;
 		}
 	}
 
-	currcontext=0;
+	currtree=0;
 }
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
-	int val=1;
+	int node=1;
 	for(;;)
 	{
 		int bit=CSInputNextBit(input);
 
-		if(bit==1) val=contexts[currcontext].oddtable[val];
-		else val=contexts[currcontext].eventable[val];
+		if(bit==1) node=trees[currtree].rightchildren[node];
+		else node=trees[currtree].leftchildren[node];
 
-		if(val>=0x100)
+		if(node>=0x100)
 		{
-			val-=0x100;
+			int byte=node-0x100;
 
-			[self updateContextsForByte:val];
+			[self updateStateForByte:byte];
 
-			return val;
+			return byte;
 		}
 	}
 }
 
--(void)updateContextsForByte:(int)byte
+-(void)updateStateForByte:(int)byte
 {
-	uint8_t *sometable=contexts[currcontext].sometable;
-	uint16_t *eventable=contexts[currcontext].eventable;
-	uint16_t *oddtable=contexts[currcontext].oddtable;
+	uint8_t *parents=trees[currtree].parents;
+	uint16_t *leftchildren=trees[currtree].leftchildren;
+	uint16_t *rightchildren=trees[currtree].rightchildren;
 
-	int val=byte+0x100;
+	int node=byte+0x100;
 	for(;;)
 	{
-		int a=sometable[val];
-		if(a==1) break;
+		int parent=parents[node];
+		if(parent==1) break;
 
-		int newval=sometable[a];
+		int grandparent=parents[parent];
 
-		int b=eventable[newval];
-		if(b!=a)
+		int uncle=leftchildren[grandparent];
+		if(uncle==parent)
 		{
-			eventable[newval]=val;
+			uncle=rightchildren[grandparent];
+			rightchildren[grandparent]=node;
 		}
 		else
 		{
-			b=oddtable[newval];
-			oddtable[newval]=val;
+			leftchildren[grandparent]=node;
 		}
 
-		if(eventable[a]!=val) oddtable[a]=b;
-		else eventable[a]=b;
+		if(leftchildren[parent]!=node) rightchildren[parent]=uncle;
+		else leftchildren[parent]=uncle;
 
-		sometable[val]=newval;
-		sometable[b]=a;
+		parents[node]=grandparent;
+		parents[uncle]=parent;
 
-		val=newval;
-		if(val==1) break;
+		node=grandparent;
+		if(node==1) break;
 	}
 
-	currcontext=byte%numcontexts;
+	currtree=byte%numtrees;
 }
 
 @end

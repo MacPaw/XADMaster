@@ -410,20 +410,20 @@
 			int xor=0;
 			if(info1>=0x2a&&(info2&0x80)==0) xor=0x5a;
 
-			int numcontexts;
+			int numtrees;
 
 			if((method&0x7f)==5)
 			{
-				numcontexts=[handle readUInt8];
-				if(numcontexts==0) numcontexts=256;
+				numtrees=[handle readUInt8];
+				if(numtrees==0) numtrees=256;
 			}
 			else
 			{
-				numcontexts=256;
+				numtrees=256;
 			}
 
 			handle=[[[XADDiskDoublerMethod2Handle alloc]
-			initWithHandle:handle length:size numberOfContexts:numcontexts] autorelease];
+			initWithHandle:handle length:size numberOfTrees:numtrees] autorelease];
 
 			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
 			password:[NSData dataWithBytes:(uint8_t[]){xor} length:1]] autorelease];

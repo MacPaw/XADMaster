@@ -2,21 +2,21 @@
 
 @interface XADDiskDoublerMethod2Handle:CSByteStreamHandle
 {
-	int numcontexts,currcontext;
+	int numtrees,currtree;
 
 	struct
 	{
-		uint8_t sometable[512];
-		uint16_t eventable[256];
-		uint16_t oddtable[256];
-	} contexts[256];
+		uint8_t parents[512];
+		uint16_t leftchildren[256];
+		uint16_t rightchildren[256];
+	} trees[256];
 }
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length numberOfContexts:(int)num;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length numberOfTrees:(int)num;
 
 -(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
--(void)updateContextsForByte:(int)byte;
+-(void)updateStateForByte:(int)byte;
 
 @end

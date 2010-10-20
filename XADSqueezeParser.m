@@ -1,5 +1,5 @@
 #import "XADSqueezeParser.h"
-#import "XADARCHandles.h"
+#import "XADSqueezeHandle.h"
 #import "XADRLE90Handle.h"
 #import "XADChecksumHandle.h"
 #import "NSDateXAD.h"
@@ -89,7 +89,7 @@
 	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 	int sum=[[dict objectForKey:@"SqueezeChecksum"] intValue];
 
-	handle=[[[XADARCSqueezeHandle alloc] initWithHandle:handle] autorelease];
+	handle=[[[XADSqueezeHandle alloc] initWithHandle:handle] autorelease];
 	handle=[[[XADRLE90Handle alloc] initWithHandle:handle] autorelease];
 
 	if(checksum) handle=[[[XADChecksumHandle alloc] initWithHandle:handle

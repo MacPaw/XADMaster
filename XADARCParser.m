@@ -1,6 +1,9 @@
 #import "XADARCParser.h"
-#import "XADARCHandles.h"
+#import "XADARCCrunchHandle.h"
+#import "XADARCCrushHandle.h"
+#import "XADARCDistillHandle.h"
 #import "XADRLE90Handle.h"
+#import "XADSqueezeHandle.h"
 #import "XADCompressHandle.h"
 #import "XADCRCHandle.h"
 #import "XADXORHandle.h"
@@ -215,7 +218,7 @@ name:(NSString *)name
 		break;
 
 		case 0x04: // Squeezed+packed
-			handle=[[[XADARCSqueezeHandle alloc] initWithHandle:handle] autorelease];
+			handle=[[[XADSqueezeHandle alloc] initWithHandle:handle] autorelease];
 
 			handle=[[[XADRLE90Handle alloc] initWithHandle:handle
 			length:length] autorelease];
@@ -259,15 +262,17 @@ name:(NSString *)name
 		break;
 
 		case 0x0a: // Crushed
-			handle=[[[XADARCCrushHandle alloc] initWithHandle:handle length:length] autorelease];
+			handle=[[[XADARCCrushHandle alloc] initWithHandle:handle] autorelease];
 
 			handle=[[[XADRLE90Handle alloc] initWithHandle:handle
 			length:length] autorelease];
 		break;
 
 		case 0x0b: // Distilled
-			// TODO: figure out and implement distill!
-			return nil;
+			handle=[[[XADARCDistillHandle alloc] initWithHandle:handle] autorelease];
+
+			handle=[[[XADRLE90Handle alloc] initWithHandle:handle
+			length:length] autorelease];
 		break;
 
 		case 0x7f: // Compressed (untested)

@@ -269,7 +269,8 @@ name:(NSString *)name
 		break;
 
 		case 0x0b: // Distilled
-			handle=[[[XADARCDistillHandle alloc] initWithHandle:handle] autorelease];
+			handle=[[[XADARCDistillHandle alloc] initWithHandle:handle
+			length:length] autorelease];
 		break;
 
 		case 0x7f: // Compressed (untested)

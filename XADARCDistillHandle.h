@@ -5,7 +5,7 @@
 {
 	XADPrefixCode *offsetcode;
 	int numnodes;
-	int nodes[0x275];
+	int nodes[0x274];
 }
 
 -(id)initWithHandle:(CSHandle *)handle;

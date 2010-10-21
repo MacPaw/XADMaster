@@ -3,8 +3,22 @@
 
 static const int offsetlengths[0x40]=
 {
-	3,4,4,4, 5,5,5,5, 5,5,5,5, 6,6,6,6, 6,6,6,6, 6,6,6,6, 7,7,7,7, 7,7,7,7,
-	7,7,7,7, 7,7,7,7, 7,7,7,7, 7,7,7,7, 8,8,8,8, 8,8,8,8, 8,8,8,8, 8,8,8,8,
+	3,4,4,4, 5,5,5,5, 5,5,5,5, 6,6,6,6,
+	6,6,6,6, 6,6,6,6, 7,7,7,7, 7,7,7,7,
+	7,7,7,7, 7,7,7,7, 7,7,7,7, 7,7,7,7,
+	8,8,8,8, 8,8,8,8, 8,8,8,8, 8,8,8,8,
+};
+
+static const int offsetcodes[0x40]=
+{
+	0x00,0x02,0x04,0x0c,0x01,0x06,0x0a,0x0e,
+	0x11,0x16,0x1a,0x1e,0x05,0x09,0x0d,0x15,
+	0x19,0x1d,0x25,0x29,0x2d,0x35,0x39,0x3d,
+	0x03,0x07,0x0b,0x13,0x17,0x1b,0x23,0x27,
+	0x2b,0x33,0x37,0x3b,0x43,0x47,0x4b,0x53,
+	0x57,0x5b,0x63,0x67,0x6b,0x73,0x77,0x7b,
+	0x0f,0x1f,0x2f,0x3f,0x4f,0x5f,0x6f,0x7f,
+	0x8f,0x9f,0xaf,0xbf,0xcf,0xdf,0xef,0xff,
 };
 
 @implementation XADARCDistillHandle
@@ -16,10 +30,11 @@ static const int offsetlengths[0x40]=
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	if(self=[super initWithHandle:handle length:length windowSize:2048])
+	if(self=[super initWithHandle:handle length:length windowSize:8192])
 	{
-		offsetcode=[[XADPrefixCode alloc] initWithLengths:offsetlengths numberOfSymbols:0x40
-		maximumLength:8 shortestCodeIsZeros:YES];
+		offsetcode=[XADPrefixCode new];
+		for(int i=0;i<0x40;i++)
+		[offsetcode addValue:i forCodeWithLowBitFirst:offsetcodes[i] length:offsetlengths[i]];
 	}
 	return self;
 }
@@ -35,12 +50,10 @@ static const int offsetlengths[0x40]=
 	numnodes=CSInputNextUInt16LE(input);
 	int codelength=CSInputNextByte(input);
 
-	if(numnodes>0x275) [XADException raiseDecrunchException];
+	if(numnodes>0x274) [XADException raiseDecrunchException];
 
 	for(int i=0;i<numnodes;i++)
 	nodes[i]=CSInputNextBitStringLE(input,codelength);
-
-//	CSInputSkipToByteBoundary(input);
 }
 
 -(void)expandFromPosition:(off_t)pos
@@ -55,8 +68,6 @@ static const int offsetlengths[0x40]=
 			if(symbol>=numnodes) break;
 		}
 		symbol-=numnodes;
-
-//NSLog(@"%x",symbol);
 
 		if(symbol<256)
 		{
@@ -85,7 +96,6 @@ static const int offsetlengths[0x40]=
 
 			int extrabits=CSInputNextBitStringLE(input,extralength);
 			int offset=(offsetsymbol<<extralength)+extrabits+1;
-//			NSLog(@"%x@%d: len %d code %x offset %d",offsetsymbol,(int)pos,extralength,extrabits,offset);
 
 			XADEmitLZSSMatch(self,offset,length,&pos);
 		}

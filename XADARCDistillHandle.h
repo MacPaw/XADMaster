@@ -3,7 +3,9 @@
 
 @interface XADARCDistillHandle:XADFastLZSSHandle
 {
-	XADPrefixCode *code;
+	//XADPrefixCode *code;
+	int numnodes;
+	int nodes[0x275];
 }
 
 -(id)initWithHandle:(CSHandle *)handle;

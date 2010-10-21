@@ -180,14 +180,17 @@ maximumLength:(int)maxcodelength shortestCodeIsZeros:(BOOL)zeros
 			int code=0,symbolsleft=numsymbols;
 
 			for(int length=1;length<=maxcodelength;length++)
-			for(int i=0;i<numsymbols;i++)
 			{
-				if(lengths[i]!=length) continue;
-				// Instead of reversing to get a low-bit-first code, we shift and use high-bit-first.
-				if(zeros) [self addValue:i forCodeWithHighBitFirst:code>>32-length length:length];
-				else [self addValue:i forCodeWithHighBitFirst:~code>>32-length length:length];
-				code+=1<<32-length;
-				if(--symbolsleft==0) return self; // early exit if all codes have been handled
+				for(int i=0;i<numsymbols;i++)
+				{
+					if(lengths[i]!=length) continue;
+					// Instead of reversing to get a low-bit-first code, we shift and use high-bit-first.
+					if(zeros) [self addValue:i forCodeWithHighBitFirst:code length:length];
+					else [self addValue:i forCodeWithHighBitFirst:~code length:length];
+					code++;
+					if(--symbolsleft==0) return self; // early exit if all codes have been handled
+				}
+				code<<=1;
 			}
 		}
 		@catch (id e)

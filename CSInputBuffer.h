@@ -133,12 +133,14 @@ static inline void _CSInputCheckAndFillBitsLE(CSInputBuffer *self,int numbits)
 
 static inline unsigned int CSInputPeekBitString(CSInputBuffer *self,int numbits)
 {
+	if(numbits==0) return 0;
 	_CSInputCheckAndFillBits(self,numbits);
 	return self->bits>>(32-numbits);
 }
 
 static inline unsigned int CSInputPeekBitStringLE(CSInputBuffer *self,int numbits)
 {
+	if(numbits==0) return 0;
 	_CSInputCheckAndFillBitsLE(self,numbits);
 	return self->bits&((1<<numbits)-1);
 }

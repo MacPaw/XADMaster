@@ -1,8 +1,9 @@
 #import "CSByteStreamHandle.h"
+#import "XADPrefixCode.h"
 
 @interface XADSqueezeHandle:CSByteStreamHandle
 {
-	int nodes[257*2];
+	XADPrefixCode *code;
 }
 
 -(void)resetByteStream;

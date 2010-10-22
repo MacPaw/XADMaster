@@ -32,6 +32,7 @@ static const int offsetcodes[0x40]=
 {
 	if(self=[super initWithHandle:handle length:length windowSize:8192])
 	{
+		maincode=nil;
 		offsetcode=[XADPrefixCode new];
 		for(int i=0;i<0x40;i++)
 		[offsetcode addValue:i forCodeWithLowBitFirst:offsetcodes[i] length:offsetlengths[i]];
@@ -41,33 +42,51 @@ static const int offsetcodes[0x40]=
 
 -(void)dealloc
 {
+	[maincode release];
 	[offsetcode release];
 	[super dealloc];
 }
 
+static void BuildCodeFromTree(XADPrefixCode *code,int *tree,int node,int numnodes)
+{
+	if(node>=numnodes)
+	{
+		[code makeLeafWithValue:node-numnodes];
+	}
+	else
+	{
+		[code startZeroBranch];
+		BuildCodeFromTree(code,tree,tree[node],numnodes);
+		[code startOneBranch];
+		BuildCodeFromTree(code,tree,tree[node+1],numnodes);
+		[code finishBranches];
+	}
+}
+
 -(void)resetLZSSHandle
 {
-	numnodes=CSInputNextUInt16LE(input);
+	int numnodes=CSInputNextUInt16LE(input);
 	int codelength=CSInputNextByte(input);
 
 	if(numnodes>0x274) [XADException raiseDecrunchException];
 
+	int nodes[numnodes];
+
 	for(int i=0;i<numnodes;i++)
 	nodes[i]=CSInputNextBitStringLE(input,codelength);
+
+	[maincode release];
+	maincode=[XADPrefixCode new];
+
+	[maincode startBuildingTree];
+	BuildCodeFromTree(maincode,nodes,numnodes-2,numnodes);
 }
 
 -(void)expandFromPosition:(off_t)pos
 {
 	while(XADLZSSShouldKeepExpanding(self))
 	{
-		int symbol=numnodes-2;
-		for(;;)
-		{
-			int bit=CSInputNextBitLE(input);
-			symbol=nodes[symbol+bit];
-			if(symbol>=numnodes) break;
-		}
-		symbol-=numnodes;
+		int symbol=CSInputNextSymbolUsingCodeLE(input,maincode);
 
 		if(symbol<256)
 		{

@@ -3,9 +3,7 @@
 
 @interface XADARCDistillHandle:XADFastLZSSHandle
 {
-	XADPrefixCode *offsetcode;
-	int numnodes;
-	int nodes[0x274];
+	XADPrefixCode *maincode,*offsetcode;
 }
 
 -(id)initWithHandle:(CSHandle *)handle;

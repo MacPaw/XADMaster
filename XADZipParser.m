@@ -647,7 +647,7 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 		}
 		else
 		{
-			//NSLog(@"unknown extension: %x %d %@",extid,size,[fh readDataOfLength:size]);
+			NSLog(@"unknown extension: %x %d %@",extid,size,[fh readDataOfLength:size]);
 		}
 
 		[fh seekToFileOffset:next];

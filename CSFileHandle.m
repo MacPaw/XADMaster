@@ -98,8 +98,14 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(off_t)fileSize
 {
+	#if defined(__MINGW32__)
+	struct _stati64 s;
+	if(_fstati64(fileno(fh),&s)) [self _raiseError];
+	#else
 	struct stat s;
-	if(fstat(fileno(fh),&s)) [self _raiseError];
+	if(stat(fileno(fh),&s)) [self _raiseError];
+	#endif
+
 	return s.st_size;
 }
 

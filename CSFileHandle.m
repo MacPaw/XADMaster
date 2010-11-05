@@ -103,7 +103,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 	if(_fstati64(fileno(fh),&s)) [self _raiseError];
 	#else
 	struct stat s;
-	if(stat(fileno(fh),&s)) [self _raiseError];
+	if(fstat(fileno(fh),&s)) [self _raiseError];
 	#endif
 
 	return s.st_size;

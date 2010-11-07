@@ -70,7 +70,6 @@
 	{
 		CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:NULL];
 		[self setInputBuffer:buf];
-		if(ppmblock) ppmd.core.coder.input=buf; // TODO: Ew, what an ugly kludge.
 
 		if(startnewtable) [self allocAndParseCodes];
 
@@ -199,6 +198,7 @@
 
 					case 2:
 						startnewpart=YES;
+						startnewtable=YES;
 						return LZSSPosition(&lzss);
 					break;
 

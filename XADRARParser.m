@@ -14,6 +14,7 @@
 #import "NSDateXAD.h"
 #import "Scanning.h"
 
+//#define SUPPORT_OFFICIAL_UNRAR
 #ifdef SUPPORT_OFFICIAL_UNRAR
 #import "../BadLicense/XADRAROfficialHandle.h"
 #endif

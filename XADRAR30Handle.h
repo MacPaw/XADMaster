@@ -33,6 +33,7 @@
 	off_t filterstart;
 	int lastfilternum;
 	int oldfilterlength[1024],usagecount[1024];
+	off_t currfilestartpos;
 
 	int lengthtable[299+60+17+28];
 }

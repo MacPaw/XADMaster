@@ -59,6 +59,7 @@
 	[stack removeAllObjects];
 	filterstart=CSHandleMaxLength;
 	lastfilternum=0;
+	currfilestartpos=0;
 
 	startnewpart=startnewtable=YES;
 }
@@ -92,7 +93,7 @@
 		uint8_t *memory=[vm memory];
 		CopyBytesFromLZSSWindow(&lzss,memory,start,length);
 
-		[firstfilter executeOnVirtualMachine:vm atPosition:pos];
+		[firstfilter executeOnVirtualMachine:vm atPosition:pos-currfilestartpos];
 
 		uint32_t lastfilteraddress=[firstfilter filteredBlockAddress];
 		uint32_t lastfilterlength=[firstfilter filteredBlockLength];
@@ -199,6 +200,7 @@
 					case 2:
 						startnewpart=YES;
 						startnewtable=YES;
+						currfilestartpos=LZSSPosition(&lzss);
 						return LZSSPosition(&lzss);
 					break;
 
@@ -255,6 +257,7 @@
 				{
 					startnewpart=YES;
 					startnewtable=CSInputNextBit(input);
+					currfilestartpos=LZSSPosition(&lzss);
 					return LZSSPosition(&lzss);
 				}
 				else

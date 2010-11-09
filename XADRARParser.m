@@ -626,7 +626,10 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 	}
 	else
 	{
-		handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
+		// Avoid 0-length files because they make trouble in solid streams.
+		off_t length=[[dict objectForKey:XADSolidLengthKey] longLongValue];
+		if(length==0) handle=[self zeroLengthHandleWithChecksum:NO];
+		else handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
 	}
 
 	if(checksum) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]

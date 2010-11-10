@@ -684,6 +684,7 @@ isLastEntry:(BOOL)islastentry
 		[NSDate XADDateWithMSDOSDateTime:date],XADLastModificationDateKey,
 		[NSNumber numberWithUnsignedInt:crc],@"ZipCRC32",
 		[NSNumber numberWithUnsignedInt:localdate],@"ZipLocalDate",
+		[NSNumber numberWithInt:extfileattrib],@"ZipFileAttributes",
 		[NSNumber numberWithUnsignedLongLong:compsize],XADCompressedSizeKey,
 		[NSNumber numberWithUnsignedLongLong:uncompsize],XADFileSizeKey,
 		[NSNumber numberWithLongLong:dataoffset],XADDataOffsetKey,
@@ -742,10 +743,23 @@ isLastEntry:(BOOL)islastentry
 		const uint8_t *namebytes=[namedata bytes];
 		int namelength=[namedata length];
 
-		if(flags&0x800)
-		[dict setObject:[self XADPathWithData:namedata encodingName:XADUTF8StringEncodingName separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+		char *separators;
+		if(system==0)
+		{
+			// Kludge: IZArc claims to be MS-DOS, and uses DOS path separators.
+			// Allow DOS paths in this case, since files shouldn't contain
+			// backslashes anyway.
+			separators=XADEitherPathSeparator;
+		}
 		else
-		[dict setObject:[self XADPathWithData:namedata separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+		{
+			separators=XADUnixPathSeparator;
+		}
+
+		if(flags&0x800)
+		[dict setObject:[self XADPathWithData:namedata encodingName:XADUTF8StringEncodingName separators:separators] forKey:XADFileNameKey];
+		else
+		[dict setObject:[self XADPathWithData:namedata separators:separators] forKey:XADFileNameKey];
 
 		if(namebytes[namelength-1]=='/'&&uncompsize==0)
 		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
@@ -801,19 +815,30 @@ isLastEntry:(BOOL)islastentry
 
 	if(extfileattrib!=0xffffffff)
 	{
-		//if(zc.System==1) fi2->xfi_Protection = ((EndGetI32(zc.ExtFileAttrib)>>16)^15)&0xFF; // amiga
-		if(system==0) // ms-dos
+		if(system==0) // MS-DOS
 		{
 			if(extfileattrib&0x10) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 			[dict setObject:[NSNumber numberWithInt:extfileattrib] forKey:XADDOSFileAttributesKey];
 		}
-		else if(system==3) // unix
+		else if(system==3) // Unix
 		{
 			int perm=extfileattrib>>16;
 			[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
 
 			if((perm&0xf000)==0x4000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 			else if((perm&0xf000)==0xa000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
+		}
+		else if(system==11) // MVS
+		{
+			// Some amazingly broken archiver on OS X creates files that claim
+			// to be MVS, and contain no records of file permissions, even though
+			// it seems to be used to compress installers that contain scripts
+			// that have to be executable.
+			// Kludge in default permissions to make all files executable.
+			// (This is default behaviour in Archive Utility.)
+
+			mode_t mask=umask(0); umask(mask);
+			[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
 		}
 	}
 

@@ -785,19 +785,6 @@ isLastEntry:(BOOL)islastentry
 			if(memcmp(namebytes+namelength-4,".bin",4)==0)
 			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
 		}
-
-		// Kludge to make executables in bad Mac OS X app bundles
-		// without permission information executable.
-		if(namelength>22&&system!=3)
-		{
-			for(int i=1;i<namelength-21;i++)
-			if(memcmp(namebytes+i,".app/Contents/MacOS/",20)==0)
-			{
-				mode_t mask=umask(0); umask(mask);
-				[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
-				break;
-			}
-		}
 	}
 	else
 	{
@@ -828,17 +815,17 @@ isLastEntry:(BOOL)islastentry
 			if((perm&0xf000)==0x4000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 			else if((perm&0xf000)==0xa000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 		}
-		else if(system==11) // MVS
+		else
 		{
-			// Some amazingly broken archiver on OS X creates files that claim
-			// to be MVS, and contain no records of file permissions, even though
-			// it seems to be used to compress installers that contain scripts
-			// that have to be executable.
-			// Kludge in default permissions to make all files executable.
-			// (This is default behaviour in Archive Utility.)
-
+			#ifndef __MINGW32__
+			// Several amazingly broken archivers on OS X create files that do
+			// not contain proper permissions extra records, and use non-sensical
+			// OS field values. They still expect apps and scripts to be executable,
+			// though, because Archive Utility by default makes all files executable.
+			// Don't bother with this on Windows.
 			mode_t mask=umask(0); umask(mask);
 			[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
+			#endif
 		}
 	}
 

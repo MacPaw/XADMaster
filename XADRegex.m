@@ -48,6 +48,7 @@ static NSString *nullstring=nil;
 {
 	[patternstring release];
 	regfree(&preg);
+	free(matches);
 	[currdata release];
 	[super dealloc];
 }

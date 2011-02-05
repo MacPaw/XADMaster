@@ -59,8 +59,7 @@ static BOOL IsARCHeader(const uint8_t *bytes,int length,BOOL acceptloader)
 		// Check sizes.
 		uint32_t compsize=CSUInt32LE(&bytes[0x0f]);
 		uint32_t uncompsize=CSUInt32LE(&bytes[0x19]);
-		if(compsize>0x1000000) return NO; // Assume files are less than 16 megabytes.
-		if(uncompsize>0x1000000) return NO;
+		if(uncompsize>0x1000000) return NO; // Assume files are less than 16 megabytes.
 		if(compsize>uncompsize) return NO; // Assume files are always compressed or stored.
 
 		// Check next file or end marker, if it fits in the buffer.

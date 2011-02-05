@@ -338,7 +338,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	if(length>2)
 	if(bytes[0]=='M'&&bytes[1]=='Z')
 	{
-		for(int i=2;i<=length-0x1d;i++)
+		for(int i=2;i<=length-0x1d && i<0x10000-0x1d;i++)
 		{
 			if(IsARCHeader(&bytes[i],length-i,NO))
 			{

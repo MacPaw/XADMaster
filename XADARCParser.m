@@ -40,23 +40,38 @@ static BOOL IsARCHeader(const uint8_t *bytes,int length,BOOL acceptloader)
 		if(!IsRegularARCName(&bytes[2])) return NO;
 	}
 
-	// Stop checking here if the file is an old-style uncompressed file.
-	if(bytes[0x01]==0x01) return YES;
+	// Simplified checks if the file is an old-style uncompressed file.
+	if(bytes[0x01]==0x01)
+	{
+		uint32_t size=CSUInt32LE(&bytes[0x0f]);
+		if(size>0x1000000) return NO; // Assume files are less than 16 megabytes.
 
-	// Check sizes.
-	uint32_t compsize=CSUInt32LE(&bytes[0x0f]);
-	uint32_t uncompsize=CSUInt32LE(&bytes[0x19]);
-	if(compsize>0x1000000) return NO; // Assume files are less than 16 megabytes.
-	if(compsize>uncompsize) return NO; // Assume files are always compressed or stored.
+		// Check next file or end marker, if it fits in the buffer.
+		uint32_t nextoffset=0x19+size;
 
-	// Check next file or end marker, if it fits in the buffer.
-	uint32_t nextoffset=0x1d+compsize;
-	if(bytes[0x01]&0x80) nextoffset+=12;
+		if(length>=nextoffset+1)
+		if(bytes[nextoffset]!=0x1a) return NO;
 
-	if(length>=nextoffset+1)
-	if(bytes[nextoffset]!=0x1a) return NO;
+		return YES;
+	}
+	else
+	{
+		// Check sizes.
+		uint32_t compsize=CSUInt32LE(&bytes[0x0f]);
+		uint32_t uncompsize=CSUInt32LE(&bytes[0x19]);
+		if(compsize>0x1000000) return NO; // Assume files are less than 16 megabytes.
+		if(uncompsize>0x1000000) return NO;
+		if(compsize>uncompsize) return NO; // Assume files are always compressed or stored.
 
-	return YES;
+		// Check next file or end marker, if it fits in the buffer.
+		uint32_t nextoffset=0x1d+compsize;
+		if(bytes[0x01]&0x80) nextoffset+=12;
+
+		if(length>=nextoffset+1)
+		if(bytes[nextoffset]!=0x1a) return NO;
+
+		return YES;
+	}
 }
 
 @implementation XADARCParser
@@ -338,7 +353,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	if(length>2)
 	if(bytes[0]=='M'&&bytes[1]=='Z')
 	{
-		for(int i=2;i<=length-0x1d && i<0x10000-0x1d;i++)
+		for(int i=2;i<=length-0x1d /*&& i<0x10000-0x1d*/;i++)
 		{
 			if(IsARCHeader(&bytes[i],length-i,NO))
 			{

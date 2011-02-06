@@ -256,7 +256,7 @@ static void DumpElement(StuffItXElement *element)
 
 	CSHandle *fh=[self handle];
 
-	[fh skipBytes:10];
+	[fh skipBytes:8];
 
 	NSMutableArray *entries=[NSMutableArray array];
 	NSMutableDictionary *entrydict=[NSMutableDictionary dictionary];

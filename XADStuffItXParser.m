@@ -89,7 +89,7 @@ static void ScanElementData(CSHandle *fh,StuffItXElement *element)
 }
 
 
-#import "XAD7ZipBranchHandles.h"
+
 static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wantchecksum)
 {
 	[fh seekToFileOffset:element->dataoffset];

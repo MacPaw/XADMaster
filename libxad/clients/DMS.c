@@ -1087,7 +1087,7 @@ static struct DMSData *GetDMSData(struct xadMasterBase *xadMasterBase, xadSTRPTR
         d->RTV_Pass = d->PassCRC = 0;
       else
 #endif
-      d->RTV_Pass = d->PassCRC = xadCalcCRC16(XADM XADCRC16_ID1, 0, strlen(pwd), (xadUINT8 *)pwd);
+      d->RTV_Pass = d->PassCRC = xadCalcCRC16(XADM XADCRC16_ID1, 0, strlen((const char *)pwd), (xadUINT8 *)pwd);
     }
   }
   return d;
@@ -1268,7 +1268,7 @@ struct xadArchiveInfo *ai, xadINT32 *more, xadINT32 crypted, xadINT32 *ret)
         switch(tracksize)
         {
         case 18: case 9:
-          di->xdi_EntryInfo = "MSDOS disk"; /* no break! */
+          di->xdi_EntryInfo = (xadSTRPTR)"MSDOS disk"; /* no break! */
         case 22: case 11:
           di->xdi_TrackSectors = tracksize;
           break;

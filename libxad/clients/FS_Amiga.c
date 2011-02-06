@@ -211,7 +211,7 @@ static xadINT32 parsedir(struct DiskParseData *parse)
   if(parse->CurDir)
   {
     curdirname = parse->CurDir->xfi_FileName;
-    curnamesize = strlen(curdirname);
+    curnamesize = strlen((const char *)curdirname);
   }
 
   ii = parse->ai->xai_ImageInfo;
@@ -261,7 +261,7 @@ static xadINT32 parsedir(struct DiskParseData *parse)
               err = XADERR_NOMEMORY;
             break;
           case ST_SOFTLINK:
-            j = strlen((xadSTRPTR)fh->afs_SoftLinkName)+1;
+            j = strlen((const char *)fh->afs_SoftLinkName)+1;
             if((fi = (struct xadFileInfo *) xadAllocObject(XADM XADOBJ_FILEINFO, XAD_OBJNAMESIZE,
             fh->afs_Name[0] + curnamesize+1+1+j,fh->afs_Comment[0] ? XAD_OBJCOMMENTSIZE :
             TAG_DONE, fh->afs_Comment[0]+1, TAG_DONE)))
@@ -459,8 +459,8 @@ XADGETINFO(FSAmiga)
                   xadUINT32 j, k;
                   xadSTRPTR str;
 
-                  j = strlen(ofi->xfi_FileName)+1;
-                  k = par ? strlen(par->xfi_FileName)+1 : 0;
+                  j = strlen((const char *)ofi->xfi_FileName)+1;
+                  k = par ? strlen((const char *)par->xfi_FileName)+1 : 0;
                   if((fi = (struct xadFileInfo *) xadAllocObject(XADM  XADOBJ_FILEINFO,
                   XAD_OBJNAMESIZE, pd.fh1->afs_Name[0] + k+j+1, pd.fh1->afs_Comment[0] ?
                   XAD_OBJCOMMENTSIZE : TAG_DONE, pd.fh1->afs_Comment[0]+1, TAG_DONE)))

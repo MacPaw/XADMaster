@@ -149,7 +149,7 @@ static struct xadMasterBaseP *InitXADMasterBaseP( struct xadMasterBaseP *xmb )
   if (xmb == NULL)
     return NULL;
 
-  xmb->xmb_DefaultName            = "unnamed.dat";
+  xmb->xmb_DefaultName            = (xadSTRPTR)"unnamed.dat";
   xmb->xmb_FirstClient            = NULL;
   xmb->xmb_ExtClients             = NULL;
   xmb->xmb_NumExtClients          = 0;

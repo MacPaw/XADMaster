@@ -1225,7 +1225,7 @@ struct AMPKFile {
 
 #define AMPKFile_TRUESIZE 18
 
-static const xadSTRPTR ampktype[4] = {"stored", "medium", "fast", "slow"};
+static const xadSTRPTR ampktype[4] = {(xadSTRPTR)"stored", (xadSTRPTR)"medium", (xadSTRPTR)"fast", (xadSTRPTR)"slow"};
 
 XADGETINFO(AMPK)
 {
@@ -1446,7 +1446,7 @@ struct AmUnpackPriv {
   xadUINT16 Mode;
 };
 
-static const xadSTRPTR apuptype[2] = {"internal", "XPK"};
+static const xadSTRPTR apuptype[2] = {(xadSTRPTR)"internal", (xadSTRPTR)"XPK"};
 
 /* This Client does not scan all correct IFF file possibilities, but only
 IFF-APUP file structures, which really exist. */
@@ -2079,8 +2079,8 @@ control byte, and then follows the LZ table and compressed data.
 */
 
 static const xadSTRPTR arctypes[] = {
-"stored", "stored", "packed", "squeezed", "crunched", "pack+crunch",
-"fastpacked", "LZW packed", "squashed", "compressed"};
+(xadSTRPTR)"stored", (xadSTRPTR)"stored", (xadSTRPTR)"packed", (xadSTRPTR)"squeezed", (xadSTRPTR)"crunched", (xadSTRPTR)"pack+crunch",
+(xadSTRPTR)"fastpacked", (xadSTRPTR)"LZW packed", (xadSTRPTR)"squashed", (xadSTRPTR)"compressed"};
 
 XADRECOGDATA(ArcCBM)
 {
@@ -2707,11 +2707,11 @@ XADGETINFO(Crunch)
 
         if((data[i+1] & 0xF0) == 0x10)
         {
-          fi->xfi_EntryInfo = data[1] == 0xFE ? "LZW 1" : "LZHUF 1";
+          fi->xfi_EntryInfo = data[1] == 0xFE ? (xadSTRPTR)"LZW 1" : (xadSTRPTR)"LZHUF 1";
         }
         else
         {
-          fi->xfi_EntryInfo = data[1] == 0xFE ? "LZW 2" : "LZHUF 2";
+          fi->xfi_EntryInfo = data[1] == 0xFE ? (xadSTRPTR)"LZW 2" : (xadSTRPTR)"LZHUF 2";
         }
 
         /* fill in today's date */

@@ -24,7 +24,7 @@
 
 #include "include/functions.h"
 
-static const xadSTRPTR errtxt[] = {
+static const char *errtxt[] = {
 "no error",
 "unknown error",
 "error reading input",
@@ -61,7 +61,7 @@ FUNCxadGetErrorText /* xadERROR errnum */
   if(errnum < XADERR_OK || errnum > XADERR_ENCODING)
     errnum = XADERR_UNKNOWN;
 
-  return errtxt[errnum];
+  return (xadSTRPTR)errtxt[errnum];
 }
 ENDFUNC
 

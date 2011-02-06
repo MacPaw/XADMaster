@@ -14,20 +14,16 @@ static struct xadMasterBaseP *xmb;
 
 struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
-+(void)initialize
-{
-	xmb=xadOpenLibrary(12);
-}
-
 +(int)requiredHeaderSize
 {
-	if(!xmb) return 0;
+	if(!xmb) xmb=xadOpenLibrary(12);
+
 	return ((struct xadMasterBaseP *)xmb)->xmb_RecogSize;
 }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
-	if(!xmb) return NO;
+	if(!xmb) xmb=xadOpenLibrary(12);
 
 	// Kludge to recognize ADF disk images, since the filesystem parsers don't provide recognition functions
 	NSString *ext=[[name pathExtension] lowercaseString];
@@ -179,7 +175,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 -(NSMutableDictionary *)dictionaryForFileInfo:(struct xadFileInfo *)info
 {
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADPathWithCString:info->xfi_FileName separators:XADEitherPathSeparator],XADFileNameKey,
+		[self XADPathWithCString:(const char *)info->xfi_FileName separators:XADEitherPathSeparator],XADFileNameKey,
 		[NSNumber numberWithUnsignedLongLong:info->xfi_CrunchSize],XADCompressedSizeKey,
 		[NSValue valueWithPointer:info],@"LibXADFileInfo",
 	nil];
@@ -205,7 +201,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 
 	if(info->xfi_Flags&XADFIF_LINK)
-	[dict setObject:[self XADStringWithCString:info->xfi_LinkName] forKey:XADLinkDestinationKey];
+	[dict setObject:[self XADStringWithCString:(const char *)info->xfi_LinkName] forKey:XADLinkDestinationKey];
 
 	if(info->xfi_Flags&XADFIF_CRYPTED)
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
@@ -220,13 +216,13 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	[dict setObject:[NSNumber numberWithInt:info->xfi_OwnerGID] forKey:XADPosixGroupKey];
 
 	if(info->xfi_UserName)
-	[dict setObject:[self XADStringWithCString:info->xfi_UserName] forKey:XADPosixUserNameKey];
+	[dict setObject:[self XADStringWithCString:(const char *)info->xfi_UserName] forKey:XADPosixUserNameKey];
 
 	if(info->xfi_GroupName)
-	[dict setObject:[self XADStringWithCString:info->xfi_GroupName] forKey:XADPosixGroupNameKey];
+	[dict setObject:[self XADStringWithCString:(const char *)info->xfi_GroupName] forKey:XADPosixGroupNameKey];
 
 	if(info->xfi_Comment)
-	[dict setObject:[self XADStringWithCString:info->xfi_Comment] forKey:XADCommentKey];
+	[dict setObject:[self XADStringWithCString:(const char *)info->xfi_Comment] forKey:XADCommentKey];
 
 	if(archive->xaip_ArchiveInfo.xai_Flags&XADAIF_FILECORRUPT) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 

@@ -181,7 +181,7 @@ static xadINT32 FATparsedir(struct FATDiskParseData *pd, xadINT32 pos, xadINT32 
   if(pd->CurDir)
   {
     curdirname = pd->CurDir->xfi_FileName;
-    curnamesize = strlen(curdirname);
+    curnamesize = strlen((const char *)curdirname);
   }
 
   while(!stop && !err)
@@ -257,7 +257,7 @@ static xadINT32 FATparsedir(struct FATDiskParseData *pd, xadINT32 pos, xadINT32 
                 namesize = str-name;
               }
               else
-                namesize = strlen(name);
+                namesize = strlen((const char *)name);
 
               if((fi = (struct xadFileInfo *) xadAllocObject(XADM XADOBJ_FILEINFO, XAD_OBJNAMESIZE,
               namesize + curnamesize+1+1, TAG_DONE)))
@@ -335,19 +335,19 @@ XADGETINFO(FSFAT)
     {
       if((xadUINT8)mem[0] == 0xEB && (xadUINT8)mem[2] == 0x90 && (xadUINT8)mem[510] == 0x55 && (xadUINT8)mem[511] == 0xAA)
       {
-        if(mem[38] == 0x29 && !strncmp(mem+54, "FAT12   ", 8))
+        if(mem[38] == 0x29 && !strncmp((const char *)mem+54, "FAT12   ", 8))
         {
           type = FATTYPE_FAT12;
         }
-        else if(mem[38] == 0x29 && !strncmp(mem+54, "FAT16   ", 8))
+        else if(mem[38] == 0x29 && !strncmp((const char *)mem+54, "FAT16   ", 8))
         {
           type = FATTYPE_FAT16;
         }
-        else if(mem[66] == 0x29 && !strncmp(mem+82, "FAT32   ", 8))
+        else if(mem[66] == 0x29 && !strncmp((const char *)mem+82, "FAT32   ", 8))
         {
           type = FATTYPE_FAT32;
         }
-        else if(mem[38] != 0x29 && strncmp(mem+3, "NTFS    ", 8)) /* do not detect NTFS as FAT12 */
+        else if(mem[38] != 0x29 && strncmp((const char *)mem+3, "NTFS    ", 8)) /* do not detect NTFS as FAT12 */
         {
           type = FATTYPE_FAT12;
         }

@@ -277,6 +277,10 @@ static void DumpElement(StuffItXElement *element)
 
 			case 1: // data
 			{
+				int64_t objid=element.attribs[0];
+				int64_t uncompsize=element.attribs[4];
+				int64_t compressionalgorithm=element.alglist[0];
+
 				ScanElementData(fh,&element);
 				off_t pos=[fh offsetInFile];
 
@@ -299,47 +303,63 @@ static void DumpElement(StuffItXElement *element)
 				}
 
 				off_t compsize=pos-element.dataoffset;
-				off_t uncompsize=element.attribs[4];
 
-				NSMutableArray *forks=[streamforks objectForKey:[NSNumber numberWithLongLong:element.attribs[0]]];
+				NSString *compname=nil;
+				switch(compressionalgorithm)
+				{
+					case 0: compname=@"Brimstone/PPMd"; break;
+					case 1: compname=@"Cyanide"; break;
+					case 2: compname=@"Darkhorse"; break;
+					case 3: compname=@"Deflate"; break;
+					//case 4: compname=@"Darkhorse?"; break;
+					case 5: compname=@"None"; break;
+					case 6: compname=@"Iron"; break;
+					//case 7: compname=@""; break;
+					default: compname=[NSString stringWithFormat:@"Method %d",(int)compressionalgorithm]; break;
+				}
+				XADString *compnamestr=[self XADStringWithString:compname];
+
 				NSValue *elementval=[NSValue valueWithBytes:&element objCType:@encode(StuffItXElement)];
 
+				NSMutableArray *forks=[streamforks objectForKey:[NSNumber numberWithLongLong:objid]];
 				NSEnumerator *enumerator=[forks objectEnumerator];
 				NSMutableDictionary *fork;
+				off_t offs=0;
 				while(fork=[enumerator nextObject])
 				{
 					if(![self shouldKeepParsing]) return;
 
-					NSMutableDictionary *entry=[entrydict objectForKey:[fork objectForKey:@"Entry"]];
-					NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
+					if((id)fork==[NSNull null]) [XADException raiseIllegalDataException];
 
-					[dict setObject:elementval forKey:XADSolidObjectKey];
-					[dict setObject:[fork objectForKey:@"Offset"] forKey:XADSolidOffsetKey];
+					NSArray *entries=[fork objectForKey:@"Entries"];
+					NSNumber *lengthnum=[fork objectForKey:@"Length"];
+					NSNumber *offsnum=[NSNumber numberWithLongLong:offs];
 
-					NSNumber *length=[fork objectForKey:@"Length"];
-					[dict setObject:length forKey:XADFileSizeKey];
-					[dict setObject:length forKey:XADSolidLengthKey];
-					[dict setObject:[NSNumber numberWithLongLong:[length longLongValue]*compsize/uncompsize] forKey:XADCompressedSizeKey];
+					off_t currcompsize=[lengthnum longLongValue]*compsize/uncompsize;
+					NSNumber *currcompsizenum=[NSNumber numberWithLongLong:currcompsize];
 
-					if([[fork objectForKey:@"Type"] intValue]==1)
-					[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
+					BOOL isfork=[[fork objectForKey:@"Type"] intValue]==1;
 
-					NSString *compname=nil;
-					switch(element.alglist[0])
+					NSEnumerator *entryenumerator=[entries objectEnumerator];
+					NSNumber *entrynum;
+					while(entrynum=[entryenumerator nextObject])
 					{
-						case 0: compname=@"Brimstone/PPMd"; break;
-						case 1: compname=@"Cyanide"; break;
-						case 2: compname=@"Darkhorse"; break;
-						case 3: compname=@"Deflate"; break;
-						//case 4: compname=@"Darkhorse?"; break;
-						case 5: compname=@"None"; break;
-						case 6: compname=@"Iron"; break;
-						//case 7: compname=@""; break;
-						default: compname=[NSString stringWithFormat:@"Method %d",(int)element.alglist[0]]; break;
-					}
-					[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
+						NSDictionary *entry=[entrydict objectForKey:entrynum];
+						NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
 
-					[self addEntryWithDictionary:dict];
+						[dict setObject:elementval forKey:XADSolidObjectKey];
+						[dict setObject:offsnum forKey:XADSolidOffsetKey];
+						[dict setObject:lengthnum forKey:XADFileSizeKey];
+						[dict setObject:lengthnum forKey:XADSolidLengthKey];
+						[dict setObject:currcompsizenum forKey:XADCompressedSizeKey];
+						[dict setObject:compnamestr forKey:XADCompressionNameKey];
+
+						if(isfork)
+						[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
+
+						[self addEntryWithDictionary:dict];
+					}
+					offs+=[lengthnum longLongValue];
 				}
 
 				[fh seekToFileOffset:pos];
@@ -348,11 +368,16 @@ static void DumpElement(StuffItXElement *element)
 
 			case 2: // file
 			{
-				NSNumber *num=[NSNumber numberWithLongLong:element.attribs[0]];
+				int64_t objid=element.attribs[0];
+				int64_t parent=element.attribs[1];
+
+				NSNumber *num=[NSNumber numberWithLongLong:objid];
+
 				NSDictionary *file=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					num,@"StuffItXID",
-					[NSNumber numberWithLongLong:element.attribs[1]],@"StuffItXParent",
+					[NSNumber numberWithLongLong:parent],@"StuffItXParent",
 				nil];
+
 				[entries addObject:file];
 				[entrydict setObject:file forKey:num];
 			}
@@ -360,44 +385,77 @@ static void DumpElement(StuffItXElement *element)
 
 			case 3: // fork
 			{
+				int64_t entry=element.attribs[1];
+				int64_t stream=element.attribs[2];
+				int64_t index=element.attribs[3];
+				int64_t length=element.attribs[4];
+
 				uint64_t type=ReadSitxP2(fh);
 
-				NSNumber *entrynum=[NSNumber numberWithLongLong:element.attribs[1]];
-				NSNumber *streamnum=[NSNumber numberWithLongLong:element.attribs[2]];
+				NSNumber *entrynum=[NSNumber numberWithLongLong:entry];
+				NSNumber *streamnum=[NSNumber numberWithLongLong:stream];
 
 				[forkedset addObject:entrynum];
 
-				off_t offs;
 				NSMutableArray *forks=[streamforks objectForKey:streamnum];
-				if(forks)
-				{
-					NSMutableDictionary *last=[forks lastObject];
-					offs=[[last objectForKey:@"Offset"] longLongValue]+[[last objectForKey:@"Length"] longLongValue];
-				}
-				else
+				if(!forks)
 				{
 					forks=[NSMutableArray array];
-					offs=0;
 					[streamforks setObject:forks forKey:streamnum];
 				}
 
-				[forks addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-					entrynum,@"Entry",
+				NSDictionary *dict=[NSDictionary dictionaryWithObjectsAndKeys:
+					[NSMutableArray arrayWithObject:entrynum],@"Entries",
 					[NSNumber numberWithInt:type],@"Type",
-					[NSNumber numberWithLongLong:offs],@"Offset",
-					[NSNumber numberWithLongLong:element.attribs[4]],@"Length",
-				nil]];
+					[NSNumber numberWithLongLong:length],@"Length",
+				nil];
+
+				// Insert the fork at the right part of the data stream.
+				// Forks can be specified out of order.
+				int count=[forks count];
+				if(index==count)
+				{
+					[forks addObject:dict];
+				}
+				else if(index>count)
+				{
+					for(int i=count;i<index;i++) [forks addObject:[NSNull null]];
+					[forks addObject:dict];
+				}
+				else /*if(index<count)*/
+				{
+					// Multiple files can also reference the same fork.
+					// This causes restarts in the stream in the current implementation.
+					NSDictionary *curr=[forks objectAtIndex:index];
+					if((id)curr==[NSNull null])
+					{
+						[forks replaceObjectAtIndex:index withObject:dict];
+					}
+					else
+					{
+						if([[curr objectForKey:@"Length"] longLongValue]!=length)
+						[XADException raiseIllegalDataException];
+
+						NSMutableArray *entries=[curr objectForKey:@"Entries"];
+						[entries addObject:entrynum];
+					}
+				}
 			}
 			break;
 
 			case 4: // directory
 			{
-				NSNumber *num=[NSNumber numberWithLongLong:element.attribs[0]];
+				int64_t objid=element.attribs[0];
+				int64_t parent=element.attribs[1];
+
+				NSNumber *num=[NSNumber numberWithLongLong:objid];
+
 				NSDictionary *dir=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					num,@"StuffItXID",
-					[NSNumber numberWithLongLong:element.attribs[1]],@"StuffItXParent",
+					[NSNumber numberWithLongLong:parent],@"StuffItXParent",
 					[NSNumber numberWithBool:YES],XADIsDirectoryKey,
 				nil];
+
 				[entries addObject:dir];
 				[entrydict setObject:dir forKey:num];
 			}
@@ -417,13 +475,16 @@ static void DumpElement(StuffItXElement *element)
 			break;
 
 			case 6: // clue
-				[fh skipBytes:element.attribs[4]];
+			{
+				int64_t size=element.attribs[4];
+				[fh skipBytes:size];
+			}
 			break;
 
 			case 7: // root
 			{
 				uint64_t something=ReadSitxP2(fh);
-				NSLog(@"root: %qu",something);
+				//NSLog(@"root: %qu",something);
 			}
 			break;
 

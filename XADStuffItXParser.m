@@ -500,7 +500,18 @@ static void DumpElement(StuffItXElement *element)
 
 				case 4: // finder info?
 				case 5: // ?
-					[entry setObject:ReadSitxData(fh,32) forKey:XADFinderInfoKey];
+				{
+					NSData *data=ReadSitxData(fh,32);
+
+					if(memcmp([data bytes],"slnkrhap",8)==0)
+					{
+						[entry setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
+					}
+					else
+					{
+						[entry setObject:data forKey:XADFinderInfoKey];
+					}
+				}
 				break;
 
 				case 6:

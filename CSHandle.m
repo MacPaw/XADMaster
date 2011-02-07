@@ -239,7 +239,7 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 		actual=[self readAtMost:sizeof(buffer) toBuffer:buffer];
 		[data appendBytes:buffer length:actual];
 	}
-	while(actual==sizeof(buffer));
+	while(actual!=0);
 
 	return [NSData dataWithData:data];
 }

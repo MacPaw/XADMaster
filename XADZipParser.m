@@ -807,7 +807,8 @@ isLastEntry:(BOOL)islastentry
 			if(extfileattrib&0x10) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 			[dict setObject:[NSNumber numberWithInt:extfileattrib] forKey:XADDOSFileAttributesKey];
 		}
-		else if(system==3) // Unix
+
+		if(system==3) // Unix
 		{
 			int perm=extfileattrib>>16;
 			[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];

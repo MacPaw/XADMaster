@@ -280,6 +280,7 @@ static void DumpElement(StuffItXElement *element)
 				int64_t objid=element.attribs[0];
 				int64_t uncompsize=element.attribs[4];
 				int64_t compressionalgorithm=element.alglist[0];
+				int64_t preprocessalgorithm=element.alglist[2];
 
 				ScanElementData(fh,&element);
 				off_t pos=[fh offsetInFile];
@@ -304,7 +305,7 @@ static void DumpElement(StuffItXElement *element)
 
 				off_t compsize=pos-element.dataoffset;
 
-				NSString *compname=nil;
+				NSString *compname;
 				switch(compressionalgorithm)
 				{
 					case 0: compname=@"Brimstone/PPMd"; break;
@@ -317,7 +318,26 @@ static void DumpElement(StuffItXElement *element)
 					//case 7: compname=@""; break;
 					default: compname=[NSString stringWithFormat:@"Method %d",(int)compressionalgorithm]; break;
 				}
-				XADString *compnamestr=[self XADStringWithString:compname];
+
+				NSString *preprocessname;
+				switch(preprocessalgorithm)
+				{
+					case -1: preprocessname=nil; break;
+					case 0: preprocessname=@"English"; break;
+					case 1: preprocessname=@"Biff"; break;
+					case 2: preprocessname=@"X86"; break;
+					case 3: preprocessname=@"PEFF"; break;
+					case 4: preprocessname=@"M68k"; break;
+					case 5: preprocessname=@"Sparc"; break;
+					case 6: preprocessname=@"TIFF"; break;
+					case 7: preprocessname=@"WAV"; break;
+					case 8: preprocessname=@"WRT"; break;
+					default: compname=[NSString stringWithFormat:@"Preprocess %d",(int)preprocessalgorithm]; break;
+				}
+
+				XADString *compnamestr;
+				if(!preprocessalgorithm) compnamestr=[self XADStringWithString:compname];
+				else compnamestr=[self XADStringWithString:[NSString stringWithFormat:@"%@+%@",compname,preprocessname]];
 
 				NSValue *elementval=[NSValue valueWithBytes:&element objCType:@encode(StuffItXElement)];
 
@@ -483,7 +503,7 @@ static void DumpElement(StuffItXElement *element)
 
 			case 7: // root
 			{
-				uint64_t something=ReadSitxP2(fh);
+				/*uint64_t something=*/ReadSitxP2(fh);
 				//NSLog(@"root: %qu",something);
 			}
 			break;

@@ -837,7 +837,7 @@ isLastEntry:(BOOL)islastentry
 		[self addRemeberedEntryAndForget];
 	}
 
-	if(uncompsize==0&&!islastentry&&![dict objectForKey:XADIsDirectoryKey])
+	if(uncompsize==0&&!islastentry&&![dict objectForKey:XADIsDirectoryKey]&&namedata)
 	{
 		// this entry could be a directory, save it for testing against the next entry
 		[self rememberEntry:dict withName:namedata];

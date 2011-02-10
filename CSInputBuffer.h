@@ -76,13 +76,13 @@ static inline int _CSInputPeekByteWithoutEOF(CSInputBuffer *self,int offs)
 
 static inline int CSInputPeekByte(CSInputBuffer *self,int offs)
 {
+	_CSInputCheckAndFillBuffer(self);
 	if(offs>=_CSInputBytesLeftInBuffer(self)) _CSInputBufferRaiseEOF(self);
 	return _CSInputPeekByteWithoutEOF(self,offs);
 }
 
 static inline int CSInputNextByte(CSInputBuffer *self)
 {
-	_CSInputCheckAndFillBuffer(self);
 	int byte=CSInputPeekByte(self,0);
 	CSInputSkipBytes(self,1);
 	return byte;

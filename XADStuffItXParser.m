@@ -6,6 +6,7 @@
 #import "XADStuffItXIronHandle.h"
 #import "XADStuffItXBlendHandle.h"
 #import "XADStuffItXEnglishHandle.h"
+#import "XADStuffItXX86Handle.h"
 #import "XADDeflateHandle.h"
 #import "XADRC4Handle.h"
 #import "CSZlibHandle.h"
@@ -18,7 +19,7 @@ typedef struct StuffItXElement
 	int something,type;
 	int64_t attribs[9];
 	int64_t alglist[4];
-	off_t dataoffset;
+	off_t dataoffset,actualsize;
 	uint32_t datacrc;
 } StuffItXElement;
 
@@ -55,6 +56,7 @@ static void ReadElement(CSHandle *fh,StuffItXElement *element)
 	}
 
 	element->dataoffset=[fh offsetInFile];
+	element->actualsize=0;
 }
 
 
@@ -92,16 +94,20 @@ static void ScanElementData(CSHandle *fh,StuffItXElement *element)
 
 static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wantchecksum)
 {
+	int64_t compressionalgorithm=element->alglist[0];
+	int64_t checksumalgorithm=element->alglist[1];
+	int64_t preprocessalgorithm=element->alglist[2];
+
 	[fh seekToFileOffset:element->dataoffset];
 	[fh flushReadBits];
 
 	CSHandle *handle=[[[XADStuffItXBlockHandle alloc] initWithHandle:fh] autorelease];
 
-	off_t length;
-	if(element->alglist[2]==0) length=CSHandleMaxLength;
-	else length=element->attribs[4];
+	off_t uncompressedlength;
+	if(element->alglist[2]==0) uncompressedlength=CSHandleMaxLength;
+	else uncompressedlength=element->actualsize;
 
-	switch(element->alglist[0])
+	switch(compressionalgorithm)
 	{
 		case -1: break; // no compression
 
@@ -110,12 +116,13 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			int allocsize=1<<[handle readUInt8];
 			int order=[handle readUInt8];
 			handle=[[[XADStuffItXBrimstoneHandle alloc] initWithHandle:handle
-			length:length maxOrder:order subAllocSize:allocsize] autorelease];
+			length:uncompressedlength maxOrder:order subAllocSize:allocsize] autorelease];
 		}
 		break;
 
 		case 1: // Cyanide
-			handle=[[[XADStuffItXCyanideHandle alloc] initWithHandle:handle length:length] autorelease];
+			handle=[[[XADStuffItXCyanideHandle alloc] initWithHandle:handle
+			length:uncompressedlength] autorelease];
 		break;
 
 		case 2: // Darkhorse
@@ -123,7 +130,7 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			int windowsize=1<<[handle readUInt8];
 			if(windowsize<0x100000) windowsize=0x100000;
 			handle=[[[XADStuffItXDarkhorseHandle alloc] initWithHandle:handle
-			length:length windowSize:windowsize] autorelease];
+			length:uncompressedlength windowSize:windowsize] autorelease];
 		}
 		break;
 
@@ -132,12 +139,13 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 			int windowsize=[handle readUInt8];
 			if(windowsize!=15) return nil; // alternate sizes are not supported, as no files have been found that use them
 			handle=[[[XADDeflateHandle alloc] initWithHandle:handle
-			length:length variant:XADStuffItXDeflateVariant] autorelease];
+			length:uncompressedlength variant:XADStuffItXDeflateVariant] autorelease];
 		}
 		break;
 
 		case 4: // Blend
-			handle=[[[XADStuffItXBlendHandle alloc] initWithHandle:handle length:length] autorelease];
+			handle=[[[XADStuffItXBlendHandle alloc] initWithHandle:handle
+			length:uncompressedlength] autorelease];
 		break;
 
 		case 5: // No compression, obscured by RC4
@@ -149,29 +157,31 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 		break;
 
 		case 6: // Iron
-			handle=[[[XADStuffItXIronHandle alloc] initWithHandle:handle length:length] autorelease];
+			handle=[[[XADStuffItXIronHandle alloc] initWithHandle:handle
+			length:uncompressedlength] autorelease];
 		break;
 
 		default:
-			NSLog(@"File uses SITX compression method %qd\n",element->alglist[0]);
+			NSLog(@"File uses SITX compression method %qd\n",compressionalgorithm);
 			return nil;
 	}
 
-	switch(element->alglist[2])
+	switch(preprocessalgorithm)
 	{
 		case -1: break; // no filtering
 
 		case 0: // English
-			handle=[[[XADStuffItXEnglishHandle alloc] initWithHandle:handle length:element->attribs[4]] autorelease];
+			handle=[[[XADStuffItXEnglishHandle alloc] initWithHandle:handle length:element->actualsize] autorelease];
 		break;
 
-/*		case 1: // biff
-		break;
+//		case 1: // biff
+//		break;
 
 		case 2: // x86
+			handle=[[[XADStuffItXX86Handle alloc] initWithHandle:handle length:element->actualsize] autorelease];
 		break;
 
-		case 3: // peff
+/*		case 3: // peff
 		break;
 
 		case 4: // m68k
@@ -191,13 +201,13 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 */
 
 		default:
-			NSLog(@"File uses SITX preprocessing method %qd\n",element->alglist[2]);
+			NSLog(@"File uses SITX preprocessing method %qd\n",preprocessalgorithm);
 			return nil;
 	}
 
-	if(wantchecksum&&element->alglist[1]==0)
+	if(wantchecksum&&checksumalgorithm==0)
 	handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle
-	length:element->attribs[4] correctCRC:element->datacrc conditioned:YES];
+	length:element->actualsize correctCRC:element->datacrc conditioned:YES];
 
 	return handle;
 }
@@ -285,6 +295,17 @@ static void DumpElement(StuffItXElement *element)
 				ScanElementData(fh,&element);
 				off_t pos=[fh offsetInFile];
 
+				// Find actual size of stream
+				NSMutableArray *forks=[streamforks objectForKey:[NSNumber numberWithLongLong:objid]];
+				NSEnumerator *enumerator=[forks objectEnumerator];
+				NSMutableDictionary *fork;
+				while(fork=[enumerator nextObject])
+				{
+					if((id)fork==[NSNull null]) [XADException raiseIllegalDataException];
+					NSNumber *lengthnum=[fork objectForKey:@"Length"];
+					element.actualsize+=[lengthnum longLongValue];
+				}
+
 				// Send out all the entries without data streams first
 				if(forkedset)
 				{
@@ -316,7 +337,7 @@ static void DumpElement(StuffItXElement *element)
 					case 5: compname=@"None"; break;
 					case 6: compname=@"Iron"; break;
 					//case 7: compname=@""; break;
-					default: compname=[NSString stringWithFormat:@"Method %d",(int)compressionalgorithm]; break;
+					default: compname=[NSString stringWithFormat:@"Method %qd",compressionalgorithm]; break;
 				}
 
 				NSString *preprocessname;
@@ -325,25 +346,23 @@ static void DumpElement(StuffItXElement *element)
 					case -1: preprocessname=nil; break;
 					case 0: preprocessname=@"English"; break;
 					case 1: preprocessname=@"Biff"; break;
-					case 2: preprocessname=@"X86"; break;
+					case 2: preprocessname=@"x86"; break;
 					case 3: preprocessname=@"PEFF"; break;
 					case 4: preprocessname=@"M68k"; break;
 					case 5: preprocessname=@"Sparc"; break;
 					case 6: preprocessname=@"TIFF"; break;
 					case 7: preprocessname=@"WAV"; break;
 					case 8: preprocessname=@"WRT"; break;
-					default: compname=[NSString stringWithFormat:@"Preprocess %d",(int)preprocessalgorithm]; break;
+					default: compname=[NSString stringWithFormat:@"Preprocess %qd",preprocessalgorithm]; break;
 				}
 
 				XADString *compnamestr;
-				if(!preprocessalgorithm) compnamestr=[self XADStringWithString:compname];
+				if(!preprocessname) compnamestr=[self XADStringWithString:compname];
 				else compnamestr=[self XADStringWithString:[NSString stringWithFormat:@"%@+%@",compname,preprocessname]];
 
 				NSValue *elementval=[NSValue valueWithBytes:&element objCType:@encode(StuffItXElement)];
 
-				NSMutableArray *forks=[streamforks objectForKey:[NSNumber numberWithLongLong:objid]];
-				NSEnumerator *enumerator=[forks objectEnumerator];
-				NSMutableDictionary *fork;
+				enumerator=[forks objectEnumerator];
 				off_t offs=0;
 				while(fork=[enumerator nextObject])
 				{
@@ -484,6 +503,7 @@ static void DumpElement(StuffItXElement *element)
 			case 5: // catalog
 			{
 				ScanElementData(fh,&element);
+				element.actualsize=element.attribs[4];
 				off_t pos=[fh offsetInFile];
 
 				CSHandle *ch=HandleForElement(fh,&element,NO);

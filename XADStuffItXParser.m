@@ -260,6 +260,23 @@ static void DumpElement(StuffItXElement *element)
 	&&bytes[5]=='I'&&bytes[6]=='t'&&(bytes[7]=='!'||bytes[7]=='?');
 }
 
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+{
+	if(self=[super initWithHandle:handle name:name])
+	{
+		repeatedentrydata=nil;
+		repeatedentries=nil;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[repeatedentrydata release];
+	[repeatedentries release];
+	[super dealloc];
+}
+
 -(void)parse
 {
 	[self setIsMacArchive:YES];
@@ -396,6 +413,9 @@ static void DumpElement(StuffItXElement *element)
 						if(isfork)
 						[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
 
+						if([entries count]>1)
+						[dict setObject:entries forKey:@"StuffItXRepeatedEntries"];
+
 						[self addEntryWithDictionary:dict];
 					}
 					offs+=[lengthnum longLongValue];
@@ -464,7 +484,6 @@ static void DumpElement(StuffItXElement *element)
 				else /*if(index<count)*/
 				{
 					// Multiple files can also reference the same fork.
-					// This causes restarts in the stream in the current implementation.
 					NSDictionary *curr=[forks objectAtIndex:index];
 					if((id)curr==[NSNull null])
 					{
@@ -676,7 +695,36 @@ static void DumpElement(StuffItXElement *element)
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	if([dict objectForKey:@"StuffItXEmpty"]) return [self zeroLengthHandleWithChecksum:checksum];
-	return [self subHandleFromSolidStreamForEntryWithDictionary:dict];
+
+	// Because multiple files can reference the same part of a stream,
+	// we try to cache those files to avoid restarts (if they are smaller
+	// than 16 megabytes).
+	// TODO: Should the data be released at some point?
+	NSArray *repeat=[dict objectForKey:@"StuffItXRepeatedEntries"];
+	NSNumber *filesize=[dict objectForKey:XADFileSizeKey];
+	if(repeat && [filesize longLongValue]<0x1000000)
+	{
+		if(repeat!=repeatedentries)
+		{
+			[repeatedentrydata release];
+			[repeatedentries release];
+
+			repeatedentries=[repeat retain];
+
+			CSHandle *handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
+
+			repeatedentrydata=[[handle remainingFileContents] retain];
+			repeatedentryhaschecksum=[handle hasChecksum];
+			repeatedentryiscorrect=[handle isChecksumCorrect];
+		}
+
+		return [[[XADStuffItXRepeatedEntryHandle alloc] initWithData:repeatedentrydata
+		hasChecksum:repeatedentryhaschecksum isChecksumCorrect:repeatedentryiscorrect] autorelease];
+	}
+	else
+	{
+		return [self subHandleFromSolidStreamForEntryWithDictionary:dict];
+	}
 }
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
@@ -692,4 +740,22 @@ static void DumpElement(StuffItXElement *element)
 @end
 
 
+
+
+@implementation XADStuffItXRepeatedEntryHandle
+
+-(id)initWithData:(NSData *)data hasChecksum:(BOOL)hascheck isChecksumCorrect:(BOOL)iscorrect
+{
+	if(self=[super initWithData:data])
+	{
+		haschecksum=hascheck;
+		ischecksumcorrect=iscorrect;
+	}
+	return self;
+}
+
+-(BOOL)hasChecksum { return haschecksum; }
+-(BOOL)isChecksumCorrect { return ischecksumcorrect; }
+
+@end
 

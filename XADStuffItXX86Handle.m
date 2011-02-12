@@ -22,14 +22,16 @@
 
 	if(b==0xe8||b==0xe9)
 	{
-		if(pos-lasthit>5)
+		int dist=pos-lasthit;
+		lasthit=pos;
+
+		if(dist>5)
 		{
 			bitfield=0;
 		}
 		else
 		{
-			int n=pos-lasthit;
-			while(n--)
+			for(int i=0;i<dist;i++)
 			{
 				bitfield=(bitfield&0x77)<<1;
 			}
@@ -48,20 +50,35 @@
 			buffer[i]=CSInputPeekByte(input,i);
 		}
 
-		// Check if the offset is within 16 megabytes forward or back.
+		static const BOOL table[8]={YES,YES,YES,NO,YES,NO,NO,NO};
+
 		if(buffer[3]==0x00 || buffer[3]==0xff)
 		{
-if(1)
-//			if(table[(bitfield>>1)&0x07]!=0 && (bitfield>>1)<=0x0f)
+			if(table[(bitfield>>1)&0x07] && (bitfield>>1)<=0x0f)
 			{
 				int32_t absaddress=CSInt32LE(buffer);
-				int32_t reladdress=absaddress-pos-6;
+				int32_t reladdress;
 
-//				...
+				for(;;)
+				{
+					reladdress=absaddress-pos-6;
+					if(bitfield==0) break;
+
+					static const int shifts[8]={24,16,8,8,0,0,0,0};
+					int shift=shifts[bitfield>>1];
+					int something=(reladdress>>shift)&0xff;
+					if(something!=0&&something!=0xff) break;
+					absaddress=reladdress^((1<<(shift+8))-1);
+				}
+
+				reladdress&=0x1ffffff;
+				if(reladdress>=0x1000000) reladdress|=0xff000000;
 
 				CSSetInt32LE(buffer,reladdress);
 				currbufferbyte=0;
 				numbufferbytes=4;
+
+				bitfield=0;
 
 				CSInputSkipBytes(input,4);
 			}

@@ -2,7 +2,8 @@
 
 @implementation XADISO9660Parser
 
-+(int)requiredHeaderSize { return 2448*16+2048; }
+//+(int)requiredHeaderSize { return 2448*16+2048; }
++(int)requiredHeaderSize { return 0x80000; }
 
 static BOOL IsISO9660PrimaryVolumeDescriptor(const uint8_t *bytes,int length,int offset)
 {
@@ -27,7 +28,28 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
-	if(IsISO9660PrimaryVolumeDescriptor(bytes,length,16*2048))
+	// Scan for a primary volume descriptor to find the start of the image.
+	for(int i=0x8000;i<length-2048-6;i++)
+	{
+		if(memcmp(&bytes[i],"\001CD001\001\0",8)==0)
+		{
+			// Then, scan for the volume descriptor on the next block to find the block size.
+			for(int j=2048;j<2448;j++)
+			{
+				if(i+j+6>length) break;
+				if(memcmp(&bytes[i+j+1],"CD001",5)==0)
+				{
+					[props setObject:[NSNumber numberWithInt:j] forKey:@"ISO9660ImageBlockSize"];
+					[props setObject:[NSNumber numberWithInt:i-j*16] forKey:@"ISO9660ImageBlockOffset"];
+					return YES;
+				}
+			}
+		}
+	}
+
+	return NO;
+
+/*	if(IsISO9660PrimaryVolumeDescriptor(bytes,length,16*2048))
 	{
 		[props setObject:[NSNumber numberWithInt:2048] forKey:@"ISO9660ImageBlockSize"];
 		[props setObject:[NSNumber numberWithInt:0] forKey:@"ISO9660ImageBlockOffset"];
@@ -60,7 +82,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		[props setObject:[NSNumber numberWithInt:2448] forKey:@"ISO9660ImageBlockSize"];
 		[props setObject:[NSNumber numberWithInt:16] forKey:@"ISO9660ImageBlockOffset"];
 		return YES;
-	}
+	}*/
 
 	return NO;
 }

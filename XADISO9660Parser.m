@@ -252,11 +252,24 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 		if(isjoliet)
 		{
 			NSMutableString *str=[NSMutableString stringWithCapacity:namelength/2];
-			for(int i=0;i+2<=namelength;i+=2) [str appendFormat:@"%C",CSUInt16BE(&name[i])];
+			for(int i=0;i+2<=namelength;i+=2)
+			{
+				int c=CSUInt16BE(&name[i]);
+				[str appendFormat:@"%C",c];
+			}
+
+			if([str hasSuffix:@";1"])
+			[str deleteCharactersInRange:NSMakeRange(namelength/2-2,2)];
+
 			filename=[self XADStringWithString:str];
 		}
 		else
 		{
+			if(namelength>=2)
+			if(name[namelength-2]==';')
+			if(name[namelength-1]=='1')
+			namelength-=2;
+
 			filename=[self XADStringWithBytes:name length:namelength];
 		}
 

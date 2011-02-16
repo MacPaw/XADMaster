@@ -379,6 +379,12 @@
 		1B7450AE1300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7450AA1300D76F008D80FE /* XADStuffItXX86Handle.m */; };
 		1B7450AF1300D76F008D80FE /* XADStuffItXX86Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7450A91300D76F008D80FE /* XADStuffItXX86Handle.h */; };
 		1B7450B01300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7450AA1300D76F008D80FE /* XADStuffItXX86Handle.m */; };
+		1B7451A913081B89008D80FE /* XADISO9660Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7451A713081B89008D80FE /* XADISO9660Parser.h */; };
+		1B7451AA13081B89008D80FE /* XADISO9660Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7451A813081B89008D80FE /* XADISO9660Parser.m */; };
+		1B7451AB13081B89008D80FE /* XADISO9660Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7451A713081B89008D80FE /* XADISO9660Parser.h */; };
+		1B7451AC13081B89008D80FE /* XADISO9660Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7451A813081B89008D80FE /* XADISO9660Parser.m */; };
+		1B7451AD13081B89008D80FE /* XADISO9660Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7451A713081B89008D80FE /* XADISO9660Parser.h */; };
+		1B7451AE13081B89008D80FE /* XADISO9660Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7451A813081B89008D80FE /* XADISO9660Parser.m */; };
 		1B81DD460FFEB87B005C5B23 /* XADUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B880C270F09A23B0061CCBE /* XADStuffItXBlockHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B880C250F09A23B0061CCBE /* XADStuffItXBlockHandle.h */; };
 		1B880C280F09A23B0061CCBE /* XADStuffItXBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */; };
@@ -1242,6 +1248,8 @@
 		1B69134D0F4CA44F00A415E0 /* XADZipSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADZipSFXParsers.m; sourceTree = "<group>"; };
 		1B7450A91300D76F008D80FE /* XADStuffItXX86Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXX86Handle.h; sourceTree = "<group>"; };
 		1B7450AA1300D76F008D80FE /* XADStuffItXX86Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXX86Handle.m; sourceTree = "<group>"; };
+		1B7451A713081B89008D80FE /* XADISO9660Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADISO9660Parser.h; sourceTree = "<group>"; };
+		1B7451A813081B89008D80FE /* XADISO9660Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADISO9660Parser.m; sourceTree = "<group>"; };
 		1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADUnarchiver.h; sourceTree = "<group>"; };
 		1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiver.m; sourceTree = "<group>"; };
 		1B880C250F09A23B0061CCBE /* XADStuffItXBlockHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXBlockHandle.h; sourceTree = "<group>"; };
@@ -2361,6 +2369,8 @@
 				1BE785ED10AF8607007EA6F6 /* XADSARParser.m */,
 				1B32D3C410FA7A69002A2C76 /* XADSplitFileParser.h */,
 				1B32D3C510FA7A69002A2C76 /* XADSplitFileParser.m */,
+				1B7451A713081B89008D80FE /* XADISO9660Parser.h */,
+				1B7451A813081B89008D80FE /* XADISO9660Parser.m */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -2437,6 +2447,7 @@
 				1B33BDDF126F7782002568A0 /* XADARCCrunchHandle.h in Headers */,
 				1B33BDE9126F77BF002568A0 /* XADARCDistillHandle.h in Headers */,
 				1B7450AF1300D76F008D80FE /* XADStuffItXX86Handle.h in Headers */,
+				1B7451AD13081B89008D80FE /* XADISO9660Parser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2459,6 +2470,7 @@
 				1B33BDE1126F7782002568A0 /* XADARCCrunchHandle.h in Headers */,
 				1B33BDEB126F77BF002568A0 /* XADARCDistillHandle.h in Headers */,
 				1B7450AB1300D76F008D80FE /* XADStuffItXX86Handle.h in Headers */,
+				1B7451A913081B89008D80FE /* XADISO9660Parser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2626,6 +2638,7 @@
 				1B33BDDD126F7782002568A0 /* XADARCCrunchHandle.h in Headers */,
 				1B33BDE7126F77BF002568A0 /* XADARCDistillHandle.h in Headers */,
 				1B7450AD1300D76F008D80FE /* XADStuffItXX86Handle.h in Headers */,
+				1B7451AB13081B89008D80FE /* XADISO9660Parser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3096,6 +3109,7 @@
 				1B33BDE0126F7782002568A0 /* XADARCCrunchHandle.m in Sources */,
 				1B33BDEA126F77BF002568A0 /* XADARCDistillHandle.m in Sources */,
 				1B7450B01300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */,
+				1B7451AE13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3285,6 +3299,7 @@
 				1B33BDE2126F7782002568A0 /* XADARCCrunchHandle.m in Sources */,
 				1B33BDEC126F77BF002568A0 /* XADARCDistillHandle.m in Sources */,
 				1B7450AC1300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */,
+				1B7451AA13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3514,6 +3529,7 @@
 				1B33BDDE126F7782002568A0 /* XADARCCrunchHandle.m in Sources */,
 				1B33BDE8126F77BF002568A0 /* XADARCDistillHandle.m in Sources */,
 				1B7450AE1300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */,
+				1B7451AC13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

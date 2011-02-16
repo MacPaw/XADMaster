@@ -44,6 +44,7 @@
 #import "XADNSAParser.h"
 #import "XADSARParser.h"
 #import "XADSplitFileParser.h"
+#import "XADISO9660Parser.h"
 #import "XADLibXADParser.h"
 
 #include <dirent.h>
@@ -71,6 +72,7 @@ NSString *XADIsCorruptedKey=@"XADIsCorrupted";
 NSString *XADIsDirectoryKey=@"XADIsDirectory";
 NSString *XADIsResourceForkKey=@"XADIsResourceFork";
 NSString *XADIsArchiveKey=@"XADIsArchive";
+NSString *XADIsHiddenKey=@"XADIsHidden";
 NSString *XADIsLinkKey=@"XADIsLink";
 NSString *XADIsHardLinkKey=@"XADIsHardLink";
 NSString *XADLinkDestinationKey=@"XADLinkDestination";
@@ -96,6 +98,7 @@ NSString *XADSolidLengthKey=@"XADSolidLength";
 
 NSString *XADArchiveNameKey=@"XADArchiveName";
 NSString *XADVolumesKey=@"XADVolumes";
+NSString *XADDiskLabelKey=@"XADDiskLabel";
 
 
 @implementation XADArchiveParser
@@ -168,6 +171,7 @@ static int maxheader=0;
 		[XADLZMAAloneParser class],
 		[XADCpioParser class],
 		[XADSplitFileParser class],
+		[XADISO9660Parser class],
 
 		// LibXAD
 		[XADLibXADParser class],

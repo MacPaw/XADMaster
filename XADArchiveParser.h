@@ -30,6 +30,7 @@ extern NSString *XADIsCorruptedKey;
 extern NSString *XADIsDirectoryKey;
 extern NSString *XADIsResourceForkKey;
 extern NSString *XADIsArchiveKey;
+extern NSString *XADIsHiddenKey;
 extern NSString *XADIsLinkKey;
 extern NSString *XADIsHardLinkKey;
 extern NSString *XADLinkDestinationKey;
@@ -56,7 +57,7 @@ extern NSString *XADSolidLengthKey;
 // Archive properties only
 extern NSString *XADArchiveNameKey;
 extern NSString *XADVolumesKey;
-
+extern NSString *XADDiskLabelKey;
 
 @interface XADArchiveParser:NSObject
 {

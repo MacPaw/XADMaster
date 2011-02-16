@@ -379,7 +379,18 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	return nil;
+	uint32_t startblock=[[dict objectForKey:@"ISO9660LocationOfExtent"] unsignedIntValue];
+	uint32_t length=[[dict objectForKey:XADFileSizeKey] unsignedIntValue];
+
+	if(blocksize==2048)
+	{
+		return [[self handle] nonCopiedSubHandleFrom:startblock*blocksize+blockoffset
+		length:length];
+	}
+	else
+	{
+		return nil;
+	}
 }
 
 -(NSString *)formatName { return @"ISO 9660"; }

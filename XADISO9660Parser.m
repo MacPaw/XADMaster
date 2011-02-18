@@ -241,6 +241,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 		}
 
 		int recordlength=[fh readUInt8];
+		off_t endpos=startpos+recordlength;
 
 		// If the record length is 0, we need to skip to the next block.
 		if(recordlength==0)
@@ -265,10 +266,14 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 		int volumesequencenumber=[fh readUInt16LE];
 		[fh skipBytes:2];
 
+		if(flags&0x80) [XADException raiseNotSupportedException];
+		if(unitsize!=0) [XADException raiseNotSupportedException];
+		if(gapsize!=0) [XADException raiseNotSupportedException];
+
 		int namelength=[fh readUInt8];
 		uint8_t name[namelength];
 		[fh readBytes:namelength toBuffer:name];
-		if((namelength&1)==1) [fh skipBytes:1];
+		if((namelength&1)==0) [fh skipBytes:1];
 
 		XADString *filename;
 		if(isjoliet)
@@ -295,8 +300,6 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 			filename=[self XADStringWithBytes:name length:namelength];
 		}
 
-		if(flags&0x80) [XADException raiseNotSupportedException];
-
 		XADPath *currpath=[path pathByAppendingPathComponent:filename];
 
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -315,12 +318,89 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 		if(flags&0x02) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 		if(flags&0x04) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 
+		int systemlength=recordlength-33-namelength-((namelength&1)^1);
+		if(systemlength)
+		{
+			off_t nextoffset=[fh offsetInFile];
+			int nextlength=systemlength;
+
+			while(nextlength)
+			{
+				off_t curroffset=nextoffset;
+				int currlength=nextlength;
+				nextlength=0;
+				nextoffset=0;
+
+				uint8_t system[currlength];
+				[fh seekToFileOffset:curroffset];
+				[fh readBytes:currlength toBuffer:system];
+
+				int pos=0;
+				while(pos+3<=currlength)
+				{
+					int type=CSUInt16BE(&system[pos]);
+					int length=system[pos+2];
+
+					if(pos+length>currlength) break;
+
+					NSLog(@"%c%c: %@",type>>8,type&0xff,[NSData dataWithBytes:&system[pos+3] length:length-3]);
+
+					switch(type)
+					{
+						case 'AA':
+							NSLog(@"apple");
+						break;
+
+						case 'PX':
+						{
+							if(length!=44) break;
+							if(system[pos+3]!=1) break;
+
+							uint32_t mode=CSUInt32LE(&system[pos+4]);
+							uint32_t user=CSUInt32LE(&system[pos+20]);
+							uint32_t group=CSUInt32LE(&system[pos+28]);
+
+							[dict setObject:[NSNumber numberWithUnsignedInt:mode] forKey:XADPosixPermissionsKey];
+							[dict setObject:[NSNumber numberWithUnsignedInt:user] forKey:XADPosixUserKey];
+							[dict setObject:[NSNumber numberWithUnsignedInt:group] forKey:XADPosixGroupKey];
+						}
+						break;
+
+						case 'CE':
+						{
+							if(length!=28) break;
+							if(system[pos+3]!=1) break;
+
+							uint32_t block=CSUInt32LE(&system[pos+4]);
+							uint32_t offset=CSUInt32LE(&system[pos+12]);
+							nextoffset=block*2048+offset;
+
+							nextlength=CSUInt32LE(&system[pos+20]);
+						}
+						break;
+
+						case 'ST':
+						{
+							if(length!=4) break;
+							if(system[pos+3]!=1) break;
+							goto exitloop;
+						}
+						break;
+					}
+
+					pos+=(length+1)&~1;
+				}
+				exitloop:
+				0;
+			}
+		}
+
 		[self addEntryWithDictionary:dict];
 
 		if(flags&0x02)
 		[self parseDirectoryWithPath:currpath atBlock:location length:length isJoliet:isjoliet];
 
-		[fh seekToFileOffset:startpos+recordlength];
+		[fh seekToFileOffset:endpos];
 	}
 }
 

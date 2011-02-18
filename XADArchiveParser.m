@@ -601,6 +601,18 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	XADString *linkdest=[dict objectForKey:XADLinkDestinationKey];
 	if(linkdest) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 
+	// Extract further flags from PosixPermissions, if possible
+	NSNumber *perms=[dict objectForKey:XADPosixPermissionsKey];
+	if(perms)
+	switch([perms unsignedIntValue]&0xf000)
+	{
+		case 0x1000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsFIFOKey]; break;
+		case 0x2000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCharacterDeviceKey]; break;
+		case 0x4000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey]; break;
+		case 0x6000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsBlockDeviceKey]; break;
+		case 0xa000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey]; break;
+	}
+
 	// Extract type, creator and finderflags from finderinfo
 	NSData *finderinfo=[dict objectForKey:XADFinderInfoKey];
 	if(finderinfo&&[finderinfo length]>=10)

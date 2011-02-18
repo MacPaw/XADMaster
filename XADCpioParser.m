@@ -145,35 +145,19 @@
 			[NSNumber numberWithLongLong:pos],XADDataOffsetKey,
 		nil];
 
-		switch(mode&0xf000)
+		int type=mode&0xf000;
+
+		if(type==0x2000||type==0x6000)
 		{
-			case 0x1000:
-				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsFIFOKey];
-			break;
-
-			case 0x2000:
-				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCharacterDeviceKey];
-				[dict setObject:[NSNumber numberWithInt:rdevmajor] forKey:XADDeviceMajorKey];
-				[dict setObject:[NSNumber numberWithInt:rdevminor] forKey:XADDeviceMinorKey];
-			break;
-
-			case 0x4000:
-				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-			break;
-
-			case 0x6000:
-				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsBlockDeviceKey];
-				[dict setObject:[NSNumber numberWithInt:rdevmajor] forKey:XADDeviceMajorKey];
-				[dict setObject:[NSNumber numberWithInt:rdevminor] forKey:XADDeviceMinorKey];
-			break;
-
-			case 0xa000:
-				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
-			break;
+			[dict setObject:[NSNumber numberWithInt:rdevmajor] forKey:XADDeviceMajorKey];
+			[dict setObject:[NSNumber numberWithInt:rdevminor] forKey:XADDeviceMinorKey];
 		}
 
 		if(haschecksum)
-		if((mode&0xf000)==0x8000) [dict setObject:[NSNumber numberWithInt:checksum] forKey:@"CpioChecksum"];
+		if(type==0x8000)
+		{
+			[dict setObject:[NSNumber numberWithInt:checksum] forKey:@"CpioChecksum"];
+		}
 
 		[self addEntryWithDictionary:dict];
 

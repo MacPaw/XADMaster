@@ -353,7 +353,20 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 					switch(type)
 					{
 						case 'AA':
-							NSLog(@"apple");
+						case 'BA':
+						{
+							if(length!=14) break;
+							if(type=='AA' && system[pos+3]!=2) break;
+							if(type=='BA' && system[pos+3]!=6) break;
+
+							uint32_t filetype=CSUInt32BE(&system[pos+4]);
+							uint32_t filecreator=CSUInt32BE(&system[pos+8]);
+							int finderflags=CSUInt16BE(&system[pos+12]);
+
+							if(filetype) [dict setObject:[NSNumber numberWithUnsignedInt:filetype] forKey:XADFileTypeKey];
+							if(filecreator) [dict setObject:[NSNumber numberWithUnsignedInt:filecreator] forKey:XADFileCreatorKey];
+							if(finderflags) [dict setObject:[NSNumber numberWithInt:finderflags] forKey:XADFinderFlagsKey];
+						}
 						break;
 
 						case 'PX':

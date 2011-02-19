@@ -54,6 +54,7 @@ NSString *XADFileSizeKey=@"XADFileSize";
 NSString *XADCompressedSizeKey=@"XADCompressedSize";
 NSString *XADLastModificationDateKey=@"XADLastModificationDate";
 NSString *XADLastAccessDateKey=@"XADLastAccessDate";
+NSString *XADLastAttributeChangeDateKey=@"XADLastAttributeChangeDate";
 NSString *XADCreationDateKey=@"XADCreationDate";
 NSString *XADFileTypeKey=@"XADFileType";
 NSString *XADFileCreatorKey=@"XADFileCreator";

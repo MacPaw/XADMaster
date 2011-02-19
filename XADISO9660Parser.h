@@ -17,6 +17,9 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet;
 -(XADString *)readStringOfLength:(int)length isJoliet:(BOOL)isjoliet;
 -(NSDate *)readLongDateAndTime;
 -(NSDate *)readShortDateAndTime;
+-(NSDate *)parseDateAndTimeWithBytes:(const uint8_t *)buffer long:(BOOL)islong;
+-(NSDate *)parseLongDateAndTimeWithBytes:(const uint8_t *)buffer;
+-(NSDate *)parseShortDateAndTimeWithBytes:(const uint8_t *)buffer;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;

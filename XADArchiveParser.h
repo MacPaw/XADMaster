@@ -12,6 +12,7 @@ extern NSString *XADFileSizeKey;
 extern NSString *XADCompressedSizeKey;
 extern NSString *XADLastModificationDateKey;
 extern NSString *XADLastAccessDateKey;
+extern NSString *XADLastAttributeChangeDateKey;
 extern NSString *XADCreationDateKey;
 extern NSString *XADFileTypeKey;
 extern NSString *XADFileCreatorKey;

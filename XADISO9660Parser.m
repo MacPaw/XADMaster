@@ -335,8 +335,10 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 				[fh seekToFileOffset:curroffset];
 				[fh readBytes:currlength toBuffer:system];
 
+NSLog(@"---%d %@",currlength,[NSData dataWithBytes:system length:currlength]);
+
 				int pos=0;
-				while(pos+3<=currlength)
+				while(pos+4<=currlength)
 				{
 					int type=CSUInt16BE(&system[pos]);
 					int length=system[pos+2];
@@ -366,6 +368,92 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
+						case 'PN':
+						{
+							if(length!=20) break;
+							if(system[pos+3]!=1) break;
+
+							uint32_t devmajor=CSUInt32LE(&system[pos+4]);
+							uint32_t devminor=CSUInt32LE(&system[pos+12]);
+
+							[dict setObject:[NSNumber numberWithUnsignedInt:devmajor] forKey:XADDeviceMajorKey];
+							[dict setObject:[NSNumber numberWithUnsignedInt:devminor] forKey:XADDeviceMinorKey];
+						}
+						break;
+
+						case 'SL':
+						break;
+
+						case 'NM':
+						break;
+
+						case 'TF':
+						{
+							if(length<5) break;
+							if(system[pos+3]!=1) break;
+
+							int flags=system[pos+4];
+							int offs=5;
+							int datelen=(flags&0x80)?17:7;
+
+							if(flags&0x01)
+							{
+								if(offs+datelen>length) break;
+								NSDate *date=[self parseDateAndTimeWithBytes:&system[pos+offs] long:flags&0x80];
+								[dict setObject:date forKey:XADCreationDateKey];
+								offs+=datelen;
+							}
+
+							if(flags&0x02)
+							{
+								if(offs+datelen>length) break;
+								NSDate *date=[self parseDateAndTimeWithBytes:&system[pos+offs] long:flags&0x80];
+								[dict setObject:date forKey:XADLastModificationDateKey];
+								offs+=datelen;
+							}
+
+							if(flags&0x04)
+							{
+								if(offs+datelen>length) break;
+								NSDate *date=[self parseDateAndTimeWithBytes:&system[pos+offs] long:flags&0x80];
+								[dict setObject:date forKey:XADLastAccessDateKey];
+								offs+=datelen;
+							}
+
+							if(flags&0x08)
+							{
+								if(offs+datelen>length) break;
+								NSDate *date=[self parseDateAndTimeWithBytes:&system[pos+offs] long:flags&0x80];
+								[dict setObject:date forKey:XADLastAttributeChangeDateKey];
+								offs+=datelen;
+							}
+
+							if(flags&0x10)
+							{
+								if(offs+datelen>length) break;
+								NSDate *date=[self parseDateAndTimeWithBytes:&system[pos+offs] long:flags&0x80];
+								[dict setObject:date forKey:@"ISO9660BackupDate"];
+								offs+=datelen;
+							}
+
+							if(flags&0x20)
+							{
+								if(offs+datelen>length) break;
+								NSDate *date=[self parseDateAndTimeWithBytes:&system[pos+offs] long:flags&0x80];
+								[dict setObject:date forKey:@"ISO9660ExpirationDate"];
+								offs+=datelen;
+							}
+
+							if(flags&0x40)
+							{
+								if(offs+datelen>length) break;
+								NSDate *date=[self parseDateAndTimeWithBytes:&system[pos+offs] long:flags&0x80];
+								[dict setObject:date forKey:@"ISO9660EffectiveDate"];
+							}
+						}
+						break;
+
+
 						case 'CE':
 						{
 							if(length!=28) break;
@@ -388,7 +476,10 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						break;
 					}
 
-					pos+=(length+1)&~1;
+					pos+=length;
+
+					// Deal with padding, which apparently happens at random!
+					if(pos<currlength && (length&1) && system[pos]==0) pos++;
 				}
 				exitloop:
 				0;
@@ -440,7 +531,24 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 {
 	uint8_t buffer[17];
 	[[self handle] readBytes:17 toBuffer:buffer];
+	return [self parseLongDateAndTimeWithBytes:buffer];
+}
 
+-(NSDate *)readShortDateAndTime
+{
+	uint8_t buffer[7];
+	[[self handle] readBytes:7 toBuffer:buffer];
+	return [self parseShortDateAndTimeWithBytes:buffer];
+}
+
+-(NSDate *)parseDateAndTimeWithBytes:(const uint8_t *)buffer long:(BOOL)islong
+{
+	if(islong) return [self parseLongDateAndTimeWithBytes:buffer];
+	else return [self parseShortDateAndTimeWithBytes:buffer];
+}
+
+-(NSDate *)parseLongDateAndTimeWithBytes:(const uint8_t *)buffer
+{
 	if(memcmp(buffer,"0000000000000000",16)==0 && buffer[16]==0) return nil;
 	for(int i=0;i<16;i++) if(buffer[i]<'0'||buffer[i]>'9') return nil;
 
@@ -458,18 +566,15 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 	hour:hour minute:minute second:second timeZone:tz];
 }
 
--(NSDate *)readShortDateAndTime
+-(NSDate *)parseShortDateAndTimeWithBytes:(const uint8_t *)buffer
 {
-	uint8_t buffer[7];
-	[[self handle] readBytes:7 toBuffer:buffer];
-
 	int year=buffer[0]+1900;
 	int month=buffer[1];
 	int day=buffer[2];
 	int hour=buffer[3];
 	int minute=buffer[4];
 	int second=buffer[5];
-	int offset=(int8_t)buffer[16];
+	int offset=(int8_t)buffer[6];
 
 	NSTimeZone *tz=[NSTimeZone timeZoneForSecondsFromGMT:offset*15*60];
 	return [NSCalendarDate dateWithYear:year month:month day:day

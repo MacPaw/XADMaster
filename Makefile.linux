@@ -125,6 +125,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADException.m \
 			XADFastLZSSHandle.m \
 			XADGzipParser.m \
+			XADISO9660Parser.m \
 			XADLArcHandles.m \
 			XADLBRParser.m \
 			XADLibXADIOHandle.m \
@@ -189,6 +190,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADStuffItXDarkhorseHandle.m \
 			XADStuffItXEnglishHandle.m \
 			XADStuffItXIronHandle.m \
+			XADStuffItXX86Handle.m \
 			XADStuffItXParser.m \
 			XADSqueezeHandle.m \
 			XADSqueezeParser.m \

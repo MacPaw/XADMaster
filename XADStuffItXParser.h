@@ -22,7 +22,7 @@
 
 @interface XADStuffItXRepeatedEntryHandle:CSMemoryHandle
 {
-	bool haschecksum,ischecksumcorrect;
+	BOOL haschecksum,ischecksumcorrect;
 }
 
 -(id)initWithData:(NSData *)data hasChecksum:(BOOL)hascheck isChecksumCorrect:(BOOL)iscorrect;

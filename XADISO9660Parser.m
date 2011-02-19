@@ -323,6 +323,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 		{
 			NSMutableData *namedata=nil;
 			NSMutableData *linkdata=nil;
+			NSMutableData *commentdata=nil;
 
 			off_t nextoffset=[fh offsetInFile];
 			int nextlength=systemlength;
@@ -353,11 +354,11 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 					switch(type)
 					{
 						case 'AA':
-						case 'BA':
+						case 'AB':
 						{
 							if(length!=14) break;
 							if(type=='AA' && system[pos+3]!=2) break;
-							if(type=='BA' && system[pos+3]!=6) break;
+							if(type=='AB' && system[pos+3]!=6) break;
 
 							uint32_t filetype=CSUInt32BE(&system[pos+4]);
 							uint32_t filecreator=CSUInt32BE(&system[pos+8]);
@@ -528,6 +529,29 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
+						case 'AS':
+						{
+							if(length<6) break;
+							if(system[pos+3]!=1) break;
+
+							int flags=system[pos+4];
+							int commentoffs=5;
+
+							if(flags&0x01)
+							{
+								if(length<9) break;
+								uint32_t protection=CSUInt32BE(&system[pos+5]);
+								[dict setObject:[NSNumber numberWithUnsignedInt:protection] forKey:XADAmigaProtectionBitsKey];
+								commentoffs=9;
+							}
+
+							if(length>commentoffs)
+							{
+								if(!commentdata) commentdata=[NSMutableData dataWithBytes:&system[pos+commentoffs] length:length-commentoffs];
+								else [commentdata appendBytes:&system[pos+commentoffs] length:length-commentoffs];
+							}
+						}
+						break;
 
 						case 'CE':
 						{

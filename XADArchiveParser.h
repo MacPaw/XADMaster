@@ -25,6 +25,7 @@ extern NSString *XADPosixUserNameKey;
 extern NSString *XADPosixGroupNameKey;
 extern NSString *XADDOSFileAttributesKey;
 extern NSString *XADWindowsFileAttributesKey;
+extern NSString *XADAmigaProtectionBitsKey;
 
 extern NSString *XADIsEncryptedKey;
 extern NSString *XADIsCorruptedKey;

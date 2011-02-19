@@ -67,6 +67,7 @@ NSString *XADPosixUserNameKey=@"XADPosixUserName";
 NSString *XADPosixGroupNameKey=@"XADPosixGroupName";
 NSString *XADDOSFileAttributesKey=@"XADDOSFileAttributes";
 NSString *XADWindowsFileAttributesKey=@"XADWindowsFileAttributes";
+NSString *XADAmigaProtectionBitsKey=@"XADAmigaProtectionBits";
 
 NSString *XADIsEncryptedKey=@"XADIsEncrypted";
 NSString *XADIsCorruptedKey=@"XADIsCorrupted";

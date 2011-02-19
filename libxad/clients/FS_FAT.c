@@ -287,7 +287,7 @@ static xadINT32 FATparsedir(struct FATDiskParseData *pd, xadINT32 pos, xadINT32 
                 fi->xfi_Date.xd_Second += mem[i+13]/10;
                 fi->xfi_Date.xd_Micros = (mem[i+13]%10)*1000*100;
                 fi->xfi_Size = fi->xfi_CrunchSize = EndGetI32(mem+i+28);
-                xadConvertProtection(XADM XAD_PROTMSDOS, mem[i+11], XAD_GETPROTAMIGA, &fi->xfi_Protection, TAG_DONE);
+                //xadConvertProtection(XADM XAD_PROTMSDOS, mem[i+11], XAD_GETPROTAMIGA, &fi->xfi_Protection, TAG_DONE);
               }
               LFN = 0;
             } /* else */

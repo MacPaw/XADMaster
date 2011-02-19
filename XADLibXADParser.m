@@ -197,6 +197,9 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	if(info->xfi_Flags&XADFIF_UNIXPROTECTION)
 	[dict setObject:[NSNumber numberWithInt:info->xfi_UnixProtect] forKey:XADPosixPermissionsKey];
 
+	if(info->xfi_Protection)
+	[dict setObject:[NSNumber numberWithUnsignedInt:info->xfi_Protection] forKey:XADAmigaProtectionBitsKey];
+
 	if(info->xfi_Flags&XADFIF_DIRECTORY)
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 

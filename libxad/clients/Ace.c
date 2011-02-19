@@ -665,7 +665,7 @@ XADGETINFO(Ace)
               i = EndGetI32(bptr+15);
               if(i & 0x10)
                 fi2->xfi_Flags |= XADFIF_DIRECTORY;
-              xadConvertProtection(XADM XAD_PROTMSDOS, EndGetI32(bptr+15), XAD_GETPROTAMIGA, &fi2->xfi_Protection, TAG_DONE);
+              //xadConvertProtection(XADM XAD_PROTMSDOS, EndGetI32(bptr+15), XAD_GETPROTAMIGA, &fi2->xfi_Protection, TAG_DONE);
               xadConvertDates(XADM XAD_DATEMSDOS, EndGetI32(bptr+11), XAD_GETDATEXADDATE, &fi2->xfi_Date, TAG_DONE);
               if(bptr[2] & ACEFFLAG_PASSWORD)
               {

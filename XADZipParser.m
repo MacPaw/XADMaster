@@ -805,16 +805,18 @@ isLastEntry:(BOOL)islastentry
 		if(system==0) // MS-DOS
 		{
 			if(extfileattrib&0x10) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-			[dict setObject:[NSNumber numberWithInt:extfileattrib] forKey:XADDOSFileAttributesKey];
+			[dict setObject:[NSNumber numberWithUnsignedInt:extfileattrib] forKey:XADDOSFileAttributesKey];
+		}
+
+		if(system==1) // Amiga
+		{
+			[dict setObject:[NSNumber numberWithUnsignedInt:extfileattrib] forKey:XADAmigaProtectionBitsKey];
 		}
 
 		if(system==3) // Unix
 		{
 			int perm=extfileattrib>>16;
 			[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
-
-			if((perm&0xf000)==0x4000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-			else if((perm&0xf000)==0xa000) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 		}
 		else
 		{

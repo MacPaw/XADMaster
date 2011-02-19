@@ -321,6 +321,9 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 		int systemlength=recordlength-33-namelength-((namelength&1)^1);
 		if(systemlength)
 		{
+			NSMutableData *namedata=nil;
+			NSMutableData *linkdata=nil;
+
 			off_t nextoffset=[fh offsetInFile];
 			int nextlength=systemlength;
 
@@ -335,7 +338,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 				[fh seekToFileOffset:curroffset];
 				[fh readBytes:currlength toBuffer:system];
 
-NSLog(@"---%d %@",currlength,[NSData dataWithBytes:system length:currlength]);
+//NSLog(@"---%d %@",currlength,[NSData dataWithBytes:system length:currlength]);
 
 				int pos=0;
 				while(pos+4<=currlength)
@@ -345,7 +348,7 @@ NSLog(@"---%d %@",currlength,[NSData dataWithBytes:system length:currlength]);
 
 					if(pos+length>currlength) break;
 
-					NSLog(@"%c%c: %@",type>>8,type&0xff,[NSData dataWithBytes:&system[pos+3] length:length-3]);
+//NSLog(@"%c%c: %@",type>>8,type&0xff,[NSData dataWithBytes:&system[pos+3] length:length-3]);
 
 					switch(type)
 					{
@@ -382,9 +385,68 @@ NSLog(@"---%d %@",currlength,[NSData dataWithBytes:system length:currlength]);
 						break;
 
 						case 'SL':
+						{
+							if(length<6) break;
+							if(system[pos+3]!=1) break;
+
+							BOOL continuefromlast=NO;
+							int offs=5;
+							while(offs+2<=length)
+							{
+								int flags=system[pos+offs];
+								int complen=system[pos+offs+1];
+								if(offs+complen>length) break;
+
+								if(flags&0x08)
+								{
+									linkdata=[NSMutableData dataWithBytes:"/" length:1];
+									continuefromlast=YES;
+								}
+								else
+								{
+									const void *appendbytes;
+									int appendlength;
+									if(flags&0x02)
+									{
+										appendbytes=".";
+										appendlength=1;
+									}
+									else if(flags&0x04)
+									{
+										appendbytes="..";
+										appendlength=2;
+									}
+									else
+									{
+										appendbytes=&system[pos+offs+2];
+										appendlength=complen;
+									}
+
+									if(!linkdata)
+									{
+										linkdata=[NSMutableData dataWithBytes:appendbytes length:appendlength];
+									}
+									else
+									{
+										if(!continuefromlast) [linkdata appendBytes:"/" length:1];
+										[linkdata appendBytes:appendbytes length:appendlength];
+									}
+									continuefromlast=(flags&0x01)?YES:NO;
+								}
+
+								pos+=2+complen;
+							}
+						}
 						break;
 
 						case 'NM':
+						{
+							if(length<6) break;
+							if(system[pos+3]!=1) break;
+
+							if(!namedata) namedata=[NSMutableData dataWithBytes:&system[pos+5] length:length-5];
+							else [namedata appendBytes:&system[pos+5] length:length-5];
+						}
 						break;
 
 						case 'TF':
@@ -483,6 +545,20 @@ NSLog(@"---%d %@",currlength,[NSData dataWithBytes:system length:currlength]);
 				}
 				exitloop:
 				0;
+			}
+
+			if(namedata)
+			{
+				XADString *correctfilename=[self XADStringWithData:namedata];
+				currpath=[path pathByAppendingPathComponent:correctfilename];
+				[dict setObject:filename forKey:@"ISO9660OriginalFileName"];
+				[dict setObject:currpath forKey:XADFileNameKey];
+			}
+
+			if(linkdata)
+			{
+				XADString *linkdest=[self XADStringWithData:linkdata];
+				[dict setObject:linkdest forKey:XADLinkDestinationKey];
 			}
 		}
 

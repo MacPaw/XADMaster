@@ -42,6 +42,8 @@
 {
 	CSHandle *fh=[self handle];
 
+	int guessedos=0;
+
 	while([self shouldKeepParsing])
 	{
 		off_t start=[fh offsetInFile];
@@ -59,7 +61,7 @@
 		uint32_t size=[fh readUInt32LE];
 		uint32_t time=[fh readUInt32LE];
 
-		int dosattrs=[fh readUInt8];
+		int attrs=[fh readUInt8];
 		int level=[fh readUInt8];
 
 		NSString *compname=[[[NSString alloc] initWithBytes:method length:5 encoding:NSISOLatin1StringEncoding] autorelease];
@@ -78,7 +80,6 @@
 			headersize=(firstword&0xff)+2;
 
 			[dict setObject:[NSDate XADDateWithMSDOSDateTime:time] forKey:XADLastModificationDateKey];
-			[dict setObject:[NSNumber numberWithInt:dosattrs] forKey:XADDOSFileAttributesKey];
 
 			int namelen=[fh readUInt8];
 			[dict setObject:[fh readDataOfLength:namelen] forKey:@"LHAHeaderFileNameData"];
@@ -142,7 +143,29 @@
 		}
 		else [XADException raiseIllegalDataException];
 
-		if(level==1||level==2||level==3)
+		if(level==0)
+		{
+			if(!guessedos)
+			{
+				NSString *name=[self filename];
+
+				if([name matchedByPattern:@"\\.(lha|run)$"
+				options:REG_ICASE]) guessedos='A';
+				else guessedos='M';
+			}
+
+			if(guessedos=='M')
+			{
+				[dict setObject:[self XADStringWithString:@"MS-DOS"] forKey:@"LHAGuessedOSName"];
+				[dict setObject:[NSNumber numberWithInt:attrs] forKey:XADDOSFileAttributesKey];
+			}
+			else
+			{
+				[dict setObject:[self XADStringWithString:@"Amiga"] forKey:@"LHAGuessedOSName"];
+				[dict setObject:[NSNumber numberWithInt:attrs] forKey:XADAmigaProtectionBitsKey];
+			}
+		}
+		else
 		{
 			[dict setObject:[NSNumber numberWithInt:os] forKey:@"LHAOS"];
 
@@ -167,6 +190,14 @@
 				//case '': methodname=@""; break;
 			}
 			if(osname) [dict setObject:[self XADStringWithString:osname] forKey:@"LHAOSName"];
+
+			[dict setObject:[NSNumber numberWithInt:attrs] forKey:XADDOSFileAttributesKey];
+
+			if(os=='m')
+			{
+				[self setIsMacArchive:YES];
+				[dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
+			}
 		}
 
 		[dict setValue:[NSNumber numberWithUnsignedInt:compsize] forKey:XADCompressedSizeKey];
@@ -174,12 +205,6 @@
 		[dict setValue:[NSNumber numberWithLongLong:start+headersize] forKey:XADDataOffsetKey];
 
 		if(memcmp(method,"-lhd-",5)==0) [dict setValue:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
-
-		if(os=='m')
-		{
-			[self setIsMacArchive:YES];
-			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADMightBeMacBinaryKey];
-		}
 
 		NSData *filenamedata=[dict objectForKey:@"LHAExtFileNameData"];
 		if(!filenamedata) filenamedata=[dict objectForKey:@"LHAHeaderFileNameData"];

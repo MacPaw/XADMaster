@@ -100,6 +100,22 @@
 		}
 		if(osname) [dict setObject:[self XADStringWithString:osname] forKey:@"LZXOSName"];
 
+		if(os==10)
+		{
+			// Decode Amiga protection bits
+			int prot=0;
+			if(!(attributes&0x01)) prot|=0x08; // Read
+			if(!(attributes&0x02)) prot|=0x04; // Write
+			if(!(attributes&0x04)) prot|=0x01; // Delete
+			if(!(attributes&0x08)) prot|=0x02; // Execute
+			if(attributes&0x10) prot|=0x10; // Archive
+			if(attributes&0x20) prot|=0x80; // Hold
+			if(attributes&0x40) prot|=0x40; // Script
+			if(attributes&0x80) prot|=0x20; // Pure
+			
+			[dict setObject:[NSNumber numberWithInt:prot] forKey:XADAmigaProtectionBitsKey];
+		}
+
 		[solidfiles addObject:dict];
 		solidsize+=filesize;
 

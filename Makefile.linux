@@ -152,6 +152,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADNSISBzip2Handle.m \
 			XADNSISParser.m \
 			XADPackItParser.m \
+			XADPaddedBlockHandle.m \
 			XADPath.m \
 			XADPowerPackerParser.m \
 			XADPPMdHandles.m \

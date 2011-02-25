@@ -214,7 +214,8 @@ XADGzipParser.o: XADGzipParser.m XADGzipParser.h XADArchiveParser.h \
  Scanning.h
 XADISO9660Parser.o: XADISO9660Parser.m XADISO9660Parser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
- CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h \
+ XADPaddedBlockHandle.h
 XADLArcHandles.o: XADLArcHandles.m XADLArcHandles.h XADLZSSHandle.h \
  CSByteStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h
 XADLBRParser.o: XADLBRParser.m XADLBRParser.h XADArchiveParser.h \
@@ -317,6 +318,8 @@ XADPackItParser.o: XADPackItParser.m XADPackItParser.h XADArchiveParser.h \
  CSStreamHandle.h CSInputBuffer.h XADStuffItHuffmanHandle.h \
  CSByteStreamHandle.h XADPrefixCode.h XADCRCHandle.h Progress.h \
  CSZlibHandle.h CSBzip2Handle.h CRC.h NSDateXAD.h
+XADPaddedBlockHandle.o: XADPaddedBlockHandle.m XADPaddedBlockHandle.h \
+ CSHandle.h
 XADPath.o: XADPath.m XADPath.h XADString.h
 XADPowerPackerParser.o: XADPowerPackerParser.m XADPowerPackerParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \

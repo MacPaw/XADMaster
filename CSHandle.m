@@ -309,6 +309,21 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	return [[[CSSubHandle alloc] initWithHandle:[[self copy] autorelease] from:start length:length] autorelease];
 }
 
+-(CSHandle *)subHandleToEndOfFileFrom:(off_t)start
+{
+	off_t size=[self fileSize];
+	if(size==CSHandleMaxLength)
+	{
+		return [[[CSSubHandle alloc] initWithHandle:[[self copy] autorelease]
+		from:start length:CSHandleMaxLength] autorelease];
+	}
+	else
+	{
+		return [[[CSSubHandle alloc] initWithHandle:[[self copy] autorelease]
+		from:start length:size-start] autorelease];
+	}
+}
+
 -(CSHandle *)nonCopiedSubHandleOfLength:(off_t)length
 {
 	return [[[CSSubHandle alloc] initWithHandle:self from:[self offsetInFile] length:length] autorelease];
@@ -317,6 +332,21 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 -(CSHandle *)nonCopiedSubHandleFrom:(off_t)start length:(off_t)length
 {
 	return [[[CSSubHandle alloc] initWithHandle:self from:start length:length] autorelease];
+}
+
+-(CSHandle *)nonCopiedSubHandleToEndOfFileFrom:(off_t)start
+{
+	off_t size=[self fileSize];
+	if(size==CSHandleMaxLength)
+	{
+		return [[[CSSubHandle alloc] initWithHandle:self
+		from:start length:CSHandleMaxLength] autorelease];
+	}
+	else
+	{
+		return [[[CSSubHandle alloc] initWithHandle:self
+		from:start length:size-start] autorelease];
+	}
 }
 
 

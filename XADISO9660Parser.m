@@ -1,4 +1,5 @@
 #import "XADISO9660Parser.h"
+#import "XADPaddedBlockHandle.h"
 
 @implementation XADISO9660Parser
 
@@ -48,55 +49,51 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	}
 
 	return NO;
-
-/*	if(IsISO9660PrimaryVolumeDescriptor(bytes,length,16*2048))
-	{
-		[props setObject:[NSNumber numberWithInt:2048] forKey:@"ISO9660ImageBlockSize"];
-		[props setObject:[NSNumber numberWithInt:0] forKey:@"ISO9660ImageBlockOffset"];
-		return YES;
-	}
-
-	if(IsISO9660PrimaryVolumeDescriptor(bytes,length,16*2336)) // Untested
-	{
-		[props setObject:[NSNumber numberWithInt:2336] forKey:@"ISO9660ImageBlockSize"];
-		[props setObject:[NSNumber numberWithInt:0] forKey:@"ISO9660ImageBlockOffset"];
-		return YES;
-	}
-
-	if(IsISO9660PrimaryVolumeDescriptor(bytes,length,16*2352+16))
-	{
-		[props setObject:[NSNumber numberWithInt:2352] forKey:@"ISO9660ImageBlockSize"];
-		[props setObject:[NSNumber numberWithInt:16] forKey:@"ISO9660ImageBlockOffset"];
-		return YES;
-	}
-
-	if(IsISO9660PrimaryVolumeDescriptor(bytes,length,16*2368+16)) // Untested
-	{
-		[props setObject:[NSNumber numberWithInt:2368] forKey:@"ISO9660ImageBlockSize"];
-		[props setObject:[NSNumber numberWithInt:16] forKey:@"ISO9660ImageBlockOffset"];
-		return YES;
-	}
-
-	if(IsISO9660PrimaryVolumeDescriptor(bytes,length,16*2448+16)) // Untested
-	{
-		[props setObject:[NSNumber numberWithInt:2448] forKey:@"ISO9660ImageBlockSize"];
-		[props setObject:[NSNumber numberWithInt:16] forKey:@"ISO9660ImageBlockOffset"];
-		return YES;
-	}*/
-
-	return NO;
 }
+
+
+
+
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+{
+	if(self=[super initWithHandle:handle name:name])
+	{
+		fh=nil;
+	}
+	return self;
+}
+
+-(void)dealloc;
+{
+	[fh release];
+	[super dealloc];
+}
+
+
+
 
 -(void)parse
 {
-	CSHandle *fh=[self handle];
-
+	int blockoffset=[[[self properties] objectForKey:@"ISO9660ImageBlockOffset"] intValue];
 	blocksize=[[[self properties] objectForKey:@"ISO9660ImageBlockSize"] intValue];
-	blockoffset=[[[self properties] objectForKey:@"ISO9660ImageBlockOffset"] intValue];
+
+	if(blocksize!=2048)
+	{
+		fh=[[XADPaddedBlockHandle alloc] initWithHandle:[self handle]
+		startOffset:blockoffset logicalBlockSize:2048 physicalBlockSize:blocksize];
+	}
+	else if(blockoffset!=0)
+	{
+		fh=[[[self handle] nonCopiedSubHandleToEndOfFileFrom:blockoffset] retain];
+	}
+	else
+	{
+		fh=[[self handle] retain];
+	}
 
 	for(int block=17;;block++)
 	{
-		[fh seekToFileOffset:blocksize*block+blockoffset];
+		[fh seekToFileOffset:block*2048];
 
 		int type=[fh readUInt8];
 
@@ -136,9 +133,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 -(void)parseVolumeDescriptorAtBlock:(uint32_t)block isJoliet:(BOOL)isjoliet
 {
-	CSHandle *fh=[self handle];
-
-	[fh seekToFileOffset:blocksize*block+blockoffset+8];
+	[fh seekToFileOffset:block*2048+8];
 
 	XADString *system=[self readStringOfLength:32 isJoliet:isjoliet]; 
 	XADString *volume=[self readStringOfLength:32 isJoliet:isjoliet]; 
@@ -210,10 +205,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 -(void)parseDirectoryWithPath:(XADPath *)path atBlock:(uint32_t)block
 length:(uint32_t)length isJoliet:(BOOL)isjoliet
 {
-	CSHandle *fh=[self handle];
-
-	off_t extentstart=block*blocksize+blockoffset;
-	off_t extentend=extentstart+length+(length/blocksize)*(blocksize-2048);
+	off_t extentstart=block*2048;
+	off_t extentend=extentstart+length;
 
 	[fh seekToFileOffset:extentstart];
 
@@ -227,27 +220,14 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 	{
 		off_t startpos=[fh offsetInFile];
 
-		// If the physical block size is not 2048, we might end exactly on the
-		// end of a block, and will have to skip over the gap to the next block.
-		if(blocksize!=2048)
-		{
-			int blockpos=(startpos-blockoffset)%blocksize;
-			if(blockpos==2048)
-			{
-				int block=(startpos-blockoffset)/blocksize;
-				[fh seekToFileOffset:(block+1)*blocksize+blockoffset];
-				continue;
-			}
-		}
-
 		int recordlength=[fh readUInt8];
 		off_t endpos=startpos+recordlength;
 
 		// If the record length is 0, we need to skip to the next block.
 		if(recordlength==0)
 		{
-			int block=(startpos-blockoffset)/blocksize;
-			[fh seekToFileOffset:(block+1)*blocksize+blockoffset];
+			int block=startpos/2048;
+			[fh seekToFileOffset:(block+1)*2048];
 			continue;
 		}
 
@@ -614,7 +594,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 -(XADString *)readStringOfLength:(int)length isJoliet:(BOOL)isjoliet
 {
 	uint8_t buffer[length];
-	[[self handle] readBytes:length toBuffer:buffer];
+	[fh readBytes:length toBuffer:buffer];
 
 	if(isjoliet)
 	{
@@ -643,14 +623,14 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 -(NSDate *)readLongDateAndTime
 {
 	uint8_t buffer[17];
-	[[self handle] readBytes:17 toBuffer:buffer];
+	[fh readBytes:17 toBuffer:buffer];
 	return [self parseLongDateAndTimeWithBytes:buffer];
 }
 
 -(NSDate *)readShortDateAndTime
 {
 	uint8_t buffer[7];
-	[[self handle] readBytes:7 toBuffer:buffer];
+	[fh readBytes:7 toBuffer:buffer];
 	return [self parseShortDateAndTimeWithBytes:buffer];
 }
 
@@ -702,15 +682,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 	uint32_t startblock=[[dict objectForKey:@"ISO9660LocationOfExtent"] unsignedIntValue];
 	uint32_t length=[[dict objectForKey:XADFileSizeKey] unsignedIntValue];
 
-	if(blocksize==2048)
-	{
-		return [[self handle] nonCopiedSubHandleFrom:startblock*blocksize+blockoffset
-		length:length];
-	}
-	else
-	{
-		return nil;
-	}
+	return [fh nonCopiedSubHandleFrom:startblock*2048 length:length];
 }
 
 -(NSString *)formatName { return @"ISO 9660"; }

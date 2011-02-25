@@ -2,12 +2,16 @@
 
 @interface XADISO9660Parser:XADArchiveParser
 {
-	off_t blocksize,blockoffset;
+	int blocksize;
+	CSHandle *fh;
 }
 
 +(int)requiredHeaderSize;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
 name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
+
+-(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
+-(void)dealloc;
 
 -(void)parse;
 -(void)parseVolumeDescriptorAtBlock:(uint32_t)block isJoliet:(BOOL)isjoliet;

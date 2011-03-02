@@ -2,13 +2,25 @@
 #import "CRC.h"
 
 @interface TestDelegate:NSObject
+{
+	int count;
+}
 @end
 
 @implementation TestDelegate
 
+-(id)init
+{
+	if(self=[super init])
+	{
+		count=0;
+	}
+	return self;
+}
+
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
-	NSLog(@"%@",dict);
+	NSLog(@"Entry %d: %@",count++,dict);
 
 	CSHandle *fh=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
 

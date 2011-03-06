@@ -36,6 +36,10 @@
 	[super dealloc];
 }
 
+-(CSHandle *)parentHandle { return parent; }
+
+-(off_t)startOffsetInParent { return start; }
+
 -(off_t)fileSize
 {
 	return end-start;

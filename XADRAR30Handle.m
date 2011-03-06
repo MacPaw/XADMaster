@@ -1,6 +1,9 @@
 #import "XADRAR30Handle.h"
 #import "XADRAR30Filter.h"
 #import "XADException.h"
+@interface XADTest:NSObject {}
++(void)testByte:(uint8_t)byte atOffset:(off_t)offset;
+@end
 
 @implementation XADRAR30Handle
 
@@ -185,6 +188,7 @@
 
 			if(byte!=ppmescape)
 			{
+[NSClassFromString(@"XADTest") testByte:byte atOffset:LZSSPosition(&lzss)];
 				EmitLZSSLiteral(&lzss,byte);
 			}
 			else
@@ -234,6 +238,7 @@
 					break;
 
 					default:
+[NSClassFromString(@"XADTest") testByte:byte atOffset:LZSSPosition(&lzss)];
 						EmitLZSSLiteral(&lzss,byte);
 					break;
 				}

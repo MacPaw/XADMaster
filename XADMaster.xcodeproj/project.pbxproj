@@ -1642,13 +1642,13 @@
 				1BBAB68B0EC274A3007FE6A2 /* XADTest2 */,
 				1BC8931A0ED6F283006B47FE /* XADTest3 */,
 				1B3A68A2101BA12C00AE25A8 /* XADTest4 */,
+				1B342390131D8B5B00CCDF77 /* XADTest5 */,
 				1B34A97511C2FD0500396C26 /* libXADMaster.a */,
 				1B23DDC01185EBA300620319 /* unar */,
 				1B91D18F11E1677B0081E40A /* lsar */,
 				1B91CD5E11D97E7C0081E40A /* libXADMaster.a */,
 				1B91CDAC11D981E20081E40A /* unar.exe */,
 				1B91D2EE11E694860081E40A /* lsar.exe */,
-				1B342390131D8B5B00CCDF77 /* XADTest5 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3866,7 +3866,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = XADTest3;
+				PRODUCT_NAME = XADTest5;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				ZERO_LINK = NO;
 			};
@@ -3961,7 +3961,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = XADTest3;
+				PRODUCT_NAME = XADTest4;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				ZERO_LINK = NO;
 			};

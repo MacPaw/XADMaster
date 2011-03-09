@@ -2,6 +2,13 @@
 #import "XADException.h"
 #import "NSDateXAD.h"
 
+#import "XADRC4Handle.h"
+#include <openssl/evp.h>
+
+static NSData *DeriveArchiveKey(NSString *password);
+static NSData *DeriveFileKey(NSData *archiveKey, NSData *entryKey);
+static NSData *StuffItMD5(NSData *data);
+
 @implementation XADStuffIt5Parser
 
 +(int)requiredHeaderSize { return 100; }
@@ -95,6 +102,15 @@
 #define SIT5FLAGS_CRYPTED       0x20
 #define SIT5FLAGS_RSRC_FORK     0x10
 
+#define SIT5_ARCHIVEVERSION 5
+
+#define SIT5_ARCHIVEFLAGS_14BYTES 0x10
+#define SIT5_ARCHIVEFLAGS_20      0x20
+#define SIT5_ARCHIVEFLAGS_40      0x40
+#define SIT5_ARCHIVEFLAGS_CRYPTED 0x80
+
+#define SIT5_KEY_LENGTH 5  /* 40 bits */
+
 -(void)parse
 {
 	[self setIsMacArchive:YES];
@@ -103,11 +119,62 @@
 
 	off_t base=[fh offsetInFile];
 
-	[fh skipBytes:84];
+	[fh skipBytes:82];
+	int version=[fh readUInt8];
+	int flags=[fh readUInt8];
+	if(version!=SIT5_ARCHIVEVERSION) [XADException raiseDataFormatException];
+
 	/*uint32_t totalsize=*/[fh readUInt32BE];
 	/*uint32_t something=*/[fh readUInt32BE];
 	int numfiles=[fh readUInt16BE];
-	uint32_t firstoffs=[fh readUInt32BE];
+	uint32_t firstoffs=[fh readUInt32BE]; // length of header
+	/*uint16_t crc=*/[fh readUInt16BE];
+
+	if(flags&SIT5_ARCHIVEFLAGS_14BYTES) [fh skipBytes:14];
+
+	int length_a=0;
+	int length_b=0;
+	if(flags&SIT5_ARCHIVEFLAGS_20)
+	{
+		length_a=[fh readUInt16BE];
+		length_b=[fh readUInt16BE];
+	}
+
+	if(flags&SIT5_ARCHIVEFLAGS_CRYPTED)
+	{
+		int hashsize=[fh readUInt8];
+		if (hashsize!=SIT5_KEY_LENGTH) [XADException raiseDataFormatException];
+		
+		NSData *hash=[fh readDataOfLength:hashsize];
+
+		[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsEncryptedKey];
+		[self setObject:hash forPropertyKey:@"StuffItPasswordHash"];
+	}
+
+	if(flags&SIT5_ARCHIVEFLAGS_40)
+	{
+		int length_n=[fh readUInt16BE];
+		for(int i=0;i<length_n;i++)
+		{
+			[fh readUInt32BE];
+			[fh readInt16BE];
+			[fh readInt16BE];
+			[fh readInt16BE];
+			[fh readInt16BE];
+			[fh readUInt8];
+			[fh readUInt8];
+			[fh readUInt16BE];
+			[fh readUInt16BE];
+			[fh readUInt16BE];
+		}
+	}
+
+	if(flags&SIT5_ARCHIVEFLAGS_20)
+	{
+		[fh skipBytes:length_a];
+		[fh skipBytes:length_b];
+	}
+
 	[fh seekToFileOffset:firstoffs+base];
 
 	[self parseDirectoryWithNumberOfEntries:numfiles parent:[self XADPath]];
@@ -145,6 +212,7 @@
 		[fh skipBytes:2];
 
 		int datamethod,numfiles;
+		NSData *datakey=nil,*rsrckey=nil;
 		if(flags&SIT5FLAGS_DIRECTORY)
 		{
 			numfiles=[fh readUInt16BE];
@@ -156,8 +224,14 @@
 		else
 		{
 			datamethod=[fh readUInt8];
+
 			int passlen=[fh readUInt8];
-			[fh skipBytes:passlen];
+			if((flags&SIT5FLAGS_CRYPTED) && datalength)
+			{
+				if(passlen!=SIT5_KEY_LENGTH) [XADException raiseNotSupportedException];
+				datakey=[fh readDataOfLength:passlen];
+			}
+			else if(passlen) [XADException raiseNotSupportedException];
 		}
 
 		NSData *namedata=[fh readDataOfLength:namelength];
@@ -181,14 +255,22 @@
 
 		uint32_t resourcelength=0,resourcecomplen=0;
 		int resourcecrc,resourcemethod;
-		if(something&0x01)
+		BOOL hasresource=something&0x01;
+		if(hasresource)
 		{
 			resourcelength=[fh readUInt32BE];
 			resourcecomplen=[fh readUInt32BE];
 			resourcecrc=[fh readUInt16BE];
 			[fh skipBytes:2];
 			resourcemethod=[fh readUInt8];
-			[fh skipBytes:1];
+
+			int passlen=[fh readUInt8];
+			if((flags&SIT5FLAGS_CRYPTED) && resourcelength)
+			{
+				if(passlen!=SIT5_KEY_LENGTH) [XADException raiseNotSupportedException];
+				rsrckey=[fh readDataOfLength:passlen];
+			}
+			else if(passlen) [XADException raiseNotSupportedException];
 		}
 
 		off_t datastart=[fh offsetInFile];
@@ -213,8 +295,6 @@
 		}
 		else
 		{
-			BOOL hasresource=something&0x01;
-
 			if(hasresource)
 			{
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -239,10 +319,11 @@
 				XADString *compressionname=[self nameOfCompressionMethod:resourcemethod];
 				if(compressionname) [dict setObject:compressionname forKey:XADCompressionNameKey];
 
-				if(flags&SIT5FLAGS_CRYPTED) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
-
-				//if(datamethod!=0&&datamethod!=13&&datamethod!=15)
-				//DebugFileSearched(ai, "Unknown or untested compression method %ld.",datam;
+				if(rsrckey)
+				{
+					[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+					[dict setObject:rsrckey forKey:@"StuffItEntryKey"];
+				}
 
 				[self addEntryWithDictionary:dict];
 			}
@@ -270,10 +351,11 @@
 				XADString *compressionname=[self nameOfCompressionMethod:datamethod];
 				if(compressionname) [dict setObject:compressionname forKey:XADCompressionNameKey];
 
-				if(flags&SIT5FLAGS_CRYPTED) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
-
-				//if(datamethod!=0&&datamethod!=13&&datamethod!=15)
-				//DebugFileSearched(ai, "Unknown or untested compression method %ld.",datam;
+				if(datakey)
+				{
+					[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+					[dict setObject:datakey forKey:@"StuffItEntryKey"];
+				}
 
 				[self addEntryWithDictionary:dict];
 			}
@@ -283,6 +365,38 @@
 }
 
 -(NSString *)formatName { return @"StuffIt 5"; }
+
+-(NSData *)keyForEntryWithDictionary:(NSDictionary *)dict
+{
+	NSData *entrykey=[dict objectForKey:@"StuffItEntryKey"];
+	NSData *archivekey=StuffItMD5([self encodedPassword]);
+
+	// Verify the encryption key
+	NSData *archivehash=[properties objectForKey:@"StuffItPasswordHash"];
+	if(!archivehash) [XADException raiseIllegalDataException];
+
+	NSData *hash=StuffItMD5(archivekey);
+	if(![hash isEqual:archivehash]) return nil;
+
+	NSMutableData *key=[NSMutableData dataWithData:archivekey];
+	[key appendData:entrykey];
+
+	return key;
+}
+
+-(CSHandle *)decryptHandleForEntryWithDictionary:(NSDictionary *)dict handle:(CSHandle *)fh
+{
+	NSData *key=[self keyForEntryWithDictionary:dict];
+	if(key)
+	{
+		return [[[XADRC4Handle alloc] initWithHandle:fh key:key] autorelease];
+	}
+	else
+	{
+		[XADException raisePasswordException];
+		return nil;
+	}
+}
 
 @end
 
@@ -310,3 +424,18 @@
 }
 
 @end
+
+
+
+static NSData *StuffItMD5(NSData *data)
+{
+	uint8_t buf[16];
+
+	EVP_MD_CTX ctx;
+	EVP_DigestInit(&ctx,EVP_md5());
+	EVP_DigestUpdate(&ctx,[data bytes],[data length]);
+	EVP_DigestFinal(&ctx,buf,NULL);
+	EVP_MD_CTX_cleanup(&ctx);
+	
+	return [NSData dataWithBytes:buf length:SIT5_KEY_LENGTH];
+}

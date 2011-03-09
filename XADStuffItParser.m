@@ -56,7 +56,7 @@
 #define SITFH_HDRCRC       110 /* xadUINT16 crc of file header */
 #define SIT_FILEHDRSIZE    112
 
-#define StuffItEncrytedFlag         16      /* password protected bit */
+#define StuffItEncryptedFlag         16      /* password protected bit */
 #define StuffItStartFolder      32      /* start of folder */
 #define StuffItEndFolder      33      /* end of folder */
 
@@ -144,7 +144,7 @@
 					XADString *compressionname=[self nameOfCompressionMethod:resourcemethod];
 					if(compressionname) [dict setObject:compressionname forKey:XADCompressionNameKey];
 
-					if(resourcemethod&StuffItEncrytedFlag) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+					if(resourcemethod&StuffItEncryptedFlag) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 
 					// TODO: deal with this? if(!datalen&&datamethod==0) size=crunchsize
 
@@ -179,7 +179,7 @@
 					XADString *compressionname=[self nameOfCompressionMethod:datamethod];
 					if(compressionname) [dict setObject:compressionname forKey:XADCompressionNameKey];
 
-					if(datamethod&StuffItEncrytedFlag) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+					if(datamethod&StuffItEncryptedFlag) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 
 					[self addEntryWithDictionary:dict];
 				}
@@ -218,6 +218,12 @@
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
 	off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 
+	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
+	if(enc&&[enc boolValue])
+	{
+		fh = [self decryptHandleForEntryWithDictionary:dict handle:fh];
+	}
+	
 	CSHandle *handle;
 	switch(compressionmethod&0x0f)
 	{
@@ -246,6 +252,12 @@
 	}
 
 	return handle;
+}
+
+-(CSHandle *)decryptHandleForEntryWithDictionary:(NSDictionary *)dict handle:(CSHandle *)fh
+{
+	[XADException raiseNotSupportedException];
+	return fh;
 }
 
 -(NSString *)formatName { return @"StuffIt"; }

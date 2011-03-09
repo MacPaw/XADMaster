@@ -234,7 +234,6 @@
 					break;
 
 					default:
-[NSClassFromString(@"XADTest") testByte:byte atOffset:LZSSPosition(&lzss)];
 						EmitLZSSLiteral(&lzss,byte);
 					break;
 				}

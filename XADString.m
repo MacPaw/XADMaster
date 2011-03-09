@@ -321,8 +321,9 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 	{
 		static NSDictionary *macalternatives=nil;
 		if(!macalternatives) macalternatives=[[NSDictionary alloc] initWithObjectsAndKeys:
-			XADMacOSRomanStringEncodingName,XADWindowsCP1252StringEncodingName,
-			XADMacOSJapaneseStringEncodingName,XADShiftJISStringEncodingName,
+			XADMacOSRomanStringEncodingName,[XADASCIIStringEncodingName lowercaseString],
+			XADMacOSRomanStringEncodingName,[XADWindowsCP1252StringEncodingName lowercaseString],
+			XADMacOSJapaneseStringEncodingName,[XADShiftJISStringEncodingName lowercaseString],
 		nil];
 
 		NSString *macalternative=[macalternatives objectForKey:[encoding lowercaseString]];

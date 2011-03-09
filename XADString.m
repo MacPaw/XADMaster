@@ -4,6 +4,7 @@
 
 
 
+NSString *XADASCIIStringEncodingName=@"US-ASCII";
 NSString *XADUTF8StringEncodingName=@"utf-8";
 
 NSString *XADISOLatin1StringEncodingName=@"iso-8859-1";

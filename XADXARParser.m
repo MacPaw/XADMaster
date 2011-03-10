@@ -429,6 +429,7 @@ length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum chec
 		length:[length longLongValue]];
 
 		if(!encodingstyle||[encodingstyle length]==0); // no encoding style, copy
+		else if([encodingstyle isEqual:@"application/octet-stream"]);  // octe-stream, also copy
 		else if([encodingstyle isEqual:@"application/x-gzip"]) handle=[CSZlibHandle zlibHandleWithHandle:handle length:sizeval];
 		else if([encodingstyle isEqual:@"application/x-bzip2"]) handle=[CSBzip2Handle bzip2HandleWithHandle:handle length:sizeval];
 		else if([encodingstyle isEqual:@"application/x-xz"]) handle=[[[XADXZHandle alloc] initWithHandle:handle length:sizeval] autorelease];

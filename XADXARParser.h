@@ -1,6 +1,10 @@
 #import "XADArchiveParser.h"
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED>=1060
 @interface XADXARParser:XADArchiveParser <NSXMLParserDelegate>
+#else
+@interface XADXARParser:XADArchiveParser
+#endif
 {
 	off_t heapoffset;
 	int state;

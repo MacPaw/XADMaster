@@ -12,7 +12,7 @@ static void ResetTable(int *table,int *reverse);
 
 -(id)initWithRARParser:(XADRARParser *)parent parts:(NSArray *)partarray
 {
-	if(self=[super initWithName:[parent filename] windowSize:0x10000])
+	if((self=[super initWithName:[parent filename] windowSize:0x10000]))
 	{
 		parser=parent;
 		parts=[partarray retain];

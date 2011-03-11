@@ -141,7 +141,7 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 
 -(id)init
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		tree=malloc(sizeof(int)*2);
 		SetEmptyNode(self,0);
@@ -159,7 +159,7 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 
 -(id)initWithStaticTable:(int (*)[2])statictable
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		tree=(XADCodeTreeNode *)statictable; // TODO: fix the ugly cast
 		isstatic=YES;
@@ -173,7 +173,7 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 -(id)initWithLengths:(const int *)lengths numberOfSymbols:(int)numsymbols
 maximumLength:(int)maxcodelength shortestCodeIsZeros:(BOOL)zeros
 {
-	if(self=[self init])
+	if((self=[self init]))
 	{
 		@try
 		{

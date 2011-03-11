@@ -438,7 +438,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 
 	NSEnumerator *enumerator=[dircontents objectEnumerator];
 	NSString *direntry;
-	while(direntry=[enumerator nextObject])
+	while((direntry=[enumerator nextObject]))
 	{
 		if([filepart caseInsensitiveCompare:direntry]==NSOrderedSame)
 		{

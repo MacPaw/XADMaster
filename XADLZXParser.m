@@ -130,7 +130,7 @@
 
 			NSEnumerator *enumerator=[solidfiles objectEnumerator];
 			NSMutableDictionary *dict;
-			while(dict=[enumerator nextObject])
+			while((dict=[enumerator nextObject]))
 			{
 				[dict setObject:solidobj forKey:XADSolidObjectKey];
 				[dict setObject:[NSNumber numberWithLongLong:

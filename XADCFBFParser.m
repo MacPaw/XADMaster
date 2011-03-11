@@ -6,7 +6,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(self=[super initWithHandle:handle name:name])
+	if((self=[super initWithHandle:handle name:name]))
 	{
 		sectable=NULL;
 	}

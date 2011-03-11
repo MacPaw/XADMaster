@@ -6,7 +6,7 @@
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 {
-	if(self=[super initWithHandle:handle length:length windowSize:largedict?8192:4096])
+	if((self=[super initWithHandle:handle length:length windowSize:largedict?8192:4096]))
 	{
 		if(largedict) offsetbits=7;
 		else offsetbits=6;

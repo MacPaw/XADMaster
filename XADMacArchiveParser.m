@@ -44,7 +44,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(self=[super initWithHandle:handle name:name])
+	if((self=[super initWithHandle:handle name:name]))
 	{
 		currhandle=nil;
 		queuedditto=nil;
@@ -416,7 +416,7 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 
 -(id)initWithHeaderData:(NSData *)headerdata handle:(CSHandle *)handle
 {
-	if(self=[super initWithName:[handle name] length:[handle fileSize]])
+	if((self=[super initWithName:[handle name] length:[handle fileSize]]))
 	{
 		parent=[handle retain];
 		header=[headerdata retain];

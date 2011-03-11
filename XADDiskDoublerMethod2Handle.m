@@ -5,7 +5,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length numberOfTrees:(int)num
 {
-	if(self=[super initWithHandle:handle length:length])
+	if((self=[super initWithHandle:handle length:length]))
 	{
 		numtrees=num;
 	}

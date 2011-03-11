@@ -18,7 +18,7 @@
 
 -(id)initWithArchiveParser:(XADArchiveParser *)archiveparser
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		parser=[archiveparser retain];
 		destination=nil;
@@ -268,7 +268,7 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 	NSEnumerator *enumerator=[deferreddirectories objectEnumerator];
 	NSArray *entry;
-	while(entry=[enumerator nextObject])
+	while((entry=[enumerator nextObject]))
 	{
 		NSString *path=[entry objectAtIndex:0];
 		NSDictionary *dict=[entry objectAtIndex:1];

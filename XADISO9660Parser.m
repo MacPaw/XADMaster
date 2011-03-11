@@ -56,7 +56,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(self=[super initWithHandle:handle name:name])
+	if((self=[super initWithHandle:handle name:name]))
 	{
 		fh=nil;
 	}
@@ -202,6 +202,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	length:rootlength isJoliet:isjoliet];
 }
 
+#define TypeID(a,b) (((a)<<8)|(b))
+
 -(void)parseDirectoryWithPath:(XADPath *)path atBlock:(uint32_t)block
 length:(uint32_t)length isJoliet:(BOOL)isjoliet
 {
@@ -333,12 +335,12 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 
 					switch(type)
 					{
-						case 'AA':
-						case 'AB':
+						case TypeID('A','A'):
+						case TypeID('A','B'):
 						{
 							if(length!=14) break;
-							if(type=='AA' && system[pos+3]!=2) break;
-							if(type=='AB' && system[pos+3]!=6) break;
+							if(type==TypeID('A','A') && system[pos+3]!=2) break;
+							if(type==TypeID('A','B') && system[pos+3]!=6) break;
 
 							uint32_t filetype=CSUInt32BE(&system[pos+4]);
 							uint32_t filecreator=CSUInt32BE(&system[pos+8]);
@@ -350,7 +352,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
-						case 'PX':
+						case TypeID('P','X'):
 						{
 							if(length!=44) break;
 							if(system[pos+3]!=1) break;
@@ -365,7 +367,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
-						case 'PN':
+						case TypeID('P','N'):
 						{
 							if(length!=20) break;
 							if(system[pos+3]!=1) break;
@@ -378,7 +380,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
-						case 'SL':
+						case TypeID('S','L'):
 						{
 							if(length<6) break;
 							if(system[pos+3]!=1) break;
@@ -433,7 +435,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
-						case 'NM':
+						case TypeID('N','M'):
 						{
 							if(length<6) break;
 							if(system[pos+3]!=1) break;
@@ -443,7 +445,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
-						case 'TF':
+						case TypeID('T','F'):
 						{
 							if(length<5) break;
 							if(system[pos+3]!=1) break;
@@ -509,7 +511,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
-						case 'AS':
+						case TypeID('A','S'):
 						{
 							if(length<6) break;
 							if(system[pos+3]!=1) break;
@@ -533,7 +535,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
-						case 'CE':
+						case TypeID('C','E'):
 						{
 							if(length!=28) break;
 							if(system[pos+3]!=1) break;
@@ -546,7 +548,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 						}
 						break;
 
-						case 'ST':
+						case TypeID('S','T'):
 						{
 							if(length!=4) break;
 							if(system[pos+3]!=1) break;
@@ -561,7 +563,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 					if(pos<currlength && (length&1) && system[pos]==0) pos++;
 				}
 				exitloop:
-				0;
+				(void)0;
 			}
 
 			if(namedata)

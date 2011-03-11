@@ -6,7 +6,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
 {
-	if(self=[super initWithName:[handle name]])
+	if((self=[super initWithName:[handle name]]))
 	{
 		parent=[handle retain];
 		startoffs=[parent offsetInFile];
@@ -52,7 +52,7 @@
 
 -(id)initWithKey:(NSData *)key
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		const uint8_t *keybytes=[key bytes];
 		int keylength=[key length];

@@ -46,7 +46,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc name:(NSString *)descname
 {
-	if(self=[super initWithName:descname])
+	if((self=[super initWithName:descname]))
 	{
 		fh=file;
  		close=closeondealloc;
@@ -58,7 +58,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(id)initAsCopyOf:(CSFileHandle *)other
 {
-	if(self=[super initAsCopyOf:other])
+	if((self=[super initAsCopyOf:other]))
 	{
 		fh=other->fh;
  		close=NO;

@@ -15,7 +15,7 @@ NSString *CSNotSupportedException=@"CSNotSupportedException";
 
 -(id)initWithName:(NSString *)descname
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		name=[descname retain];
 
@@ -29,7 +29,7 @@ NSString *CSNotSupportedException=@"CSNotSupportedException";
 
 -(id)initAsCopyOf:(CSHandle *)other
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		name=[[[other name] stringByAppendingString:@" (copy)"] retain];
 

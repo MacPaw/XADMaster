@@ -15,7 +15,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	if(self=[super initWithHandle:handle length:length windowSize:2048])
+	if((self=[super initWithHandle:handle length:length windowSize:2048]))
 	{
 		lengthcode=[XADPrefixCode new];
 

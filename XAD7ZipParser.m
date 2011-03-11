@@ -92,7 +92,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(self=[super initWithHandle:handle name:name])
+	if((self=[super initWithHandle:handle name:name]))
 	{
 		mainstreams=nil;
 	}
@@ -165,7 +165,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 		}
 	}
 
-	end: 0;
+	end: (void)0;
 
 	NSEnumerator *substreamenumerator=[[mainstreams objectForKey:@"SubStreams"] objectEnumerator];
 
@@ -837,7 +837,7 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 	off_t totalsize=0;
 	NSEnumerator *enumerator=[[folder objectForKey:@"InStreams"] objectEnumerator];
 	NSDictionary *instream;
-	while(instream=[enumerator nextObject])
+	while((instream=[enumerator nextObject]))
 	{
 		NSDictionary *packedstream=[instream objectForKey:@"PackedStream"];
 		if(packedstream) totalsize+=[[packedstream objectForKey:@"Size"] longLongValue];

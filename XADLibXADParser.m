@@ -46,7 +46,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(self=[super initWithHandle:handle name:name])
+	if((self=[super initWithHandle:handle name:name]))
 	{
 		archive=NULL;
 
@@ -420,7 +420,7 @@ static xadUINT32 OutFunc(struct Hook *hook,xadPTR object,struct xadHookParam *pa
 
 -(id)initWithData:(NSData *)data successfullyExtracted:(BOOL)wassuccess
 {
-	if(self=[super initWithData:data])
+	if((self=[super initWithData:data]))
 	{
 		success=wassuccess;
 	}

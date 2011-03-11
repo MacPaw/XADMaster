@@ -5,7 +5,7 @@
 -(id)initWithHandle:(CSHandle *)handle startOffset:(off_t)start
 logicalBlockSize:(int)logical physicalBlockSize:(int)physical;
 {
-	if(self=[super initWithName:[handle name]])
+	if((self=[super initWithName:[handle name]]))
 	{
 		parent=[handle retain];
 		startoffset=start;

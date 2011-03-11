@@ -3743,41 +3743,6 @@
 			};
 			name = Debug;
 		};
-		1B23DDC31185EBA500620319 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = unar;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		1B34238E131D8B5B00CCDF77 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3802,31 +3767,6 @@
 			};
 			name = Debug;
 		};
-		1B34238F131D8B5B00CCDF77 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = XADTest5;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		1B34A97811C2FD0700396C26 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3846,26 +3786,6 @@
 				PRODUCT_NAME = XADMaster;
 			};
 			name = Debug;
-		};
-		1B34A97911C2FD0700396C26 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = XADMaster;
-				ZERO_LINK = NO;
-			};
-			name = Release;
 		};
 		1B3A68A0101BA12C00AE25A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -3891,31 +3811,6 @@
 			};
 			name = Debug;
 		};
-		1B3A68A1101BA12C00AE25A8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = XADTest4;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		1B433E2711E945D300DA1EFB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3925,17 +3820,6 @@
 				PRODUCT_NAME = Everything;
 			};
 			name = Debug;
-		};
-		1B433E2811E945D300DA1EFB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = Everything;
-				ZERO_LINK = NO;
-			};
-			name = Release;
 		};
 		1B5A7BA70A24F9E300B189EB /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -3961,58 +3845,20 @@
 			};
 			name = Debug;
 		};
-		1B5A7BA80A24F9E300B189EB /* Release */ = {
+		1B68D25C13282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
-				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = "$(HOME)/bin";
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = XADTest;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				ZERO_LINK = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				FRAMEWORK_SEARCH_PATHS = "$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};
-		1B68D25C13282D2500A8121A /* App Store */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					x86_64,
-					i386,
-				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					/Library/Frameworks,
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"";
-				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.5;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk;
-				USE_HEADERMAP = NO;
-			};
-			name = "App Store";
-		};
-		1B68D25D13282D2500A8121A /* App Store */ = {
+		1B68D25D13282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -4044,9 +3890,9 @@
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D25E13282D2500A8121A /* App Store */ = {
+		1B68D25E13282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4064,12 +3910,11 @@
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = XADTest;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D25F13282D2500A8121A /* App Store */ = {
+		1B68D25F13282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4087,12 +3932,11 @@
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = XADTest2;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26013282D2500A8121A /* App Store */ = {
+		1B68D26013282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4112,12 +3956,11 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = XADTest3;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26113282D2500A8121A /* App Store */ = {
+		1B68D26113282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4137,12 +3980,11 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = XADTest4;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26213282D2500A8121A /* App Store */ = {
+		1B68D26213282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4162,12 +4004,11 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = XADTest5;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26313282D2500A8121A /* App Store */ = {
+		1B68D26313282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4185,9 +4026,9 @@
 				PRODUCT_NAME = XADMaster;
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26413282D2500A8121A /* App Store */ = {
+		1B68D26413282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4215,14 +4056,13 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = unar;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26513282D2500A8121A /* App Store */ = {
+		1B68D26513282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4250,14 +4090,13 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = lsar;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26613282D2500A8121A /* App Store */ = {
+		1B68D26613282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4295,9 +4134,9 @@
 				WARNING_CFLAGS = "-Wno-multichar";
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26713282D2500A8121A /* App Store */ = {
+		1B68D26713282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4348,9 +4187,9 @@
 				SYMROOT = /Users/dag/Code/Build/Windows;
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26813282D2500A8121A /* App Store */ = {
+		1B68D26813282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4401,9 +4240,9 @@
 				SYMROOT = /Users/dag/Code/Build/Windows;
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
-		1B68D26913282D2500A8121A /* App Store */ = {
+		1B68D26913282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -4412,7 +4251,7 @@
 				PRODUCT_NAME = Everything;
 				ZERO_LINK = NO;
 			};
-			name = "App Store";
+			name = Release;
 		};
 		1B91CD5C11D97E7C0081E40A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -4453,46 +4292,6 @@
 				WARNING_CFLAGS = "-Wno-multichar";
 			};
 			name = Debug;
-		};
-		1B91CD5D11D97E7C0081E40A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_OBJC_MODULE_STATIC_INITIALIZER = NO;
-				GCC_FAST_OBJC_DISPATCH = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = "";
-				GCC_VERSION_i386 = "";
-				GCC_VERSION_ppc = "";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
-				INSTALL_PATH = /usr/local/lib;
-				LIBTOOL = "$(SRCROOT)/Windows/bin/libtoolstub.pl";
-				MACOSX_DEPLOYMENT_TARGET_i386 = "";
-				MACOSX_DEPLOYMENT_TARGET_ppc = "";
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = XADMaster;
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
-				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
-				WARNING_CFLAGS = "-Wno-multichar";
-				ZERO_LINK = NO;
-			};
-			name = Release;
 		};
 		1B91CDAA11D981E20081E40A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -4547,59 +4346,6 @@
 			};
 			name = Debug;
 		};
-		1B91CDAB11D981E20081E40A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_FAST_OBJC_DISPATCH = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = "";
-				GCC_VERSION_i386 = "";
-				GCC_VERSION_ppc = "";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
-				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Windows/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-					"\"$(DEVELOPER_DIR)/Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = "";
-				MACOSX_DEPLOYMENT_TARGET_i386 = "";
-				MACOSX_DEPLOYMENT_TARGET_ppc = "";
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-Wl,--whole-archive",
-					"-lXADMaster",
-					"-lUniversalDetector",
-					"-Wl,--no-whole-archive",
-					"-Wl,--enable-auto-import",
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = unar.exe;
-				SDKROOT = "";
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
-				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		1B91D18D11E1677B0081E40A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4632,41 +4378,6 @@
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
-		};
-		1B91D18E11E1677B0081E40A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = lsar;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
-				ZERO_LINK = NO;
-			};
-			name = Release;
 		};
 		1B91D2EC11E694860081E40A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -4721,7 +4432,359 @@
 			};
 			name = Debug;
 		};
-		1B91D2ED11E694860081E40A /* Release */ = {
+		1BAF0138132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				FRAMEWORK_SEARCH_PATHS = "$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 4.0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				SDKROOT_i386 = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				SDKROOT_ppc = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				USE_HEADERMAP = NO;
+			};
+			name = Old;
+		};
+		1BAF0139132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"\"$(SRCROOT)/../../Build/Debug\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					UniversalDetector,
+				);
+				PRODUCT_NAME = XADMaster;
+				WRAPPER_EXTENSION = framework;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF013A132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				INSTALL_PATH = "$(HOME)/bin";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = XADTest;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF013B132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				INSTALL_PATH = "$(HOME)/bin";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = XADTest2;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF013C132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = XADTest3;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF013D132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = XADTest4;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF013E132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = XADTest5;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF013F132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = XADMaster;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF0140132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Build/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = unar;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF0141132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Build/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = lsar;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF0142132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = i386;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
+					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_MODULE_STATIC_INITIALIZER = NO;
+				GCC_FAST_OBJC_DISPATCH = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = "";
+				GCC_VERSION_i386 = "";
+				GCC_VERSION_ppc = "";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
+				INSTALL_PATH = /usr/local/lib;
+				LIBTOOL = "$(SRCROOT)/Windows/bin/libtoolstub.pl";
+				MACOSX_DEPLOYMENT_TARGET_i386 = "";
+				MACOSX_DEPLOYMENT_TARGET_ppc = "";
+				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = XADMaster;
+				SDKROOT_i386 = "";
+				SDKROOT_ppc = "";
+				SDKROOT_x86_64 = "";
+				SYMROOT = /Users/dag/Code/Build/Windows;
+				WARNING_CFLAGS = "-Wno-multichar";
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF0143132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = i386;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
+					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_FAST_OBJC_DISPATCH = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_VERSION = "";
+				GCC_VERSION_i386 = "";
+				GCC_VERSION_ppc = "";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../Build/Windows/Debug\"",
+					"\"$(SRCROOT)/Windows/lib\"",
+					"\"$(DEVELOPER_DIR)/Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib\"",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "";
+				MACOSX_DEPLOYMENT_TARGET_i386 = "";
+				MACOSX_DEPLOYMENT_TARGET_ppc = "";
+				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Wl,--whole-archive",
+					"-lXADMaster",
+					"-lUniversalDetector",
+					"-Wl,--no-whole-archive",
+					"-Wl,--enable-auto-import",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = unar.exe;
+				SDKROOT = "";
+				SDKROOT_i386 = "";
+				SDKROOT_ppc = "";
+				SDKROOT_x86_64 = "";
+				SYMROOT = /Users/dag/Code/Build/Windows;
+				ZERO_LINK = NO;
+			};
+			name = Old;
+		};
+		1BAF0144132A9C0F002B6FE0 /* Old */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4772,7 +4835,18 @@
 				SYMROOT = /Users/dag/Code/Build/Windows;
 				ZERO_LINK = NO;
 			};
-			name = Release;
+			name = Old;
+		};
+		1BAF0145132A9C0F002B6FE0 /* Old */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = Everything;
+				ZERO_LINK = NO;
+			};
+			name = Old;
 		};
 		1BBAB6890EC274A3007FE6A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -4798,29 +4872,6 @@
 			};
 			name = Debug;
 		};
-		1BBAB68A0EC274A3007FE6A2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
-				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = "$(HOME)/bin";
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = XADTest2;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		1BC8931D0ED6F285006B47FE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4844,31 +4895,6 @@
 				PRODUCT_NAME = XADTest3;
 			};
 			name = Debug;
-		};
-		1BC8931E0ED6F285006B47FE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = XADTest3;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				ZERO_LINK = NO;
-			};
-			name = Release;
 		};
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -4905,84 +4931,17 @@
 			};
 			name = Debug;
 		};
-		1DEB91AF08733DA50010E9CD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-				);
-				FRAMEWORK_VERSION = A;
-				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					UniversalDetector,
-				);
-				PRODUCT_NAME = XADMaster;
-				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				FRAMEWORK_SEARCH_PATHS = "$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.5;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk;
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
-		};
-		1DEB91B308733DA50010E9CD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					/Library/Frameworks,
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"";
-				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.5;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk;
-				USE_HEADERMAP = NO;
-			};
-			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -4991,141 +4950,141 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B23DDC21185EBA500620319 /* Debug */,
-				1B23DDC31185EBA500620319 /* Release */,
-				1B68D26413282D2500A8121A /* App Store */,
+				1B68D26413282D2500A8121A /* Release */,
+				1BAF0140132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B34238D131D8B5B00CCDF77 /* Build configuration list for PBXNativeTarget "XADTest5" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B34238E131D8B5B00CCDF77 /* Debug */,
-				1B34238F131D8B5B00CCDF77 /* Release */,
-				1B68D26213282D2500A8121A /* App Store */,
+				1B68D26213282D2500A8121A /* Release */,
+				1BAF013E132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B34A97A11C2FD2500396C26 /* Build configuration list for PBXNativeTarget "libXADMaster.a" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B34A97811C2FD0700396C26 /* Debug */,
-				1B34A97911C2FD0700396C26 /* Release */,
-				1B68D26313282D2500A8121A /* App Store */,
+				1B68D26313282D2500A8121A /* Release */,
+				1BAF013F132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B3A689F101BA12C00AE25A8 /* Build configuration list for PBXNativeTarget "XADTest4" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B3A68A0101BA12C00AE25A8 /* Debug */,
-				1B3A68A1101BA12C00AE25A8 /* Release */,
-				1B68D26113282D2500A8121A /* App Store */,
+				1B68D26113282D2500A8121A /* Release */,
+				1BAF013D132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B433E4211E9460100DA1EFB /* Build configuration list for PBXAggregateTarget "Everything" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B433E2711E945D300DA1EFB /* Debug */,
-				1B433E2811E945D300DA1EFB /* Release */,
-				1B68D26913282D2500A8121A /* App Store */,
+				1B68D26913282D2500A8121A /* Release */,
+				1BAF0145132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B5A7BA60A24F9E300B189EB /* Build configuration list for PBXNativeTarget "XADTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B5A7BA70A24F9E300B189EB /* Debug */,
-				1B5A7BA80A24F9E300B189EB /* Release */,
-				1B68D25E13282D2500A8121A /* App Store */,
+				1B68D25E13282D2500A8121A /* Release */,
+				1BAF013A132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B91CD5B11D97E7C0081E40A /* Build configuration list for PBXNativeTarget "libXADMaster.a (Windows)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B91CD5C11D97E7C0081E40A /* Debug */,
-				1B91CD5D11D97E7C0081E40A /* Release */,
-				1B68D26613282D2500A8121A /* App Store */,
+				1B68D26613282D2500A8121A /* Release */,
+				1BAF0142132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B91CDA911D981E20081E40A /* Build configuration list for PBXNativeTarget "unar.exe (Windows)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B91CDAA11D981E20081E40A /* Debug */,
-				1B91CDAB11D981E20081E40A /* Release */,
-				1B68D26713282D2500A8121A /* App Store */,
+				1B68D26713282D2500A8121A /* Release */,
+				1BAF0143132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B91D18C11E1677B0081E40A /* Build configuration list for PBXNativeTarget "lsar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B91D18D11E1677B0081E40A /* Debug */,
-				1B91D18E11E1677B0081E40A /* Release */,
-				1B68D26513282D2500A8121A /* App Store */,
+				1B68D26513282D2500A8121A /* Release */,
+				1BAF0141132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1B91D2EB11E694860081E40A /* Build configuration list for PBXNativeTarget "lsar.exe (Windows)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B91D2EC11E694860081E40A /* Debug */,
-				1B91D2ED11E694860081E40A /* Release */,
-				1B68D26813282D2500A8121A /* App Store */,
+				1B68D26813282D2500A8121A /* Release */,
+				1BAF0144132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1BBAB6880EC274A3007FE6A2 /* Build configuration list for PBXNativeTarget "XADTest2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1BBAB6890EC274A3007FE6A2 /* Debug */,
-				1BBAB68A0EC274A3007FE6A2 /* Release */,
-				1B68D25F13282D2500A8121A /* App Store */,
+				1B68D25F13282D2500A8121A /* Release */,
+				1BAF013B132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1BC893210ED6F2A7006B47FE /* Build configuration list for PBXNativeTarget "XADTest3" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1BC8931D0ED6F285006B47FE /* Debug */,
-				1BC8931E0ED6F285006B47FE /* Release */,
-				1B68D26013282D2500A8121A /* App Store */,
+				1B68D26013282D2500A8121A /* Release */,
+				1BAF013C132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "XADMaster" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,
-				1DEB91AF08733DA50010E9CD /* Release */,
-				1B68D25D13282D2500A8121A /* App Store */,
+				1B68D25D13282D2500A8121A /* Release */,
+				1BAF0139132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
-				1DEB91B308733DA50010E9CD /* Release */,
-				1B68D25C13282D2500A8121A /* App Store */,
+				1B68D25C13282D2500A8121A /* Release */,
+				1BAF0138132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

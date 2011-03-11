@@ -91,7 +91,7 @@ static BOOL LooksLikeZlib(uint8_t *sig)
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(self=[super initWithHandle:handle name:name])
+	if((self=[super initWithHandle:handle name:name]))
 	{
 		solidhandle=nil;
 		detectedformat=UndetectedFormat;
@@ -485,7 +485,7 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BO
 
 	NSEnumerator *enumerator=[array objectEnumerator];
 	NSMutableDictionary *dict;
-	while(dict=[enumerator nextObject]) [self addEntryWithDictionary:dict];
+	while((dict=[enumerator nextObject])) [self addEntryWithDictionary:dict];
 }
 
 -(void)makeEntryArrayStrictlyIncreasing:(NSMutableArray *)array
@@ -1032,7 +1032,7 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath
 	NSMutableArray *array=[NSMutableArray arrayWithCapacity:[parts count]];
 	NSEnumerator *enumerator=[parts objectEnumerator];
 	NSString *part;
-	while(part=[enumerator nextObject]) [array addObject:[self XADStringWithString:part]];
+	while((part=[enumerator nextObject])) [array addObject:[self XADStringWithString:part]];
 
 	XADPath *path=[[[XADPath alloc] initWithComponents:array] autorelease];
 

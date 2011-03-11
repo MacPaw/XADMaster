@@ -96,7 +96,7 @@
 
 	NSEnumerator *enumerator=[entries objectEnumerator];
 	NSMutableDictionary *dict;
-	while(dict=[enumerator nextObject]) [self addEntryWithDictionary:dict];
+	while((dict=[enumerator nextObject])) [self addEntryWithDictionary:dict];
 }
 
 -(BOOL)parseDirectoryWithPath:(XADPath *)parent numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries

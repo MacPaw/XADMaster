@@ -17,7 +17,7 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length);
 
 -(id)initWithHandle:(CSHandle *)handle files:(NSMutableArray *)filesarray
 {
-	if(self=[super initWithName:[handle name]])
+	if((self=[super initWithName:[handle name]]))
 	{
 		parent=[handle retain];
 

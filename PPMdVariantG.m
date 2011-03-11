@@ -319,7 +319,8 @@ static BOOL MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *s
 	}
 	while(context->Suffix);
 
-	skip: 0;
+	skip: (void)0;
+
 	PPMdState *upstate=PPMdContextOneState(upbranch);
 	if(NumberOfStates(context)!=1)
 	{

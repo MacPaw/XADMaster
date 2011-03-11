@@ -91,7 +91,7 @@ static off_t ActualOffsetToSkip(XADSkipHandle *self,off_t pos)
 
 -(id)initWithHandle:(CSHandle *)handle
 {
-	if(self=[super initWithName:[handle name]])
+	if((self=[super initWithName:[handle name]]))
 	{
 		parent=[handle retain];
 		regions=malloc(sizeof(XADSkipRegion));
@@ -103,7 +103,7 @@ static off_t ActualOffsetToSkip(XADSkipHandle *self,off_t pos)
 
 -(id)initAsCopyOf:(XADSkipHandle *)other
 {
-	if(self=[super initAsCopyOf:other])
+	if((self=[super initAsCopyOf:other]))
 	{
 		parent=[other->parent copy];
 		numregions=other->numregions;

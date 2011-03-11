@@ -7,7 +7,7 @@ static void StripDotPaths(NSMutableArray *components);
 
 -(id)init
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		components=[[NSArray array] retain];
 		source=nil;
@@ -17,7 +17,7 @@ static void StripDotPaths(NSMutableArray *components);
 
 -(id)initWithComponents:(NSArray *)pathcomponents
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		if(HasDotPaths(pathcomponents))
 		{
@@ -34,7 +34,7 @@ static void StripDotPaths(NSMutableArray *components);
 
 		NSEnumerator *enumerator=[components objectEnumerator];
 		XADString *string;
-		while(string=[enumerator nextObject])
+		while((string=[enumerator nextObject]))
 		{
 			XADStringSource *othersource=[string source];
 			if(othersource)
@@ -54,7 +54,7 @@ static void StripDotPaths(NSMutableArray *components);
 
 -(id)initWithString:(NSString *)pathstring
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		NSArray *stringcomps=[pathstring pathComponents];
 		int count=[stringcomps count];
@@ -94,7 +94,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 -(id)initWithBytes:(const char *)bytes length:(int)length encodingName:(NSString *)encoding
 separators:(const char *)separators source:(XADStringSource *)stringsource
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		NSMutableArray *array=[NSMutableArray array];
 

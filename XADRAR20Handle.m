@@ -5,7 +5,7 @@
 
 -(id)initWithRARParser:(XADRARParser *)parent parts:(NSArray *)partarray
 {
-	if(self=[super initWithName:[parent filename] windowSize:0x100000])
+	if((self=[super initWithName:[parent filename] windowSize:0x100000]))
 	{
 		parser=parent;
 		parts=[partarray retain];

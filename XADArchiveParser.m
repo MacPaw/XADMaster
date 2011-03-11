@@ -181,7 +181,7 @@ static int maxheader=0;
 
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
 	Class class;
-	while(class=[enumerator nextObject])
+	while((class=[enumerator nextObject]))
 	{
 		int header=[class requiredHeaderSize];
 		if(header>maxheader) maxheader=header;
@@ -193,7 +193,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
 	Class parserclass;
-	while(parserclass=[enumerator nextObject])
+	while((parserclass=[enumerator nextObject]))
 	{
 		[handle seekToFileOffset:0];
 		[props removeAllObjects];
@@ -256,7 +256,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 			NSEnumerator *enumerator=[volumes objectEnumerator];
 			NSString *volume;
 
-			while(volume=[enumerator nextObject])
+			while((volume=[enumerator nextObject]))
 			[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
 
 			CSMultiHandle *multihandle=[CSMultiHandle multiHandleWithHandleArray:handles];
@@ -289,7 +289,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		sourcehandle=[handle retain];
 
@@ -462,10 +462,11 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	if(!dirname||[dirname length]==0) dirname=@".";
 
 	NSEnumerator *enumerator=[[[NSFileManager defaultManager] directoryContentsAtPath:dirname] objectEnumerator];
+
 	if(!enumerator) return nil;
 
 	NSString *direntry;
-	while(direntry=[enumerator nextObject])
+	while((direntry=[enumerator nextObject]))
 	{
 		NSString *filename=[dirname stringByAppendingPathComponent:direntry];
 		if([regex matchesString:filename]) [volumes addObject:filename];

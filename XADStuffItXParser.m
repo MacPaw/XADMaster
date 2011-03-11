@@ -262,7 +262,7 @@ static void DumpElement(StuffItXElement *element)
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
 {
-	if(self=[super initWithHandle:handle name:name])
+	if((self=[super initWithHandle:handle name:name]))
 	{
 		repeatedentrydata=nil;
 		repeatedentries=nil;
@@ -316,7 +316,7 @@ static void DumpElement(StuffItXElement *element)
 				NSMutableArray *forks=[streamforks objectForKey:[NSNumber numberWithLongLong:objid]];
 				NSEnumerator *enumerator=[forks objectEnumerator];
 				NSMutableDictionary *fork;
-				while(fork=[enumerator nextObject])
+				while((fork=[enumerator nextObject]))
 				{
 					if((id)fork==[NSNull null]) [XADException raiseIllegalDataException];
 					NSNumber *lengthnum=[fork objectForKey:@"Length"];
@@ -328,7 +328,7 @@ static void DumpElement(StuffItXElement *element)
 				{
 					NSEnumerator *enumerator=[entries objectEnumerator];
 					NSMutableDictionary *entry;
-					while(entry=[enumerator nextObject])
+					while((entry=[enumerator nextObject]))
 					{
 						if(![forkedset containsObject:[entry objectForKey:@"StuffItXID"]])
 						{
@@ -381,7 +381,7 @@ static void DumpElement(StuffItXElement *element)
 
 				enumerator=[forks objectEnumerator];
 				off_t offs=0;
-				while(fork=[enumerator nextObject])
+				while((fork=[enumerator nextObject]))
 				{
 					if(![self shouldKeepParsing]) return;
 
@@ -398,7 +398,7 @@ static void DumpElement(StuffItXElement *element)
 
 					NSEnumerator *entryenumerator=[entries objectEnumerator];
 					NSNumber *entrynum;
-					while(entrynum=[entryenumerator nextObject])
+					while((entrynum=[entryenumerator nextObject]))
 					{
 						NSDictionary *entry=[entrydict objectForKey:entrynum];
 						NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
@@ -585,7 +585,7 @@ static void DumpElement(StuffItXElement *element)
 {
 	NSEnumerator *enumerator=[entries objectEnumerator];
 	NSMutableDictionary *entry;
-	while(entry=[enumerator nextObject])
+	while((entry=[enumerator nextObject]))
 	{
 		for(;;)
 		{
@@ -746,7 +746,7 @@ static void DumpElement(StuffItXElement *element)
 
 -(id)initWithData:(NSData *)data hasChecksum:(BOOL)hascheck isChecksumCorrect:(BOOL)iscorrect
 {
-	if(self=[super initWithData:data])
+	if((self=[super initWithData:data]))
 	{
 		haschecksum=hascheck;
 		ischecksumcorrect=iscorrect;

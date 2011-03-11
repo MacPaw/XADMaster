@@ -5,7 +5,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle password:(NSData *)passdata
 {
-	if(self=[super initWithName:[handle name]])
+	if((self=[super initWithName:[handle name]]))
 	{
 		parent=[handle retain];
 		startoffs=[handle offsetInFile];

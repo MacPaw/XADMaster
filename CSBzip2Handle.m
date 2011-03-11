@@ -16,7 +16,7 @@ NSString *CSBzip2Exception=@"CSBzip2Exception";
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length name:(NSString *)descname
 {
-	if(self=[super initWithName:descname])
+	if((self=[super initWithName:descname]))
 	{
 		parent=[handle retain];
 		startoffs=[parent offsetInFile];

@@ -24,13 +24,10 @@
 @end
 
 @implementation CSChecksumWrapperHandle
-{
-	CSHandle *parent,*checksum;
-}
 
 -(id)initWithHandle:(CSHandle *)handle checksumHandle:(CSHandle *)checksumhandle
 {
-	if(self=[super initWithName:[handle name]])
+	if((self=[super initWithName:[handle name]]))
 	{
 		parent=[handle retain];
 		checksum=[checksumhandle retain];

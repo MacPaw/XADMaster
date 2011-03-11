@@ -7,7 +7,7 @@ static inline uint16_t ror16(uint16_t val,int n) { return (val>>n)|(val<<(16-n))
 
 -(id)initWithHandle:(CSHandle *)handle password:(NSData *)passdata
 {
-	if(self=[super initWithHandle:handle])
+	if((self=[super initWithHandle:handle]))
 	{
 		password=[passdata retain];
 	}

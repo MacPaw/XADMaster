@@ -162,7 +162,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 -(id)initWithHandle:(CSHandle *)handle
 {
-	if(self=[super initWithName:[handle name]])
+    
+	if((self=[super initWithName:[handle name]]))
 	{
 		parent=[handle retain];
 		startoffs=[parent offsetInFile];

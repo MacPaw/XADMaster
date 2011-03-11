@@ -6,7 +6,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 -(id)initWithName:(NSString *)descname length:(off_t)length
 {
-	if(self=[super initWithName:descname length:length])
+	if((self=[super initWithName:descname length:length]))
 	{
 		_currblock=NULL;
 		_blockstartpos=0;
@@ -17,7 +17,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length bufferSize:(int)buffersize;
 {
-	if(self=[super initWithHandle:handle length:length bufferSize:buffersize])
+	if((self=[super initWithHandle:handle length:length bufferSize:buffersize]))
 	{
 		_currblock=NULL;
 		_blockstartpos=0;

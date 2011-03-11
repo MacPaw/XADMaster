@@ -10,7 +10,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length useFastHash:(BOOL)usefast
 {
-	if(self=[super initWithHandle:handle length:length])
+	if((self=[super initWithHandle:handle length:length]))
 	{
 		fast=usefast;
 	}

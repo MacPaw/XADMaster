@@ -239,7 +239,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata
 {
-	if(self=[super initWithHandle:handle length:length])
+	if((self=[super initWithHandle:handle length:length]))
 	{
 		const uint8_t *passbytes=[passdata bytes];
 		int passlen=[passdata length];
@@ -294,7 +294,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata
 {
-	if(self=[super initWithHandle:handle length:length])
+	if((self=[super initWithHandle:handle length:length]))
 	{
 		const uint8_t *passbytes=[passdata bytes];
 		int passlen=[passdata length];

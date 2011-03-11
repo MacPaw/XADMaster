@@ -50,7 +50,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(id)init
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		parser=nil;
 		delegate=nil;
@@ -74,7 +74,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(id)initWithFile:(NSString *)file delegate:(id)del error:(XADError *)error
 {
-	if(self=[self init])
+	if((self=[self init]))
 	{
 		delegate=del;
 
@@ -99,7 +99,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(id)initWithData:(NSData *)data delegate:(id)del error:(XADError *)error
 {
-	if(self=[self init])
+	if((self=[self init]))
 	{
 		delegate=del;
 
@@ -123,7 +123,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n delegate:(id)del error:(XADError *)error
 {
-	if(self=[self init])
+	if((self=[self init]))
 	{
 		parentarchive=[otherarchive retain];
 		delegate=del;
@@ -155,7 +155,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 -(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
      immediateExtractionTo:(NSString *)destination subArchives:(BOOL)sub error:(XADError *)error
 {
-	if(self=[self init])
+	if((self=[self init]))
 	{
 		parentarchive=[otherarchive retain];
 		immediatedestination=destination;

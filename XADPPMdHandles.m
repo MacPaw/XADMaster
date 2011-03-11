@@ -12,7 +12,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length maxOrder:(int)maxorder subAllocSize:(int)suballocsize
 {
-	if(self=[super initWithHandle:handle length:length])
+	if((self=[super initWithHandle:handle length:length]))
 	{
 		alloc=CreateSubAllocatorVariantG(suballocsize);
 		max=maxorder;
@@ -49,7 +49,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length maxOrder:(int)maxorder subAllocSize:(int)suballocsize
 {
-	if(self=[super initWithHandle:handle length:length])
+	if((self=[super initWithHandle:handle length:length]))
 	{
 		alloc=CreateSubAllocatorVariantH(suballocsize);
 		max=maxorder;
@@ -86,7 +86,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length maxOrder:(int)maxorder subAllocSize:(int)suballocsize modelRestorationMethod:(int)mrmethod
 {
-	if(self=[super initWithHandle:handle length:length])
+	if((self=[super initWithHandle:handle length:length]))
 	{
 		alloc=CreateSubAllocatorVariantI(suballocsize);
 		max=maxorder;
@@ -124,7 +124,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length maxOrder:(int)maxorder subAllocSize:(int)suballocsize
 {
-	if(self=[super initWithHandle:handle length:length])
+	if((self=[super initWithHandle:handle length:length]))
 	{
 		alloc=CreateSubAllocatorBrimstone(suballocsize);
 		max=maxorder;

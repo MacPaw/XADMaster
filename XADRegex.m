@@ -89,7 +89,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 
 -(id)initWithPattern:(NSString *)pattern options:(int)options
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		patternstring=[patternstring retain];
 		currdata=nil;

@@ -4,7 +4,7 @@
 #import "CSJSONPrinter.h"
 #import "CommandLineCommon.h"
 
-#define VERSION_STRING @"v0.3"
+#define VERSION_STRING @"v0.4"
 
 
 

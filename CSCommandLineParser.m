@@ -28,7 +28,12 @@ static NSString *SwitchOptionType=@"SwitchOptionType";
 static NSString *HelpOptionType=@"HelpOptionType";
 static NSString *AliasOptionType=@"AliasOptionType";
 
-
+#if MAC_OS_X_VERSION_MAX_ALLOWED<1050
+@interface NSScanner (BuildKludge)
+-(BOOL)scanHexLongLong:(unsigned long long *)val;
+-(BOOL)scanHexDouble:(double *)val;
+@end
+#endif
 
 @implementation CSCommandLineParser
 
@@ -163,7 +168,7 @@ description:(NSString *)description argumentDescription:(NSString *)argdescripti
 		NSUInteger index=[allowedvalues indexOfObject:[defaultvalue lowercaseString]];
 		if(index==NSNotFound) [NSException raise:NSInvalidArgumentException format:
 		@"Default value \"%@\" is not in the array of allowed values.",defaultvalue];
-		[dict setObject:[NSNumber numberWithUnsignedInteger:index] forKey:DefaultValueKey];
+		[dict setObject:[NSNumber numberWithUnsignedInt:index] forKey:DefaultValueKey];
 	}
 
 	[options setObject:dict forKey:option];
@@ -503,7 +508,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 		}
 
 		[dict setObject:[allowedvalues objectAtIndex:index] forKey:StringValueKey];
-		[dict setObject:[NSNumber numberWithUnsignedInteger:index] forKey:NumberValueKey];
+		[dict setObject:[NSNumber numberWithUnsignedInt:index] forKey:NumberValueKey];
 	}
 	else if(type==IntegerOptionType)
 	{
@@ -576,7 +581,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 		{
 			if(![dict objectForKey:NumberValueKey])
 			{
-				NSUInteger index=[defaultvalue unsignedIntegerValue];
+				int index=[defaultvalue unsignedIntValue];
 				NSArray *allowedvalues=[dict objectForKey:AllowedValuesKey];
 				[dict setObject:[allowedvalues objectAtIndex:index] forKey:StringValueKey];
 				[dict setObject:defaultvalue forKey:NumberValueKey];

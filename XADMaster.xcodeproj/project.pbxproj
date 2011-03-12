@@ -1695,7 +1695,7 @@
 			children = (
 				1B06D3770DDA5C2600D9C000 /* UniversalDetector.framework */,
 				1B23E08C1190F2B400620319 /* libUniversalDetector.a */,
-				1B91CBE911D821C50081E40A /* libUniversalDetector.a */,
+				1B91CBE911D821C50081E40A /* libUniversalDetector.win.a */,
 				1B06D3790DDA5C2600D9C000 /* DetectorTest */,
 			);
 			name = Products;
@@ -2882,7 +2882,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -2940,10 +2939,10 @@
 			remoteRef = 1B23E08B1190F2B400620319 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1B91CBE911D821C50081E40A /* libUniversalDetector.a */ = {
+		1B91CBE911D821C50081E40A /* libUniversalDetector.win.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libUniversalDetector.a;
+			path = libUniversalDetector.win.a;
 			remoteRef = 1B91CBE811D821C50081E40A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -4325,7 +4324,7 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = "$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = 4.2;
 				GCC_VERSION_i386 = 4.0;
 				GCC_VERSION_ppc = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -4494,6 +4493,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = (
+					"-fexceptions",
 					"-all_load",
 					"-ObjC",
 				);
@@ -4513,6 +4513,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = (
+					"-fexceptions",
 					"-all_load",
 					"-ObjC",
 				);

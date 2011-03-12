@@ -490,7 +490,12 @@ deferDirectories:(BOOL)defer
 			if(![delegate unarchiver:self shouldCreateDirectory:path]) return XADBreakError;
 		}
 
+		#if MAC_OS_X_VERSION_MAX_ALLOWED>=1050
+		if([manager createDirectoryAtPath:path
+		withIntermediateDirectories:NO attributes:nil error:NULL]) return XADNoError;
+		#else
 		if([manager createDirectoryAtPath:path attributes:nil]) return XADNoError;
+		#endif
 		else return XADMakeDirectoryError;
 	}
 }

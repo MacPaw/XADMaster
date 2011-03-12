@@ -703,11 +703,6 @@
 		1BC89C720EDC5E18006B47FE /* XADRARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A70DDA667A00D9C000 /* XADRARParser.m */; };
 		1BC89C9F0EDCAA51006B47FE /* Checksums.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89C9D0EDCAA51006B47FE /* Checksums.m */; };
 		1BC89CA00EDCAA51006B47FE /* Checksums.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89C9E0EDCAA51006B47FE /* Checksums.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BC89D490EDCC2F4006B47FE /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D1A0EDCC1F3006B47FE /* unpack.cpp */; };
-		1BC89D4A0EDCC2FB006B47FE /* getbits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D160EDCC1F3006B47FE /* getbits.cpp */; };
-		1BC89D4B0EDCC2FF006B47FE /* rarvm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D0D0EDCC1F3006B47FE /* rarvm.cpp */; };
-		1BC89D790EDCC6ED006B47FE /* XADRAROfficialHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89D770EDCC6ED006B47FE /* XADRAROfficialHandle.h */; };
-		1BC89D7A0EDCC6ED006B47FE /* XADRAROfficialHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89D780EDCC6ED006B47FE /* XADRAROfficialHandle.m */; };
 		1BC89DEC0EDDBB33006B47FE /* XADRARAESHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89DEA0EDDBB33006B47FE /* XADRARAESHandle.h */; };
 		1BC89DED0EDDBB33006B47FE /* XADRARAESHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC89DEB0EDDBB33006B47FE /* XADRARAESHandle.m */; };
 		1BC89F130EE0CD71006B47FE /* XADDeflateHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89F110EE0CD71006B47FE /* XADDeflateHandle.h */; };
@@ -725,7 +720,6 @@
 		1BC9A7110F007AAF0094C7B5 /* BWT.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC9A70F0F007AAF0094C7B5 /* BWT.c */; };
 		1BCD5B2A0EEA276A00D86C43 /* XADRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B21106F0A4452C2005ED2AF /* XADRegex.m */; };
 		1BCD5C350EEC605400D86C43 /* RARUnpacker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD5C330EEC605400D86C43 /* RARUnpacker.h */; };
-		1BCD5C360EEC605400D86C43 /* RARUnpacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5C340EEC605400D86C43 /* RARUnpacker.cpp */; };
 		1BCD5D4A0EECB0A300D86C43 /* XAD7ZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5AF0DDA669100D9C000 /* XAD7ZipParser.m */; };
 		1BCD5DA30EED8C9500D86C43 /* XADLZMAHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD5DA10EED8C9500D86C43 /* XADLZMAHandle.m */; };
 		1BCD5DA40EED8C9500D86C43 /* XADLZMAHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BCD5DA20EED8C9500D86C43 /* XADLZMAHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2551,7 +2545,6 @@
 				1BC89A790EDB12F8006B47FE /* XADStuffIt13Handle.h in Headers */,
 				1BC89A7A0EDB12F8006B47FE /* XADLZSSHandle.h in Headers */,
 				1BC89CA00EDCAA51006B47FE /* Checksums.h in Headers */,
-				1BC89D790EDCC6ED006B47FE /* XADRAROfficialHandle.h in Headers */,
 				1BC89DEC0EDDBB33006B47FE /* XADRARAESHandle.h in Headers */,
 				1BC89F130EE0CD71006B47FE /* XADDeflateHandle.h in Headers */,
 				1BC8A07D0EE4C4DA006B47FE /* XADALZipParser.h in Headers */,
@@ -2893,6 +2886,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -3459,10 +3453,6 @@
 				1BC89BC20EDB5C2E006B47FE /* XADStuffIt13Handle.m in Sources */,
 				1BC89C720EDC5E18006B47FE /* XADRARParser.m in Sources */,
 				1BC89C9F0EDCAA51006B47FE /* Checksums.m in Sources */,
-				1BC89D490EDCC2F4006B47FE /* unpack.cpp in Sources */,
-				1BC89D4A0EDCC2FB006B47FE /* getbits.cpp in Sources */,
-				1BC89D4B0EDCC2FF006B47FE /* rarvm.cpp in Sources */,
-				1BC89D7A0EDCC6ED006B47FE /* XADRAROfficialHandle.m in Sources */,
 				1BC89DED0EDDBB33006B47FE /* XADRARAESHandle.m in Sources */,
 				1BC89F140EE0CD71006B47FE /* XADDeflateHandle.m in Sources */,
 				1BC8A07C0EE4C4DA006B47FE /* XADALZipParser.m in Sources */,
@@ -3471,7 +3461,6 @@
 				1B2F18410EE965880000DAFF /* XADPowerPackerParser.m in Sources */,
 				1B2F18990EE9A4440000DAFF /* XADSkipHandle.m in Sources */,
 				1BCD5B2A0EEA276A00D86C43 /* XADRegex.m in Sources */,
-				1BCD5C360EEC605400D86C43 /* RARUnpacker.cpp in Sources */,
 				1BCD5D4A0EECB0A300D86C43 /* XAD7ZipParser.m in Sources */,
 				1BCD5DA30EED8C9500D86C43 /* XADLZMAHandle.m in Sources */,
 				1BCD5DA90EED8C9C00D86C43 /* LzmaDec.c in Sources */,
@@ -3721,7 +3710,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3778,7 +3766,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
@@ -3851,6 +3838,7 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
 				FRAMEWORK_SEARCH_PATHS = "$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				USE_HEADERMAP = NO;
@@ -3877,7 +3865,6 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -4018,7 +4005,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
@@ -4038,7 +4024,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4072,7 +4057,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4357,7 +4341,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4440,6 +4423,7 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = "$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_VERSION_i386 = 4.0;
 				GCC_VERSION_ppc = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -4472,7 +4456,6 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -4613,7 +4596,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
@@ -4633,7 +4615,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4667,7 +4648,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4916,7 +4896,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_CFLAGS = "";
@@ -4936,6 +4915,7 @@
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				FRAMEWORK_SEARCH_PATHS = "$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				USE_HEADERMAP = NO;

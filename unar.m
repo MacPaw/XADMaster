@@ -20,7 +20,7 @@ BOOL recurse;
 
 -(id)init
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		indent=1;
 	}

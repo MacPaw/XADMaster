@@ -97,7 +97,7 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 
 -(id)init
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		indent=0;
 	}
@@ -203,7 +203,7 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 
 -(id)initWithJSONPrinter:(CSJSONPrinter *)json
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		printer=[json retain];
 	}

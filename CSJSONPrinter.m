@@ -5,7 +5,7 @@
 
 -(id)init
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		indentlevel=0;
 		indentstring=[@"\n" retain];
@@ -141,7 +141,7 @@
 {
 	NSEnumerator *enumerator=[array objectEnumerator];
 	id object;
-	while(object=[enumerator nextObject]) [self printArrayObject:object];
+	while((object=[enumerator nextObject])) [self printArrayObject:object];
 }
 
 
@@ -189,7 +189,7 @@
 {
 	NSEnumerator *enumerator=[dictionary keyEnumerator];
 	id key;
-	while(key=[enumerator nextObject])
+	while((key=[enumerator nextObject]))
 	{
 		[self printDictionaryKey:key];
 		[self printDictionaryObject:[dictionary objectForKey:key]];

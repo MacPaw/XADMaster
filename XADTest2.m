@@ -11,7 +11,7 @@
 
 -(id)init
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		count=0;
 	}
@@ -46,9 +46,9 @@
 		for(int i=0;i<length;i++) xor^=bytes[i];
 	}
 
-	NSLog(@"Checksum: %@, Length: %d, CRC32: %08x, XOR: 0x%02x (%d)",
+	NSLog(@"Checksum: %@, Length: %qd, CRC32: %08x, XOR: 0x%02x (%d)",
 	[fh hasChecksum]?[fh isChecksumCorrect]?@"Correct":@"Incorrect":@"Unknown",
-	[data length],crc,xor,xor);
+	(uint64_t)[data length],crc,xor,xor);
 
 	NSLog(@"\n%@",[data subdataWithRange:NSMakeRange(0,[data length]<256?[data length]:256)]);
 }

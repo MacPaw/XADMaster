@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 44;
+	objectVersion = 45;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -275,7 +275,6 @@
 		1B34AA4311C3088900396C26 /* CSZlibHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFF0EC3859F006D2F06 /* CSZlibHandle.m */; };
 		1B34AA7111C30B3500396C26 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA20EC52505006D2F06 /* libcrypto.dylib */; };
 		1B34AA7211C30B3600396C26 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */; };
-		1B34AA7311C30B3700396C26 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03C11BB1CD900396C26 /* libbz2.a */; };
 		1B34AA7411C30B3A00396C26 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
 		1B34AA7511C30B3D00396C26 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B216A7F0F8E9D9E001207C9 /* Carbon.framework */; };
 		1B34AA7611C30B5200396C26 /* libUniversalDetector.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B23E1B11190F8CC00620319 /* libUniversalDetector.a */; };
@@ -556,8 +555,8 @@
 		1B91CD9E11D981E20081E40A /* CSCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */; };
 		1B91CDA211D981E20081E40A /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03C11BB1CD900396C26 /* libbz2.a */; };
 		1B91CDA311D981E20081E40A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
-		1B91CDB711D983280081E40A /* libXADMaster.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CD5E11D97E7C0081E40A /* libXADMaster.a */; };
-		1B91CDBC11D983760081E40A /* libUniversalDetector.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CDBB11D983760081E40A /* libUniversalDetector.a */; };
+		1B91CDB711D983280081E40A /* libXADMaster.win.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CD5E11D97E7C0081E40A /* libXADMaster.win.a */; };
+		1B91CDBC11D983760081E40A /* libUniversalDetector.win.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CDBB11D983760081E40A /* libUniversalDetector.win.a */; };
 		1B91CDBD11D983A70081E40A /* libeay32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A04411BB1F2000396C26 /* libeay32.a */; };
 		1B91CDBE11D983A80081E40A /* libstdc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A08E11BB254800396C26 /* libstdc++.a */; };
 		1B91CDBF11D983AA0081E40A /* libwinmm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A06611BB21A900396C26 /* libwinmm.a */; };
@@ -573,7 +572,6 @@
 		1B91D18111E1677B0081E40A /* CSCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */; };
 		1B91D18311E1677B0081E40A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA20EC52505006D2F06 /* libcrypto.dylib */; };
 		1B91D18411E1677B0081E40A /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */; };
-		1B91D18511E1677B0081E40A /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03C11BB1CD900396C26 /* libbz2.a */; };
 		1B91D18611E1677B0081E40A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
 		1B91D18711E1677B0081E40A /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B216A7F0F8E9D9E001207C9 /* Carbon.framework */; };
 		1B91D18811E1677B0081E40A /* libUniversalDetector.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B23E1B11190F8CC00620319 /* libUniversalDetector.a */; };
@@ -591,8 +589,8 @@
 		1B91D2E011E694860081E40A /* CommandLineCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B91D1A011E237AD0081E40A /* CommandLineCommon.m */; };
 		1B91D2E211E694860081E40A /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03C11BB1CD900396C26 /* libbz2.a */; };
 		1B91D2E311E694860081E40A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
-		1B91D2E411E694860081E40A /* libXADMaster.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CD5E11D97E7C0081E40A /* libXADMaster.a */; };
-		1B91D2E511E694860081E40A /* libUniversalDetector.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CDBB11D983760081E40A /* libUniversalDetector.a */; };
+		1B91D2E411E694860081E40A /* libXADMaster.win.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CD5E11D97E7C0081E40A /* libXADMaster.win.a */; };
+		1B91D2E511E694860081E40A /* libUniversalDetector.win.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CDBB11D983760081E40A /* libUniversalDetector.win.a */; };
 		1B91D2E611E694860081E40A /* libeay32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A04411BB1F2000396C26 /* libeay32.a */; };
 		1B91D2E711E694860081E40A /* libstdc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A08E11BB254800396C26 /* libstdc++.a */; };
 		1B91D2E811E694860081E40A /* libwinmm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A06611BB21A900396C26 /* libwinmm.a */; };
@@ -1266,9 +1264,9 @@
 		1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPPMdHandles.m; sourceTree = "<group>"; };
 		1B8A89D31012078C00C8534E /* XADNDSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNDSParser.h; sourceTree = "<group>"; };
 		1B8A89D41012078C00C8534E /* XADNDSParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNDSParser.m; sourceTree = "<group>"; };
-		1B91CD5E11D97E7C0081E40A /* libXADMaster.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libXADMaster.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B91CD5E11D97E7C0081E40A /* libXADMaster.win.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libXADMaster.win.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B91CDAC11D981E20081E40A /* unar.exe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unar.exe; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B91CDBB11D983760081E40A /* libUniversalDetector.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUniversalDetector.a; path = ../Windows/Debug/libUniversalDetector.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B91CDBB11D983760081E40A /* libUniversalDetector.win.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libUniversalDetector.win.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B91CF7211DCF4140081E40A /* XADStringWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringWindows.m; sourceTree = "<group>"; };
 		1B91D0AC11DFC0480081E40A /* XADStringCFString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringCFString.m; sourceTree = "<group>"; };
 		1B91D11211E11A0F0081E40A /* XADStringICU.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStringICU.m; sourceTree = "<group>"; };
@@ -1479,7 +1477,6 @@
 			files = (
 				1B34AA7111C30B3500396C26 /* libcrypto.dylib in Frameworks */,
 				1B34AA7211C30B3600396C26 /* libbz2.dylib in Frameworks */,
-				1B34AA7311C30B3700396C26 /* libbz2.a in Frameworks */,
 				1B34AA7411C30B3A00396C26 /* Foundation.framework in Frameworks */,
 				1B34AA7511C30B3D00396C26 /* Carbon.framework in Frameworks */,
 				1B34AA7611C30B5200396C26 /* libUniversalDetector.a in Frameworks */,
@@ -1534,8 +1531,8 @@
 			files = (
 				1B91CDA211D981E20081E40A /* libbz2.a in Frameworks */,
 				1B91CDA311D981E20081E40A /* Foundation.framework in Frameworks */,
-				1B91CDB711D983280081E40A /* libXADMaster.a in Frameworks */,
-				1B91CDBC11D983760081E40A /* libUniversalDetector.a in Frameworks */,
+				1B91CDB711D983280081E40A /* libXADMaster.win.a in Frameworks */,
+				1B91CDBC11D983760081E40A /* libUniversalDetector.win.a in Frameworks */,
 				1B91CDBD11D983A70081E40A /* libeay32.a in Frameworks */,
 				1B91CDBE11D983A80081E40A /* libstdc++.a in Frameworks */,
 				1B91CDBF11D983AA0081E40A /* libwinmm.a in Frameworks */,
@@ -1549,7 +1546,6 @@
 			files = (
 				1B91D18311E1677B0081E40A /* libcrypto.dylib in Frameworks */,
 				1B91D18411E1677B0081E40A /* libbz2.dylib in Frameworks */,
-				1B91D18511E1677B0081E40A /* libbz2.a in Frameworks */,
 				1B91D18611E1677B0081E40A /* Foundation.framework in Frameworks */,
 				1B91D18711E1677B0081E40A /* Carbon.framework in Frameworks */,
 				1B91D18811E1677B0081E40A /* libUniversalDetector.a in Frameworks */,
@@ -1565,8 +1561,8 @@
 			files = (
 				1B91D2E211E694860081E40A /* libbz2.a in Frameworks */,
 				1B91D2E311E694860081E40A /* Foundation.framework in Frameworks */,
-				1B91D2E411E694860081E40A /* libXADMaster.a in Frameworks */,
-				1B91D2E511E694860081E40A /* libUniversalDetector.a in Frameworks */,
+				1B91D2E411E694860081E40A /* libXADMaster.win.a in Frameworks */,
+				1B91D2E511E694860081E40A /* libUniversalDetector.win.a in Frameworks */,
 				1B91D2E611E694860081E40A /* libeay32.a in Frameworks */,
 				1B91D2E711E694860081E40A /* libstdc++.a in Frameworks */,
 				1B91D2E811E694860081E40A /* libwinmm.a in Frameworks */,
@@ -1619,7 +1615,7 @@
 				1B34A97511C2FD0500396C26 /* libXADMaster.a */,
 				1B23DDC01185EBA300620319 /* unar */,
 				1B91D18F11E1677B0081E40A /* lsar */,
-				1B91CD5E11D97E7C0081E40A /* libXADMaster.a */,
+				1B91CD5E11D97E7C0081E40A /* libXADMaster.win.a */,
 				1B91CDAC11D981E20081E40A /* unar.exe */,
 				1B91D2EE11E694860081E40A /* lsar.exe */,
 			);
@@ -1635,7 +1631,6 @@
 				1BC886D80ECE18EF006B47FE /* Utilities */,
 				1BC89A7C0EDB1B99006B47FE /* Categories */,
 				1B06D6100DDCBE4400D9C000 /* CSHandle */,
-				56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */,
 				1B5A7BA50A24F9E300B189EB /* XADTest */,
 				1B23DDC41185EBC200620319 /* Command Line Tools */,
 				1B91CBA911D803920081E40A /* Windows Sources */,
@@ -1643,6 +1638,7 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */,
 			);
 			name = XADMaster;
 			sourceTree = "<group>";
@@ -1915,7 +1911,7 @@
 		1B34A03A11BB1CC300396C26 /* Windows Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				1B91CDBB11D983760081E40A /* libUniversalDetector.a */,
+				1B91CDBB11D983760081E40A /* libUniversalDetector.win.a */,
 				1B34A03C11BB1CD900396C26 /* libbz2.a */,
 				1B34A04411BB1F2000396C26 /* libeay32.a */,
 				1B34A06611BB21A900396C26 /* libwinmm.a */,
@@ -2751,9 +2747,9 @@
 			productReference = 1B5A7BA30A24F9B400B189EB /* XADTest */;
 			productType = "com.apple.product-type.tool";
 		};
-		1B91CCBE11D97E7C0081E40A /* libXADMaster.a (Windows) */ = {
+		1B91CCBE11D97E7C0081E40A /* libXADMaster.win.a */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1B91CD5B11D97E7C0081E40A /* Build configuration list for PBXNativeTarget "libXADMaster.a (Windows)" */;
+			buildConfigurationList = 1B91CD5B11D97E7C0081E40A /* Build configuration list for PBXNativeTarget "libXADMaster.win.a" */;
 			buildPhases = (
 				1B91CCBF11D97E7C0081E40A /* Headers */,
 				1B91CCC111D97E7C0081E40A /* Sources */,
@@ -2764,14 +2760,14 @@
 			);
 			dependencies = (
 			);
-			name = "libXADMaster.a (Windows)";
+			name = libXADMaster.win.a;
 			productName = libXADMaster;
-			productReference = 1B91CD5E11D97E7C0081E40A /* libXADMaster.a */;
+			productReference = 1B91CD5E11D97E7C0081E40A /* libXADMaster.win.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		1B91CD9611D981E20081E40A /* unar.exe (Windows) */ = {
+		1B91CD9611D981E20081E40A /* unar.exe */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1B91CDA911D981E20081E40A /* Build configuration list for PBXNativeTarget "unar.exe (Windows)" */;
+			buildConfigurationList = 1B91CDA911D981E20081E40A /* Build configuration list for PBXNativeTarget "unar.exe" */;
 			buildPhases = (
 				1B91CD9B11D981E20081E40A /* Sources */,
 				1B91CD9F11D981E20081E40A /* Frameworks */,
@@ -2783,7 +2779,7 @@
 				1B91CDC611D983DA0081E40A /* PBXTargetDependency */,
 				1B91CDC811D983DD0081E40A /* PBXTargetDependency */,
 			);
-			name = "unar.exe (Windows)";
+			name = unar.exe;
 			productName = unar;
 			productReference = 1B91CDAC11D981E20081E40A /* unar.exe */;
 			productType = "com.apple.product-type.tool";
@@ -2806,9 +2802,9 @@
 			productReference = 1B91D18F11E1677B0081E40A /* lsar */;
 			productType = "com.apple.product-type.tool";
 		};
-		1B91D2D611E694860081E40A /* lsar.exe (Windows) */ = {
+		1B91D2D611E694860081E40A /* lsar.exe */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1B91D2EB11E694860081E40A /* Build configuration list for PBXNativeTarget "lsar.exe (Windows)" */;
+			buildConfigurationList = 1B91D2EB11E694860081E40A /* Build configuration list for PBXNativeTarget "lsar.exe" */;
 			buildPhases = (
 				1B91D2DB11E694860081E40A /* Sources */,
 				1B91D2E111E694860081E40A /* Frameworks */,
@@ -2820,7 +2816,7 @@
 				1B91D2D711E694860081E40A /* PBXTargetDependency */,
 				1B91D2D911E694860081E40A /* PBXTargetDependency */,
 			);
-			name = "lsar.exe (Windows)";
+			name = lsar.exe;
 			productName = unar;
 			productReference = 1B91D2EE11E694860081E40A /* lsar.exe */;
 			productType = "com.apple.product-type.tool";
@@ -2885,7 +2881,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
-			compatibilityVersion = "Xcode 3.0";
+			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -2914,9 +2910,9 @@
 				1B34A97411C2FD0500396C26 /* libXADMaster.a */,
 				1B23DDBF1185EBA300620319 /* unar */,
 				1B91D17911E1677B0081E40A /* lsar */,
-				1B91CCBE11D97E7C0081E40A /* libXADMaster.a (Windows) */,
-				1B91CD9611D981E20081E40A /* unar.exe (Windows) */,
-				1B91D2D611E694860081E40A /* lsar.exe (Windows) */,
+				1B91CCBE11D97E7C0081E40A /* libXADMaster.win.a */,
+				1B91CD9611D981E20081E40A /* unar.exe */,
+				1B91D2D611E694860081E40A /* lsar.exe */,
 				1B433E2611E945D300DA1EFB /* Everything */,
 			);
 		};
@@ -3626,12 +3622,12 @@
 		};
 		1B433E3411E945EB00DA1EFB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1B91D2D611E694860081E40A /* lsar.exe (Windows) */;
+			target = 1B91D2D611E694860081E40A /* lsar.exe */;
 			targetProxy = 1B433E3311E945EB00DA1EFB /* PBXContainerItemProxy */;
 		};
 		1B433E3611E945EB00DA1EFB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1B91CD9611D981E20081E40A /* unar.exe (Windows) */;
+			target = 1B91CD9611D981E20081E40A /* unar.exe */;
 			targetProxy = 1B433E3511E945EB00DA1EFB /* PBXContainerItemProxy */;
 		};
 		1B5A7BBC0A24FB2400B189EB /* PBXTargetDependency */ = {
@@ -3641,7 +3637,7 @@
 		};
 		1B91CDC611D983DA0081E40A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1B91CCBE11D97E7C0081E40A /* libXADMaster.a (Windows) */;
+			target = 1B91CCBE11D97E7C0081E40A /* libXADMaster.win.a */;
 			targetProxy = 1B91CDC511D983DA0081E40A /* PBXContainerItemProxy */;
 		};
 		1B91CDC811D983DD0081E40A /* PBXTargetDependency */ = {
@@ -3661,7 +3657,7 @@
 		};
 		1B91D2D711E694860081E40A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1B91CCBE11D97E7C0081E40A /* libXADMaster.a (Windows) */;
+			target = 1B91CCBE11D97E7C0081E40A /* libXADMaster.win.a */;
 			targetProxy = 1B91D2D811E694860081E40A /* PBXContainerItemProxy */;
 		};
 		1B91D2D911E694860081E40A /* PBXTargetDependency */ = {
@@ -3706,27 +3702,15 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = unar;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
@@ -3738,7 +3722,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
@@ -3749,7 +3732,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest5;
 			};
 			name = Debug;
@@ -3762,13 +3744,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADMaster;
 			};
 			name = Debug;
@@ -3781,7 +3761,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
@@ -3792,7 +3771,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest4;
 			};
 			name = Debug;
@@ -3818,24 +3796,20 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = "$(HOME)/bin";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest;
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
 		1B68D25C13282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				FRAMEWORK_SEARCH_PATHS = "$(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -3861,7 +3835,6 @@
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
@@ -3874,7 +3847,6 @@
 				);
 				PRODUCT_NAME = XADMaster;
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -3888,15 +3860,12 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = "$(HOME)/bin";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -3910,15 +3879,12 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = "$(HOME)/bin";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest2;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -3927,10 +3893,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
@@ -3940,9 +3904,7 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest3;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -3951,10 +3913,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
@@ -3964,9 +3924,7 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest4;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -3975,10 +3933,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
@@ -3988,9 +3944,7 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest5;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -3999,17 +3953,13 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADMaster;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -4018,31 +3968,16 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = unar;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -4051,31 +3986,16 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = lsar;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -4109,11 +4029,10 @@
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = XADMaster;
+				PRODUCT_NAME = XADMaster.win;
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 				WARNING_CFLAGS = "-Wno-multichar";
 				ZERO_LINK = NO;
 			};
@@ -4156,8 +4075,8 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-Wl,--whole-archive",
-					"-lXADMaster",
-					"-lUniversalDetector",
+					"-lXADMaster.win",
+					"-lUniversalDetector.win",
 					"-Wl,--no-whole-archive",
 					"-Wl,--enable-auto-import",
 				);
@@ -4167,7 +4086,6 @@
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -4209,8 +4127,8 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-Wl,--whole-archive",
-					"-lXADMaster",
-					"-lUniversalDetector",
+					"-lXADMaster.win",
+					"-lUniversalDetector.win",
 					"-Wl,--no-whole-archive",
 					"-Wl,--enable-auto-import",
 				);
@@ -4220,7 +4138,6 @@
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -4267,11 +4184,10 @@
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = XADMaster;
+				PRODUCT_NAME = XADMaster.win;
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 				WARNING_CFLAGS = "-Wno-multichar";
 			};
 			name = Debug;
@@ -4314,8 +4230,8 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-Wl,--whole-archive",
-					"-lXADMaster",
-					"-lUniversalDetector",
+					"-lXADMaster.win",
+					"-lUniversalDetector.win",
 					"-Wl,--no-whole-archive",
 					"-Wl,--enable-auto-import",
 				);
@@ -4325,7 +4241,6 @@
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 			};
 			name = Debug;
 		};
@@ -4337,27 +4252,15 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = lsar;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
@@ -4399,8 +4302,8 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-Wl,--whole-archive",
-					"-lXADMaster",
-					"-lUniversalDetector",
+					"-lXADMaster.win",
+					"-lUniversalDetector.win",
 					"-Wl,--no-whole-archive",
 					"-Wl,--enable-auto-import",
 				);
@@ -4410,7 +4313,6 @@
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 			};
 			name = Debug;
 		};
@@ -4452,7 +4354,6 @@
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
@@ -4465,7 +4366,6 @@
 				);
 				PRODUCT_NAME = XADMaster;
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4479,15 +4379,12 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = "$(HOME)/bin";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4501,15 +4398,12 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = "$(HOME)/bin";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest2;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4518,10 +4412,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
@@ -4531,9 +4423,7 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest3;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4542,10 +4432,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
@@ -4555,9 +4443,7 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest4;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4566,10 +4452,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
@@ -4579,9 +4463,7 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest5;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4590,17 +4472,13 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADMaster;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4609,31 +4487,17 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = unar;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4642,31 +4506,17 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-ObjC",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = lsar;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk;
-				ZERO_LINK = NO;
 			};
 			name = Old;
 		};
@@ -4700,11 +4550,10 @@
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				PRODUCT_NAME = XADMaster;
+				PRODUCT_NAME = XADMaster.win;
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 				WARNING_CFLAGS = "-Wno-multichar";
 				ZERO_LINK = NO;
 			};
@@ -4747,8 +4596,8 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-Wl,--whole-archive",
-					"-lXADMaster",
-					"-lUniversalDetector",
+					"-lXADMaster.win",
+					"-lUniversalDetector.win",
 					"-Wl,--no-whole-archive",
 					"-Wl,--enable-auto-import",
 				);
@@ -4758,7 +4607,6 @@
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 				ZERO_LINK = NO;
 			};
 			name = Old;
@@ -4800,8 +4648,8 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-Wl,--whole-archive",
-					"-lXADMaster",
-					"-lUniversalDetector",
+					"-lXADMaster.win",
+					"-lUniversalDetector.win",
 					"-Wl,--no-whole-archive",
 					"-Wl,--enable-auto-import",
 				);
@@ -4811,7 +4659,6 @@
 				SDKROOT_i386 = "";
 				SDKROOT_ppc = "";
 				SDKROOT_x86_64 = "";
-				SYMROOT = /Users/dag/Code/Build/Windows;
 				ZERO_LINK = NO;
 			};
 			name = Old;
@@ -4838,16 +4685,13 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				INSTALL_PATH = "$(HOME)/bin";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest2;
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
@@ -4859,7 +4703,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
@@ -4870,7 +4713,6 @@
 					"-framework",
 					AppKit,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = XADTest3;
 			};
 			name = Debug;
@@ -4892,7 +4734,6 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
@@ -4905,7 +4746,6 @@
 				);
 				PRODUCT_NAME = XADMaster;
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
@@ -4985,7 +4825,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		1B91CD5B11D97E7C0081E40A /* Build configuration list for PBXNativeTarget "libXADMaster.a (Windows)" */ = {
+		1B91CD5B11D97E7C0081E40A /* Build configuration list for PBXNativeTarget "libXADMaster.win.a" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B91CD5C11D97E7C0081E40A /* Debug */,
@@ -4995,7 +4835,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		1B91CDA911D981E20081E40A /* Build configuration list for PBXNativeTarget "unar.exe (Windows)" */ = {
+		1B91CDA911D981E20081E40A /* Build configuration list for PBXNativeTarget "unar.exe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B91CDAA11D981E20081E40A /* Debug */,
@@ -5015,7 +4855,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		1B91D2EB11E694860081E40A /* Build configuration list for PBXNativeTarget "lsar.exe (Windows)" */ = {
+		1B91D2EB11E694860081E40A /* Build configuration list for PBXNativeTarget "lsar.exe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1B91D2EC11E694860081E40A /* Debug */,

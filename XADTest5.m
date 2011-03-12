@@ -222,7 +222,7 @@ CSHandle *HandleForLocators(NSArray *locators,NSString **nameptr)
 
 -(id)initWithLocator:(NSString *)locator
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		count=-1;
 		entrynum=-1;

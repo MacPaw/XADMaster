@@ -7,7 +7,7 @@ void PrintEncodingList()
 {
 	NSEnumerator *enumerator=[[XADString availableEncodingNames] objectEnumerator];
 	NSArray *encodingarray;
-	while(encodingarray=[enumerator nextObject])
+	while((encodingarray=[enumerator nextObject]))
 	{
 		NSString *description=[encodingarray objectAtIndex:0];
 		if((id)description==[NSNull null]||[description length]==0) description=nil;

@@ -34,7 +34,7 @@ static NSString *AliasOptionType=@"AliasOptionType";
 
 -(id)init
 {
-	if(self=[super init])
+	if((self=[super init]))
 	{
 		options=[NSMutableDictionary new];
 		optionordering=[NSMutableArray new];
@@ -337,7 +337,7 @@ description:(NSString *)description argumentDescription:(NSString *)argdescripti
 {
 	NSEnumerator *enumerator=[requiredoptions objectEnumerator];
 	NSString *requiredoption;
-	while(requiredoption=[enumerator nextObject]) [self addRequiredOption:requiredoption];
+	while((requiredoption=[enumerator nextObject])) [self addRequiredOption:requiredoption];
 }
 
 -(void)addRequiredOption:(NSString *)requiredoption forOption:(NSString *)option
@@ -358,7 +358,7 @@ description:(NSString *)description argumentDescription:(NSString *)argdescripti
 {
 	NSEnumerator *enumerator=[requiredoptions objectEnumerator];
 	NSString *requiredoption;
-	while(requiredoption=[enumerator nextObject]) [self addRequiredOption:requiredoption forOption:option];
+	while((requiredoption=[enumerator nextObject])) [self addRequiredOption:requiredoption forOption:option];
 }
 
 
@@ -405,7 +405,7 @@ errors:(NSMutableArray *)errors
 	NSEnumerator *enumerator=[arguments objectEnumerator];
 	NSString *argument;
 	BOOL stillparsing=YES;
-	while(argument=[enumerator nextObject])
+	while((argument=[enumerator nextObject]))
 	{
 		// Check for options, unless we have seen a stop marker.
 		if(stillparsing && [argument characterAtIndex:0]=='-')
@@ -561,7 +561,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 {
 	NSEnumerator *enumerator=[options objectEnumerator];
 	NSMutableDictionary *dict;
-	while(dict=[enumerator nextObject])
+	while((dict=[enumerator nextObject]))
 	{
 		id defaultvalue=[dict objectForKey:DefaultValueKey];
 		if(!defaultvalue) continue;
@@ -601,7 +601,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 	NSEnumerator *enumerator=[options objectEnumerator];
 	NSDictionary *dict;
-	while(dict=[enumerator nextObject])
+	while((dict=[enumerator nextObject]))
 	{
 		NSArray *names=[dict objectForKey:NamesKey];
 		NSString *name=[names objectAtIndex:0];
@@ -623,7 +623,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 	NSEnumerator *enumerator=[requiredoptions objectEnumerator];
 	NSString *requiredoption;
-	while(requiredoption=[enumerator nextObject])
+	while((requiredoption=[enumerator nextObject]))
 	{
 		if(![self _isOptionDefined:requiredoption]) [set addObject:requiredoption];
 	}
@@ -634,7 +634,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 	enumerator=[optionordering objectEnumerator];
 	NSString *option;
-	while(option=[enumerator nextObject])
+	while((option=[enumerator nextObject]))
 	{
 		if([set containsObject:option]) [array addObject:[self _describeOption:option]];
 	}
@@ -678,7 +678,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 {
 	NSEnumerator *enumerator=[errors objectEnumerator];
 	NSString *error;
-	while(error=[enumerator nextObject])
+	while((error=[enumerator nextObject]))
 	{
 		[error print];
 		[@"\n" print];

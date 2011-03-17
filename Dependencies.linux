@@ -412,7 +412,8 @@ XADStuffIt13Handle.o: XADStuffIt13Handle.m XADStuffIt13Handle.h \
 XADStuffIt5Parser.o: XADStuffIt5Parser.m XADStuffIt5Parser.h \
  XADStuffItParser.h XADArchiveParser.h XADException.h XADString.h \
  XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
- CSSubHandle.h NSDateXAD.h
+ CSSubHandle.h NSDateXAD.h XADRC4Handle.h CSStreamHandle.h \
+ CSInputBuffer.h
 XADStuffItArsenicHandle.o: XADStuffItArsenicHandle.m \
  XADStuffItArsenicHandle.h CSByteStreamHandle.h CSStreamHandle.h \
  CSHandle.h CSInputBuffer.h BWT.h XADException.h CRC.h

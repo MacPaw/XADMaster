@@ -270,7 +270,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			NSDictionary *extradict=nil;
 			@try {
 				if(localextralength) extradict=[self parseZipExtraWithLength:localextralength nameData:namedata
-				uncompressedSizePointer:NULL compressedSizePointer:NULL];
+				uncompressedSizePointer:&uncompsize compressedSizePointer:&compsize];
 			} @catch(id e) {
 				[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 				NSLog(@"Error parsing Zip extra fields: %@",e);

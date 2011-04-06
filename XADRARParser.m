@@ -14,10 +14,6 @@
 #import "NSDateXAD.h"
 #import "Scanning.h"
 
-#ifdef SUPPORT_OFFICIAL_UNRAR
-#import "../BadLicense/XADRAROfficialHandle.h"
-#endif
-
 #define RARFLAG_SKIP_IF_UNKNOWN 0x4000
 #define RARFLAG_LONG_BLOCK    0x8000
 
@@ -642,9 +638,6 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 {
 	int version=[[[obj objectAtIndex:0] objectForKey:@"Version"] intValue];
 
-	#ifdef SUPPORT_OFFICIAL_UNRAR
-	return [[[XADRAROfficialHandle alloc] initWithRARParser:self version:version parts:obj] autorelease];
-	#else
 	switch(version)
 	{
 		case 15:
@@ -661,7 +654,6 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 		default:
 			return nil;
 	}
-	#endif
 }
 
 -(CSHandle *)handleWithVersion:(int)version skipOffset:(off_t)skipoffset

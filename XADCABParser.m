@@ -58,7 +58,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 		if(!firsthead.prevvolume&&!firsthead.nextvolume) return nil;
 
 		NSString *dirname=[name stringByDeletingLastPathComponent];
-		#if MAC_OS_X_VERSION_MAX_ALLOWED>=1050
+		#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
 		NSArray *dircontents=[[NSFileManager defaultManager] contentsOfDirectoryAtPath:dirname error:NULL];
 		#else
 		NSArray *dircontents=[[NSFileManager defaultManager] directoryContentsAtPath:dirname];

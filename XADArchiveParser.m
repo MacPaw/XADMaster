@@ -461,7 +461,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	NSString *dirname=[filename stringByDeletingLastPathComponent];
 	if(!dirname||[dirname length]==0) dirname=@".";
 
-	#if MAC_OS_X_VERSION_MAX_ALLOWED>=1050
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
 	NSEnumerator *enumerator=[[[NSFileManager defaultManager] contentsOfDirectoryAtPath:dirname error:NULL] objectEnumerator];
 	#else
 	NSEnumerator *enumerator=[[[NSFileManager defaultManager] directoryContentsAtPath:dirname] objectEnumerator];

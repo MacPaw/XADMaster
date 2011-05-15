@@ -304,7 +304,7 @@ int main(int argc,const char **argv)
 	[cmdline addAlias:@"j" forOption:@"json"];
 
 	[cmdline addSwitchOption:@"json-ascii" description:
-	@"Print the listing in JSON format, encoded as pure ASCII text.."];
+	@"Print the listing in JSON format, encoded as pure ASCII text."];
 	[cmdline addAlias:@"ja" forOption:@"json-ascii"];
 
 	[cmdline addHelpOption];

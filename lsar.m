@@ -375,7 +375,7 @@ int main(int argc,const char **argv)
 		}
 
 		[printer endPrintingArray];
-		[@";\n" print];
+		[@"\n" print];
 	}
 	else
 	{

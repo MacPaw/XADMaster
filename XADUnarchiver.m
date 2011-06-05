@@ -221,8 +221,12 @@
 		error=[self _extractFileEntryWithDictionary:dict as:path];
 	}
 
-	// Update file attributes
-	if(!error)
+	// Update file attributes, but not for symlinks.  We might not
+	// have permission to update these on the the symlink target,
+	// which is one reason why we would need to take care to update
+	// the link itself, not the target.  Other utilities like GNU
+	// Tar don't seem to update the mtime for symlinks either.
+	if(!error&&!islink)
 	{
 		error=[self _updateFileAttributesAtPath:path forEntryWithDictionary:dict deferDirectories:!force];
 	}

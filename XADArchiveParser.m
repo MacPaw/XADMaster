@@ -458,13 +458,16 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 {
 	NSMutableArray *volumes=[NSMutableArray array];
 
-	NSString *dirname=[filename stringByDeletingLastPathComponent];
-	if(!dirname||[dirname length]==0) dirname=@".";
+	NSString *directory=[filename stringByDeletingLastPathComponent];
+	if([directory length]==0) directory=nil;
+
+	NSString *dirpath=directory;
+	if(!dirpath) dirpath=@".";
 
 	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	NSEnumerator *enumerator=[[[NSFileManager defaultManager] contentsOfDirectoryAtPath:dirname error:NULL] objectEnumerator];
+	NSEnumerator *enumerator=[[[NSFileManager defaultManager] contentsOfDirectoryAtPath:dirpath error:NULL] objectEnumerator];
 	#else
-	NSEnumerator *enumerator=[[[NSFileManager defaultManager] directoryContentsAtPath:dirname] objectEnumerator];
+	NSEnumerator *enumerator=[[[NSFileManager defaultManager] directoryContentsAtPath:dirpath] objectEnumerator];
 	#endif
 	
 	if(!enumerator) return nil;
@@ -472,7 +475,10 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	NSString *direntry;
 	while((direntry=[enumerator nextObject]))
 	{
-		NSString *filename=[dirname stringByAppendingPathComponent:direntry];
+		NSString *filename;
+		if(directory) filename=[directory stringByAppendingPathComponent:direntry];
+		else filename=direntry;
+
 		if([regex matchesString:filename]) [volumes addObject:filename];
 	}
 

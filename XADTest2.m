@@ -76,6 +76,7 @@ int main(int argc,char **argv)
 		char *pass=getenv("XADTestPassword");
 		if(pass) [parser setPassword:[NSString stringWithUTF8String:pass]];
 
+		NSLog(@"Archive format: \"%@\", properties: %@",[parser formatName],[parser properties]);
 		[parser parse];
 		NSLog(@"Archive format: \"%@\", properties: %@",[parser formatName],[parser properties]);
 

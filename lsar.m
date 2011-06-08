@@ -11,6 +11,12 @@
 BOOL recurse,test;
 NSString *password,*encoding;
 
+int returncode;
+
+#define PrintUsageReturnCode 1
+#define OpeningArchiveFailedReturnCode 2
+#define EntryFailedTestingReturnCode 4
+#define EntryIsNotSupportedReturnCode 8
 
 
 #define EntryDoesNotNeedTestingResult 0
@@ -35,6 +41,7 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 
 	if(!handle)
 	{
+		returncode|=EntryIsNotSupportedReturnCode;
 		return EntryIsNotSupportedResult;
 	}
 
@@ -44,6 +51,7 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 	{
 		if(size&&[size longLongValue]!=[handle offsetInFile])
 		{
+			returncode|=EntryFailedTestingReturnCode;
 			return EntrySizeIsWrongResult;
 		}
 		else
@@ -55,10 +63,12 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 	{
 		if(![handle isChecksumCorrect])
 		{
+			returncode|=EntryFailedTestingReturnCode;
 			return EntryChecksumIsIncorrectResult;
 		}
 		else if(size&&[size longLongValue]!=[handle offsetInFile])
 		{
+			returncode|=EntryFailedTestingReturnCode;
 			return EntrySizeIsWrongResult; // Unlikely to happen
 		}
 		else
@@ -341,10 +351,12 @@ int main(int argc,const char **argv)
 	if(numfiles==0)
 	{
 		[cmdline printUsage];
-		return 1;
+		return PrintUsageReturnCode;
 	}
 
 
+
+	returncode=0;
 
 	if(json||jsonascii)
 	{
@@ -374,6 +386,7 @@ int main(int argc,const char **argv)
 			else
 			{
 				[printer printArrayObject:@"Couldn't open archive."];
+				returncode|=OpeningArchiveFailedReturnCode;
 			}
 
 			[pool release];
@@ -417,6 +430,7 @@ int main(int argc,const char **argv)
 			else
 			{
 				[@" Couldn't open archive.\n" print];
+				returncode|=OpeningArchiveFailedReturnCode;
 			}
 
 			[pool release];
@@ -425,6 +439,6 @@ int main(int argc,const char **argv)
 
 	[pool release];
 
-	return 0;
+	return returncode;
 }
 

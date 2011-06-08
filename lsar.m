@@ -4,7 +4,7 @@
 #import "CSJSONPrinter.h"
 #import "CommandLineCommon.h"
 
-#define VERSION_STRING @"v0.4"
+#define VERSION_STRING @"v0.5"
 
 
 
@@ -290,6 +290,11 @@ int main(int argc,const char **argv)
 	argumentDescription:@"encoding name"];
 	[cmdline addAlias:@"e" forOption:@"encoding"];
 
+	[cmdline addSwitchOption:@"print-encoding" description:
+	@"Print the auto-detected encoding after the file list, and the "
+	@"confidence factor."];
+	[cmdline addAlias:@"pe" forOption:@"print-encoding"];
+
 	[cmdline addSwitchOption:@"test" description:
 	@"Test the integrity of the files in the archive, if possible."];
 	[cmdline addAlias:@"t" forOption:@"test"];
@@ -400,6 +405,14 @@ int main(int argc,const char **argv)
 
 				[parser setDelegate:[[[Lister alloc] init] autorelease]];
 				[parser parse];
+
+				if([cmdline boolValueForOption:@"print-encoding"])
+				{
+					XADStringSource *source=[parser stringSource];
+
+					[[NSString stringWithFormat:@"Encoding: %@ (%d%% confidence)\n",
+					[source encodingName],(int)([source confidence]*100+0.5)] print];
+				}
 			}
 			else
 			{

@@ -400,7 +400,9 @@ int main(int argc,const char **argv)
 			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 			NSString *filename=[files objectAtIndex:i];
 
-			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
+			XADArchiveParser *parser;
+			@try { parser=[XADArchiveParser archiveParserForPath:filename]; }
+			@catch(id exception) { parser=nil; }
 
 			if(parser)
 			{
@@ -448,7 +450,9 @@ int main(int argc,const char **argv)
 			[@":" print];
 			fflush(stdout);
 
-			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
+			XADArchiveParser *parser;
+			@try { parser=[XADArchiveParser archiveParserForPath:filename]; }
+			@catch(id exception) { parser=nil; }
 
 			if(parser)
 			{

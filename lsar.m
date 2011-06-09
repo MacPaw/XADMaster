@@ -13,18 +13,15 @@ NSString *password,*encoding;
 
 int returncode;
 
-#define PrintUsageReturnCode 1
-#define OpeningArchiveFailedReturnCode 2
-#define EntryFailedTestingReturnCode 4
-#define EntryIsNotSupportedReturnCode 8
 
 
 #define EntryDoesNotNeedTestingResult 0
 #define EntryIsNotSupportedResult 1
-#define EntrySizeIsWrongResult 2
-#define EntryHasNoChecksumResult 3
-#define EntryChecksumIsIncorrectResult 4
-#define EntryIsOkResult 5
+#define EntryFailsWhileUnpackingResult 2
+#define EntrySizeIsWrongResult 3
+#define EntryHasNoChecksumResult 4
+#define EntryChecksumIsIncorrectResult 5
+#define EntryIsOkResult 6
 
 static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handle)
 {
@@ -37,21 +34,33 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 
 	if(isdir||islink) return EntryDoesNotNeedTestingResult;
 
-	if(!handle) handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
+	if(!handle)
+	{
+		@try { handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES]; }
+		@catch(id exception) { handle=nil; }
+	}
 
 	if(!handle)
 	{
-		returncode|=EntryIsNotSupportedReturnCode;
+		returncode=1;
 		return EntryIsNotSupportedResult;
 	}
 
-	[handle seekToEndOfFile];
+	@try
+	{
+		[handle seekToEndOfFile];
+	}
+	@catch(id exception)
+	{
+		returncode=1;
+		return EntryFailsWhileUnpackingResult;
+	}
 
 	if(![handle hasChecksum])
 	{
 		if(size&&[size longLongValue]!=[handle offsetInFile])
 		{
-			returncode|=EntryFailedTestingReturnCode;
+			returncode=1;
 			return EntrySizeIsWrongResult;
 		}
 		else
@@ -63,12 +72,12 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 	{
 		if(![handle isChecksumCorrect])
 		{
-			returncode|=EntryFailedTestingReturnCode;
+			returncode=1;
 			return EntryChecksumIsIncorrectResult;
 		}
 		else if(size&&[size longLongValue]!=[handle offsetInFile])
 		{
-			returncode|=EntryFailedTestingReturnCode;
+			returncode=1;
 			return EntrySizeIsWrongResult; // Unlikely to happen
 		}
 		else
@@ -80,19 +89,25 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 
 static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *parser,NSDictionary *dict,id delegate)
 {
-	// TODO: handle exceptions
-	CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:test];
-	if(!handle) return nil;
+	@try
+	{
+		CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:test];
+		if(!handle) return nil;
 
-	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle
-	name:[[dict objectForKey:XADFileNameKey] string]];
-	if(!subparser) return nil;
+		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle
+		name:[[dict objectForKey:XADFileNameKey] string]];
+		if(!subparser) return nil;
 
-	if(password) [subparser setPassword:password];
-	if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
-	[subparser setDelegate:delegate];
+		if(password) [subparser setPassword:password];
+		if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
+		[subparser setDelegate:delegate];
 
-	return subparser;
+		return subparser;
+	}
+	@catch(id exception)
+	{
+		return nil;
+	}
 }
 
 
@@ -138,25 +153,8 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 	NSString *displayname=[[[dict objectForKey:XADFileNameKey] string] stringByEscapingControlCharacters];
 	[displayname print];
 
-/*	[@" (" print];
-
-	if(dir&&[dir boolValue])
-	{
-		[@"dir" print];
-	}
-	else if(link&&[link boolValue]) [@"link" print];
-	else
-	{
-		if(size) [[NSString stringWithFormat:@"%lld",[size longLongValue]] print];
-		else [@"?" print];
-	}
-
-	if(rsrc&&[rsrc boolValue]) [@", rsrc" print];
-
-	[@")..." print];
-	fflush(stdout);*/
-
 	CSHandle *handle=nil;
+	BOOL failed=NO;
 
 	if(recurse&&isarchive)
 	{
@@ -166,7 +164,17 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 		{
 			[@":\n" print];
 			indent++;
-			[subparser parse]; // TODO: handle exceptions
+
+			@try
+			{
+				[subparser parse];
+			}
+			@catch(id exception)
+			{
+				failed=YES;
+				returncode=1;
+			}
+
 			indent--;
 
 			if(test) for(int i=0;i<indent;i++) [@"  " print];
@@ -174,7 +182,8 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 		}
 		else
 		{
-			[@" (Failed to extract!) " print];
+			// Currently does not set a return code, as sub-archives might be misidentified.
+			[@" (Couldn't open contained archive!) " print];
 		}
 	}
 	else
@@ -182,12 +191,17 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 		if(test) [@" " print];
 	}
 
-	if(test)
+	if(failed)
+	{
+		[@" (Failed while reading contained archive!)" print];
+	}
+	else if(test)
 	{
 		switch(TestEntry(parser,dict,handle))
 		{
 			case EntryDoesNotNeedTestingResult: break;
 			case EntryIsNotSupportedResult: [@"(Unsupported!)" print]; break;
+			case EntryFailsWhileUnpackingResult: [@"(Unpacking failed!)" print]; break;
 			case EntrySizeIsWrongResult: [@"(Wrong size!)" print]; break;
 			case EntryHasNoChecksumResult: [@"(Unknown)" print]; break;
 			case EntryChecksumIsIncorrectResult: [@"(Checksum failed!)" print]; break;
@@ -222,9 +236,10 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 
 -(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
 {
-	// TODO: be useful
+	// Return 2 to indicate that a password is needed.
+	// Output will likely be invalid.
 	[printer printArrayObject:@"password_required"];
-	exit(1);
+	exit(2);
 }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
@@ -248,11 +263,25 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 			[printer printDictionaryKey:@"lsarContents"];
 			[printer startPrintingDictionaryObject];
 			[printer startPrintingArray];
-			[subparser parse]; // TODO: handle exceptions
+
+			@try
+			{
+				[subparser parse];
+			}
+			@catch(id exception)
+			{
+				[printer printArrayObject:@"parsing_failed"];
+				returncode=1;
+			}
+
 			[printer endPrintingArray];
 			[printer endPrintingDictionaryObject];
 
 			handle=[subparser handle];
+		}
+		else
+		{
+			// Currently does not set a return code, as sub-archives might be misidentified.
 		}
 	}
 
@@ -263,6 +292,7 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 		{
 			case EntryDoesNotNeedTestingResult: [printer printDictionaryObject:@"not_tested"]; break;
 			case EntryIsNotSupportedResult: [printer printDictionaryObject:@"not_supported"]; break;
+			case EntryFailsWhileUnpackingResult: [printer printDictionaryObject:@"unpacking_failed"]; break;
 			case EntrySizeIsWrongResult: [printer printDictionaryObject:@"wrong_size"]; break;
 			case EntryHasNoChecksumResult: [printer printDictionaryObject:@"no_checksum"]; break;
 			case EntryChecksumIsIncorrectResult: [printer printDictionaryObject:@"wrong_checksum"]; break;
@@ -351,7 +381,7 @@ int main(int argc,const char **argv)
 	if(numfiles==0)
 	{
 		[cmdline printUsage];
-		return PrintUsageReturnCode;
+		return 1;
 	}
 
 
@@ -369,6 +399,7 @@ int main(int argc,const char **argv)
 		{
 			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 			NSString *filename=[files objectAtIndex:i];
+
 			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
 
 			if(parser)
@@ -379,14 +410,24 @@ int main(int argc,const char **argv)
 				[printer startPrintingArrayObject];
 				[printer startPrintingArray];
 				[parser setDelegate:[[[JSONLister alloc] initWithJSONPrinter:printer] autorelease]];
-				[parser parse];
+
+				@try
+				{
+					[parser parse];
+				}
+				@catch(id exception)
+				{
+					[printer printArrayObject:@"parsing_failed"];
+					returncode=1;
+				}
+
 				[printer endPrintingArray];
 				[printer endPrintingArrayObject];
 			}
 			else
 			{
-				[printer printArrayObject:@"Couldn't open archive."];
-				returncode|=OpeningArchiveFailedReturnCode;
+				[printer printArrayObject:@"opening_failed"];
+				returncode=1;
 			}
 
 			[pool release];
@@ -417,7 +458,16 @@ int main(int argc,const char **argv)
 				if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
 
 				[parser setDelegate:[[[Lister alloc] init] autorelease]];
-				[parser parse];
+
+				@try
+				{
+					[parser parse];
+				}
+				@catch(id exception)
+				{
+					[@"Failed while reading archive!\n" print];
+					returncode=1;
+				}
 
 				if([cmdline boolValueForOption:@"print-encoding"])
 				{
@@ -429,8 +479,8 @@ int main(int argc,const char **argv)
 			}
 			else
 			{
-				[@" Couldn't open archive.\n" print];
-				returncode|=OpeningArchiveFailedReturnCode;
+				[@" Couldn't open archive!\n" print];
+				returncode=1;
 			}
 
 			[pool release];

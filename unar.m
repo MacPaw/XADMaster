@@ -8,6 +8,9 @@
 
 BOOL recurse;
 
+int returncode;
+
+
 
 
 @interface Unarchiver:NSObject
@@ -220,7 +223,7 @@ int main(int argc,const char **argv)
 	if(numfiles==0)
 	{
 		[cmdline printUsage];
-		exit(1);
+		return 1;
 	}
 
 	NSString *destination=nil;
@@ -236,6 +239,8 @@ int main(int argc,const char **argv)
 	}
 
 
+
+	returncode=0;
 
 	for(int i=0;i<numfiles;i++)
 	{
@@ -273,6 +278,7 @@ int main(int argc,const char **argv)
 		else
 		{
 			[@" Couldn't open archive.\n" print];
+			returncode=1;
 		}
 
 		[pool release];
@@ -280,5 +286,5 @@ int main(int argc,const char **argv)
 
 	[pool release];
 
-	return 0;
+	return returncode;
 }

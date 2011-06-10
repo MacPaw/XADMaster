@@ -132,7 +132,7 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 -(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
 {
 	[@"This archive requires a password to unpack. Use the -p option to provide one.\n" print];
-	exit(1);
+	exit(2);
 }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict

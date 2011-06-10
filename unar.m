@@ -38,7 +38,7 @@ int returncode;
 -(void)unarchiverNeedsPassword:(XADUnarchiver *)unarchiver
 {
 	[@"This archive requires a password to unpack. Use the -p option to provide one.\n" print];
-	exit(1);
+	exit(2);
 }
 
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver pathForExtractingEntryWithDictionary:(NSDictionary *)dict
@@ -94,6 +94,8 @@ int returncode;
 		[@"Failed! (" print];
 		[[XADException describeXADError:error] print];
 		[@")\n" print];
+
+		returncode=1;
 	}
 }
 

@@ -28,6 +28,7 @@
 
 +(XADUnarchiver *)unarchiverForArchiveParser:(XADArchiveParser *)archiveparser;
 +(XADUnarchiver *)unarchiverForPath:(NSString *)path;
++(XADUnarchiver *)unarchiverForPath:(NSString *)path error:(XADError *)errorptr;
 
 -(id)initWithArchiveParser:(XADArchiveParser *)archiveparser;
 -(void)dealloc;

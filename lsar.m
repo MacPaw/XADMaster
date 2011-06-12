@@ -34,11 +34,7 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 
 	if(isdir||islink) return EntryDoesNotNeedTestingResult;
 
-	if(!handle)
-	{
-		@try { handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES]; }
-		@catch(id exception) { handle=nil; }
-	}
+	if(!handle) handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES error:NULL];
 
 	if(!handle)
 	{
@@ -89,25 +85,18 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 
 static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *parser,NSDictionary *dict,id delegate)
 {
-	@try
-	{
-		CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:test];
-		if(!handle) return nil;
+	CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:test error:NULL];
+	if(!handle) return nil;
 
-		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle
-		name:[[dict objectForKey:XADFileNameKey] string]];
-		if(!subparser) return nil;
+	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle
+	name:[[dict objectForKey:XADFileNameKey] string] error:NULL];
+	if(!subparser) return nil;
 
-		if(password) [subparser setPassword:password];
-		if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
-		[subparser setDelegate:delegate];
+	if(password) [subparser setPassword:password];
+	if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
+	[subparser setDelegate:delegate];
 
-		return subparser;
-	}
-	@catch(id exception)
-	{
-		return nil;
-	}
+	return subparser;
 }
 
 
@@ -159,17 +148,12 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 	if(recurse&&isarchive)
 	{
 		XADArchiveParser *subparser=ArchiveParserForEntryWithDelegate(parser,dict,self);
-
 		if(subparser)
 		{
 			[@":\n" print];
 			indent++;
 
-			@try
-			{
-				[subparser parse];
-			}
-			@catch(id exception)
+			if([subparser parseWithoutExceptions]!=XADNoError)
 			{
 				failed=YES;
 				returncode=1;
@@ -257,18 +241,13 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 	if(recurse&&isarchive)
 	{
 		XADArchiveParser *subparser=ArchiveParserForEntryWithDelegate(parser,dict,self);
-
 		if(subparser)
 		{
 			[printer printDictionaryKey:@"lsarContents"];
 			[printer startPrintingDictionaryObject];
 			[printer startPrintingArray];
 
-			@try
-			{
-				[subparser parse];
-			}
-			@catch(id exception)
+			if([subparser parseWithoutExceptions]!=XADNoError)
 			{
 				[printer printArrayObject:@"parsing_failed"];
 				returncode=1;
@@ -400,10 +379,7 @@ int main(int argc,const char **argv)
 			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
 			NSString *filename=[files objectAtIndex:i];
 
-			XADArchiveParser *parser;
-			@try { parser=[XADArchiveParser archiveParserForPath:filename]; }
-			@catch(id exception) { parser=nil; }
-
+			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename error:NULL];
 			if(parser)
 			{
 				if(password) [parser setPassword:password];
@@ -413,11 +389,7 @@ int main(int argc,const char **argv)
 				[printer startPrintingArray];
 				[parser setDelegate:[[[JSONLister alloc] initWithJSONPrinter:printer] autorelease]];
 
-				@try
-				{
-					[parser parse];
-				}
-				@catch(id exception)
+				if([parser parseWithoutExceptions]!=XADNoError)
 				{
 					[printer printArrayObject:@"parsing_failed"];
 					returncode=1;
@@ -450,10 +422,7 @@ int main(int argc,const char **argv)
 			[@":" print];
 			fflush(stdout);
 
-			XADArchiveParser *parser;
-			@try { parser=[XADArchiveParser archiveParserForPath:filename]; }
-			@catch(id exception) { parser=nil; }
-
+			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename error:NULL];
 			if(parser)
 			{
 				[@"\n" print];
@@ -463,11 +432,7 @@ int main(int argc,const char **argv)
 
 				[parser setDelegate:[[[Lister alloc] init] autorelease]];
 
-				@try
-				{
-					[parser parse];
-				}
-				@catch(id exception)
+				if([parser parseWithoutExceptions]!=XADNoError)
 				{
 					[@"Failed while reading archive!\n" print];
 					returncode=1;

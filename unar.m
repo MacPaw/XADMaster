@@ -256,7 +256,7 @@ int main(int argc,const char **argv)
 
 		fflush(stdout);
 
-		XADUnarchiver *unarchiver=[XADUnarchiver unarchiverForPath:filename];
+		XADUnarchiver *unarchiver=[XADUnarchiver unarchiverForPath:filename error:NULL];
 
 		if(unarchiver)
 		{

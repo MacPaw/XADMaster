@@ -86,8 +86,11 @@ extern NSString *XADDiskLabelKey;
 +(Class)archiveParserClassForHandle:(CSHandle *)handle firstBytes:(NSData *)header
 name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name;
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name error:(XADError *)errorptr;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name;
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name error:(XADError *)errorptr;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename;
++(XADArchiveParser *)archiveParserForPath:(NSString *)filename error:(XADError *)errorptr;
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
@@ -108,7 +111,9 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 -(XADStringSource *)stringSource;
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict;
+-(XADString *)linkDestinationForDictionary:(NSDictionary *)dict error:(XADError *)errorptr;
 -(NSData *)finderInfoForDictionary:(NSDictionary *)dict;
+-(NSData *)finderInfoForDictionary:(NSDictionary *)dict error:(XADError *)errorptr;
 
 
 
@@ -159,6 +164,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 -(const char *)encodedCStringPassword;
 
 
+
 // Subclasses implement these:
 
 +(int)requiredHeaderSize;
@@ -174,6 +180,11 @@ name:(NSString *)name;
 -(NSString *)formatName;
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
+
+// Exception-free wrappers for subclass methods:
+
+-(XADError)parseWithoutExceptions;
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
 
 @end
 

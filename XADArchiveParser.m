@@ -216,6 +216,14 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return [self archiveParserForHandle:handle firstBytes:header name:name];
 }
 
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self archiveParserForHandle:handle name:name]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
+
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name
 {
 	NSMutableDictionary *props=[NSMutableDictionary dictionary];
@@ -229,6 +237,14 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	[parser addPropertiesFromDictionary:props];
 
 	return parser;
+}
+
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self archiveParserForHandle:handle firstBytes:header name:name]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
 }
 
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename
@@ -281,6 +297,13 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return parser;
 }
 
++(XADArchiveParser *)archiveParserForPath:(NSString *)filename error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self archiveParserForPath:filename]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
 
 
 
@@ -398,6 +421,14 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return [self XADStringWithData:linkdata];
 }
 
+-(XADString *)linkDestinationForDictionary:(NSDictionary *)dict error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self linkDestinationForDictionary:dict]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
+
 -(NSData *)finderInfoForDictionary:(NSDictionary *)dict
 {
 	// Return a FinderInfo struct with extended info (32 bytes in size).
@@ -434,6 +465,15 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		return [NSData dataWithBytes:finderinfo length:32];
 	}
 }
+
+-(NSData *)finderInfoForDictionary:(NSDictionary *)dict error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self finderInfoForDictionary:dict]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
+
 
 
 
@@ -824,6 +864,23 @@ name:(NSString *)name { return nil; }
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum { return nil; }
 
+
+
+
+-(XADError)parseWithoutExceptions
+{
+	@try { [self parse]; }
+	@catch(id exception) { return [XADException parseException:exception]; }
+	return XADNoError;
+}
+
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self handleForEntryWithDictionary:dict wantChecksum:checksum]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
 
 @end
 

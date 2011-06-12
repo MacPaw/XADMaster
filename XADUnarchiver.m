@@ -11,7 +11,12 @@
 
 +(XADUnarchiver *)unarchiverForPath:(NSString *)path
 {
-	XADArchiveParser *archiveparser=[XADArchiveParser archiveParserForPath:path];
+	return [self unarchiverForPath:path error:NULL];
+}
+
++(XADUnarchiver *)unarchiverForPath:(NSString *)path error:(XADError *)errorptr
+{
+	XADArchiveParser *archiveparser=[XADArchiveParser archiveParserForPath:path error:errorptr];
 	if(!archiveparser) return nil;
 	return [[[self alloc] initWithArchiveParser:archiveparser] autorelease];
 }
@@ -28,8 +33,6 @@
 		delegate=nil;
 
 		deferreddirectories=[NSMutableArray new];
-
-		[parser setDelegate:self];
 	}
 	return self;
 }
@@ -77,19 +80,47 @@
 
 
 
+
 -(XADError)parseAndUnarchive
 {
+	id olddelegate=[parser delegate];
+	[parser setDelegate:self];
+
 	@try
 	{
 		[parser parse];
 	}
 	@catch(id e)
 	{
+		[parser setDelegate:olddelegate];
 		return [XADException parseException:e];
 	}
 
+	[parser setDelegate:olddelegate];
+
 	return [self finishExtractions];
 }
+
+-(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
+{
+	// TODO: conditionals?
+	[self extractEntryWithDictionary:dict];
+}
+
+-(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser
+{
+	if(!delegate) return NO;
+	return [delegate extractionShouldStopForUnarchiver:self];
+}
+
+-(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
+{
+	if(!delegate) return;
+	[delegate unarchiverNeedsPassword:self];
+}
+
+
+
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict
 {
@@ -243,6 +274,9 @@
 
 	return error;
 }
+
+
+
 
 static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *context)
 {
@@ -503,28 +537,6 @@ deferDirectories:(BOOL)defer
 		else return XADMakeDirectoryError;
 	}
 }
-
-
-
-
--(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
-{
-	// TODO: conditionals?
-	[self extractEntryWithDictionary:dict];
-}
-
--(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser
-{
-	if(!delegate) return NO;
-	return [delegate extractionShouldStopForUnarchiver:self];
-}
-
--(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
-{
-	if(!delegate) return;
-	[delegate unarchiverNeedsPassword:self];
-}
-
 
 @end
 

@@ -201,6 +201,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADUnarchiver.m \
 			XADUnarchiverLinux.m \
 			XADWinZipAESHandle.m \
+			XADWinZipWavPackHandle.m \
 			XADXARParser.m \
 			XADXORHandle.m \
 			XADXORSumHandle.m \
@@ -229,6 +230,12 @@ LIBRARY_C_FILES =	BWT.c \
 			lzma/Bra86.c \
 			lzma/Bra.c \
 			lzma/Lzma2Dec.c \
+			wavpack/bits.c \
+			wavpack/float.c \
+			wavpack/metadata.c \
+			wavpack/unpack.c \
+			wavpack/words.c \
+			wavpack/wputils.c
 
 LIBRARY_CXX_FILES =		
 

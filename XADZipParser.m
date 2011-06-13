@@ -6,6 +6,7 @@
 #import "XADPPMdHandles.h"
 #import "XADZipCryptHandle.h"
 #import "XADWinZipAESHandle.h"
+#import "XADWinZipWavPackHandle.h"
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
 #import "XADCRCHandle.h"
@@ -734,6 +735,7 @@ isLastEntry:(BOOL)islastentry
 		case 9: compressionname=@"Deflate64"; break;
 		case 12: compressionname=@"Bzip2"; break;
 		case 14: compressionname=@"LZMA"; break;
+		case 97: compressionname=@"WavPack"; break;
 		case 98: compressionname=@"PPMd"; break;
 	}
 	if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
@@ -966,6 +968,7 @@ isLastEntry:(BOOL)islastentry
 			return [[[XADLZMAHandle alloc] initWithHandle:parent length:size propertyData:props] autorelease];
 		}
 		break;
+		case 97: return [[[XADWinZipWavPackHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 98:
 		{
 			uint16_t info=[parent readUInt16LE];
@@ -983,3 +986,4 @@ isLastEntry:(BOOL)islastentry
 -(NSString *)formatName { return @"Zip"; }
 
 @end
+

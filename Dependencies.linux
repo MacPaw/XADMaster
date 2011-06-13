@@ -502,6 +502,9 @@ XADUnarchiverLinux.o: XADUnarchiverLinux.m XADUnarchiver.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h NSDateXAD.h
 XADWinZipAESHandle.o: XADWinZipAESHandle.m XADWinZipAESHandle.h \
  CSStreamHandle.h CSHandle.h CSInputBuffer.h XADException.h
+XADWinZipWavPackHandle.o: XADWinZipWavPackHandle.m \
+ XADWinZipWavPackHandle.h CSBlockStreamHandle.h CSStreamHandle.h \
+ CSHandle.h CSInputBuffer.h wavpack/wavpack.h XADException.h
 XADXARParser.o: XADXARParser.m XADXARParser.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h CSZlibHandle.h \
@@ -536,7 +539,8 @@ XADZipParser.o: XADZipParser.m XADZipParser.h XADMacArchiveParser.h \
  CarrylessRangeCoder.h PPMdSubAllocator.h PPMdVariantH.h \
  PPMdSubAllocatorVariantH.h PPMdVariantI.h PPMdSubAllocatorVariantI.h \
  PPMdSubAllocatorVariantG.h PPMdSubAllocatorBrimstone.h \
- XADZipCryptHandle.h XADWinZipAESHandle.h CSZlibHandle.h CSBzip2Handle.h \
+ XADZipCryptHandle.h XADWinZipAESHandle.h XADWinZipWavPackHandle.h \
+ CSBlockStreamHandle.h wavpack/wavpack.h CSZlibHandle.h CSBzip2Handle.h \
  XADCRCHandle.h Progress.h CRC.h NSDateXAD.h Scanning.h
 XADZipSFXParsers.o: XADZipSFXParsers.m XADZipSFXParsers.h XADZipParser.h \
  XADMacArchiveParser.h XADArchiveParser.h XADException.h XADString.h \
@@ -624,3 +628,10 @@ lzma/BraIA64.o: lzma/BraIA64.c lzma/Bra.h lzma/Types.h
 lzma/Bra86.o: lzma/Bra86.c lzma/Bra.h lzma/Types.h
 lzma/Bra.o: lzma/Bra.c lzma/Bra.h lzma/Types.h
 lzma/Lzma2Dec.o: lzma/Lzma2Dec.c lzma/Lzma2Dec.h lzma/LzmaDec.h lzma/Types.h
+wavpack/bits.o: wavpack/bits.c wavpack/wavpack_local.h
+wavpack/float.o: wavpack/float.c wavpack/wavpack_local.h
+wavpack/metadata.o: wavpack/metadata.c wavpack/wavpack_local.h
+wavpack/unpack.o: wavpack/unpack.c wavpack/wavpack_local.h
+wavpack/words.o: wavpack/words.c wavpack/wavpack_local.h
+wavpack/wputils.o: wavpack/wputils.c wavpack/wavpack_version.h \
+ wavpack/wavpack_local.h

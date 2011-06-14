@@ -464,7 +464,7 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 			{
 				updatetime=currtime;
 
-				off_t progress;
+				double progress;
 				if(sizenum) progress=(double)done/(double)size;
 				else progress=[srchandle estimatedProgress];
 

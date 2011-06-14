@@ -89,6 +89,21 @@
 		1B34238C131D8B5B00CCDF77 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
 		1B3423A5131D8B9D00CCDF77 /* XADTest3.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC893230ED6F2F2006B47FE /* XADTest3.m */; };
 		1B3423A6131D8BA400CCDF77 /* XADTest5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3423A0131D8B8C00CCDF77 /* XADTest5.m */; };
+		1B3443D813A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */; };
+		1B3443D913A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */; };
+		1B3443DA13A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */; };
+		1B3443DB13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */; };
+		1B3443DC13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */; };
+		1B3443DD13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */; };
+		1B3443E913A6EB2700C89872 /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E013A6EB2700C89872 /* bits.c */; };
+		1B3443EA13A6EB2700C89872 /* float.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E113A6EB2700C89872 /* float.c */; };
+		1B3443EB13A6EB2700C89872 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E213A6EB2700C89872 /* metadata.c */; };
+		1B3443EC13A6EB2700C89872 /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E313A6EB2700C89872 /* unpack.c */; };
+		1B3443ED13A6EB2700C89872 /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E413A6EB2700C89872 /* wavpack.h */; };
+		1B3443EE13A6EB2700C89872 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E513A6EB2700C89872 /* wavpack_local.h */; };
+		1B3443EF13A6EB2700C89872 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E613A6EB2700C89872 /* wavpack_version.h */; };
+		1B3443F013A6EB2700C89872 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
+		1B3443F113A6EB2700C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
 		1B349EF211BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */; };
 		1B34A55B11BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
 		1B34A65011C01A5A00396C26 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
@@ -1148,6 +1163,17 @@
 		1B33BDE6126F77BF002568A0 /* XADARCDistillHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADARCDistillHandle.m; sourceTree = "<group>"; };
 		1B342390131D8B5B00CCDF77 /* XADTest5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest5; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B3423A0131D8B8C00CCDF77 /* XADTest5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest5.m; sourceTree = "<group>"; };
+		1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADWinZipWavPackHandle.h; sourceTree = "<group>"; };
+		1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADWinZipWavPackHandle.m; sourceTree = "<group>"; };
+		1B3443E013A6EB2700C89872 /* bits.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bits.c; sourceTree = "<group>"; };
+		1B3443E113A6EB2700C89872 /* float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = float.c; sourceTree = "<group>"; };
+		1B3443E213A6EB2700C89872 /* metadata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = metadata.c; sourceTree = "<group>"; };
+		1B3443E313A6EB2700C89872 /* unpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack.c; sourceTree = "<group>"; };
+		1B3443E413A6EB2700C89872 /* wavpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack.h; sourceTree = "<group>"; };
+		1B3443E513A6EB2700C89872 /* wavpack_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack_local.h; sourceTree = "<group>"; };
+		1B3443E613A6EB2700C89872 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack_version.h; sourceTree = "<group>"; };
+		1B3443E713A6EB2700C89872 /* words.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = words.c; sourceTree = "<group>"; };
+		1B3443E813A6EB2700C89872 /* wputils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wputils.c; sourceTree = "<group>"; };
 		1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverMacOSX.m; sourceTree = "<group>"; };
 		1B349EF511BACA3C00396C26 /* XADUnarchiverLinux.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverLinux.m; sourceTree = "<group>"; };
 		1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverWindows.m; sourceTree = "<group>"; };
@@ -1893,6 +1919,22 @@
 			name = ARC;
 			sourceTree = "<group>";
 		};
+		1B3443DF13A6EB2700C89872 /* wavpack */ = {
+			isa = PBXGroup;
+			children = (
+				1B3443E013A6EB2700C89872 /* bits.c */,
+				1B3443E113A6EB2700C89872 /* float.c */,
+				1B3443E213A6EB2700C89872 /* metadata.c */,
+				1B3443E313A6EB2700C89872 /* unpack.c */,
+				1B3443E413A6EB2700C89872 /* wavpack.h */,
+				1B3443E513A6EB2700C89872 /* wavpack_local.h */,
+				1B3443E613A6EB2700C89872 /* wavpack_version.h */,
+				1B3443E713A6EB2700C89872 /* words.c */,
+				1B3443E813A6EB2700C89872 /* wputils.c */,
+			);
+			path = wavpack;
+			sourceTree = "<group>";
+		};
 		1B34A03A11BB1CC300396C26 /* Windows Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -2102,6 +2144,9 @@
 				1BC885C80ECD11BC006B47FE /* XADZipCryptHandle.m */,
 				1BC885CB0ECD11CF006B47FE /* XADWinZipAESHandle.h */,
 				1BC885CC0ECD11CF006B47FE /* XADWinZipAESHandle.m */,
+				1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */,
+				1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */,
+				1B3443DF13A6EB2700C89872 /* wavpack */,
 			);
 			name = Zip;
 			sourceTree = "<group>";
@@ -2406,6 +2451,7 @@
 				1B7450AF1300D76F008D80FE /* XADStuffItXX86Handle.h in Headers */,
 				1B7451AD13081B89008D80FE /* XADISO9660Parser.h in Headers */,
 				1B7F3CB413147CD6008238BF /* XADPaddedBlockHandle.h in Headers */,
+				1B3443D913A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2430,6 +2476,7 @@
 				1B7450AB1300D76F008D80FE /* XADStuffItXX86Handle.h in Headers */,
 				1B7451A913081B89008D80FE /* XADISO9660Parser.h in Headers */,
 				1B7F3CB613147CD6008238BF /* XADPaddedBlockHandle.h in Headers */,
+				1B3443DA13A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2608,6 +2655,10 @@
 				1B75B93E134E5BF500510EA5 /* XADZipSFXParsers.h in Headers */,
 				1B75B93F134E5BF600510EA5 /* XADZipShrinkHandle.h in Headers */,
 				1B75B940134E5BF700510EA5 /* XADZooParser.h in Headers */,
+				1B3443D813A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */,
+				1B3443ED13A6EB2700C89872 /* wavpack.h in Headers */,
+				1B3443EE13A6EB2700C89872 /* wavpack_local.h in Headers */,
+				1B3443EF13A6EB2700C89872 /* wavpack_version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2835,6 +2886,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -3104,6 +3156,7 @@
 				1B7450B01300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */,
 				1B7451AE13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 				1B7F3CB513147CD6008238BF /* XADPaddedBlockHandle.m in Sources */,
+				1B3443DC13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3295,6 +3348,7 @@
 				1B7450AC1300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */,
 				1B7451AA13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 				1B7F3CB713147CD6008238BF /* XADPaddedBlockHandle.m in Sources */,
+				1B3443DD13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3521,6 +3575,13 @@
 				1B7450AE1300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */,
 				1B7451AC13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 				1B7F3CB313147CD6008238BF /* XADPaddedBlockHandle.m in Sources */,
+				1B3443DB13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */,
+				1B3443E913A6EB2700C89872 /* bits.c in Sources */,
+				1B3443EA13A6EB2700C89872 /* float.c in Sources */,
+				1B3443EB13A6EB2700C89872 /* metadata.c in Sources */,
+				1B3443EC13A6EB2700C89872 /* unpack.c in Sources */,
+				1B3443F013A6EB2700C89872 /* words.c in Sources */,
+				1B3443F113A6EB2700C89872 /* wputils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

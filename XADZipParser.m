@@ -735,6 +735,7 @@ isLastEntry:(BOOL)islastentry
 		case 9: compressionname=@"Deflate64"; break;
 		case 12: compressionname=@"Bzip2"; break;
 		case 14: compressionname=@"LZMA"; break;
+		case 96: compressionname=@"Compressed JPEG"; break;
 		case 97: compressionname=@"WavPack"; break;
 		case 98: compressionname=@"PPMd"; break;
 	}
@@ -968,6 +969,7 @@ isLastEntry:(BOOL)islastentry
 			return [[[XADLZMAHandle alloc] initWithHandle:parent length:size propertyData:props] autorelease];
 		}
 		break;
+		case 96: return parent;
 		case 97: return [[[XADWinZipWavPackHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 98:
 		{

@@ -198,7 +198,9 @@
 		[delegate unarchiver:self willExtractEntryWithDictionary:dict to:path];
 	}
 
-	XADError error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
+	XADError error;
+	
+	error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
 	if(error) goto end;
 
 	// Attempt to extract embedded archives if requested.

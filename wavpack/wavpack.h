@@ -42,10 +42,10 @@ typedef struct {
     char formType [4];
 } RiffChunkHeader;
 
-typedef struct {
+/*typedef struct {
     char ckID [4];
     uint32_t ckSize;
-} ChunkHeader;
+} ChunkHeader;*/
 
 #define ChunkHeaderFormat "4L"
 

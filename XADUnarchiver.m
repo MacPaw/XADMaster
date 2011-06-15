@@ -359,8 +359,16 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 	[fh writeBytes:sizeof(header) fromBuffer:header];
 
 	NSData *finderinfo=[parser finderInfoForDictionary:dict];
-	if([finderinfo length]<32) return XADUnknownError;
-	[fh writeBytes:32 fromBuffer:[finderinfo bytes]];
+	if(finderinfo)
+	{
+		if([finderinfo length]<32) return XADUnknownError;
+		[fh writeBytes:32 fromBuffer:[finderinfo bytes]];
+	}
+	else
+	{
+		uint8_t emptyfinderinfo[32]={ 0x00 };
+		[fh writeBytes:32 fromBuffer:emptyfinderinfo];
+	}
 
 	XADError error=XADNoError;
 	if(size) error=[self _extractEntryWithDictionary:dict toHandle:fh];

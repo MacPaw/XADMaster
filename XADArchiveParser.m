@@ -56,6 +56,7 @@ NSString *XADLastModificationDateKey=@"XADLastModificationDate";
 NSString *XADLastAccessDateKey=@"XADLastAccessDate";
 NSString *XADLastAttributeChangeDateKey=@"XADLastAttributeChangeDate";
 NSString *XADCreationDateKey=@"XADCreationDate";
+NSString *XADExtendedAttributesKey=@"XADExtendedAttributes";
 NSString *XADFileTypeKey=@"XADFileType";
 NSString *XADFileCreatorKey=@"XADFileCreator";
 NSString *XADFinderFlagsKey=@"XADFinderFlags";
@@ -401,6 +402,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 
 
+
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict
 {
 	// Return the destination path for a link.
@@ -429,6 +431,38 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return nil;
 }
 
+-(NSDictionary *)extendedAttributesForDictionary:(NSDictionary *)dict
+{
+	NSDictionary *originalattrs=[dict objectForKey:XADExtendedAttributesKey];
+
+	// If the extended attributes already have a finderinfo,
+	// just keep it and return them as such.
+	if(originalattrs&&[originalattrs objectForKey:@"com.apple.FinderInfo"])
+	return originalattrs;
+
+	// If we have or can build a finderinfo struct, add it.
+	NSData *finderinfo=[self finderInfoForDictionary:dict];
+	if(finderinfo)
+	{
+		if(originalattrs)
+		{
+			// If we have a set of extended attributes, extend it.
+			NSMutableDictionary *newattrs=[NSMutableDictionary dictionaryWithDictionary:originalattrs];
+			[newattrs setObject:finderinfo forKey:@"com.apple.FinderInfo"];
+			return newattrs;
+		}
+		else
+		{
+			// If we do not have any extended attributes, create a
+			// set that only contains a finderinfo.
+			return [NSDictionary dictionaryWithObject:finderinfo
+			forKey:@"com.apple.FinderInfo"];
+		}
+	}
+
+	return nil;
+}
+
 -(NSData *)finderInfoForDictionary:(NSDictionary *)dict
 {
 	// Return a FinderInfo struct with extended info (32 bytes in size).
@@ -444,7 +478,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	}
 	else
 	{
-		// If a FinderInfo struct doesn't exist, make one.
+		// If a FinderInfo struct doesn't exist, try to make one.
 
 		uint8_t finderinfo[32]={ 0x00 };
 
@@ -462,16 +496,13 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		NSNumber *flagsnum=[dict objectForKey:XADFinderFlagsKey];
 		if(flagsnum) CSSetUInt16BE(&finderinfo[8],[flagsnum unsignedShortValue]);
 
+		// Check if any data was filled in at all. If not, return nil.
+		bool zero=true;
+		for(int i=0;zero && i<sizeof(finderinfo);i++) if(finderinfo[i]!=0) zero=false;
+		if(!zero) return nil;
+
 		return [NSData dataWithBytes:finderinfo length:32];
 	}
-}
-
--(NSData *)finderInfoForDictionary:(NSDictionary *)dict error:(XADError *)errorptr
-{
-	if(errorptr) *errorptr=XADNoError;
-	@try { return [self finderInfoForDictionary:dict]; }
-	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
-	return nil;
 }
 
 
@@ -642,19 +673,19 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
-	// If an encrypted file is added, set the global encryption flag
+	// If an encrypted file is added, set the global encryption flag.
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
 	if(enc&&[enc boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsEncryptedKey];
 
-	// Same for the corrupted flag
+	// Same for the corrupted flag.
 	NSNumber *cor=[dict objectForKey:XADIsCorruptedKey];
 	if(cor&&[cor boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 
-	// LinkDestination implies IsLink
+	// LinkDestination implies IsLink.
 	XADString *linkdest=[dict objectForKey:XADLinkDestinationKey];
 	if(linkdest) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey];
 
-	// Extract further flags from PosixPermissions, if possible
+	// Extract further flags from PosixPermissions, if possible.
 	NSNumber *perms=[dict objectForKey:XADPosixPermissionsKey];
 	if(perms)
 	switch([perms unsignedIntValue]&0xf000)
@@ -666,7 +697,14 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		case 0xa000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey]; break;
 	}
 
-	// Extract type, creator and finderflags from finderinfo
+	// Extract finderinfo from extended attributes, if present.
+	// Overwrite whatever finderinfo was provided, on the assumption that
+	// the extended attributes are more authoritative.
+	NSData *extfinderinfo=[[dict objectForKey:XADExtendedAttributesKey]
+	objectForKey:@"com.apple.FinderInfo"];
+	if(extfinderinfo) [dict setObject:extfinderinfo forKey:XADFinderInfoKey];
+
+	// Extract type, creator and finderflags from finderinfo.
 	NSData *finderinfo=[dict objectForKey:XADFinderInfoKey];
 	if(finderinfo&&[finderinfo length]>=10)
 	{
@@ -713,9 +751,11 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		prevsoliddict=nil;
 	}
 
-	// If a solid file is added, set the global solid flag
+	// If a solid file is added, set the global solid flag.
 	NSNumber *solid=[dict objectForKey:XADIsSolidKey];
 	if(solid&&[solid boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsSolidKey];
+
+
 
 	NSAutoreleasePool *delegatepool=[NSAutoreleasePool new];
 

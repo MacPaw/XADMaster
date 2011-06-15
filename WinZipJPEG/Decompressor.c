@@ -114,7 +114,7 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 
 	// Calculate the dictionary size used for the LZMA coding.
 	int dictionarysize=(uncompressedsize+511)&~511;
-	if(dictionarysize<1024) dictionarysize=1024; // Silly - LZMA enforce a lower limit of 4096.
+	if(dictionarysize<1024) dictionarysize=1024; // Silly - LZMA enforces a lower limit of 4096.
 	if(dictionarysize>512*1024) dictionarysize=512*1024;
 
 	// Create properties chunk for LZMA, using the dictionary size and default settings (lc=3, lp=0, pb=2).
@@ -131,6 +131,9 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 
 	// Check if LZMA decoding succeeded.
 	if(res!=SZ_OK) return WinZipJPEGLZMAError;
+
+	// Initialize arithmetic coder for reading scans.
+	InitializeWinZipJPEGArithmeticDecoder(&self->decoder,self->readfunc,self->inputcontext);
 
 	return WinZipJPEGNoError;
 }

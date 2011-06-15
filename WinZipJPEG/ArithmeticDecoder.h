@@ -35,25 +35,12 @@ typedef struct WinZipJPEGArithmeticDecoder
 
 	uint16_t incrsv; // save extra increments at MPS exchange
 
-	// in probtbl based on i
-	uint16_t logp[1]; // log p at index i
-	uint16_t lqp[1]; // log q - log p
-	uint16_t nmaxlp[1]; // nmax * lp
-	uint16_t nmx[1]; // not used currently
-	uint8_t halfi[1]; // pointer to q halved
-	uint8_t dbli[1]; // pointer to q doubled
-
 	// statistics based on s (old state initially)
 	uint32_t s; // pointer to statistics for this state (???)
 	uint32_t ist[1]; // index into probtbl (base s) (???)
 	uint16_t dlrst[1]; // lrm-lr+lp (base s)
 	uint8_t mpsst[1]; // most probably symbol (base s)
 	uint8_t kst[1]; // lps count (base s)
-
-	uint16_t alogtbl[1024];
-	uint16_t logtbl[4096];
-	uint16_t probtbl[250];
-	uint8_t chartbl[512];
 
 	uint32_t ns; //  (???)
 

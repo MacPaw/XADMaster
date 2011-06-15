@@ -16,7 +16,19 @@ static void ByteIn(WinZipJPEGArithmeticDecoder *self);
 static void UpdateLRT(WinZipJPEGArithmeticDecoder *self);
 static void LRMBig(WinZipJPEGArithmeticDecoder *self);
 static void InitDec(WinZipJPEGArithmeticDecoder *self);
+static void InitTbl(WinZipJPEGArithmeticDecoder *self);
 static void Flush(WinZipJPEGArithmeticDecoder *self);
+
+static uint16_t logp[]; // log p at index i
+static uint16_t lqp[]; // log q - log p
+static uint16_t nmaxlp[]; // nmax * lp
+static uint8_t halfi[]; // pointer to q halved
+static uint8_t dbli[]; // pointer to q doubled
+
+static uint16_t alogtbl[];
+static uint16_t logtbl[];
+static uint16_t probtbl[];
+static uint8_t chartbl[];
 
 void InitializeWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGReadFunction *readfunc, void *inputcontext)
 {
@@ -24,6 +36,7 @@ void InitializeWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,Win
 	self->inputcontext=inputcontext;
 
 	InitDec(self);
+	InitTbl(self);
 }
 
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,int state)
@@ -81,7 +94,7 @@ static void ChangeState(WinZipJPEGArithmeticDecoder *self)
 	self->k=self->kst[self->s];
 	self->i=self->ist[self->s];
 	self->mps=self->mpsst[self->s];
-	self->lp=self->logp[self->i];
+	self->lp=logp[self->i];
 	self->lrm=self->lr+self->dlrst[self->s];
 	LRMBig(self);
 }
@@ -91,14 +104,14 @@ static void UpdateMPS(WinZipJPEGArithmeticDecoder *self)
 	if(self->k<=self->kmin) QSmaller(self);
 	self->k=0;
 	self->kst[self->s]=0;
-	self->lrm=self->lr+self->nmaxlp[self->i];
+	self->lrm=self->lr+nmaxlp[self->i];
 	LRMBig(self);
 }
 
 static void QSmaller(WinZipJPEGArithmeticDecoder *self)
 {
 	self->i++;
-	if(self->logp[self->i]==0)
+	if(logp[self->i]==0)
 	{
 		self->i--;
 	}
@@ -106,22 +119,22 @@ static void QSmaller(WinZipJPEGArithmeticDecoder *self)
 	{
 		if(self->k<=self->kmin1)
 		{
-			self->i=self->i+self->halfi[self->i];
+			self->i=self->i+halfi[self->i];
 
 			if(self->k<=self->kmin2)
 			{
-				self->i=self->i+self->halfi[self->i];
+				self->i=self->i+halfi[self->i];
 			}
 		}
 		self->ist[self->s]=self->i;
-		self->lp=self->logp[self->i];
+		self->lp=logp[self->i];
 	}
 }
 
 static void AntilogX(WinZipJPEGArithmeticDecoder *self)
 {
 	self->mr=self->lr&0x3ff;
-	self->dx=self->alogtbl[self->mr];
+	self->dx=alogtbl[self->mr];
 	self->ct=self->lr>>10; // logical shift
 	self->ct=7-self->ct;
 	self->dx=self->dx<<self->ct;
@@ -129,14 +142,14 @@ static void AntilogX(WinZipJPEGArithmeticDecoder *self)
 
 static void UpdateLPS(WinZipJPEGArithmeticDecoder *self)
 {
-	self->lr=self->lr+self->lqp[self->i];
+	self->lr=self->lr+lqp[self->i];
 
 	if(self->k>=self->kmax)
 	{
 		QBigger(self);
 		self->k=0;
-		self->dlrm=self->nmaxlp[self->i];
-		self->lp=self->logp[self->i];
+		self->dlrm=nmaxlp[self->i];
+		self->lp=logp[self->i];
 		self->ist[self->s]=self->i;
 	}
 	else
@@ -152,20 +165,20 @@ static void QBigger(WinZipJPEGArithmeticDecoder *self)
 {
 	self->incrsv=0;
 
-	if(self->dlrm>=self->nmaxlp[self->i]/2)
+	if(self->dlrm>=nmaxlp[self->i]/2)
 	{
-		self->dlrm=self->nmaxlp[self->i]-self->dlrm;
-		if(self->dlrm<=self->nmaxlp[self->i]/4) DblIndex(self);
+		self->dlrm=nmaxlp[self->i]-self->dlrm;
+		if(self->dlrm<=nmaxlp[self->i]/4) DblIndex(self);
 		DblIndex(self);
 	}
 	else
 	{
-		if(self->dlrm>=self->nmaxlp[self->i]/4) IncrIndex(self);
+		if(self->dlrm>=nmaxlp[self->i]/4) IncrIndex(self);
 		IncrIndex(self);
 	}
 
 	SwitchMPS(self);
-	self->lp=self->logp[self->i];
+	self->lp=logp[self->i];
 }
 
 
@@ -177,8 +190,8 @@ static void IncrIndex(WinZipJPEGArithmeticDecoder *self)
 
 static void DblIndex(WinZipJPEGArithmeticDecoder *self)
 {
-	if(self->i>0) self->i=self->i-self->dbli[self->i];
-	else self->incrsv=self->incrsv+self->dbli[self->i];
+	if(self->i>0) self->i=self->i-dbli[self->i];
+	else self->incrsv=self->incrsv+dbli[self->i];
 }
 
 static void SwitchMPS(WinZipJPEGArithmeticDecoder *self)
@@ -201,11 +214,11 @@ static void LogX(WinZipJPEGArithmeticDecoder *self)
 	}
 	else
 	{
-		self->cx=self->chartbl[self->cx];
+		self->cx=chartbl[self->cx];
 		self->ct=8-self->cx;
 		self->xf=0xfff&(self->x>>self->ct); // logical shift
 		self->lx=self->cx<<10;
-		self->lx=self->lx-self->logtbl[self->xf];
+		self->lx=self->lx-logtbl[self->xf];
 	}
 }
 
@@ -275,6 +288,27 @@ static void InitDec(WinZipJPEGArithmeticDecoder *self)
 	if(self->x==0xffff) ByteIn(self);
 }
 
+static void InitTbl(WinZipJPEGArithmeticDecoder *self)
+{
+	self->kmin2=0;
+	self->kmin1=1;
+	self->kmin=5;
+//	self->kavg=8;
+	self->kmax=11;
+//	self->bl=probaddr;
+//	self->s=addr stats;
+//	self->bl=probaddr;
+/*
+	for(int s=0;s<numstates;s++)
+	{
+		self->dlrst[s]=expl nmaxlp[];
+		self->ist[s]=bl;
+		self->kst[s]=0;
+		self->mpsst[s]=0;
+	}
+*/
+}
+
 /*static void Flush(WinZipJPEGArithmeticDecoder *self)
 {
 	Renorm(self);
@@ -284,4 +318,14 @@ static void InitDec(WinZipJPEGArithmeticDecoder *self)
 	//if(self->bp>=self->bpst) BufOut(self);
 }*/
 
+static uint16_t logp[1]; // log p at index i
+static uint16_t lqp[1]; // log q - log p
+static uint16_t nmaxlp[1]; // nmax * lp
+static uint8_t halfi[1]; // pointer to q halved
+static uint8_t dbli[1]; // pointer to q doubled
+
+static uint16_t alogtbl[1024];
+static uint16_t logtbl[4096];
+static uint16_t probtbl[250];
+static uint8_t chartbl[512];
 

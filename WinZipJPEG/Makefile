@@ -6,18 +6,37 @@ LIBS=
 CC=gcc
 LD=gcc
 
-C_FILES=ArithmeticDecoder.c \
-        Decompressor.c \
-        RawDecoder.c \
-		../lzma/LzmaDec.c \
+ALL_C_FILES=ArithmeticDecoder.c \
+            Decompressor.c \
+            RawDecoder.c \
+            Test.c \
+            ../lzma/LzmaDec.c \
 
-OBJS=$(C_FILES:.c=.o)
+RAWDECODER_C_FILES=ArithmeticDecoder.c \
+                   Decompressor.c \
+                   RawDecoder.c \
+                   ../lzma/LzmaDec.c \
 
-RawDecoder: $(OBJS)
+TEST_C_FILES=ArithmeticDecoder.c \
+             Test.c
+
+ALL_OBJS=$(ALL_C_FILES:.c=.o)
+RAWDECODER_OBJS=$(RAWDECODER_C_FILES:.c=.o)
+TEST_OBJS=$(TEST_C_FILES:.c=.o)
+
+all: RawDecoder Test
+
+RawDecoder: $(RAWDECODER_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
+Test: $(TEST_OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+clean:
+	rm -rf $(ALL_OBJS) RawDecoder Test
+
 depend:
-	$(CC) -MM $(CFLAGS) $(C_FILES) >Dependencies.tmp
+	$(CC) -MM $(CFLAGS) $(ALL_C_FILES) >Dependencies.tmp
 	sed 's/.*: *\([^ ]*\)\.\([^ ]*\)/\1.o: \1.\2/g' <Dependencies.tmp >Dependencies
 	rm Dependencies.tmp
 

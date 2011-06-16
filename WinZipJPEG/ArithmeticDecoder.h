@@ -37,16 +37,17 @@ typedef struct WinZipJPEGArithmeticDecoder
 
 	// statistics based on s (old state initially)
 	uint32_t s; // pointer to statistics for this state (???)
-	uint32_t ist[1]; // index into probtbl (base s) (???)
-	uint16_t dlrst[1]; // lrm-lr+lp (base s)
-	uint8_t mpsst[1]; // most probably symbol (base s)
-	uint8_t kst[1]; // lps count (base s)
+	uint32_t ist[256]; // index into probtbl (base s) (???)
+	uint16_t dlrst[256]; // lrm-lr+lp (base s)
+	uint8_t mpsst[256]; // most probably symbol (base s)
+	uint8_t kst[256]; // lps count (base s)
 
 	uint32_t ns; //  (???)
 
 } WinZipJPEGArithmeticDecoder;
 
 void InitializeWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGReadFunction *readfunc, void *inputcontext);
+int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,int state);
 
 #endif
 

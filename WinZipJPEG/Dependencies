@@ -4,4 +4,5 @@ Decompressor.o: Decompressor.c Decompressor.h InputStream.h \
  ArithmeticDecoder.h LZMA.h ../lzma/LzmaDec.h ../lzma/Types.h
 RawDecoder.o: RawDecoder.c Decompressor.h InputStream.h \
  ArithmeticDecoder.h
+Test.o: Test.c ArithmeticDecoder.h InputStream.h
 ../lzma/LzmaDec.o: ../lzma/LzmaDec.c ../lzma/LzmaDec.h ../lzma/Types.h

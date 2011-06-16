@@ -30,18 +30,19 @@ static uint16_t logtbl[];
 static uint16_t probtbl[]; //250
 static uint8_t chartbl[];
 
+#define DummyState 0xffffffff
+
 void InitializeWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGReadFunction *readfunc, void *inputcontext)
 {
 	self->readfunc=readfunc;
 	self->inputcontext=inputcontext;
 
 	InitDec(self);
-	InitTbl(self);
 }
 
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,int state)
 {
-	self->s=state;
+	self->ns=state;
 	LogDecoder(self);
 	return self->yn;
 }
@@ -89,7 +90,7 @@ static void LogDecoder(WinZipJPEGArithmeticDecoder *self)
 
 static void ChangeState(WinZipJPEGArithmeticDecoder *self)
 {
-	self->dlrst[self->s]=self->lrm-self->lr;
+	if(self->s!=DummyState) self->dlrst[self->s]=self->lrm-self->lr;
 	self->s=self->ns;
 	self->k=self->kst[self->s];
 	self->i=self->ist[self->s];
@@ -272,8 +273,9 @@ static void LRMBig(WinZipJPEGArithmeticDecoder *self)
 
 static void InitDec(WinZipJPEGArithmeticDecoder *self)
 {
-	//InitializeTables(self);
-	self->s=42222; // TODO: fix
+	InitTbl(self);
+
+	self->s=DummyState;
 
 	ByteIn(self);
 	self->x=self->b;

@@ -130,6 +130,9 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 -(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
 retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
+	// AppleDouble format referenced from:
+	// http://www.opensource.apple.com/source/Libc/Libc-391.2.3/darwin/copyfile.c
+
 	XADString *first=[name firstPathComponent];
 	XADString *last=[name lastPathComponent];
 	XADPath *basepath=[name pathByDeletingLastPathComponent];
@@ -297,7 +300,9 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 		/*int flags=*/[fh readUInt16BE];
 		entries[i].namelen=[fh readUInt8];
 		[fh readBytes:entries[i].namelen toBuffer:entries[i].namebytes];
-		[fh skipBytes:(-(entries[i].namelen+11))&3]; // Align to 4 bytes.
+
+		int padbytes=(-(entries[i].namelen+11))&3;
+		[fh skipBytes:padbytes]; // Align to 4 bytes.
 	}
 
 	NSMutableDictionary *attrs=[NSMutableDictionary dictionary];
@@ -323,7 +328,7 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 		NSData *data=[fh readDataOfLength:entries[minindex].length];
 
 		NSString *name=[[[NSString alloc] initWithBytes:entries[minindex].namebytes
-		length:entries[minindex].namelen encoding:NSUTF8StringEncoding] autorelease];
+		length:entries[minindex].namelen-1 encoding:NSUTF8StringEncoding] autorelease];
 
 		[attrs setObject:data forKey:name];
 	}

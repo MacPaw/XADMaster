@@ -1,5 +1,7 @@
 #include "ArithmeticDecoder.h"
 
+// Arithmetic decoder based on US patent 4791403.
+
 static void LogDecoder(WinZipJPEGArithmeticDecoder *self);
 static void ChangeState(WinZipJPEGArithmeticDecoder *self);
 static void UpdateMPS(WinZipJPEGArithmeticDecoder *self);
@@ -112,6 +114,8 @@ static void UpdateMPS(WinZipJPEGArithmeticDecoder *self)
 
 static void QSmaller(WinZipJPEGArithmeticDecoder *self)
 {
+	if(self->i>=47) return; // WinZip modification.
+
 	self->i++;
 	if(logp[self->i]==0)
 	{
@@ -165,6 +169,8 @@ static void UpdateLPS(WinZipJPEGArithmeticDecoder *self)
 
 static void QBigger(WinZipJPEGArithmeticDecoder *self)
 {
+	if(self->i>=48) return; // WinZip modification.
+
 	self->incrsv=0;
 
 	if(self->dlrm>=nmaxlp[self->i]/2)
@@ -372,7 +378,7 @@ static uint16_t logp[49]= // log p at index i
 	3,
 	2,
 	1,
-	0,
+	1024,
 };
 
 static uint16_t lqp[49]= // log q - log p

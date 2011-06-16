@@ -43,6 +43,7 @@ void InitializeWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,Win
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,int state)
 {
 	self->ns=state;
+	self->dx=0; // Otherwise tests don't pass.
 	LogDecoder(self);
 	return self->yn;
 }
@@ -300,15 +301,15 @@ static void InitTbl(WinZipJPEGArithmeticDecoder *self)
 //	self->bl=probaddr;
 //	self->s=addr stats;
 //	self->bl=probaddr;
-/*
-	for(int s=0;s<numstates;s++)
+
+	for(int s=0;s<sizeof(self->ist)/sizeof(self->ist[0]);s++)
 	{
-		self->dlrst[s]=expl nmaxlp[];
-		self->ist[s]=bl;
+		self->dlrst[s]=nmaxlp[0];
+//		self->ist[s]=bl;
+		self->ist[s]=0;
 		self->kst[s]=0;
 		self->mpsst[s]=0;
 	}
-*/
 }
 
 /*static void Flush(WinZipJPEGArithmeticDecoder *self)

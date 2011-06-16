@@ -713,11 +713,15 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 		if(!isdir||![isdir boolValue])
 		{
-			[dict setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+0)] forKey:XADFileTypeKey];
-			[dict setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+4)] forKey:XADFileCreatorKey];
+			uint32_t filetype=CSUInt32BE(bytes+0);
+			uint32_t filecreator=CSUInt32BE(bytes+4);
+
+			if(filetype) [dict setObject:[NSNumber numberWithUnsignedInt:filetype] forKey:XADFileTypeKey];
+			if(filecreator) [dict setObject:[NSNumber numberWithUnsignedInt:filecreator] forKey:XADFileCreatorKey];
 		}
 
-		[dict setObject:[NSNumber numberWithInt:CSUInt16BE(bytes+8)] forKey:XADFinderFlagsKey];
+		int finderflags=CSUInt16BE(bytes+8);
+		if(finderflags) [dict setObject:[NSNumber numberWithInt:finderflags] forKey:XADFinderFlagsKey];
 	}
 
 	// Handle solidness - set FirstSolid, NextSolid and IsSolid depending on SolidObject.

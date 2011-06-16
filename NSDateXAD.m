@@ -75,6 +75,13 @@
 	struct timeval tv={ (time_t)seconds, (suseconds_t)(fmod(seconds,1.0)*1000000) };
 	return tv;
 }
+
+-(struct timespec)timespecStruct;
+{
+	NSTimeInterval seconds=[self timeIntervalSince1970];
+	struct timespec ts={ (time_t)seconds, (long)(fmod(seconds,1.0)*1000000000) };
+	return ts;
+}
 #endif
 
 

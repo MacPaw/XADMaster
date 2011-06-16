@@ -406,7 +406,6 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+65)] forKey:XADFileTypeKey];
 	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+69)] forKey:XADFileCreatorKey];
 	[template setObject:[NSNumber numberWithInt:bytes[101]+(bytes[73]<<8)] forKey:XADFinderFlagsKey];
-	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+65)] forKey:XADFileTypeKey];
 	[template setObject:[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(bytes+91)] forKey:XADCreationDateKey];
 	[template setObject:[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(bytes+95)] forKey:XADLastModificationDateKey];
 	[template removeObjectForKey:XADDataLengthKey];

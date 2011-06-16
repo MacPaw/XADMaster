@@ -19,6 +19,7 @@
 
 #ifndef __MINGW32__
 -(struct timeval)timevalStruct;
+-(struct timespec)timespecStruct;
 #endif
 
 #ifdef __APPLE__

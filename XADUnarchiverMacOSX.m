@@ -6,6 +6,8 @@
 #import <unistd.h>
 #import <sys/stat.h>
 #import <sys/time.h>
+#import <sys/attr.h>
+#import <sys/xattr.h>
 
 @implementation XADUnarchiver (PlatformSpecific)
 
@@ -74,45 +76,81 @@
 {
 	const char *cpath=[path fileSystemRepresentation];
 
-	FSRef ref;
-	FSCatalogInfo info;
-	if(FSPathMakeRefWithOptions((const UInt8 *)cpath,
-	kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
-	if(FSGetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info,NULL,NULL,NULL)!=noErr) return NO;
+	// Read file permissions.
+	struct stat st;
+	if(stat(cpath,&st)!=0) return XADOpenFileError; // TODO: better error
 
-	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
-	FSPermissionInfo *pinfo=(FSPermissionInfo *)&info.permissions;
-	if(permissions)
+	// If the file does not have write permissions, change this temporarily.
+	if(!(st.st_mode&S_IWUSR)) chmod(cpath,0700);
+
+	// Write extended attributes.
+	NSDictionary *extattrs=[parser extendedAttributesForDictionary:dict];
+	if(extattrs)
 	{
-		mode_t mask=umask(022);
-		umask(mask); // This is stupid. Is there no sane way to just READ the umask?
-		pinfo->mode=[permissions unsignedShortValue]&~(mask|S_ISUID|S_ISGID);
+		NSEnumerator *enumerator=[extattrs keyEnumerator];
+		NSString *key;
+		while((key=[enumerator nextObject]))
+		{
+			NSData *data=[extattrs objectForKey:key];
+
+			int namelen=[key lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+			char namebytes[namelen+1];
+			[key getCString:namebytes maxLength:sizeof(namebytes) encoding:NSUTF8StringEncoding];
+
+			setxattr(cpath,namebytes,[data bytes],[data length],0,XATTR_NOFOLLOW);
+		}
 	}
 
+	// Attrlist structures.
+	struct attrlist list={ ATTR_BIT_MAP_COUNT };
+	uint8_t attrdata[3*sizeof(struct timespec)+sizeof(uint32_t)];
+	uint8_t *attrptr=attrdata;
+
+	// Handle timestamps.
 	NSDate *creation=[dict objectForKey:XADCreationDateKey];
 	NSDate *modification=[dict objectForKey:XADLastModificationDateKey];
 	NSDate *access=[dict objectForKey:XADLastAccessDateKey];
 
-	if(creation) info.createDate=[creation UTCDateTime];
-	if(modification) info.contentModDate=[modification UTCDateTime];
-	if(access) info.accessDate=[access UTCDateTime];
-
-	// TODO: Handle FinderInfo structure
-	NSNumber *type=[dict objectForKey:XADFileTypeKey];
-	NSNumber *creator=[dict objectForKey:XADFileCreatorKey];
-	NSNumber *finderflags=[dict objectForKey:XADFinderFlagsKey];
-	FileInfo *finfo=(FileInfo *)&info.finderInfo;
-
-	if(type) finfo->fileType=[type unsignedLongValue];
-	if(creator) finfo->fileCreator=[creator unsignedLongValue];
-	if(finderflags) finfo->finderFlags=[finderflags unsignedShortValue];
-
-	if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info)!=noErr)
+	if(creation)
 	{
-		chmod(cpath,0700);
-		if(FSSetCatalogInfo(&ref,kFSCatInfoFinderInfo|kFSCatInfoPermissions|kFSCatInfoCreateDate|kFSCatInfoContentMod|kFSCatInfoAccessDate,&info)!=noErr)
-		return XADUnknownError; // TODO: better error
+		list.commonattr|=ATTR_CMN_CRTIME;
+		*((struct timespec *)attrptr)=[creation timespecStruct];
+		attrptr+=sizeof(struct timeval);
 	}
+	if(modification)
+	{
+		list.commonattr|=ATTR_CMN_MODTIME;
+		*((struct timespec *)attrptr)=[modification timespecStruct];
+		attrptr+=sizeof(struct timeval);
+	}
+	if(access)
+	{
+		list.commonattr|=ATTR_CMN_ACCTIME;
+		*((struct timespec *)attrptr)=[access timespecStruct];
+		attrptr+=sizeof(struct timeval);
+	}
+
+	// Figure out permissions, or reuse the earlier value.
+	mode_t mode=st.st_mode;
+	NSNumber *permissions=[dict objectForKey:XADPosixPermissionsKey];
+	if(permissions)
+	{
+		mode=[permissions unsignedShortValue];
+		if(!preservepermissions)
+		{
+			mode_t mask=umask(022);
+			umask(mask); // This is stupid. Is there no sane way to just READ the umask?
+			mode&=~(mask|S_ISUID|S_ISGID);
+		}
+	}
+
+	// Add permissions to attribute list.
+	list.commonattr|=ATTR_CMN_ACCESSMASK;
+	*((uint32_t *)attrptr)=mode;
+	attrptr+=sizeof(uint32_t);
+
+	// Finally, set all attributes.
+	setattrlist(cpath,&list,attrdata,attrptr-attrdata,FSOPT_NOFOLLOW);
 
 	return XADNoError;
 }

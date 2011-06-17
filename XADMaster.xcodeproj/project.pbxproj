@@ -104,6 +104,27 @@
 		1B3443EF13A6EB2700C89872 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E613A6EB2700C89872 /* wavpack_version.h */; };
 		1B3443F013A6EB2700C89872 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
 		1B3443F113A6EB2700C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
+		1B34442E13A9789B00C89872 /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E013A6EB2700C89872 /* bits.c */; };
+		1B34443013A9789B00C89872 /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E013A6EB2700C89872 /* bits.c */; };
+		1B34443113A9789E00C89872 /* float.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E113A6EB2700C89872 /* float.c */; };
+		1B34443213A9789F00C89872 /* float.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E113A6EB2700C89872 /* float.c */; };
+		1B34443313A978A100C89872 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E213A6EB2700C89872 /* metadata.c */; };
+		1B34443413A978A200C89872 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E213A6EB2700C89872 /* metadata.c */; };
+		1B34443513A978A500C89872 /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E313A6EB2700C89872 /* unpack.c */; };
+		1B34443613A978A600C89872 /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E313A6EB2700C89872 /* unpack.c */; };
+		1B34443713A978A800C89872 /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E413A6EB2700C89872 /* wavpack.h */; };
+		1B34443813A978A900C89872 /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E413A6EB2700C89872 /* wavpack.h */; };
+		1B34443913A978AC00C89872 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E513A6EB2700C89872 /* wavpack_local.h */; };
+		1B34443A13A978AD00C89872 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E513A6EB2700C89872 /* wavpack_local.h */; };
+		1B34443B13A978AF00C89872 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E613A6EB2700C89872 /* wavpack_version.h */; };
+		1B34443C13A978B000C89872 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E613A6EB2700C89872 /* wavpack_version.h */; };
+		1B34443D13A978B200C89872 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
+		1B34443E13A978B300C89872 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
+		1B34443F13A978B700C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
+		1B34444013A978B800C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
+		1B34444213AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */; };
+		1B34444313AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */; };
+		1B34444413AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */; };
 		1B349EF211BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */; };
 		1B34A55B11BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
 		1B34A65011C01A5A00396C26 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
@@ -1174,6 +1195,7 @@
 		1B3443E613A6EB2700C89872 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack_version.h; sourceTree = "<group>"; };
 		1B3443E713A6EB2700C89872 /* words.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = words.c; sourceTree = "<group>"; };
 		1B3443E813A6EB2700C89872 /* wputils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wputils.c; sourceTree = "<group>"; };
+		1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverAppleDouble.m; sourceTree = "<group>"; };
 		1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverMacOSX.m; sourceTree = "<group>"; };
 		1B349EF511BACA3C00396C26 /* XADUnarchiverLinux.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverLinux.m; sourceTree = "<group>"; };
 		1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverWindows.m; sourceTree = "<group>"; };
@@ -1694,6 +1716,7 @@
 				1B578C330DDBC8BF005B0F68 /* XADException.m */,
 				1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */,
 				1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */,
+				1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */,
 				1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */,
 				1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */,
 				1B349EF511BACA3C00396C26 /* XADUnarchiverLinux.m */,
@@ -2452,6 +2475,9 @@
 				1B7451AD13081B89008D80FE /* XADISO9660Parser.h in Headers */,
 				1B7F3CB413147CD6008238BF /* XADPaddedBlockHandle.h in Headers */,
 				1B3443D913A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */,
+				1B34443713A978A800C89872 /* wavpack.h in Headers */,
+				1B34443913A978AC00C89872 /* wavpack_local.h in Headers */,
+				1B34443B13A978AF00C89872 /* wavpack_version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2477,6 +2503,9 @@
 				1B7451A913081B89008D80FE /* XADISO9660Parser.h in Headers */,
 				1B7F3CB613147CD6008238BF /* XADPaddedBlockHandle.h in Headers */,
 				1B3443DA13A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */,
+				1B34443813A978A900C89872 /* wavpack.h in Headers */,
+				1B34443A13A978AD00C89872 /* wavpack_local.h in Headers */,
+				1B34443C13A978B000C89872 /* wavpack_version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3157,6 +3186,13 @@
 				1B7451AE13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 				1B7F3CB513147CD6008238BF /* XADPaddedBlockHandle.m in Sources */,
 				1B3443DC13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */,
+				1B34442E13A9789B00C89872 /* bits.c in Sources */,
+				1B34443113A9789E00C89872 /* float.c in Sources */,
+				1B34443313A978A100C89872 /* metadata.c in Sources */,
+				1B34443513A978A500C89872 /* unpack.c in Sources */,
+				1B34443D13A978B200C89872 /* words.c in Sources */,
+				1B34443F13A978B700C89872 /* wputils.c in Sources */,
+				1B34444313AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3349,6 +3385,13 @@
 				1B7451AA13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 				1B7F3CB713147CD6008238BF /* XADPaddedBlockHandle.m in Sources */,
 				1B3443DD13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */,
+				1B34443013A9789B00C89872 /* bits.c in Sources */,
+				1B34443213A9789F00C89872 /* float.c in Sources */,
+				1B34443413A978A200C89872 /* metadata.c in Sources */,
+				1B34443613A978A600C89872 /* unpack.c in Sources */,
+				1B34443E13A978B300C89872 /* words.c in Sources */,
+				1B34444013A978B800C89872 /* wputils.c in Sources */,
+				1B34444413AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3582,6 +3625,7 @@
 				1B3443EC13A6EB2700C89872 /* unpack.c in Sources */,
 				1B3443F013A6EB2700C89872 /* words.c in Sources */,
 				1B3443F113A6EB2700C89872 /* wputils.c in Sources */,
+				1B34444213AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

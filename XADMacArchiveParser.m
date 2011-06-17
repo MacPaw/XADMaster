@@ -130,6 +130,9 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 -(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
 retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
+	// AppleDouble format referenced from:
+	// http://www.opensource.apple.com/source/Libc/Libc-391.2.3/darwin/copyfile.c
+
 	XADString *first=[name firstPathComponent];
 	XADString *last=[name lastPathComponent];
 	XADPath *basepath=[name pathByDeletingLastPathComponent];
@@ -219,21 +222,35 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 	[newdict setObject:[NSNumber numberWithUnsignedInt:rsrclen] forKey:XADFileSizeKey];
 	[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
 
-	if(finderoffs) // Load FinderInfo struct if available
+	// Load FinderInfo struct and extended attributes if available.
+ 	if(finderoffs)
 	{
+		// First 32 bytes are the FinderInfo struct.
 		[fh seekToFileOffset:finderoffs];
-		NSData *finderinfo=[fh readDataOfLength:finderlen];
+		NSData *finderinfo;
+		if(finderlen>32) finderinfo=[fh readDataOfLength:32];
+		else finderinfo=[fh readDataOfLength:finderlen];
 		[newdict setObject:finderinfo forKey:XADFinderInfoKey];
+
+		// The FinderInfo struct is optionally followed by the extended attributes.
+		if(finderlen>70)
+		{
+			NSDictionary *attrs=[self parseAppleDoubleExtendedAttributesWithHandle:fh];
+			if(attrs) [newdict setObject:attrs forKey:XADExtendedAttributesKey];
+			// TODO: This replaces any existing attributes. None should
+			// exist, but maybe just in case they should be merged if they do.
+		}
 	}
 
-	// Replace name, remove unused entries
+
+	// Replace name, remove unused entries.
 	[newdict setObject:origname forKey:XADFileNameKey];
 	[newdict removeObjectsForKeys:[NSArray arrayWithObjects:
 		XADDataLengthKey,XADDataOffsetKey,XADPosixPermissionsKey,
 		XADPosixUserKey,XADPosixUserNameKey,XADPosixGroupKey,XADPosixGroupNameKey,
 	nil]];
 
-	// Pop deeper directories off the stack, and see this entry is on the stack as a directory
+	// Pop deeper directories off the stack, and see this entry is on the stack as a directory.
 	[self popDittoStackUntilPrefixFor:origname];
 	BOOL isdir=[dittostack count]&&[[dittostack lastObject] isEqual:origname];
 	if(isdir) [newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
@@ -253,6 +270,70 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 	}
 
 	return YES;
+}
+
+-(NSDictionary *)parseAppleDoubleExtendedAttributesWithHandle:(CSHandle *)fh
+{
+	[fh skipBytes:2];
+	uint32_t magic=[fh readUInt32BE];
+
+	if(magic!=0x41545452) return nil;
+
+	/*uint32_t debug=*/[fh readUInt32BE];
+	/*uint32_t totalsize=*/[fh readUInt32BE];
+	/*uint32_t datastart=*/[fh readUInt32BE];
+	/*uint32_t datalength=*/[fh readUInt32BE];
+	[fh skipBytes:12];
+	/*int flags=*/[fh readUInt16BE];
+	int numattrs=[fh readUInt16BE];
+
+	struct
+	{
+		int offset,length,namelen;
+		uint8_t namebytes[256];
+	} entries[numattrs];
+
+	for(int i=0;i<numattrs;i++)
+	{
+		entries[i].offset=[fh readUInt32BE];
+		entries[i].length=[fh readUInt32BE];
+		/*int flags=*/[fh readUInt16BE];
+		entries[i].namelen=[fh readUInt8];
+		[fh readBytes:entries[i].namelen toBuffer:entries[i].namebytes];
+
+		int padbytes=(-(entries[i].namelen+11))&3;
+		[fh skipBytes:padbytes]; // Align to 4 bytes.
+	}
+
+	NSMutableDictionary *attrs=[NSMutableDictionary dictionary];
+
+	for(int i=0;i<numattrs;i++)
+	{
+		off_t curroffset=[fh offsetInFile];
+
+		// Find the entry that comes next in the file to avoid seeks.
+		int minoffset=INT_MAX;
+		int minindex=-1;
+		for(int j=0;j<numattrs;j++)
+		{
+			if(entries[j].offset>=curroffset && entries[j].offset<minoffset)
+			{
+				minoffset=entries[j].offset;
+				minindex=j;
+			}
+		}
+		if(minindex<0) break; // File structure was messed up, so give up.
+
+		if(minoffset!=curroffset) [fh seekToFileOffset:minoffset];
+		NSData *data=[fh readDataOfLength:entries[minindex].length];
+
+		NSString *name=[[[NSString alloc] initWithBytes:entries[minindex].namebytes
+		length:entries[minindex].namelen-1 encoding:NSUTF8StringEncoding] autorelease];
+
+		[attrs setObject:data forKey:name];
+	}
+
+	return attrs;
 }
 
 -(void)popDittoStackUntilPrefixFor:(XADPath *)path
@@ -325,7 +406,6 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+65)] forKey:XADFileTypeKey];
 	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+69)] forKey:XADFileCreatorKey];
 	[template setObject:[NSNumber numberWithInt:bytes[101]+(bytes[73]<<8)] forKey:XADFinderFlagsKey];
-	[template setObject:[NSNumber numberWithUnsignedInt:CSUInt32BE(bytes+65)] forKey:XADFileTypeKey];
 	[template setObject:[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(bytes+91)] forKey:XADCreationDateKey];
 	[template setObject:[NSDate XADDateWithTimeIntervalSince1904:CSUInt32BE(bytes+95)] forKey:XADLastModificationDateKey];
 	[template removeObjectForKey:XADDataLengthKey];

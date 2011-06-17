@@ -14,6 +14,7 @@ extern NSString *XADLastModificationDateKey;
 extern NSString *XADLastAccessDateKey;
 extern NSString *XADLastAttributeChangeDateKey;
 extern NSString *XADCreationDateKey;
+extern NSString *XADExtendedAttributesKey;
 extern NSString *XADFileTypeKey;
 extern NSString *XADFileCreatorKey;
 extern NSString *XADFinderFlagsKey;
@@ -113,7 +114,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict;
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict error:(XADError *)errorptr;
 -(NSData *)finderInfoForDictionary:(NSDictionary *)dict;
--(NSData *)finderInfoForDictionary:(NSDictionary *)dict error:(XADError *)errorptr;
+-(NSDictionary *)extendedAttributesForDictionary:(NSDictionary *)dict;
 
 
 

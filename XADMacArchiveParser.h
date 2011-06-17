@@ -25,6 +25,7 @@ extern NSString *XADDisableMacForkExpansionKey;
 
 -(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
 retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools;
+-(NSDictionary *)parseAppleDoubleExtendedAttributesWithHandle:(CSHandle *)fh;
 -(void)popDittoStackUntilPrefixFor:(XADPath *)path;
 -(void)queueDittoDictionary:(NSMutableDictionary *)dict;
 -(void)addQueuedDittoDictionaryAsDirectory:(BOOL)isdir retainPosition:(BOOL)retainpos;

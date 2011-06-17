@@ -65,18 +65,19 @@
 -(XADError)finishExtractions;
 
 -(XADError)_extractFileEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath;
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractLinkEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename;
--(XADError)_extractEntryWithDictionary:(NSDictionary *)dict toHandle:(CSHandle *)fh;
 
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
 deferDirectories:(BOOL)defer;
 -(XADError)_ensureDirectoryExists:(NSString *)path;
 
-@end
+-(XADError)runExtractorWithDictionary:(NSDictionary *)dict outputHandle:(CSHandle *)handle;
+-(XADError)runExtractorWithDictionary:(NSDictionary *)dict
+outputTarget:(id)target selector:(SEL)sel argument:(id)arg;
 
+@end
 
 @interface XADUnarchiver (PlatformSpecific)
 
@@ -86,6 +87,11 @@ deferDirectories:(BOOL)defer;
 
 @end
 
+@interface XADUnarchiver (AppleDouble)
+
+-(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath;
+
+@end
 
 
 @interface NSObject (XADUnarchiverDelegate)

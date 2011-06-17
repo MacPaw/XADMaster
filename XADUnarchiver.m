@@ -264,7 +264,6 @@
 		error=[self _updateFileAttributesAtPath:path forEntryWithDictionary:dict deferDirectories:!force];
 	}
 
-
 	// Report success or failure
 	end:
 	if(delegate)
@@ -331,45 +330,11 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 	@try { fh=[CSFileHandle fileHandleForWritingAtPath:destpath]; }
 	@catch(id e) { return XADOpenFileError; }
 
-	XADError err=[self _extractEntryWithDictionary:dict toHandle:fh];
+	XADError err=[self runExtractorWithDictionary:dict outputHandle:fh];
 
 	[fh close];
 
 	return err;
-}
-
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath
-{
-	CSHandle *fh;
-	@try { fh=[CSFileHandle fileHandleForWritingAtPath:destpath]; }
-	@catch(id e) { return XADOpenFileError; }
-
-	uint8_t header[0x32]=
-	{
-		0x00,0x05,0x16,0x07,0x00,0x02,0x00,0x00,
-		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-		0x00,0x02,
-		0x00,0x00,0x00,0x09,0x00,0x00,0x00,0x32,0x00,0x00,0x00,0x20,
-		0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x52,0x00,0x00,0x00,0x00,
-	};
-
-	off_t size=0;
-	NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
-	if(sizenum) size=[sizenum longLongValue];
-
-	CSSetUInt32BE(&header[46],size);
-	[fh writeBytes:sizeof(header) fromBuffer:header];
-
-	NSData *finderinfo=[parser finderInfoForDictionary:dict];
-	if([finderinfo length]<32) return XADUnknownError;
-	[fh writeBytes:32 fromBuffer:[finderinfo bytes]];
-
-	XADError error=XADNoError;
-	if(size) error=[self _extractEntryWithDictionary:dict toHandle:fh];
-
-	[fh close];
-
-	return error;
 }
 
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath
@@ -430,67 +395,6 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 
 
--(XADError)_extractEntryWithDictionary:(NSDictionary *)dict toHandle:(CSHandle *)fh
-{
-	@try
-	{
-		CSHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
-		if(!srchandle) return XADNotSupportedError;
-
-		NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
-		off_t size=0;
-		if(sizenum) size=[sizenum longLongValue];
-
-		off_t done=0;
-		double updatetime=0;
-		uint8_t buf[0x40000];
-
-		for(;;)
-		{
-			if(delegate&&[delegate extractionShouldStopForUnarchiver:self]) return XADBreakError;
-
-			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
-			if(actual)
-			{
-				// TODO: combine the except parsing for input and output
-				@try { [fh writeBytes:actual fromBuffer:buf]; }
-				@catch(id e) { return XADOutputError; }
-			}
-
-			done+=actual;
-
-			double currtime=_XADUnarchiverGetTime();
-			if(currtime-updatetime>updateinterval)
-			{
-				updatetime=currtime;
-
-				double progress;
-				if(sizenum) progress=(double)done/(double)size;
-				else progress=[srchandle estimatedProgress];
-
-				[delegate unarchiver:self extractionProgressForEntryWithDictionary:dict
-				fileFraction:progress estimatedTotalFraction:[[parser handle] estimatedProgress]];
-			}
-
-			if(actual==0) break;
-		}
-
-		if([srchandle hasChecksum])
-		{
-			if(![srchandle isChecksumCorrect]) return XADChecksumError;
-		}
-		else
-		{
-			if(sizenum&&done!=size) return XADDecrunchError; // kind of hacky
-		}
-	}
-	@catch(id e)
-	{
-		return [XADException parseException:e];
-	}
-
-	return XADNoError;
-}
 
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
 deferDirectories:(BOOL)defer
@@ -538,6 +442,87 @@ deferDirectories:(BOOL)defer
 		#endif
 		else return XADMakeDirectoryError;
 	}
+}
+
+
+
+-(XADError)runExtractorWithDictionary:(NSDictionary *)dict outputHandle:(CSHandle *)handle
+{
+	return [self runExtractorWithDictionary:dict outputTarget:self
+	selector:@selector(_outputToHandle:bytes:length:) argument:handle];
+}
+
+-(XADError)_outputToHandle:(CSHandle *)handle bytes:(uint8_t *)bytes length:(int)length
+{
+	// TODO: combine the exception parsing for input and output
+	@try { [handle writeBytes:length fromBuffer:bytes]; }
+	@catch(id e) { return XADOutputError; }
+	return XADNoError;
+}
+
+-(XADError)runExtractorWithDictionary:(NSDictionary *)dict
+outputTarget:(id)target selector:(SEL)selector argument:(id)argument
+{
+	XADError (*outputfunc)(id,SEL,id,uint8_t *,int);
+	outputfunc=(void *)[target methodForSelector:selector];
+
+	@try
+	{
+		CSHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
+		if(!srchandle) return XADNotSupportedError;
+
+		NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
+		off_t size=0;
+		if(sizenum) size=[sizenum longLongValue];
+
+		off_t done=0;
+		double updatetime=0;
+		uint8_t buf[0x40000];
+
+		for(;;)
+		{
+			if(delegate&&[delegate extractionShouldStopForUnarchiver:self]) return XADBreakError;
+
+			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
+			if(actual)
+			{
+				XADError error=outputfunc(target,selector,argument,buf,actual);
+				if(error) return error;
+			}
+
+			done+=actual;
+
+			double currtime=_XADUnarchiverGetTime();
+			if(currtime-updatetime>updateinterval)
+			{
+				updatetime=currtime;
+
+				double progress;
+				if(sizenum) progress=(double)done/(double)size;
+				else progress=[srchandle estimatedProgress];
+
+				[delegate unarchiver:self extractionProgressForEntryWithDictionary:dict
+				fileFraction:progress estimatedTotalFraction:[[parser handle] estimatedProgress]];
+			}
+
+			if(actual==0) break;
+		}
+
+		if([srchandle hasChecksum])
+		{
+			if(![srchandle isChecksumCorrect]) return XADChecksumError;
+		}
+		else
+		{
+			if(sizenum&&done!=size) return XADDecrunchError; // kind of hacky
+		}
+	}
+	@catch(id e)
+	{
+		return [XADException parseException:e];
+	}
+
+	return XADNoError;
 }
 
 @end

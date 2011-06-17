@@ -704,6 +704,20 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	objectForKey:@"com.apple.FinderInfo"];
 	if(extfinderinfo) [dict setObject:extfinderinfo forKey:XADFinderInfoKey];
 
+	// Extract Spotlight comment from extended attributes, if present,
+	// and if there is not already a comment.
+	NSData *extcomment=[[dict objectForKey:XADExtendedAttributesKey]
+	objectForKey:@"com.apple.metadata:kMDItemFinderComment"];
+	XADString *actualcomment=[dict objectForKey:XADCommentKey];
+	if(extcomment && !actualcomment)
+	{
+		id plist=[NSPropertyListSerialization propertyListFromData:extcomment
+		mutabilityOption:0 format:NULL errorDescription:NULL];
+
+		if(plist&&[plist isKindOfClass:[NSString class]])
+		[dict setObject:[self XADStringWithString:plist] forKey:XADCommentKey];
+	}
+
 	// Extract type, creator and finderflags from finderinfo.
 	NSData *finderinfo=[dict objectForKey:XADFinderInfoKey];
 	if(finderinfo&&[finderinfo length]>=10)

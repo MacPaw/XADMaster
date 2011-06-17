@@ -9,12 +9,14 @@
 #import <sys/attr.h>
 #import <sys/xattr.h>
 
-@implementation XADUnarchiver (PlatformSpecific)
-
 struct ResourceOutputArguments
 {
 	int fd,offset;
 };
+
+static void SetCommentForPath(NSString *comment,NSString *path);
+
+@implementation XADUnarchiver (PlatformSpecific)
 
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asPlatformSpecificForkForFile:(NSString *)destpath
 {
@@ -100,6 +102,10 @@ struct ResourceOutputArguments
 		}
 	}
 
+	// Set comment.
+	XADString *comment=[dict objectForKey:XADCommentKey];
+	if(comment) SetCommentForPath([comment string],path);
+
 	// Attrlist structures.
 	struct attrlist list={ ATTR_BIT_MAP_COUNT };
 	uint8_t attrdata[3*sizeof(struct timespec)+sizeof(uint32_t)];
@@ -155,6 +161,55 @@ struct ResourceOutputArguments
 }
 
 @end
+
+static void SetCommentForPath(NSString *comment,NSString *path)
+{
+	if(!comment||![comment length]) return;
+
+	const char *eventformat =
+	"'----': 'obj '{ "         // Direct object is the file comment we want to modify
+	"  form: enum(prop), "     //  ... the comment is an object's property...
+	"  seld: type(comt), "     //  ... selected by the 'comt' 4CC ...
+	"  want: type(prop), "     //  ... which we want to interpret as a property (not as e.g. text).
+	"  from: 'obj '{ "         // It's the property of an object...
+	"      form: enum(indx), "
+	"      want: type(file), " //  ... of type 'file' ...
+	"      seld: @,"           //  ... selected by an alias ...
+	"      from: null() "      //  ... according to the receiving application.
+	"              }"
+	"             }, "
+	"data: @";                 // The data is what we want to set the direct object to.
+
+	NSAppleEventDescriptor *commentdesc=[NSAppleEventDescriptor descriptorWithString:comment];
+
+	FSRef ref;
+	bzero(&ref,sizeof(ref));
+	if(FSPathMakeRef((UInt8 *)[path fileSystemRepresentation],&ref,NULL)!=noErr) return;
+
+	AEDesc filedesc;
+	AEInitializeDesc(&filedesc);
+	if(AECoercePtr(typeFSRef,&ref,sizeof(ref),typeAlias,&filedesc)!=noErr) return;
+	
+	AEDesc builtevent,replyevent;
+	AEInitializeDesc(&builtevent);
+	AEInitializeDesc(&replyevent);
+
+	static OSType findersignature='MACS';
+
+	OSErr err=AEBuildAppleEvent(kAECoreSuite,kAESetData,
+	typeApplSignature,&findersignature,sizeof(findersignature),
+	kAutoGenerateReturnID,kAnyTransactionID,
+	&builtevent,NULL,eventformat,&filedesc,[commentdesc aeDesc]);
+
+	AEDisposeDesc(&filedesc);
+	
+	if(err!=noErr) return;
+	
+	AESendMessage(&builtevent,&replyevent,kAENoReply,kAEDefaultTimeout);
+	
+	AEDisposeDesc(&builtevent);
+	AEDisposeDesc(&replyevent);
+}
 
 double _XADUnarchiverGetTime()
 {

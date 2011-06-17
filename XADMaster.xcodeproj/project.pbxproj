@@ -122,6 +122,9 @@
 		1B34443E13A978B300C89872 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
 		1B34443F13A978B700C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
 		1B34444013A978B800C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
+		1B34444213AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */; };
+		1B34444313AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */; };
+		1B34444413AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */; };
 		1B349EF211BACA2900396C26 /* XADUnarchiverMacOSX.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */; };
 		1B34A55B11BDC1AD00396C26 /* RARAudioDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A55711BDC1AC00396C26 /* RARAudioDecoder.c */; };
 		1B34A65011C01A5A00396C26 /* XADRAR15Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB6B119B7F2500CDACC1 /* XADRAR15Handle.m */; };
@@ -1192,6 +1195,7 @@
 		1B3443E613A6EB2700C89872 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack_version.h; sourceTree = "<group>"; };
 		1B3443E713A6EB2700C89872 /* words.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = words.c; sourceTree = "<group>"; };
 		1B3443E813A6EB2700C89872 /* wputils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wputils.c; sourceTree = "<group>"; };
+		1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverAppleDouble.m; sourceTree = "<group>"; };
 		1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverMacOSX.m; sourceTree = "<group>"; };
 		1B349EF511BACA3C00396C26 /* XADUnarchiverLinux.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverLinux.m; sourceTree = "<group>"; };
 		1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiverWindows.m; sourceTree = "<group>"; };
@@ -1712,6 +1716,7 @@
 				1B578C330DDBC8BF005B0F68 /* XADException.m */,
 				1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */,
 				1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */,
+				1B34444113AACE1F00C89872 /* XADUnarchiverAppleDouble.m */,
 				1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */,
 				1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */,
 				1B349EF511BACA3C00396C26 /* XADUnarchiverLinux.m */,
@@ -3187,6 +3192,7 @@
 				1B34443513A978A500C89872 /* unpack.c in Sources */,
 				1B34443D13A978B200C89872 /* words.c in Sources */,
 				1B34443F13A978B700C89872 /* wputils.c in Sources */,
+				1B34444313AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3385,6 +3391,7 @@
 				1B34443613A978A600C89872 /* unpack.c in Sources */,
 				1B34443E13A978B300C89872 /* words.c in Sources */,
 				1B34444013A978B800C89872 /* wputils.c in Sources */,
+				1B34444413AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3618,6 +3625,7 @@
 				1B3443EC13A6EB2700C89872 /* unpack.c in Sources */,
 				1B3443F013A6EB2700C89872 /* words.c in Sources */,
 				1B3443F113A6EB2700C89872 /* wputils.c in Sources */,
+				1B34444213AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

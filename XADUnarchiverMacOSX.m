@@ -11,55 +11,54 @@
 
 @implementation XADUnarchiver (PlatformSpecific)
 
+struct ResourceOutputArguments
+{
+	int fd,offset;
+};
+
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asPlatformSpecificForkForFile:(NSString *)destpath
 {
-	// Make sure a plain file exists at this path before proceeding.
 	const char *cpath=[destpath fileSystemRepresentation];
-	struct stat st;
-	if(lstat(cpath,&st)==0)
-	{
-		// If something exists that is not a regular file, try deleting it.
-		if((st.st_mode&S_IFMT)!=S_IFREG)
-		{
-			if(unlink(cpath)!=0) return XADOpenFileError; // TODO: better error
-		}
-	}
-	else
-	{
-		// If nothing exists, create an empty file.
-		int fh=open(cpath,O_WRONLY|O_CREAT|O_TRUNC,0666);
-		if(fh==-1) return XADOpenFileError;
-		close(fh);
-	}
-
-	// Then, unpack to resource fork.
-	NSString *forkpath=[destpath stringByAppendingPathComponent:@"..namedfork/rsrc"];
 	int originalpermissions=-1;
-	CSHandle *fh=nil;
 
-	@try { fh=[CSFileHandle fileHandleForWritingAtPath:forkpath]; }
-	@catch(id e) {}
-
-	// If opening the resource fork failed, change permissions on the file and try again.
-	if(!fh)
+	// Open the file for writing, creating it if it doesn't exist.
+	// TODO: Does it need to be opened for writing or is read enough?
+	int fd=open(cpath,O_WRONLY|O_CREAT|O_NOFOLLOW,0666);
+	if(fd==-1) 
 	{
+		// If opening the file failed, try changing permissions.
 		struct stat st;
 		stat(cpath,&st);
 		originalpermissions=st.st_mode;
 
 		chmod(cpath,0700);
 
-		@try { fh=[CSFileHandle fileHandleForWritingAtPath:forkpath]; }
-		@catch(id e) { return XADOpenFileError; }
+		fd=open(cpath,O_WRONLY|O_CREAT|O_NOFOLLOW,0666);
+		if(fd==-1) return XADOpenFileError; // TODO: Better error.
 	}
 
-	XADError error=[self _extractEntryWithDictionary:dict toHandle:fh];
+	struct ResourceOutputArguments args={ .fd=fd, .offset=0 };
 
-	[fh close];
+	XADError error=[self runExtractorWithDictionary:dict
+	outputTarget:self selector:@selector(_outputToResourceFork:bytes:length:)
+	argument:[NSValue valueWithPointer:&args]];
+
+	close(fd);
 
 	if(originalpermissions!=-1) chmod(cpath,originalpermissions);
 
 	return error;
+}
+
+-(XADError)_outputToResourceFork:(NSValue *)pointerval bytes:(uint8_t *)bytes length:(int)length
+{
+	struct ResourceOutputArguments *args=[pointerval pointerValue];
+	if(fsetxattr(args->fd,XATTR_RESOURCEFORK_NAME,bytes,length,
+	args->offset,0)) return XADOutputError;
+
+	args->offset+=length;
+
+	return XADNoError;
 }
 
 -(XADError)_createPlatformSpecificLinkToPath:(NSString *)link from:(NSString *)path

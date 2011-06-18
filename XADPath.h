@@ -38,7 +38,9 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 -(NSString *)string;
 -(NSString *)stringWithEncodingName:(NSString *)encoding;
 -(NSData *)data; // NOTE: not guaranteed to be safe for usage as a filesystem path, only for display!
+
 -(int)depth;
+-(NSArray *)pathComponents;
 
 -(BOOL)encodingIsKnown;
 -(NSString *)encodingName;

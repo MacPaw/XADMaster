@@ -291,9 +291,16 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	return data;
 }
 
+
+
 -(int)depth
 {
 	return [components count];
+}
+
+-(NSArray *)pathComponents
+{
+	return components;
 }
 
 

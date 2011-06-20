@@ -6,28 +6,25 @@
 // Arithmetic decoder based on US patent 4791403.
 
 static void InitDec(WinZipJPEGArithmeticDecoder *self);
-static void InitTbl(WinZipJPEGArithmeticDecoder *self);
 
-static unsigned int LogDecoder(WinZipJPEGArithmeticDecoder *self);
-static void ChangeState(WinZipJPEGArithmeticDecoder *self);
-static void UpdateLRT(WinZipJPEGArithmeticDecoder *self);
-static void UpdateMPS(WinZipJPEGArithmeticDecoder *self);
-static void UpdateLPS(WinZipJPEGArithmeticDecoder *self);
-static void LRMBig(WinZipJPEGArithmeticDecoder *self);
+static unsigned int LogDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context);
 
-static void Renorm(WinZipJPEGArithmeticDecoder *self);
-static void ByteIn(WinZipJPEGArithmeticDecoder *self);
+static void UpdateMPS(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context);
+static void QSmaller(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context);
 
-static void QSmaller(WinZipJPEGArithmeticDecoder *self);
-static void QBigger(WinZipJPEGArithmeticDecoder *self);
-static void IncrIndex(WinZipJPEGArithmeticDecoder *self);
-static void DblIndex(WinZipJPEGArithmeticDecoder *self);
-static void SwitchMPS(WinZipJPEGArithmeticDecoder *self);
+static void UpdateLPS(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context);
+static void QBigger(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context);
+static void IncrIndex(int *i,int *incrsv);
+static void DblIndex(int *i,int *incrsv);
 
 //static void Flush(WinZipJPEGArithmeticDecoder *self);
 
-static unsigned int AntilogX(unsigned int lr);
-static unsigned int LogX(unsigned int x);
+static void LRMBig(WinZipJPEGArithmeticDecoder *self);
+static void Renorm(WinZipJPEGArithmeticDecoder *self);
+static void ByteIn(WinZipJPEGArithmeticDecoder *self);
+
+static uint32_t AntilogX(uint16_t lr);
+static uint16_t LogX(uint32_t x);
 
 
 
@@ -56,11 +53,20 @@ void InitializeWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,Win
 	InitDec(self);
 }
 
-int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,int state)
+void InitializeWinZipJPEGContext(WinZipJPEGContext *self)
 {
-	self->ns=state;
-	self->dx=0; // Otherwise tests don't pass.
-	return LogDecoder(self);
+	self->dlrm=nmaxlp[0];
+	self->i=0;
+	self->k=0;
+	self->mps=0;
+}
+
+int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
+{
+self->dx=0; // Otherwise tests don't pass.
+	int bit=LogDecoder(self,context);
+self->lp=logp[context->i];
+	return bit;
 }
 
 
@@ -68,9 +74,10 @@ int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,int
 
 static void InitDec(WinZipJPEGArithmeticDecoder *self)
 {
-	InitTbl(self);
-
-	self->s=DummyState;
+	self->kmin2=0;
+	self->kmin1=1;
+	self->kmin=5;
+	self->kmax=11;
 
 	ByteIn(self);
 	self->x=self->b;
@@ -85,129 +92,168 @@ static void InitDec(WinZipJPEGArithmeticDecoder *self)
 	if(self->x==0xffff) ByteIn(self);
 }
 
-static void InitTbl(WinZipJPEGArithmeticDecoder *self)
+
+
+
+static unsigned int LogDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
-	self->kmin2=0;
-	self->kmin1=1;
-	self->kmin=5;
-	self->kmax=11;
+self->lrm=self->lr+context->dlrm;
 
-	for(int s=0;s<sizeof(self->ist)/sizeof(self->ist[0]);s++)
-	{
-		self->dlrst[s]=nmaxlp[0];
-		self->ist[s]=0;
-		self->kst[s]=0;
-		self->mpsst[s]=0;
-	}
-}
+	LRMBig(self);
 
+	self->lr+=logp[context->i];
 
+	unsigned int bit=context->mps;
 
+	unsigned int lrt;
+	if(self->lx<self->lrm) lrt=self->lx;
+	else lrt=self->lrm;
 
-static unsigned int LogDecoder(WinZipJPEGArithmeticDecoder *self)
-{
-	if(self->s!=self->ns)
-	{
-		ChangeState(self);
-		UpdateLRT(self);
-	}
-
-	self->lr+=self->lp;
-
-	int bit=self->mps;
-
-	if(self->lr>=self->lrt)
+	if(self->lr>=lrt)
 	{
 		if(self->lx>self->lr)
 		{
-			UpdateMPS(self);
+			UpdateMPS(self,context);
 		}
 		else
 		{
-			self->dlrm=self->lrm-self->lr;
+			context->dlrm=self->lrm-self->lr;
 			Renorm(self);
 			if(self->lx>self->lr)
 			{
-				self->lrm=self->dlrm+self->lr;
-				if(self->lr>=self->lrm) UpdateMPS(self);
+				self->lrm=context->dlrm+self->lr;
+				if(self->lr>=self->lrm) UpdateMPS(self,context);
 			}
 			else
 			{
 				bit^=1;
 
-				self->k++;
-				self->dx=AntilogX(self->lr);
-				self->x-=self->dx;
+				context->k++;
+
+				uint32_t dx=AntilogX(self->lr);
+				self->x-=dx;
 				self->lx=LogX(self->x);
-				UpdateLPS(self);
-				self->lrm=self->dlrm+self->lr;
+self->dx=dx; // for tests
+
+				UpdateLPS(self,context);
+				self->lrm=context->dlrm+self->lr;
 			}
 		}
-		UpdateLRT(self);
 	}
+
+context->dlrm=self->lrm-self->lr;
 
 	return bit;
 }
 
-static void ChangeState(WinZipJPEGArithmeticDecoder *self)
+
+
+
+static void UpdateMPS(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
-	if(self->s!=DummyState) self->dlrst[self->s]=self->lrm-self->lr;
-	self->s=self->ns;
-	self->k=self->kst[self->s];
-	self->i=self->ist[self->s];
-	self->mps=self->mpsst[self->s];
-	self->lp=logp[self->i];
-	self->lrm=self->lr+self->dlrst[self->s];
+	if(context->k<=self->kmin) QSmaller(self,context);
+	context->k=0;
+	self->lrm=self->lr+nmaxlp[context->i];
 	LRMBig(self);
 }
 
-static void UpdateLRT(WinZipJPEGArithmeticDecoder *self)
+static void QSmaller(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
-	self->lrt=self->lrm;
-	if(self->lrt>self->lx) self->lrt=self->lx;
-}
+	if(context->i>=47) return; // WinZip modification.
 
-static void UpdateMPS(WinZipJPEGArithmeticDecoder *self)
-{
-	if(self->k<=self->kmin) QSmaller(self);
-	self->k=0;
-	self->kst[self->s]=0;
-	self->lrm=self->lr+nmaxlp[self->i];
-	LRMBig(self);
-}
-
-static void UpdateLPS(WinZipJPEGArithmeticDecoder *self)
-{
-	self->lr=self->lr+lqp[self->i];
-
-	if(self->k>=self->kmax)
+	if(logp[context->i+1]!=0) // Redundant after WinZip modification?
 	{
-		QBigger(self);
-		self->k=0;
-		self->dlrm=nmaxlp[self->i];
-		self->lp=logp[self->i];
-		self->ist[self->s]=self->i;
+		context->i++;
+		if(context->k<=self->kmin1)
+		{
+			context->i+=halfi[context->i];
+
+			if(context->k<=self->kmin2)
+			{
+				context->i+=halfi[context->i];
+			}
+		}
+	}
+}
+
+
+
+
+static void UpdateLPS(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
+{
+	self->lr+=lqp[context->i];
+
+	if(context->k>=self->kmax)
+	{
+		QBigger(self,context);
+		context->k=0;
+		context->dlrm=nmaxlp[context->i];
 	}
 	else
 	{
-		if(self->dlrm<0) self->dlrm=0;
+		if(context->dlrm<0) context->dlrm=0;
+	}
+}
+
+static void QBigger(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
+{
+	if(context->i>=48) return; // WinZip modification.
+
+	int incrsv=0;
+
+	if(context->dlrm>=nmaxlp[context->i]/2)
+	{
+		context->dlrm=nmaxlp[context->i]-context->dlrm;
+		if(context->dlrm<=nmaxlp[context->i]/4) DblIndex(&context->i,&incrsv);
+		DblIndex(&context->i,&incrsv);
+	}
+	else
+	{
+		if(context->dlrm>=nmaxlp[context->i]/4) IncrIndex(&context->i,&incrsv);
+		IncrIndex(&context->i,&incrsv);
 	}
 
-	self->kst[self->s]=self->k;
+	if(context->i<=0)
+	{
+		context->i=incrsv;
+		context->mps=context->mps^1;
+	}
 }
+
+static void IncrIndex(int *i,int *incrsv)
+{
+	if(*i>0) (*i)--;
+	else (*incrsv)++;
+}
+
+static void DblIndex(int *i,int *incrsv)
+{
+	if(*i>0) *i-=dbli[*i];
+	else *incrsv+=dbli[*i];
+}
+
+
+
+
+
+/*static void Flush(WinZipJPEGArithmeticDecoder *self)
+{
+	Renorm(self);
+	self->lr=self->lr+0x8000;
+	Renorm(self);
+	//if(self->bp>=self->be-2) BufOut(self);
+	//if(self->bp>=self->bpst) BufOut(self);
+}*/
 
 static void LRMBig(WinZipJPEGArithmeticDecoder *self)
 {
 	if(self->lrm>0x7ff)
 	{
-		self->dlrm=self->lrm-self->lr;
+		int32_t dlrm=self->lrm-self->lr;
 		Renorm(self);
-		self->lrm=self->dlrm+self->lr;
+		self->lrm=dlrm+self->lr;
 	}
 }
-
-
-
 
 static void Renorm(WinZipJPEGArithmeticDecoder *self)
 {
@@ -241,87 +287,7 @@ static void ByteIn(WinZipJPEGArithmeticDecoder *self)
 
 
 
-
-static void QSmaller(WinZipJPEGArithmeticDecoder *self)
-{
-	if(self->i>=47) return; // WinZip modification.
-
-	if(logp[self->i+1]!=0) // Redundant after WinZip modification?
-	{
-		self->i++;
-		if(self->k<=self->kmin1)
-		{
-			self->i+=halfi[self->i];
-
-			if(self->k<=self->kmin2)
-			{
-				self->i+=halfi[self->i];
-			}
-		}
-		self->ist[self->s]=self->i;
-		self->lp=logp[self->i];
-	}
-}
-
-static void QBigger(WinZipJPEGArithmeticDecoder *self)
-{
-	if(self->i>=48) return; // WinZip modification.
-
-	self->incrsv=0;
-
-	if(self->dlrm>=nmaxlp[self->i]/2)
-	{
-		self->dlrm=nmaxlp[self->i]-self->dlrm;
-		if(self->dlrm<=nmaxlp[self->i]/4) DblIndex(self);
-		DblIndex(self);
-	}
-	else
-	{
-		if(self->dlrm>=nmaxlp[self->i]/4) IncrIndex(self);
-		IncrIndex(self);
-	}
-
-	SwitchMPS(self);
-	self->lp=logp[self->i];
-}
-
-
-static void IncrIndex(WinZipJPEGArithmeticDecoder *self)
-{
-	if(self->i>0) self->i--;
-	else self->incrsv++;
-}
-
-static void DblIndex(WinZipJPEGArithmeticDecoder *self)
-{
-	if(self->i>0) self->i=self->i-dbli[self->i];
-	else self->incrsv=self->incrsv+dbli[self->i];
-}
-
-static void SwitchMPS(WinZipJPEGArithmeticDecoder *self)
-{
-	if(self->i<=0)
-	{
-		self->i=0;
-		self->mps=self->mps^1;
-		self->mpsst[self->s]=self->mps;
-		self->i=self->i+self->incrsv;
-	}
-}
-
-
-
-
-/*static void Flush(WinZipJPEGArithmeticDecoder *self)
-{
-	Renorm(self);
-	self->lr=self->lr+0x8000;
-	Renorm(self);
-	//if(self->bp>=self->be-2) BufOut(self);
-	//if(self->bp>=self->bpst) BufOut(self);
-}*/
-
-static unsigned int LogX(unsigned int x)
+static uint16_t LogX(uint32_t x)
 {
 	unsigned int highbits=x>>12;
 	if(highbits==0) return 0x2000;
@@ -331,7 +297,7 @@ static unsigned int LogX(unsigned int x)
 	return (whole<<10)-negfraction;
 }
 
-static unsigned int AntilogX(unsigned int lr)
+static uint32_t AntilogX(uint16_t lr)
 {
 	unsigned int whole=lr>>10;
 	unsigned int fraction=lr&0x3ff;

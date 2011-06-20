@@ -37,6 +37,9 @@ int main()
 	WinZipJPEGArithmeticDecoder decoder;
 	InitializeWinZipJPEGArithmeticDecoder(&decoder,ReadFunc,&stream);
 
+	WinZipJPEGContext context;
+	InitializeWinZipJPEGContext(&context);
+
 	int errors=0;
 	if(decoder.lr!=knownstates[0].lr) { fprintf(stderr,"Wrong lr value (%x!=%x) at step %d!\n",decoder.lr,knownstates[0].lr,0); errors++; }
 	if(decoder.lrm!=knownstates[0].lrm) { fprintf(stderr,"Wrong lrm value (%x!=%x) at step %d!\n",decoder.lrm,knownstates[0].lrm,0); errors++; }
@@ -44,18 +47,18 @@ int main()
 
 	for(int i=1;i<=256;i++)
 	{
-		int bit=NextBitFromWinZipJPEGArithmeticDecoder(&decoder,0);
+		int bit=NextBitFromWinZipJPEGArithmeticDecoder(&decoder,&context);
 
-		if(bit!=knownstates[i].yn) { fprintf(stderr,"Wrong yn value (%x!=%x) at step %d!\n",decoder.yn,knownstates[i].yn,i); errors++; }
-		if(decoder.mps!=knownstates[i].mps) { fprintf(stderr,"Wrong mps value (%x!=%x) at step %d!\n",decoder.mps,knownstates[i].mps,i); errors++; }
+		if(bit!=knownstates[i].yn) { fprintf(stderr,"Wrong yn value (%x!=%x) at step %d!\n",bit,knownstates[i].yn,i); errors++; }
+		if(context.mps!=knownstates[i].mps) { fprintf(stderr,"Wrong mps value (%x!=%x) at step %d!\n",context.mps,knownstates[i].mps,i); errors++; }
 		if(decoder.lr!=knownstates[i].lr) { fprintf(stderr,"Wrong lr value (%x!=%x) at step %d!\n",decoder.lr,knownstates[i].lr,i); errors++; }
 		if(decoder.lrm!=knownstates[i].lrm) { fprintf(stderr,"Wrong lrm value (%x!=%x) at step %d!\n",decoder.lrm,knownstates[i].lrm,i); errors++; }
 		if(decoder.x!=knownstates[i].x) { fprintf(stderr,"Wrong x value (%x!=%x) at step %d!\n",decoder.x,knownstates[i].x,i); errors++; }
 		if(decoder.dx!=knownstates[i].dx) { fprintf(stderr,"Wrong dx value (%x!=%x) at step %d!\n",decoder.dx,knownstates[i].dx,i); errors++; }
-		if(decoder.k!=knownstates[i].k) { fprintf(stderr,"Wrong k value (%x!=%x) at step %d!\n",decoder.k,knownstates[i].k,i); errors++; }
+		if(context.k!=knownstates[i].k) { fprintf(stderr,"Wrong k value (%x!=%x) at step %d!\n",context.k,knownstates[i].k,i); errors++; }
 		if(decoder.lp!=knownstates[i].lp) { fprintf(stderr,"Wrong lp value (%x!=%x) at step %d!\n",decoder.lp,knownstates[i].lp,i); errors++; }
 		if(decoder.lx!=knownstates[i].lx) { fprintf(stderr,"Wrong lx value (%x!=%x) at step %d!\n",decoder.lx,knownstates[i].lx,i); errors++; }
-		if(errors>1000) return 1;
+		if(errors>20) return 1;
 	}
 
 	if(errors) return 1;

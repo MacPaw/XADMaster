@@ -27,11 +27,7 @@ typedef struct WinZipJPEGArithmeticDecoder
 	uint16_t lrm; // maximum lr before change index
 	uint16_t lrt; // decoder - minimum of lrm and lx
 	uint16_t lx; // decoder - log x
-	uint32_t mr; // mantissa of range for calculating antilog
 	uint32_t dx; // antilog of lr
-	uint32_t ct; // decoder - number of bits to shift for logx
-	uint32_t cx; // decoder - characteristic of x
-	uint32_t xf; // fractional part of x
 
 	uint16_t incrsv; // save extra increments at MPS exchange
 

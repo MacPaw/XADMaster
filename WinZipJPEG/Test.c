@@ -46,7 +46,7 @@ int main()
 	{
 		int bit=NextBitFromWinZipJPEGArithmeticDecoder(&decoder,0);
 
-		if(decoder.yn!=knownstates[i].yn) { fprintf(stderr,"Wrong yn value (%x!=%x) at step %d!\n",decoder.yn,knownstates[i].yn,i); errors++; }
+		if(bit!=knownstates[i].yn) { fprintf(stderr,"Wrong yn value (%x!=%x) at step %d!\n",decoder.yn,knownstates[i].yn,i); errors++; }
 		if(decoder.mps!=knownstates[i].mps) { fprintf(stderr,"Wrong mps value (%x!=%x) at step %d!\n",decoder.mps,knownstates[i].mps,i); errors++; }
 		if(decoder.lr!=knownstates[i].lr) { fprintf(stderr,"Wrong lr value (%x!=%x) at step %d!\n",decoder.lr,knownstates[i].lr,i); errors++; }
 		if(decoder.lrm!=knownstates[i].lrm) { fprintf(stderr,"Wrong lrm value (%x!=%x) at step %d!\n",decoder.lrm,knownstates[i].lrm,i); errors++; }

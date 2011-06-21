@@ -19,6 +19,7 @@ typedef struct WinZipJPEGArithmeticDecoder
 	uint16_t lp; // minus log p --- used only for testing
 	uint16_t lr; // minus log of the range
 	uint16_t lrm; // maximum lr before change index
+	int32_t dlrm; // difference between lrm and lr
 	uint16_t lx; // decoder - log x
 	uint32_t dx; // antilog of lr -- used only for testing
 } WinZipJPEGArithmeticDecoder;

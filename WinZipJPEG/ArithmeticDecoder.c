@@ -97,8 +97,7 @@ static void InitDec(WinZipJPEGArithmeticDecoder *self)
 
 static unsigned int LogDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
-self->lrm=self->lr+context->dlrm;
-
+	self->lrm=self->lr+context->dlrm;
 	LRMBig(self);
 
 	self->lr+=logp[context->i];
@@ -111,17 +110,15 @@ self->lrm=self->lr+context->dlrm;
 
 	if(self->lr>=lrt)
 	{
-		if(self->lx>self->lr)
+		if(self->lr<self->lx)
 		{
 			UpdateMPS(self,context);
 		}
 		else
 		{
-			context->dlrm=self->lrm-self->lr;
 			Renorm(self);
-			if(self->lx>self->lr)
+			if(self->lr<self->lx)
 			{
-				self->lrm=context->dlrm+self->lr;
 				if(self->lr>=self->lrm) UpdateMPS(self,context);
 			}
 			else
@@ -136,12 +133,11 @@ self->lrm=self->lr+context->dlrm;
 self->dx=dx; // for tests
 
 				UpdateLPS(self,context);
-				self->lrm=context->dlrm+self->lr;
 			}
 		}
 	}
 
-context->dlrm=self->lrm-self->lr;
+	context->dlrm=self->lrm-self->lr;
 
 	return bit;
 }
@@ -181,18 +177,20 @@ static void QSmaller(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *contex
 
 static void UpdateLPS(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
+self->dlrm=self->lrm-self->lr;
 	self->lr+=lqp[context->i];
 
 	if(context->k>=self->kmax)
 	{
 		QBigger(self,context);
 		context->k=0;
-		context->dlrm=nmaxlp[context->i];
+		self->dlrm=nmaxlp[context->i];
 	}
 	else
 	{
-		if(context->dlrm<0) context->dlrm=0;
+		if(self->dlrm<0) self->dlrm=0;
 	}
+self->lrm=self->dlrm+self->lr;
 }
 
 static void QBigger(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
@@ -201,15 +199,15 @@ static void QBigger(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context
 
 	int incrsv=0;
 
-	if(context->dlrm>=nmaxlp[context->i]/2)
+	if(self->dlrm>=nmaxlp[context->i]/2)
 	{
-		context->dlrm=nmaxlp[context->i]-context->dlrm;
-		if(context->dlrm<=nmaxlp[context->i]/4) DblIndex(&context->i,&incrsv);
+		self->dlrm=nmaxlp[context->i]-self->dlrm;
+		if(self->dlrm<=nmaxlp[context->i]/4) DblIndex(&context->i,&incrsv);
 		DblIndex(&context->i,&incrsv);
 	}
 	else
 	{
-		if(context->dlrm>=nmaxlp[context->i]/4) IncrIndex(&context->i,&incrsv);
+		if(self->dlrm>=nmaxlp[context->i]/4) IncrIndex(&context->i,&incrsv);
 		IncrIndex(&context->i,&incrsv);
 	}
 
@@ -247,12 +245,7 @@ static void DblIndex(int *i,int *incrsv)
 
 static void LRMBig(WinZipJPEGArithmeticDecoder *self)
 {
-	if(self->lrm>0x7ff)
-	{
-		int32_t dlrm=self->lrm-self->lr;
-		Renorm(self);
-		self->lrm=dlrm+self->lr;
-	}
+	if(self->lrm>0x7ff) Renorm(self);
 }
 
 static void Renorm(WinZipJPEGArithmeticDecoder *self)
@@ -272,6 +265,7 @@ static void Renorm(WinZipJPEGArithmeticDecoder *self)
 			ByteIn(self);
 			self->x=(self->x<<8)|self->b;
 			self->lr-=0x2000;
+			self->lrm-=0x2000;
 		}
 		while(self->lr>0x1fff);
 	}

@@ -23,8 +23,8 @@ static void LRMBig(WinZipJPEGArithmeticDecoder *self);
 static void Renorm(WinZipJPEGArithmeticDecoder *self);
 static void ByteIn(WinZipJPEGArithmeticDecoder *self);
 
-static uint32_t AntilogX(uint16_t lr);
-static uint16_t LogX(uint32_t x);
+static uint32_t AntilogX(int16_t lr);
+static int16_t LogX(uint32_t x);
 
 
 
@@ -104,7 +104,7 @@ static unsigned int LogDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGConte
 
 	unsigned int bit=context->mps;
 
-	unsigned int lrt;
+	int lrt;
 	if(self->lx<self->lrm) lrt=self->lx;
 	else lrt=self->lrm;
 
@@ -280,22 +280,32 @@ static void ByteIn(WinZipJPEGArithmeticDecoder *self)
 }
 
 
-
-static uint16_t LogX(uint32_t x)
+static int16_t LogX(uint32_t x)
 {
 	unsigned int highbits=x>>12;
 	if(highbits==0) return 0x2000;
 
-	unsigned int whole=chartbl[highbits];
-	unsigned int negfraction=logtbl[(x>>8-whole)&0xfff];
+	int whole;
+	if(highbits<512) whole=chartbl[highbits];
+	else whole=0;
+
+	int shift=8-whole;
+
+	int negfraction;
+	if(shift>=0) negfraction=logtbl[(x>>shift)&0xfff];
+	else negfraction=logtbl[(x<<-shift)&0xfff]; // Is this necessary? No idea.
+
 	return (whole<<10)-negfraction;
 }
 
-static uint32_t AntilogX(uint16_t lr)
+static uint32_t AntilogX(int16_t lr)
 {
-	unsigned int whole=lr>>10;
+	int whole=lr>>10;
 	unsigned int fraction=lr&0x3ff;
-	return alogtbl[fraction]<<(7-whole);
+
+	int shift=7-whole;
+	if(shift>=0) return alogtbl[fraction]<<shift;
+	else return alogtbl[fraction]>>-shift; // Is this necessary? No idea.
 }
 
 

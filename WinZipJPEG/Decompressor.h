@@ -33,7 +33,7 @@ typedef struct WinZipJPEGDecompressor
 	int components;
 
 	int numquantizations;
-	uint8_t quantization[4][64];
+	uint8_t quantizations[4][64];
 
 } WinZipJPEGDecompressor;
 

@@ -242,7 +242,20 @@ fprintf(stderr,"Define huffman table\n");
 fprintf(stderr,"Define quantization table(s)\n");
 				int size=ParseSize(ptr,end);
 				if(!size) return false;
-				ptr+=size;
+				uint8_t *next=ptr+size;
+
+				ptr+=2;
+
+				int num=size/65;
+				for(int i=0;i<num;i++)
+				{
+					//int n=*ptr++;
+					//if(n>=4) return false;
+					//memcpy(self->quantizations[n],ptr,64);
+					ptr+=64;
+				}
+
+				ptr=size;
 			}
 			break;
 

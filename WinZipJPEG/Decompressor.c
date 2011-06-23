@@ -10,6 +10,9 @@
 static int FullRead(WinZipJPEGDecompressor *self,uint8_t *buffer,size_t length);
 static int SkipBytes(WinZipJPEGDecompressor *self,size_t length);
 
+// JPEG parser.
+static bool ParseJPEG(WinZipJPEGDecompressor *self);
+
 // Little endian integer parsing functions.
 static inline uint16_t LittleEndianUInt16(uint8_t *ptr) { return ptr[0]|(ptr[1]<<8); }
 static inline uint32_t LittleEndianUInt32(uint8_t *ptr) { return ptr[0]|(ptr[1]<<8)|(ptr[2]<<16)|(ptr[3]<<24); }
@@ -32,6 +35,8 @@ WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *read
 	self->metadatalength=0;
 	self->metadatabytes=NULL;
 	self->isfinalbundle=false;
+
+	self->hasparsedjpeg=false;
 }
 
 void FreeWinZipJPEGDecompressor(WinZipJPEGDecompressor *self)
@@ -132,8 +137,18 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 	// Check if LZMA decoding succeeded.
 	if(res!=SZ_OK) return WinZipJPEGLZMAError;
 
+	// If this is the first bundle, parse JPEG structure
+	if(!self->hasparsedjpeg)
+	{
+		if(!ParseJPEG(self)) return WinZipJPEGParseError;
+		self->hasparsedjpeg=true;
+	}
+
 	// Initialize arithmetic coder for reading scans.
 	InitializeWinZipJPEGArithmeticDecoder(&self->decoder,self->readfunc,self->inputcontext);
+
+	// Initialize arithmetic coder contexts.
+	// ...
 
 	return WinZipJPEGNoError;
 }
@@ -172,5 +187,128 @@ static int SkipBytes(WinZipJPEGDecompressor *self,size_t length)
 	}
 
 	return WinZipJPEGNoError;
+}
+
+
+
+// JPEG parser.
+#include <stdio.h>
+static uint8_t *FindNextMarker(uint8_t *ptr,uint8_t *end);
+static int ParseSize(uint8_t *ptr,uint8_t *end);
+
+static inline uint16_t ParseUInt16(uint8_t *ptr) { return (ptr[0]<<8)|ptr[1]; }
+
+static bool ParseJPEG(WinZipJPEGDecompressor *self)
+{
+	uint8_t *ptr=self->metadatabytes;
+	uint8_t *end=self->metadatabytes+self->metadatalength;
+
+	for(;;)
+	{
+		ptr=FindNextMarker(ptr,end);
+		if(!ptr) return false;
+
+		switch(*ptr++)
+		{
+			case 0xc0: // Start of frame 0
+			{
+fprintf(stderr,"Start of frame 0\n");
+				int size=ParseSize(ptr,end);
+				if(!size) return false;
+				ptr+=size;
+			}
+			break;
+
+			case 0xc1: // Start of frame 1
+			{
+fprintf(stderr,"Start of frame 1\n");
+				int size=ParseSize(ptr,end);
+				if(!size) return false;
+				ptr+=size;
+			}
+			break;
+
+			case 0xc4: // Define huffman table
+			{
+fprintf(stderr,"Define huffman table\n");
+				int size=ParseSize(ptr,end);
+				if(!size) return false;
+				ptr+=size;
+			}
+			break;
+
+			case 0xdb: // Define quantization table(s)
+			{
+fprintf(stderr,"Define quantization table(s)\n");
+				int size=ParseSize(ptr,end);
+				if(!size) return false;
+				ptr+=size;
+			}
+			break;
+
+			case 0xda: // Start of scan
+			{
+fprintf(stderr,"Start of scan\n");
+				int size=ParseSize(ptr,end);
+				if(!size) return false;
+
+				return true;
+			}
+			break;
+
+			case 0xd8: // Start of image
+fprintf(stderr,"Start of image\n");
+				// Empty marker, do nothing.
+			break;
+
+			case 0xd9: // End of image 
+				return true; // TODO: figure out how to properly find end of file.
+
+			case 0xdd: // Define restart interval
+			{
+fprintf(stderr,"Define restart interval\n");
+				int size=ParseSize(ptr,end);
+				if(!size) return false;
+				ptr+=size;
+			}
+			break;
+
+			default:
+			{
+fprintf(stderr,"Unknown marker %02x\n",ptr[-1]);
+				int size=ParseSize(ptr,end);
+				if(!size) return false;
+				ptr+=size;
+			}
+			break;
+		}
+	}
+}
+
+// Find next marker, skipping pad bytes.
+static uint8_t *FindNextMarker(uint8_t *ptr,uint8_t *end)
+{
+	if(ptr>=end) return NULL;
+	if(*ptr!=0xff) return NULL;
+
+	while(*ptr==0xff)
+	{
+		ptr++;
+		if(ptr>=end) return NULL;
+	}
+
+	return ptr;
+}
+
+// Parse and sanity check the size of a marker.
+static int ParseSize(uint8_t *ptr,uint8_t *end)
+{
+	if(ptr+2>end) return 0;
+
+	int size=ParseUInt16(ptr);
+	if(size<2) return 0;
+	if(ptr+size>end) return 0;
+
+	return size;
 }
 

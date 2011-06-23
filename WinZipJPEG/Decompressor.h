@@ -12,6 +12,7 @@
 #define WinZipJPEGOutOfMemoryError 2
 #define WinZipJPEGInvalidHeaderError 3
 #define WinZipJPEGLZMAError 4
+#define WinZipJPEGParseError 5
 
 typedef struct WinZipJPEGDecompressor
 {
@@ -25,6 +26,14 @@ typedef struct WinZipJPEGDecompressor
 	uint32_t metadatalength;
 	uint8_t *metadatabytes;
 	bool isfinalbundle;
+
+	bool hasparsedjpeg;
+
+	int width,height;
+	int components;
+
+	int numquantizations;
+	uint8_t quantization[4][64];
 
 } WinZipJPEGDecompressor;
 

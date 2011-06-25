@@ -1,11 +1,18 @@
 #include "Decompressor.h"
 
+#ifdef __STRICT_ANSI__
+#undef __STRICT_ANSI__
+#endif
+
 #include <stdio.h>
+#include <fcntl.h>
 
 static size_t STDIOReadFunction(void *context,uint8_t *buffer,size_t length) { return fread(buffer,1,length,(FILE *)context); }
 
 int main(int argv,const char **argc)
 {
+	setmode(fileno(stdin),O_BINARY);
+
 	WinZipJPEGDecompressor *decompressor=AllocWinZipJPEGDecompressor(STDIOReadFunction,stdin);
 	if(!decompressor)
 	{

@@ -29,8 +29,23 @@ typedef struct WinZipJPEGDecompressor
 
 	bool hasparsedjpeg;
 
-	int width,height;
-	int components;
+	int width,height,bits;
+	int restartinterval;
+
+	int numcomponents;
+	struct
+	{
+		int identifier;
+		int horizontalfactor,verticalfactor;
+		int quantizationtable;
+	} components[4];
+
+	int numscancomponents;
+	struct
+	{
+		int componentindex;
+		int dctable,actable;
+	} scancomponents[4];
 
 	int numquantizations;
 	uint8_t quantizations[4][64];

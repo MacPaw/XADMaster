@@ -223,10 +223,44 @@ fprintf(stderr,"Start of image\n");
 
 			case 0xc4: // Define huffman table
 			{
-fprintf(stderr,"Define huffman table\n");
 				int size=ParseSize(ptr,end);
 				if(!size) return false;
 				uint8_t *next=ptr+size;
+
+				ptr+=2;
+
+fprintf(stderr,"Define huffman table(s)\n");
+				while(ptr+17<=next)
+				{
+					int class=*ptr>>4;
+					int index=*ptr&0x0f;
+					ptr++;
+
+					if(class!=0 && class!=1) return false;
+					if(index>=4) return false;
+
+					int numcodes[16];
+					int totalcodes=0;
+					for(int i=0;i<16;i++)
+					{
+						numcodes[i]=ptr[i];
+						totalcodes+=numcodes[i];
+					}
+					ptr+=16;
+
+					if(ptr+totalcodes>next) return false;
+
+fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,totalcodes);
+
+					for(int i=0;i<16;i++)
+					{
+						for(int j=0;j<numcodes[i];j++)
+						{
+							int value=*ptr++;
+							self->huffmantables[class][index][value].length=i+1;
+						}
+					}
+				}
 
 				ptr=next;
 			}
@@ -234,20 +268,36 @@ fprintf(stderr,"Define huffman table\n");
 
 			case 0xdb: // Define quantization table(s)
 			{
-fprintf(stderr,"Define quantization table(s)\n");
 				int size=ParseSize(ptr,end);
 				if(!size) return false;
 				uint8_t *next=ptr+size;
 
 				ptr+=2;
 
-				int num=size/65;
-				for(int i=0;i<num;i++)
+fprintf(stderr,"Define quantization table(s)\n");
+				while(ptr+1<=next)
 				{
-					//int n=*ptr++;
-					//if(n>=4) return false;
-					//memcpy(self->quantizations[n],ptr,64);
-					ptr+=64;
+					int precision=*ptr>>4;
+					int index=*ptr&0x0f;
+					ptr++;
+
+					if(index>=4) return false;
+
+					if(precision==0)
+					{
+fprintf(stderr," > 8 bit table at %d\n",index);
+						if(ptr+64>next) return false;
+						for(int i=0;i<64;i++) self->quantizationtables[index][i]=ptr[i];
+						ptr+=64;
+					}
+					else if(precision==1)
+					{
+fprintf(stderr," > 16 bit table at %d\n",index);
+						if(ptr+128>next) return false;
+						for(int i=0;i<64;i++) self->quantizationtables[index][i]=ParseUInt16(&ptr[2*i]);
+						ptr+=128;
+					}
+					else return false;
 				}
 
 				ptr=next;
@@ -268,6 +318,7 @@ fprintf(stderr,"Define restart interval: %d\n",self->restartinterval);
 			break;
 
 			case 0xc0: // Start of frame 0
+			case 0xc1: // Start of frame 1
 			{
 				int size=ParseSize(ptr,end);
 				if(!size) return false;
@@ -289,18 +340,9 @@ fprintf(stderr,"Define restart interval: %d\n",self->restartinterval);
 					self->components[i].verticalfactor=ptr[9+i*3]&0x0f;
 					self->components[i].quantizationtable=ptr[10+i*3];
 				}
-fprintf(stderr,"Start of frame 0: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
+fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
 
 				ptr=next;
-			}
-			break;
-
-			case 0xc1: // Start of frame 1
-			{
-fprintf(stderr,"Start of frame 1\n");
-				int size=ParseSize(ptr,end);
-				if(!size) return false;
-				ptr+=size;
 			}
 			break;
 

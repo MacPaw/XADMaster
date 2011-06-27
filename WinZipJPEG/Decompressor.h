@@ -21,7 +21,7 @@ typedef struct WinZipJPEGDecompressor
 
 	WinZipJPEGArithmeticDecoder decoder;
 
-	int slicevalue;
+	unsigned int slicevalue;
 
 	uint32_t metadatalength;
 	uint8_t *metadatabytes;
@@ -29,27 +29,30 @@ typedef struct WinZipJPEGDecompressor
 
 	bool hasparsedjpeg;
 
-	int width,height,bits;
-	int restartinterval;
+	unsigned int width,height,bits;
+	unsigned int restartinterval;
 
-	int numcomponents;
+	unsigned int numcomponents;
 	struct
 	{
-		int identifier;
-		int horizontalfactor,verticalfactor;
-		int quantizationtable;
+		unsigned int identifier;
+		unsigned int horizontalfactor,verticalfactor;
+		unsigned int quantizationtable;
 	} components[4];
 
-	int numscancomponents;
+	unsigned int numscancomponents;
 	struct
 	{
-		int componentindex;
-		int dctable,actable;
+		unsigned int componentindex;
+		unsigned int dctable,actable;
 	} scancomponents[4];
 
-	int numquantizations;
-	uint8_t quantizations[4][64];
+	unsigned int quantizationtables[4][64];
 
+	struct
+	{
+		unsigned int code,length;
+	} huffmantables[2][4][256];
 } WinZipJPEGDecompressor;
 
 WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *readfunc,void *inputcontext);

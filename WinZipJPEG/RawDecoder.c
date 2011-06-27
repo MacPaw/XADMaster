@@ -1,17 +1,21 @@
 #include "Decompressor.h"
 
+#ifdef MINGW32
 #ifdef __STRICT_ANSI__
 #undef __STRICT_ANSI__
 #endif
+#include <fcntl.h>
+#endif
 
 #include <stdio.h>
-#include <fcntl.h>
 
 static size_t STDIOReadFunction(void *context,uint8_t *buffer,size_t length) { return fread(buffer,1,length,(FILE *)context); }
 
 int main(int argv,const char **argc)
 {
+	#ifdef MINGW32
 	setmode(fileno(stdin),O_BINARY);
+	#endif
 
 	WinZipJPEGDecompressor *decompressor=AllocWinZipJPEGDecompressor(STDIOReadFunction,stdin);
 	if(!decompressor)

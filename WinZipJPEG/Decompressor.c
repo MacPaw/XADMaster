@@ -336,10 +336,10 @@ fprintf(stderr,"Start of frame 1\n");
 				}
 
 				if(ptr[3+self->numscancomponents*2]!=0) return false;
-				if(ptr[4+self->numscancomponents*2]!=0) return false;
+				if(ptr[4+self->numscancomponents*2]!=63) return false;
 				if(ptr[5+self->numscancomponents*2]!=0) return false;
 
-fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents);
+fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents,ptr[3+self->numscancomponents*2]);
 
 				return true;
 			}

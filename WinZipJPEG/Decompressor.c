@@ -154,6 +154,140 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 }
 
 
+static inline unsigned int Category(uint16_t val)
+{
+	unsigned int cat=0;
+	if(val&0xff00) { val>>=8; cat|=8; }
+	if(val&0xf0) { val>>=4; cat|=4; }
+	if(val&0xc) { val>>=2; cat|=2; }
+	if(val&0x2) { val>>=1; cat|=1; }
+	return cat;
+}
+
+void TestDecompress(WinZipJPEGDecompressor *self)
+{
+/*	int slicesize;
+
+	if(self->slicevalue)
+	{
+		int pow2size=1<<(self->slicevalue+
+		slicesize=ceil(self->height/ceil(self->height/max(pow2size/self->width,1)))*self->width;
+	}
+	else
+	{
+		slicesize=(self->width+7)/8*(self->height+7)/8;
+	}*/
+
+	for(int comp=0;comp<self->numscancomponents;comp++)
+	{
+
+
+eobbins[4][12][64];
+zerobins[4][62*6*3];
+pivotbins[4][63*5*7]; // Why 63?
+magnitudebins[4][3*9*9*9];
+remainderbins[4][13][3*7];
+
+static void DecodeMCU(WinZipJPEGDecompressor *self,int x,int y
+int16_t *current[64],int16_t *west[64],int16_t *north[64])
+{
+	// Decode End Of Block value to find out how many AC components there are. (5.6.5)
+
+	// Calculate EOB context. (5.6.5.2)
+	int average;
+	if(x==0&&y==0) average=0;
+	if(x==0) average=Sum(north,0); 
+	else if(y==0) average=Sum(west,0);
+	else average=(Sum(north,0)+Sum(west,0)+1)/2;
+
+	int eobcontext=Min(Category(average),12);
+
+	// Decode EOB bits using binary tree. (5.6.5.1)
+	unsigned int bitstring=1;
+	for(int i=0;i<6;i++)
+	{
+		bitstring|=(bitstring<<1)|NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+		self->eobbins[comp][eobcontext][bitstring]);
+	}
+	unsigned int eob=bitstring&0x3f;
+
+	// Decode AC components, if any. (5.6.6)
+	for(int k=1;k<=eob;k++)
+	{
+		DecodeACComponent(self,k,current,west,north);
+	}
+
+	// Fill out remaining block entries with 0.
+	for(int k=eob+1;k<=63;k++) current[k]=0;
+
+	// Decode DC components. (5.6.7)
+}
+
+static int DecodeACComponent(WinZipJPEGDecompressor *self,int k,
+int16_t *current[64],int16_t *west[64],int16_t *north[64])
+{
+	// Decode zero/non-zero bit. (5.6.6.1)
+	int val1;
+	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(current,north,west,k);
+	else val1=Average(current,k);
+
+	int val2=Sum(current,k);
+
+	int zerocontext=((k-1)*3+Min(Category(val1),2))*6+min(Category(val2),5);
+	int nonzero=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+	&self->zerobins[comp][zerocontext]);
+
+	// If this component is zero, there is no need to decode further parameters.
+	if(!nonzero) return 0;
+
+	// This component is not zero. Proceed with decoding absolute value.
+	int absvalue;
+
+	// Decode pivot (abs>=2). (5.6.6.2)
+	int pivotcontext=((k-1)*5+Min(Category(val1),4))*7+min(Category(val2),6);
+	int pivot=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+	&self->pivotbins[comp][pivotcontext]);
+
+	if(!pivot)
+	{
+		// The absolute of this component is not >=2. It must therefore be 1,
+		// and there is no need to decode the value.
+		absvalue=1;
+	}
+	else
+	{
+		// The absolute of this component is >=2. Proceed with decoding
+		// the absolute value. (5.6.6.3)
+		int val3,n;
+		if(IsFirstRow(k)) { val3=Column(k)-1; n=0; }
+		else if(IsFirstColumn(k)) { val3=Row(k)-1; n=1; }
+		else { val3=Category(k-4); n=2; }
+
+		int magnitudecontext=(n*9+Min(Category(val1),8))*9+Min(Category(val2),8);
+		int remaindercontext=n*7+val3;
+
+		// Decode binarization. (5.6.4)
+		...
+	}
+
+	// Decode sign. (5.6.6.4)
+	int sign;
+	if(IsFirstOrSecondRowOrColumn(k))
+	{
+		// Calculate sign context. (5.6.6.4.1)
+		int signcontext;
+		...
+		sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,signcontext);
+	}
+	else
+	{
+		// Use fixed probability.
+		sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
+	}
+
+	if(sign) return -absvalue;
+	else return absvalue;
+}
 
 // Helper function that makes sure to read as much data as requested, even
 // if the read function returns short buffers, and reports an error if it

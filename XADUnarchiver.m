@@ -198,7 +198,9 @@
 		[delegate unarchiver:self willExtractEntryWithDictionary:dict to:path];
 	}
 
-	XADError error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
+	XADError error;
+	
+	error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
 	if(error) goto end;
 
 	// Attempt to extract embedded archives if requested.
@@ -495,7 +497,7 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 			{
 				updatetime=currtime;
 
-				off_t progress;
+				double progress;
 				if(sizenum) progress=(double)done/(double)size;
 				else progress=[srchandle estimatedProgress];
 

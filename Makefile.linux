@@ -93,6 +93,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XAD7ZipBranchHandles.m \
 			XAD7ZipParser.m \
 			XADALZipParser.m \
+			XADArParser.m \
 			XADArchiveParser.m \
 			XADARCCrunchHandle.m \
 			XADARCCrushHandle.m \

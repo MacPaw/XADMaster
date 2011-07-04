@@ -14,6 +14,15 @@
 #import "CSBzip2Handle.h"
 #import "NSDateXAD.h"
 
+
+
+
+static BOOL Is7ZipSignature(const uint8_t *ptr)
+{
+	static const uint8_t signature[7]={'7','z',0xbc,0xaf,0x27,0x1c,0x00};
+	return memcmp(ptr,signature,sizeof(signature))==0;
+}
+
 static uint64_t ReadNumber(CSHandle *handle)
 {
 	uint64_t first=[handle readUInt8];
@@ -70,8 +79,8 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
-	return length>=32&&bytes[0]=='7'&&bytes[1]=='z'&&bytes[2]==0xbc&&bytes[3]==0xaf
-	&&bytes[4]==0x27&&bytes[5]==0x1c&&bytes[6]==0;
+	if(length<32) return NO;
+	return Is7ZipSignature(bytes);
 }
 
 
@@ -109,12 +118,14 @@ static void FindAttribute(CSHandle *handle,int attribute)
 {
 	CSHandle *handle=[self handle];
 
+	startoffset=[handle offsetInFile];
+
 	[handle skipBytes:12];
 
 	off_t nextheaderoffs=[handle readUInt64LE];
 	//off_t nextheadersize=[handle readUInt64LE];
 
-	[handle seekToFileOffset:nextheaderoffs+32];
+	[handle seekToFileOffset:nextheaderoffs+32+startoffset];
 
 	CSHandle *fh=handle;
 
@@ -404,7 +415,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 
 -(NSArray *)parsePackedStreamsForHandle:(CSHandle *)handle
 {
-	uint64_t dataoffset=ReadNumber(handle)+32;
+	uint64_t dataoffset=ReadNumber(handle)+32+startoffset;
 	int numpackedstreams=ReadNumber(handle);
 	NSMutableArray *packedstreams=ArrayWithLength(numpackedstreams);
 
@@ -916,5 +927,52 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 
 
 -(NSString *)formatName { return @"7-Zip"; }
+
+@end
+
+
+
+
+
+@implementation XAD7ZipSFXParser
+
++(int)requiredHeaderSize
+{
+	return 0x40000; // TODO: Is this enough?
+}
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
+{
+	const uint8_t *bytes=[data bytes];
+	int length=[data length];
+
+	if(length<2) return NO;
+	if(bytes[0]!='M' || bytes[1]!='Z') return NO;
+
+	for(int offs=0;offs<length+7;offs+=512)
+	{
+		if(Is7ZipSignature(bytes+offs))
+		{
+			[props setObject:[NSNumber numberWithLongLong:offs]
+			forKey:@"7zSFXOffset"];
+			return YES;
+		}
+	}
+	return NO;
+}
+
+-(void)parse
+{
+	off_t offs=[[[self properties] objectForKey:@"7zSFXOffset"] longLongValue];
+	[[self handle] seekToFileOffset:offs];
+
+	[super parse];
+}
+
+-(NSString *)formatName
+{
+	return @"7-Zip SFX";
+}
 
 @end

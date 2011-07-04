@@ -163,6 +163,7 @@ static int maxheader=0;
 		[XADZipItSEAParser class],
 		[XADZipSFXParser class],
 		[XADEmbeddedRARParser class],
+		[XAD7ZipSFXParser class],
 		[XADNSISParser class],
 		[XADGzipSFXParser class],
 		[XADCompactProParser class],

@@ -1,5 +1,4 @@
 #import "XADArParser.h"
-#import "XADRegex.h"
 
 @implementation XADArParser
 
@@ -47,7 +46,7 @@ static uint64_t ParseOctal(const uint8_t *ptr,int maxlen)
 
 	NSData *filenametable=nil; // TODO: Maybe this shouldn't be autoreleased.
 
-	while(![fh atEndOfFile])
+	while(![fh atEndOfFile] && [self shouldKeepParsing])
 	{
 		uint8_t header[60];
 		[fh readBytes:sizeof(header) toBuffer:header];

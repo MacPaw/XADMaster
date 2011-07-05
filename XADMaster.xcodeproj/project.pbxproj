@@ -59,6 +59,24 @@
 		1B31CB6213C2305100ED119E /* XADArParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB5E13C2305100ED119E /* XADArParser.m */; };
 		1B31CB6313C2305100ED119E /* XADArParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB5E13C2305100ED119E /* XADArParser.m */; };
 		1B31CB6413C2305100ED119E /* XADArParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB5E13C2305100ED119E /* XADArParser.m */; };
+		1B31CB6B13C288D700ED119E /* SWFGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB6713C288D700ED119E /* SWFGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B31CB6C13C288D700ED119E /* SWFGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB6713C288D700ED119E /* SWFGeometry.h */; };
+		1B31CB6D13C288D700ED119E /* SWFGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB6713C288D700ED119E /* SWFGeometry.h */; };
+		1B31CB6E13C288D700ED119E /* SWFGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB6813C288D700ED119E /* SWFGeometry.m */; };
+		1B31CB6F13C288D700ED119E /* SWFGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB6813C288D700ED119E /* SWFGeometry.m */; };
+		1B31CB7013C288D700ED119E /* SWFGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB6813C288D700ED119E /* SWFGeometry.m */; };
+		1B31CB7113C288D700ED119E /* SWFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB6913C288D700ED119E /* SWFParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B31CB7213C288D700ED119E /* SWFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB6913C288D700ED119E /* SWFParser.h */; };
+		1B31CB7313C288D700ED119E /* SWFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB6913C288D700ED119E /* SWFParser.h */; };
+		1B31CB7413C288D700ED119E /* SWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB6A13C288D700ED119E /* SWFParser.m */; };
+		1B31CB7513C288D700ED119E /* SWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB6A13C288D700ED119E /* SWFParser.m */; };
+		1B31CB7613C288D700ED119E /* SWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB6A13C288D700ED119E /* SWFParser.m */; };
+		1B31CB7913C2890700ED119E /* XADSWFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB7713C2890600ED119E /* XADSWFParser.h */; };
+		1B31CB7A13C2890700ED119E /* XADSWFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB7713C2890600ED119E /* XADSWFParser.h */; };
+		1B31CB7B13C2890700ED119E /* XADSWFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB7713C2890600ED119E /* XADSWFParser.h */; };
+		1B31CB7C13C2890700ED119E /* XADSWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB7813C2890600ED119E /* XADSWFParser.m */; };
+		1B31CB7D13C2890700ED119E /* XADSWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB7813C2890600ED119E /* XADSWFParser.m */; };
+		1B31CB7E13C2890700ED119E /* XADSWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB7813C2890600ED119E /* XADSWFParser.m */; };
 		1B32D0FD10F6E461002A2C76 /* XADCFBFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D0FB10F6E461002A2C76 /* XADCFBFParser.m */; };
 		1B32D2AB10F8D11D002A2C76 /* XADBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D2A910F8D11D002A2C76 /* XADBlockHandle.m */; };
 		1B32D3C710FA7A69002A2C76 /* XADSplitFileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D3C510FA7A69002A2C76 /* XADSplitFileParser.m */; };
@@ -1172,6 +1190,12 @@
 		1B2F183F0EE965880000DAFF /* XADPowerPackerParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPowerPackerParser.m; sourceTree = "<group>"; };
 		1B31CB5D13C2305100ED119E /* XADArParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADArParser.h; sourceTree = "<group>"; };
 		1B31CB5E13C2305100ED119E /* XADArParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADArParser.m; sourceTree = "<group>"; };
+		1B31CB6713C288D700ED119E /* SWFGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWFGeometry.h; sourceTree = "<group>"; };
+		1B31CB6813C288D700ED119E /* SWFGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWFGeometry.m; sourceTree = "<group>"; };
+		1B31CB6913C288D700ED119E /* SWFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWFParser.h; sourceTree = "<group>"; };
+		1B31CB6A13C288D700ED119E /* SWFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWFParser.m; sourceTree = "<group>"; };
+		1B31CB7713C2890600ED119E /* XADSWFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSWFParser.h; sourceTree = "<group>"; };
+		1B31CB7813C2890600ED119E /* XADSWFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADSWFParser.m; sourceTree = "<group>"; };
 		1B32D0FA10F6E461002A2C76 /* XADCFBFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCFBFParser.h; sourceTree = "<group>"; };
 		1B32D0FB10F6E461002A2C76 /* XADCFBFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCFBFParser.m; sourceTree = "<group>"; };
 		1B32D2A810F8D11D002A2C76 /* XADBlockHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADBlockHandle.h; sourceTree = "<group>"; };
@@ -1917,6 +1941,19 @@
 			name = Amiga;
 			sourceTree = "<group>";
 		};
+		1B31CB6613C288AD00ED119E /* SWF */ = {
+			isa = PBXGroup;
+			children = (
+				1B31CB7713C2890600ED119E /* XADSWFParser.h */,
+				1B31CB7813C2890600ED119E /* XADSWFParser.m */,
+				1B31CB6913C288D700ED119E /* SWFParser.h */,
+				1B31CB6A13C288D700ED119E /* SWFParser.m */,
+				1B31CB6713C288D700ED119E /* SWFGeometry.h */,
+				1B31CB6813C288D700ED119E /* SWFGeometry.m */,
+			);
+			name = SWF;
+			sourceTree = "<group>";
+		};
 		1B33BB861268F777002568A0 /* Old */ = {
 			isa = PBXGroup;
 			children = (
@@ -2392,6 +2429,7 @@
 				1B3A66351016832300AE25A8 /* NSIS */,
 				1BBC410510B79CDE00A05E29 /* CAB */,
 				1B880CFE0F0AAB360061CCBE /* PPMd */,
+				1B31CB6613C288AD00ED119E /* SWF */,
 				1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */,
 				1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */,
 				1B32D0FA10F6E461002A2C76 /* XADCFBFParser.h */,
@@ -2489,6 +2527,9 @@
 				1B34443913A978AC00C89872 /* wavpack_local.h in Headers */,
 				1B34443B13A978AF00C89872 /* wavpack_version.h in Headers */,
 				1B31CB6013C2305100ED119E /* XADArParser.h in Headers */,
+				1B31CB6C13C288D700ED119E /* SWFGeometry.h in Headers */,
+				1B31CB7213C288D700ED119E /* SWFParser.h in Headers */,
+				1B31CB7A13C2890700ED119E /* XADSWFParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2518,6 +2559,9 @@
 				1B34443A13A978AD00C89872 /* wavpack_local.h in Headers */,
 				1B34443C13A978B000C89872 /* wavpack_version.h in Headers */,
 				1B31CB6113C2305100ED119E /* XADArParser.h in Headers */,
+				1B31CB6D13C288D700ED119E /* SWFGeometry.h in Headers */,
+				1B31CB7313C288D700ED119E /* SWFParser.h in Headers */,
+				1B31CB7B13C2890700ED119E /* XADSWFParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2701,6 +2745,9 @@
 				1B3443EE13A6EB2700C89872 /* wavpack_local.h in Headers */,
 				1B3443EF13A6EB2700C89872 /* wavpack_version.h in Headers */,
 				1B31CB5F13C2305100ED119E /* XADArParser.h in Headers */,
+				1B31CB6B13C288D700ED119E /* SWFGeometry.h in Headers */,
+				1B31CB7113C288D700ED119E /* SWFParser.h in Headers */,
+				1B31CB7913C2890700ED119E /* XADSWFParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3207,6 +3254,9 @@
 				1B34443F13A978B700C89872 /* wputils.c in Sources */,
 				1B34444313AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 				1B31CB6313C2305100ED119E /* XADArParser.m in Sources */,
+				1B31CB6F13C288D700ED119E /* SWFGeometry.m in Sources */,
+				1B31CB7513C288D700ED119E /* SWFParser.m in Sources */,
+				1B31CB7D13C2890700ED119E /* XADSWFParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3407,6 +3457,9 @@
 				1B34444013A978B800C89872 /* wputils.c in Sources */,
 				1B34444413AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 				1B31CB6413C2305100ED119E /* XADArParser.m in Sources */,
+				1B31CB7013C288D700ED119E /* SWFGeometry.m in Sources */,
+				1B31CB7613C288D700ED119E /* SWFParser.m in Sources */,
+				1B31CB7E13C2890700ED119E /* XADSWFParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3642,6 +3695,9 @@
 				1B3443F113A6EB2700C89872 /* wputils.c in Sources */,
 				1B34444213AACE2000C89872 /* XADUnarchiverAppleDouble.m in Sources */,
 				1B31CB6213C2305100ED119E /* XADArParser.m in Sources */,
+				1B31CB6E13C288D700ED119E /* SWFGeometry.m in Sources */,
+				1B31CB7413C288D700ED119E /* SWFParser.m in Sources */,
+				1B31CB7C13C2890700ED119E /* XADSWFParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

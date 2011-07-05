@@ -8,7 +8,6 @@
 #import "XADZipSFXParsers.h"
 #import "XADRARParser.h"
 #import "XAD7ZipParser.h"
-#import "XADPPMdParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
 #import "XADStuffItXParser.h"
@@ -39,8 +38,10 @@
 #import "XADZooParser.h"
 #import "XADNSISParser.h"
 #import "XADCABParser.h"
-#import "XADCFBFParser.h"
+#import "XADPPMdParser.h"
+#import "XADSWFParser.h"
 #import "XADALZipParser.h"
+#import "XADCFBFParser.h"
 #import "XADNDSParser.h"
 #import "XADNSAParser.h"
 #import "XADSARParser.h"
@@ -142,6 +143,7 @@ static int maxheader=0;
 		[XADCompressParser class],
 		[XADRPMParser class],
 		[XADXZParser class],
+		[XADSWFParser class],
 		[XADALZipParser class],
 		[XADCABParser class],
 		[XADCFBFParser class],

@@ -317,15 +317,57 @@
 		break;
 
 		case SWFDefineSpriteTag:
-			//NSLog(@"DefineSprite");
+		{
+			[parser parseDefineSpriteTag];
+
+			NSMutableData *substream=nil;
+			int lastsubframe=-1;
+
+			int tag;
+			while((tag=[parser nextSubTag]) && [self shouldKeepParsing])
+			switch(tag)
+			{
+				case SWFSoundStreamHeadTag:
+				case SWFSoundStreamHead2Tag:
+				{
+					int flags=[fh readUInt8];
+					int format=(flags>>4)&0x0f;
+					if(format==2||format==0) // MP3 format - why is 0 MP3? Who knows!
+					{
+						substream=[NSMutableData data];
+						[dataobjects addObject:substream];
+					}
+					else NSLog(@"Unsupported stream format");
+				}
+				break;
+
+				case SWFSoundStreamBlockTag:
+				{
+					if(lastsubframe!=[parser subFrame])
+					{
+						lastsubframe=[parser subFrame];
+						[fh skipBytes:4];
+					}
+					[substream appendData:[fh readDataOfLength:[parser subTagBytesLeft]]];
+				}
+				break;
+			}
+
+			if(substream && [substream length])
+			{
+				numstreams++;
+
+				[self addEntryWithName:[NSString stringWithFormat:
+				@"Stream %d at frame %d.mp3",numstreams,[parser frame]]
+				data:substream];
+			}
+		}
 		break;
 	}
 
 	if(currstream && [currstream length])
 	{
-		numstreams++;
-
-		[self addEntryWithName:[NSString stringWithFormat:@"Stream %d.mp3",numstreams]
+		[self addEntryWithName:[NSString stringWithFormat:@"Stream.mp3"]
 		data:currstream];
 	}
 }

@@ -678,6 +678,9 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
+	// If the caller has requested to stop parsing, discard entry.
+	if(![self shouldKeepParsing]) return;
+
 	// If an encrypted file is added, set the global encryption flag.
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
 	if(enc&&[enc boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsEncryptedKey];

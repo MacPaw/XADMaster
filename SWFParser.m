@@ -107,9 +107,54 @@ NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 -(double)time { return (double)currframe/((double)fps/256.0); }
 
 -(CSHandle *)handle { return fh; }
-
 -(CSHandle *)tagHandle { return [fh subHandleOfLength:[self tagBytesLeft]]; }
-
 -(NSData *)tagContents { return [fh readDataOfLength:[self tagBytesLeft]]; }
+
+
+
+-(void)parseDefineSpriteTag
+{
+	spriteid=[fh readUInt16LE];
+	subframes=[fh readUInt16LE];
+
+	nextsubtag=[fh offsetInFile];
+
+	subtag=0;
+	sublen=0;
+	subframe=0;
+}
+
+-(int)spriteID { return spriteid; }
+-(int)subFrames { return subframes; }
+
+-(int)nextSubTag
+{
+	if(!nextsubtag) [NSException raise:SWFNoMoreTagsException format:@"No more subtags available in the SWF file."];
+	if(subtag==SWFShowFrameTag) subframe++;
+
+	[fh seekToFileOffset:nextsubtag];
+
+	int tagval=[fh readUInt16LE];
+
+	subtag=tagval>>6;
+	if(subtag==0)
+	{
+		nextsubtag=0;
+		return 0;
+	}
+
+	sublen=tagval&0x3f;
+	if(sublen==0x3f) sublen=[fh readUInt32LE];
+
+	nextsubtag=[fh offsetInFile]+sublen;
+
+	return subtag;
+}
+
+-(int)subTag { return subtag; }
+-(int)subTagLength { return sublen; }
+-(int)subTagBytesLeft { return nextsubtag-[fh offsetInFile]; }
+-(int)subFrame { return subframe; }
+-(double)subTime { return (double)subframe/((double)fps/256.0); }
 
 @end

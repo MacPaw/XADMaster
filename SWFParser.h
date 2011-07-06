@@ -36,7 +36,7 @@ extern NSString *SWFNoMoreTagsException;
 @interface SWFParser:NSObject
 {
 	CSHandle *fh;
-	off_t nexttag;
+	off_t nexttag,nextsubtag;
 
 	int totallen,version;
 	BOOL compressed;
@@ -45,6 +45,10 @@ extern NSString *SWFNoMoreTagsException;
 
 	int currtag,currlen;
 	int currframe;
+
+	int spriteid,subframes;
+	int subtag,sublen;
+	int subframe;
 }
 
 +(SWFParser *)parserWithHandle:(CSHandle *)handle;
@@ -72,5 +76,17 @@ extern NSString *SWFNoMoreTagsException;
 -(CSHandle *)handle;
 -(CSHandle *)tagHandle;
 -(NSData *)tagContents;
+
+-(void)parseDefineSpriteTag;
+
+-(int)spriteID;
+-(int)subFrames;
+
+-(int)nextSubTag;
+-(int)subTag;
+-(int)subTagLength;
+-(int)subTagBytesLeft;
+-(int)subFrame;
+-(double)subTime;
 
 @end

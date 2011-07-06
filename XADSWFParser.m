@@ -62,7 +62,18 @@
 	{
 		case SWFJPEGTables:
 		{
-			currjpegtables=[fh readDataOfLength:[parser tagLength]-2];
+			int length=[parser tagLength];
+			if(length>=2)
+			{
+				currjpegtables=[fh readDataOfLength:length-2];
+			}
+			else
+			{
+				 // Apparently sometimes Flash uses a zero-length table tag,
+				 // and this implicitly means that the header should be a
+				 // single SOI marker.
+				currjpegtables=[NSData dataWithBytes:(uint8_t[2]){0xff,0xd8} length:2];
+			}
 			[dataobjects addObject:currjpegtables];
 		}
 		break;
@@ -310,7 +321,7 @@
 		break;
 	}
 
-	if(currstream)
+	if(currstream && [currstream length])
 	{
 		numstreams++;
 

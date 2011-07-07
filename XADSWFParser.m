@@ -2,6 +2,7 @@
 #import "SWFParser.h"
 #import "CSMemoryHandle.h"
 #import "CSMultiHandle.h"
+#import "XADPNGWriter.h"
 
 @implementation XADSWFParser
 
@@ -185,49 +186,16 @@
 			numimages++;
 
 			[fh skipBytes:2];
-			int formatnum=[fh readUInt8];
+			int format=[fh readUInt8];
 
-			// off_t offset=[fh offsetInFile];
-			// off_t length=[parser tagBytesLeft];
-
-			[self addEntryWithName:[NSString stringWithFormat:
-			@"Image %d at frame %d.tiff",numimages,[parser frame]]
-			data:[NSData data]];
-
-			// TODO: Handle lossless
-
-/*			switch(formatnum)
+			if(format==3||format==4||format==5)
 			{
-				case 3:
-					if(tag==SWFDefineBitsLosslessTag)
-					[self addEntry:[[[XeeSWFLossless3Entry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-					else
-					[self addEntry:[[[XeeSWFLossless3AlphaEntry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-				break;
-
-				case 4:
-					NSLog(@"Error loading SWF file: unsupported lossless format 4. Please send the author of this program the file, so he can add support for it.");
-				break;
-
-				case 5:
-					if(tag==SWFDefineBitsLosslessTag)
-					[self addEntry:[[[XeeSWFLossless5Entry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-					else
-					[self addEntry:[[[XeeSWFLossless5AlphaEntry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-				break;
-
-				default:
-					NSLog(@"Error loading SWF file: unsupported lossless format %d",formatnum);
-				break;
-			}*/
+				[self addEntryWithName:[NSString stringWithFormat:
+				@"Image %d at frame %d.tiff",numimages,[parser frame]]
+				losslessFormat:format alpha:tag==SWFDefineBitsLossless2Tag
+				offset:[fh offsetInFile] length:[parser tagBytesLeft]];
+			}
+			else NSLog(@"Unsupported lossless format %d in SWF file",format);
 		}
 		break;
 
@@ -242,7 +210,7 @@
 			if(format==2)
 			{
 				// MP3 audio.
-				[fh skipBytes:4];
+				[fh skipBytes:4]; //uint32_t numsamples=[fh readUInt32LE];
 
 				[self addEntryWithName:[NSString stringWithFormat:
 				@"Sound %d at frame %d.mp3",numsounds,[parser frame]]
@@ -251,52 +219,18 @@
 			else if(format==0||format==3)
 			{
 				// Uncompresed audio. Assumes format 0 is little-endian.
-				// Create a WAV header.
+				// Add a WAV header.
 
-				//uint32_t numsamples=[fh readUInt32LE];
-				[fh skipBytes:4];
-
-				int samplerate,bitsperchannel,numchannels;
-
-				switch((flags>>2)&0x03)
-				{
-					case 0: samplerate=5512; break; // 5.5125 kHz - what.
-					case 1: samplerate=11025; break;
-					case 2: samplerate=22050; break;
-					case 3: samplerate=44100; break;
-				}
-
-				if(flags&0x02) bitsperchannel=16;
-				else bitsperchannel=8;
-
-				if(flags&0x01) numchannels=2;
-				else numchannels=1;
+				[fh skipBytes:4]; //uint32_t numsamples=[fh readUInt32LE];
 
 				int length=[parser tagBytesLeft];
 
-				uint8_t header[44]=
-				{
-					'R','I','F','F',0x00,0x00,0x00,0x00,
-					'W','A','V','E','f','m','t',' ',0x10,0x00,0x00,0x00,
-					0x01,0x00, 0x00,0x00, 0x00,0x00,0x00,0x00,
-					0x00,0x00,0x00,0x00,  0x00,0x00, 0x00,0x00,
-					'd','a','t','a',0x00,0x00,0x00,0x00,
-				};
-
-				CSSetUInt32LE(&header[4],36+length);
-				CSSetUInt16LE(&header[22],numchannels);
-				CSSetUInt32LE(&header[24],samplerate);
-				CSSetUInt32LE(&header[28],samplerate*numchannels*bitsperchannel/8);
-				CSSetUInt16LE(&header[32],numchannels*bitsperchannel/8);
-				CSSetUInt16LE(&header[34],bitsperchannel);
-				CSSetUInt32LE(&header[40],length);
-
 				[self addEntryWithName:[NSString stringWithFormat:
 				@"Sound %d at frame %d.wav",numsounds,[parser frame]]
-				data:[NSData dataWithBytes:header length:sizeof(header)]
+				data:[self createWAVHeaderForFlags:flags length:length]
 				offset:[fh offsetInFile] length:length];
 			}
-			else NSLog(@"Unsupported sound format %x",format);
+			else NSLog(@"Unsupported sound format %d in SWF file",format);
 		}
 		break;
 
@@ -310,7 +244,7 @@
 				mainstream=[NSMutableData data];
 				[dataobjects addObject:mainstream];
 			}
-			else NSLog(@"Unsupported stream format");
+			else NSLog(@"Unsupported stream format %d in SWF file",format);
 		}
 		break;
 
@@ -381,6 +315,50 @@
 	}
 }
 
+
+
+
+-(NSData *)createWAVHeaderForFlags:(int)flags length:(int)length
+{
+	int samplerate,bitsperchannel,numchannels;
+
+	switch((flags>>2)&0x03)
+	{
+		case 0: samplerate=5512; break; // 5.5125 kHz - what.
+		case 1: samplerate=11025; break;
+		case 2: samplerate=22050; break;
+		case 3: samplerate=44100; break;
+	}
+
+	if(flags&0x02) bitsperchannel=16;
+	else bitsperchannel=8;
+
+	if(flags&0x01) numchannels=2;
+	else numchannels=1;
+
+	uint8_t header[44]=
+	{
+		'R','I','F','F',0x00,0x00,0x00,0x00,
+		'W','A','V','E','f','m','t',' ',0x10,0x00,0x00,0x00,
+		0x01,0x00, 0x00,0x00, 0x00,0x00,0x00,0x00,
+		0x00,0x00,0x00,0x00,  0x00,0x00, 0x00,0x00,
+		'd','a','t','a',0x00,0x00,0x00,0x00,
+	};
+
+	CSSetUInt32LE(&header[4],36+length);
+	CSSetUInt16LE(&header[22],numchannels);
+	CSSetUInt32LE(&header[24],samplerate);
+	CSSetUInt32LE(&header[28],samplerate*numchannels*bitsperchannel/8);
+	CSSetUInt16LE(&header[32],numchannels*bitsperchannel/8);
+	CSSetUInt16LE(&header[34],bitsperchannel);
+	CSSetUInt32LE(&header[40],length);
+
+	return [NSData dataWithBytes:header length:sizeof(header)];
+}
+
+
+
+
 -(void)addEntryWithName:(NSString *)name data:(NSData *)data
 {
 	NSUInteger index=[dataobjects indexOfObjectIdenticalTo:data];
@@ -399,19 +377,21 @@
 	[self addEntryWithDictionary:dict];
 }
 
--(void)addEntryWithName:(NSString *)name offset:(off_t)offset length:(off_t)length
+-(void)addEntryWithName:(NSString *)name
+offset:(off_t)offset length:(off_t)length
 {
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[self XADPathWithString:name],XADFileNameKey,
-		[NSNumber numberWithUnsignedLong:length],XADFileSizeKey,
-		[NSNumber numberWithUnsignedLong:length],@"SWFDataLengthKey",
-		[NSNumber numberWithUnsignedLong:offset],@"SWFDataOffsetKey",
+		[NSNumber numberWithLongLong:length],XADFileSizeKey,
+		[NSNumber numberWithLongLong:length],@"SWFDataLengthKey",
+		[NSNumber numberWithLongLong:offset],@"SWFDataOffsetKey",
 		[self XADStringWithString:[parser isCompressed]?@"Zlib":@"None"],XADCompressionNameKey,
 	nil];
 	[self addEntryWithDictionary:dict];
 }
 
--(void)addEntryWithName:(NSString *)name data:(NSData *)data offset:(off_t)offset length:(off_t)length
+-(void)addEntryWithName:(NSString *)name data:(NSData *)data
+offset:(off_t)offset length:(off_t)length
 {
 	NSUInteger index=[dataobjects indexOfObjectIdenticalTo:data];
 	if(index==NSNotFound)
@@ -431,6 +411,24 @@
 	[self addEntryWithDictionary:dict];
 }
 
+-(void)addEntryWithName:(NSString *)name losslessFormat:(int)format
+alpha:(BOOL)alpha offset:(off_t)offset length:(off_t)length
+{
+	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		[self XADPathWithString:name],XADFileNameKey,
+		[NSNumber numberWithLongLong:length],XADFileSizeKey,
+		[NSNumber numberWithLongLong:length],@"SWFDataLengthKey",
+		[NSNumber numberWithLongLong:offset],@"SWFDataOffsetKey",
+		[NSNumber numberWithInt:format],@"SWFLosslessFormatKey",
+		[NSNumber numberWithBool:alpha],@"SWFLosslessAlphaKey",
+		[self XADStringWithString:@"Zlib"],XADCompressionNameKey,
+	nil];
+	[self addEntryWithDictionary:dict];
+}
+
+
+
+
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	CSHandle *handle=nil;
@@ -440,6 +438,15 @@
 	{
 		handle=[[parser handle] nonCopiedSubHandleFrom:[offsetnum longLongValue]
 		length:[lengthnum longLongValue]];
+
+		NSNumber *formatnum=[dict objectForKey:@"SWFLosslessFormatKey"];
+		if(formatnum)
+		{
+			return [CSMemoryHandle memoryHandleForReadingData:
+			[self convertLosslessFormat:[formatnum intValue]
+			alpha:[[dict objectForKey:@"SWFLosslessAlphaKey"] boolValue]
+			handle:handle]];
+		}
 	}
 
 	CSHandle *datahandle=nil;
@@ -463,6 +470,57 @@
 		return handle;
 	}
 }
+
+-(NSData *)convertLosslessFormat:(int)format alpha:(BOOL)alpha handle:(CSHandle *)handle
+{
+	XADPNGWriter *png=[XADPNGWriter PNGWriter];
+
+	switch(format)
+	{
+		case 3:
+		break;
+
+		case 4:
+		break;
+
+		case 5:
+		break;
+	}
+
+	return [png data];
+}
+
+
+/*			switch(formatnum)
+			{
+				case 3:
+					if(tag==SWFDefineBitsLosslessTag)
+					[self addEntry:[[[XeeSWFLossless3Entry alloc] initWithHandle:
+					[fh subHandleOfLength:[parser tagBytesLeft]]
+					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+					else
+					[self addEntry:[[[XeeSWFLossless3AlphaEntry alloc] initWithHandle:
+					[fh subHandleOfLength:[parser tagBytesLeft]]
+					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+				break;
+
+				case 4:
+					NSLog(@"Error loading SWF file: unsupported lossless format 4. Please send the author of this program the file, so he can add support for it.");
+				break;
+
+				case 5:
+					if(tag==SWFDefineBitsLosslessTag)
+					[self addEntry:[[[XeeSWFLossless5Entry alloc] initWithHandle:
+					[fh subHandleOfLength:[parser tagBytesLeft]]
+					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+					else
+					[self addEntry:[[[XeeSWFLossless5AlphaEntry alloc] initWithHandle:
+					[fh subHandleOfLength:[parser tagBytesLeft]]
+					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
+				break;
+*/
+
+
 
 -(NSString *)formatName { return @"SWF"; }
 

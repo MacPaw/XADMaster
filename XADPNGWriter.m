@@ -156,12 +156,6 @@ colourType:(int)colourtype
 	deflateEnd(&zs);
 	streaminited=NO;
 
-	uint8_t buf[4];
-
-	// Write Adler checksum for the uncompressed image data.
-	CSSetUInt32BE(buf,zs.adler);
-	[data appendBytes:buf length:4];
-
 	// Get data pointer to start modifications to the header.
 	uint8_t *bytes=[data mutableBytes];
 
@@ -170,6 +164,7 @@ colourType:(int)colourtype
 	CSSetUInt32BE(&bytes[idatstart],length);
 
 	// Calculate and write chunk checksum.
+	uint8_t buf[4];
 	uint32_t crc=XADCalculateCRC(0xffffffff,&bytes[idatstart+4],length+4,XADCRCTable_edb88320);
 	CSSetUInt32BE(buf,~crc);
 	[data appendBytes:buf length:4];

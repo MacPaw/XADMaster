@@ -496,19 +496,22 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
 			if(alpha)
 			{
-NSLog(@"alpha palette!");
-exit(1);
+//NSLog(@"alpha palette!");
+//exit(1);
 				uint8_t palette[4*numcolours];
 				[zh readBytes:4*numcolours toBuffer:palette];
 
 				uint8_t plte[3*numcolours];
+				uint8_t trns[numcolours];
 				for(int i=0;i<numcolours;i++)
 				{
 					plte[3*i+0]=palette[4*i+0];
 					plte[3*i+1]=palette[4*i+1];
 					plte[3*i+2]=palette[4*i+2];
+					trns[i]=palette[4*i+3];
 				}
 				[png addChunk:'PLTE' bytes:plte length:3*numcolours];
+				[png addChunk:'tRNS' bytes:trns length:numcolours];
 			}
 			else
 			{
@@ -537,16 +540,19 @@ exit(1);
 		{
 			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
 
-			if(alpha)
-			{
-				[png addIHDRWithWidth:width height:height bitDepth:8 colourType:6];
-				[png startIDAT];
-				int bytesperrow=width*4;
-				for(int y=0;y<height;y++)
-				{
-					uint8_t row[bytesperrow];
-					[zh readBytes:bytesperrow toBuffer:row];
+			if(alpha) [png addIHDRWithWidth:width height:height bitDepth:8 colourType:6];
+			else [png addIHDRWithWidth:width height:height bitDepth:8 colourType:2];
 
+			[png startIDAT];
+
+			int bytesperrow=width*4;
+			for(int y=0;y<height;y++)
+			{
+				uint8_t row[bytesperrow];
+				[zh readBytes:bytesperrow toBuffer:row];
+
+				if(alpha)
+				{
 					for(int x=0;x<width;x++)
 					{
 						uint8_t a=row[4*x+0],r=row[4*x+1],g=row[4*x+2],b=row[4*x+3];
@@ -555,21 +561,9 @@ exit(1);
 						row[4*x+2]=b;
 						row[4*x+3]=a;
 					}
-
-					[png addIDATRow:row];
 				}
-				[png endIDAT];
-			}
-			else
-			{
-				[png addIHDRWithWidth:width height:height bitDepth:8 colourType:2];
-				[png startIDAT];
-				int bytesperrow=(width*3+3)&~3;
-				for(int y=0;y<height;y++)
+				else
 				{
-					uint8_t row[bytesperrow];
-					[zh readBytes:bytesperrow toBuffer:row];
-
 					for(int x=0;x<width;x++)
 					{
 						uint8_t r=row[4*x+1],g=row[4*x+2],b=row[4*x+3];
@@ -577,11 +571,12 @@ exit(1);
 						row[3*x+1]=g;
 						row[3*x+2]=b;
 					}
-
-					[png addIDATRow:row];
 				}
-				[png endIDAT];
+
+				[png addIDATRow:row];
 			}
+
+			[png endIDAT];
 		}
 		break;
 	}

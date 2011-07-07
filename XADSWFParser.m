@@ -539,8 +539,6 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
 			if(alpha)
 			{
-				[self reportInterestingFileWithReason:@"Paletted lossless image with transparency"];
-
 				uint8_t palette[4*numcolours];
 				[zh readBytes:4*numcolours toBuffer:palette];
 

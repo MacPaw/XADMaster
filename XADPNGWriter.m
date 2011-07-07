@@ -110,26 +110,31 @@ colourType:(int)colourtype
 {
 	uint8_t outbuffer[4096];
 
-	zs.avail_out=sizeof(outbuffer);
-	zs.next_out=outbuffer;
-
 	zs.avail_in=1;
 	zs.next_in=(uint8_t[1]){ 0x00 };
+	do
+	{
+		zs.avail_out=sizeof(outbuffer);
+		zs.next_out=outbuffer;
 
-	deflate(&zs,Z_NO_FLUSH);
+		deflate(&zs,Z_NO_FLUSH);
+
+		int produced=sizeof(outbuffer)-zs.avail_out;
+		if(produced) [data appendBytes:outbuffer length:produced];
+	}
+	while(zs.avail_in);
 
 	zs.avail_in=bytesperrow;
 	zs.next_in=bytes;
 	do
 	{
+		zs.avail_out=sizeof(outbuffer);
+		zs.next_out=outbuffer;
+
 		deflate(&zs,Z_NO_FLUSH);
 
 		int produced=sizeof(outbuffer)-zs.avail_out;
-		if(!produced) break;
-		[data appendBytes:outbuffer length:produced];
-
-		zs.avail_out=sizeof(outbuffer);
-		zs.next_out=outbuffer;
+		if(produced) [data appendBytes:outbuffer length:produced];
 	}
 	while(zs.avail_in);
 }
@@ -148,8 +153,7 @@ colourType:(int)colourtype
 		res=deflate(&zs,Z_FINISH);
 
 		int produced=sizeof(outbuffer)-zs.avail_out;
-		if(!produced) break;
-		[data appendBytes:outbuffer length:produced];
+		if(produced) [data appendBytes:outbuffer length:produced];
 	} while(res==Z_OK);
 
 

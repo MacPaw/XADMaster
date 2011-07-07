@@ -106,18 +106,20 @@
 			[fh skipBytes:2];
 
 			int alphaoffs=0;
-			if(tag==SWFDefineBitsJPEG3Tag)
+			if(tag==SWFDefineBitsJPEG3Tag||tag==SWFDefineBitsJPEG4Tag)
 			{
 				alphaoffs=[fh readUInt32LE];
 			}
-			else if(tag==SWFDefineBitsJPEG4Tag)
+
+			if(tag==SWFDefineBitsJPEG4Tag)
 			{
-				alphaoffs=[fh readUInt32LE];
 				[fh skipBytes:2]; // Skip deblocking filter params.
 			}
 
 //if(alphaoffs!=0) NSLog(@"alphaoffs: %d",alphaoffs);
 // TODO: read alpha
+
+			off_t startoffs=[fh offsetInFile];
 
 			int first=[fh readUInt16BE];
 			if(first==0x8950)
@@ -136,45 +138,87 @@
 				data:[NSData dataWithBytes:(uint8_t[2]){ 0x47,0x49 } length:2]
 				offset:[fh offsetInFile] length:[parser tagBytesLeft]];
 			}
-			else if(first==0xffd9)
+			else if(first==0xffd8||first==0xffd9)
 			{
-				// JPEG image with invalid EOI/SOI header. Skip the rest of
-				// the header and use the rest of the file as is.
-				[fh skipBytes:2];
+				// JPEG image.
 
-				[self addEntryWithName:[NSString stringWithFormat:
-				@"Image %d at frame %d.jpg",numimages,[parser frame]]
-				offset:[fh offsetInFile] length:[parser tagBytesLeft]];
-			}
-			else if(first==0xffd8)
-			{
-				// JPEG image correct header. However, there may still be
-				// a garbage EOI/SOI marker pair before the SOF, so we have
-				// to parse and store all markers up until that.
-				CSMemoryHandle *tables=[CSMemoryHandle memoryHandleForWriting];
-				[tables writeUInt16BE:first];
+				// Check if there is an invalid EOI/SOI marker pair at
+				// the start of the image, and skip it.
+				if(first==0xffd9)
+				{
+					[fh skipBytes:4];
+					first=0xffd8;
+				}
+
+				// Parse JPEG markers to find image dimensions, and
+				// to remove possible later EOI/SOI pairs.
+				int width=0,height=0;
+
+				CSMemoryHandle *header=[CSMemoryHandle memoryHandleForWriting];
+				[header writeUInt16BE:first];
 				for(;;)
 				{
 					int marker=[fh readUInt16BE];
-					if(marker==0xffd9||marker==0xffda)
-					{
-						// Skip garbage EOI/SOI pair if it exists.
-						if(marker==0xffd9) [fh skipBytes:2];
-						else [tables writeUInt16BE:marker];
 
+					if(marker==0xffda)
+					{
+						[header writeUInt16BE:marker];
+
+						off_t imagestart=[fh offsetInFile];
+						int imagelength=[parser tagBytesLeft];
+
+						// Calculate alpha channel extent and adjust
+						// main image if needed.
+						off_t alphastart=0;
+						int alphalength=0;
+						if(alphaoffs)
+						{
+							alphastart=startoffs+alphaoffs;
+							alphalength=imagestart+imagelength-alphastart;
+							imagelength=alphastart-imagestart;
+						}
+
+						// Emit main image.
 						[self addEntryWithName:[NSString stringWithFormat:
 						@"Image %d at frame %d.jpg",numimages,[parser frame]]
-						data:[tables data]
-						offset:[fh offsetInFile] length:[parser tagBytesLeft]];
+						data:[header data] offset:imagestart length:imagelength];
+
+						// Emit alpha channel image if one exists.
+						if(alphaoffs && width && height)
+						{
+							[self addEntryWithName:[NSString stringWithFormat:
+							@"Image %d alpha channel at frame %d.png",numimages,[parser frame]]
+							losslessFormat:-1 width:width height:height alpha:NO
+							offset:alphastart length:alphalength];
+						}
 
 						break;
 					}
+					else if(marker==0xffd9)
+					{
+						// EOI marker. This is garbage introduced by Flash.
+						// An SOI marker follows. Skip this.
+						[fh skipBytes:2];
+					}
 					else
 					{
+						// Other markers. Copy, and parse if known.
 						int len=[fh readUInt16BE];
-						[tables writeUInt16BE:marker];
-						[tables writeUInt16BE:len];
-						for(int i=0;i<len-2;i++) [tables writeUInt8:[fh readUInt8]];
+						[header writeUInt16BE:marker];
+						[header writeUInt16BE:len];
+						if(len>2)
+						{
+							uint8_t contents[len-2];
+							[fh readBytes:len-2 toBuffer:contents];
+							[header writeBytes:len-2 fromBuffer:contents];
+
+							if(marker>=0xffc0&&marker<=0xffc3)
+							{
+								// SOFx marker, extract width and height.
+								width=CSUInt16BE(&contents[3]);
+								height=CSUInt16BE(&contents[1]);
+							}
+						}
 					}
 				}
 			}
@@ -533,7 +577,38 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 		break;
 
 		case 4:
+		{
 			NSLog(@"Unsupported lossless type 4");
+
+			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
+
+			[png addIHDRWithWidth:width height:height bitDepth:8 colourType:2];
+			[png startIDAT];
+
+			int bytesperrow=(2*width+3)&~3;
+			for(int y=0;y<height;y++)
+			{
+				uint8_t row[bytesperrow];
+				uint8_t rgbrow[3*width];
+				[zh readBytes:bytesperrow toBuffer:row];
+
+				for(int x=0;x<width;x++)
+				{
+					uint16_t rgb=CSUInt16BE(&row[2*x]);
+					uint8_t r=(((rgb>>10)&0x1f)*0x21)>>2;
+					uint8_t g=(((rgb>>5)&0x1f)*0x21)>>2;
+					uint8_t b=(((rgb>>0)&0x1f)*0x21)>>2;
+
+					rgbrow[3*x+0]=r;
+					rgbrow[3*x+1]=g;
+					rgbrow[3*x+2]=b;
+				}
+
+				[png addIDATRow:row];
+			}
+
+			[png endIDAT];
+		}
 		break;
 
 		case 5:
@@ -579,44 +654,30 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 			[png endIDAT];
 		}
 		break;
+
+		case -1: // Special alpha channel format.
+		{
+			[png addIHDRWithWidth:width height:height bitDepth:8 colourType:0];
+
+			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
+
+			[png startIDAT];
+			int bytesperrow=width;
+			for(int y=0;y<height;y++)
+			{
+				uint8_t row[bytesperrow];
+				[zh readBytes:bytesperrow toBuffer:row];
+				[png addIDATRow:row];
+			}
+			[png endIDAT];
+		}
+		break;
 	}
 
 	[png addIEND];
 
 	return [png data];
 }
-
-
-/*			switch(formatnum)
-			{
-				case 3:
-					if(tag==SWFDefineBitsLosslessTag)
-					[self addEntry:[[[XeeSWFLossless3Entry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-					else
-					[self addEntry:[[[XeeSWFLossless3AlphaEntry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-				break;
-
-				case 4:
-					NSLog(@"Error loading SWF file: unsupported lossless format 4. Please send the author of this program the file, so he can add support for it.");
-				break;
-
-				case 5:
-					if(tag==SWFDefineBitsLosslessTag)
-					[self addEntry:[[[XeeSWFLossless5Entry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-					else
-					[self addEntry:[[[XeeSWFLossless5AlphaEntry alloc] initWithHandle:
-					[fh subHandleOfLength:[parser tagBytesLeft]]
-					name:[NSString stringWithFormat:@"Image %d",n++]] autorelease]];
-				break;
-*/
-
-
 
 -(NSString *)formatName { return @"SWF"; }
 

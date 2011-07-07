@@ -25,7 +25,7 @@ typedef struct StuffItXElement
 
 static void ReadElement(CSHandle *fh,StuffItXElement *element);
 static void ScanElementData(CSHandle *fh,StuffItXElement *element);
-static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wantchecksum);
+static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *element,BOOL wantchecksum);
 static void DumpElement(StuffItXElement *element);
 
 static void ReadElement(CSHandle *fh,StuffItXElement *element)
@@ -92,8 +92,10 @@ static void ScanElementData(CSHandle *fh,StuffItXElement *element)
 
 
 
-static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wantchecksum)
+static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *element,BOOL wantchecksum)
 {
+	CSHandle *fh=[self handle];
+
 	int64_t compressionalgorithm=element->alglist[0];
 	int64_t checksumalgorithm=element->alglist[1];
 	int64_t preprocessalgorithm=element->alglist[2];
@@ -162,7 +164,7 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 		break;
 
 		default:
-			NSLog(@"File uses SITX compression method %qd\n",compressionalgorithm);
+			[self reportInterestingFileWithReason:@"Unsupported compression method %qd",compressionalgorithm];
 			return nil;
 	}
 
@@ -201,7 +203,7 @@ static CSHandle *HandleForElement(CSHandle *fh,StuffItXElement *element,BOOL wan
 */
 
 		default:
-			NSLog(@"File uses SITX preprocessing method %qd\n",preprocessalgorithm);
+			[self reportInterestingFileWithReason:@"Unsupported preprocessing method %qd",preprocessalgorithm];
 			return nil;
 	}
 
@@ -525,7 +527,7 @@ static void DumpElement(StuffItXElement *element)
 				element.actualsize=element.attribs[4];
 				off_t pos=[fh offsetInFile];
 
-				CSHandle *ch=HandleForElement(fh,&element,NO);
+				CSHandle *ch=HandleForElement(self,&element,NO);
 				if(!ch) [XADException raiseNotSupportedException];
 				[self parseCatalogWithHandle:ch entryArray:entries entryDictionary:entrydict];
 
@@ -732,7 +734,7 @@ static void DumpElement(StuffItXElement *element)
 	StuffItXElement element;
 	[obj getValue:&element];
 
-	return HandleForElement([self handle],&element,checksum);
+	return HandleForElement(self,&element,checksum);
 }
 
 -(NSString *)formatName { return @"StuffIt X"; }

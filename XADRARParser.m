@@ -171,6 +171,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 	if(TestSignature(buf)==RAR_OLDSIGNATURE)
 	{
+		[self reportInterestingFileWithReason:@"Very old RAR file"];
 		[XADException raiseNotSupportedException];
 		// [fh skipBytes:-3];
 		// TODO: handle old RARs.

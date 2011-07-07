@@ -251,6 +251,10 @@ XADTEST3_FILES =	XADTest3.m
 
 XADTEST4_FILES =	XADTest4.m
 
+XADTEST5_FILES =	XADTest5.m
+
+XADTEST6_FILES =	XADTest6.m
+
 UNAR_FILES =		unar.m
 
 LSAR_FILES =		lsar.m \
@@ -264,6 +268,8 @@ ALL_OBJC_FILES =	$(LIBRARY_OBJC_FILES) \
 			$(XADTEST2_FILES) \
 			$(XADTEST3_FILES) \
 			$(XADTEST4_FILES) \
+			$(XADTEST5_FILES) \
+			$(XADTEST6_FILES) \
 			$(UNAR_FILES) \
 			$(LSAR_FILES) \
 			$(CMDLINE_FILES)
@@ -291,6 +297,10 @@ XADTEST3_OBJS =		$(XADTEST3_FILES:.m=.o)
 
 XADTEST4_OBJS =		$(XADTEST4_FILES:.m=.o)
 
+XADTEST5_OBJS =		$(XADTEST5_FILES:.m=.o)
+
+XADTEST6_OBJS =		$(XADTEST6_FILES:.m=.o)
+
 UNAR_OBJS =		$(UNAR_FILES:.m=.o)
 
 LSAR_OBJS =		$(LSAR_FILES:.m=.o)
@@ -301,6 +311,8 @@ ALL_OBJS = 		$(LIBRARY_OBJS) \
 			$(XADTEST2_OBJS) \
 			$(XADTEST3_OBJS) \
 			$(XADTEST4_OBJS) \
+			$(XADTEST5_OBJS) \
+			$(XADTEST6_OBJS) \
 			$(UNAR_OBJS) \
 			$(LSAR_OBJS) \
 			$(CMDLINE_OBJS)
@@ -311,6 +323,8 @@ ALL_OBJS = 		$(LIBRARY_OBJS) \
 EXECUTABLE_FILES =	XADTest2 \
 			XADTest3 \
 			XADTest4 \
+			XADTest5 \
+			XADTest6 \
 			unar \
 			lsar
 
@@ -352,6 +366,12 @@ XADTest3: $(XADTEST3_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetec
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 XADTest4: $(XADTEST4_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+XADTest5: $(XADTEST5_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+XADTest6: $(XADTEST6_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 unar: $(UNAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a

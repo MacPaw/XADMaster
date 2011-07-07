@@ -910,6 +910,20 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 
 
+-(void)reportInterestingFileWithReason:(NSString *)reason,...
+{
+	va_list args;
+	va_start(args,reason);
+	NSString *fullreason=[[[NSString alloc] initWithFormat:reason arguments:args] autorelease];
+	va_end(args);
+
+	[delegate archiveParser:self findsFileInterestingForReason:[NSString stringWithFormat:
+	@"%@: %@",[self formatName],fullreason]];
+}
+
+
+
+
 +(int)requiredHeaderSize { return 0; }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
@@ -955,6 +969,7 @@ name:(NSString *)name { return nil; }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict {}
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser { return NO; }
--(void)archiveParserNeedsPassword:(XADArchiveParser *)parser { }
+-(void)archiveParserNeedsPassword:(XADArchiveParser *)parser {}
+-(void)archiveParser:(XADArchiveParser *)parser findsFileInterestingForReason:(NSString *)reason {}
 
 @end

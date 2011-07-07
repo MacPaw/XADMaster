@@ -239,6 +239,7 @@ static NSData *ReadNullTerminatedString(CSHandle *fh);
 		break;
 
 		default:
+			[self reportInterestingFileWithReason:@"Unsupported compression method %d",method];
 			return nil;
 	}
 

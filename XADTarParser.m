@@ -524,6 +524,7 @@
 		else
 		{
 			// TODO: star
+			[self reportInterestingFileWithReason:@"star archive"];
 			[XADException raiseNotSupportedException];
 		}
 

@@ -105,6 +105,8 @@
 		}
 		else if(level==2)
 		{
+			[self reportInterestingFileWithReason:@"LZH level 2 file"];
+
 			headersize=firstword;
 
 			[dict setObject:[NSDate dateWithTimeIntervalSince1970:time] forKey:XADLastModificationDateKey];
@@ -123,6 +125,8 @@
 		}
 		else if(level==3)
 		{
+			[self reportInterestingFileWithReason:@"LZH level 3 file"];
+
 			if(firstword!=4) [XADException raiseNotSupportedException];
 
 			[dict setObject:[NSDate dateWithTimeIntervalSince1970:time] forKey:XADLastModificationDateKey];
@@ -260,6 +264,7 @@
 
 		case 0x42:
 			// 64-bit file sizes
+			[self reportInterestingFileWithReason:@"64-bit file"];
 			[XADException raiseNotSupportedException];
 		break;
 
@@ -376,6 +381,7 @@
 	}
 	else // not supported
 	{
+		[self reportInterestingFileWithReason:@"Unsupported compression method %@",method];
 		return nil; 
 	}
 

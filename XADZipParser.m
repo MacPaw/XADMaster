@@ -979,7 +979,9 @@ isLastEntry:(BOOL)islastentry
 			maxOrder:maxorder subAllocSize:suballocsize modelRestorationMethod:modelrestoration] autorelease];
 		}
 		break;
-		default: return nil;
+		default:
+			[self reportInterestingFileWithReason:@"Unsupported compression method %d",method];
+			return nil;
 	}
 }
 

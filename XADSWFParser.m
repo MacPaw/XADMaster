@@ -116,15 +116,13 @@
 				[fh skipBytes:2]; // Skip deblocking filter params.
 			}
 
-//if(alphaoffs!=0) NSLog(@"alphaoffs: %d",alphaoffs);
-// TODO: read alpha
-
 			off_t startoffs=[fh offsetInFile];
 
 			int first=[fh readUInt16BE];
 			if(first==0x8950)
 			{
 				// PNG image.
+				[self reportInterestingFileWithReason:@"Image with PNG data"];
 				[self addEntryWithName:[NSString stringWithFormat:
 				@"Image %d at frame %d.png",numimages,[parser frame]]
 				data:[NSData dataWithBytes:(uint8_t[2]){ 0x89,0x50 } length:2]
@@ -133,6 +131,7 @@
 			else if(first==0x4749)
 			{
 				// GIF image.
+				[self reportInterestingFileWithReason:@"Image with GIF data"];
 				[self addEntryWithName:[NSString stringWithFormat:
 				@"Image %d at frame %d.gif",numimages,[parser frame]]
 				data:[NSData dataWithBytes:(uint8_t[2]){ 0x47,0x49 } length:2]
@@ -243,7 +242,7 @@
 				losslessFormat:format width:width height:height alpha:tag==SWFDefineBitsLossless2Tag
 				offset:[fh offsetInFile] length:[parser tagBytesLeft]];
 			}
-			else NSLog(@"Unsupported lossless format %d in SWF file",format);
+			else [self reportInterestingFileWithReason:@"Unsupported lossless format %d",format];
 		}
 		break;
 
@@ -278,7 +277,7 @@
 				data:[self createWAVHeaderForFlags:flags length:length]
 				offset:[fh offsetInFile] length:length];
 			}
-			else NSLog(@"Unsupported sound format %d in SWF file",format);
+			else [self reportInterestingFileWithReason:@"Unsupported sound format %d",format];
 		}
 		break;
 
@@ -292,7 +291,7 @@
 				mainstream=[NSMutableData data];
 				[dataobjects addObject:mainstream];
 			}
-			else NSLog(@"Unsupported stream format %d in SWF file",format);
+			else [self reportInterestingFileWithReason:@"Unsupported stream format %d",format];
 		}
 		break;
 
@@ -328,7 +327,7 @@
 						substream=[NSMutableData data];
 						[dataobjects addObject:substream];
 					}
-					else NSLog(@"Unsupported stream format");
+					else [self reportInterestingFileWithReason:@"Unsupported stream format %d",format];
 				}
 				break;
 
@@ -540,8 +539,8 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
 			if(alpha)
 			{
-//NSLog(@"alpha palette!");
-//exit(1);
+				[self reportInterestingFileWithReason:@"Paletted lossless image with transparency"];
+
 				uint8_t palette[4*numcolours];
 				[zh readBytes:4*numcolours toBuffer:palette];
 
@@ -578,7 +577,7 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 
 		case 4:
 		{
-			NSLog(@"Unsupported lossless type 4");
+			[self reportInterestingFileWithReason:@"15-bit lossless RGB image"];
 
 			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
 

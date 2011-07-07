@@ -164,6 +164,8 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 -(NSData *)encodedPassword;
 -(const char *)encodedCStringPassword;
 
+-(void)reportInterestingFileWithReason:(NSString *)reason,...;
+
 
 
 // Subclasses implement these:
@@ -194,6 +196,7 @@ name:(NSString *)name;
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict;
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser;
 -(void)archiveParserNeedsPassword:(XADArchiveParser *)parser;
+-(void)archiveParser:(XADArchiveParser *)parser findsFileInterestingForReason:(NSString *)reason;
 
 @end
 

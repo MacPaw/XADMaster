@@ -77,6 +77,12 @@
 		1B31CB7C13C2890700ED119E /* XADSWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB7813C2890600ED119E /* XADSWFParser.m */; };
 		1B31CB7D13C2890700ED119E /* XADSWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB7813C2890600ED119E /* XADSWFParser.m */; };
 		1B31CB7E13C2890700ED119E /* XADSWFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB7813C2890600ED119E /* XADSWFParser.m */; };
+		1B31CB8113C523A300ED119E /* XADPNGWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB7F13C523A200ED119E /* XADPNGWriter.h */; };
+		1B31CB8213C523A300ED119E /* XADPNGWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB7F13C523A200ED119E /* XADPNGWriter.h */; };
+		1B31CB8313C523A300ED119E /* XADPNGWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB7F13C523A200ED119E /* XADPNGWriter.h */; };
+		1B31CB8413C523A300ED119E /* XADPNGWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB8013C523A200ED119E /* XADPNGWriter.m */; };
+		1B31CB8513C523A300ED119E /* XADPNGWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB8013C523A200ED119E /* XADPNGWriter.m */; };
+		1B31CB8613C523A300ED119E /* XADPNGWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB8013C523A200ED119E /* XADPNGWriter.m */; };
 		1B32D0FD10F6E461002A2C76 /* XADCFBFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D0FB10F6E461002A2C76 /* XADCFBFParser.m */; };
 		1B32D2AB10F8D11D002A2C76 /* XADBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D2A910F8D11D002A2C76 /* XADBlockHandle.m */; };
 		1B32D3C710FA7A69002A2C76 /* XADSplitFileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D3C510FA7A69002A2C76 /* XADSplitFileParser.m */; };
@@ -1196,6 +1202,8 @@
 		1B31CB6A13C288D700ED119E /* SWFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWFParser.m; sourceTree = "<group>"; };
 		1B31CB7713C2890600ED119E /* XADSWFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSWFParser.h; sourceTree = "<group>"; };
 		1B31CB7813C2890600ED119E /* XADSWFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADSWFParser.m; sourceTree = "<group>"; };
+		1B31CB7F13C523A200ED119E /* XADPNGWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPNGWriter.h; sourceTree = "<group>"; };
+		1B31CB8013C523A200ED119E /* XADPNGWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPNGWriter.m; sourceTree = "<group>"; };
 		1B32D0FA10F6E461002A2C76 /* XADCFBFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCFBFParser.h; sourceTree = "<group>"; };
 		1B32D0FB10F6E461002A2C76 /* XADCFBFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCFBFParser.m; sourceTree = "<group>"; };
 		1B32D2A810F8D11D002A2C76 /* XADBlockHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADBlockHandle.h; sourceTree = "<group>"; };
@@ -2248,6 +2256,8 @@
 				1BCD64310EF6CB5200D86C43 /* XADDigestHandle.m */,
 				1B3E2BF10F28D715003EEF98 /* XADRC4Handle.h */,
 				1B3E2BF20F28D715003EEF98 /* XADRC4Handle.m */,
+				1B31CB7F13C523A200ED119E /* XADPNGWriter.h */,
+				1B31CB8013C523A200ED119E /* XADPNGWriter.m */,
 				1B216A780F8E9064001207C9 /* CRC.h */,
 				1B216A770F8E9064001207C9 /* CRC.m */,
 				1B3E377D0F422D2F003EEF98 /* NumberParsing.h */,
@@ -2530,6 +2540,7 @@
 				1B31CB6C13C288D700ED119E /* SWFGeometry.h in Headers */,
 				1B31CB7213C288D700ED119E /* SWFParser.h in Headers */,
 				1B31CB7A13C2890700ED119E /* XADSWFParser.h in Headers */,
+				1B31CB8213C523A300ED119E /* XADPNGWriter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2562,6 +2573,7 @@
 				1B31CB6D13C288D700ED119E /* SWFGeometry.h in Headers */,
 				1B31CB7313C288D700ED119E /* SWFParser.h in Headers */,
 				1B31CB7B13C2890700ED119E /* XADSWFParser.h in Headers */,
+				1B31CB8313C523A300ED119E /* XADPNGWriter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2748,6 +2760,7 @@
 				1B31CB6B13C288D700ED119E /* SWFGeometry.h in Headers */,
 				1B31CB7113C288D700ED119E /* SWFParser.h in Headers */,
 				1B31CB7913C2890700ED119E /* XADSWFParser.h in Headers */,
+				1B31CB8113C523A300ED119E /* XADPNGWriter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3257,6 +3270,7 @@
 				1B31CB6F13C288D700ED119E /* SWFGeometry.m in Sources */,
 				1B31CB7513C288D700ED119E /* SWFParser.m in Sources */,
 				1B31CB7D13C2890700ED119E /* XADSWFParser.m in Sources */,
+				1B31CB8513C523A300ED119E /* XADPNGWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3460,6 +3474,7 @@
 				1B31CB7013C288D700ED119E /* SWFGeometry.m in Sources */,
 				1B31CB7613C288D700ED119E /* SWFParser.m in Sources */,
 				1B31CB7E13C2890700ED119E /* XADSWFParser.m in Sources */,
+				1B31CB8613C523A300ED119E /* XADPNGWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3698,6 +3713,7 @@
 				1B31CB6E13C288D700ED119E /* SWFGeometry.m in Sources */,
 				1B31CB7413C288D700ED119E /* SWFParser.m in Sources */,
 				1B31CB7C13C2890700ED119E /* XADSWFParser.m in Sources */,
+				1B31CB8413C523A300ED119E /* XADPNGWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

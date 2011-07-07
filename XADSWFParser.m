@@ -19,7 +19,7 @@
 	if(bytes[0]=='F'&&bytes[1]=='W'&&bytes[2]=='S') return YES;
 	if(bytes[0]=='C'&&bytes[1]=='W'&&bytes[2]=='S') return YES;
 
-	return YES;
+	return NO;
 }
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
@@ -49,8 +49,8 @@
 	int numsounds=0;
 	int numstreams=0;
 	int laststreamframe=-1;
-	NSData *currjpegtables=nil;
-	NSMutableData *currstream=nil;
+	NSData *jpegtables=nil;
+	NSMutableData *mainstream=nil;
 
 	NSString *compname;
 	if([parser isCompressed]) compname=@"Zlib";
@@ -65,16 +65,16 @@
 			int length=[parser tagLength];
 			if(length>=2)
 			{
-				currjpegtables=[fh readDataOfLength:length-2];
+				jpegtables=[fh readDataOfLength:length-2];
 			}
 			else
 			{
 				 // Apparently sometimes Flash uses a zero-length table tag,
 				 // and this implicitly means that the header should be a
 				 // single SOI marker.
-				currjpegtables=[NSData dataWithBytes:(uint8_t[2]){0xff,0xd8} length:2];
+				jpegtables=[NSData dataWithBytes:(uint8_t[2]){0xff,0xd8} length:2];
 			}
-			[dataobjects addObject:currjpegtables];
+			[dataobjects addObject:jpegtables];
 		}
 		break;
 
@@ -86,24 +86,35 @@
 			off_t offset=[fh offsetInFile];
 			off_t length=[parser tagBytesLeft];
 
-			if(!currjpegtables) [XADException raiseIllegalDataException];
+			if(!jpegtables) [XADException raiseIllegalDataException];
 
 			[self addEntryWithName:[NSString stringWithFormat:
 			@"Image %d at frame %d.jpg",numimages,[parser frame]]
-			data:currjpegtables offset:offset length:length];
+			data:jpegtables offset:offset length:length];
 		}
 		break;
 
 		case SWFDefineBitsJPEG2Tag:
 		case SWFDefineBitsJPEG3Tag:
+		case SWFDefineBitsJPEG4Tag:
 		{
 			numimages++;
 
 			[fh skipBytes:2];
 
 			int alphaoffs=0;
-			if(tag==SWFDefineBitsJPEG3Tag) alphaoffs=[fh readUInt32LE];
+			if(tag==SWFDefineBitsJPEG3Tag)
+			{
+				alphaoffs=[fh readUInt32LE];
+			}
+			else if(tag==SWFDefineBitsJPEG4Tag)
+			{
+				alphaoffs=[fh readUInt32LE];
+				[fh skipBytes:2]; // Skip deblocking filter params.
+			}
+
 //if(alphaoffs!=0) NSLog(@"alphaoffs: %d",alphaoffs);
+// TODO: read alpha
 
 			int first=[fh readUInt16BE];
 			if(first==0x8950)
@@ -168,10 +179,6 @@
 		}
 		break;
 
-		case SWFDefineBitsJPEG4Tag:
-			NSLog(@"DefineBitsJPEG4");
-		break;
-
 		case SWFDefineBitsLosslessTag:
 		case SWFDefineBitsLossless2Tag:
 		{
@@ -186,6 +193,8 @@
 			[self addEntryWithName:[NSString stringWithFormat:
 			@"Image %d at frame %d.tiff",numimages,[parser frame]]
 			data:[NSData data]];
+
+			// TODO: Handle lossless
 
 /*			switch(formatnum)
 			{
@@ -298,8 +307,8 @@
 			int format=(flags>>4)&0x0f;
 			if(format==2||format==0) // MP3 format - why is 0 MP3? Who knows!
 			{
-				currstream=[NSMutableData data];
-				[dataobjects addObject:currstream];
+				mainstream=[NSMutableData data];
+				[dataobjects addObject:mainstream];
 			}
 			else NSLog(@"Unsupported stream format");
 		}
@@ -312,7 +321,7 @@
 				laststreamframe=[parser frame];
 				[fh skipBytes:4];
 			}
-			[currstream appendData:[fh readDataOfLength:[parser tagBytesLeft]]];
+			[mainstream appendData:[fh readDataOfLength:[parser tagBytesLeft]]];
 		}
 		break;
 
@@ -365,10 +374,10 @@
 		break;
 	}
 
-	if(currstream && [currstream length])
+	if(mainstream && [mainstream length])
 	{
 		[self addEntryWithName:[NSString stringWithFormat:@"Stream.mp3"]
-		data:currstream];
+		data:mainstream];
 	}
 }
 

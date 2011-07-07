@@ -582,6 +582,12 @@ XADTest3.o: XADTest3.m XADArchiveParser.h XADException.h XADString.h \
 XADTest4.o: XADTest4.m XADArchiveParser.h XADException.h XADString.h \
  XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
  CSSubHandle.h
+XADTest5.o: XADTest5.m XADArchiveParser.h XADException.h XADString.h \
+ XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
+ CSSubHandle.h CSFileHandle.h
+XADTest6.o: XADTest6.m XADArchiveParser.h XADException.h XADString.h \
+ XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
+ CSSubHandle.h NSStringPrinting.h
 unar.o: unar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
  CSSubHandle.h NSStringPrinting.h CSCommandLineParser.h \

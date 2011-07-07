@@ -350,7 +350,7 @@ LIBRARY_FILES = 	libXADMaster.a
 
 # Compilation rules
 
-all: unar lsar XADTest2 XADTest3 XADTest4
+all: unar lsar XADTest2 XADTest3 XADTest4 XADTest5 XADTest6
 
 libXADMaster.a: $(LIBRARY_OBJS)
 	rm -f $@

@@ -663,7 +663,10 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 			for(int y=0;y<height;y++)
 			{
 				uint8_t row[bytesperrow];
-				[zh readBytes:bytesperrow toBuffer:row];
+				// Kludge: Some alpha channels end (one byte) early.
+				// Just zero the buffer and accept short reads to work around it.
+				memset(row,0,sizeof(row));
+				[zh readAtMost:bytesperrow toBuffer:row];
 				[png addIDATRow:row];
 			}
 			[png endIDAT];

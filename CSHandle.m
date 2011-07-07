@@ -273,7 +273,8 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 
 -(void)readBytes:(int)num toBuffer:(void *)buffer
 {
-	if([self readAtMost:num toBuffer:buffer]!=num) [self _raiseEOF];
+	int actual=[self readAtMost:num toBuffer:buffer];
+	if(actual!=num) [self _raiseEOF];
 }
 
 

@@ -1,9 +1,9 @@
 #import "XADArchiveParser.h"
-#import "SWFParser.h"
+#import "XADSWFTagParser.h"
 
 @interface XADSWFParser:XADArchiveParser
 {
-	SWFParser *parser;
+	XADSWFTagParser *parser;
 	NSMutableArray *dataobjects;
 }
 
@@ -23,10 +23,12 @@ offset:(off_t)offset length:(off_t)length;
 -(void)addEntryWithName:(NSString *)name data:(NSData *)data
 offset:(off_t)offset length:(off_t)length;
 -(void)addEntryWithName:(NSString *)name losslessFormat:(int)format
-alpha:(BOOL)alpha offset:(off_t)offset length:(off_t)length;
+width:(int)width height:(int)height alpha:(BOOL)alpha
+offset:(off_t)offset length:(off_t)length;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
--(NSData *)convertLosslessFormat:(int)format alpha:(BOOL)alpha handle:(CSHandle *)handle;
+-(NSData *)convertLosslessFormat:(int)format width:(int)width height:(int)height
+alpha:(BOOL)alpha handle:(CSHandle *)handle;
 
 -(NSString *)formatName;
 

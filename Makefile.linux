@@ -88,8 +88,6 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			PPMdVariantH.m \
 			PPMdVariantI.m \
 			Progress.m \
-			SWFGeometry.m \
-			SWFParser.m \
 			StuffItXUtilities.m \
 			XAD7ZipBCJ2Handle.m \
 			XAD7ZipBranchHandles.m \
@@ -179,9 +177,10 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADRLE90Handle.m \
 			XADRPMParser.m \
 			XADSARParser.m \
-			XADSWFParser.m \
 			XADSkipHandle.m \
 			XADSplitFileParser.m \
+			XADSqueezeHandle.m \
+			XADSqueezeParser.m \
 			XADStacLZSHandle.m \
 			XADString.m \
 			XADStringICU.m \
@@ -199,8 +198,9 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADStuffItXIronHandle.m \
 			XADStuffItXX86Handle.m \
 			XADStuffItXParser.m \
-			XADSqueezeHandle.m \
-			XADSqueezeParser.m \
+			XADSWFGeometry.m \
+			XADSWFParser.m \
+			XADSWFTagParser.m \
 			XADTarParser.m \
 			XADTarSparseHandle.m \
 			XADUnarchiver.m \

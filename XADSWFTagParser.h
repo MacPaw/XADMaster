@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-#import "SWFGeometry.h"
+#import "XADSWFGeometry.h"
 
 #import "CSHandle.h"
 
@@ -33,7 +33,7 @@
 extern NSString *SWFWrongMagicException;
 extern NSString *SWFNoMoreTagsException;
 
-@interface SWFParser:NSObject
+@interface XADSWFTagParser:NSObject
 {
 	CSHandle *fh;
 	off_t nexttag,nextsubtag;
@@ -51,8 +51,8 @@ extern NSString *SWFNoMoreTagsException;
 	int subframe;
 }
 
-+(SWFParser *)parserWithHandle:(CSHandle *)handle;
-+(SWFParser *)parserForPath:(NSString *)path;
++(XADSWFTagParser *)parserWithHandle:(CSHandle *)handle;
++(XADSWFTagParser *)parserForPath:(NSString *)path;
 
 -(id)initWithHandle:(CSHandle *)handle;
 -(void)dealloc;

@@ -1,4 +1,4 @@
-#import "SWFParser.h"
+#import "XADSWFTagParser.h"
 #import "CSFileHandle.h"
 #import "CSZlibHandle.h"
 
@@ -7,17 +7,17 @@ NSString *SWFWrongMagicException=@"SWFWrongMagicException";
 NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 
 
-@implementation SWFParser
+@implementation XADSWFTagParser
 
-+(SWFParser *)parserWithHandle:(CSHandle *)handle
++(XADSWFTagParser *)parserWithHandle:(CSHandle *)handle
 {
-	return [[[SWFParser alloc] initWithHandle:handle] autorelease];
+	return [[[XADSWFTagParser alloc] initWithHandle:handle] autorelease];
 }
 
-+(SWFParser *)parserForPath:(NSString *)path
++(XADSWFTagParser *)parserForPath:(NSString *)path
 {
 	CSFileHandle *handle=[CSFileHandle fileHandleForReadingAtPath:path];
-	return [[[SWFParser alloc] initWithHandle:handle] autorelease];
+	return [[[XADSWFTagParser alloc] initWithHandle:handle] autorelease];
 }
 
 -(id)initWithHandle:(CSHandle *)handle

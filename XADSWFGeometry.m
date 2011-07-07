@@ -1,4 +1,4 @@
-#import "SWFGeometry.h"
+#import "XADSWFGeometry.h"
 #import <math.h>
 
 

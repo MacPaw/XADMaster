@@ -1,8 +1,9 @@
 #import "XADSWFParser.h"
-#import "SWFParser.h"
+#import "XADSWFParser.h"
+#import "XADPNGWriter.h"
 #import "CSMemoryHandle.h"
 #import "CSMultiHandle.h"
-#import "XADPNGWriter.h"
+#import "CSZlibHandle.h"
 
 @implementation XADSWFParser
 
@@ -15,8 +16,9 @@
 
 	if(length<4) return NO;
 
-	NSLog(@"SWF version %d\n",bytes[3]);
+	//NSLog(@"SWF version %d\n",bytes[3]);
 
+	if(bytes[3]>=32) return NO; // Assume the SWF format doesn't reach version 32 any time soon.
 	if(bytes[0]=='F'&&bytes[1]=='W'&&bytes[2]=='S') return YES;
 	if(bytes[0]=='C'&&bytes[1]=='W'&&bytes[2]=='S') return YES;
 
@@ -27,7 +29,7 @@
 {
 	if((self=[super initWithHandle:handle name:name]))
 	{
-		parser=[[SWFParser parserWithHandle:handle] retain];
+		parser=[[XADSWFTagParser parserWithHandle:handle] retain];
 		dataobjects=[NSMutableArray new];
 	}
 	return self;
@@ -187,12 +189,14 @@
 
 			[fh skipBytes:2];
 			int format=[fh readUInt8];
+			int width=[fh readUInt16LE];
+			int height=[fh readUInt16LE];
 
 			if(format==3||format==4||format==5)
 			{
 				[self addEntryWithName:[NSString stringWithFormat:
-				@"Image %d at frame %d.tiff",numimages,[parser frame]]
-				losslessFormat:format alpha:tag==SWFDefineBitsLossless2Tag
+				@"Image %d at frame %d.png",numimages,[parser frame]]
+				losslessFormat:format width:width height:height alpha:tag==SWFDefineBitsLossless2Tag
 				offset:[fh offsetInFile] length:[parser tagBytesLeft]];
 			}
 			else NSLog(@"Unsupported lossless format %d in SWF file",format);
@@ -412,14 +416,17 @@ offset:(off_t)offset length:(off_t)length
 }
 
 -(void)addEntryWithName:(NSString *)name losslessFormat:(int)format
-alpha:(BOOL)alpha offset:(off_t)offset length:(off_t)length
+width:(int)width height:(int)height alpha:(BOOL)alpha
+offset:(off_t)offset length:(off_t)length
 {
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[self XADPathWithString:name],XADFileNameKey,
-		[NSNumber numberWithLongLong:length],XADFileSizeKey,
+		//[NSNumber numberWithLongLong:length],XADFileSizeKey,
 		[NSNumber numberWithLongLong:length],@"SWFDataLengthKey",
 		[NSNumber numberWithLongLong:offset],@"SWFDataOffsetKey",
 		[NSNumber numberWithInt:format],@"SWFLosslessFormatKey",
+		[NSNumber numberWithInt:width],@"SWFLosslessWidthKey",
+		[NSNumber numberWithInt:height],@"SWFLosslessHeightKey",
 		[NSNumber numberWithBool:alpha],@"SWFLosslessAlphaKey",
 		[self XADStringWithString:@"Zlib"],XADCompressionNameKey,
 	nil];
@@ -444,6 +451,8 @@ alpha:(BOOL)alpha offset:(off_t)offset length:(off_t)length
 		{
 			return [CSMemoryHandle memoryHandleForReadingData:
 			[self convertLosslessFormat:[formatnum intValue]
+			width:[[dict objectForKey:@"SWFLosslessWidthKey"] intValue]
+			height:[[dict objectForKey:@"SWFLosslessHeightKey"] intValue]
 			alpha:[[dict objectForKey:@"SWFLosslessAlphaKey"] boolValue]
 			handle:handle]];
 		}
@@ -471,21 +480,113 @@ alpha:(BOOL)alpha offset:(off_t)offset length:(off_t)length
 	}
 }
 
--(NSData *)convertLosslessFormat:(int)format alpha:(BOOL)alpha handle:(CSHandle *)handle
+-(NSData *)convertLosslessFormat:(int)format width:(int)width height:(int)height
+alpha:(BOOL)alpha handle:(CSHandle *)handle
 {
 	XADPNGWriter *png=[XADPNGWriter PNGWriter];
 
 	switch(format)
 	{
 		case 3:
+		{
+			int numcolours=[handle readUInt8]+1;
+
+			[png addIHDRWithWidth:width height:height bitDepth:8 colourType:3];
+
+			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
+			if(alpha)
+			{
+NSLog(@"alpha palette!");
+exit(1);
+				uint8_t palette[4*numcolours];
+				[zh readBytes:4*numcolours toBuffer:palette];
+
+				uint8_t plte[3*numcolours];
+				for(int i=0;i<numcolours;i++)
+				{
+					plte[3*i+0]=palette[4*i+0];
+					plte[3*i+1]=palette[4*i+1];
+					plte[3*i+2]=palette[4*i+2];
+				}
+				[png addChunk:'PLTE' bytes:plte length:3*numcolours];
+			}
+			else
+			{
+				uint8_t plte[3*numcolours];
+				[zh readBytes:3*numcolours toBuffer:plte];
+				[png addChunk:'PLTE' bytes:plte length:3*numcolours];
+			}
+
+			[png startIDAT];
+			int bytesperrow=(width+3)&~3;
+			for(int y=0;y<height;y++)
+			{
+				uint8_t row[bytesperrow];
+				[zh readBytes:bytesperrow toBuffer:row];
+				[png addIDATRow:row];
+			}
+			[png endIDAT];
+		}
 		break;
 
 		case 4:
+			NSLog(@"Unsupported lossless type 4");
 		break;
 
 		case 5:
+		{
+			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
+
+			if(alpha)
+			{
+				[png addIHDRWithWidth:width height:height bitDepth:8 colourType:6];
+				[png startIDAT];
+				int bytesperrow=width*4;
+				for(int y=0;y<height;y++)
+				{
+					uint8_t row[bytesperrow];
+					[zh readBytes:bytesperrow toBuffer:row];
+
+					for(int x=0;x<width;x++)
+					{
+						uint8_t a=row[4*x+0],r=row[4*x+1],g=row[4*x+2],b=row[4*x+3];
+						row[4*x+0]=r;
+						row[4*x+1]=g;
+						row[4*x+2]=b;
+						row[4*x+3]=a;
+					}
+
+					[png addIDATRow:row];
+				}
+				[png endIDAT];
+			}
+			else
+			{
+				[png addIHDRWithWidth:width height:height bitDepth:8 colourType:2];
+				[png startIDAT];
+				int bytesperrow=(width*3+3)&~3;
+				for(int y=0;y<height;y++)
+				{
+					uint8_t row[bytesperrow];
+					[zh readBytes:bytesperrow toBuffer:row];
+
+					for(int x=0;x<width;x++)
+					{
+						uint8_t r=row[4*x+1],g=row[4*x+2],b=row[4*x+3];
+						row[3*x+0]=r;
+						row[3*x+1]=g;
+						row[3*x+2]=b;
+					}
+
+					[png addIDATRow:row];
+				}
+				[png endIDAT];
+			}
+		}
 		break;
 	}
+
+	[png addIEND];
 
 	return [png data];
 }
@@ -525,3 +626,4 @@ alpha:(BOOL)alpha offset:(off_t)offset length:(off_t)length
 -(NSString *)formatName { return @"SWF"; }
 
 @end
+

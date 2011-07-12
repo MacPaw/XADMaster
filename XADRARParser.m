@@ -469,6 +469,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 	block.fh=fh;
 
+	if([fh atEndOfFile]) return ZeroBlock;
 	@try
 	{
 		block.crc=[fh readUInt16LE];

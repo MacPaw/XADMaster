@@ -508,6 +508,9 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 			if(actual==0) break;
 		}
 
+		NSNumber *iscorrupt=[dict objectForKey:XADIsCorruptedKey];
+		if(iscorrupt&&[iscorrupt boolValue]) return XADDecrunchError;
+
 		if([srchandle hasChecksum])
 		{
 			if(![srchandle isChecksumCorrect]) return XADChecksumError;

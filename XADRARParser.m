@@ -231,7 +231,6 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 	off_t lastpos=block.datastart+block.datasize;
 	BOOL last=(block.flags&LHD_SPLIT_AFTER)?NO:YES;
-	BOOL partial=NO;
 
 	for(;;)
 	{
@@ -245,7 +244,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 		if(block.type==0x74) // file header
 		{
 			if(last) break;
-			else if(!(block.flags&LHD_SPLIT_BEFORE)) { partial=YES; break; }
+			else if(!(block.flags&LHD_SPLIT_BEFORE)) break;
 
 			[fh skipBytes:5];
 			crc=[fh readUInt32LE];
@@ -262,10 +261,10 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 			NSData *currnamedata=[fh readDataOfLength:namelength];
 
 			if(![namedata isEqual:currnamedata])
-			{ // Name doesn't match, skip back to header and give up.
+			{
+				// Name doesn't match, skip back to header and give up.
 				[fh seekToFileOffset:block.start];
 				block=[self readBlockHeaderLevel2];
-				partial=YES;
 				break;
 			}
 
@@ -299,7 +298,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 	if(salt) [dict setObject:salt forKey:@"RARSalt"];
 
-	if(partial) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
+	if(!last) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
 
 	if(flags&LHD_PASSWORD) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 	if((flags&LHD_WINDOWMASK)==LHD_DIRECTORY) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];

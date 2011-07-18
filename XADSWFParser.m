@@ -277,6 +277,14 @@
 				data:[self createWAVHeaderForFlags:flags length:length]
 				offset:[fh offsetInFile] length:length];
 			}
+			else if(format==1) // ADPCM
+			{
+				// Not implemented yet.
+			}
+			else if(format==6) // Speex?
+			{
+				// Not implemented yet.
+			}
 			else [self reportInterestingFileWithReason:@"Unsupported sound format %d",format];
 		}
 		break;
@@ -290,6 +298,10 @@
 			{
 				mainstream=[NSMutableData data];
 				[dataobjects addObject:mainstream];
+			}
+			else if(format==4) // Nellymoser
+			{
+				// Not implemented yet.
 			}
 			else [self reportInterestingFileWithReason:@"Unsupported stream format %d",format];
 		}
@@ -326,6 +338,10 @@
 					{
 						substream=[NSMutableData data];
 						[dataobjects addObject:substream];
+					}
+					else if(format==4) // Nellymoser
+					{
+						// Not implemented yet.
 					}
 					else [self reportInterestingFileWithReason:@"Unsupported stream format %d",format];
 				}
@@ -430,8 +446,8 @@ offset:(off_t)offset length:(off_t)length
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[self XADPathWithString:name],XADFileNameKey,
 		[NSNumber numberWithLongLong:length],XADFileSizeKey,
-		[NSNumber numberWithLongLong:length],@"SWFDataLengthKey",
-		[NSNumber numberWithLongLong:offset],@"SWFDataOffsetKey",
+		[NSNumber numberWithLongLong:length],@"SWFDataLength",
+		[NSNumber numberWithLongLong:offset],@"SWFDataOffset",
 		[self XADStringWithString:[parser isCompressed]?@"Zlib":@"None"],XADCompressionNameKey,
 	nil];
 	[self addEntryWithDictionary:dict];
@@ -450,8 +466,8 @@ offset:(off_t)offset length:(off_t)length
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[self XADPathWithString:name],XADFileNameKey,
 		[NSNumber numberWithLongLong:length+[data length]],XADFileSizeKey,
-		[NSNumber numberWithLongLong:length],@"SWFDataLengthKey",
-		[NSNumber numberWithLongLong:offset],@"SWFDataOffsetKey",
+		[NSNumber numberWithLongLong:length],@"SWFDataLength",
+		[NSNumber numberWithLongLong:offset],@"SWFDataOffset",
 		[self XADStringWithString:[parser isCompressed]?@"Zlib":@"None"],XADCompressionNameKey,
 		[NSNumber numberWithInt:index],@"SWFDataIndex",
 	nil];
@@ -465,12 +481,12 @@ offset:(off_t)offset length:(off_t)length
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[self XADPathWithString:name],XADFileNameKey,
 		//[NSNumber numberWithLongLong:length],XADFileSizeKey,
-		[NSNumber numberWithLongLong:length],@"SWFDataLengthKey",
-		[NSNumber numberWithLongLong:offset],@"SWFDataOffsetKey",
-		[NSNumber numberWithInt:format],@"SWFLosslessFormatKey",
-		[NSNumber numberWithInt:width],@"SWFLosslessWidthKey",
-		[NSNumber numberWithInt:height],@"SWFLosslessHeightKey",
-		[NSNumber numberWithBool:alpha],@"SWFLosslessAlphaKey",
+		[NSNumber numberWithLongLong:length],@"SWFDataLength",
+		[NSNumber numberWithLongLong:offset],@"SWFDataOffset",
+		[NSNumber numberWithInt:format],@"SWFLosslessFormat",
+		[NSNumber numberWithInt:width],@"SWFLosslessWidth",
+		[NSNumber numberWithInt:height],@"SWFLosslessHeight",
+		[NSNumber numberWithBool:alpha],@"SWFLosslessAlpha",
 		[self XADStringWithString:@"Zlib"],XADCompressionNameKey,
 	nil];
 	[self addEntryWithDictionary:dict];
@@ -482,21 +498,21 @@ offset:(off_t)offset length:(off_t)length
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	CSHandle *handle=nil;
-	NSNumber *offsetnum=[dict objectForKey:@"SWFDataOffsetKey"];
-	NSNumber *lengthnum=[dict objectForKey:@"SWFDataLengthKey"];
+	NSNumber *offsetnum=[dict objectForKey:@"SWFDataOffset"];
+	NSNumber *lengthnum=[dict objectForKey:@"SWFDataLength"];
 	if(offsetnum&&lengthnum)
 	{
 		handle=[[parser handle] nonCopiedSubHandleFrom:[offsetnum longLongValue]
 		length:[lengthnum longLongValue]];
 
-		NSNumber *formatnum=[dict objectForKey:@"SWFLosslessFormatKey"];
+		NSNumber *formatnum=[dict objectForKey:@"SWFLosslessFormat"];
 		if(formatnum)
 		{
 			return [CSMemoryHandle memoryHandleForReadingData:
 			[self convertLosslessFormat:[formatnum intValue]
-			width:[[dict objectForKey:@"SWFLosslessWidthKey"] intValue]
-			height:[[dict objectForKey:@"SWFLosslessHeightKey"] intValue]
-			alpha:[[dict objectForKey:@"SWFLosslessAlphaKey"] boolValue]
+			width:[[dict objectForKey:@"SWFLosslessWidth"] intValue]
+			height:[[dict objectForKey:@"SWFLosslessHeight"] intValue]
+			alpha:[[dict objectForKey:@"SWFLosslessAlpha"] boolValue]
 			handle:handle]];
 		}
 	}
@@ -575,8 +591,6 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 
 		case 4:
 		{
-			[self reportInterestingFileWithReason:@"15-bit lossless RGB image"];
-
 			CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:handle];
 
 			[png addIHDRWithWidth:width height:height bitDepth:8 colourType:2];
@@ -601,7 +615,7 @@ alpha:(BOOL)alpha handle:(CSHandle *)handle
 					rgbrow[3*x+2]=b;
 				}
 
-				[png addIDATRow:row];
+				[png addIDATRow:rgbrow];
 			}
 
 			[png endIDAT];

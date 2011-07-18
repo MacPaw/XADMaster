@@ -44,15 +44,16 @@
 
 	int guessedos=0;
 
-	while([self shouldKeepParsing])
+	while([self shouldKeepParsing] && ![fh atEndOfFile])
 	{
 		off_t start=[fh offsetInFile];
 
-		int firstword;
-		@try { firstword=[fh readInt16LE]; }
-		@catch(id e) { break; }
+		uint8_t b1=[fh readUInt8];
+		if(b1==0) break;
 
-		if((firstword&0xff)==0) break;
+		uint8_t b2=[fh readUInt8];
+
+		int firstword=b1|(b2<<8);
 
 		uint8_t method[5];
 		[fh readBytes:5 toBuffer:method];

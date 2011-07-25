@@ -7,6 +7,7 @@
 #import "XADSkipHandle.h"
 #import "Checksums.h"
 
+extern NSString *XADIndexKey;
 extern NSString *XADFileNameKey;
 extern NSString *XADFileSizeKey;
 extern NSString *XADCompressedSizeKey;
@@ -51,7 +52,9 @@ extern NSString *XADSkipLengthKey;
 extern NSString *XADCompressionNameKey;
 
 extern NSString *XADIsSolidKey;
+extern NSString *XADFirstSolidIndexKey;
 extern NSString *XADFirstSolidEntryKey;
+extern NSString *XADNextSolidIndexKey;
 extern NSString *XADNextSolidEntryKey;
 extern NSString *XADSolidObjectKey;
 extern NSString *XADSolidOffsetKey;
@@ -72,6 +75,8 @@ extern NSString *XADDiskLabelKey;
 
 	NSMutableDictionary *properties;
 	XADStringSource *stringsource;
+
+	int currindex;
 
 	id parsersolidobj;
 	NSMutableDictionary *firstsoliddict,*prevsoliddict;

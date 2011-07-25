@@ -51,6 +51,7 @@
 
 #include <dirent.h>
 
+NSString *XADIndexKey=@"XADIndex";
 NSString *XADFileNameKey=@"XADFileName";
 NSString *XADFileSizeKey=@"XADFileSize";
 NSString *XADCompressedSizeKey=@"XADCompressedSize";
@@ -95,7 +96,9 @@ NSString *XADSkipLengthKey=@"XADSkipLength";
 NSString *XADCompressionNameKey=@"XADCompressionName";
 
 NSString *XADIsSolidKey=@"XADIsSolid";
+NSString *XADFirstSolidIndexKey=@"XADFirstSolidIndex";
 NSString *XADFirstSolidEntryKey=@"XADFirstSolidEntry";
+NSString *XADNextSolidIndexKey=@"XADNextSolidIndex";
 NSString *XADNextSolidEntryKey=@"XADNextSolidEntry";
 NSString *XADSolidObjectKey=@"XADSolidObject";
 NSString *XADSolidOffsetKey=@"XADSolidOffset";
@@ -334,6 +337,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 		currsolidobj=nil;
 		currsolidhandle=nil;
+
+		currindex=0;
 
 		parsersolidobj=nil;
 		firstsoliddict=prevsoliddict=nil;
@@ -681,6 +686,10 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	// If the caller has requested to stop parsing, discard entry.
 	if(![self shouldKeepParsing]) return;
 
+	// Add index and increment.
+	[dict setObject:[NSNumber numberWithInt:currindex] forKey:XADIndexKey];
+	currindex++;
+
 	// If an encrypted file is added, set the global encryption flag.
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
 	if(enc&&[enc boolValue]) [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsEncryptedKey];
@@ -753,7 +762,9 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		if(solidobj==parsersolidobj)
 		{
 			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsSolidKey];
+			[dict setObject:[firstsoliddict objectForKey:XADIndexKey] forKey:XADFirstSolidIndexKey];
 			[dict setObject:[NSValue valueWithNonretainedObject:firstsoliddict] forKey:XADFirstSolidEntryKey];
+			[prevsoliddict setObject:[dict objectForKey:XADIndexKey] forKey:XADNextSolidIndexKey];
 			[prevsoliddict setObject:[NSValue valueWithNonretainedObject:dict] forKey:XADNextSolidEntryKey];
 
 			[prevsoliddict release];
@@ -765,7 +776,8 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 			[firstsoliddict release];
 			[prevsoliddict release];
-			firstsoliddict=prevsoliddict=[[dict retain] retain];
+			firstsoliddict=[dict retain];
+			prevsoliddict=[dict retain];
 		}
 	}
 	else if(parsersolidobj)

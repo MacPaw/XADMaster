@@ -3,6 +3,14 @@
 #import "XADString.h"
 #import "NSStringPrinting.h"
 
+BOOL IsListRequest(NSString *encoding)
+{
+	if(!encoding) return NO;
+	if([encoding caseInsensitiveCompare:@"list"]==NSOrderedSame) return YES;
+	if([encoding caseInsensitiveCompare:@"help"]==NSOrderedSame) return YES;
+	return NO;
+}
+
 void PrintEncodingList()
 {
 	NSEnumerator *enumerator=[[XADString availableEncodingNames] objectEnumerator];

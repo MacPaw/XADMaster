@@ -159,9 +159,17 @@ int main(int argc,const char **argv)
 
 	[cmdline addStringOption:@"encoding" description:
 	@"The encoding to use for filenames in the archive, when it is not known. "
+	@"If not specified, the program attempts to auto-detect the encoding used. "
 	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."
 	argumentDescription:@"encoding name"];
 	[cmdline addAlias:@"e" forOption:@"encoding"];
+
+	[cmdline addStringOption:@"password-encoding" description:
+	@"The encoding to use for the password for the archive, when it is not known. "
+	@"If not specified, then either the encoding given by the -encoding option "
+	@"or the auto-detected encoding is used."
+	argumentDescription:@"name"];
+	[cmdline addAlias:@"E" forOption:@"password-encoding"];
 
 	[cmdline addSwitchOption:@"no-recursion" description:
 	@"Do not attempt to extract archives contained in other archives. For instance, "
@@ -207,9 +215,10 @@ int main(int argc,const char **argv)
 
 	NSString *password=[cmdline stringValueForOption:@"password"];
 	NSString *encoding=[cmdline stringValueForOption:@"encoding"];
+	NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
 	int forkstyle=forkvalues[[cmdline intValueForOption:@"forks"]];
 
-	if(encoding&&([encoding caseInsensitiveCompare:@"list"]==NSOrderedSame||[encoding caseInsensitiveCompare:@"help"]==NSOrderedSame))
+	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
 	{
 		[@"Available encodings are:\n" print];
 		PrintEncodingList();
@@ -262,7 +271,8 @@ int main(int argc,const char **argv)
 		{
 			if(destination) [unarchiver setDestination:destination];
 			if(password) [[unarchiver archiveParser] setPassword:password];
-			if(encoding) [[[unarchiver archiveParser] stringSource] setFixedEncodingName:encoding];
+			if(encoding) [[unarchiver archiveParser] setEncodingName:encoding];
+			if(passwordencoding) [[unarchiver archiveParser] setPasswordEncodingName:passwordencoding];
 			[unarchiver setMacResourceForkStyle:forkstyle];
 
 			[unarchiver setDelegate:[[[Unarchiver alloc] init] autorelease]];

@@ -367,9 +367,9 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:srchandle name:filename]; // TODO: provide a name?
 		if(!subparser) return XADSubArchiveError;
+		[subparser setSameEncodingAsArchiveParser:parser];
 
 		XADUnarchiver *unarchiver=[XADUnarchiver unarchiverForArchiveParser:subparser];
-
 		[unarchiver setDelegate:delegate];
 		[unarchiver setDestination:destpath];
 		[unarchiver setMacResourceForkStyle:forkstyle];

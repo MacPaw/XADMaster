@@ -328,6 +328,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		skiphandle=nil;
 		delegate=nil;
 		password=nil;
+		passwordencodingname=nil;
 
 		stringsource=[XADStringSource new];
 
@@ -355,6 +356,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	[sourcehandle release];
 	[skiphandle release];
+	[password release];
+	[passwordencodingname release];
 	[stringsource release];
 	[properties release];
 	[currsolidobj release];
@@ -408,7 +411,43 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	password=[newpassword retain];
 }
 
+-(NSString *)encodingName
+{
+	return [stringsource encodingName];
+}
+
+-(float)encodingConfidence
+{
+	return [stringsource confidence];
+}
+
+-(void)setEncodingName:(NSString *)encodingname
+{
+	[stringsource setFixedEncodingName:encodingname];
+}
+
+-(NSString *)passwordEncodingName
+{
+	if(!passwordencodingname) return [self encodingName];
+	else return passwordencodingname;
+}
+
+-(void)setPasswordEncodingName:(NSString *)encodingname
+{
+	if(encodingname!=passwordencodingname)
+	{
+		[passwordencodingname release];
+		passwordencodingname=[encodingname retain];
+	}
+}
+
 -(XADStringSource *)stringSource { return stringsource; }
+
+-(void)setSameEncodingAsArchiveParser:(XADArchiveParser *)parser
+{
+	if([[parser stringSource] hasFixedEncoding]) [self setEncodingName:[parser encodingName]];
+	if(parser->passwordencodingname) [self setPasswordEncodingName:parser->passwordencodingname];
+}
 
 
 
@@ -910,7 +949,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 -(NSData *)encodedPassword
 {
-	return [XADString dataForString:[self password] encodingName:[stringsource encodingName]];
+	return [XADString dataForString:[self password] encodingName:[self passwordEncodingName]];
 }
 
 -(const char *)encodedCStringPassword

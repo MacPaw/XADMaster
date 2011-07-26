@@ -9,7 +9,7 @@
 
 
 BOOL recurse,test;
-NSString *password,*encoding;
+NSString *password,*encoding,*passwordencoding;
 
 int returncode;
 
@@ -93,7 +93,8 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 	if(!subparser) return nil;
 
 	if(password) [subparser setPassword:password];
-	if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
+	if(encoding) [subparser setEncodingName:encoding];
+	if(passwordencoding) [parser setPasswordEncodingName:passwordencoding];
 	[subparser setDelegate:delegate];
 
 	return subparser;
@@ -287,6 +288,7 @@ static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *par
 
 
 
+
 int main(int argc,const char **argv)
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
@@ -305,9 +307,17 @@ int main(int argc,const char **argv)
 
 	[cmdline addStringOption:@"encoding" description:
 	@"The encoding to use for filenames in the archive, when it is not known. "
+	@"If not specified, the program attempts to auto-detect the encoding used. "
 	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."
 	argumentDescription:@"encoding name"];
 	[cmdline addAlias:@"e" forOption:@"encoding"];
+
+	[cmdline addStringOption:@"password-encoding" description:
+	@"The encoding to use for the password for the archive, when it is not known. "
+	@"If not specified, then either the encoding given by the -encoding option "
+	@"or the auto-detected encoding is used."
+	argumentDescription:@"name"];
+	[cmdline addAlias:@"E" forOption:@"password-encoding"];
 
 	[cmdline addSwitchOption:@"print-encoding" description:
 	@"Print the auto-detected encoding after the file list, and the "
@@ -339,20 +349,19 @@ int main(int argc,const char **argv)
 
 	password=[cmdline stringValueForOption:@"password"];
 	encoding=[cmdline stringValueForOption:@"encoding"];
+	passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
 	test=[cmdline boolValueForOption:@"test"];
 	recurse=![cmdline boolValueForOption:@"no-recursion"];
 
 	BOOL json=[cmdline boolValueForOption:@"json"];
 	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
 
-	if(encoding&&([encoding caseInsensitiveCompare:@"list"]==NSOrderedSame||[encoding caseInsensitiveCompare:@"help"]==NSOrderedSame))
+	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
 	{
 		[@"Available encodings are:\n" print];
 		PrintEncodingList();
 		return 0;
 	}
-
-
 
 	NSArray *files=[cmdline remainingArguments];
 	int numfiles=[files count];
@@ -383,7 +392,8 @@ int main(int argc,const char **argv)
 			if(parser)
 			{
 				if(password) [parser setPassword:password];
-				if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
+				if(encoding) [parser setEncodingName:encoding];
+				if(passwordencoding) [parser setPasswordEncodingName:passwordencoding];
 
 				[printer startPrintingArrayObject];
 				[printer startPrintingArray];
@@ -428,7 +438,8 @@ int main(int argc,const char **argv)
 				[@"\n" print];
 
 				if(password) [parser setPassword:password];
-				if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
+				if(encoding) [parser setEncodingName:encoding];
+				if(passwordencoding) [parser setPasswordEncodingName:passwordencoding];
 
 				[parser setDelegate:[[[Lister alloc] init] autorelease]];
 
@@ -440,10 +451,8 @@ int main(int argc,const char **argv)
 
 				if([cmdline boolValueForOption:@"print-encoding"])
 				{
-					XADStringSource *source=[parser stringSource];
-
 					[[NSString stringWithFormat:@"Encoding: %@ (%d%% confidence)\n",
-					[source encodingName],(int)([source confidence]*100+0.5)] print];
+					[parser encodingName],(int)([parser encodingConfidence]*100+0.5)] print];
 				}
 			}
 			else

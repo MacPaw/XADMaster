@@ -72,6 +72,7 @@ extern NSString *XADDiskLabelKey;
 
 	id delegate;
 	NSString *password;
+	NSString *passwordencodingname;
 
 	NSMutableDictionary *properties;
 	XADStringSource *stringsource;
@@ -114,7 +115,13 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 -(BOOL)hasPassword;
 -(void)setPassword:(NSString *)newpassword;
 
+-(NSString *)encodingName;
+-(float)encodingConfidence;
+-(void)setEncodingName:(NSString *)encodingname;
+-(NSString *)passwordEncodingName;
+-(void)setPasswordEncodingName:(NSString *)encodingname;
 -(XADStringSource *)stringSource;
+-(void)setSameEncodingAsArchiveParser:(XADArchiveParser *)parser;
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict;
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict error:(XADError *)errorptr;

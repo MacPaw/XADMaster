@@ -1564,6 +1564,8 @@
 		1BD3832E125610C200FE08BD /* XADDiskDoublerMethod2Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADDiskDoublerMethod2Handle.m; sourceTree = "<group>"; };
 		1BD3842A125A351400FE08BD /* XADNowCompressHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNowCompressHandle.h; sourceTree = "<group>"; };
 		1BD3842B125A351400FE08BD /* XADNowCompressHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNowCompressHandle.m; sourceTree = "<group>"; };
+		1BDDC79513DE3D4200A8C079 /* lsar.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = lsar.1; path = ../Extra/lsar.1; sourceTree = "<group>"; };
+		1BDDC79613DE3D4200A8C079 /* unar.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = unar.1; path = ../Extra/unar.1; sourceTree = "<group>"; };
 		1BE07E6810C9953400B17F91 /* XADCABBlockReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCABBlockReader.h; sourceTree = "<group>"; };
 		1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCABBlockReader.m; sourceTree = "<group>"; };
 		1BE785C410AF78D0007EA6F6 /* XADNSAParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSAParser.h; sourceTree = "<group>"; };
@@ -1752,6 +1754,7 @@
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				1BDDC79413DE3D2800A8C079 /* Man Pages */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */,
 			);
@@ -2541,6 +2544,15 @@
 				1BCD5DA80EED8C9C00D86C43 /* Types.h */,
 			);
 			path = lzma;
+			sourceTree = "<group>";
+		};
+		1BDDC79413DE3D2800A8C079 /* Man Pages */ = {
+			isa = PBXGroup;
+			children = (
+				1BDDC79513DE3D4200A8C079 /* lsar.1 */,
+				1BDDC79613DE3D4200A8C079 /* unar.1 */,
+			);
+			name = "Man Pages";
 			sourceTree = "<group>";
 		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
@@ -4041,6 +4053,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = XADMaster;

@@ -144,24 +144,6 @@
 		else path=[name string];
 	}
 
-	// If we are unpacking a resource fork, we may need to modify the path
-	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
-	if(resnum&&[resnum boolValue])
-	{
-		switch(forkstyle)
-		{
-			case XADHiddenAppleDoubleForkStyle:
-				// TODO: is this path generation correct?
-				path=[[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:
-				[@"._" stringByAppendingString:[path lastPathComponent]]];
-			break;
-
-			case XADVisibleAppleDoubleForkStyle:
-				path=[path stringByAppendingPathExtension:@"rsrc"];
-			break;
-		}
-	}
-
 	XADError error=[self extractEntryWithDictionary:dict as:path forceDirectories:force];
 
 	[pool release];
@@ -186,6 +168,23 @@
 	BOOL islink=linknum&&[linknum boolValue];
 	BOOL isres=resnum&&[resnum boolValue];
 	BOOL isarchive=archivenum&&[archivenum boolValue];
+
+	// If we are unpacking a resource fork, we may need to modify the path
+	if(resnum&&[resnum boolValue])
+	{
+		switch(forkstyle)
+		{
+			case XADHiddenAppleDoubleForkStyle:
+				// TODO: is this path generation correct?
+				path=[[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:
+				[@"._" stringByAppendingString:[path lastPathComponent]]];
+			break;
+
+			case XADVisibleAppleDoubleForkStyle:
+				path=[path stringByAppendingPathExtension:@"rsrc"];
+			break;
+		}
+	}
 
 	// Ask for permission and report that we are starting.
 	if(delegate)

@@ -57,6 +57,11 @@ void InitializeWinZipJPEGContext(WinZipJPEGContext *self)
 	self->mps=0;
 }
 
+void InitializeWinZipJPEGContexts(WinZipJPEGContext *first,size_t bytes)
+{
+	for(int i=0;i<bytes/sizeof(WinZipJPEGContext);i++) InitializeWinZipJPEGContext(first+i);
+}
+
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
 self->dx=0; // Otherwise tests don't pass.

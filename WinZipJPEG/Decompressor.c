@@ -74,6 +74,14 @@ int ReadWinZipJPEGHeader(WinZipJPEGDecompressor *self)
 	// Parse slice value.
 	self->slicevalue=header[3]&0x1f;
 
+	// Initialize arithmetic decoder contexts.
+	InitializeWinZipJPEGContexts(&self->eobbins[0][0][0][0],sizeof(self->eobbins));
+	InitializeWinZipJPEGContexts(&self->zerobins[0][0][0][0],sizeof(self->zerobins));
+	InitializeWinZipJPEGContexts(&self->pivotbins[0][0][0][0],sizeof(self->pivotbins));
+	InitializeWinZipJPEGContexts(&self->magnitudebins[0][0][0][0][0],sizeof(self->magnitudebins));
+	InitializeWinZipJPEGContexts(6self->remainderbins[0][0][0][0],sizeof(self->remainderbins));
+	InitializeWinZipJPEGContexts(6self->signbins[0][0][0][0],sizeof(self->signbins));
+
 	return WinZipJPEGNoError;
 }
 
@@ -182,13 +190,8 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 	{
 
 
-eobbins[4][12][64];
-zerobins[4][62*6*3];
-pivotbins[4][63*5*7]; // Why 63?
-magnitudebins[4][3*9*9*9];
-remainderbins[4][13][3*7];
 
-static void DecodeMCU(WinZipJPEGDecompressor *self,int x,int y
+static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,int x,int y
 int16_t *current[64],int16_t *west[64],int16_t *north[64])
 {
 	// Decode End Of Block value to find out how many AC components there are. (5.6.5)
@@ -214,7 +217,7 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 	// Decode AC components, if any. (5.6.6)
 	for(int k=1;k<=eob;k++)
 	{
-		DecodeACComponent(self,k,current,west,north);
+		DecodeACComponent(self,comp,k,current,west,north);
 	}
 
 	// Fill out remaining block entries with 0.
@@ -223,19 +226,20 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 	// Decode DC components. (5.6.7)
 }
 
-static int DecodeACComponent(WinZipJPEGDecompressor *self,int k,
+static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,int k,
 int16_t *current[64],int16_t *west[64],int16_t *north[64])
 {
 	// Decode zero/non-zero bit. (5.6.6.1)
 	int val1;
-	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(current,north,west,k);
+	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(current,north,west,k));
 	else val1=Average(current,k);
 
 	int val2=Sum(current,k);
 
-	int zerocontext=((k-1)*3+Min(Category(val1),2))*6+min(Category(val2),5);
+	int zerocontext1=Min(Category(val1),2);
+	int zerocontext2=Min(Category(val2),5);
 	int nonzero=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-	&self->zerobins[comp][zerocontext]);
+	&self->zerobins[comp][k-1][zerocontext1][zerocontext2]);
 
 	// If this component is zero, there is no need to decode further parameters.
 	if(!nonzero) return 0;
@@ -244,9 +248,10 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 	int absvalue;
 
 	// Decode pivot (abs>=2). (5.6.6.2)
-	int pivotcontext=((k-1)*5+Min(Category(val1),4))*7+min(Category(val2),6);
+	int pivotcontext1=Min(Category(val1),4);
+	int pivotcontext2=Min(Category(val2),6);
 	int pivot=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-	&self->pivotbins[comp][pivotcontext]);
+	&self->pivotbins[comp][k-1][pivotcontext1][pivotcontext2]);
 
 	if(!pivot)
 	{
@@ -263,31 +268,120 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 		else if(IsFirstColumn(k)) { val3=Row(k)-1; n=1; }
 		else { val3=Category(k-4); n=2; }
 
-		int magnitudecontext=(n*9+Min(Category(val1),8))*9+Min(Category(val2),8);
-		int remaindercontext=n*7+val3;
+		int magnitudecontext1=Min(Category(val1),8);
+		int magnitudecontext2=Min(Category(val2),8);
+		int remaindercontext1=val3;
 
 		// Decode binarization. (5.6.4)
-		...
+
+		// Decode unary header.
+		int ones=0;
+		while(ones<9)
+		{
+			int unary=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+			&self->magnitudebins[comp][n][magnitudecontext1][magnitudecontext2][bits]);
+			if(unary==1) ones++;
+			else break;
+		}
+
+		// Decode remainder bits, if any.
+		if(ones==0) absvalue=2;
+		else if(ones==1) absvalue=3;
+		else
+		{
+			int numbits=ones-1;
+			int val=1<<numbits;
+
+			for(int i=0;i<numbits;i++)
+			{
+				int bit=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+				&self->remainderbins[comp][n][remainedercontext1][i]);
+
+				val|=bit<<i; // TODO: Is this correct? No idea! Spec sure doesn't say!
+			}
+
+			absvalue=val+2;
+		}
 	}
 
+	if(DecodeACSign(self,comp,k,absvalue,current,west,north)) return -absvalue;
+	else return absvalue;
+}
+
+static inline int Sign(int x)
+{
+	if(x>0) return 1;
+	else if(x<0) return -1;
+	else return 0;
+}
+
+static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,int k,int absvalue,
+int16_t *current[64],int16_t *west[64],int16_t *north[64])
+{
 	// Decode sign. (5.6.6.4)
-	int sign;
-	if(IsFirstOrSecondRowOrColumn(k))
+
+	// Calculate sign context, or decode with fixed probability. (5.6.6.4.1)
+	int predictedsign;
+	if(IsFirstRowOrColumn(k))
 	{
-		// Calculate sign context. (5.6.6.4.1)
-		int signcontext;
-		...
-		sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,signcontext);
+		int bdr=BDR(current,north,west,k);
+
+		if(bdr==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
+
+		predictedsign=(bdr<0);
+	}
+	else if(k==4)
+	{
+		int sign1=Sign(north[k]);
+		int sign2=Sign(west[k]);
+
+		if(sign1+sign2==0) NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
+
+		predictedsign=(sign1+sign2<0);
+	}
+	else if(IsSecondRow(k))
+	{
+		if(north[k]==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
+
+		predictedsign=(north[k]<0);
+	}
+	else if(IsSecondCoumn(k))
+	{
+		if(west[k]==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
+
+		predictedsign=(west[k]<0);
 	}
 	else
 	{
-		// Use fixed probability.
-		sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
+		return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
 	}
 
-	if(sign) return -absvalue;
-	else return absvalue;
+	static const int n_for_k[64]={
+		 0,
+		 0, 1,
+		 2, 3, 4,
+		 5, 6, 7, 8,
+		 9,10, 0,11,12,
+		13,14, 0, 0,15,16,
+		17,18, 0, 0, 0,19,20,
+		21,22, 0, 0, 0, 0,23,24,
+		25, 0, 0, 0, 0, 0,26,
+		 0, 0, 0, 0, 0, 0,
+		 0, 0, 0, 0, 0,
+		 0, 0, 0, 0
+		 0, 0, 0,
+		 0, 0,
+		 0,
+	};
+	int n=n_for_k[k];
+
+	int signcontext1=Min(Category(absvalue)/2,2);
+
+	return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+	&self->signbins[comp][n][signcontext1][predictedsign]);
 }
+
+
 
 // Helper function that makes sure to read as much data as requested, even
 // if the read function returns short buffers, and reports an error if it

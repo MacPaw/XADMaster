@@ -98,6 +98,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name error:(XADError *)errorptr;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename error:(XADError *)errorptr;
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum;
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
@@ -121,12 +123,15 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 -(NSString *)passwordEncodingName;
 -(void)setPasswordEncodingName:(NSString *)encodingname;
 -(XADStringSource *)stringSource;
--(void)setSameEncodingAsArchiveParser:(XADArchiveParser *)parser;
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict;
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict error:(XADError *)errorptr;
--(NSData *)finderInfoForDictionary:(NSDictionary *)dict;
 -(NSDictionary *)extendedAttributesForDictionary:(NSDictionary *)dict;
+-(NSData *)finderInfoForDictionary:(NSDictionary *)dict;
+
+-(BOOL)hasChecksum;
+-(BOOL)testChecksum;
+-(XADError)testChecksumWithoutExceptions;
 
 
 

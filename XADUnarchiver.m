@@ -31,6 +31,7 @@
 		preservepermissions=NO;
 		updateinterval=0.1;
 		delegate=nil;
+		shouldstop=NO;
 
 		deferreddirectories=[NSMutableArray new];
 	}
@@ -51,12 +52,6 @@
 -(id)delegate { return delegate; }
 
 -(void)setDelegate:(id)newdelegate { delegate=newdelegate; }
-
-//-(NSString *)password;
-//-(void)setPassword:(NSString *)password;
-
-//-(NSStringEncoding)encoding;
-//-(void)setEncoding:(NSStringEncoding)encoding;
 
 -(NSString *)destination { return destination; }
 
@@ -84,39 +79,40 @@
 -(XADError)parseAndUnarchive
 {
 	id olddelegate=[parser delegate];
+
 	[parser setDelegate:self];
-
-	@try
-	{
-		[parser parse];
-	}
-	@catch(id e)
-	{
-		[parser setDelegate:olddelegate];
-		return [XADException parseException:e];
-	}
-
+	XADError error=[parser parseWithoutExceptions];
 	[parser setDelegate:olddelegate];
+	if(error) return error;
 
-	return [self finishExtractions];
+	error=[self finishExtractions];
+	if(error) return error;
+
+	error=[parser testChecksumWithoutExceptions];
+	if(error) return error;
+
+	return XADNoError;
 }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
-	// TODO: conditionals?
+	//if([self _shouldStop]) return; // Unnecessary - XADArchiveParser handles it.
 	[self extractEntryWithDictionary:dict];
 }
 
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser
 {
-	if(!delegate) return NO;
-	return [delegate extractionShouldStopForUnarchiver:self];
+	return [self _shouldStop];
 }
 
 -(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
 {
-	if(!delegate) return;
 	[delegate unarchiverNeedsPassword:self];
+}
+
+-(void)archiveParser:(XADArchiveParser *)parser findsFileInterestingForReason:(NSString *)reason
+{
+	[delegate unarchiver:self findsFileInterestingForReason:reason];
 }
 
 
@@ -140,8 +136,11 @@
 	if(!path)
 	{
 		XADPath *name=[[dict objectForKey:XADFileNameKey] safePath];
-		if(destination) path=[destination stringByAppendingPathComponent:[name string]];
-		else path=[name string];
+		NSString *namestring=[name string];
+		if(!namestring) return XADEncodingError;
+
+		if(destination) path=[destination stringByAppendingPathComponent:namestring];
+		else path=namestring;
 	}
 
 	XADError error=[self extractEntryWithDictionary:dict as:path forceDirectories:force];
@@ -321,6 +320,25 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 }
 
 
+-(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
+wantChecksum:(BOOL)checksum error:(XADError *)errorptr
+{
+	XADArchiveParser *subparser=[XADArchiveParser
+	archiveParserForEntryWithDictionary:dict
+	archiveParser:parser wantChecksum:checksum error:errorptr];
+	if(!subparser) return nil;
+
+	XADUnarchiver *subunarchiver=[XADUnarchiver unarchiverForArchiveParser:subparser];
+	[subunarchiver setDelegate:delegate];
+	[subunarchiver setDestination:destination];
+	[subunarchiver setMacResourceForkStyle:forkstyle];
+	[subunarchiver setPreserevesPermissions:preservepermissions];
+	[subunarchiver setUpdateInterval:updateinterval];
+
+	return subunarchiver;
+}
+
+
 
 
 -(XADError)_extractFileEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath
@@ -343,53 +361,47 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 -(XADError)_extractLinkEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath
 {
-	NSString *link=nil;
+	XADError error;
+	XADString *link=[parser linkDestinationForDictionary:dict error:&error];
+	if(!link) return error;
 
-	if(delegate)
+	NSString *linkdest=nil;
+	if(delegate) linkdest=[delegate unarchiver:self destinationForLink:link from:destpath];
+	if(!linkdest)
 	{
-		link=[delegate unarchiver:self linkDestinationForEntryWithDictionary:dict from:destpath];
+		linkdest=[link string];
+		if(!linkdest) return XADEncodingError;
 	}
 
-	if(!link) link=[[parser linkDestinationForDictionary:dict] string];
+	// TODO: handle link safety?
 
-	if(!link) return XADBadParametersError; // TODO: better error
-
-	return [self _createPlatformSpecificLinkToPath:link from:destpath];
+	return [self _createPlatformSpecificLinkToPath:linkdest from:destpath];
 }
 
 -(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename
 {
-	@try
+	XADError error;
+	XADUnarchiver *subunarchiver=[self unarchiverForEntryWithDictionary:dict
+	wantChecksum:YES error:&error];
+	if(!subunarchiver)
 	{
-		CSHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
-		if(!srchandle) return XADNotSupportedError;
-
-		XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:srchandle name:filename]; // TODO: provide a name?
-		if(!subparser) return XADSubArchiveError;
-		[subparser setSameEncodingAsArchiveParser:parser];
-
-		XADUnarchiver *unarchiver=[XADUnarchiver unarchiverForArchiveParser:subparser];
-		[unarchiver setDelegate:delegate];
-		[unarchiver setDestination:destpath];
-		[unarchiver setMacResourceForkStyle:forkstyle];
-		[unarchiver setPreserevesPermissions:preservepermissions];
-		[unarchiver setUpdateInterval:updateinterval];
-
-		[delegate unarchiver:self willExtractArchiveEntryWithDictionary:dict
-		withUnarchiver:unarchiver to:destpath];
-
-		XADError error=[unarchiver parseAndUnarchive];
-
-		[delegate unarchiver:self didExtractArchiveEntryWithDictionary:dict
-		withUnarchiver:unarchiver to:destpath error:error];
-
-		return error;
+		if(error) return error;
+		else return XADSubArchiveError;
 	}
-	@catch(id e)
-	{
-		return [XADException parseException:e];
-	}
-	return XADUnknownError; // Kludge to keep gcc quiet
+
+	[subunarchiver setDestination:destpath];
+
+	[delegate unarchiver:self willExtractArchiveEntryWithDictionary:dict
+	withUnarchiver:subunarchiver to:destpath];
+
+	error=[subunarchiver parseAndUnarchive];
+
+	
+
+	[delegate unarchiver:self didExtractArchiveEntryWithDictionary:dict
+	withUnarchiver:subunarchiver to:destpath error:error];
+
+	return error;
 }
 
 
@@ -480,7 +492,7 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 
 		for(;;)
 		{
-			if(delegate&&[delegate extractionShouldStopForUnarchiver:self]) return XADBreakError;
+			if([self _shouldStop]) return XADBreakError;
 
 			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
 			if(actual)
@@ -527,6 +539,14 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 	return XADNoError;
 }
 
+-(BOOL)_shouldStop
+{
+	if(!delegate) return NO;
+	if(shouldstop) return YES;
+
+	return shouldstop=[delegate extractionShouldStopForUnarchiver:self];
+}
+
 @end
 
 
@@ -546,12 +566,25 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path {}
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path error:(XADError)error {}
 
--(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path { return nil; }
-//-(XADAction)unarchiver:(XADUnarchiver *)unarchiver creatingDirectoryDidFailForEntry:(int)n;
+-(NSString *)unarchiver:(XADUnarchiver *)unarchiver destinationForLink:(XADString *)link from:(NSString *)path
+{
+	// Kludge to handle old-style interface.
+	if([self respondsToSelector:@selector(unarchiver:linkDestinationForEntryWithDictionary:from:)])
+	{
+		return [self unarchiver:unarchiver linkDestinationForEntryWithDictionary:
+		[NSMutableDictionary dictionaryWithObjectsAndKeys:
+			link,XADLinkDestinationKey,
+			[NSNumber numberWithBool:YES],XADIsLinkKey,
+		nil] from:path];
+	}
+	return nil;
+}
 
 -(BOOL)extractionShouldStopForUnarchiver:(XADUnarchiver *)unarchiver { return NO; }
 -(void)unarchiver:(XADUnarchiver *)unarchiver extractionProgressForEntryWithDictionary:(NSDictionary *)dict
 fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress {}
+
+-(void)unarchiver:(XADUnarchiver *)unarchiver findsFileInterestingForReason:(NSString *)reason {}
 
 @end
 

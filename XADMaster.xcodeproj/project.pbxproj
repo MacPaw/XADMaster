@@ -877,6 +877,12 @@
 		1BD3842F125A351400FE08BD /* XADNowCompressHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3842B125A351400FE08BD /* XADNowCompressHandle.m */; };
 		1BD38430125A351400FE08BD /* XADNowCompressHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD3842A125A351400FE08BD /* XADNowCompressHandle.h */; };
 		1BD38431125A351400FE08BD /* XADNowCompressHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3842B125A351400FE08BD /* XADNowCompressHandle.m */; };
+		1BDDC7ED13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
+		1BDDC7EE13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
+		1BDDC7EF13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
+		1BDDC7F013E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */; };
+		1BDDC7F113E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */; };
+		1BDDC7F213E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */; };
 		1BE07E6B10C9953400B17F91 /* XADCABBlockReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */; };
 		1BE785C710AF78D0007EA6F6 /* XADNSAParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785C510AF78D0007EA6F6 /* XADNSAParser.m */; };
 		1BE785EF10AF8607007EA6F6 /* XADSARParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BE785ED10AF8607007EA6F6 /* XADSARParser.m */; };
@@ -1566,6 +1572,8 @@
 		1BD3842B125A351400FE08BD /* XADNowCompressHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNowCompressHandle.m; sourceTree = "<group>"; };
 		1BDDC79513DE3D4200A8C079 /* lsar.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = lsar.1; path = ../Extra/lsar.1; sourceTree = "<group>"; };
 		1BDDC79613DE3D4200A8C079 /* unar.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = unar.1; path = ../Extra/unar.1; sourceTree = "<group>"; };
+		1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSimpleUnarchiver.h; sourceTree = "<group>"; };
+		1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADSimpleUnarchiver.m; sourceTree = "<group>"; };
 		1BE07E6810C9953400B17F91 /* XADCABBlockReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCABBlockReader.h; sourceTree = "<group>"; };
 		1BE07E6910C9953400B17F91 /* XADCABBlockReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCABBlockReader.m; sourceTree = "<group>"; };
 		1BE785C410AF78D0007EA6F6 /* XADNSAParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSAParser.h; sourceTree = "<group>"; };
@@ -1805,6 +1813,8 @@
 				1B349EF011BACA2900396C26 /* XADUnarchiverMacOSX.m */,
 				1B349EF711BACA4F00396C26 /* XADUnarchiverWindows.m */,
 				1B349EF511BACA3C00396C26 /* XADUnarchiverLinux.m */,
+				1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */,
+				1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -2596,6 +2606,7 @@
 				1B31CB7213C288D700ED119E /* XADSWFTagParser.h in Headers */,
 				1B31CB7A13C2890700ED119E /* XADSWFParser.h in Headers */,
 				1B31CB8213C523A300ED119E /* XADPNGWriter.h in Headers */,
+				1BDDC7EE13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2629,6 +2640,7 @@
 				1B31CB7313C288D700ED119E /* XADSWFTagParser.h in Headers */,
 				1B31CB7B13C2890700ED119E /* XADSWFParser.h in Headers */,
 				1B31CB8313C523A300ED119E /* XADPNGWriter.h in Headers */,
+				1BDDC7EF13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2816,6 +2828,7 @@
 				1B31CB7113C288D700ED119E /* XADSWFTagParser.h in Headers */,
 				1B31CB7913C2890700ED119E /* XADSWFParser.h in Headers */,
 				1B31CB8113C523A300ED119E /* XADPNGWriter.h in Headers */,
+				1BDDC7ED13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3063,7 +3076,6 @@
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -3357,6 +3369,7 @@
 				1B31CB7513C288D700ED119E /* XADSWFTagParser.m in Sources */,
 				1B31CB7D13C2890700ED119E /* XADSWFParser.m in Sources */,
 				1B31CB8513C523A300ED119E /* XADPNGWriter.m in Sources */,
+				1BDDC7F113E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3563,6 +3576,7 @@
 				1B31CB7613C288D700ED119E /* XADSWFTagParser.m in Sources */,
 				1B31CB7E13C2890700ED119E /* XADSWFParser.m in Sources */,
 				1B31CB8613C523A300ED119E /* XADPNGWriter.m in Sources */,
+				1BDDC7F213E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3804,6 +3818,7 @@
 				1B31CB7413C288D700ED119E /* XADSWFTagParser.m in Sources */,
 				1B31CB7C13C2890700ED119E /* XADSWFParser.m in Sources */,
 				1B31CB8413C523A300ED119E /* XADPNGWriter.m in Sources */,
+				1BDDC7F013E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

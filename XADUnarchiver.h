@@ -22,6 +22,7 @@
 	double updateinterval;
 
 	id delegate;
+	BOOL shouldstop;
 
 	NSMutableArray *deferreddirectories;
 }
@@ -37,12 +38,6 @@
 
 -(id)delegate;
 -(void)setDelegate:(id)newdelegate;
-
-//-(NSString *)password;
-//-(void)setPassword:(NSString *)password;
-
-//-(NSStringEncoding)encoding;
-//-(void)setEncoding:(NSStringEncoding)encoding;
 
 -(NSString *)destination;
 -(void)setDestination:(NSString *)destpath;
@@ -64,6 +59,9 @@
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path forceDirectories:(BOOL)force;
 -(XADError)finishExtractions;
 
+-(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
+wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
+
 -(XADError)_extractFileEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractLinkEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
@@ -76,6 +74,8 @@ deferDirectories:(BOOL)defer;
 -(XADError)runExtractorWithDictionary:(NSDictionary *)dict outputHandle:(CSHandle *)handle;
 -(XADError)runExtractorWithDictionary:(NSDictionary *)dict
 outputTarget:(id)target selector:(SEL)sel argument:(id)arg;
+
+-(BOOL)_shouldStop;
 
 @end
 
@@ -109,13 +109,19 @@ outputTarget:(id)target selector:(SEL)sel argument:(id)arg;
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path;
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path error:(XADError)error;
 
--(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path;
+-(NSString *)unarchiver:(XADUnarchiver *)unarchiver destinationForLink:(XADString *)link from:(NSString *)path;
 
 -(BOOL)extractionShouldStopForUnarchiver:(XADUnarchiver *)unarchiver;
 -(void)unarchiver:(XADUnarchiver *)unarchiver extractionProgressForEntryWithDictionary:(NSDictionary *)dict
 fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress;
 
+-(void)unarchiver:(XADUnarchiver *)unarchiver findsFileInterestingForReason:(NSString *)reason;
+
 @end
 
+@interface NSObject (XADUnarchiverDelegateDeprecated)
+// Deprecated.
+-(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path;
+@end
 
 double _XADUnarchiverGetTime();

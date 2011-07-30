@@ -164,40 +164,30 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 		immediatesize=[otherarchive representativeSizeOfEntry:n];
 
-		CSHandle *handle=[otherarchive handleForEntry:n error:error];
-		if(handle)
+		parser=[[XADArchiveParser archiveParserForEntryWithDictionary:
+		[otherarchive dataForkParserDictionaryForEntry:n]
+		archiveParser:otherarchive->parser wantChecksum:YES error:error] retain];
+		if(parser)
 		{
-			parser=[[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]] retain];
-			if(parser)
+			if([self _parseWithErrorPointer:error])
 			{
-				if([self _parseWithErrorPointer:error])
+				if(!immediatefailed)
 				{
-					if(!immediatefailed)
+					XADError checksumerror=[parser testChecksumWithoutExceptions];
+					if(checksumerror)
 					{
-						@try
-						{
-							if([handle hasChecksum]&&[handle atEndOfFile]&&![handle isChecksumCorrect])
-							{
-								lasterror=XADChecksumError;
-								if(error) *error=lasterror;
-								immediatefailed=YES;
-							}
-						}
-						@catch(id e)
-						{
-							lasterror=[XADException parseException:e];
-							if(error) *error=lasterror;
-							immediatefailed=YES;
-						}
+						lasterror=checksumerror;
+						if(error) *error=checksumerror;
+						immediatefailed=YES;
 					}
-
-					[self updateAttributesForDeferredDirectories];
-					immediatedestination=nil;
-					return self;
 				}
+
+				[self updateAttributesForDeferredDirectories];
+				immediatedestination=nil;
+				return self;
 			}
-			else if(error) *error=XADDataFormatError;
 		}
+		else if(error) *error=XADSubArchiveError;
 
 		[self release];
 	}
@@ -1008,20 +998,19 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 	}
 }
 
--(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path
+-(NSString *)unarchiver:(XADUnarchiver *)unarchiver destinationForLink:(XADString *)link from:(NSString *)path
 {
-	XADString *xadlink=[parser linkDestinationForDictionary:dict];
-	NSString *link;
-	if(![xadlink encodingIsKnown]&&delegate)
+	NSString *linkstring;
+	if(![link encodingIsKnown]&&delegate)
 	{
 		// TODO: should there be a better way to deal with encodings?
-		NSStringEncoding encoding=[delegate archive:self encodingForData:[xadlink data]
-		guess:[xadlink encoding] confidence:[xadlink confidence]];
-		link=[xadlink stringWithEncoding:encoding];
+		NSStringEncoding encoding=[delegate archive:self encodingForData:[link data]
+		guess:[link encoding] confidence:[link confidence]];
+		linkstring=[link stringWithEncoding:encoding];
 	}
-	else link=[xadlink string];
+	else linkstring=[link string];
 
-	return link;
+	return linkstring;
 }
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory

@@ -314,6 +314,29 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return nil;
 }
 
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum
+{
+	CSHandle *handle=[parser handleForEntryWithDictionary:entry wantChecksum:checksum];
+	if(!handle) [XADException raiseNotSupportedException];
+
+	NSString *filename=[[entry objectForKey:XADFileNameKey] string];
+	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle name:filename];
+	if(!subparser) return nil;
+
+	if([parser password]) [subparser setPassword:[parser password]];
+	if([[parser stringSource] hasFixedEncoding]) [subparser setEncodingName:[parser encodingName]];
+	if(parser->passwordencodingname) [subparser setPasswordEncodingName:parser->passwordencodingname];
+
+	return subparser;
+}
+
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self archiveParserForEntryWithDictionary:entry archiveParser:parser wantChecksum:checksum]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
 
 
 
@@ -443,12 +466,6 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 -(XADStringSource *)stringSource { return stringsource; }
 
--(void)setSameEncodingAsArchiveParser:(XADArchiveParser *)parser
-{
-	if([[parser stringSource] hasFixedEncoding]) [self setEncodingName:[parser encodingName]];
-	if(parser->passwordencodingname) [self setPasswordEncodingName:parser->passwordencodingname];
-}
-
 
 
 
@@ -464,10 +481,10 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	XADString *linkdest=[dict objectForKey:XADLinkDestinationKey];
 	if(linkdest) return linkdest;
 
-	// If not, return the contents of the data stream as the destination (for Zip files and the like).
+	// If not, read the contents of the data stream as the destination (for Zip files and the like).
 	CSHandle *handle=[self handleForEntryWithDictionary:dict wantChecksum:YES];
 	NSData *linkdata=[handle remainingFileContents];
-	if([handle hasChecksum]&&![handle isChecksumCorrect]) return nil; // TODO: do something else here?
+	if([handle hasChecksum]&&![handle isChecksumCorrect]) [XADException raiseChecksumException];
 
 	return [self XADStringWithData:linkdata];
 }
@@ -552,6 +569,22 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 		return [NSData dataWithBytes:finderinfo length:32];
 	}
+}
+
+-(BOOL)hasChecksum { return [sourcehandle hasChecksum]; }
+
+-(BOOL)testChecksum
+{
+	if(![sourcehandle hasChecksum]) return YES;
+	[sourcehandle seekToEndOfFile];
+	return [sourcehandle isChecksumCorrect];
+}
+
+-(XADError)testChecksumWithoutExceptions
+{
+	@try { if(![self testChecksum]) return XADChecksumError; }
+	@catch(id exception) { return [XADException parseException:exception]; }
+	return XADNoError;
 }
 
 
@@ -1008,8 +1041,17 @@ name:(NSString *)name { return nil; }
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 {
 	if(errorptr) *errorptr=XADNoError;
-	@try { return [self handleForEntryWithDictionary:dict wantChecksum:checksum]; }
-	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	@try
+	{
+		CSHandle *handle=[self handleForEntryWithDictionary:dict wantChecksum:checksum];
+		if(!handle&&errorptr) *errorptr=XADNotSupportedError;
+		return handle;
+	}
+	@catch(id exception)
+	{
+		if(errorptr) *errorptr=[XADException parseException:exception];
+	}
+
 	return nil;
 }
 

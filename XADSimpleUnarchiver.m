@@ -24,6 +24,8 @@
 		delegate=nil;
 		shouldstop=NO;
 
+		destination=nil;
+
 		entries=[NSMutableArray new];
 		reasonsforinterest=[NSMutableArray new];
 	}
@@ -36,6 +38,8 @@
 	[parser release];
 	[unarchiver release];
 	[subunarchiver release];
+
+	[destination release];
 
 	[entries release];
 	[reasonsforinterest release];
@@ -61,11 +65,14 @@
 	[[subunarchiver archiveParser] setPassword:password];
 }
 
--(NSString *)destination { return [unarchiver destination]; }
+-(NSString *)destination { return destination; }
 -(void)setDestination:(NSString *)destpath
 {
-	[unarchiver setDestination:destpath];
-	[subunarchiver setDestination:destpath];
+	if(destpath!=destination)
+	{
+		[destination release];
+		destination=[destpath retain];
+	}
 }
 
 -(int)createsEnclosingDirectory { return 0; }
@@ -252,12 +259,14 @@
 	if(!delegate) return nil;
 
 	XADString *filename=[dict objectForKey:XADFileNameKey];
+
 	NSString *encodingname=[delegate simpleUnarchiver:self encodingNameForXADString:filename];
 	if(!encodingname) return nil;
 
-	// TODO: handle destination!
+	NSString *filenamestring=[filename stringWithEncodingName:encodingname];
 
-	return [filename stringWithEncodingName:encodingname];
+	if(destination) return [destination stringByAppendingPathComponent:filenamestring];
+	else return filenamestring;
 }
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path

@@ -15,6 +15,8 @@
 	id delegate;
 	BOOL shouldstop;
 
+	NSString *destination;
+
 	NSMutableArray *entries,*reasonsforinterest;
 
 	off_t totalsize,currsize,totalprogress;

@@ -5,12 +5,14 @@
 
 +(XADSimpleUnarchiver *)simpleUnarchiverForPath:(NSString *)path
 {
-	return nil;
+	return [self simpleUnarchiverForPath:path error:NULL];
 }
 
 +(XADSimpleUnarchiver *)simpleUnarchiverForPath:(NSString *)path error:(XADError *)errorptr;
 {
-	return nil;
+	XADArchiveParser *archiveparser=[XADArchiveParser archiveParserForPath:path error:errorptr];
+	if(!archiveparser) return nil;
+	return [[[self alloc] initWithArchiveParser:archiveparser] autorelease];
 }
 
 -(id)initWithArchiveParser:(XADArchiveParser *)archiveparser
@@ -26,6 +28,27 @@
 
 		destination=nil;
 
+		NSString *name=[archiveparser name];
+		if([name matchedByPattern:
+		@"\\.(part[0-9]+\\.rar|tar\\.gz|tar\\.bz2|tar\\.lzma|sit\\.hqx)$"
+		options:REG_ICASE])
+		{
+			enclosingdir=[[[name stringByDeletingPathExtension]
+			stringByDeletingPathExtension] retain];
+		}
+		else
+		{
+			enclosingdir=[[name stringByDeletingPathExtension] retain];
+		}
+
+		extractsubarchives=YES;
+		removesolo=YES;
+		overwrite=NO;
+		rename=NO;
+
+		regexes=nil;
+		indices=nil;
+
 		entries=[NSMutableArray new];
 		reasonsforinterest=[NSMutableArray new];
 	}
@@ -40,6 +63,10 @@
 	[subunarchiver release];
 
 	[destination release];
+	[enclosingdir release];
+
+	[regexes release];
+	[indices release];
 
 	[entries release];
 	[reasonsforinterest release];
@@ -75,11 +102,33 @@
 	}
 }
 
--(int)createsEnclosingDirectory { return 0; }
--(void)setCreatesEnclosingDirectory:(int)createmode
+-(NSString *)enclosingDirectoryName { return enclosingdir; }
+-(NSString *)enclosingDirectoryPath
 {
-	// TODO: implement
+	if(destination&&enclosingdir) return [destination stringByAppendingPathComponent:enclosingdir];
+	else if(enclosingdir) return enclosingdir;
+	else return destination;
 }
+-(void)setEnclosingDirectoryName:(NSString *)dirname
+{
+	if(dirname!=enclosingdir)
+	{
+		[enclosingdir release];
+		enclosingdir=[dirname retain];
+	}
+}
+
+-(BOOL)removesEnclosingDirectoryForSoloItems { return removesolo; }
+-(void)setRemovesEnclosingDirectoryForSoloItems:(BOOL)removeflag { removesolo=removeflag; }
+
+-(BOOL)alwaysOverwritesFiles { return overwrite; }
+-(void)setAlwaysOverwritesFiles:(BOOL)overwriteflag { overwrite=overwriteflag; }
+
+-(BOOL)alwaysRenamesFiles { return rename; }
+-(void)setAlwaysRenamesFiles:(BOOL)renameflag { rename=renameflag; }
+
+-(BOOL)extractsSubArchives { return extractsubarchives; }
+-(void)setExtractsSubArchives:(BOOL)extractflag { extractsubarchives=extractflag; }
 
 -(int)macResourceForkStyle { return [unarchiver macResourceForkStyle]; }
 -(void)setMacResourceForkStyle:(int)style
@@ -100,6 +149,25 @@
 {
 	[unarchiver setUpdateInterval:interval];
 	[subunarchiver setUpdateInterval:interval];
+}
+
+-(void)addGlobFilter:(NSString *)wildcard
+{
+	// TODO: SOMEHOW correctly handle case sensitivity!
+	NSString *pattern=[XADRegex patternForGlob:wildcard];
+	[self addRegexFilter:[XADRegex regexWithPattern:pattern options:REG_ICASE]];
+}
+
+-(void)addRegexFilter:(XADRegex *)regex
+{
+	if(!regexes) regexes=[NSMutableArray new];
+	[regexes addObject:regex];
+}
+
+-(void)addIndexFilter:(int)index
+{
+	if(!indices) indices=[NSMutableIndexSet new];
+	[indices addIndex:index];
 }
 
 -(XADError)parseAndUnarchive
@@ -176,18 +244,24 @@
 	}
 
 	// Run unarchiver on all entries.
+	XADError lasterror=XADNoError;
+
 	[unarchiver setDelegate:self];
+
 	enumerator=[entries objectEnumerator];
 	while((entry=[enumerator nextObject]))
 	{
 		if(totalsize>=0) currsize=[[entry objectForKey:XADFileSizeKey] longLongValue];
 
-		[unarchiver extractEntryWithDictionary:entry];
+		XADError error=[unarchiver extractEntryWithDictionary:entry];
+		if(error) lasterror=error;
 
 		if(totalsize>=0) totalprogress+=currsize;
 	}
 
-	return XADNoError;
+	[self _finalizeExtraction];
+
+	return lasterror;
 }
 
 -(XADError)_handleSubArchiveWithEntry:(NSDictionary *)entry
@@ -215,8 +289,19 @@
 	[subunarchiver setDelegate:self];
 	error=[subunarchiver parseAndUnarchive];
 
-	return XADNoError;
+	[self _finalizeExtraction];
+
+	return error;
 }
+
+-(void)_finalizeExtraction
+{
+	// TODO: postprocessing. Remove containing dir, propagate quarantine, ...
+
+}
+
+
+
 
 -(BOOL)_shouldStop
 {
@@ -224,6 +309,30 @@
 	if(shouldstop) return YES;
 
 	return shouldstop=[delegate extractionShouldStopForSimpleUnarchiver:self];
+}
+
+-(NSString *)_filenameForEntryWithDictionary:(NSDictionary *)dict
+{
+	XADString *filename=[dict objectForKey:XADFileNameKey];
+
+	NSString *encodingname=[delegate simpleUnarchiver:self encodingNameForXADString:filename];
+
+	if(encodingname) return [filename stringWithEncodingName:encodingname];
+	else return [filename string];
+}
+
+-(NSString *)_findUniquePathForCollidingPath:(NSString *)path
+{
+	NSString *base=[path stringByDeletingPathExtension];
+	NSString *extension=[path pathExtension];
+	if([extension length]) extension=[@"." stringByAppendingString:extension];
+
+	NSString *dest;
+	int n=1;
+	do { dest=[NSString stringWithFormat:@"%@-%d%@",base,n++,extension]; }
+	while([[NSFileManager defaultManager] fileExistsAtPath:dest]);
+
+	return dest;
 }
 
 
@@ -258,20 +367,66 @@
 {
 	if(!delegate) return nil;
 
-	XADString *filename=[dict objectForKey:XADFileNameKey];
+	NSString *filename=[self _filenameForEntryWithDictionary:dict];
 
-	NSString *encodingname=[delegate simpleUnarchiver:self encodingNameForXADString:filename];
-	if(!encodingname) return nil;
-
-	NSString *filenamestring=[filename stringWithEncodingName:encodingname];
-
-	if(destination) return [destination stringByAppendingPathComponent:filenamestring];
-	else return filenamestring;
+	NSString *actualdest=[self enclosingDirectoryPath];
+	if(actualdest) return [actualdest stringByAppendingPathComponent:filename];
+	else return filename;
 }
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	// TODO: handle file collisions
+	// Apply filters.
+	if(delegate)
+	{
+		// If any regex filters have been added, require that one matches.
+		if(regexes)
+		{
+			NSString *filename=[self _filenameForEntryWithDictionary:dict];
+			BOOL found=NO;
+
+			NSEnumerator *enumerator=[regexes objectEnumerator];
+			XADRegex *regex;
+			while(!found && (regex=[enumerator nextObject]))
+			{
+				if([regex matchesString:filename]) found=YES;
+			}
+
+			if(!found) return NO;
+		}
+
+		// If any index filters have been added, require that one matches.
+		if(indices)
+		{
+			NSNumber *indexnum=[dict objectForKey:XADIndexKey];
+			int index=[indexnum intValue];
+			if(![indices containsIndex:index]) return NO;
+		}
+	}
+
+	// Check for collisions unless set to always overwrite.
+	if(!overwrite)
+	if([[NSFileManager defaultManager] fileExistsAtPath:path])
+	{
+		NSString *unique=[self _findUniquePathForCollidingPath:path];
+		if(rename)
+		{
+			path=unique;
+		}
+		else if(delegate)
+		{
+			path=[delegate simpleUnarchiver:self replacementPathForEntryWithDictionary:dict
+			originalPath:path suggestedPath:unique];
+
+			// Cancel extraction if delegate requested it.
+			if(!path) return NO;
+		}
+		else
+		{
+			return NO;
+		}
+	}
+
 	if(!delegate) return YES;
 
 	return [delegate simpleUnarchiver:self shouldExtractEntryWithDictionary:dict to:path];
@@ -309,6 +464,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 
 	if(totalsize>=0)
 	{
+		// If the total size is known, report exact progress.
 		off_t fileprogress=fileratio*currsize;
 		[delegate simpleUnarchiver:self extractionProgressForEntryWithDictionary:dict
 		fileProgress:fileprogress of:currsize
@@ -316,6 +472,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	}
 	else
 	{
+		// If the total size is not known, report estimated progress.
 		[delegate simpleUnarchiver:self estimatedExtractionProgressForEntryWithDictionary:dict
 		fileProgress:fileratio totalProgress:totalratio];
 	}
@@ -325,5 +482,32 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 {
 	[reasonsforinterest addObject:reason];
 }
+
+@end
+
+
+
+@implementation NSObject (XADSimpleUnarchiverDelegate)
+
+-(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver {}
+
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string { return nil; }
+
+-(NSString *)simpleUnarchiver:self replacementPathForEntryWithDictionary:(NSDictionary *)dict
+originalPath:(NSString *)path suggestedPath:(NSString *)unique { return nil; }
+
+-(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path { return YES; }
+-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path {}
+-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error {}
+
+-(BOOL)extractionShouldStopForSimpleUnarchiver:(XADSimpleUnarchiver *)unarchiver { return NO; }
+
+-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver
+extractionProgressForEntryWithDictionary:(NSDictionary *)dict
+fileProgress:(off_t)fileprogress of:(off_t)filesize
+totalProgress:(off_t)totalprogress of:(off_t)totalsize {}
+-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver
+estimatedExtractionProgressForEntryWithDictionary:(NSDictionary *)dict
+fileProgress:(double)fileprogress totalProgress:(double)totalprogress {}
 
 @end

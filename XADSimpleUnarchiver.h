@@ -2,6 +2,7 @@
 
 #import "XADArchiveParser.h"
 #import "XADUnarchiver.h"
+#import "XADRegex.h"
 
 #define XADNeverCreateEnclosingDirectory 0
 #define XADAlwaysCreateEnclosingDirectory 1
@@ -15,7 +16,11 @@
 	id delegate;
 	BOOL shouldstop;
 
-	NSString *destination;
+	NSString *destination,*enclosingdir;
+	BOOL extractsubarchives,removesolo,overwrite,rename;
+
+	NSMutableArray *regexes;
+	NSMutableIndexSet *indices;
 
 	NSMutableArray *entries,*reasonsforinterest;
 
@@ -34,14 +39,29 @@
 -(id)delegate;
 -(void)setDelegate:(id)newdelegate;
 
+// TODO: Encoding wrappers?
+
 -(NSString *)password;
 -(void)setPassword:(NSString *)password;
 
 -(NSString *)destination;
 -(void)setDestination:(NSString *)destpath;
 
--(int)createsEnclosingDirectory;
--(void)setCreatesEnclosingDirectory:(int)createmode;
+-(NSString *)enclosingDirectoryName;
+-(NSString *)enclosingDirectoryPath;
+-(void)setEnclosingDirectoryName:(NSString *)dirname;
+
+-(BOOL)removesEnclosingDirectoryForSoloItems;
+-(void)setRemovesEnclosingDirectoryForSoloItems:(BOOL)removeflag;
+
+-(BOOL)alwaysOverwritesFiles;
+-(void)setAlwaysOverwritesFiles:(BOOL)overwriteflag;
+
+-(BOOL)alwaysRenamesFiles;
+-(void)setAlwaysRenamesFiles:(BOOL)renameflag;
+
+-(BOOL)extractsSubArchives;
+-(void)setExtractsSubArchives:(BOOL)extractflag;
 
 -(int)macResourceForkStyle;
 -(void)setMacResourceForkStyle:(int)style;
@@ -52,12 +72,19 @@
 -(double)updateInterval;
 -(void)setUpdateInterval:(double)interval;
 
+-(void)addGlobFilter:(NSString *)wildcard;
+-(void)addRegexFilter:(XADRegex *)regex;
+-(void)addIndexFilter:(int)index;
+
 -(XADError)parseAndUnarchive;
 
 -(XADError)_handleRegularArchive;
 -(XADError)_handleSubArchiveWithEntry:(NSDictionary *)entry;
+-(void)_finalizeExtraction;
 
 -(BOOL)_shouldStop;
+-(NSString *)_filenameForEntryWithDictionary:(NSDictionary *)dict;
+-(NSString *)_findUniquePathForCollidingPath:(NSString *)path;
 
 @end
 
@@ -68,6 +95,9 @@
 -(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver;
 
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string;
+
+-(NSString *)simpleUnarchiver:self replacementPathForEntryWithDictionary:(NSDictionary *)dict
+originalPath:(NSString *)path suggestedPath:(NSString *)unique;
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
 -(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;

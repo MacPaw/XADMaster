@@ -137,7 +137,6 @@
 	{
 		XADPath *name=[[dict objectForKey:XADFileNameKey] safePath];
 		NSString *namestring=[name string];
-		if(!namestring) return XADEncodingError;
 
 		if(destination) path=[destination stringByAppendingPathComponent:namestring];
 		else path=namestring;
@@ -367,11 +366,7 @@ wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 
 	NSString *linkdest=nil;
 	if(delegate) linkdest=[delegate unarchiver:self destinationForLink:link from:destpath];
-	if(!linkdest)
-	{
-		linkdest=[link string];
-		if(!linkdest) return XADEncodingError;
-	}
+	if(!linkdest) linkdest=[link string];
 
 	// TODO: handle link safety?
 

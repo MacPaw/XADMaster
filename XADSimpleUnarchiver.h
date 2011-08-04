@@ -17,14 +17,23 @@
 	BOOL shouldstop;
 
 	NSString *destination,*enclosingdir;
-	BOOL extractsubarchives,removesolo,overwrite,rename;
+	BOOL extractsubarchives,removesolo;
+	BOOL overwrite,rename,skip;
+	BOOL updateenclosing,updatesolo;
+	BOOL propagatemetadata;
 
 	NSMutableArray *regexes;
 	NSMutableIndexSet *indices;
 
 	NSMutableArray *entries,*reasonsforinterest;
+	NSString *actualdestination,*finaldestination;
+	BOOL enclosingcollision;
 
 	off_t totalsize,currsize,totalprogress;
+
+	#ifdef __APPLE__
+	CFDictionaryRef quarantinedict;
+	#endif
 }
 
 +(XADSimpleUnarchiver *)simpleUnarchiverForPath:(NSString *)path;
@@ -48,7 +57,6 @@
 -(void)setDestination:(NSString *)destpath;
 
 -(NSString *)enclosingDirectoryName;
--(NSString *)enclosingDirectoryPath;
 -(void)setEnclosingDirectoryName:(NSString *)dirname;
 
 -(BOOL)removesEnclosingDirectoryForSoloItems;
@@ -60,8 +68,20 @@
 -(BOOL)alwaysRenamesFiles;
 -(void)setAlwaysRenamesFiles:(BOOL)renameflag;
 
+-(BOOL)alwaysSkipsFiles;
+-(void)setAlwaysSkipsFiles:(BOOL)skipflag;
+
+-(BOOL)updatesEnclosingDirectoryModificationTime;
+-(void)setUpdatesEnclosingDirectoryModificationTime:(BOOL)modificationflag;
+
+-(BOOL)updatesSoloItemModificationTime;
+-(void)setUpdatesSoloItemModificationTime:(BOOL)modificationflag;
+
 -(BOOL)extractsSubArchives;
 -(void)setExtractsSubArchives:(BOOL)extractflag;
+
+-(BOOL)propagatesRelevantMetadata;
+-(void)setPropagatesRelevantMetadata:(BOOL)propagateflag;
 
 -(int)macResourceForkStyle;
 -(void)setMacResourceForkStyle:(int)style;
@@ -76,11 +96,21 @@
 -(void)addRegexFilter:(XADRegex *)regex;
 -(void)addIndexFilter:(int)index;
 
+-(NSString *)actualDestinationPath;
+
 -(XADError)parseAndUnarchive;
 
 -(XADError)_handleRegularArchive;
 -(XADError)_handleSubArchiveWithEntry:(NSDictionary *)entry;
+
 -(void)_finalizeExtraction;
+
+-(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred;
+-(NSString *)_uniqueDirectoryNameWithParentDirectory:(NSString *)parent;
+-(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path;
+-(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest;
+-(BOOL)_removeItemAtPath:(NSString *)path;
+-(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest;
 
 -(BOOL)_shouldStop;
 -(NSString *)_filenameForEntryWithDictionary:(NSDictionary *)dict;
@@ -98,6 +128,8 @@
 
 -(NSString *)simpleUnarchiver:self replacementPathForEntryWithDictionary:(NSDictionary *)dict
 originalPath:(NSString *)path suggestedPath:(NSString *)unique;
+-(NSString *)simpleUnarchiver:self deferredReplacementPathForEntryOriginalPath:(NSString *)path
+suggestedPath:(NSString *)unique;
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
 -(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;

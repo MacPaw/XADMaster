@@ -49,6 +49,13 @@ originalPath:(NSString *)path suggestedPath:(NSString *)unique
 	exit(1);
 }
 
+-(NSString *)simpleUnarchiver:self deferredReplacementPathForOriginalPath:(NSString *)path
+suggestedPath:(NSString *)unique
+{
+	[@"Not implemented.\n" print];
+	exit(1);
+}
+
 //-(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
 
 -(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
@@ -131,12 +138,17 @@ int main(int argc,const char **argv)
 	[cmdline addAlias:@"o" forOption:@"output-directory"];
 
 	[cmdline addSwitchOption:@"force-overwrite" description:
-	@"Always overwrite files when a file to be unpacked already exists on disk."];
+	@"Always overwrite files when a file to be unpacked already exists on disk. "
+	@"By default, the program asks the user if possible, otherwise skips the file."];
 	[cmdline addAlias:@"f" forOption:@"force-overwrite"];
 
 	[cmdline addSwitchOption:@"force-rename" description:
 	@"Always rename files when a file to be unpacked already exists on disk."];
 	[cmdline addAlias:@"r" forOption:@"force-rename"];
+
+	[cmdline addSwitchOption:@"force-skip" description:
+	@"Always skip files when a file to be unpacked already exists on disk."];
+	[cmdline addAlias:@"s" forOption:@"force-skip"];
 
 	[cmdline addSwitchOption:@"force-directory" description:
 	@"Always create a containing directory for for the contents of the "
@@ -185,7 +197,7 @@ int main(int argc,const char **argv)
 	@"\"fork\" creates regular resource forks, "
 	@"\"visible\" creates AppleDouble files with the extension \".rsrc\", "
 	@"\"hidden\" creates AppleDouble files with the prefix \"._\", "
-	@"and \"skip\" discards all resource forks."];
+	@"and \"skip\" discards all resource forks. Defaults to \"fork\"."];
  	[cmdline addAlias:@"k" forOption:@"forks"];
 
 	int forkvalues[]={XADMacOSXForkStyle,XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADIgnoredForkStyle};
@@ -197,7 +209,7 @@ int main(int argc,const char **argv)
 	description:@"How to handle Mac OS resource forks. "
 	@"\"visible\" creates AppleDouble files with the extension \".rsrc\", "
 	@"\"hidden\" creates AppleDouble files with the prefix \"._\", "
-	@"and \"skip\" discards all resource forks."];
+	@"and \"skip\" discards all resource forks. Defaults to \"visisble\"."];
  	[cmdline addAlias:@"k" forOption:@"forks"];
 
 	int forkvalues[]={XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADIgnoredForkStyle};
@@ -212,6 +224,7 @@ int main(int argc,const char **argv)
 	NSString *destination=[cmdline stringValueForOption:@"output-directory"];
 	BOOL forceoverwrite=[cmdline boolValueForOption:@"force-overwrite"];
 	BOOL forcerename=[cmdline boolValueForOption:@"force-rename"];
+	BOOL forceskip=[cmdline boolValueForOption:@"force-skip"];
 	BOOL forcedirectory=[cmdline boolValueForOption:@"force-directory"];
 	BOOL nodirectory=[cmdline boolValueForOption:@"no-directory"];
 	NSString *password=[cmdline stringValueForOption:@"password"];
@@ -263,6 +276,7 @@ int main(int argc,const char **argv)
 	if(nodirectory) [unarchiver setEnclosingDirectoryName:nil];
 	[unarchiver setAlwaysOverwritesFiles:forceoverwrite];
 	[unarchiver setAlwaysRenamesFiles:forcerename];
+	[unarchiver setAlwaysSkipsFiles:forceskip];
 	[unarchiver setExtractsSubArchives:!norecursion];
 	[unarchiver setMacResourceForkStyle:forkstyle];
 
@@ -281,10 +295,18 @@ int main(int argc,const char **argv)
 	error=[unarchiver parseAndUnarchive];
 	if(error)
 	{
-		[@"Failed! (" print];
+		[@"Extraction failed! (" print];
 		[[XADException describeXADError:error] print];
 		[@")\n" print];
 	}
+	else
+	{
+		[@"Successfully extracted to \"" print];
+		[[unarchiver actualDestinationPath] print];
+		[@"\".\n" print];
+	}
+
+	// TODO: Print interest?
 
 	[pool release];
 

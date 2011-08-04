@@ -75,6 +75,8 @@ deferDirectories:(BOOL)defer;
 -(XADError)runExtractorWithDictionary:(NSDictionary *)dict
 outputTarget:(id)target selector:(SEL)sel argument:(id)arg;
 
+-(NSString *)adjustPathString:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict;
+
 -(BOOL)_shouldStop;
 
 @end
@@ -98,8 +100,7 @@ outputTarget:(id)target selector:(SEL)sel argument:(id)arg;
 
 -(void)unarchiverNeedsPassword:(XADUnarchiver *)unarchiver;
 
--(NSString *)unarchiver:(XADUnarchiver *)unarchiver pathForExtractingEntryWithDictionary:(NSDictionary *)dict;
--(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict suggestedPath:(NSString **)pathptr;
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error;
 
@@ -121,6 +122,8 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress;
 
 @interface NSObject (XADUnarchiverDelegateDeprecated)
 // Deprecated.
+-(NSString *)unarchiver:(XADUnarchiver *)unarchiver pathForExtractingEntryWithDictionary:(NSDictionary *)dict;
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path;
 @end
 

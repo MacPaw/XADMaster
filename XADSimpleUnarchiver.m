@@ -1,6 +1,11 @@
 #import "XADSimpleUnarchiver.h"
 #import "XADException.h"
 
+#ifdef __APPLE__
+#include <sys/stat.h>
+#include <sys/xattr.h>
+#endif
+
 @implementation XADSimpleUnarchiver
 
 +(XADSimpleUnarchiver *)simpleUnarchiverForPath:(NSString *)path
@@ -57,6 +62,7 @@
 
 		entries=[NSMutableArray new];
 		reasonsforinterest=[NSMutableArray new];
+		renames=[NSMutableDictionary new];
 
 		actualdestination=nil;
 		finaldestination=nil;
@@ -90,6 +96,7 @@
 
 	[entries release];
 	[reasonsforinterest release];
+	[renames release];
 
 	[actualdestination release];
 	[finaldestination release];
@@ -552,6 +559,33 @@
 	// Check for collision.
 	if([[NSFileManager defaultManager] fileExistsAtPath:path])
 	{
+		// When writing OS X data forks, some collisions will happen. Try
+		// to handle these.
+		#ifdef __APPLE__
+		if(dict && [self macResourceForkStyle]==XADMacOSXForkStyle)
+		{
+			const char *cpath=[path fileSystemRepresentation];
+			size_t ressize=getxattr(cpath,XATTR_RESOURCEFORK_NAME,NULL,0,0,XATTR_NOFOLLOW);
+
+			NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+			if(resnum && [resnum boolValue])
+			{
+				// If this entry is a resource fork, check if the resource fork
+				// size is 0. If so, do not consider this a collision.
+				if(ressize==0) return path;
+			}
+			else
+			{
+				// If this entry is a data fork, check if the resource fork
+				// size is non-zero while the data fork size is zero.
+				// If so, do not consider this a collision.
+				struct stat st;
+				lstat(cpath,&st);
+				if(ressize!=0 && st.st_size==0) return path;
+			}
+		}
+		#endif
+
 		// If set to always skip, just return nil.
 		if(skip) return nil;
 
@@ -578,7 +612,7 @@
 			return nil;
 		}
 	}
-	return path;
+	else return path;
 }
 
 -(NSString *)_uniqueDirectoryNameWithParentDirectory:(NSString *)parent
@@ -627,6 +661,10 @@
 
 -(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest
 {
+	// Check path, and skip if requested.
+	dest=[self _checkPath:dest forEntryWithDictionary:nil deferred:YES];
+	if(!dest) return YES;
+
 	BOOL isdestdir;
 	if([[NSFileManager defaultManager] fileExistsAtPath:dest isDirectory:&isdestdir])
 	{
@@ -651,18 +689,9 @@
 		}
 		else if(!issrcdir&&!isdestdir)
 		{
-			// If both are files, ask for a possible replacement name, and
-			// then remove any existing file, and move.
-			NSString *newdest=[self _checkPath:dest forEntryWithDictionary:nil deferred:YES];
-			if(!newdest) return YES;
-
-			BOOL isnewdestdir;
-			if([[NSFileManager defaultManager] fileExistsAtPath:src isDirectory:&isnewdestdir])
-			{
-				if(isnewdestdir) return NO; // If the new path is a directory, fail.
-				else [self _removeItemAtPath:newdest];
-			}
-			return [self _moveItemAtPath:src toPath:newdest];
+			// If both are files, remove any existing file, then move.
+			[self _removeItemAtPath:dest];
+			return [self _moveItemAtPath:src toPath:dest];
 		}
 		else
 		{
@@ -704,24 +733,27 @@
 	[delegate simpleUnarchiverNeedsPassword:self];
 }
 
--(NSString *)unarchiver:(XADUnarchiver *)unarchiver pathForExtractingEntryWithDictionary:(NSDictionary *)dict
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict suggestedPath:(NSString **)pathptr
 {
-	if(!delegate) return nil;
+	// Decode name.
+	XADPath *xadpath=[[dict objectForKey:XADFileNameKey] safePath];
+	NSString *encodingname=nil;
+	if(delegate && ![xadpath encodingIsKnown])
+	{
+		encodingname=[delegate simpleUnarchiver:self encodingNameForXADPath:xadpath];
+		if(!encodingname) return NO;
+	}
 
-	NSString *filename=[self _filenameForEntryWithDictionary:dict];
+	NSString *filename;
+	if(encodingname) filename=[xadpath stringWithEncodingName:encodingname];
+	else filename=[xadpath string];
 
-	return [actualdestination stringByAppendingPathComponent:filename];
-}
-
--(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
-{
 	// Apply filters.
 	if(delegate)
 	{
 		// If any regex filters have been added, require that one matches.
 		if(regexes)
 		{
-			NSString *filename=[self _filenameForEntryWithDictionary:dict];
 			BOOL found=NO;
 
 			NSEnumerator *enumerator=[regexes objectEnumerator];
@@ -743,21 +775,47 @@
 		}
 	}
 
-	// If the entry is not a directory, check path for collisions,
-	// and skip if requested. Directories are currently always silently
-	// accepted.
-	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
-	if(!dirnum||![dirnum boolValue])
+	// Walk through the path, and check if any parts that have not already been
+	// encountered collide, and cache results in the path hierarchy.
+	NSMutableDictionary *parent=renames;
+	NSString *path=actualdestination;
+	NSArray *components=[xadpath pathComponents];
+	int numcomponents=[components count];
+	for(int i=0;i<numcomponents;i++)
 	{
-		path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
-		if(!path) return NO;
+		XADString *component=[components objectAtIndex:i];
+		NSMutableDictionary *pathdict=[parent objectForKey:component];
+		if(!pathdict)
+		{
+			// This path has not been encountered yet. First, build a
+			// path based on the current component and the parent's path.
+			NSString *componentstr;
+			if(encodingname) componentstr=[component stringWithEncodingName:encodingname];
+			else componentstr=[component string];
+
+			path=[path stringByAppendingPathComponent:componentstr];
+
+			// Check it for collisions, and skip if requested.
+			if(i==numcomponents-1) path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
+			else path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
+			if(!path) return NO;
+
+			// Store path and dictionary in path hierarchy.
+			pathdict=[NSMutableDictionary dictionaryWithObject:path forKey:@"."];
+			[parent setObject:pathdict forKey:component];
+		}
+		else path=[pathdict objectForKey:@"."];
+
+		parent=pathdict;
 	}
 
-	// If we have no delegate to ask, extract the file.
-	if(!delegate) return YES;
+	*pathptr=path;
 
-	// Otherwise, ask the delegate.
-	return [delegate simpleUnarchiver:self shouldExtractEntryWithDictionary:dict to:path];
+	// If we have a delegate, ask it if we should extract.
+	if(delegate) return [delegate simpleUnarchiver:self shouldExtractEntryWithDictionary:dict to:path];
+
+	// Otherwise, just extract.
+	return YES;
 }
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
@@ -831,16 +889,6 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	return shouldstop=[delegate extractionShouldStopForSimpleUnarchiver:self];
 }
 
--(NSString *)_filenameForEntryWithDictionary:(NSDictionary *)dict
-{
-	XADString *filename=[dict objectForKey:XADFileNameKey];
-
-	NSString *encodingname=[delegate simpleUnarchiver:self encodingNameForXADString:filename];
-
-	if(encodingname) return [filename stringWithEncodingName:encodingname];
-	else return [filename string];
-}
-
 -(NSString *)_findUniquePathForCollidingPath:(NSString *)path
 {
 	NSString *base=[path stringByDeletingPathExtension];
@@ -863,7 +911,8 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 
 -(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver {}
 
--(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string { return nil; }
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADPath:(XADPath *)path { return [path encodingName]; }
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string { return [string encodingName]; }
 
 -(NSString *)simpleUnarchiver:self replacementPathForEntryWithDictionary:(NSDictionary *)dict
 originalPath:(NSString *)path suggestedPath:(NSString *)unique { return nil; }

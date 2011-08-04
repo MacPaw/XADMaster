@@ -190,7 +190,8 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	int count=[components count];
 	int first=0;
 
-	// Drop slashes and .. at the start of the path
+	// Drop "/" and ".." components at the start of the path.
+	// "." and ".." components have already been stripped earlier.
 	while(first<count)
 	{
 		NSString *component=[components objectAtIndex:first];
@@ -200,18 +201,6 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 	if(first==0) return self;
 	else return [[[XADPath alloc] initWithComponents:[components subarrayWithRange:NSMakeRange(first,count-first)]] autorelease];
-
-/*	NSMutableArray *safecomponents=[NSMutableArray arrayWithArray:components];
-
-	// Drop slashes and .. at the start of the path
-	while([safecomponents count])
-	{
-		NSString *first=[safecomponents objectAtIndex:0];
-		if([first isEqual:@".."]||[first isEqual:@"/"]) [safecomponents removeObjectAtIndex:0];
-		else break;
-	}
-
-	return [[[XADPath alloc] initWithComponents:safecomponents] autorelease];*/
 }
 
 

@@ -26,6 +26,7 @@
 	NSMutableIndexSet *indices;
 
 	NSMutableArray *entries,*reasonsforinterest;
+	NSMutableDictionary *renames;
 	NSString *actualdestination,*finaldestination;
 	BOOL enclosingcollision;
 
@@ -113,7 +114,6 @@
 -(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest;
 
 -(BOOL)_shouldStop;
--(NSString *)_filenameForEntryWithDictionary:(NSDictionary *)dict;
 -(NSString *)_findUniquePathForCollidingPath:(NSString *)path;
 
 @end
@@ -124,6 +124,7 @@
 
 -(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver;
 
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADPath:(XADPath *)path;
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string;
 
 -(NSString *)simpleUnarchiver:self replacementPathForEntryWithDictionary:(NSDictionary *)dict

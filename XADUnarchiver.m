@@ -120,33 +120,12 @@
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict
 {
-	return [self extractEntryWithDictionary:dict forceDirectories:NO];
+	return [self extractEntryWithDictionary:dict as:nil forceDirectories:NO];
 }
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict forceDirectories:(BOOL)force
 {
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
-
-	NSString *path=nil;
-
-	// Ask the delegate for its opinion on the output path.
-	if(delegate) path=[delegate unarchiver:self pathForExtractingEntryWithDictionary:dict];
-
-	// If we were not given a path, pick one ourselves.
-	if(!path)
-	{
-		XADPath *name=[[dict objectForKey:XADFileNameKey] safePath];
-		NSString *namestring=[name string];
-
-		if(destination) path=[destination stringByAppendingPathComponent:namestring];
-		else path=namestring;
-	}
-
-	XADError error=[self extractEntryWithDictionary:dict as:path forceDirectories:force];
-
-	[pool release];
-
-	return error;
+	return [self extractEntryWithDictionary:dict as:nil forceDirectories:force];
 }
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path
@@ -167,27 +146,23 @@
 	BOOL isres=resnum&&[resnum boolValue];
 	BOOL isarchive=archivenum&&[archivenum boolValue];
 
-	// If we are unpacking a resource fork, we may need to modify the path
-	if(resnum&&[resnum boolValue])
+	// If we were not given a path, pick one ourselves.
+	if(!path)
 	{
-		switch(forkstyle)
-		{
-			case XADHiddenAppleDoubleForkStyle:
-				// TODO: is this path generation correct?
-				path=[[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:
-				[@"._" stringByAppendingString:[path lastPathComponent]]];
-			break;
+		XADPath *name=[[dict objectForKey:XADFileNameKey] safePath];
+		NSString *namestring=[name string];
 
-			case XADVisibleAppleDoubleForkStyle:
-				path=[path stringByAppendingPathExtension:@"rsrc"];
-			break;
-		}
+		if(destination) path=[destination stringByAppendingPathComponent:namestring];
+		else path=namestring;
+
+		// Adjust path for resource forks.
+		path=[self adjustPathString:path forEntryWithDictionary:dict];
 	}
 
-	// Ask for permission and report that we are starting.
+	// Ask for permission and possibly a path, and report that we are starting.
 	if(delegate)
 	{
-		if(![delegate unarchiver:self shouldExtractEntryWithDictionary:dict to:path])
+		if(![delegate unarchiver:self shouldExtractEntryWithDictionary:dict suggestedPath:&path])
 		{
 			[pool release];
 			return XADBreakError;
@@ -366,7 +341,7 @@ wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 
 	NSString *linkdest=nil;
 	if(delegate) linkdest=[delegate unarchiver:self destinationForLink:link from:destpath];
-	if(!linkdest) linkdest=[link string];
+	if(!linkdest) return XADBreakError;
 
 	// TODO: handle link safety?
 
@@ -534,6 +509,28 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 	return XADNoError;
 }
 
+-(NSString *)adjustPathString:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
+{
+	// If we are unpacking a resource fork, we may need to modify the path.
+	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+	if(resnum&&[resnum boolValue])
+	{
+		switch(forkstyle)
+		{
+			case XADHiddenAppleDoubleForkStyle:
+				// TODO: is this path generation correct?
+				return [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:
+				[@"._" stringByAppendingString:[path lastPathComponent]]];
+			break;
+
+			case XADVisibleAppleDoubleForkStyle:
+				return [path stringByAppendingPathExtension:@"rsrc"];
+			break;
+		}
+	}
+	return path;
+}
+
 -(BOOL)_shouldStop
 {
 	if(!delegate) return NO;
@@ -551,7 +548,19 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 -(void)unarchiverNeedsPassword:(XADUnarchiver *)unarchiver {}
 
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver pathForExtractingEntryWithDictionary:(NSDictionary *)dict { return nil; }
--(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path { return YES; }
+
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict suggestedPath:(NSString **)pathptr
+{
+	// Kludge to handle old-style interface.
+	if([self respondsToSelector:@selector(unarchiver:shouldExtractEntryWithDictionary:to:)])
+	{
+		NSString *path=[self unarchiver:unarchiver pathForExtractingEntryWithDictionary:dict];
+		if(path) *pathptr=path;
+		return [self unarchiver:unarchiver shouldExtractEntryWithDictionary:dict to:*pathptr];
+	}
+	else return YES;
+}
+
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path {}
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error {}
 
@@ -572,7 +581,7 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 			[NSNumber numberWithBool:YES],XADIsLinkKey,
 		nil] from:path];
 	}
-	return nil;
+	else return [link string];
 }
 
 -(BOOL)extractionShouldStopForUnarchiver:(XADUnarchiver *)unarchiver { return NO; }

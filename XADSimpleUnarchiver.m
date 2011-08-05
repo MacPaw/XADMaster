@@ -552,163 +552,6 @@
 
 
 
--(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred
-{
-	// If set to always overwrite, just return the path without furhter checking.
-	if(overwrite) return path;
-
-	// Check for collision.
-	if([[NSFileManager defaultManager] fileExistsAtPath:path])
-	{
-		// When writing OS X data forks, some collisions will happen. Try
-		// to handle these.
-		#ifdef __APPLE__
-		if(dict && [self macResourceForkStyle]==XADMacOSXForkStyle)
-		{
-			const char *cpath=[path fileSystemRepresentation];
-			size_t ressize=getxattr(cpath,XATTR_RESOURCEFORK_NAME,NULL,0,0,XATTR_NOFOLLOW);
-
-			NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
-			if(resnum && [resnum boolValue])
-			{
-				// If this entry is a resource fork, check if the resource fork
-				// size is 0. If so, do not consider this a collision.
-				if(ressize==0) return path;
-			}
-			else
-			{
-				// If this entry is a data fork, check if the resource fork
-				// size is non-zero while the data fork size is zero.
-				// If so, do not consider this a collision.
-				struct stat st;
-				lstat(cpath,&st);
-				if(ressize!=0 && st.st_size==0) return path;
-			}
-		}
-		#endif
-
-		// If set to always skip, just return nil.
-		if(skip) return nil;
-
-		NSString *unique=[self _findUniquePathForCollidingPath:path];
-
-		if(rename)
-		{
-			// If set to always rename, just return the alternate path.
-			return unique;
-		}
-		else if(delegate)
-		{
-			// If we have a delegate, ask it.
-			if(deferred) return [delegate simpleUnarchiver:self
-			deferredReplacementPathForEntryOriginalPath:path
-			suggestedPath:unique];
-			else return [delegate simpleUnarchiver:self
-			replacementPathForEntryWithDictionary:dict
-			originalPath:path suggestedPath:unique];
-		}
-		else
-		{
-			// By default, skip file.
-			return nil;
-		}
-	}
-	else return path;
-}
-
--(NSString *)_uniqueDirectoryNameWithParentDirectory:(NSString *)parent
-{
-	// TODO: ensure this path is actually unique.
-	NSDate *now=[NSDate date];
-	int64_t t=[now timeIntervalSinceReferenceDate]*1000000000;
-
-	#ifdef __MINGW32__
-	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd",t];
-	#else
-	pid_t pid=getpid();
-	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd%d",t,pid];
-	#endif
-
-	if(parent) return [parent stringByAppendingPathComponent:dirname];
-	else return dirname;
-}
-
--(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path
-{
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
-	#else
-	return [[NSFileManager defaultManager] directoryContentsAtPath:destpath];
-	#endif
-}
-
--(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest
-{
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	return [[NSFileManager defaultManager] moveItemAtPath:src toPath:dest error:NULL];
-	#else
-	return [[NSFileManager defaultManager] movePath:src toPath:dest handler:nil];
-	#endif
-}
-
--(BOOL)_removeItemAtPath:(NSString *)path
-{
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
-	#else
-	return [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
-	#endif
-}
-
--(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest
-{
-	// Check path, and skip if requested.
-	dest=[self _checkPath:dest forEntryWithDictionary:nil deferred:YES];
-	if(!dest) return YES;
-
-	BOOL isdestdir;
-	if([[NSFileManager defaultManager] fileExistsAtPath:dest isDirectory:&isdestdir])
-	{
-		BOOL issrcdir;
-		if(![[NSFileManager defaultManager] fileExistsAtPath:src isDirectory:&issrcdir]) return NO;
-
-		if(issrcdir&&isdestdir)
-		{
-			// If both source and destinaton are directories, iterate over the
-			// contents and recurse.
-			NSArray *files=[self _contentsOfDirectoryAtPath:src];
-			NSEnumerator *enumerator=[files objectEnumerator];
-			NSString *file;
-			while((file=[enumerator nextObject]))
-			{
-				NSString *newsrc=[src stringByAppendingPathComponent:file];
-				NSString *newdest=[dest stringByAppendingPathComponent:file];
-				BOOL res=[self _recursivelyMoveItemAtPath:newsrc toPath:newdest];
-				if(!res) return NO; // TODO: Should this try to move the remaining items?
-			}
-			return YES;
-		}
-		else if(!issrcdir&&!isdestdir)
-		{
-			// If both are files, remove any existing file, then move.
-			[self _removeItemAtPath:dest];
-			return [self _moveItemAtPath:src toPath:dest];
-		}
-		else
-		{
-			// Can't overwrite a file with a directory or vice versa.
-			return NO;
-		}
-	}
-	else
-	{
-		return [self _moveItemAtPath:src toPath:dest];
-	}
-}
-
-
-
-
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
 {
 	[entries addObject:dict];
@@ -734,7 +577,7 @@
 	[delegate simpleUnarchiverNeedsPassword:self];
 }
 
--(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict suggestedPath:(NSString **)pathptr
+-(BOOL)unarchiver:(XADUnarchiver *)unarch shouldExtractEntryWithDictionary:(NSDictionary *)dict suggestedPath:(NSString **)pathptr
 {
 	// Decode name.
 	XADPath *xadpath=[[dict objectForKey:XADFileNameKey] safePath];
@@ -797,8 +640,15 @@
 			path=[path stringByAppendingPathComponent:componentstr];
 
 			// Check it for collisions, and skip if requested.
-			if(i==numcomponents-1) path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
-			else path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
+			if(i==numcomponents-1)
+			{
+				path=[unarch adjustPathString:path forEntryWithDictionary:dict];
+				path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
+			}
+			else
+			{
+				path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
+			}
 			if(!path) return NO;
 
 			// Store path and dictionary in path hierarchy.
@@ -882,12 +732,86 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 
 
 
--(BOOL)_shouldStop
-{
-	if(!delegate) return NO;
-	if(shouldstop) return YES;
 
-	return shouldstop=[delegate extractionShouldStopForSimpleUnarchiver:self];
+-(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred
+{
+	// If set to always overwrite, just return the path without furhter checking.
+	if(overwrite) return path;
+
+	// Check for collision.
+	if([[NSFileManager defaultManager] fileExistsAtPath:path])
+	{
+		// When writing OS X data forks, some collisions will happen. Try
+		// to handle these.
+		#ifdef __APPLE__
+		if(dict && [self macResourceForkStyle]==XADMacOSXForkStyle)
+		{
+			const char *cpath=[path fileSystemRepresentation];
+			size_t ressize=getxattr(cpath,XATTR_RESOURCEFORK_NAME,NULL,0,0,XATTR_NOFOLLOW);
+
+			NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+			if(resnum && [resnum boolValue])
+			{
+				// If this entry is a resource fork, check if the resource fork
+				// size is 0. If so, do not consider this a collision.
+				if(ressize==0) return path;
+			}
+			else
+			{
+				// If this entry is a data fork, check if the resource fork
+				// size is non-zero while the data fork size is zero.
+				// If so, do not consider this a collision.
+				struct stat st;
+				lstat(cpath,&st);
+				if(ressize!=0 && st.st_size==0) return path;
+			}
+		}
+		#endif
+
+		// If set to always skip, just return nil.
+		if(skip) return nil;
+
+		NSString *unique=[self _findUniquePathForCollidingPath:path];
+
+		if(rename)
+		{
+			// If set to always rename, just return the alternate path.
+			return unique;
+		}
+		else if(delegate)
+		{
+			// If we have a delegate, ask it.
+			if(deferred) return [delegate simpleUnarchiver:self
+			deferredReplacementPathForEntryOriginalPath:path
+			suggestedPath:unique];
+			else return [delegate simpleUnarchiver:self
+			replacementPathForEntryWithDictionary:dict
+			originalPath:path suggestedPath:unique];
+		}
+		else
+		{
+			// By default, skip file.
+			return nil;
+		}
+	}
+	else return path;
+}
+
+-(NSString *)_uniqueDirectoryNameWithParentDirectory:(NSString *)parent
+{
+	// TODO: ensure this path is actually unique.
+	NSDate *now=[NSDate date];
+	int64_t t=[now timeIntervalSinceReferenceDate]*1000000000;
+
+	#ifdef __MINGW32__
+	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd",t];
+	#else
+	pid_t pid=getpid();
+	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd%d",t,pid];
+	#endif
+
+	if(parent) return [parent stringByAppendingPathComponent:dirname];
+	else return dirname;
 }
 
 -(NSString *)_findUniquePathForCollidingPath:(NSString *)path
@@ -902,6 +826,87 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	while([[NSFileManager defaultManager] fileExistsAtPath:dest]);
 
 	return dest;
+}
+
+-(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path
+{
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
+	#else
+	return [[NSFileManager defaultManager] directoryContentsAtPath:destpath];
+	#endif
+}
+
+-(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest
+{
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	return [[NSFileManager defaultManager] moveItemAtPath:src toPath:dest error:NULL];
+	#else
+	return [[NSFileManager defaultManager] movePath:src toPath:dest handler:nil];
+	#endif
+}
+
+-(BOOL)_removeItemAtPath:(NSString *)path
+{
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+	#else
+	return [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+	#endif
+}
+
+-(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest
+{
+	// Check path, and skip if requested.
+	dest=[self _checkPath:dest forEntryWithDictionary:nil deferred:YES];
+	if(!dest) return YES;
+
+	BOOL isdestdir;
+	if([[NSFileManager defaultManager] fileExistsAtPath:dest isDirectory:&isdestdir])
+	{
+		BOOL issrcdir;
+		if(![[NSFileManager defaultManager] fileExistsAtPath:src isDirectory:&issrcdir]) return NO;
+
+		if(issrcdir&&isdestdir)
+		{
+			// If both source and destinaton are directories, iterate over the
+			// contents and recurse.
+			NSArray *files=[self _contentsOfDirectoryAtPath:src];
+			NSEnumerator *enumerator=[files objectEnumerator];
+			NSString *file;
+			while((file=[enumerator nextObject]))
+			{
+				NSString *newsrc=[src stringByAppendingPathComponent:file];
+				NSString *newdest=[dest stringByAppendingPathComponent:file];
+				BOOL res=[self _recursivelyMoveItemAtPath:newsrc toPath:newdest];
+				if(!res) return NO; // TODO: Should this try to move the remaining items?
+			}
+			return YES;
+		}
+		else if(!issrcdir&&!isdestdir)
+		{
+			// If both are files, remove any existing file, then move.
+			[self _removeItemAtPath:dest];
+			return [self _moveItemAtPath:src toPath:dest];
+		}
+		else
+		{
+			// Can't overwrite a file with a directory or vice versa.
+			return NO;
+		}
+	}
+	else
+	{
+		return [self _moveItemAtPath:src toPath:dest];
+	}
+}
+
+-(BOOL)_shouldStop
+{
+	if(!delegate) return NO;
+	if(shouldstop) return YES;
+
+	return shouldstop=[delegate extractionShouldStopForSimpleUnarchiver:self];
 }
 
 @end

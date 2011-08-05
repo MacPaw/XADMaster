@@ -108,13 +108,12 @@
 
 -(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred;
 -(NSString *)_uniqueDirectoryNameWithParentDirectory:(NSString *)parent;
+-(NSString *)_findUniquePathForCollidingPath:(NSString *)path;
 -(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path;
 -(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest;
 -(BOOL)_removeItemAtPath:(NSString *)path;
 -(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest;
-
 -(BOOL)_shouldStop;
--(NSString *)_findUniquePathForCollidingPath:(NSString *)path;
 
 @end
 

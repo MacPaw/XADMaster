@@ -13,7 +13,6 @@ int returncode;
 
 @interface Unarchiver:NSObject
 {
-	int indent;
 }
 @end
 
@@ -23,52 +22,84 @@ int returncode;
 {
 	if((self=[super init]))
 	{
-		indent=1;
 	}
 	return self;
 }
 
--(void)printIndention
-{
-	for(int i=0;i<indent;i++) [@"  " print];
-}
-
 -(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver
 {
-	[@"This archive requires a password to unpack. Use the -p option to provide one.\n" print];
-	exit(2);
+ 	if(IsInteractive())
+	{
+		NSString *password=AskForPassword(@"This archive requires a password to unpack.\n");
+		if(!password) exit(2);
+		[unarchiver setPassword:password];
+	}
+	else
+	{
+		[@"This archive requires a password to unpack. Use the -p option to provide one.\n" printToFile:stderr];
+		exit(2);
+	}
 }
 
 
+//-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADPath:(XADPath *)string;
 //-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string;
 
--(NSString *)simpleUnarchiver:self replacementPathForEntryWithDictionary:(NSDictionary *)dict
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver replacementPathForEntryWithDictionary:(NSDictionary *)dict
 originalPath:(NSString *)path suggestedPath:(NSString *)unique
 {
-	[@"Not implemented.\n" print];
-	exit(1);
+	// Skip files if not interactive.
+ 	if(!IsInteractive()) return nil;
+
+	[@"\"" print];
+	[[path stringByEscapingControlCharacters] print];
+	[@"\" already exists.\n" print];
+
+	for(;;)
+	{
+		[@"(r)ename to \"" print];
+		[[[unique lastPathComponent] stringByEscapingControlCharacters] print];
+		[@"\", (R)ename all, (o)verwrite, (O)verwrite all, (s)kip, (S)kip all, (q)uit? " print];
+		fflush(stdout);
+
+		fpurge(stdin);
+		int c=getc(stdin);
+		fpurge(stdin);
+
+		switch(c)
+		{
+			case 'r': return unique;
+			case 'R': [unarchiver setAlwaysRenamesFiles:YES]; return unique;
+			case 'o': return path;
+			case 'O': [unarchiver setAlwaysOverwritesFiles:YES]; return path;
+			case 's': return nil;
+			case 'S': [unarchiver setAlwaysSkipsFiles:YES]; return nil;
+			case 'q': exit(1);
+		}
+	}
 }
 
--(NSString *)simpleUnarchiver:self deferredReplacementPathForOriginalPath:(NSString *)path
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver deferredReplacementPathForOriginalPath:(NSString *)path
 suggestedPath:(NSString *)unique
 {
-	[@"Not implemented.\n" print];
-	exit(1);
+	return [self simpleUnarchiver:unarchiver replacementPathForEntryWithDictionary:nil
+	originalPath:path suggestedPath:unique];
 }
 
 //-(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
 
 -(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	[self printIndention];
-
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
 //	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
 	NSNumber *size=[dict objectForKey:XADFileSizeKey];
 	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
 
-	NSString *name=[[[dict objectForKey:XADFileNameKey] string] stringByEscapingControlCharacters];
+	[@"  " print];
+
+	// TODO: Move more into DisplayNameForEntryWithDictionary?
+	NSString *name=DisplayNameForEntryWithDictionary(dict);
 	[name print];
 	[@" (" print];
 

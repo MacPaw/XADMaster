@@ -63,6 +63,7 @@
 		entries=[NSMutableArray new];
 		reasonsforinterest=[NSMutableArray new];
 		renames=[NSMutableDictionary new];
+		resourceforks=[NSMutableSet new];
 
 		actualdestination=nil;
 		finaldestination=nil;
@@ -96,6 +97,7 @@
 
 	[entries release];
 	[reasonsforinterest release];
+	[resourceforks release];
 	[renames release];
 
 	[actualdestination release];
@@ -669,8 +671,16 @@
 	return YES;
 }
 
--(void)unarchiver:(XADUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
+-(void)unarchiver:(XADUnarchiver *)unarch willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
+	// If we are writing OS X resource forks, keep a list of which resource
+	// forks have been extracted, for the collision tests in checkPath.
+	if([unarch macResourceForkStyle]==XADMacOSXForkStyle)
+	{
+		NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+		if(resnum && [resnum boolValue]) [resourceforks addObject:path];
+	}
+
 	[delegate simpleUnarchiver:self willExtractEntryWithDictionary:dict to:path];
 }
 
@@ -758,12 +768,9 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 			}
 			else
 			{
-				// If this entry is a data fork, check if the resource fork
-				// size is non-zero while the data fork size is zero.
-				// If so, do not consider this a collision.
-				struct stat st;
-				lstat(cpath,&st);
-				if(ressize!=0 && st.st_size==0) return path;
+				// If this entry is a data fork, check if we have earlier extracted this
+				// file as a resource fork. If so, do not consider this a collision.
+				if([resourceforks containsObject:path]) return path;
 			}
 		}
 		#endif
@@ -920,9 +927,9 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADPath:(XADPath *)path { return [path encodingName]; }
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string { return [string encodingName]; }
 
--(NSString *)simpleUnarchiver:self replacementPathForEntryWithDictionary:(NSDictionary *)dict
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver replacementPathForEntryWithDictionary:(NSDictionary *)dict
 originalPath:(NSString *)path suggestedPath:(NSString *)unique { return nil; }
--(NSString *)simpleUnarchiver:self deferredReplacementPathForEntryOriginalPath:(NSString *)path
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver deferredReplacementPathForEntryOriginalPath:(NSString *)path
 suggestedPath:(NSString *)unique { return nil; }
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path { return YES; }

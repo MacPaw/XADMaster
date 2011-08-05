@@ -1,5 +1,6 @@
 #import "CommandLineCommon.h"
 
+#import "XADArchiveParser.h"
 #import "XADString.h"
 #import "NSStringPrinting.h"
 
@@ -47,3 +48,40 @@ void PrintEncodingList()
 	}
 }
 
+
+
+
+NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
+{
+	NSString *name=[[dict objectForKey:XADFileNameKey] string];
+	name=[name stringByEscapingControlCharacters];
+
+	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
+	if(dirnum && [dirnum boolValue]) name=[name stringByAppendingString:@"/"];
+	// TODO: What about Windows?
+
+	return name;
+}
+
+
+
+
+NSString *AskForPassword(NSString *prompt)
+{
+	[prompt print];
+	fflush(stdout); // getpass() doesn't print its prompt to stdout.
+
+	char *pass=getpass("Password (will not be shown): ");
+	if(!pass) return nil;
+
+	return [NSString stringWithUTF8String:pass];
+}
+
+BOOL IsInteractive()
+{
+	#ifdef __MINGW32__
+	return is_console(fileno(stdin))&&is_console(fileno(stdout));
+	#else
+	return isatty(fileno(stdin))&&isatty(fileno(stdout));
+	#endif
+}

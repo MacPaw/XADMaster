@@ -4,6 +4,10 @@
 #import "XADString.h"
 #import "NSStringPrinting.h"
 
+#ifndef __MINGW32__
+#import <unistd.h>
+#endif
+
 BOOL IsListRequest(NSString *encoding)
 {
 	if(!encoding) return NO;
@@ -66,6 +70,29 @@ NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 
 
 
+BOOL IsInteractive()
+{
+	#ifdef __MINGW32__
+	return is_console(fileno(stdin))&&is_console(fileno(stdout));
+	#else
+	return isatty(fileno(stdin))&&isatty(fileno(stdout));
+	#endif
+}
+
+int GetPromptCharacter()
+{
+	#ifdef __APPLE__
+	fpurge(stdin);
+	int c=getc(stdin);
+	fpurge(stdin);
+	#else
+	// TODO: Handle purging.
+	char c;
+	if(scanf("%c%*c",&c)<1) return -1;
+	#endif
+	return c;
+}
+
 NSString *AskForPassword(NSString *prompt)
 {
 	[prompt print];
@@ -75,13 +102,4 @@ NSString *AskForPassword(NSString *prompt)
 	if(!pass) return nil;
 
 	return [NSString stringWithUTF8String:pass];
-}
-
-BOOL IsInteractive()
-{
-	#ifdef __MINGW32__
-	return is_console(fileno(stdin))&&is_console(fileno(stdout));
-	#else
-	return isatty(fileno(stdin))&&isatty(fileno(stdout));
-	#endif
 }

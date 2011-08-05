@@ -2,8 +2,10 @@
 #import "XADException.h"
 
 #ifdef __APPLE__
-#include <sys/stat.h>
 #include <sys/xattr.h>
+#endif
+#ifndef __MINGW32__
+#include <unistd.h>
 #endif
 
 @implementation XADSimpleUnarchiver
@@ -840,7 +842,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
 	return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
 	#else
-	return [[NSFileManager defaultManager] directoryContentsAtPath:destpath];
+	return [[NSFileManager defaultManager] directoryContentsAtPath:path];
 	#endif
 }
 

@@ -62,11 +62,7 @@ originalPath:(NSString *)path suggestedPath:(NSString *)unique
 		[@"\", (R)ename all, (o)verwrite, (O)verwrite all, (s)kip, (S)kip all, (q)uit? " print];
 		fflush(stdout);
 
-		fpurge(stdin);
-		int c=getc(stdin);
-		fpurge(stdin);
-
-		switch(c)
+		switch(GetPromptCharacter())
 		{
 			case 'r': return unique;
 			case 'R': [unarchiver setAlwaysRenamesFiles:YES]; return unique;

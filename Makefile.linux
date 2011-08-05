@@ -177,6 +177,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADRLE90Handle.m \
 			XADRPMParser.m \
 			XADSARParser.m \
+			XADSimpleUnarchiver.m \
 			XADSkipHandle.m \
 			XADSplitFileParser.m \
 			XADSqueezeHandle.m \

@@ -5,5 +5,6 @@ void PrintEncodingList();
 
 NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict);
 
-NSString *AskForPassword(NSString *prompt);
 BOOL IsInteractive();
+int GetPromptCharacter();
+NSString *AskForPassword(NSString *prompt);

@@ -401,6 +401,9 @@ XADRPMParser.o: XADRPMParser.m XADRPMParser.h XADArchiveParser.h \
 XADSARParser.o: XADSARParser.m XADSARParser.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h
+XADSimpleUnarchiver.o: XADSimpleUnarchiver.m XADSimpleUnarchiver.h \
+ XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h XADUnarchiver.h
 XADSkipHandle.o: XADSkipHandle.m XADSkipHandle.h CSHandle.h \
  SystemSpecific.h
 XADSplitFileParser.o: XADSplitFileParser.m XADSplitFileParser.h \
@@ -588,9 +591,9 @@ XADTest5.o: XADTest5.m XADArchiveParser.h XADException.h XADString.h \
 XADTest6.o: XADTest6.m XADArchiveParser.h XADException.h XADString.h \
  XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
  CSSubHandle.h NSStringPrinting.h
-unar.o: unar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
+unar.o: unar.m XADSimpleUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
- CSSubHandle.h NSStringPrinting.h CSCommandLineParser.h \
+ CSSubHandle.h XADUnarchiver.h NSStringPrinting.h CSCommandLineParser.h \
  CommandLineCommon.h
 lsar.o: lsar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
@@ -599,8 +602,9 @@ lsar.o: lsar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
 CSJSONPrinter.o: CSJSONPrinter.m CSJSONPrinter.h NSStringPrinting.h
 CSCommandLineParser.o: CSCommandLineParser.m CSCommandLineParser.h \
  NSStringPrinting.h
-CommandLineCommon.o: CommandLineCommon.m CommandLineCommon.h XADString.h \
- NSStringPrinting.h
+CommandLineCommon.o: CommandLineCommon.m CommandLineCommon.h \
+ XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h NSStringPrinting.h
 NSStringPrinting.o: NSStringPrinting.m NSStringPrinting.h
 BWT.o: BWT.c BWT.h
 LZSS.o: LZSS.c LZSS.h

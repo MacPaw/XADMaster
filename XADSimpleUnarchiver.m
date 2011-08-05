@@ -352,7 +352,8 @@
 		if(totalsize>=0) totalprogress+=currsize;
 	}
 
-	//[self _finalizeExtraction];
+	XADError error=[unarchiver finishExtractions];
+	if(error) lasterror=error;
 
 	return lasterror;
 }

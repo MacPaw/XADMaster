@@ -351,7 +351,7 @@
 		if(totalsize>=0) currsize=[[entry objectForKey:XADFileSizeKey] longLongValue];
 
 		XADError error=[unarchiver extractEntryWithDictionary:entry];
-		if(error) lasterror=error;
+		if(error!=XADNoError && error!=XADBreakError) lasterror=error;
 
 		if(totalsize>=0) totalprogress+=currsize;
 	}
@@ -643,7 +643,7 @@
 
 			path=[path stringByAppendingPathComponent:componentstr];
 
-			// Check it for collisions, and skip if requested.
+			// Check it for collisions.
 			if(i==numcomponents-1)
 			{
 				path=[unarch adjustPathString:path forEntryWithDictionary:dict];
@@ -653,13 +653,29 @@
 			{
 				path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
 			}
-			if(!path) return NO;
 
-			// Store path and dictionary in path hierarchy.
-			pathdict=[NSMutableDictionary dictionaryWithObject:path forKey:@"."];
-			[parent setObject:pathdict forKey:component];
+			if(path)
+			{
+				// Store path and dictionary in path hierarchy.
+				pathdict=[NSMutableDictionary dictionaryWithObject:path forKey:@"."];
+				[parent setObject:pathdict forKey:component];
+			}
+			else
+			{
+				// If skipping was requested, store a marker in the path hierarchy
+				// for future requests, and skip.
+				pathdict=[NSMutableDictionary dictionaryWithObject:[NSNull null] forKey:@"."];
+				[parent setObject:pathdict forKey:component];
+				return NO;
+			}
 		}
-		else path=[pathdict objectForKey:@"."];
+		else
+		{
+			path=[pathdict objectForKey:@"."];
+
+			// Check if this path was marked as skipped earlier.
+			if((id)path==[NSNull null]) return NO;
+		}
 
 		parent=pathdict;
 	}

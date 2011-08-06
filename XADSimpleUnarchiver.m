@@ -367,7 +367,7 @@
 	XADError error;
 
 	// Figure out actual destination to write to.
-	NSString *destpath,*originaldest;
+	NSString *destpath,*originaldest=nil;
 	BOOL needsolocheck=NO;
 	if(enclosingdir)
 	{

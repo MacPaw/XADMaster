@@ -258,11 +258,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename
 {
-	CSHandle *handle;
-
-	@try {
-		handle=[CSFileHandle fileHandleForReadingAtPath:filename];
-	} @catch(id e) { return nil; }
+	CSHandle *handle=[CSFileHandle fileHandleForReadingAtPath:filename];
 
 	NSData *header=[handle readDataOfLengthAtMost:maxheader];
 	NSMutableDictionary *props=[NSMutableDictionary dictionary];

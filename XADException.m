@@ -38,10 +38,8 @@ NSString *XADExceptionName=@"XADException";
 		{
 			return [[[e userInfo] objectForKey:@"XADError"] intValue];
 		}
-		else if([name isEqual:CSFileErrorException])
-		{
-			return XADUnknownError; // TODO: use ErrNo in userInfo to figure out better error
-		}
+		else if([name isEqual:CSCannotOpenFileException]) return XADOpenFileError;
+		else if([name isEqual:CSFileErrorException]) return XADUnknownError; // TODO: use ErrNo in userInfo to figure out better error
 		else if([name isEqual:CSOutOfMemoryException]) return XADOutOfMemoryError;
 		else if([name isEqual:CSEndOfFileException]) return XADInputError;
 		else if([name isEqual:CSNotImplementedException]) return XADNotSupportedError;

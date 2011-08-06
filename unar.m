@@ -5,147 +5,10 @@
 
 #define VERSION_STRING @"v0.99"
 
+@interface Unarchiver:NSObject {}
+@end
 
 int returncode;
-
-
-
-
-@interface Unarchiver:NSObject
-{
-}
-@end
-
-@implementation Unarchiver
-
--(id)init
-{
-	if((self=[super init]))
-	{
-	}
-	return self;
-}
-
--(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver
-{
- 	if(IsInteractive())
-	{
-		NSString *password=AskForPassword(@"This archive requires a password to unpack.\n");
-		if(!password) exit(2);
-		[unarchiver setPassword:password];
-	}
-	else
-	{
-		[@"This archive requires a password to unpack. Use the -p option to provide one.\n" printToFile:stderr];
-		exit(2);
-	}
-}
-
-
-//-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADPath:(XADPath *)string;
-//-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string;
-
--(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver replacementPathForEntryWithDictionary:(NSDictionary *)dict
-originalPath:(NSString *)path suggestedPath:(NSString *)unique
-{
-	// Skip files if not interactive.
- 	if(!IsInteractive()) return nil;
-
-	[@"\"" print];
-	[[path stringByEscapingControlCharacters] print];
-	[@"\" already exists.\n" print];
-
-	for(;;)
-	{
-		[@"(r)ename to \"" print];
-		[[[unique lastPathComponent] stringByEscapingControlCharacters] print];
-		[@"\", (R)ename all, (o)verwrite, (O)verwrite all, (s)kip, (S)kip all, (q)uit? " print];
-		fflush(stdout);
-
-		switch(GetPromptCharacter())
-		{
-			case 'r': return unique;
-			case 'R': [unarchiver setAlwaysRenamesFiles:YES]; return unique;
-			case 'o': return path;
-			case 'O': [unarchiver setAlwaysOverwritesFiles:YES]; return path;
-			case 's': return nil;
-			case 'S': [unarchiver setAlwaysSkipsFiles:YES]; return nil;
-			case 'q': exit(1);
-		}
-	}
-}
-
--(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver deferredReplacementPathForOriginalPath:(NSString *)path
-suggestedPath:(NSString *)unique
-{
-	return [self simpleUnarchiver:unarchiver replacementPathForEntryWithDictionary:nil
-	originalPath:path suggestedPath:unique];
-}
-
-//-(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
-
--(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
-{
-	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
-	NSNumber *link=[dict objectForKey:XADIsLinkKey];
-//	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
-	NSNumber *size=[dict objectForKey:XADFileSizeKey];
-	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
-
-	[@"  " print];
-
-	// TODO: Move more into DisplayNameForEntryWithDictionary?
-	NSString *name=DisplayNameForEntryWithDictionary(dict);
-	[name print];
-	[@" (" print];
-
-	if(dir&&[dir boolValue])
-	{
-		[@"dir" print];
-	}
-	else if(link&&[link boolValue]) [@"link" print];
-	else
-	{
-		if(size) [[NSString stringWithFormat:@"%lld",[size longLongValue]] print];
-		else [@"?" print];
-	}
-
-	if(rsrc&&[rsrc boolValue]) [@", rsrc" print];
-
-	[@")... " print];
-	fflush(stdout);
-}
-
--(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
-{
-	if(!error) [@"OK.\n" print];
-	else
-	{
-		[@"Failed! (" print];
-		[[XADException describeXADError:error] print];
-		[@")\n" print];
-
-		returncode=1;
-	}
-}
-
--(BOOL)extractionShouldStopForSimpleUnarchiver:(XADSimpleUnarchiver *)unarchiver;
-{
-	return NO;
-}
-
-//-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver
-//extractionProgressForEntryWithDictionary:(NSDictionary *)dict
-//fileProgress:(off_t)fileprogress of:(off_t)filesize
-//totalProgress:(off_t)totalprogress of:(off_t)totalsize;
-//-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver
-//estimatedExtractionProgressForEntryWithDictionary:(NSDictionary *)dict
-//fileProgress:(double)fileprogress totalProgress:(double)totalprogress;
-
-@end
-
-
-
 
 int main(int argc,const char **argv)
 {
@@ -155,7 +18,7 @@ int main(int argc,const char **argv)
 
 	[cmdline setUsageHeader:
 	@"unar " VERSION_STRING @" (" @__DATE__ @"), a tool for extracting the contents of archive files.\n"
-	@"Usage: unar [options] archive [files...]\n"
+	@"Usage: unar [options] archive [files ...]\n"
 	@"\n"
 	@"Available options:\n"];
 
@@ -206,15 +69,15 @@ int main(int argc,const char **argv)
 	argumentDescription:@"name"];
 	[cmdline addAlias:@"E" forOption:@"password-encoding"];
 
-	[cmdline addSwitchOption:@"no-recursion" description:
-	@"Do not attempt to extract archives contained in other archives. For instance, "
-	@"when unpacking a .tar.gz file, only unpack the .tar file and not its contents."];
-	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
-
 	[cmdline addSwitchOption:@"indexes" description:
 	@"Instead of specifying the files to unpack as filenames or wildcard patterns, "
 	@"specify them as indexes, as output by lsar."];
 	[cmdline addAlias:@"i" forOption:@"indexes"];
+
+	[cmdline addSwitchOption:@"no-recursion" description:
+	@"Do not attempt to extract archives contained in other archives. For instance, "
+	@"when unpacking a .tar.gz file, only unpack the .gz file and not its contents."];
+	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
 
 	#ifdef __APPLE__
 
@@ -248,6 +111,7 @@ int main(int argc,const char **argv)
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
 
 
+
 	NSString *destination=[cmdline stringValueForOption:@"output-directory"];
 	BOOL forceoverwrite=[cmdline boolValueForOption:@"force-overwrite"];
 	BOOL forcerename=[cmdline boolValueForOption:@"force-rename"];
@@ -257,8 +121,8 @@ int main(int argc,const char **argv)
 	NSString *password=[cmdline stringValueForOption:@"password"];
 	NSString *encoding=[cmdline stringValueForOption:@"encoding"];
 	NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
-	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
 	BOOL indexes=[cmdline boolValueForOption:@"indexes"];
+	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
 	int forkstyle=forkvalues[[cmdline intValueForOption:@"forks"]];
 
 	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
@@ -314,11 +178,12 @@ int main(int argc,const char **argv)
 		else [unarchiver addGlobFilter:filter];
 	}
 
-	[unarchiver setDelegate:[[[Unarchiver alloc] init] autorelease]];
+	[unarchiver setDelegate:[[Unarchiver new] autorelease]];
 			
 	[@"\n" print];
 
 	returncode=0;
+
 	error=[unarchiver parseAndUnarchive];
 	if(error)
 	{
@@ -339,3 +204,102 @@ int main(int argc,const char **argv)
 
 	return returncode;
 }
+
+@implementation Unarchiver
+
+-(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver
+{
+	// Ask for a password from the user if called in interactive mode,
+	// otherwise just print an error on stderr and exit.
+ 	if(IsInteractive())
+	{
+		NSString *password=AskForPassword(@"This archive requires a password to unpack.\n");
+		if(!password) exit(2);
+		[unarchiver setPassword:password];
+	}
+	else
+	{
+		[@"This archive requires a password to unpack. Use the -p option to provide one.\n" printToFile:stderr];
+		exit(2);
+	}
+}
+
+
+//-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADPath:(XADPath *)string;
+//-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string;
+
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver replacementPathForEntryWithDictionary:(NSDictionary *)dict
+originalPath:(NSString *)path suggestedPath:(NSString *)unique
+{
+	// Skip files if not interactive.
+ 	if(!IsInteractive()) return nil;
+
+	[@"\"" print];
+	[[path stringByEscapingControlCharacters] print];
+	[@"\" already exists.\n" print];
+
+	for(;;)
+	{
+		[@"(r)ename to \"" print];
+		[[[unique lastPathComponent] stringByEscapingControlCharacters] print];
+		[@"\", (R)ename all, (o)verwrite, (O)verwrite all, (s)kip, (S)kip all, (q)uit? " print];
+		fflush(stdout);
+
+		switch(GetPromptCharacter())
+		{
+			case 'r': return unique;
+			case 'R': [unarchiver setAlwaysRenamesFiles:YES]; return unique;
+			case 'o': return path;
+			case 'O': [unarchiver setAlwaysOverwritesFiles:YES]; return path;
+			case 's': return nil;
+			case 'S': [unarchiver setAlwaysSkipsFiles:YES]; return nil;
+			case 'q': exit(1);
+		}
+	}
+}
+
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver deferredReplacementPathForOriginalPath:(NSString *)path
+suggestedPath:(NSString *)unique
+{
+	return [self simpleUnarchiver:unarchiver replacementPathForEntryWithDictionary:nil
+	originalPath:path suggestedPath:unique];
+}
+
+-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
+{
+	[@"  " print];
+
+	NSString *name=DisplayNameForEntryWithDictionary(dict);
+	[name print];
+
+	[@"... " print];
+	fflush(stdout);
+}
+
+-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
+{
+	if(!error) [@"OK.\n" print];
+	else
+	{
+		[@"Failed! (" print];
+		[[XADException describeXADError:error] print];
+		[@")\n" print];
+
+		returncode=1;
+	}
+}
+
+-(BOOL)extractionShouldStopForSimpleUnarchiver:(XADSimpleUnarchiver *)unarchiver;
+{
+	return NO;
+}
+
+//-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver
+//extractionProgressForEntryWithDictionary:(NSDictionary *)dict
+//fileProgress:(off_t)fileprogress of:(off_t)filesize
+//totalProgress:(off_t)totalprogress of:(off_t)totalsize;
+//-(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver
+//estimatedExtractionProgressForEntryWithDictionary:(NSDictionary *)dict
+//fileProgress:(double)fileprogress totalProgress:(double)totalprogress;
+
+@end

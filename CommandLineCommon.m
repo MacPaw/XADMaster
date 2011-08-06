@@ -57,14 +57,41 @@ void PrintEncodingList()
 
 NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 {
+	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
+	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
+	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+	NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
+//	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
+
+	BOOL isdir=dirnum && [dirnum boolValue];
+	BOOL islink=linknum && [linknum boolValue];
+	BOOL isres=resnum && [resnum boolValue];
+	BOOL hassize=(sizenum!=nil);
+
 	NSString *name=[[dict objectForKey:XADFileNameKey] string];
 	name=[name stringByEscapingControlCharacters];
+	if(!isdir && !islink && !isres && !hassize) return name;
 
-	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
-	if(dirnum && [dirnum boolValue]) name=[name stringByAppendingString:@"/"];
+	NSMutableString *str=[NSMutableString stringWithString:name];
+
+	if(isdir) [str appendString:@"/"];
 	// TODO: What about Windows?
 
-	return name;
+	[str appendString:@"  ("];
+
+	if(isdir) [str appendString:@"dir"];
+	else if(islink) [str appendString:@"link"];
+	else if(hassize) [str appendFormat:@"%lld B",[sizenum longLongValue]];
+
+	if(isres)
+	{
+		if(isdir||islink||hassize) [str appendString:@", "];
+		[str appendString:@"rsrc"];
+	}
+
+	[str appendString:@")"];
+
+	return str;
 }
 
 

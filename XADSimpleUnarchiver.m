@@ -402,8 +402,8 @@
 	actualdestination=[destpath retain];
 
 	// Create unarchiver.
-	subunarchiver=[unarchiver unarchiverForEntryWithDictionary:entry
-	wantChecksum:YES error:&error];
+	subunarchiver=[[unarchiver unarchiverForEntryWithDictionary:entry
+	wantChecksum:YES error:&error] retain];
 	if(!subunarchiver)
 	{
 		if(error) return error;
@@ -455,7 +455,7 @@
 			// Remember where the item ended up.
 			finaldestination=[[finalitempath stringByDeletingLastPathComponent] retain];
 		}
-		else
+		else if([files count]>1)
 		{
 			// Multiple top-level items were unpacked, so we keep the enclosing
 			// directory, but we need to check if there was a collision while

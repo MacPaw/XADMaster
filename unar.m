@@ -142,18 +142,15 @@ int main(int argc,const char **argv)
 
 	NSString *filename=[files objectAtIndex:0];
 
-	[@"Extracting " print];
 	[filename print];
-	[@"..." print];
-
+	[@": " print];
 	fflush(stdout);
 
 	XADError error;
 	XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
-
 	if(!unarchiver)
 	{
-		[@" Couldn't open archive. (" print];
+		[@"Couldn't open archive. (" print];
 		[[XADException describeXADError:error] print];
 		[@")\n" print];
 		return 1;
@@ -179,12 +176,32 @@ int main(int argc,const char **argv)
 	}
 
 	[unarchiver setDelegate:[[Unarchiver new] autorelease]];
-			
+
+	error=[unarchiver parse];
+	if(error)
+	{
+		[@"Extraction failed! (" print];
+		[[XADException describeXADError:error] print];
+		[@")\n" print];
+		return 1;
+	}
+
+	if([unarchiver innerArchiveParser])
+	{
+		[[[unarchiver innerArchiveParser] formatName] print];
+		[@" in " print];
+		[[[unarchiver outerArchiveParser] formatName] print];
+	}
+	else
+	{
+		[[[unarchiver outerArchiveParser] formatName] print];
+	}
+
 	[@"\n" print];
 
 	returncode=0;
 
-	error=[unarchiver parseAndUnarchive];
+	error=[unarchiver unarchive];
 	if(error)
 	{
 		[@"Extraction failed! (" print];

@@ -118,6 +118,9 @@
 	else return parser;
 }
 
+-(XADArchiveParser *)outerArchiveParser { return parser; }
+-(XADArchiveParser *)innerArchiveParser { return [subunarchiver archiveParser]; }
+
 -(NSArray *)reasonsForInterest { return reasonsforinterest; }
 
 -(id)delegate { return delegate; }
@@ -225,6 +228,16 @@
 
 -(XADError)parseAndUnarchive
 {
+	XADError error=[self parse];
+	if(error) return error;
+	else return [self unarchive];
+}
+
+
+
+
+-(XADError)parse
+{
 	if([entries count]) [NSException raise:NSInternalInconsistencyException format:@"You can not call parseAndUnarchive twice"];
 
 	// Run parser to find archive entries.
@@ -239,7 +252,7 @@
 		{
 			NSDictionary *entry=[entries objectAtIndex:0];
 			NSNumber *archnum=[entry objectForKey:XADIsArchiveKey];
-			if(archnum&&[archnum boolValue]) return [self _handleSubArchiveWithEntry:entry];
+			if(archnum&&[archnum boolValue]) return [self _setupSubArchiveForEntryWithDictionary:entry];
 		}
 
 		// Check if we have two entries, which are data and resource forks
@@ -268,15 +281,38 @@
 
 				// TODO: Handle resource forks for archives that require them.
 				NSNumber *archnum=[datafork objectForKey:XADIsArchiveKey];
-				if(archnum&&[archnum boolValue]) return [self _handleSubArchiveWithEntry:datafork];
+				if(archnum&&[archnum boolValue]) return [self _setupSubArchiveForEntryWithDictionary:datafork];
 			}
 		}
 	}
 
-	return [self _handleRegularArchive];
+	return XADNoError;
 }
 
--(XADError)_handleRegularArchive
+-(XADError)_setupSubArchiveForEntryWithDictionary:(NSDictionary *)dict
+{
+	// Create unarchiver.
+	XADError error;
+	subunarchiver=[[unarchiver unarchiverForEntryWithDictionary:dict
+	wantChecksum:YES error:&error] retain];
+	if(!subunarchiver)
+	{
+		if(error) return error;
+		else return XADSubArchiveError;
+	}
+	return XADNoError;
+}
+
+
+
+
+-(XADError)unarchive
+{
+	if(subunarchiver) return [self _unarchiveSubArchive];
+	else return [self _unarchiveRegularArchive];
+}
+
+-(XADError)_unarchiveRegularArchive
 {
 	NSEnumerator *enumerator;
 	NSDictionary *entry;
@@ -362,7 +398,7 @@
 	return lasterror;
 }
 
--(XADError)_handleSubArchiveWithEntry:(NSDictionary *)entry
+-(XADError)_unarchiveSubArchive
 {
 	XADError error;
 
@@ -400,15 +436,6 @@
 	}
 
 	actualdestination=[destpath retain];
-
-	// Create unarchiver.
-	subunarchiver=[[unarchiver unarchiverForEntryWithDictionary:entry
-	wantChecksum:YES error:&error] retain];
-	if(!subunarchiver)
-	{
-		if(error) return error;
-		else return XADSubArchiveError;
-	}
 
 	// Disable accurate progress calculation.
 	totalsize=-1;

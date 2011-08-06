@@ -45,6 +45,8 @@
 -(void)dealloc;
 
 -(XADArchiveParser *)archiveParser;
+-(XADArchiveParser *)outerArchiveParser;
+-(XADArchiveParser *)innerArchiveParser;
 -(NSArray *)reasonsForInterest;
 
 -(id)delegate;
@@ -100,10 +102,15 @@
 
 -(NSString *)actualDestinationPath;
 
+
 -(XADError)parseAndUnarchive;
 
--(XADError)_handleRegularArchive;
--(XADError)_handleSubArchiveWithEntry:(NSDictionary *)entry;
+-(XADError)parse;
+-(XADError)_setupSubArchiveForEntryWithDictionary:(NSDictionary *)dict;
+
+-(XADError)unarchive;
+-(XADError)_unarchiveRegularArchive;
+-(XADError)_unarchiveSubArchive;
 
 -(void)_finalizeExtraction;
 

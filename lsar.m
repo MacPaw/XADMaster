@@ -90,7 +90,7 @@ int main(int argc,const char **argv)
 
 	[cmdline addHelpOption];
 
-	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
+	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) return 1;
 
 
 
@@ -130,14 +130,14 @@ int main(int argc,const char **argv)
 		[printer setASCIIMode:jsonascii];
 
 		[printer startPrintingDictionary];
-		[printer printDictionaryKey:@"version"];
+		[printer printDictionaryKey:@"lsarFormatVersion"];
 		[printer printDictionaryObject:[NSNumber numberWithInt:2]];
 
 		XADError error;
 		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
 		if(!unarchiver)
 		{
-			[printer printDictionaryKey:@"error"];
+			[printer printDictionaryKey:@"lsarError"];
 			[printer printDictionaryObject:[NSNumber numberWithInt:error]];
 			[printer endPrintingDictionary];
 			[@"\n" print];
@@ -159,7 +159,7 @@ int main(int argc,const char **argv)
 
 		[unarchiver setDelegate:[[JSONLister new] autorelease]];
 
-		[printer printDictionaryKey:@"contents"];
+		[printer printDictionaryKey:@"lsarContents"];
 		[printer startPrintingDictionaryObject];
 		[printer startPrintingArray];
 
@@ -172,16 +172,57 @@ int main(int argc,const char **argv)
 
 		if(error)
 		{
-			[printer printDictionaryKey:@"error"];
+			[printer printDictionaryKey:@"lsarError"];
 			[printer printDictionaryObject:[NSNumber numberWithInt:error]];
 			returncode=1;
 		}
 
+		if(test)
+		{
+			XADArchiveParser *subparser=[unarchiver innerArchiveParser];
+			if(subparser)
+			{
+				[printer printDictionaryKey:@"lsarTestResult"];
+
+				CSHandle *handle=[subparser handle];
+				if([handle hasChecksum])
+				{
+					@try
+					{
+						[handle seekToEndOfFile];
+						if([handle isChecksumCorrect]) [printer printDictionaryObject:@"ok"];
+						else { [printer printDictionaryObject:@"wrong_checksum"]; returncode=1; }
+					}
+					@catch(id e) { [printer printDictionaryObject:@"unpacking_failed"]; returncode=1; }
+				}
+				else [printer printDictionaryObject:@"no_checksum"];
+			}
+		}
+
 		XADArchiveParser *parser=[unarchiver archiveParser];
-		[printer printDictionaryKey:@"encoding"];
+		[printer printDictionaryKey:@"lsarEncoding"];
 		[printer printDictionaryObject:[parser encodingName]];
-		[printer printDictionaryKey:@"confidence"];
+		[printer printDictionaryKey:@"lsarConfidence"];
 		[printer printDictionaryObject:[NSNumber numberWithFloat:[parser encodingConfidence]]];
+
+		XADArchiveParser *outerparser=[unarchiver outerArchiveParser];
+		[printer printDictionaryKey:@"lsarFormatName"];
+		[printer printObject:[outerparser formatName]];
+		[printer printDictionaryKey:@"lsarProperties"];
+		[printer startPrintingDictionary];
+		[printer printDictionaryKeysAndObjects:[outerparser properties]];
+		[printer endPrintingDictionary];
+
+		XADArchiveParser *innerparser=[unarchiver innerArchiveParser];
+		if(innerparser)
+		{
+			[printer printDictionaryKey:@"lsarInnerFormatName"];
+			[printer printObject:[innerparser formatName]];
+			[printer printDictionaryKey:@"lsarInnerProperties"];
+			[printer startPrintingDictionary];
+			[printer printDictionaryKeysAndObjects:[innerparser properties]];
+			[printer endPrintingDictionary];
+		}
 
 		[printer endPrintingDictionary];
 
@@ -190,14 +231,14 @@ int main(int argc,const char **argv)
 	else
 	{
 		[filename print];
-		[@":" print];
+		[@": " print];
 		fflush(stdout);
 
 		XADError error;
 		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
 		if(!unarchiver)
 		{
-			[@" Couldn't open archive. (" print];
+			[@"Couldn't open archive. (" print];
 			[[XADException describeXADError:error] print];
 			[@")\n" print];
 			return 1;
@@ -218,31 +259,71 @@ int main(int argc,const char **argv)
 
 		[unarchiver setDelegate:[[[Lister alloc] init] autorelease]];
 
-		[@"\n" print];
-
-		returncode=0;
-		passed=failed=unknown=0;
-
-		error=[unarchiver parseAndUnarchive];
+		error=[unarchiver parse];
 		if(error)
 		{
 			[@"Listing failed! (" print];
 			[[XADException describeXADError:error] print];
 			[@")\n" print];
+			return 1;
+		}
+
+		if([unarchiver innerArchiveParser])
+		{
+			[[[unarchiver innerArchiveParser] formatName] print];
+			[@" in " print];
+			[[[unarchiver outerArchiveParser] formatName] print];
+		}
+		else
+		{
+			[[[unarchiver outerArchiveParser] formatName] print];
+		}
+
+		[@"\n" print];
+
+		returncode=0;
+		passed=failed=unknown=0;
+
+		error=[unarchiver unarchive];
+		if(error)
+		{
+			[@"Listing failed! (" print];
+			[[XADException describeXADError:error] print];
+			[@")\n" print];
+			return 1;
 		}
 
 		if(test)
 		{
 			if(unknown)
 			{
-				[[NSString stringWithFormat:@"%d passed, %d failed, %d unknown.\n",
+				[[NSString stringWithFormat:@"%d passed, %d failed, %d unknown.",
 				passed,failed,unknown] print];
 			}
 			else
 			{
-				[[NSString stringWithFormat:@"%d passed, %d failed.\n",
+				[[NSString stringWithFormat:@"%d passed, %d failed.",
 				passed,failed] print];
 			}
+
+			XADArchiveParser *subparser=[unarchiver innerArchiveParser];
+			if(subparser)
+			{
+				CSHandle *handle=[subparser handle];
+				if([handle hasChecksum])
+				{
+					@try
+					{
+						[handle seekToEndOfFile];
+						if([handle isChecksumCorrect]) [@" Container file checksum is correct." print];
+						else { [@" Container file checksum failed!" print]; returncode=1; }
+					}
+					@catch(id e) { [@" Container file failed while testing checksum!" print]; returncode=1; }
+				}
+				else [@" Container file has no checksum." print];
+			}
+
+			[@"\n" print];
 		}
 
 		if(printencoding)

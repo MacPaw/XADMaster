@@ -99,11 +99,11 @@ NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 
 BOOL IsInteractive()
 {
-	#ifdef __MINGW32__
-	return is_console(fileno(stdin))&&is_console(fileno(stdout));
-	#else
+//	#ifdef __MINGW32__
+//	return isatty(fileno(stdin))&&isatty(fileno(stdout));
+//	#else
 	return isatty(fileno(stdin))&&isatty(fileno(stdout));
-	#endif
+//	#endif
 }
 
 int GetPromptCharacter()
@@ -125,8 +125,20 @@ NSString *AskForPassword(NSString *prompt)
 	[prompt print];
 	fflush(stdout); // getpass() doesn't print its prompt to stdout.
 
+	#ifdef __MINGW32__
+
+	[@"Password (will be shown): " print];
+	fflush(stdout);
+
+	char pass[1024];
+	fgets(pass,sizeof(pass),stdin);
+
+	#else
+
 	char *pass=getpass("Password (will not be shown): ");
 	if(!pass) return nil;
+
+	#endif
 
 	return [NSString stringWithUTF8String:pass];
 }

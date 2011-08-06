@@ -36,7 +36,7 @@
 
 #ifdef WIN32
 #define stricmp(x,y) _stricmp(x,y)
-#define fileno _fileno
+//#define fileno _fileno // XADfix
 #else
 #define stricmp(x,y) strcasecmp(x,y)
 #endif

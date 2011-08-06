@@ -319,7 +319,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle name:filename];
 	if(!subparser) return nil;
 
-	if([parser password]) [subparser setPassword:[parser password]];
+	if([parser hasPassword]) [subparser setPassword:[parser password]];
 	if([[parser stringSource] hasFixedEncoding]) [subparser setEncodingName:[parser encodingName]];
 	if(parser->passwordencodingname) [subparser setPasswordEncodingName:parser->passwordencodingname];
 

@@ -546,6 +546,24 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 			[dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:XADPosixUserKey];
 			[dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:XADPosixGroupKey];
 		}
+		else if(extid==0x7875&&size>=8) // Info-ZIP New Unix Extra Field (type 3)
+		{
+			int version=[fh readUInt8];
+			if(version==1)
+			{
+				int uidsize=[fh readUInt8];
+				if(uidsize==2) [dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:XADPosixUserKey];
+				else if(uidsize==4) [dict setObject:[NSNumber numberWithUnsignedInt:[fh readUInt32LE]] forKey:XADPosixUserKey];
+				else if(uidsize==8) [dict setObject:[NSNumber numberWithUnsignedLongLong:[fh readUInt64LE]] forKey:XADPosixUserKey];
+				else [fh skipBytes:uidsize];
+
+				int gidsize=[fh readUInt8];
+				if(gidsize==2) [dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:XADPosixGroupKey];
+				else if(gidsize==4) [dict setObject:[NSNumber numberWithUnsignedInt:[fh readUInt32LE]] forKey:XADPosixGroupKey];
+				else if(gidsize==8) [dict setObject:[NSNumber numberWithUnsignedLongLong:[fh readUInt64LE]] forKey:XADPosixGroupKey];
+				else [fh skipBytes:gidsize];
+			}
+		}
 		else if(extid==0x334d&&size>=14) // Info-ZIP Macintosh Extra Field
 		{
 			int len=[fh readUInt32LE];

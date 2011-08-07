@@ -4,21 +4,22 @@
 #import <windows.h>
 #import <sys/stat.h>
 
+
+
+
 // TODO: Implement proper handling of Windows metadata.
 
-@implementation XADUnarchiver (PlatformSpecific)
+@implementation XADPlatform
 
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asPlatformSpecificForkForFile:(NSString *)destpath
++(XADError)extractResourceForkEntryWithDictionary:(NSDictionary *)dict
+unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 {
 	return XADNotSupportedError;
 }
 
--(XADError)_createPlatformSpecificLinkToPath:(NSString *)link from:(NSString *)path
-{
-	return XADNotSupportedError;
-}
-
--(XADError)_updatePlatformSpecificFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
++(XADError)updateFileAttributesAtPath:(NSString *)path
+forEntryWithDictionary:(NSDictionary *)dict parser:(XADArchiveParser *)parser
+preservePermissions:(BOOL)preservepermissions
 {
 	const wchar_t *wpath=[path fileSystemRepresentationW];
 
@@ -70,9 +71,14 @@
 	return XADNoError;
 }
 
-@end
++(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link
+{
+	return XADNotSupportedError;
+}
 
-double _XADUnarchiverGetTime()
++(double)currentTimeInSeconds
 {
 	return (double)timeGetTime()/1000.0;
 }
+
+@end

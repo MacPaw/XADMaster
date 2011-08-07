@@ -81,14 +81,6 @@ outputTarget:(id)target selector:(SEL)sel argument:(id)arg;
 
 @end
 
-@interface XADUnarchiver (PlatformSpecific)
-
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asPlatformSpecificForkForFile:(NSString *)destpath;
--(XADError)_createPlatformSpecificLinkToPath:(NSString *)link from:(NSString *)path;
--(XADError)_updatePlatformSpecificFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict;
-
-@end
-
 @interface XADUnarchiver (AppleDouble)
 
 -(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath;
@@ -126,5 +118,3 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress;
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path;
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver linkDestinationForEntryWithDictionary:(NSDictionary *)dict from:(NSString *)path;
 @end
-
-double _XADUnarchiverGetTime();

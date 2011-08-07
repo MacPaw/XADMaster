@@ -1,4 +1,4 @@
-#import "XADUnarchiver.h"
+#import "XADPlatform.h"
 #import "CSFileHandle.h"
 #import "NSDateXAD.h"
 
@@ -14,11 +14,19 @@ struct ResourceOutputArguments
 	int fd,offset;
 };
 
-static void SetCommentForPath(NSString *comment,NSString *path);
+@interface XADPlatform (Private)
 
-@implementation XADUnarchiver (PlatformSpecific)
++(void)setComment:(NSString *)comment forPath:(NSString *)path;
 
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asPlatformSpecificForkForFile:(NSString *)destpath
+@end
+
+
+
+
+@implementation XADPlatform
+
++(XADError)extractResourceForkEntryWithDictionary:(NSDictionary *)dict
+unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 {
 	const char *cpath=[destpath fileSystemRepresentation];
 	int originalpermissions=-1;
@@ -41,8 +49,8 @@ static void SetCommentForPath(NSString *comment,NSString *path);
 
 	struct ResourceOutputArguments args={ .fd=fd, .offset=0 };
 
-	XADError error=[self runExtractorWithDictionary:dict
-	outputTarget:self selector:@selector(_outputToResourceFork:bytes:length:)
+	XADError error=[unarchiver runExtractorWithDictionary:dict
+	outputTarget:self selector:@selector(outputToResourceFork:bytes:length:)
 	argument:[NSValue valueWithPointer:&args]];
 
 	close(fd);
@@ -52,7 +60,7 @@ static void SetCommentForPath(NSString *comment,NSString *path);
 	return error;
 }
 
--(XADError)_outputToResourceFork:(NSValue *)pointerval bytes:(uint8_t *)bytes length:(int)length
++(XADError)outputToResourceFork:(NSValue *)pointerval bytes:(uint8_t *)bytes length:(int)length
 {
 	struct ResourceOutputArguments *args=[pointerval pointerValue];
 	if(fsetxattr(args->fd,XATTR_RESOURCEFORK_NAME,bytes,length,
@@ -63,17 +71,9 @@ static void SetCommentForPath(NSString *comment,NSString *path);
 	return XADNoError;
 }
 
--(XADError)_createPlatformSpecificLinkToPath:(NSString *)link from:(NSString *)path
-{
-	struct stat st;
-	const char *destcstr=[path fileSystemRepresentation];
-	if(lstat(destcstr,&st)==0) unlink(destcstr);
-	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
-
-	return XADNoError;
-}
-
--(XADError)_updatePlatformSpecificFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
++(XADError)updateFileAttributesAtPath:(NSString *)path
+forEntryWithDictionary:(NSDictionary *)dict parser:(XADArchiveParser *)parser
+preservePermissions:(BOOL)preservepermissions
 {
 	const char *cpath=[path fileSystemRepresentation];
 
@@ -104,7 +104,7 @@ static void SetCommentForPath(NSString *comment,NSString *path);
 
 	// Set comment.
 	XADString *comment=[dict objectForKey:XADCommentKey];
-	if(comment) SetCommentForPath([comment string],path);
+	if(comment) [self setComment:[comment string] forPath:path];
 
 	// Attrlist structures.
 	struct attrlist list={ ATTR_BIT_MAP_COUNT };
@@ -160,9 +160,27 @@ static void SetCommentForPath(NSString *comment,NSString *path);
 	return XADNoError;
 }
 
-@end
++(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link
+{
+	struct stat st;
+	const char *destcstr=[path fileSystemRepresentation];
+	if(lstat(destcstr,&st)==0) unlink(destcstr);
+	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
 
-static void SetCommentForPath(NSString *comment,NSString *path)
+	return XADNoError;
+}
+
++(double)currentTimeInSeconds
+{
+	struct timeval tv;
+	gettimeofday(&tv,NULL);
+	return (double)tv.tv_sec+(double)tv.tv_usec/1000000.0;
+}
+
+
+
+
++(void)setComment:(NSString *)comment forPath:(NSString *)path;
 {
 	if(!comment||![comment length]) return;
 
@@ -211,9 +229,4 @@ static void SetCommentForPath(NSString *comment,NSString *path)
 	AEDisposeDesc(&replyevent);
 }
 
-double _XADUnarchiverGetTime()
-{
-	struct timeval tv;
-	gettimeofday(&tv,NULL);
-	return (double)tv.tv_sec+(double)tv.tv_usec/1000000.0;
-}
+@end

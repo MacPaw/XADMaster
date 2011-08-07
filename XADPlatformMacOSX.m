@@ -222,6 +222,17 @@ preservePermissions:(BOOL)preservepermissions
 
 
 
++(NSString *)sanitizedPathComponent:(NSString *)component
+{
+	if([component rangeOfString:@"/"].location==NSNotFound) return component;
+
+	NSMutableString *newstring=[NSMutableString stringWithString:component];
+	[newstring replaceOccurrencesOfString:@"/" withString:@":" options:0 range:NSMakeRange(0,[newstring length])];
+	return newstring;
+}
+
+
+
 
 +(double)currentTimeInSeconds
 {

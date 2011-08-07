@@ -599,7 +599,7 @@
 -(BOOL)unarchiver:(XADUnarchiver *)unarch shouldExtractEntryWithDictionary:(NSDictionary *)dict suggestedPath:(NSString **)pathptr
 {
 	// Decode name.
-	XADPath *xadpath=[[dict objectForKey:XADFileNameKey] safePath];
+	XADPath *xadpath=[dict objectForKey:XADFileNameKey];
 	NSString *encodingname=nil;
 	if(delegate && ![xadpath encodingIsKnown])
 	{
@@ -608,8 +608,8 @@
 	}
 
 	NSString *filename;
-	if(encodingname) filename=[xadpath stringWithEncodingName:encodingname];
-	else filename=[xadpath string];
+	if(encodingname) filename=[xadpath sanitizedPathStringWithEncodingName:encodingname];
+	else filename=[xadpath sanitizedPathString];
 
 	// Apply filters.
 	if(delegate)
@@ -642,21 +642,17 @@
 	// encountered collide, and cache results in the path hierarchy.
 	NSMutableDictionary *parent=renames;
 	NSString *path=actualdestination;
-	NSArray *components=[xadpath pathComponents];
+	NSArray *components=[filename pathComponents];
 	int numcomponents=[components count];
 	for(int i=0;i<numcomponents;i++)
 	{
-		XADString *component=[components objectAtIndex:i];
+		NSString *component=[components objectAtIndex:i];
 		NSMutableDictionary *pathdict=[parent objectForKey:component];
 		if(!pathdict)
 		{
 			// This path has not been encountered yet. First, build a
 			// path based on the current component and the parent's path.
-			NSString *componentstr;
-			if(encodingname) componentstr=[component stringWithEncodingName:encodingname];
-			else componentstr=[component string];
-
-			path=[path stringByAppendingPathComponent:componentstr];
+			path=[path stringByAppendingPathComponent:component];
 
 			// Check it for collisions.
 			if(i==numcomponents-1)

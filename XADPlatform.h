@@ -16,6 +16,8 @@ preservePermissions:(BOOL)preservepermissions;
 
 +(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent;
 
++(NSString *)sanitizedPathComponent:(NSString *)component;
+
 +(double)currentTimeInSeconds;
 
 @end

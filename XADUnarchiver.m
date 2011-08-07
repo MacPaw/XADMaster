@@ -150,8 +150,8 @@
 	// If we were not given a path, pick one ourselves.
 	if(!path)
 	{
-		XADPath *name=[[dict objectForKey:XADFileNameKey] safePath];
-		NSString *namestring=[name string];
+		XADPath *name=[dict objectForKey:XADFileNameKey];
+		NSString *namestring=[name sanitizedPathString];
 
 		if(destination) path=[destination stringByAppendingPathComponent:namestring];
 		else path=namestring;

@@ -90,6 +90,50 @@ preservePermissions:(BOOL)preservepermissions
 	else return dirname;
 }
 
++(NSString *)sanitizedPathComponent:(NSString *)component
+{
+	static NSCharacterSet *charset=nil;
+	if(!charset) charset=[[NSCharacterSet characterSetWithCharactersInString:
+	@"\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017"
+	@"\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037"
+	@"\"*:<>?\\/|"] retain];
+
+	static XADRegex *regex1=nil;
+	if(!regex1) regex1=[[XADRegex regexWithPattern:
+	@"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$" options:REG_ICASE] retain];
+
+	static XADRegex *regex2=nil;
+	if(!regex2) regex2=[[XADRegex regexWithPattern:
+	@"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\\..*)$" options:REG_ICASE] retain];
+
+	if([component rangeOfCharacterFromSet:charset].location!=NSNotFound)
+	{
+		NSMutableString *newstring=[NSMutableString stringWithString:component];
+		int length=[newstring length];
+		for(int i=0;i<length;i++)
+		{
+			unichar c=[newstring characterAtIndex:i];
+			if([charset characterIsMember:c])
+			[newstring replaceCharactersInRange:NSMakeRange(i,1) withString:@"_"];
+		}
+		component=newstring;
+	}
+
+	if([regex1 matchesString:component])
+	{
+		return [component stringByAppendingString:@"_"];
+	}
+
+	if([regex2 matchesString:component])
+	{
+		NSArray *matches=[regex2 capturedSubstringsOfString:component];
+		return [NSString stringWithFormat:@"%@_%@",
+		[matches objectAtIndex:1],[matches objectAtIndex:2]];
+	}
+
+	return component;
+}
+
 +(double)currentTimeInSeconds
 {
 	return (double)timeGetTime()/1000.0;

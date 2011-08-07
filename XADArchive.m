@@ -497,14 +497,14 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	NSDictionary *dict=[self dataForkParserDictionaryForEntry:n];
 	if(!dict) dict=[self resourceForkParserDictionaryForEntry:n];
 
-	XADPath *xadname=[[dict objectForKey:XADFileNameKey] safePath];
+	XADPath *xadname=[dict objectForKey:XADFileNameKey];
 	if(!xadname) return nil;
 
 	if(![xadname encodingIsKnown]&&delegate)
 	{
 		NSStringEncoding encoding=[delegate archive:self encodingForData:[xadname data]
 		guess:[xadname encoding] confidence:[xadname confidence]];
-		return [xadname stringWithEncoding:encoding];
+		return [xadname sanitizedPathStringWithEncoding:encoding];
 	}
 
 	return [xadname string];

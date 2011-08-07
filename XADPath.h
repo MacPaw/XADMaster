@@ -30,14 +30,20 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 -(XADPath *)pathByDeletingFirstPathComponent;
 -(XADPath *)pathByAppendingPathComponent:(XADString *)component;
 -(XADPath *)pathByAppendingPath:(XADPath *)path;
--(XADPath *)safePath;
+-(XADPath *)safePath; // Deprecated. Use sanitizedPathString: instead.
 
 -(BOOL)isAbsolute;
 -(BOOL)hasPrefix:(XADPath *)other;
 
+// NOTE: These are not guaranteed to be safe for usage as filesystem paths,
+// only for display!
 -(NSString *)string;
 -(NSString *)stringWithEncodingName:(NSString *)encoding;
--(NSData *)data; // NOTE: not guaranteed to be safe for usage as a filesystem path, only for display!
+-(NSData *)data;
+
+// These are safe for filesystem use, and adapted to the current platform.
+-(NSString *)sanitizedPathString;
+-(NSString *)sanitizedPathStringWithEncodingName:(NSString *)encoding;
 
 -(int)depth;
 -(NSArray *)pathComponents;
@@ -54,6 +60,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 
 #ifdef __APPLE__
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
+-(NSString *)sanitizedPathStringWithEncoding:(NSStringEncoding)encoding;
 -(NSStringEncoding)encoding;
 #endif
 

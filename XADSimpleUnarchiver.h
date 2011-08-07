@@ -113,10 +113,12 @@
 
 -(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred;
 -(NSString *)_findUniquePathForCollidingPath:(NSString *)path;
+-(BOOL)_fileExistsAtPath:(NSString *)path;
+-(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr;
 -(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path;
 -(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest;
 -(BOOL)_removeItemAtPath:(NSString *)path;
--(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest;
+-(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest overwrite:(BOOL)overwritethislevel;
 -(BOOL)_shouldStop;
 
 @end
@@ -136,7 +138,7 @@
 
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver replacementPathForEntryWithDictionary:(NSDictionary *)dict
 originalPath:(NSString *)path suggestedPath:(NSString *)unique;
--(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver deferredReplacementPathForEntryOriginalPath:(NSString *)path
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver deferredReplacementPathForOriginalPath:(NSString *)path
 suggestedPath:(NSString *)unique;
 
 -(BOOL)extractionShouldStopForSimpleUnarchiver:(XADSimpleUnarchiver *)unarchiver;

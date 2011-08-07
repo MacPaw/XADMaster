@@ -2,9 +2,11 @@
 #import "XADPlatform.h"
 #import "XADException.h"
 
+#include <sys/stat.h>
 #ifdef __APPLE__
 #include <sys/xattr.h>
 #endif
+
 
 @implementation XADSimpleUnarchiver
 
@@ -401,7 +403,7 @@
 			// If there is a possibility we might remove the enclosing directory
 			// later, do not handle collisions until after extraction is finished.
 			// For now, just pick a unique name if necessary.
-			if([[NSFileManager defaultManager] fileExistsAtPath:destpath])
+			if([self _fileExistsAtPath:destpath])
 			{
 				originaldest=destpath;
 				destpath=[self _findUniquePathForCollidingPath:destpath];
@@ -440,8 +442,7 @@
 		{
 			// Only one top-level item was unpacked. Move it to the parent
 			// directory and remove the enclosing directory.
-			NSString *itempath=[files objectAtIndex:0];
-			NSString *itemname=[itempath lastPathComponent];
+			NSString *itemname=[files objectAtIndex:0];
 
 			// To avoid trouble, first rename the enclosing directory
 			// to something unique.
@@ -456,11 +457,12 @@
 			{
 				// In case skipping was requested, delete everything and give up.
 				[self _removeItemAtPath:newenclosingpath];
+				finaldestination=[destination retain]; // Lie about where the item ended up.
 				return error;
 			}
 
 			// Move the item into place and delete the enclosing directory.
-			if(![self _recursivelyMoveItemAtPath:newitempath toPath:finalitempath])
+			if(![self _recursivelyMoveItemAtPath:newitempath toPath:finalitempath overwrite:YES])
 			error=XADFileExistsError; // TODO: Better error handling.
 
 			[self _removeItemAtPath:newenclosingpath];
@@ -492,7 +494,7 @@
 					// Otherwise, move the directory at the unique path to the
 					// new location selected. This may end up being the original
 					// path that caused the collision.
-					if(![self _recursivelyMoveItemAtPath:enclosingpath toPath:newenclosingpath])
+					if(![self _recursivelyMoveItemAtPath:enclosingpath toPath:newenclosingpath overwrite:YES])
 					error=XADFileExistsError; // TODO: Better error handling.
 				}
 
@@ -773,7 +775,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	if(overwrite) return path;
 
 	// Check for collision.
-	if([[NSFileManager defaultManager] fileExistsAtPath:path])
+	if([self _fileExistsAtPath:path])
 	{
 		// When writing OS X data forks, some collisions will happen. Try
 		// to handle these.
@@ -813,7 +815,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 		{
 			// If we have a delegate, ask it.
 			if(deferred) return [delegate simpleUnarchiver:self
-			deferredReplacementPathForEntryOriginalPath:path
+			deferredReplacementPathForOriginalPath:path
 			suggestedPath:unique];
 			else return [delegate simpleUnarchiver:self
 			replacementPathForEntryWithDictionary:dict
@@ -837,9 +839,28 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	NSString *dest;
 	int n=1;
 	do { dest=[NSString stringWithFormat:@"%@-%d%@",base,n++,extension]; }
-	while([[NSFileManager defaultManager] fileExistsAtPath:dest]);
+	while([self _fileExistsAtPath:dest]);
 
 	return dest;
+}
+
+-(BOOL)_fileExistsAtPath:(NSString *)path { return [self _fileExistsAtPath:path isDirectory:NULL]; }
+
+-(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr
+{
+	// [NSFileManager fileExistsAtPath:] is broken. It will happily return NO
+	// for some symbolic links. We need to implement our own.
+
+	struct stat st;
+	if(lstat([path fileSystemRepresentation],&st)!=0) return NO;
+
+	if(isdirptr)
+	{
+		if((st.st_mode&S_IFMT)==S_IFDIR) *isdirptr=YES;
+		else *isdirptr=NO;
+	}
+
+	return YES;
 }
 
 -(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path
@@ -869,17 +890,17 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	#endif
 }
 
--(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest
+-(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest overwrite:(BOOL)overwritethislevel
 {
-	// Check path, and skip if requested.
-	dest=[self _checkPath:dest forEntryWithDictionary:nil deferred:YES];
+	// Check path unless we are sure we are overwriting, and skip if requested.
+	if(!overwritethislevel) dest=[self _checkPath:dest forEntryWithDictionary:nil deferred:YES];
 	if(!dest) return YES;
 
 	BOOL isdestdir;
-	if([[NSFileManager defaultManager] fileExistsAtPath:dest isDirectory:&isdestdir])
+	if([self _fileExistsAtPath:dest isDirectory:&isdestdir])
 	{
 		BOOL issrcdir;
-		if(![[NSFileManager defaultManager] fileExistsAtPath:src isDirectory:&issrcdir]) return NO;
+		if(![self _fileExistsAtPath:src isDirectory:&issrcdir]) return NO;
 
 		if(issrcdir&&isdestdir)
 		{
@@ -892,7 +913,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 			{
 				NSString *newsrc=[src stringByAppendingPathComponent:file];
 				NSString *newdest=[dest stringByAppendingPathComponent:file];
-				BOOL res=[self _recursivelyMoveItemAtPath:newsrc toPath:newdest];
+				BOOL res=[self _recursivelyMoveItemAtPath:newsrc toPath:newdest overwrite:NO];
 				if(!res) return NO; // TODO: Should this try to move the remaining items?
 			}
 			return YES;
@@ -940,7 +961,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver replacementPathForEntryWithDictionary:(NSDictionary *)dict
 originalPath:(NSString *)path suggestedPath:(NSString *)unique { return nil; }
--(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver deferredReplacementPathForEntryOriginalPath:(NSString *)path
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver deferredReplacementPathForOriginalPath:(NSString *)path
 suggestedPath:(NSString *)unique { return nil; }
 
 -(BOOL)extractionShouldStopForSimpleUnarchiver:(XADSimpleUnarchiver *)unarchiver { return NO; }

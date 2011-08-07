@@ -326,6 +326,9 @@ XADPackItParser.o: XADPackItParser.m XADPackItParser.h XADArchiveParser.h \
 XADPaddedBlockHandle.o: XADPaddedBlockHandle.m XADPaddedBlockHandle.h \
  CSHandle.h
 XADPath.o: XADPath.m XADPath.h XADString.h
+XADPlatformLinux.o: XADPlatformLinux.m XADPlatform.h XADUnarchiver.h \
+ XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h NSDateXAD.h
 XADPNGWriter.o: XADPNGWriter.m XADPNGWriter.h CSHandle.h CRC.h
 XADPowerPackerParser.o: XADPowerPackerParser.m XADPowerPackerParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
@@ -403,7 +406,8 @@ XADSARParser.o: XADSARParser.m XADSARParser.h XADArchiveParser.h \
  XADSkipHandle.h Checksums.h CSSubHandle.h
 XADSimpleUnarchiver.o: XADSimpleUnarchiver.m XADSimpleUnarchiver.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
- CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h XADUnarchiver.h
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h XADUnarchiver.h \
+ XADPlatform.h
 XADSkipHandle.o: XADSkipHandle.m XADSkipHandle.h CSHandle.h \
  SystemSpecific.h
 XADSplitFileParser.o: XADSplitFileParser.m XADSplitFileParser.h \
@@ -513,14 +517,12 @@ XADTarSparseHandle.o: XADTarSparseHandle.m XADTarSparseHandle.h \
  CSHandle.h SystemSpecific.h
 XADUnarchiver.o: XADUnarchiver.m XADUnarchiver.h XADArchiveParser.h \
  XADException.h XADString.h XADPath.h XADRegex.h CSHandle.h \
- XADSkipHandle.h Checksums.h CSSubHandle.h CSFileHandle.h Progress.h \
- CSStreamHandle.h CSInputBuffer.h CSZlibHandle.h CSBzip2Handle.h
+ XADSkipHandle.h Checksums.h CSSubHandle.h XADPlatform.h CSFileHandle.h \
+ Progress.h CSStreamHandle.h CSInputBuffer.h CSZlibHandle.h \
+ CSBzip2Handle.h
 XADUnarchiverAppleDouble.o: XADUnarchiverAppleDouble.m XADUnarchiver.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h CSFileHandle.h
-XADUnarchiverLinux.o: XADUnarchiverLinux.m XADUnarchiver.h \
- XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
- CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h NSDateXAD.h
 XADWinZipAESHandle.o: XADWinZipAESHandle.m XADWinZipAESHandle.h \
  CSStreamHandle.h CSHandle.h CSInputBuffer.h XADException.h
 XADWinZipWavPackHandle.o: XADWinZipWavPackHandle.m \
@@ -595,10 +597,10 @@ unar.o: unar.m XADSimpleUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
  CSSubHandle.h XADUnarchiver.h NSStringPrinting.h CSCommandLineParser.h \
  CommandLineCommon.h
-lsar.o: lsar.m XADUnarchiver.h XADArchiveParser.h XADException.h \
+lsar.o: lsar.m XADSimpleUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
- CSSubHandle.h NSStringPrinting.h CSCommandLineParser.h CSJSONPrinter.h \
- CommandLineCommon.h
+ CSSubHandle.h XADUnarchiver.h NSStringPrinting.h CSCommandLineParser.h \
+ CSJSONPrinter.h CommandLineCommon.h
 CSJSONPrinter.o: CSJSONPrinter.m CSJSONPrinter.h NSStringPrinting.h
 CSCommandLineParser.o: CSCommandLineParser.m CSCommandLineParser.h \
  NSStringPrinting.h

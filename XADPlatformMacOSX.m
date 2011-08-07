@@ -71,6 +71,9 @@ unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 	return XADNoError;
 }
 
+
+
+
 +(XADError)updateFileAttributesAtPath:(NSString *)path
 forEntryWithDictionary:(NSDictionary *)dict parser:(XADArchiveParser *)parser
 preservePermissions:(BOOL)preservepermissions
@@ -160,6 +163,9 @@ preservePermissions:(BOOL)preservepermissions
 	return XADNoError;
 }
 
+
+
+
 +(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link
 {
 	struct stat st;
@@ -169,6 +175,37 @@ preservePermissions:(BOOL)preservepermissions
 
 	return XADNoError;
 }
+
+
+
+
++(id)readCloneableMetadataFromPath:(NSString *)path
+{
+	if(!LSSetItemAttribute) return nil;
+
+	FSRef ref;
+	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
+	{
+		CFDictionaryRef quarantinedict;
+		LSCopyItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,
+		(CFTypeRef*)&quarantinedict);
+
+		return [(id)quarantinedict autorelease];
+	}
+	return nil;
+}
+
++(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path
+{
+	if(!LSSetItemAttribute) return;
+
+	FSRef ref;
+	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
+	LSSetItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,metadata);
+}
+
+
+
 
 +(double)currentTimeInSeconds
 {

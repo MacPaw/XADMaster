@@ -28,14 +28,11 @@
 	NSMutableArray *entries,*reasonsforinterest;
 	NSMutableDictionary *renames;
 	NSMutableSet *resourceforks;
+	id metadata;
 	NSString *actualdestination,*finaldestination;
 	BOOL enclosingcollision;
 
 	off_t totalsize,currsize,totalprogress;
-
-	#ifdef __APPLE__
-	CFDictionaryRef quarantinedict;
-	#endif
 }
 
 +(XADSimpleUnarchiver *)simpleUnarchiverForPath:(NSString *)path;

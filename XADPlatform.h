@@ -11,6 +11,9 @@ preservePermissions:(BOOL)preservepermissions;
 
 +(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link;
 
++(id)readCloneableMetadataFromPath:(NSString *)path;
++(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path;
+
 +(double)currentTimeInSeconds;
 
 @end

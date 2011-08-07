@@ -81,6 +81,10 @@ int main(int argc,const char **argv)
 
 	#ifdef __APPLE__
 
+	[cmdline addSwitchOption:@"no-quarantine" description:
+	@"Do not copy Finder quarantine metadata from the archive to the extracted files."];
+	[cmdline addAlias:@"nq" forOption:@"no-quarantine"];
+
 	[cmdline addMultipleChoiceOption:@"forks"
 	allowedValues:[NSArray arrayWithObjects:@"fork",@"visible",@"hidden",@"skip",nil] defaultValue:@"fork"
 	description:@"How to handle Mac OS resource forks. "
@@ -123,6 +127,7 @@ int main(int argc,const char **argv)
 	NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
 	BOOL indexes=[cmdline boolValueForOption:@"indexes"];
 	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
+	BOOL noquarantine=[cmdline boolValueForOption:@"no-quarantine"];
 	int forkstyle=forkvalues[[cmdline intValueForOption:@"forks"]];
 
 	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
@@ -166,6 +171,7 @@ int main(int argc,const char **argv)
 	[unarchiver setAlwaysRenamesFiles:forcerename];
 	[unarchiver setAlwaysSkipsFiles:forceskip];
 	[unarchiver setExtractsSubArchives:!norecursion];
+	[unarchiver setPropagatesRelevantMetadata:!noquarantine];
 	[unarchiver setMacResourceForkStyle:forkstyle];
 
 	for(int i=1;i<numfiles;i++)

@@ -1,4 +1,5 @@
 #import "XADSimpleUnarchiver.h"
+#import "XADPlatform.h"
 #import "XADException.h"
 
 #ifdef __APPLE__
@@ -66,20 +67,11 @@
 		reasonsforinterest=[NSMutableArray new];
 		renames=[NSMutableDictionary new];
 		resourceforks=[NSMutableSet new];
+		metadata=[[XADPlatform readCloneableMetadataFromPath:[parser filename]] retain];
 
 		actualdestination=nil;
 		finaldestination=nil;
-
-		#ifdef __APPLE__
-		quarantinedict=NULL;
-		FSRef ref;
-		if(LSSetItemAttribute)
-		if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:[parser filename]],&ref))
-		{
-			LSCopyItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,
-			(CFTypeRef*)&quarantinedict);
-		}
-		#endif
+	
 	}
 
 	return self;
@@ -99,15 +91,12 @@
 
 	[entries release];
 	[reasonsforinterest release];
-	[resourceforks release];
 	[renames release];
+	[resourceforks release];
+	[metadata release];
 
 	[actualdestination release];
 	[finaldestination release];
-
-	#ifdef __APPLE__
-	if(quarantinedict) CFRelease(quarantinedict);
-	#endif
 
 	[super dealloc];
 }
@@ -731,14 +720,7 @@
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
 {
-	#ifdef __APPLE__
-	if(propagatemetadata && quarantinedict && LSSetItemAttribute)
-	{
-		FSRef ref;
-		if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
-		LSSetItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,quarantinedict);
-	}
-	#endif
+	if(propagatemetadata && metadata) [XADPlatform writeCloneableMetadata:metadata toPath:path];
 
 	[delegate simpleUnarchiver:self didExtractEntryWithDictionary:dict to:path error:error];
 }

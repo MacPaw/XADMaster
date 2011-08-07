@@ -85,6 +85,9 @@ preservePermissions:(BOOL)preservepermissions
 	return XADNoError;
 }
 
++(id)readCloneableMetadataFromPath:(NSString *)path { return nil; }
++(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path {}
+
 +(double)currentTimeInSeconds
 {
 	struct timeval tv;

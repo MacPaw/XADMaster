@@ -76,6 +76,9 @@ preservePermissions:(BOOL)preservepermissions
 	return XADNotSupportedError;
 }
 
++(id)readCloneableMetadataFromPath:(NSString *)path { return nil; }
++(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path {}
+
 +(double)currentTimeInSeconds
 {
 	return (double)timeGetTime()/1000.0;

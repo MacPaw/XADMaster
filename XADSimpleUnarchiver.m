@@ -852,7 +852,11 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	// for some symbolic links. We need to implement our own.
 
 	struct stat st;
+	#ifdef __MINGW32__
+	if(stat([path fileSystemRepresentation],&st)!=0) return NO;
+	#else
 	if(lstat([path fileSystemRepresentation],&st)!=0) return NO;
+	#endif
 
 	if(isdirptr)
 	{

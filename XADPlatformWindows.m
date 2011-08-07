@@ -1,4 +1,4 @@
-#import "XADUnarchiver.h"
+#import "XADPlatform.h"
 #import "NSDateXAD.h"
 
 #import <windows.h>

@@ -14,6 +14,8 @@ preservePermissions:(BOOL)preservepermissions;
 +(id)readCloneableMetadataFromPath:(NSString *)path;
 +(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path;
 
++(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent;
+
 +(double)currentTimeInSeconds;
 
 @end

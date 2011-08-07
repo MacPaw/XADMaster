@@ -5,9 +5,6 @@
 #ifdef __APPLE__
 #include <sys/xattr.h>
 #endif
-#ifndef __MINGW32__
-#include <unistd.h>
-#endif
 
 @implementation XADSimpleUnarchiver
 
@@ -448,7 +445,7 @@
 
 			// To avoid trouble, first rename the enclosing directory
 			// to something unique.
-			NSString *newenclosingpath=[self _uniqueDirectoryNameWithParentDirectory:destination];
+			NSString *newenclosingpath=[XADPlatform uniqueDirectoryPathWithParentDirectory:destination];
 			NSString *newitempath=[newenclosingpath stringByAppendingPathComponent:itemname];
 			[self _moveItemAtPath:enclosingpath toPath:newenclosingpath];
 
@@ -829,23 +826,6 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 		}
 	}
 	else return path;
-}
-
--(NSString *)_uniqueDirectoryNameWithParentDirectory:(NSString *)parent
-{
-	// TODO: ensure this path is actually unique.
-	NSDate *now=[NSDate date];
-	int64_t t=[now timeIntervalSinceReferenceDate]*1000000000;
-
-	#ifdef __MINGW32__
-	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd",t];
-	#else
-	pid_t pid=getpid();
-	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd%d",t,pid];
-	#endif
-
-	if(parent) return [parent stringByAppendingPathComponent:dirname];
-	else return dirname;
 }
 
 -(NSString *)_findUniquePathForCollidingPath:(NSString *)path

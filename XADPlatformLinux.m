@@ -88,6 +88,19 @@ preservePermissions:(BOOL)preservepermissions
 +(id)readCloneableMetadataFromPath:(NSString *)path { return nil; }
 +(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path {}
 
++(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent
+{
+	// TODO: ensure this path is actually unique.
+	NSDate *now=[NSDate date];
+	int64_t t=[now timeIntervalSinceReferenceDate]*1000000000;
+	pid_t pid=getpid();
+
+	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd%d",t,pid];
+
+	if(parent) return [parent stringByAppendingPathComponent:dirname];
+	else return dirname;
+}
+
 +(double)currentTimeInSeconds
 {
 	struct timeval tv;

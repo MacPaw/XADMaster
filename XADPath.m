@@ -1,4 +1,5 @@
 #import "XADPath.h"
+#import "XADPlatform.h"
 
 static BOOL HasDotPaths(NSArray *array);
 static void StripDotPaths(NSMutableArray *components);
@@ -248,6 +249,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 		NSString *compstring=[[components objectAtIndex:i] stringWithEncodingName:encoding];
 
+		// TODO: Should this method really map / to :?
 		if([compstring rangeOfString:@"/"].location==NSNotFound) [string appendString:compstring];
 		else
 		{
@@ -279,6 +281,41 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 	return data;
 }
+
+-(NSString *)sanitizedPathString
+{
+	return [self sanitizedPathStringWithEncodingName:[source encodingName]];
+}
+
+-(NSString *)sanitizedPathStringWithEncodingName:(NSString *)encoding
+{
+	int count=[components count];
+	int first=0;
+
+	// Drop "/" and ".." components at the start of the path.
+	// "." and ".." components in the middle have already been stripped out.
+	while(first<count)
+	{
+		NSString *component=[components objectAtIndex:first];
+		if(![component isEqual:@".."]&&![component isEqual:@"/"]) break;
+		first++;
+	}
+
+	if(first==count) return @".";
+
+	NSMutableString *string=[NSMutableString string];
+	for(int i=first;i<count;i++)
+	{
+		if(i!=first) [string appendString:@"/"];
+
+		NSString *compstring=[[components objectAtIndex:i] stringWithEncodingName:encoding];
+		NSString *sanitized=[XADPlatform sanitizedPathComponent:compstring];
+		[string appendString:sanitized];
+	}
+
+	return string;
+}
+
 
 
 
@@ -347,6 +384,12 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding
 {
 	return [self stringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
+	CFStringConvertNSStringEncodingToEncoding(encoding))];
+}
+
+-(NSString *)sanitizedPathStringWithEncoding:(NSStringEncoding)encoding;
+{
+	return [self sanitizedPathStringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
 	CFStringConvertNSStringEncodingToEncoding(encoding))];
 }
 

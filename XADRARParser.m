@@ -478,6 +478,8 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 	}
 	@catch(id e) { return ZeroBlock; }
 
+	if(block.headersize<7) [XADException raiseIllegalDataException];
+
 	// Removed CRC checking because RAR uses it completely inconsitently
 /*	if(block.crc!=0x6152||block.type!=0x72||block.flags!=0x1a21||block.headersize!=7)
 	{

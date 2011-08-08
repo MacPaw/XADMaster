@@ -1,4 +1,5 @@
 #import "XADUnarchiver.h"
+#import "XADPlatform.h"
 #import "CSFileHandle.h"
 #import "Progress.h"
 
@@ -149,8 +150,8 @@
 	// If we were not given a path, pick one ourselves.
 	if(!path)
 	{
-		XADPath *name=[[dict objectForKey:XADFileNameKey] safePath];
-		NSString *namestring=[name string];
+		XADPath *name=[dict objectForKey:XADFileNameKey];
+		NSString *namestring=[name sanitizedPathString];
 
 		if(destination) path=[destination stringByAppendingPathComponent:namestring];
 		else path=namestring;
@@ -199,7 +200,7 @@
 
 			case XADMacOSXForkStyle:
 				if(!isdir)
-				error=[self _extractResourceForkEntryWithDictionary:dict asPlatformSpecificForkForFile:path];
+				error=[XADPlatform extractResourceForkEntryWithDictionary:dict unarchiver:self toPath:path];
 			break;
 
 			case XADHiddenAppleDoubleForkStyle:
@@ -345,7 +346,7 @@ wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 
 	// TODO: handle link safety?
 
-	return [self _createPlatformSpecificLinkToPath:linkdest from:destpath];
+	return [XADPlatform createLinkAtPath:destpath withDestinationPath:linkdest];
 }
 
 -(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename
@@ -390,7 +391,8 @@ deferDirectories:(BOOL)defer
 		}
 	}
 
-	return [self _updatePlatformSpecificFileAttributesAtPath:path forEntryWithDictionary:dict];
+	return [XADPlatform updateFileAttributesAtPath:path forEntryWithDictionary:dict
+	parser:parser preservePermissions:preservepermissions];
 }
 
 -(XADError)_ensureDirectoryExists:(NSString *)path
@@ -473,7 +475,7 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 
 			done+=actual;
 
-			double currtime=_XADUnarchiverGetTime();
+			double currtime=[XADPlatform currentTimeInSeconds];
 			if(currtime-updatetime>updateinterval)
 			{
 				updatetime=currtime;

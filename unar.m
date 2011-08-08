@@ -81,6 +81,10 @@ int main(int argc,const char **argv)
 
 	#ifdef __APPLE__
 
+	[cmdline addSwitchOption:@"no-quarantine" description:
+	@"Do not copy Finder quarantine metadata from the archive to the extracted files."];
+	[cmdline addAlias:@"nq" forOption:@"no-quarantine"];
+
 	[cmdline addMultipleChoiceOption:@"forks"
 	allowedValues:[NSArray arrayWithObjects:@"fork",@"visible",@"hidden",@"skip",nil] defaultValue:@"fork"
 	description:@"How to handle Mac OS resource forks. "
@@ -123,6 +127,7 @@ int main(int argc,const char **argv)
 	NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
 	BOOL indexes=[cmdline boolValueForOption:@"indexes"];
 	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
+	BOOL noquarantine=[cmdline boolValueForOption:@"no-quarantine"];
 	int forkstyle=forkvalues[[cmdline intValueForOption:@"forks"]];
 
 	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
@@ -142,18 +147,15 @@ int main(int argc,const char **argv)
 
 	NSString *filename=[files objectAtIndex:0];
 
-	[@"Extracting " print];
 	[filename print];
-	[@"..." print];
-
+	[@": " print];
 	fflush(stdout);
 
 	XADError error;
 	XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
-
 	if(!unarchiver)
 	{
-		[@" Couldn't open archive. (" print];
+		[@"Couldn't open archive. (" print];
 		[[XADException describeXADError:error] print];
 		[@")\n" print];
 		return 1;
@@ -169,6 +171,7 @@ int main(int argc,const char **argv)
 	[unarchiver setAlwaysRenamesFiles:forcerename];
 	[unarchiver setAlwaysSkipsFiles:forceskip];
 	[unarchiver setExtractsSubArchives:!norecursion];
+	[unarchiver setPropagatesRelevantMetadata:!noquarantine];
 	[unarchiver setMacResourceForkStyle:forkstyle];
 
 	for(int i=1;i<numfiles;i++)
@@ -179,12 +182,32 @@ int main(int argc,const char **argv)
 	}
 
 	[unarchiver setDelegate:[[Unarchiver new] autorelease]];
-			
+
+	error=[unarchiver parse];
+	if(error)
+	{
+		[@"Extraction failed! (" print];
+		[[XADException describeXADError:error] print];
+		[@")\n" print];
+		return 1;
+	}
+
+	if([unarchiver innerArchiveParser])
+	{
+		[[[unarchiver innerArchiveParser] formatName] print];
+		[@" in " print];
+		[[[unarchiver outerArchiveParser] formatName] print];
+	}
+	else
+	{
+		[[[unarchiver outerArchiveParser] formatName] print];
+	}
+
 	[@"\n" print];
 
 	returncode=0;
 
-	error=[unarchiver parseAndUnarchive];
+	error=[unarchiver unarchive];
 	if(error)
 	{
 		[@"Extraction failed! (" print];
@@ -193,9 +216,17 @@ int main(int argc,const char **argv)
 	}
 	else
 	{
-		[@"Successfully extracted to \"" print];
-		[[unarchiver actualDestinationPath] print];
-		[@"\".\n" print];
+		NSString *actualdest=[unarchiver actualDestinationPath];
+		if([actualdest isEqual:@"."])
+		{
+			[@"Successfully extracted to current directory.\n" print];
+		}
+		else
+		{
+			[@"Successfully extracted to directory \"" print];
+			[actualdest print];
+			[@"\".\n" print];
+		}
 	}
 
 	// TODO: Print interest?

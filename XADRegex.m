@@ -91,7 +91,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 {
 	if((self=[super init]))
 	{
-		patternstring=[patternstring retain];
+		patternstring=[pattern retain];
 		currdata=nil;
 		matches=NULL;
 

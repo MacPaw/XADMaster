@@ -32,6 +32,7 @@
 		}
 		else
 		{
+// 			printf("TAR: Ustar format.\n" );
 			tarFormat = TAR_FORMAT_USTAR;
 		}
 	}
@@ -217,6 +218,8 @@
 		return( 1 );
 	}
 
+// 	printf( "Generictar: Name %s\n", name );
+
 	return( 0 );
 }
 
@@ -347,6 +350,8 @@
 
 	// Global header parse.
 	[self parsePaxTarHeader:currentGlobalHeader toDict:dict];
+
+// 	printf( "Ustar header parse after global\n" );
 
 	// Needed later for extended headers, possibly.
 	CSHandle *handle = [self handle];
@@ -532,11 +537,17 @@
 		if([handle atEndOfFile]) break;
 		header = [handle readDataOfLength:512];
 		
-		// See if the first byte is \0. This should mean that the archive is now over.
-		char firstByte = 1;
-		[header getBytes:&firstByte length:1];
-		if( firstByte == '\000' ) {
-			isArchiverOver = YES;
+		// See if there are 512 nullbytes. That means the file is over.
+		char firstBytes[512];
+		for( int i = 0; i < 512; i++ ) {
+			firstBytes[i] = 1;
+		}
+		[header getBytes:firstBytes length:512];
+		isArchiverOver = YES;
+		for( int i = 0; i < 512; i++ ) {		
+			if( firstBytes[i] != '\000' ) {
+				isArchiverOver = NO;
+			}
 		}
 	}
 }

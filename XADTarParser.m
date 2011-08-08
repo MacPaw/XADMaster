@@ -107,8 +107,20 @@
 	return( decimal );
 }
 
-+(int64_t)readOctalNumberInRangeFromBuffer:(NSRange)range buffer:(NSData *)buffer
++(uint64_t)readOctalNumberInRangeFromBuffer:(NSRange)range buffer:(NSData *)buffer
 {
+	// This implementation only supports numbers up to 2^64. If we ever need bigger numbers,
+	// that needs to change.
+	// Also, negative values are not supported. This could be an issue if the mtime field was
+	// supposed to be negative, but it is probably fair to assume that we will not be
+	// extracting star archives with files last modified before 1970.
+	uint8_t num_string[8];
+	uint8_t mask = 0x80;
+	[buffer getBytes:num_string range:NSMakeRange(range.location,8)];
+	if( (num_string[0]&mask) == 0x80 ) {
+		[buffer getBytes:num_string range:NSMakeRange(range.location + range.length - 8,8)];
+		return CSUInt64BE(num_string);
+	}
 	return( [XADTarParser octalToDecimal:[XADTarParser readNumberInRangeFromBuffer:range buffer:buffer]] );
 }
 
@@ -174,24 +186,8 @@
 	unsigned int gid = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(116,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:gid] forKey:XADPosixGroupKey];
 
-	uint64_t size;
-
-	// Check for "size is not in ascii octal format" marker, act accordingly.
-	uint8_t size_string[12];
-	[header getBytes:size_string range:NSMakeRange(124,12)];
-	if( size_string[0] == 0x80 )
-	{
-		// Might or might not break on some systems, endianness, &c &c
-		uint64_t size_big;
-		uint8_t* size_big_bytes = (uint8_t*)&size_big;
-		for( int i = 0; i < 8; i++ ) {
-			size_big_bytes[7-i] = size_string[i+4];
-		}
-		size = size_big;
-	}
-	else {
-		size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
-	}
+	uint64_t size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
+	
 	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
 	[dict setObject:[NSNumber numberWithLongLong:(size+(512-size%512))] forKey:XADCompressedSizeKey];
 	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADDataLengthKey];
@@ -545,9 +541,9 @@
 		}
 		else
 		{
-			// TODO: star
-			[self reportInterestingFileWithReason:@"star archive"];
-			[XADException raiseNotSupportedException];
+			// Handled like an ustar archive.
+			[self parseUstarTarHeader:header toDict:dict];
+			[self addTarEntryWithDictionaryAndSeek:dict];
 		}
 
 		// Read next header.

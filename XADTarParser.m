@@ -174,7 +174,24 @@
 	unsigned int gid = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(116,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:gid] forKey:XADPosixGroupKey];
 
-	off_t size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
+	uint64_t size;
+
+	// Check for "size is not in ascii octal format" marker, act accordingly.
+	uint8_t size_string[12];
+	[header getBytes:size_string range:NSMakeRange(124,12)];
+	if( size_string[0] == 0x80 )
+	{
+		// Might or might not break on some systems, endianness, &c &c
+		uint64_t size_big;
+		uint8_t* size_big_bytes = (uint8_t*)&size_big;
+		for( int i = 0; i < 8; i++ ) {
+			size_big_bytes[7-i] = size_string[i+4];
+		}
+		size = size_big;
+	}
+	else {
+		size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
+	}
 	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
 	[dict setObject:[NSNumber numberWithLongLong:(size+(512-size%512))] forKey:XADCompressedSizeKey];
 	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADDataLengthKey];
@@ -218,7 +235,7 @@
 		return( 1 );
 	}
 
-// 	printf( "Generictar: Name %s\n", name );
+// 	printf( "Generictar: Name %s / %u\n", name, size );
 
 	return( 0 );
 }

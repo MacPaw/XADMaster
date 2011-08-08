@@ -216,9 +216,17 @@ int main(int argc,const char **argv)
 	}
 	else
 	{
-		[@"Successfully extracted to \"" print];
-		[[unarchiver actualDestinationPath] print];
-		[@"\".\n" print];
+		NSString *actualdest=[unarchiver actualDestinationPath];
+		if([actualdest isEqual:@"."])
+		{
+			[@"Successfully extracted to current directory.\n" print];
+		}
+		else
+		{
+			[@"Successfully extracted to directory \"" print];
+			[actualdest print];
+			[@"\".\n" print];
+		}
 	}
 
 	// TODO: Print interest?

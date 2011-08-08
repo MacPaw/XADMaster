@@ -209,7 +209,11 @@
 	[indices addIndex:index];
 }
 
--(NSString *)actualDestinationPath { return finaldestination; }
+-(NSString *)actualDestinationPath
+{
+	if(!finaldestination||[finaldestination length]==0) return @".";
+	return finaldestination;
+}
 
 
 
@@ -451,7 +455,10 @@
 			[self _moveItemAtPath:enclosingpath toPath:newenclosingpath];
 
 			// Figure out the new path, and check it for collisions.
-			NSString *finalitempath=[destination stringByAppendingPathComponent:itemname];
+			NSString *finalitempath;
+			if(destination) finalitempath=[destination stringByAppendingPathComponent:itemname];
+			else finalitempath=itemname;
+
 			finalitempath=[self _checkPath:finalitempath forEntryWithDictionary:nil deferred:YES];
 			if(!finalitempath)
 			{

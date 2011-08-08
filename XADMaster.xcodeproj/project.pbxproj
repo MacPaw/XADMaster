@@ -341,6 +341,10 @@
 		1B3A66D81017B7E000AE25A8 /* XADNSISParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */; };
 		1B3A689E101BA12C00AE25A8 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
 		1B3A68B2101BA1C300AE25A8 /* XADTest4.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A68A9101BA14A00AE25A8 /* XADTest4.m */; };
+		1B3BBC1A13EF643A00A960EF /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1813EF639900A960EF /* libcrypto.a */; };
+		1B3BBC1B13EF643A00A960EF /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1813EF639900A960EF /* libcrypto.a */; };
+		1B3BBC1D13EF81AB00A960EF /* libgdi32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1C13EF81AB00A960EF /* libgdi32.a */; };
+		1B3BBC1E13EF81AB00A960EF /* libgdi32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1C13EF81AB00A960EF /* libgdi32.a */; };
 		1B3C98A8134E570D009F9674 /* CSByteStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAFC0EC3859F006D2F06 /* CSByteStreamHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3C98A9134E5793009F9674 /* XADException.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B578C320DDBC8BF005B0F68 /* XADException.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3E2B560F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */; };
@@ -716,7 +720,6 @@
 		1B91CDA311D981E20081E40A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
 		1B91CDB711D983280081E40A /* libXADMaster.win.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CD5E11D97E7C0081E40A /* libXADMaster.win.a */; };
 		1B91CDBC11D983760081E40A /* libUniversalDetector.win.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CDBB11D983760081E40A /* libUniversalDetector.win.a */; };
-		1B91CDBD11D983A70081E40A /* libeay32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A04411BB1F2000396C26 /* libeay32.a */; };
 		1B91CDBE11D983A80081E40A /* libstdc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A08E11BB254800396C26 /* libstdc++.a */; };
 		1B91CDBF11D983AA0081E40A /* libwinmm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A06611BB21A900396C26 /* libwinmm.a */; };
 		1B91CDC011D983AB0081E40A /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03E11BB1CD900396C26 /* libz.a */; };
@@ -750,7 +753,6 @@
 		1B91D2E311E694860081E40A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
 		1B91D2E411E694860081E40A /* libXADMaster.win.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CD5E11D97E7C0081E40A /* libXADMaster.win.a */; };
 		1B91D2E511E694860081E40A /* libUniversalDetector.win.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B91CDBB11D983760081E40A /* libUniversalDetector.win.a */; };
-		1B91D2E611E694860081E40A /* libeay32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A04411BB1F2000396C26 /* libeay32.a */; };
 		1B91D2E711E694860081E40A /* libstdc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A08E11BB254800396C26 /* libstdc++.a */; };
 		1B91D2E811E694860081E40A /* libwinmm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A06611BB21A900396C26 /* libwinmm.a */; };
 		1B91D2E911E694860081E40A /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B34A03E11BB1CD900396C26 /* libz.a */; };
@@ -1283,7 +1285,6 @@
 		1B349EF711BACA4F00396C26 /* XADPlatformWindows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPlatformWindows.m; sourceTree = "<group>"; };
 		1B34A03C11BB1CD900396C26 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Windows/lib/libbz2.a; sourceTree = "<group>"; };
 		1B34A03E11BB1CD900396C26 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Windows/lib/libz.a; sourceTree = "<group>"; };
-		1B34A04411BB1F2000396C26 /* libeay32.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libeay32.a; path = Windows/lib/libeay32.a; sourceTree = "<group>"; };
 		1B34A06611BB21A900396C26 /* libwinmm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libwinmm.a; path = "Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib/libwinmm.a"; sourceTree = DEVELOPER_DIR; };
 		1B34A08E11BB254800396C26 /* libstdc++.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstdc++.a"; path = "Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib/libstdc++.a"; sourceTree = DEVELOPER_DIR; };
 		1B34A0B911BB293A00396C26 /* regex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regex.c; path = Windows/regex.c; sourceTree = "<group>"; };
@@ -1311,6 +1312,8 @@
 		1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSISParser.m; sourceTree = "<group>"; };
 		1B3A68A2101BA12C00AE25A8 /* XADTest4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest4; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B3A68A9101BA14A00AE25A8 /* XADTest4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest4.m; sourceTree = "<group>"; };
+		1B3BBC1813EF639900A960EF /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = Windows/lib/libcrypto.a; sourceTree = "<group>"; };
+		1B3BBC1C13EF81AB00A960EF /* libgdi32.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgdi32.a; path = "Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib/libgdi32.a"; sourceTree = DEVELOPER_DIR; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
 		1B3E2BF10F28D715003EEF98 /* XADRC4Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRC4Handle.h; sourceTree = "<group>"; };
@@ -1661,10 +1664,11 @@
 				1B91CDA311D981E20081E40A /* Foundation.framework in Frameworks */,
 				1B91CDB711D983280081E40A /* libXADMaster.win.a in Frameworks */,
 				1B91CDBC11D983760081E40A /* libUniversalDetector.win.a in Frameworks */,
-				1B91CDBD11D983A70081E40A /* libeay32.a in Frameworks */,
 				1B91CDBE11D983A80081E40A /* libstdc++.a in Frameworks */,
 				1B91CDBF11D983AA0081E40A /* libwinmm.a in Frameworks */,
 				1B91CDC011D983AB0081E40A /* libz.a in Frameworks */,
+				1B3BBC1A13EF643A00A960EF /* libcrypto.a in Frameworks */,
+				1B3BBC1D13EF81AB00A960EF /* libgdi32.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1691,10 +1695,11 @@
 				1B91D2E311E694860081E40A /* Foundation.framework in Frameworks */,
 				1B91D2E411E694860081E40A /* libXADMaster.win.a in Frameworks */,
 				1B91D2E511E694860081E40A /* libUniversalDetector.win.a in Frameworks */,
-				1B91D2E611E694860081E40A /* libeay32.a in Frameworks */,
 				1B91D2E711E694860081E40A /* libstdc++.a in Frameworks */,
 				1B91D2E811E694860081E40A /* libwinmm.a in Frameworks */,
 				1B91D2E911E694860081E40A /* libz.a in Frameworks */,
+				1B3BBC1B13EF643A00A960EF /* libcrypto.a in Frameworks */,
+				1B3BBC1E13EF81AB00A960EF /* libgdi32.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2076,8 +2081,9 @@
 			children = (
 				1B91CDBB11D983760081E40A /* libUniversalDetector.win.a */,
 				1B34A03C11BB1CD900396C26 /* libbz2.a */,
-				1B34A04411BB1F2000396C26 /* libeay32.a */,
+				1B3BBC1813EF639900A960EF /* libcrypto.a */,
 				1B34A06611BB21A900396C26 /* libwinmm.a */,
+				1B3BBC1C13EF81AB00A960EF /* libgdi32.a */,
 				1B34A03E11BB1CD900396C26 /* libz.a */,
 				1B34A08E11BB254800396C26 /* libstdc++.a */,
 			);
@@ -4333,6 +4339,10 @@
 				GCC_VERSION_ppc = "";
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Windows/lib\"",
+				);
 				LIBTOOL = "$(SRCROOT)/Windows/bin/libtoolstub.pl";
 				MACOSX_DEPLOYMENT_TARGET_i386 = "";
 				MACOSX_DEPLOYMENT_TARGET_ppc = "";
@@ -4481,6 +4491,10 @@
 				GCC_VERSION_ppc = "";
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Windows/lib\"",
+				);
 				LIBTOOL = "$(SRCROOT)/Windows/bin/libtoolstub.pl";
 				MACOSX_DEPLOYMENT_TARGET_i386 = "";
 				MACOSX_DEPLOYMENT_TARGET_ppc = "";
@@ -4826,6 +4840,10 @@
 				GCC_VERSION_ppc = "";
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Windows/lib\"",
+				);
 				LIBTOOL = "$(SRCROOT)/Windows/bin/libtoolstub.pl";
 				MACOSX_DEPLOYMENT_TARGET_i386 = "";
 				MACOSX_DEPLOYMENT_TARGET_ppc = "";

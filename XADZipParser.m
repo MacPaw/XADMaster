@@ -972,9 +972,10 @@ isLastEntry:(BOOL)islastentry
 		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
 						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
 //		case 8: return [CSZlibHandle deflateHandleWithHandle:parent length:size];
-		case 8: return [CSZlibHandle deflateHandleWithHandle:parent]; // Leave out length,
-		// because some archivers don't bother writing zip64 extensions for >4GB files, so
-		// size might be entirely wrong, and archivers are expected to just keep unarchving anyway.
+		// Leave out length, because some archivers don't bother writing zip64
+		// extensions for >4GB files, so size might be entirely wrong, and
+		// archivers are expected to just keep unarchving anyway.
+		case 8: return [CSZlibHandle deflateHandleWithHandle:parent];
 //		case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size variant:XADDeflate64DeflateVariant] autorelease];
 		case 12: return [CSBzip2Handle bzip2HandleWithHandle:parent length:size];

@@ -24,6 +24,8 @@ static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int 
 int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64]);
 static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
 int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64]);
+static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,int x,int y,
+int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64]);
 
 static bool IsFirstRow(unsigned int k);
 static bool IsFirstColumn(unsigned int k);
@@ -66,6 +68,8 @@ WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *read
 	self->isfinalbundle=false;
 
 	self->hasparsedjpeg=false;
+
+	// TODO: Initialize fixed probability state.
 }
 
 void FreeWinZipJPEGDecompressor(WinZipJPEGDecompressor *self)
@@ -107,9 +111,12 @@ int ReadWinZipJPEGHeader(WinZipJPEGDecompressor *self)
 	InitializeWinZipJPEGContexts(&self->eobbins[0][0][0],sizeof(self->eobbins));
 	InitializeWinZipJPEGContexts(&self->zerobins[0][0][0][0],sizeof(self->zerobins));
 	InitializeWinZipJPEGContexts(&self->pivotbins[0][0][0][0],sizeof(self->pivotbins));
-	InitializeWinZipJPEGContexts(&self->magnitudebins[0][0][0][0][0],sizeof(self->magnitudebins));
-	InitializeWinZipJPEGContexts(&self->remainderbins[0][0][0][0],sizeof(self->remainderbins));
-	InitializeWinZipJPEGContexts(&self->signbins[0][0][0][0],sizeof(self->signbins));
+	InitializeWinZipJPEGContexts(&self->acmagnitudebins[0][0][0][0][0],sizeof(self->acmagnitudebins));
+	InitializeWinZipJPEGContexts(&self->acremainderbins[0][0][0][0],sizeof(self->acremainderbins));
+	InitializeWinZipJPEGContexts(&self->acsignbins[0][0][0][0],sizeof(self->acsignbins));
+	InitializeWinZipJPEGContexts(&self->dcmagnitudebins[0][0][0],sizeof(self->dcmagnitudebins));
+	InitializeWinZipJPEGContexts(&self->dcremainderbins[0][0][0],sizeof(self->dcremainderbins));
+	InitializeWinZipJPEGContexts(&self->dcsignbins[0][0][0][0],sizeof(self->dcsignbins));
 
 	return WinZipJPEGNoError;
 }
@@ -279,10 +286,11 @@ int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 	// Decode AC components in decreasing order, if any. (5.6.6)
 	for(unsigned int k=eob;k>=1;k--)
 	{
-		DecodeACComponent(self,comp,k,current,west,north,quantization);
+		current[k]=DecodeACComponent(self,comp,k,current,west,north,quantization);
 	}
 
-	// Decode DC component. (5.6.7)
+	// Decode DC component.
+	current[0]=DecodeDCComponent(self,comp,x,y,current,west,north,quantization);
 }
 
 static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,
@@ -331,30 +339,28 @@ int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 		int magnitudecontext2=Min(Category(val2),8);
 		int remaindercontext1=val3;
 
-		// Decode binarization. (5.6.4)
-
-		// Decode unary header.
+		// Decode binarization unary header. (5.6.4)
 		int ones=0;
 		while(ones<9)
 		{
 			int unary=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-			&self->magnitudebins[comp][n][magnitudecontext1][magnitudecontext2][ones]);
+			&self->acmagnitudebins[comp][n][magnitudecontext1][magnitudecontext2][ones]);
 			if(unary==1) ones++;
 			else break;
 		}
 
-		// Decode remainder bits, if any.
+		// Decode binarization remainder bits, if any. (5.6.4)
 		if(ones==0) absvalue=2;
 		else if(ones==1) absvalue=3;
 		else
 		{
-			int numbits=ones-1;
+			int numbits=ones-1; // TODO: This is wrong, and a big problem. Spec has no idea.
 			int val=1<<numbits;
 
 			for(int i=0;i<numbits;i++)
 			{
 				int bit=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-				&self->remainderbins[comp][n][remaindercontext1][i]);
+				&self->acremainderbins[comp][n][remaindercontext1][i]);
 
 				val|=bit<<i; // TODO: Is this correct? No idea! Spec sure doesn't say!
 			}
@@ -431,7 +437,106 @@ int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 	int signcontext1=Min(Category(absvalue)/2,2);
 
 	return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-	&self->signbins[comp][n][signcontext1][predictedsign]);
+	&self->acsignbins[comp][n][signcontext1][predictedsign]);
+}
+
+static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,int x,int y,
+int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
+{
+	// Decode DC component. (5.6.7)
+
+	// DC prediction. (5.6.7.1)
+	int predicted;
+	if(x==0&&y==0)
+	{
+		predicted=0;
+	}
+	else if(x==0)
+	{
+		int t0=north[0]*10000-11038*quantization[2]*(north[2]-current[2])/quantization[0];
+		int p0=((t0<0)?(t0-5000):(t0+5000))/10000;
+		predicted=p0;
+	}
+	else if(y==0)
+	{
+		int t1=west[0]*10000-11038*quantization[1]*(west[1]-current[1])/quantization[0];
+		int p1=((t1<0)?(t1-5000):(t1+5000))/10000;
+		predicted=p1;
+	}
+	else
+	{
+		int t0=north[0]*10000-11038*quantization[2]*(north[2]-current[2])/quantization[0];
+		int p0=((t0<0)?(t0-5000):(t0+5000))/10000;
+
+		int t1=west[0]*10000-11038*quantization[1]*(west[1]-current[1])/quantization[0];
+		int p1=((t1<0)?(t1-5000):(t1+5000))/10000;
+
+		// Prediction refinement. (5.6.7.2)
+		int d0=0,d1=0;
+		for(int i=1;i<8;i++)
+		{
+			d0+=Abs(Abs(north[ZigZag(i,0)])-abs(current[ZigZag(i,0)]));
+			d1+=Abs(Abs(west[ZigZag(0,i)])-abs(current[ZigZag(0,i)]));
+		}
+
+		if(d0>d1)
+		{
+			int64_t weight=1<<Min(d0-d1,31); // TODO: should this be calculated in 32 or 64 bit?
+			predicted=(weight*(int64_t)p1+(int64_t)p0)/(1+weight);
+		}
+		else
+		{
+			int64_t weight=1<<min(d1-d0,31);
+			predicted=(weight*(int64_t)p0+(int64_t)p1)/(1+weight);
+		}
+	}
+
+	// Decode DC residual. (5.6.7.3)
+
+	// Decode absolute value. (5.6.7.3.1)
+	int absvalue;
+	int sum=Sum(0,current);
+	int valuecontext=Min(Category(sum),12);
+
+	// Decode binarization unary header. (5.6.4)
+	int ones=0;
+	while(ones<10)
+	{
+		int unary=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+		&self->dcmagnitudebins[comp][valuecontext][ones]);
+		if(unary==1) ones++;
+		else break;
+	}
+
+	// Decode binarization remainder bits, if any. (5.6.4)
+	if(ones==0) return predicted;
+	else if(ones==1) absvalue=1;
+	else
+	{
+		int numbits=ones-1; // TODO: This is wrong, and a big problem. Spec has no idea.
+		int val=1<<numbits;
+
+		for(int i=0;i<numbits;i++)
+		{
+			int bit=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+			&self->dcremainderbins[comp][valuecontext][i]);
+
+			val|=bit<<i; // TODO: Is this correct? No idea! Spec sure doesn't say!
+		}
+
+		absvalue=val;
+	}
+
+	// Decode sign. (5.6.7.3.2)
+	int northsign=north[0]<0;
+	int westsign=west[0]<0;
+	int predictedsign=predicted<0;
+
+	int sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
+	&self->dcsignbins[comp][northsign][westsign][predictedsign]);
+
+	if(sign) return predicted-absvalue;
+	else return predicted+absvalue;
 }
 
 static bool IsFirstRow(unsigned int k) { return Row(k)==0; }
@@ -502,6 +607,7 @@ static int Sign(int x)
 	else return 0;
 }
 
+// CAT (5.6.3)
 static unsigned int Category(uint16_t val)
 {
 	unsigned int cat=0;
@@ -512,7 +618,7 @@ static unsigned int Category(uint16_t val)
 	return cat;
 }
 
-// 5.6.2.1 SUM
+// SUM (5.6.2.1)
 static int Sum(unsigned int k,int16_t block[64])
 {
 	int sum=0;
@@ -522,7 +628,7 @@ static int Sum(unsigned int k,int16_t block[64])
 	}
 }
 
-// 5.6.2.2 AVG
+// AVG (5.6.2.2)
 // NOTE: This assumes that the expression given for 'sum' is incorrect, and that
 // Bw[k] should actually be Bw[x].
 static int Average(unsigned int k,int16_t north[64],int16_t west[64],int16_t quantization[64])
@@ -548,7 +654,7 @@ static int Average(unsigned int k,int16_t north[64],int16_t west[64],int16_t qua
 	}
 }
 
-// 5.6.2.3 BDR
+// BDR (5.6.2.3)
 static int BDR(unsigned int k,int16_t current[64],int16_t north[64],int16_t west[64],int16_t quantization[64])
 {
 	if(IsFirstRow(k))

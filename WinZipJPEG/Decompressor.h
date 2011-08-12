@@ -34,9 +34,12 @@ typedef struct WinZipJPEGDecompressor
 	WinZipJPEGContext eobbins[4][12][64];
 	WinZipJPEGContext zerobins[4][62][3][6];
 	WinZipJPEGContext pivotbins[4][63][5][7]; // Why 63?
-	WinZipJPEGContext magnitudebins[4][3][9][9][9];
-	WinZipJPEGContext remainderbins[4][13][3][7];
-	WinZipJPEGContext signbins[4][27][3][2];
+	WinZipJPEGContext acmagnitudebins[4][3][9][9][9];
+	WinZipJPEGContext acremainderbins[4][13][3][7];
+	WinZipJPEGContext acsignbins[4][27][3][2];
+	WinZipJPEGContext dcmagnitudebins[4][13][10];
+	WinZipJPEGContext dcremainderbins[4][13][14];
+	WinZipJPEGContext dcsignbins[4][2][2][2];
 	WinZipJPEGContext fixedcontext;
 } WinZipJPEGDecompressor;
 

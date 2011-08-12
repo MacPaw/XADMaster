@@ -26,6 +26,8 @@ static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int
 int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64]);
 static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,int x,int y,
 int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64]);
+static unsigned int DecodeBinarization(WinZipJPEGArithmeticDecoder *decoder,
+WinZipJPEGContext *magnitudebins,WinZipJPEGContext *remainderbins,int maxbits,int cap);
 
 static bool IsFirstRow(unsigned int k);
 static bool IsFirstColumn(unsigned int k);
@@ -339,40 +341,16 @@ int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 		int magnitudecontext2=Min(Category(val2),8);
 		int remaindercontext1=val3;
 
-		// Decode binarization unary header. (5.6.4)
-		int ones=0;
-		while(ones<9)
-		{
-			int unary=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-			&self->acmagnitudebins[comp][n][magnitudecontext1][magnitudecontext2][ones]);
-			if(unary==1) ones++;
-			else break;
-		}
-
-		// Decode binarization remainder bits, if any. (5.6.4)
-		if(ones==0) absvalue=2;
-		else if(ones==1) absvalue=3;
-		else
-		{
-			int numbits=ones-1; // TODO: This is wrong, and a big problem. Spec has no idea.
-			int val=1<<numbits;
-
-			for(int i=0;i<numbits;i++)
-			{
-				int bit=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-				&self->acremainderbins[comp][n][remaindercontext1][i]);
-
-				val|=bit<<i; // TODO: Is this correct? No idea! Spec sure doesn't say!
-			}
-
-			absvalue=val+2;
-		}
+		// Decode absolute value.
+		absvalue=DecodeBinarization(&self->decoder,
+		self->acmagnitudebins[comp][n][magnitudecontext1][magnitudecontext2],
+		self->acremainderbins[comp][n][remaindercontext1],
+		14,9)+2;
 	}
 
 	if(DecodeACSign(self,comp,k,absvalue,current,west,north,quantization)) return -absvalue;
 	else return absvalue;
 }
-
 
 static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
 int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
@@ -498,34 +476,10 @@ int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 	int sum=Sum(0,current);
 	int valuecontext=Min(Category(sum),12);
 
-	// Decode binarization unary header. (5.6.4)
-	int ones=0;
-	while(ones<10)
-	{
-		int unary=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-		&self->dcmagnitudebins[comp][valuecontext][ones]);
-		if(unary==1) ones++;
-		else break;
-	}
-
-	// Decode binarization remainder bits, if any. (5.6.4)
-	if(ones==0) return predicted;
-	else if(ones==1) absvalue=1;
-	else
-	{
-		int numbits=ones-1; // TODO: This is wrong, and a big problem. Spec has no idea.
-		int val=1<<numbits;
-
-		for(int i=0;i<numbits;i++)
-		{
-			int bit=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-			&self->dcremainderbins[comp][valuecontext][i]);
-
-			val|=bit<<i; // TODO: Is this correct? No idea! Spec sure doesn't say!
-		}
-
-		absvalue=val;
-	}
+	absvalue=DecodeBinarization(&self->decoder,
+	self->dcmagnitudebins[comp][valuecontext],
+	self->dcremainderbins[comp][valuecontext],
+	15,10);
 
 	// Decode sign. (5.6.7.3.2)
 	int northsign=north[0]<0;
@@ -537,6 +491,42 @@ int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 
 	if(sign) return predicted-absvalue;
 	else return predicted+absvalue;
+}
+
+static unsigned int DecodeBinarization(WinZipJPEGArithmeticDecoder *decoder,
+WinZipJPEGContext *magnitudebins,WinZipJPEGContext *remainderbins,int maxbits,int cap)
+{
+	// Decode binarization. (5.6.4, and additional reverse engineering
+	// as the spec does not describe the process in sufficient detail.)
+
+	// Decode unary magnitude.
+	int ones=0;
+	while(ones<maxbits)
+	{
+		int context=ones;
+		if(context>=cap) context=cap-1;
+
+		int unary=NextBitFromWinZipJPEGArithmeticDecoder(decoder,&magnitudebins[context]);
+		if(unary==1) ones++;
+		else break;
+	}
+
+	// Decode remainder bits, if any.
+	if(ones==0) return 0;
+	else if(ones==1) return 1;
+	else
+	{
+		int numbits=ones-1;
+		int val=1<<numbits;
+
+		for(int i=numbits-1;i>=0;i--)
+		{
+			int bit=NextBitFromWinZipJPEGArithmeticDecoder(decoder,&remainderbins[i]);
+			val|=bit<<i;
+		}
+
+		return val;
+	}
 }
 
 static bool IsFirstRow(unsigned int k) { return Row(k)==0; }

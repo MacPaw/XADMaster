@@ -8,12 +8,14 @@ LD=gcc
 
 ALL_C_FILES=ArithmeticDecoder.c \
             Decompressor.c \
+            JPEG.c \
             RawDecoder.c \
             Test.c \
             ../lzma/LzmaDec.c \
 
 RAWDECODER_C_FILES=ArithmeticDecoder.c \
                    Decompressor.c \
+                   JPEG.c \
                    RawDecoder.c \
                    ../lzma/LzmaDec.c \
 

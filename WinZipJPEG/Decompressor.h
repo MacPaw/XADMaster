@@ -3,6 +3,7 @@
 
 #include "InputStream.h"
 #include "ArithmeticDecoder.h"
+#include "JPEG.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -26,32 +27,7 @@ typedef struct WinZipJPEGDecompressor
 	bool isfinalbundle;
 
 	bool hasparsedjpeg;
-
-	unsigned int width,height,bits;
-	unsigned int restartinterval;
-
-	unsigned int numcomponents;
-	struct
-	{
-		unsigned int identifier;
-		unsigned int horizontalfactor,verticalfactor;
-		unsigned int quantizationtable;
-	} components[4];
-
-	unsigned int numscancomponents;
-	struct
-	{
-		unsigned int componentindex;
-		unsigned int dctable,actable;
-	} scancomponents[4];
-
-	unsigned int quantizationtables[4][64];
-
-	struct
-	{
-		unsigned int code,length;
-	} huffmantables[2][4][256];
-
+	WinZipJPEGMetadata jpeg;
 
 	WinZipJPEGArithmeticDecoder decoder;
 
@@ -61,6 +37,7 @@ typedef struct WinZipJPEGDecompressor
 	WinZipJPEGContext magnitudebins[4][3][9][9][9];
 	WinZipJPEGContext remainderbins[4][13][3][7];
 	WinZipJPEGContext signbins[4][27][3][2];
+	WinZipJPEGContext fixedcontext;
 } WinZipJPEGDecompressor;
 
 WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *readfunc,void *inputcontext);

@@ -3,15 +3,9 @@
 
 #include <stdlib.h>
 
-
-
-
 // Helper functions for reading from the input stream.
 static int FullRead(WinZipJPEGDecompressor *self,uint8_t *buffer,size_t length);
 static int SkipBytes(WinZipJPEGDecompressor *self,size_t length);
-
-// JPEG parser.
-static bool ParseJPEG(WinZipJPEGDecompressor *self);
 
 // Little endian integer parsing functions.
 static inline uint16_t LittleEndianUInt16(uint8_t *ptr) { return ptr[0]|(ptr[1]<<8); }
@@ -21,6 +15,41 @@ static inline uint32_t LittleEndianUInt32(uint8_t *ptr) { return ptr[0]|(ptr[1]<
 static void *Alloc(void *p,size_t size) { return malloc(size); }
 static void Free(void *p,void *address) { return free(address); }
 static ISzAlloc lzmaallocator={Alloc,Free};
+
+// Decoder functions.
+
+static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,int x,int y,
+int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64]);
+static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,
+int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64]);
+static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
+int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64]);
+
+static bool IsFirstRow(unsigned int k);
+static bool IsFirstColumn(unsigned int k);
+static bool IsFirstRowOrColumn(unsigned int k);
+static bool IsSecondRow(unsigned int k);
+static bool IsSecondColumn(unsigned int k);
+
+static unsigned int Left(unsigned int k);
+static unsigned int Up(unsigned int k);
+static unsigned int UpAndLeft(unsigned int k);
+static unsigned int Right(unsigned int k);
+static unsigned int Down(unsigned int k);
+
+static unsigned int ZigZag(unsigned int row,unsigned int column);
+static unsigned int Row(unsigned int k);
+static unsigned int Column(unsigned int k);
+
+static int Min(int a,int b);
+static int Abs(int x);
+static int Sign(int x);
+static unsigned int Category(uint16_t val);
+
+static int Sum(unsigned int k,int16_t block[64]);
+static int Average(unsigned int k,int16_t north[64],int16_t west[64],int16_t quantization[64]);
+static int BDR(unsigned int k,int16_t current[64],int16_t north[64],int16_t west[64],int16_t quantization[64]);
+
 
 
 
@@ -75,12 +104,12 @@ int ReadWinZipJPEGHeader(WinZipJPEGDecompressor *self)
 	self->slicevalue=header[3]&0x1f;
 
 	// Initialize arithmetic decoder contexts.
-	InitializeWinZipJPEGContexts(&self->eobbins[0][0][0][0],sizeof(self->eobbins));
+	InitializeWinZipJPEGContexts(&self->eobbins[0][0][0],sizeof(self->eobbins));
 	InitializeWinZipJPEGContexts(&self->zerobins[0][0][0][0],sizeof(self->zerobins));
 	InitializeWinZipJPEGContexts(&self->pivotbins[0][0][0][0],sizeof(self->pivotbins));
 	InitializeWinZipJPEGContexts(&self->magnitudebins[0][0][0][0][0],sizeof(self->magnitudebins));
-	InitializeWinZipJPEGContexts(6self->remainderbins[0][0][0][0],sizeof(self->remainderbins));
-	InitializeWinZipJPEGContexts(6self->signbins[0][0][0][0],sizeof(self->signbins));
+	InitializeWinZipJPEGContexts(&self->remainderbins[0][0][0][0],sizeof(self->remainderbins));
+	InitializeWinZipJPEGContexts(&self->signbins[0][0][0][0],sizeof(self->signbins));
 
 	return WinZipJPEGNoError;
 }
@@ -148,7 +177,8 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 	// If this is the first bundle, parse JPEG structure
 	if(!self->hasparsedjpeg)
 	{
-		if(!ParseJPEG(self)) return WinZipJPEGParseError;
+		if(!ParseWinZipJPEGMetadata(&self->jpeg,
+		self->metadatabytes,self->metadatalength)) return WinZipJPEGParseError;
 		self->hasparsedjpeg=true;
 	}
 
@@ -161,16 +191,44 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 	return WinZipJPEGNoError;
 }
 
-
-static inline unsigned int Category(uint16_t val)
+// Helper function that makes sure to read as much data as requested, even
+// if the read function returns short buffers, and reports an error if it
+// reaches EOF prematurely.
+static int FullRead(WinZipJPEGDecompressor *self,uint8_t *buffer,size_t length)
 {
-	unsigned int cat=0;
-	if(val&0xff00) { val>>=8; cat|=8; }
-	if(val&0xf0) { val>>=4; cat|=4; }
-	if(val&0xc) { val>>=2; cat|=2; }
-	if(val&0x2) { val>>=1; cat|=1; }
-	return cat;
+	size_t totalread=0;
+	while(totalread<length)
+	{
+		size_t actual=self->readfunc(self->inputcontext,&buffer[totalread],length-totalread);
+		if(actual==0) return WinZipJPEGEndOfStreamError;
+		totalread+=actual;
+	}
+
+	return WinZipJPEGNoError;
 }
+
+// Helper function to skip data by reading and discarding.
+static int SkipBytes(WinZipJPEGDecompressor *self,size_t length)
+{
+	uint8_t buffer[1024];
+
+	size_t totalread=0;
+	while(totalread<length)
+	{
+		size_t numbytes=length-totalread;
+		if(numbytes>sizeof(buffer)) numbytes=sizeof(buffer);
+		size_t actual=self->readfunc(self->inputcontext,buffer,numbytes);
+		if(actual==0) return WinZipJPEGEndOfStreamError;
+		totalread+=actual;
+	}
+
+	return WinZipJPEGNoError;
+}
+
+
+
+
+
 
 void TestDecompress(WinZipJPEGDecompressor *self)
 {
@@ -186,22 +244,23 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 		slicesize=(self->width+7)/8*(self->height+7)/8;
 	}*/
 
-	for(int comp=0;comp<self->numscancomponents;comp++)
+	for(int comp=0;comp<self->jpeg.numscancomponents;comp++)
 	{
+	}
+}
 
 
-
-static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,int x,int y
-int16_t *current[64],int16_t *west[64],int16_t *north[64])
+static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,int x,int y,
+int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 {
 	// Decode End Of Block value to find out how many AC components there are. (5.6.5)
 
 	// Calculate EOB context. (5.6.5.2)
 	int average;
 	if(x==0&&y==0) average=0;
-	if(x==0) average=Sum(north,0); 
-	else if(y==0) average=Sum(west,0);
-	else average=(Sum(north,0)+Sum(west,0)+1)/2;
+	if(x==0) average=Sum(0,north);
+	else if(y==0) average=Sum(0,west);
+	else average=(Sum(0,north)+Sum(0,west)+1)/2;
 
 	int eobcontext=Min(Category(average),12);
 
@@ -210,31 +269,31 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 	for(int i=0;i<6;i++)
 	{
 		bitstring|=(bitstring<<1)|NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-		self->eobbins[comp][eobcontext][bitstring]);
+		&self->eobbins[comp][eobcontext][bitstring]);
 	}
 	unsigned int eob=bitstring&0x3f;
 
-	// Decode AC components, if any. (5.6.6)
-	for(int k=1;k<=eob;k++)
+	// Fill out the elided block entries with 0.
+	for(unsigned int k=eob+1;k<=63;k++) current[k]=0;
+
+	// Decode AC components in decreasing order, if any. (5.6.6)
+	for(unsigned int k=eob;k>=1;k--)
 	{
-		DecodeACComponent(self,comp,k,current,west,north);
+		DecodeACComponent(self,comp,k,current,west,north,quantization);
 	}
 
-	// Fill out remaining block entries with 0.
-	for(int k=eob+1;k<=63;k++) current[k]=0;
-
-	// Decode DC components. (5.6.7)
+	// Decode DC component. (5.6.7)
 }
 
-static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,int k,
-int16_t *current[64],int16_t *west[64],int16_t *north[64])
+static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,
+int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 {
 	// Decode zero/non-zero bit. (5.6.6.1)
 	int val1;
-	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(current,north,west,k));
-	else val1=Average(current,k);
+	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(k,current,north,west,quantization));
+	else val1=Average(k,north,west,quantization);
 
-	int val2=Sum(current,k);
+	int val2=Sum(k,current);
 
 	int zerocontext1=Min(Category(val1),2);
 	int zerocontext2=Min(Category(val2),5);
@@ -279,7 +338,7 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 		while(ones<9)
 		{
 			int unary=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-			&self->magnitudebins[comp][n][magnitudecontext1][magnitudecontext2][bits]);
+			&self->magnitudebins[comp][n][magnitudecontext1][magnitudecontext2][ones]);
 			if(unary==1) ones++;
 			else break;
 		}
@@ -295,7 +354,7 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 			for(int i=0;i<numbits;i++)
 			{
 				int bit=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
-				&self->remainderbins[comp][n][remainedercontext1][i]);
+				&self->remainderbins[comp][n][remaindercontext1][i]);
 
 				val|=bit<<i; // TODO: Is this correct? No idea! Spec sure doesn't say!
 			}
@@ -304,19 +363,13 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 		}
 	}
 
-	if(DecodeACSign(self,comp,k,absvalue,current,west,north)) return -absvalue;
+	if(DecodeACSign(self,comp,k,absvalue,current,west,north,quantization)) return -absvalue;
 	else return absvalue;
 }
 
-static inline int Sign(int x)
-{
-	if(x>0) return 1;
-	else if(x<0) return -1;
-	else return 0;
-}
 
-static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,int k,int absvalue,
-int16_t *current[64],int16_t *west[64],int16_t *north[64])
+static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
+int16_t current[64],int16_t west[64],int16_t north[64],int16_t quantization[64])
 {
 	// Decode sign. (5.6.6.4)
 
@@ -324,7 +377,7 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 	int predictedsign;
 	if(IsFirstRowOrColumn(k))
 	{
-		int bdr=BDR(current,north,west,k);
+		int bdr=BDR(k,current,north,west,quantization);
 
 		if(bdr==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
 
@@ -345,7 +398,7 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 
 		predictedsign=(north[k]<0);
 	}
-	else if(IsSecondCoumn(k))
+	else if(IsSecondColumn(k))
 	{
 		if(west[k]==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
 
@@ -368,7 +421,7 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 		25, 0, 0, 0, 0, 0,26,
 		 0, 0, 0, 0, 0, 0,
 		 0, 0, 0, 0, 0,
-		 0, 0, 0, 0
+		 0, 0, 0, 0,
 		 0, 0, 0,
 		 0, 0,
 		 0,
@@ -381,292 +434,130 @@ int16_t *current[64],int16_t *west[64],int16_t *north[64])
 	&self->signbins[comp][n][signcontext1][predictedsign]);
 }
 
+static bool IsFirstRow(unsigned int k) { return Row(k)==0; }
+static bool IsFirstColumn(unsigned int k) { return Column(k)==0; }
+static bool IsFirstRowOrColumn(unsigned int k) { return IsFirstRow(k)||IsFirstColumn(k); }
+static bool IsSecondRow(unsigned int k) { return Row(k)==1; }
+static bool IsSecondColumn(unsigned int k) { return Column(k)==1; }
 
+static unsigned int Left(unsigned int k) { return ZigZag(Row(k),Column(k)-1); }
+static unsigned int Up(unsigned int k) { return ZigZag(Row(k)-1,Column(k)); }
+static unsigned int UpAndLeft(unsigned int k) { return ZigZag(Row(k)-1,Column(k)-1); }
+static unsigned int Right(unsigned int k) { return ZigZag(Row(k),Column(k)+1); }
+static unsigned int Down(unsigned int k) { return ZigZag(Row(k)+1,Column(k)); }
 
-// Helper function that makes sure to read as much data as requested, even
-// if the read function returns short buffers, and reports an error if it
-// reaches EOF prematurely.
-static int FullRead(WinZipJPEGDecompressor *self,uint8_t *buffer,size_t length)
+static unsigned int ZigZag(unsigned int row,unsigned int column)
 {
-	size_t totalread=0;
-	while(totalread<length)
-	{
-		size_t actual=self->readfunc(self->inputcontext,&buffer[totalread],length-totalread);
-		if(actual==0) return WinZipJPEGEndOfStreamError;
-		totalread+=actual;
-	}
-
-	return WinZipJPEGNoError;
+	if(row>=8||column>=8) return 0; // Can't happen.
+	return (int[8][8]){
+		{  0, 1, 5, 6,14,15,27,28, },
+		{  2, 4, 7,13,16,26,29,42, },
+		{  3, 8,12,17,25,30,41,43, },
+		{  9,11,18,24,31,40,44,53, },
+		{ 10,19,23,32,39,45,52,54, },
+		{ 20,22,33,38,46,51,55,60, },
+		{ 21,34,37,47,50,56,59,61, },
+		{ 35,36,48,49,57,58,62,63, },
+	}[row][column];
 }
 
-// Helper function to skip data by reading and discarding.
-static int SkipBytes(WinZipJPEGDecompressor *self,size_t length)
+static unsigned int Row(unsigned int k)
 {
-	uint8_t buffer[1024];
-
-	size_t totalread=0;
-	while(totalread<length)
-	{
-		size_t numbytes=length-totalread;
-		if(numbytes>sizeof(buffer)) numbytes=sizeof(buffer);
-		size_t actual=self->readfunc(self->inputcontext,buffer,numbytes);
-		if(actual==0) return WinZipJPEGEndOfStreamError;
-		totalread+=actual;
-	}
-
-	return WinZipJPEGNoError;
+	if(k>=64) return 0; // Can't happen.
+	return (int[64]){
+		0,0,1,2,1,0,0,1,2,3,4,3,2,1,0,0,
+		1,2,3,4,5,6,5,4,3,2,1,0,0,1,2,3,
+		4,5,6,7,7,6,5,4,3,2,1,2,3,4,5,6,
+		7,7,6,5,4,3,4,5,6,7,7,6,5,6,7,7,
+	}[k];
 }
 
-
-
-// JPEG parser.
-#include <stdio.h>
-static uint8_t *FindStartOfImage(uint8_t *ptr,uint8_t *end);
-static uint8_t *FindNextMarker(uint8_t *ptr,uint8_t *end);
-static int ParseSize(uint8_t *ptr,uint8_t *end);
-
-static inline uint16_t ParseUInt16(uint8_t *ptr) { return (ptr[0]<<8)|ptr[1]; }
-
-static bool ParseJPEG(WinZipJPEGDecompressor *self)
+static unsigned int Column(unsigned int k)
 {
-	self->restartinterval=0;
+	if(k>=64) return 0; // Can't happen.
+	return (int[64]){
+		0,1,0,0,1,2,3,2,1,0,0,1,2,3,4,5,
+		4,3,2,1,0,0,1,2,3,4,5,6,7,6,5,4,
+		3,2,1,0,1,2,3,4,5,6,7,7,6,5,4,3,
+		2,3,4,5,6,7,7,6,5,4,5,6,7,7,6,7,
+	}[k];
+}
 
-	uint8_t *ptr=self->metadatabytes;
-	uint8_t *end=self->metadatabytes+self->metadatalength;
+static int Min(int a,int b)
+{
+	if(a<b) return a;
+	else return b;
+}
 
-	ptr=FindStartOfImage(ptr,end);
-	if(!ptr) return false;
+static int Abs(int x)
+{
+	if(x>=0) return x;
+	else return -x;
+}
 
-	for(;;)
+static int Sign(int x)
+{
+	if(x>0) return 1;
+	else if(x<0) return -1;
+	else return 0;
+}
+
+static unsigned int Category(uint16_t val)
+{
+	unsigned int cat=0;
+	if(val&0xff00) { val>>=8; cat|=8; }
+	if(val&0xf0) { val>>=4; cat|=4; }
+	if(val&0xc) { val>>=2; cat|=2; }
+	if(val&0x2) { val>>=1; cat|=1; }
+	return cat;
+}
+
+// 5.6.2.1 SUM
+static int Sum(unsigned int k,int16_t block[64])
+{
+	int sum=0;
+	for(unsigned int i=0;i<64;i++)
 	{
-		ptr=FindNextMarker(ptr,end);
-		if(!ptr) return false;
-
-		switch(*ptr++)
-		{
-			case 0xd8: // Start of image
-fprintf(stderr,"Start of image\n");
-				// Empty marker, do nothing.
-			break;
-
-			case 0xc4: // Define huffman table
-			{
-				int size=ParseSize(ptr,end);
-				if(!size) return false;
-				uint8_t *next=ptr+size;
-
-				ptr+=2;
-
-fprintf(stderr,"Define huffman table(s)\n");
-				while(ptr+17<=next)
-				{
-					int class=*ptr>>4;
-					int index=*ptr&0x0f;
-					ptr++;
-
-					if(class!=0 && class!=1) return false;
-					if(index>=4) return false;
-
-					int numcodes[16];
-					int totalcodes=0;
-					for(int i=0;i<16;i++)
-					{
-						numcodes[i]=ptr[i];
-						totalcodes+=numcodes[i];
-					}
-					ptr+=16;
-
-					if(ptr+totalcodes>next) return false;
-
-fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,totalcodes);
-
-					for(int i=0;i<16;i++)
-					{
-						for(int j=0;j<numcodes[i];j++)
-						{
-							int value=*ptr++;
-							self->huffmantables[class][index][value].length=i+1;
-						}
-					}
-				}
-
-				ptr=next;
-			}
-			break;
-
-			case 0xdb: // Define quantization table(s)
-			{
-				int size=ParseSize(ptr,end);
-				if(!size) return false;
-				uint8_t *next=ptr+size;
-
-				ptr+=2;
-
-fprintf(stderr,"Define quantization table(s)\n");
-				while(ptr+1<=next)
-				{
-					int precision=*ptr>>4;
-					int index=*ptr&0x0f;
-					ptr++;
-
-					if(index>=4) return false;
-
-					if(precision==0)
-					{
-fprintf(stderr," > 8 bit table at %d\n",index);
-						if(ptr+64>next) return false;
-						for(int i=0;i<64;i++) self->quantizationtables[index][i]=ptr[i];
-						ptr+=64;
-					}
-					else if(precision==1)
-					{
-fprintf(stderr," > 16 bit table at %d\n",index);
-						if(ptr+128>next) return false;
-						for(int i=0;i<64;i++) self->quantizationtables[index][i]=ParseUInt16(&ptr[2*i]);
-						ptr+=128;
-					}
-					else return false;
-				}
-
-				ptr=next;
-			}
-			break;
-
-			case 0xdd: // Define restart interval
-			{
-				int size=ParseSize(ptr,end);
-				if(!size) return false;
-				uint8_t *next=ptr+size;
-
-				self->restartinterval=ParseUInt16(&ptr[2]);
-
-				ptr=next;
-fprintf(stderr,"Define restart interval: %d\n",self->restartinterval);
-			}
-			break;
-
-			case 0xc0: // Start of frame 0
-			case 0xc1: // Start of frame 1
-			{
-				int size=ParseSize(ptr,end);
-				if(!size) return false;
-				uint8_t *next=ptr+size;
-
-				if(size<8) return false;
-				self->bits=ptr[2];
-				self->height=ParseUInt16(&ptr[3]);
-				self->width=ParseUInt16(&ptr[5]);
-				self->numcomponents=ptr[7];
-
-				if(self->numcomponents<1 || self->numcomponents>4) return false;
-				if(size<8+self->numcomponents*3) return false;
-
-				for(int i=0;i<self->numcomponents;i++)
-				{
-					self->components[i].identifier=ptr[8+i*3];
-					self->components[i].horizontalfactor=ptr[9+i*3]>>4;
-					self->components[i].verticalfactor=ptr[9+i*3]&0x0f;
-					self->components[i].quantizationtable=ptr[10+i*3];
-				}
-fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
-
-				ptr=next;
-			}
-			break;
-
-			case 0xda: // Start of scan
-			{
-				int size=ParseSize(ptr,end);
-				if(!size) return false;
-
-				if(size<6) return false;
-
-				self->numscancomponents=ptr[2];
-				if(self->numscancomponents<1 || self->numscancomponents>4) return false;
-				if(size<6+self->numscancomponents*2) return false;
-
-				for(int i=0;i<self->numscancomponents;i++)
-				{
-					int identifier=ptr[3+i*2];
-					int index=-1;
-					for(int j=0;j<self->numcomponents;j++)
-					{
-						if(self->components[j].identifier==identifier)
-						{
-							index=j;
-							break;
-						}
-					}
-					if(index==-1) return false;
-
-					self->scancomponents[i].componentindex=index;
-
-					self->scancomponents[i].dctable=ptr[4+i*2]>>4;
-					self->scancomponents[i].actable=ptr[4+i*2]&0x0f;
-				}
-
-				if(ptr[3+self->numscancomponents*2]!=0) return false;
-				if(ptr[4+self->numscancomponents*2]!=63) return false;
-				if(ptr[5+self->numscancomponents*2]!=0) return false;
-
-fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents,ptr[3+self->numscancomponents*2]);
-
-				return true;
-			}
-			break;
-
-
-			case 0xd9: // End of image
-				return true; // TODO: figure out how to properly find end of file.
-
-			default:
-			{
-fprintf(stderr,"Unknown marker %02x\n",ptr[-1]);
-				int size=ParseSize(ptr,end);
-				if(!size) return false;
-				ptr+=size;
-			}
-			break;
-		}
+		if(i!=k && Row(i)>=Row(k) && Column(i)>=Column(k)) sum+=Abs(block[i]);
 	}
 }
 
-// Find start of image marker.
-static uint8_t *FindStartOfImage(uint8_t *ptr,uint8_t *end)
+// 5.6.2.2 AVG
+// NOTE: This assumes that the expression given for 'sum' is incorrect, and that
+// Bw[k] should actually be Bw[x].
+static int Average(unsigned int k,int16_t north[64],int16_t west[64],int16_t quantization[64])
 {
-	while(ptr+2<=end)
+	if(k==0) return 0; // Can't happen.
+	else if(IsFirstRow(k))
 	{
-		if(ptr[0]==0xff && ptr[1]==0xd8) return ptr;
-		ptr++;
+		int sum=(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k];
+		return (sum+Abs(north[k])+Abs(west[k])+1)/(2*1);
 	}
-
-	return NULL;
-}
-
-// Find next marker, skipping pad bytes.
-static uint8_t *FindNextMarker(uint8_t *ptr,uint8_t *end)
-{
-	if(ptr>=end) return NULL;
-	if(*ptr!=0xff) return NULL;
-
-	while(*ptr==0xff)
+	else if(IsFirstColumn(k))
 	{
-		ptr++;
-		if(ptr>=end) return NULL;
+		int sum=(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Left(k)]/quantization[k];
+		return (sum+Abs(north[k])+Abs(west[k])+1)/(2*1);
 	}
-
-	return ptr;
+	else
+	{
+		int sum=0;
+		sum+=(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k];
+		sum+=(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Up(k)]/quantization[k];
+		sum+=(Abs(north[UpAndLeft(k)])+Abs(west[UpAndLeft(k)]))*quantization[UpAndLeft(k)]/quantization[k];
+		return (sum+Abs(north[k])+Abs(west[k])+3)/(2*3);
+	}
 }
 
-// Parse and sanity check the size of a marker.
-static int ParseSize(uint8_t *ptr,uint8_t *end)
+// 5.6.2.3 BDR
+static int BDR(unsigned int k,int16_t current[64],int16_t north[64],int16_t west[64],int16_t quantization[64])
 {
-	if(ptr+2>end) return 0;
-
-	int size=ParseUInt16(ptr);
-	if(size<2) return 0;
-	if(ptr+size>end) return 0;
-
-	return size;
+	if(IsFirstRow(k))
+	{
+		return north[k]-(north[Down(k)]+current[Down(k)])*quantization[Down(k)]/quantization[k];
+	}
+	else if(IsFirstColumn(k))
+	{
+		return west[k]-(west[Right(k)]+current[Right(k)])*quantization[Right(k)]/quantization[k];
+	}
+	else return 0; // Can't happen.
 }
-

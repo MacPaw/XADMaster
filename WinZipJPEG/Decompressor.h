@@ -31,9 +31,9 @@ typedef struct WinZipJPEGDecompressor
 
 	WinZipJPEGArithmeticDecoder decoder;
 
-	WinZipJPEGContext eobbins[4][12][64];
+	WinZipJPEGContext eobbins[4][13][63];
 	WinZipJPEGContext zerobins[4][62][3][6];
-	WinZipJPEGContext pivotbins[4][63][5][7]; // Why 63?
+	WinZipJPEGContext pivotbins[4][63][5][7];
 	WinZipJPEGContext acmagnitudebins[4][3][9][9][9];
 	WinZipJPEGContext acremainderbins[4][13][3][7];
 	WinZipJPEGContext acsignbins[4][27][3][2];
@@ -49,6 +49,8 @@ void FreeWinZipJPEGDecompressor(WinZipJPEGDecompressor *self);
 int ReadWinZipJPEGHeader(WinZipJPEGDecompressor *self);
 
 int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self);
+
+void TestDecompress(WinZipJPEGDecompressor *self);
 
 static inline bool IsFinalWinZipJPEGBundle(WinZipJPEGDecompressor *self) { return self->isfinalbundle; }
 

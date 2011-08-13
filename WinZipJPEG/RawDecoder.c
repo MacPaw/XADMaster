@@ -1,6 +1,6 @@
 #include "Decompressor.h"
 
-#ifdef MINGW32
+#ifdef __MINGW32__
 #ifdef __STRICT_ANSI__
 #undef __STRICT_ANSI__
 #endif
@@ -13,7 +13,7 @@ static size_t STDIOReadFunction(void *context,uint8_t *buffer,size_t length) { r
 
 int main(int argv,const char **argc)
 {
-	#ifdef MINGW32
+	#ifdef __MINGW32__
 	setmode(fileno(stdin),O_BINARY);
 	#endif
 
@@ -44,7 +44,9 @@ int main(int argv,const char **argc)
 
 		//printf("%d bytes of metadata.\n",WinZipJPEGBundleMetadataLength(decompressor));
 
-		fwrite(WinZipJPEGBundleMetadataBytes(decompressor),1,WinZipJPEGBundleMetadataLength(decompressor),stdout);
+TestDecompress(decompressor);
+
+		//fwrite(WinZipJPEGBundleMetadataBytes(decompressor),1,WinZipJPEGBundleMetadataLength(decompressor),stdout);
 	}
 
 	FreeWinZipJPEGDecompressor(decompressor);

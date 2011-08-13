@@ -62,6 +62,14 @@ void InitializeWinZipJPEGContexts(WinZipJPEGContext *first,size_t bytes)
 	for(int i=0;i<bytes/sizeof(WinZipJPEGContext);i++) InitializeWinZipJPEGContext(first+i);
 }
 
+void InitializeFixedWinZipJPEGContext(WinZipJPEGContext *self)
+{
+	self->dlrm=nmaxlp[0];
+	self->i=48;
+	self->k=0;
+	self->mps=0;
+}
+
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
 self->dx=0; // Otherwise tests don't pass.
@@ -1219,8 +1227,8 @@ static uint8_t chartbl[512]=
 {
 	9,8,7,7, 6,6,6,6, 5,5,5,5, 5,5,5,5,
 	4,4,4,4, 4,4,4,4, 4,4,4,4, 4,4,4,4,
-	3,3,3,3, 3,3,3,3, 3,3,3,3, 3,3,3,3, 
-	3,3,3,3, 3,3,3,3, 3,3,3,3, 3,3,3,3, 
+	3,3,3,3, 3,3,3,3, 3,3,3,3, 3,3,3,3,
+	3,3,3,3, 3,3,3,3, 3,3,3,3, 3,3,3,3,
 	2,2,2,2, 2,2,2,2, 2,2,2,2, 2,2,2,2,
 	2,2,2,2, 2,2,2,2, 2,2,2,2, 2,2,2,2,
 	2,2,2,2, 2,2,2,2, 2,2,2,2, 2,2,2,2,

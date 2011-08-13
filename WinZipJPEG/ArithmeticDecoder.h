@@ -34,6 +34,7 @@ typedef struct WinZipJPEGContext
 void InitializeWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGReadFunction *readfunc, void *inputcontext);
 void InitializeWinZipJPEGContext(WinZipJPEGContext *self);
 void InitializeWinZipJPEGContexts(WinZipJPEGContext *first,size_t bytes);
+void InitializeFixedWinZipJPEGContext(WinZipJPEGContext *self);
 
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context);
 

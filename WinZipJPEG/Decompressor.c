@@ -48,7 +48,7 @@ static unsigned int Column(unsigned int k);
 static int Min(int a,int b);
 static int Abs(int x);
 static int Sign(int x);
-static unsigned int Category(uint16_t val);
+static unsigned int Category(unsigned int val);
 
 static int Sum(unsigned int k,const int16_t block[64]);
 static int Average(unsigned int k,
@@ -265,19 +265,22 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 	int quantindex=self->jpeg.components[comp].quantizationtable;
 	int16_t *quantization=self->jpeg.quantizationtables[quantindex];
 
-	for(int i=0;i<25;i++)
+	for(int i=0;i<40;i++)
 	{
 		printf("\n%d:\n",i);
-		DecodeMCU(self,0,0,0,testblock,westblock,zeroblock,quantization);
-memcpy(westblock,testblock,sizeof(testblock));
+		DecodeMCU(self,0,i,0,testblock,westblock,zeroblock,quantization);
+
 		for(int row=0;row<8;row++)
 		{
 			for(int col=0;col<8;col++)
 			{
-				printf("%d ",testblock[ZigZag(row,col)]);
+				int predict=0;
+				if(i!=0&&row==0&&col==0) predict=westblock[0];
+				printf("%d ",(testblock[ZigZag(row,col)]-predict)*quantization[ZigZag(row,col)]);
 			}
 			printf("\n");
 		}
+		memcpy(westblock,testblock,sizeof(testblock));
 	}
 }
 
@@ -304,7 +307,6 @@ int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t
 		&self->eobbins[comp][eobcontext][bitstring-1]);
 	}
 	unsigned int eob=bitstring&0x3f;
-printf("%d %d\n",eob,eobcontext);
 
 	// Fill out the elided block entries with 0.
 	for(unsigned int k=eob+1;k<=63;k++) current[k]=0;
@@ -366,12 +368,12 @@ const int16_t current[64],const int16_t west[64],const int16_t north[64],const i
 
 		int magnitudecontext1=Min(Category(val1),8);
 		int magnitudecontext2=Min(Category(val2),8);
-		int remaindercontext1=val3;
+		int remaindercontext=val3;
 
 		// Decode absolute value.
 		absvalue=DecodeBinarization(&self->decoder,
 		self->acmagnitudebins[comp][n][magnitudecontext1][magnitudecontext2],
-		self->acremainderbins[comp][n][remaindercontext1],
+		self->acremainderbins[comp][n][remaindercontext],
 		14,9)+2;
 	}
 
@@ -458,22 +460,25 @@ const int16_t current[64],const int16_t west[64],const int16_t north[64],const i
 	}
 	else if(x==0)
 	{
-		int t0=north[0]*10000-11038*quantization[2]*(north[2]-current[2])/quantization[0];
+		// NOTE: spec says north[2].current[2]
+		int t0=north[0]*10000-11038*quantization[2]*(north[2]+current[2])/quantization[0];
 		int p0=((t0<0)?(t0-5000):(t0+5000))/10000;
 		predicted=p0;
 	}
 	else if(y==0)
 	{
-		int t1=west[0]*10000-11038*quantization[1]*(west[1]-current[1])/quantization[0];
+		// NOTE: spec says west[1]-current[1]
+		int t1=west[0]*10000-11038*quantization[1]*(west[1]+current[1])/quantization[0];
 		int p1=((t1<0)?(t1-5000):(t1+5000))/10000;
 		predicted=p1;
 	}
 	else
 	{
-		int t0=north[0]*10000-11038*quantization[2]*(north[2]-current[2])/quantization[0];
+		// NOTE: spec says north[2]-current[2], west[1]-current[1]
+		int t0=north[0]*10000-11038*quantization[2]*(north[2]+current[2])/quantization[0];
 		int p0=((t0<0)?(t0-5000):(t0+5000))/10000;
 
-		int t1=west[0]*10000-11038*quantization[1]*(west[1]-current[1])/quantization[0];
+		int t1=west[0]*10000-11038*quantization[1]*(west[1]+current[1])/quantization[0];
 		int p1=((t1<0)?(t1-5000):(t1+5000))/10000;
 
 		// Prediction refinement. (5.6.7.2)
@@ -626,14 +631,17 @@ static int Sign(int x)
 }
 
 // CAT (5.6.3)
-static unsigned int Category(uint16_t val)
+static unsigned int Category(unsigned int val)
 {
+	if(val==0) return 0;
+
 	unsigned int cat=0;
+	if(val&0xffff0000) { val>>=16; cat|=16; }
 	if(val&0xff00) { val>>=8; cat|=8; }
 	if(val&0xf0) { val>>=4; cat|=4; }
 	if(val&0xc) { val>>=2; cat|=2; }
 	if(val&0x2) { val>>=1; cat|=1; }
-	return cat;
+	return cat+1;
 }
 
 // SUM (5.6.2.1)
@@ -644,6 +652,7 @@ static int Sum(unsigned int k,const int16_t block[64])
 	{
 		if(i!=k && Row(i)>=Row(k) && Column(i)>=Column(k)) sum+=Abs(block[i]);
 	}
+	return sum;
 }
 
 // AVG (5.6.2.2)

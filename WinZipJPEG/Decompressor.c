@@ -265,7 +265,9 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 	int quantindex=self->jpeg.components[comp].quantizationtable;
 	int16_t *quantization=self->jpeg.quantizationtables[quantindex];
 
-	for(int i=0;i<100;i++)
+	memset(westblock,0,sizeof(westblock));
+
+	for(int i=0;i<75;i++)
 	{
 		printf("\n%d:\n",i);
 		DecodeMCU(self,0,i,0,testblock,zeroblock,westblock,quantization);
@@ -325,12 +327,11 @@ int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t
 static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,bool canbezero,
 const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
 {
+//printf("decode AC %d\n",k);
 	int val1;
 	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(k,current,north,west,quantization));
 	else val1=Average(k,north,west,quantization);
 //	else {printf("AVG(%d) ",k);val1=Average(k,north,west,quantization); printf("AVG:%d\n",val1);}
-//printf("%d=%d,%d %d %d\n",
-//k,Row(k),Column(k),IsFirstRowOrColumn(k),val1);
 
 	int val2=Sum(k,current);
 
@@ -355,6 +356,9 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 	// Decode pivot (abs>=2). (5.6.6.2)
 	int pivotcontext1=Min(Category(val1),4);
 	int pivotcontext2=Min(Category(val2),6);
+//printf("pivotcontext: %d %d %d %d\n",(k-1)*5*7+pivotcontext1*7+pivotcontext2+2256,
+//k-1,pivotcontext1,pivotcontext2);
+
 	int pivot=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 	&self->pivotbins[comp][k-1][pivotcontext1][pivotcontext2]);
 
@@ -391,6 +395,7 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
 const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
 {
+//printf("decode sign\n");
 	// Decode sign. (5.6.6.4)
 
 	// Calculate sign context, or decode with fixed probability. (5.6.6.4.1)

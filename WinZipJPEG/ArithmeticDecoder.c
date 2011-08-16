@@ -69,6 +69,7 @@ void InitializeFixedWinZipJPEGContext(WinZipJPEGContext *self)
 	self->k=0;
 	self->mps=0;
 }
+
 //static int n=0;
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {

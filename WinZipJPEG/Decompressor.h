@@ -33,14 +33,14 @@ typedef struct WinZipJPEGDecompressor
 
 	WinZipJPEGContext eobbins[4][13][63]; // 321 in WinZip.
 	WinZipJPEGContext zerobins[4][62][3][6]; // 1140 in WinZip.
-	WinZipJPEGContext pivotbins[4][63][5][7];
+	WinZipJPEGContext pivotbins[4][63][5][7]; // 2256 in WinZip.
 	WinZipJPEGContext acmagnitudebins[4][3][9][9][9];
-	WinZipJPEGContext acremainderbins[4][13][3][7];
+	WinZipJPEGContext acremainderbins[4][3][7][13];
 	WinZipJPEGContext acsignbins[4][27][3][2];
 	WinZipJPEGContext dcmagnitudebins[4][13][10]; // 1 in WinZip.
 	WinZipJPEGContext dcremainderbins[4][13][14]; // 131 in WinZip.
 	WinZipJPEGContext dcsignbins[4][2][2][2]; // 313 in WinZip.
-	WinZipJPEGContext fixedcontext;
+	WinZipJPEGContext fixedcontext; // 0 in WinZip.
 } WinZipJPEGDecompressor;
 
 WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *readfunc,void *inputcontext);

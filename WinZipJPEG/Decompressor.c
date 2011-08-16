@@ -19,13 +19,13 @@ static ISzAlloc lzmaallocator={Alloc,Free};
 // Decoder functions.
 
 static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,int x,int y,
-int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t quantization[64]);
+int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
 static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,bool canbezero,
-const int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t quantization[64]);
+const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
 static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
-const int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t quantization[64]);
+const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
 static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,int x,int y,
-const int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t quantization[64]);
+const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
 static unsigned int DecodeBinarization(WinZipJPEGArithmeticDecoder *decoder,
 WinZipJPEGContext *magnitudebins,WinZipJPEGContext *remainderbins,int maxbits,int cap);
 
@@ -265,10 +265,10 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 	int quantindex=self->jpeg.components[comp].quantizationtable;
 	int16_t *quantization=self->jpeg.quantizationtables[quantindex];
 
-	for(int i=0;i<40;i++)
+	for(int i=0;i<100;i++)
 	{
 		printf("\n%d:\n",i);
-		DecodeMCU(self,0,i,0,testblock,westblock,zeroblock,quantization);
+		DecodeMCU(self,0,i,0,testblock,zeroblock,westblock,quantization);
 
 		for(int row=0;row<8;row++)
 		{
@@ -286,7 +286,7 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 
 
 static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,int x,int y,
-int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t quantization[64])
+int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
 {
 	// Decode End Of Block value to find out how many AC components there are. (5.6.5)
 
@@ -307,6 +307,7 @@ int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t
 		&self->eobbins[comp][eobcontext][bitstring-1]);
 	}
 	unsigned int eob=bitstring&0x3f;
+//printf("eob: %d %d\n",eobcontext*63+321,eob);
 
 	// Fill out the elided block entries with 0.
 	for(unsigned int k=eob+1;k<=63;k++) current[k]=0;
@@ -314,19 +315,22 @@ int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t
 	// Decode AC components in decreasing order, if any. (5.6.6)
 	for(unsigned int k=eob;k>=1;k--)
 	{
-		current[k]=DecodeACComponent(self,comp,k,k!=eob,current,west,north,quantization);
+		current[k]=DecodeACComponent(self,comp,k,k!=eob,current,north,west,quantization);
 	}
 
 	// Decode DC component.
-	current[0]=DecodeDCComponent(self,comp,x,y,current,west,north,quantization);
+	current[0]=DecodeDCComponent(self,comp,x,y,current,north,west,quantization);
 }
 
 static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,bool canbezero,
-const int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t quantization[64])
+const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
 {
 	int val1;
 	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(k,current,north,west,quantization));
 	else val1=Average(k,north,west,quantization);
+//	else {printf("AVG(%d) ",k);val1=Average(k,north,west,quantization); printf("AVG:%d\n",val1);}
+//printf("%d=%d,%d %d %d\n",
+//k,Row(k),Column(k),IsFirstRowOrColumn(k),val1);
 
 	int val2=Sum(k,current);
 
@@ -335,6 +339,9 @@ const int16_t current[64],const int16_t west[64],const int16_t north[64],const i
 		// Decode zero/non-zero bit. (5.6.6.1)
 		int zerocontext1=Min(Category(val1),2);
 		int zerocontext2=Min(Category(val2),5);
+//printf("zerocontext: %d %d %d %d\n",(k-1)*6*3+zerocontext1*6+zerocontext2+1140,
+//k-1,zerocontext1,zerocontext2);
+
 		int nonzero=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 		&self->zerobins[comp][k-1][zerocontext1][zerocontext2]);
 
@@ -377,12 +384,12 @@ const int16_t current[64],const int16_t west[64],const int16_t north[64],const i
 		14,9)+2;
 	}
 
-	if(DecodeACSign(self,comp,k,absvalue,current,west,north,quantization)) return -absvalue;
+	if(DecodeACSign(self,comp,k,absvalue,current,north,west,quantization)) return -absvalue;
 	else return absvalue;
 }
 
 static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
-const int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t quantization[64])
+const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
 {
 	// Decode sign. (5.6.6.4)
 
@@ -448,7 +455,7 @@ const int16_t current[64],const int16_t west[64],const int16_t north[64],const i
 }
 
 static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,int x,int y,
-const int16_t current[64],const int16_t west[64],const int16_t north[64],const int16_t quantization[64])
+const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
 {
 	// Decode DC component. (5.6.7)
 
@@ -460,21 +467,21 @@ const int16_t current[64],const int16_t west[64],const int16_t north[64],const i
 	}
 	else if(x==0)
 	{
-		// NOTE: spec says north[2].current[2]
+		// NOTE: Spec says north[2].current[2].
 		int t0=north[0]*10000-11038*quantization[2]*(north[2]+current[2])/quantization[0];
 		int p0=((t0<0)?(t0-5000):(t0+5000))/10000;
 		predicted=p0;
 	}
 	else if(y==0)
 	{
-		// NOTE: spec says west[1]-current[1]
+		// NOTE: Spec says west[1]-current[1].
 		int t1=west[0]*10000-11038*quantization[1]*(west[1]+current[1])/quantization[0];
 		int p1=((t1<0)?(t1-5000):(t1+5000))/10000;
 		predicted=p1;
 	}
 	else
 	{
-		// NOTE: spec says north[2]-current[2], west[1]-current[1]
+		// NOTE: Spec says north[2]-current[2] and west[1]-current[1].
 		int t0=north[0]*10000-11038*quantization[2]*(north[2]+current[2])/quantization[0];
 		int p0=((t0<0)?(t0-5000):(t0+5000))/10000;
 
@@ -515,9 +522,12 @@ const int16_t current[64],const int16_t west[64],const int16_t north[64],const i
 	if(absvalue==0) return predicted;
 
 	// Decode sign. (5.6.7.3.2)
-	int northsign=north[0]<0;
-	int westsign=west[0]<0;
-	int predictedsign=predicted<0;
+	// NOTE: Spec says north[0]<0 and west[0]<0.
+	int northsign=(north[0]<predicted);
+	int westsign=(west[0]<predicted);
+	int predictedsign=(predicted<0);
+//printf("signcontext: %d (%d %d %d)\n",northsign*4+westsign*2+predictedsign+1+13*10+13*14,
+//north[0],west[0],predicted);
 
 	int sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 	&self->dcsignbins[comp][northsign][westsign][predictedsign]);
@@ -657,28 +667,49 @@ static int Sum(unsigned int k,const int16_t block[64])
 
 // AVG (5.6.2.2)
 // NOTE: This assumes that the expression given for 'sum' is incorrect, and that
-// Bw[k] should actually be Bw[x].
+// Bw[k] should actually be Bw[x]. Also, the spec does not explicitly mention
+// that the DC component never contributes.
 static int Average(unsigned int k,
 const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
 {
-	if(k==0) return 0; // Can't happen.
+	if(k==0||k==1||k==2)
+	{
+		return (Abs(north[k])+Abs(west[k])+1)/2;
+	}
 	else if(IsFirstRow(k))
 	{
-		int sum=(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k];
-		return (sum+Abs(north[k])+Abs(west[k])+1)/(2*1);
+		return (
+			(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k]+
+			Abs(north[k])+Abs(west[k])+
+			2
+		)/(2*2);
 	}
 	else if(IsFirstColumn(k))
 	{
-		int sum=(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Left(k)]/quantization[k];
-		return (sum+Abs(north[k])+Abs(west[k])+1)/(2*1);
+		return (
+			(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Up(k)]/quantization[k]+
+			Abs(north[k])+Abs(west[k])+
+			2
+		)/(2*2);
+	}
+	else if(k==4)
+	{
+		return (
+			(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Up(k)]/quantization[k]+
+			(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k]+
+			Abs(north[k])+Abs(west[k])+
+			3
+		)/(2*3);
 	}
 	else
 	{
-		int sum=0;
-		sum+=(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k];
-		sum+=(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Up(k)]/quantization[k];
-		sum+=(Abs(north[UpAndLeft(k)])+Abs(west[UpAndLeft(k)]))*quantization[UpAndLeft(k)]/quantization[k];
-		return (sum+Abs(north[k])+Abs(west[k])+3)/(2*3);
+		return (
+			(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Up(k)]/quantization[k]+
+			(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k]+
+			(Abs(north[UpAndLeft(k)])+Abs(west[UpAndLeft(k)]))*quantization[UpAndLeft(k)]/quantization[k]+
+			Abs(north[k])+Abs(west[k])+
+			4
+		)/(2*4);
 	}
 }
 

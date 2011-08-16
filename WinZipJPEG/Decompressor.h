@@ -31,15 +31,15 @@ typedef struct WinZipJPEGDecompressor
 
 	WinZipJPEGArithmeticDecoder decoder;
 
-	WinZipJPEGContext eobbins[4][13][63];
-	WinZipJPEGContext zerobins[4][62][3][6];
+	WinZipJPEGContext eobbins[4][13][63]; // 321 in WinZip.
+	WinZipJPEGContext zerobins[4][62][3][6]; // 1140 in WinZip.
 	WinZipJPEGContext pivotbins[4][63][5][7];
 	WinZipJPEGContext acmagnitudebins[4][3][9][9][9];
 	WinZipJPEGContext acremainderbins[4][13][3][7];
 	WinZipJPEGContext acsignbins[4][27][3][2];
-	WinZipJPEGContext dcmagnitudebins[4][13][10];
-	WinZipJPEGContext dcremainderbins[4][13][14];
-	WinZipJPEGContext dcsignbins[4][2][2][2];
+	WinZipJPEGContext dcmagnitudebins[4][13][10]; // 1 in WinZip.
+	WinZipJPEGContext dcremainderbins[4][13][14]; // 131 in WinZip.
+	WinZipJPEGContext dcsignbins[4][2][2][2]; // 313 in WinZip.
 	WinZipJPEGContext fixedcontext;
 } WinZipJPEGDecompressor;
 

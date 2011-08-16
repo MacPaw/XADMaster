@@ -69,12 +69,13 @@ void InitializeFixedWinZipJPEGContext(WinZipJPEGContext *self)
 	self->k=0;
 	self->mps=0;
 }
-
+//static int n=0;
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
 self->dx=0; // Otherwise tests don't pass.
 	int bit=LogDecoder(self,context);
 self->lp=logp[context->i];
+//printf("bit %d:%d\n",n++,bit);
 	return bit;
 }
 

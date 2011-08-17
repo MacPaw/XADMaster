@@ -313,7 +313,7 @@ int16_t *lastblock;
 					else westblock=&currblocks[(x-1+y*blocksperrow)*64];
 
 					DecodeMCU(self,i,x,full_y,currblock,northblock,westblock,quantization);
-					printf("\n%d,%d %d:\n",x,y,i);
+					printf("\n%d,%d %d:\n",x,full_y,i);
 
 					for(int row=0;row<8;row++)
 					{
@@ -326,6 +326,8 @@ int16_t *lastblock;
 						printf("\n");
 					}
 					lastblock=currblock;
+
+if(x==24&&full_y==1) return;
 				}
 			}
 		}
@@ -550,19 +552,24 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 		int d0=0,d1=0;
 		for(int i=1;i<8;i++)
 		{
-			d0+=Abs(Abs(north[ZigZag(i,0)])-abs(current[ZigZag(i,0)]));
-			d1+=Abs(Abs(west[ZigZag(0,i)])-abs(current[ZigZag(0,i)]));
+			// Note: Spec says Abs(Abs(north[ZigZag(i,0)])-
+			// Abs(current[ZigZag(i,0)])) and similarly for west.
+			d0+=Abs(north[ZigZag(i,0)]-current[ZigZag(i,0)]);
+			d1+=Abs(west[ZigZag(0,i)]-current[ZigZag(0,i)]);
 		}
+//printf("p0=%d p1=%d d0=%d d1=%d\n",p0,p1,d0,d1);
 
 		if(d0>d1)
 		{
-			int64_t weight=1<<Min(d0-d1,31); // TODO: should this be calculated in 32 or 64 bit?
+			int64_t weight=1LL<<Min(d0-d1,31);
 			predicted=(weight*(int64_t)p1+(int64_t)p0)/(1+weight);
+//printf("d0>d1 weight=%llx predicted=%d\n",weight,predicted);
 		}
 		else
 		{
-			int64_t weight=1<<min(d1-d0,31);
+			int64_t weight=1LL<<Min(d1-d0,31);
 			predicted=(weight*(int64_t)p0+(int64_t)p1)/(1+weight);
+//printf("d0<=d1 weight=%llx predicted=%d\n",weight,predicted);
 		}
 	}
 
@@ -589,6 +596,8 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 
 	int sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 	&self->dcsignbins[comp][northsign][westsign][predictedsign]);
+if(sign) printf("%d-%d=%d\n",predicted,absvalue,predicted-absvalue);
+else printf("%d+%d=%d\n",predicted,absvalue,predicted+absvalue);
 
 	if(sign) return predicted-absvalue;
 	else return predicted+absvalue;

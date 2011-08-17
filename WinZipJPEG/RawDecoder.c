@@ -11,13 +11,16 @@
 
 static size_t STDIOReadFunction(void *context,uint8_t *buffer,size_t length) { return fread(buffer,1,length,(FILE *)context); }
 
-int main(int argv,const char **argc)
+int main(int argc,const char **argv)
 {
+	FILE *file=stdin;
+	if(argc==2) if(!(file=fopen(argv[1],"rb"))) return 1;
+
 	#ifdef __MINGW32__
-	setmode(fileno(stdin),O_BINARY);
+	setmode(fileno(file),O_BINARY);
 	#endif
 
-	WinZipJPEGDecompressor *decompressor=AllocWinZipJPEGDecompressor(STDIOReadFunction,stdin);
+	WinZipJPEGDecompressor *decompressor=AllocWinZipJPEGDecompressor(STDIOReadFunction,file);
 	if(!decompressor)
 	{
 		fprintf(stderr,"Failed to allocate decompressor.\n");

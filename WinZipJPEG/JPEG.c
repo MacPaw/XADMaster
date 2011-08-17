@@ -142,14 +142,27 @@ fprintf(stderr,"Define restart interval: %d\n",self->restartinterval);
 				if(self->numcomponents<1 || self->numcomponents>4) return false;
 				if(size<8+self->numcomponents*3) return false;
 
+				self->maxhorizontalfactor=1;
+				self->maxverticalfactor=1;
+
+fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
 				for(int i=0;i<self->numcomponents;i++)
 				{
 					self->components[i].identifier=ptr[8+i*3];
 					self->components[i].horizontalfactor=ptr[9+i*3]>>4;
 					self->components[i].verticalfactor=ptr[9+i*3]&0x0f;
 					self->components[i].quantizationtable=ptr[10+i*3];
+
+					if(self->components[i].horizontalfactor>self->maxhorizontalfactor)
+					self->maxhorizontalfactor=self->components[i].horizontalfactor;
+
+					if(self->components[i].verticalfactor>self->maxverticalfactor)
+					self->maxverticalfactor=self->components[i].verticalfactor;
+fprintf(stderr," > Component id %d, %dx%d, quant %d\n",
+self->components[i].identifier=ptr[8+i*3],
+self->components[i].horizontalfactor,self->components[i].verticalfactor,
+self->components[i].quantizationtable);
 				}
-fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
 
 				ptr=next;
 			}

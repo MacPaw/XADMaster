@@ -18,6 +18,8 @@ typedef struct WinZipJPEGMetadata
 		unsigned int quantizationtable;
 	} components[4];
 
+	int maxhorizontalfactor,maxverticalfactor;
+
 	unsigned int numscancomponents;
 	struct
 	{
@@ -34,5 +36,24 @@ typedef struct WinZipJPEGMetadata
 } WinZipJPEGMetadata;
 
 bool ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,uint8_t *bytes,size_t length);
+
+static inline int JPEGMCUWidthInBlocks(WinZipJPEGMetadata *self) { return self->maxhorizontalfactor; }
+static inline int JPEGMCUHeightInBlocks(WinZipJPEGMetadata *self) { return self->maxverticalfactor; }
+static inline int JPEGMCUWidthInPixels(WinZipJPEGMetadata *self) { return JPEGMCUWidthInBlocks(self)*8; }
+static inline int JPEGMCUHeightInPixels(WinZipJPEGMetadata *self) { return JPEGMCUHeightInBlocks(self)*8; }
+
+static inline int JPEGWidthInPixels(WinZipJPEGMetadata *self) { return self->width; }
+static inline int JPEGHeightInPixels(WinZipJPEGMetadata *self) { return self->height; }
+static inline int JPEGWidthInMCUs(WinZipJPEGMetadata *self)
+{
+	int mcuwidth=JPEGMCUWidthInPixels(self);
+	return (JPEGWidthInPixels(self)+mcuwidth-1)/mcuwidth;
+}
+static inline int JPEGHeightInMCUs(WinZipJPEGMetadata *self)
+{
+	int mcuheight=JPEGMCUHeightInPixels(self);
+	return (JPEGHeightInPixels(self)+mcuheight-1)/mcuheight;
+}
+
 
 #endif

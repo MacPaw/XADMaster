@@ -113,17 +113,6 @@ int ReadWinZipJPEGHeader(WinZipJPEGDecompressor *self)
 	// Parse slice value.
 	self->slicevalue=header[3]&0x1f;
 
-	// Initialize arithmetic decoder contexts.
-	InitializeWinZipJPEGContexts(&self->eobbins[0][0][0],sizeof(self->eobbins));
-	InitializeWinZipJPEGContexts(&self->zerobins[0][0][0][0],sizeof(self->zerobins));
-	InitializeWinZipJPEGContexts(&self->pivotbins[0][0][0][0],sizeof(self->pivotbins));
-	InitializeWinZipJPEGContexts(&self->acmagnitudebins[0][0][0][0][0],sizeof(self->acmagnitudebins));
-	InitializeWinZipJPEGContexts(&self->acremainderbins[0][0][0][0],sizeof(self->acremainderbins));
-	InitializeWinZipJPEGContexts(&self->acsignbins[0][0][0][0],sizeof(self->acsignbins));
-	InitializeWinZipJPEGContexts(&self->dcmagnitudebins[0][0][0],sizeof(self->dcmagnitudebins));
-	InitializeWinZipJPEGContexts(&self->dcremainderbins[0][0][0],sizeof(self->dcremainderbins));
-	InitializeWinZipJPEGContexts(&self->dcsignbins[0][0][0][0],sizeof(self->dcsignbins));
-
 	return WinZipJPEGNoError;
 }
 
@@ -242,48 +231,110 @@ static int SkipBytes(WinZipJPEGDecompressor *self,size_t length)
 #include <stdio.h>
 void TestDecompress(WinZipJPEGDecompressor *self)
 {
-/*	int slicesize;
+	// Initialize arithmetic decoder contexts.
+	InitializeWinZipJPEGContexts(&self->eobbins[0][0][0],sizeof(self->eobbins));
+	InitializeWinZipJPEGContexts(&self->zerobins[0][0][0][0],sizeof(self->zerobins));
+	InitializeWinZipJPEGContexts(&self->pivotbins[0][0][0][0],sizeof(self->pivotbins));
+	InitializeWinZipJPEGContexts(&self->acmagnitudebins[0][0][0][0][0],sizeof(self->acmagnitudebins));
+	InitializeWinZipJPEGContexts(&self->acremainderbins[0][0][0][0],sizeof(self->acremainderbins));
+	InitializeWinZipJPEGContexts(&self->acsignbins[0][0][0][0],sizeof(self->acsignbins));
+	InitializeWinZipJPEGContexts(&self->dcmagnitudebins[0][0][0],sizeof(self->dcmagnitudebins));
+	InitializeWinZipJPEGContexts(&self->dcremainderbins[0][0][0],sizeof(self->dcremainderbins));
+	InitializeWinZipJPEGContexts(&self->dcsignbins[0][0][0][0],sizeof(self->dcsignbins));
 
+	int width=JPEGWidthInMCUs(&self->jpeg);
+	int height=JPEGHeightInMCUs(&self->jpeg);
+
+	// Calculate slize size, if any.
+	int sliceheight;
 	if(self->slicevalue)
 	{
-		int pow2size=1<<(self->slicevalue+
-		slicesize=ceil(self->height/ceil(self->height/max(pow2size/self->width,1)))*self->width;
+		int64_t pow2size=1LL<<(self->slicevalue+6);
+		int64_t div1=pow2size/width;
+		if(div1<1) div1=1;
+		int64_t div2=(height+div1-1)/div1;
+		sliceheight=(height+div2-1)/div2;
 	}
 	else
 	{
-		slicesize=(self->width+7)/8*(self->height+7)/8;
-	}*/
-
-	for(int comp=0;comp<self->jpeg.numscancomponents;comp++)
-	{
+		sliceheight=height;
 	}
+
+	// Allocate memory for each component in a slice.
+	int numcomps=self->jpeg.numscancomponents;
+	int mcuwidth=JPEGMCUWidthInBlocks(&self->jpeg);
+	int mcuheight=JPEGMCUHeightInBlocks(&self->jpeg);
+
+	int16_t *blocks[numcomps];
+	for(int i=0;i<numcomps;i++)
+	{
+		int compindex=self->jpeg.scancomponents[i].componentindex;
+		int hblocks=mcuwidth/self->jpeg.components[compindex].horizontalfactor;
+		int vblocks=mcuheight/self->jpeg.components[compindex].verticalfactor;
+		blocks[i]=malloc(width*sliceheight*mcuwidth*mcuheight*64*sizeof(int16_t));
+	}
+
+	// Decode individual components.
 	static const int16_t zeroblock[64]={0};
 
-	int16_t westblock[64];
-	int16_t testblock[64];
-	int comp=self->jpeg.scancomponents[0].componentindex;
-	int quantindex=self->jpeg.components[comp].quantizationtable;
-	int16_t *quantization=self->jpeg.quantizationtables[quantindex];
-
-	memset(westblock,0,sizeof(westblock));
-
-	for(int i=0;i<75;i++)
+	for(int row=0;row<height;row+=sliceheight)
 	{
-		printf("\n%d:\n",i);
-		DecodeMCU(self,0,i,0,testblock,zeroblock,westblock,quantization);
-
-		for(int row=0;row<8;row++)
+		for(int i=0;i<numcomps;i++)
 		{
-			for(int col=0;col<8;col++)
+			int compindex=self->jpeg.scancomponents[i].componentindex;
+			int hblocks=mcuwidth/self->jpeg.components[compindex].horizontalfactor;
+			int vblocks=mcuheight/self->jpeg.components[compindex].verticalfactor;
+			int blocksperrow=width*hblocks;
+			int16_t *currblocks=blocks[i];
+
+			int quantindex=self->jpeg.components[compindex].quantizationtable;
+			int16_t *quantization=self->jpeg.quantizationtables[quantindex];
+
+			for(int mcu_y=0;mcu_y<sliceheight;mcu_y++)
+			for(int mcu_x=0;mcu_x<width;mcu_x++)
 			{
-				int predict=0;
-				if(i!=0&&row==0&&col==0) predict=westblock[0];
-				printf("%d ",(testblock[ZigZag(row,col)]-predict)*quantization[ZigZag(row,col)]);
+				for(int block_y=0;block_y<vblocks;block_y++)
+				for(int block_x=0;block_x<hblocks;block_x++)
+				{
+					int x=mcu_x*hblocks+block_x;
+					int y=mcu_y*vblocks+block_y;
+					int full_y=(row+mcu_y)*vblocks+block_y;
+
+					int16_t *currblock=&currblocks[(x+y*blocksperrow)*64];
+
+					const int16_t *northblock;
+					if(full_y==0) northblock=zeroblock;
+					else if(y==0) northblock=&currblocks[(x+(sliceheight-1)*blocksperrow)*64];
+					else northblock=&currblocks[(x+(y-1)*blocksperrow)*64];
+
+					const int16_t *westblock;
+					if(x==0) westblock=zeroblock;
+					else westblock=&currblocks[(x-1+y*blocksperrow)*64];
+
+					DecodeMCU(self,i,x,full_y,currblock,northblock,westblock,quantization);
+					printf("\n%d,%d %d:\n",x,y,i);
+
+					for(int row=0;row<8;row++)
+					{
+						for(int col=0;col<8;col++)
+						{
+							int predict=0;
+							if(i!=0&&row==0&&col==0) predict=westblock[0];
+							printf("%d ",(currblock[ZigZag(row,col)]-predict)*quantization[ZigZag(row,col)]);
+						}
+						printf("\n");
+					}
+				}
 			}
-			printf("\n");
 		}
-		memcpy(westblock,testblock,sizeof(testblock));
 	}
+
+	// Free memory.
+	for(int i=0;i<numcomps;i++)
+	{
+		free(blocks[i]);
+	}
+
 }
 
 

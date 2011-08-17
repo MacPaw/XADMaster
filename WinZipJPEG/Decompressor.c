@@ -289,6 +289,7 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 
 			int quantindex=self->jpeg.components[compindex].quantizationtable;
 			int16_t *quantization=self->jpeg.quantizationtables[quantindex];
+int16_t *lastblock;
 
 			for(int mcu_y=0;mcu_y<sliceheight;mcu_y++)
 			for(int mcu_x=0;mcu_x<width;mcu_x++)
@@ -319,11 +320,12 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 						for(int col=0;col<8;col++)
 						{
 							int predict=0;
-							if(i!=0&&row==0&&col==0) predict=westblock[0];
+							if((full_y!=0||x!=0)&&row==0&&col==0) predict=lastblock[0];
 							printf("%d ",(currblock[ZigZag(row,col)]-predict)*quantization[ZigZag(row,col)]);
 						}
 						printf("\n");
 					}
+					lastblock=currblock;
 				}
 			}
 		}

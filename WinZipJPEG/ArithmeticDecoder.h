@@ -8,7 +8,7 @@ typedef struct WinZipJPEGArithmeticDecoder
 	WinZipJPEGReadFunction *readfunc;
 	void *inputcontext;
 
-	uint8_t b,b0;
+	uint8_t currbyte,lastbyte;
 
 	uint8_t kmin2; // LPS count for reduction of Q by 4
 	uint8_t kmin1; // LPS count for reduction of Q by 2
@@ -37,6 +37,8 @@ void InitializeWinZipJPEGContexts(WinZipJPEGContext *first,size_t bytes);
 void InitializeFixedWinZipJPEGContext(WinZipJPEGContext *self);
 
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context);
+
+void FlushWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self);
 
 #endif
 

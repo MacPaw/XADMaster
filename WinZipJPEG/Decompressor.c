@@ -259,6 +259,7 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 	{
 		sliceheight=height;
 	}
+printf("slice height: %d\n",sliceheight);
 
 	// Allocate memory for each component in a slice.
 	int numcomps=self->jpeg.numscancomponents;
@@ -291,7 +292,7 @@ void TestDecompress(WinZipJPEGDecompressor *self)
 			int16_t *quantization=self->jpeg.quantizationtables[quantindex];
 int16_t *lastblock;
 
-			for(int mcu_y=0;mcu_y<sliceheight;mcu_y++)
+			for(int mcu_y=0;mcu_y<sliceheight && row+mcu_y<height;mcu_y++)
 			for(int mcu_x=0;mcu_x<width;mcu_x++)
 			{
 				for(int block_y=0;block_y<vblocks;block_y++)
@@ -327,7 +328,7 @@ int16_t *lastblock;
 					}
 					lastblock=currblock;
 
-if(x==24&&full_y==1) return;
+//if(x==24&&full_y==1) return;
 				}
 			}
 		}
@@ -596,8 +597,8 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 
 	int sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 	&self->dcsignbins[comp][northsign][westsign][predictedsign]);
-if(sign) printf("%d-%d=%d\n",predicted,absvalue,predicted-absvalue);
-else printf("%d+%d=%d\n",predicted,absvalue,predicted+absvalue);
+//if(sign) printf("%d-%d=%d\n",predicted,absvalue,predicted-absvalue);
+//else printf("%d+%d=%d\n",predicted,absvalue,predicted+absvalue);
 
 	if(sign) return predicted-absvalue;
 	else return predicted+absvalue;

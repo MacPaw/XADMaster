@@ -19,7 +19,7 @@ static void DblIndex(int *i,int *incrsv);
 
 static void LRMBig(WinZipJPEGArithmeticDecoder *self);
 static void Renorm(WinZipJPEGArithmeticDecoder *self);
-static void ByteIn(WinZipJPEGArithmeticDecoder *self);
+static uint8_t ByteIn(WinZipJPEGArithmeticDecoder *self);
 
 static uint32_t AntilogX(int16_t lr);
 static int16_t LogX(uint32_t x);
@@ -80,7 +80,12 @@ self->lp=logp[context->i];
 	return bit;
 }
 
+void FlushWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self)
+{
+	Renorm(self);
 
+	if(self->currbyte==0xff && self->lastbyte==0xff) ByteIn(self);
+}
 
 
 static void InitDec(WinZipJPEGArithmeticDecoder *self)
@@ -90,11 +95,9 @@ static void InitDec(WinZipJPEGArithmeticDecoder *self)
 	self->kmin=5;
 	self->kmax=11;
 
-	ByteIn(self);
-	self->x=self->b;
-	ByteIn(self);
-	self->x=self->x<<8;
-	self->x=self->x+self->b;
+	uint8_t b1=ByteIn(self);
+	uint8_t b2=ByteIn(self);
+	self->x=(b1<<8)|b2;
 
 	self->lr=0x1001;
 	self->lrm=self->lr;
@@ -168,17 +171,14 @@ static void QSmaller(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *contex
 {
 	if(context->i>=47) return; // WinZip modification.
 
-	if(logp[context->i+1]!=0) // Redundant after WinZip modification?
+	context->i++;
+
+	if(context->k<=self->kmin1)
 	{
-		context->i++;
-		if(context->k<=self->kmin1)
+		context->i+=halfi[context->i];
+		if(context->k<=self->kmin2)
 		{
 			context->i+=halfi[context->i];
-
-			if(context->k<=self->kmin2)
-			{
-				context->i+=halfi[context->i];
-			}
 		}
 	}
 }
@@ -253,33 +253,25 @@ static void LRMBig(WinZipJPEGArithmeticDecoder *self)
 
 static void Renorm(WinZipJPEGArithmeticDecoder *self)
 {
-	if(self->lr>0x1fff)
+	while(self->lr>0x1fff)
 	{
-		do
+		if(self->currbyte==0xff && self->lastbyte==0xff)
 		{
-			if(self->b==0xff)
-			{
-				if(self->b0==0xff)
-				{
-					ByteIn(self);
-					self->x+=self->b;
-				}
-			}
-			ByteIn(self);
-			self->x=(self->x<<8)|self->b;
-			self->lr-=0x2000;
-			self->lrm-=0x2000;
+			self->x+=ByteIn(self);
 		}
-		while(self->lr>0x1fff);
+		self->x=(self->x<<8)|ByteIn(self);
+		self->lr-=0x2000;
+		self->lrm-=0x2000;
 	}
 
 	self->lx=LogX(self->x);
 }
 
-static void ByteIn(WinZipJPEGArithmeticDecoder *self)
+static uint8_t ByteIn(WinZipJPEGArithmeticDecoder *self)
 {
-	self->b0=self->b;
-	self->readfunc(self->inputcontext,&self->b,1);
+	self->lastbyte=self->currbyte;
+	self->readfunc(self->inputcontext,&self->currbyte,1);
+	return self->currbyte;
 }
 
 

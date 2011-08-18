@@ -335,11 +335,13 @@
 	}
 	else if([method isEqual:@"-lh2-"])
 	{
+		[self reportInterestingFileWithReason:@"-lh2- compression"];
 		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 		handle=[[[XADLZH2Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
 	}
 	else if([method isEqual:@"-lh3-"])
 	{
+		[self reportInterestingFileWithReason:@"-lh3- compression"];
 		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 		handle=[[[XADLZH3Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
 	}
@@ -377,6 +379,7 @@
 	}
 	else if([method isEqual:@"-pm2-"])
 	{
+		[self reportInterestingFileWithReason:@"-pm2- compression"];
 		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 		handle=[[[XADPMArc2Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
 	}

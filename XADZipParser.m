@@ -758,6 +758,9 @@ isLastEntry:(BOOL)islastentry
 	}
 	if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
 
+	if(compressionmethod==2||compressionmethod==3||compressionmethod==4||compressionmethod==5)
+	[self reportInterestingFileWithReason:@"Reduce %d compression",compressionmethod-1];
+
 	if(namedata)
 	{
 		const uint8_t *namebytes=[namedata bytes];

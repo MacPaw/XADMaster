@@ -66,7 +66,7 @@ fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,tota
 						for(int j=0;j<numcodes[i];j++)
 						{
 							int value=*ptr++;
-							self->huffmantables[class][index][value].length=i+1;
+							self->huffmantables[class][index].codes[value].length=i+1;
 						}
 					}
 				}
@@ -96,14 +96,14 @@ fprintf(stderr,"Define quantization table(s)\n");
 					{
 fprintf(stderr," > 8 bit table at %d\n",index);
 						if(ptr+64>next) return false;
-						for(int i=0;i<64;i++) self->quantizationtables[index][i]=ptr[i];
+						for(int i=0;i<64;i++) self->quantizationtables[index].c[i]=ptr[i];
 						ptr+=64;
 					}
 					else if(precision==1)
 					{
 fprintf(stderr," > 16 bit table at %d\n",index);
 						if(ptr+128>next) return false;
-						for(int i=0;i<64;i++) self->quantizationtables[index][i]=ParseUInt16(&ptr[2*i]);
+						for(int i=0;i<64;i++) self->quantizationtables[index].c[i]=ParseUInt16(&ptr[2*i]);
 						ptr+=128;
 					}
 					else return false;

@@ -5,6 +5,27 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+typedef struct WinZipJPEGBlock
+{
+	int16_t c[64];
+	uint8_t eob;
+} WinZipJPEGBlock;
+
+typedef struct WinZipJPEGQuantizationTable
+{
+	int16_t c[64];
+} WinZipJPEGQuantizationTable;
+
+typedef struct WinZipJPEGHuffmanCode
+{
+	unsigned int code,length;
+} WinZipJPEGHuffmanCode;
+
+typedef struct WinZipJPEGHuffmanTable
+{
+	WinZipJPEGHuffmanCode codes[256];
+} WinZipJPEGHuffmanTable;
+
 typedef struct WinZipJPEGMetadata
 {
 	unsigned int width,height,bits;
@@ -27,12 +48,8 @@ typedef struct WinZipJPEGMetadata
 		unsigned int dctable,actable;
 	} scancomponents[4];
 
-	int16_t quantizationtables[4][64];
-
-	struct
-	{
-		unsigned int code,length;
-	} huffmantables[2][4][256];
+	WinZipJPEGQuantizationTable quantizationtables[4];
+	WinZipJPEGHuffmanTable huffmantables[2][4];
 } WinZipJPEGMetadata;
 
 bool ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,uint8_t *bytes,size_t length);

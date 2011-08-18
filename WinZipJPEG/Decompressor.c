@@ -19,13 +19,21 @@ static ISzAlloc lzmaallocator={Alloc,Free};
 // Decoder functions.
 
 static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,int x,int y,
-int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
+WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
 static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,bool canbezero,
-const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
 static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
-const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
 static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,int x,int y,
-const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
 static unsigned int DecodeBinarization(WinZipJPEGArithmeticDecoder *decoder,
 WinZipJPEGContext *magnitudebins,WinZipJPEGContext *remainderbins,int maxbits,int cap);
 
@@ -50,11 +58,13 @@ static int Abs(int x);
 static int Sign(int x);
 static unsigned int Category(unsigned int val);
 
-static int Sum(unsigned int k,const int16_t block[64]);
+static int Sum(unsigned int k,const WinZipJPEGBlock *block);
 static int Average(unsigned int k,
-const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
-static int BDR(unsigned int k,const int16_t current[64],
-const int16_t north[64],const int16_t west[64],const int16_t quantization[64]);
+const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+static int BDR(unsigned int k,const WinZipJPEGBlock *current,
+const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
 
 
 
@@ -263,17 +273,17 @@ printf("slice height: %d\n",sliceheight);
 	int mcuwidth=JPEGMCUWidthInBlocks(&self->jpeg);
 	int mcuheight=JPEGMCUHeightInBlocks(&self->jpeg);
 
-	int16_t *blocks[numcomps];
+	WinZipJPEGBlock *blocks[numcomps];
 	for(int i=0;i<numcomps;i++)
 	{
 		int compindex=self->jpeg.scancomponents[i].componentindex;
 		int hblocks=mcuwidth/self->jpeg.components[compindex].horizontalfactor;
 		int vblocks=mcuheight/self->jpeg.components[compindex].verticalfactor;
-		blocks[i]=malloc(width*sliceheight*mcuwidth*mcuheight*64*sizeof(int16_t));
+		blocks[i]=malloc(width*sliceheight*mcuwidth*mcuheight*sizeof(WinZipJPEGBlock));
 	}
 
 	// Decode individual components.
-	static const int16_t zeroblock[64]={0};
+	static const WinZipJPEGBlock zeroblock[64]={0};
 
 	for(int row=0;row<height;row+=sliceheight)
 	{
@@ -286,11 +296,10 @@ printf("slice height: %d\n",sliceheight);
 			int hblocks=mcuwidth/self->jpeg.components[compindex].horizontalfactor;
 			int vblocks=mcuheight/self->jpeg.components[compindex].verticalfactor;
 			int blocksperrow=width*hblocks;
-			int16_t *currblocks=blocks[i];
 
 			int quantindex=self->jpeg.components[compindex].quantizationtable;
-			int16_t *quantization=self->jpeg.quantizationtables[quantindex];
-int16_t *lastblock;
+			const WinZipJPEGQuantizationTable *quantization=&self->jpeg.quantizationtables[quantindex];
+WinZipJPEGBlock *lastblock;
 
 			for(int mcu_y=0;mcu_y<sliceheight && row+mcu_y<height;mcu_y++)
 			for(int mcu_x=0;mcu_x<width;mcu_x++)
@@ -302,16 +311,16 @@ int16_t *lastblock;
 					int y=mcu_y*vblocks+block_y;
 					int full_y=(row+mcu_y)*vblocks+block_y;
 
-					int16_t *currblock=&currblocks[(x+y*blocksperrow)*64];
+					WinZipJPEGBlock *currblock=&blocks[i][x+y*blocksperrow];
 
-					const int16_t *northblock;
+					const WinZipJPEGBlock *northblock;
 					if(full_y==0) northblock=zeroblock;
-					else if(y==0) northblock=&currblocks[(x+(sliceheight-1)*blocksperrow)*64];
-					else northblock=&currblocks[(x+(y-1)*blocksperrow)*64];
+					else if(y==0) northblock=&blocks[i][x+(sliceheight-1)*blocksperrow];
+					else northblock=&blocks[i][x+(y-1)*blocksperrow];
 
-					const int16_t *westblock;
+					const WinZipJPEGBlock *westblock;
 					if(x==0) westblock=zeroblock;
-					else westblock=&currblocks[(x-1+y*blocksperrow)*64];
+					else westblock=&blocks[i][x-1+y*blocksperrow];
 
 					DecodeMCU(self,i,x,full_y,currblock,northblock,westblock,quantization);
 
@@ -322,8 +331,8 @@ int16_t *lastblock;
 						for(int col=0;col<8;col++)
 						{
 							int predict=0;
-							if((full_y!=0||x!=0)&&row==0&&col==0) predict=lastblock[0];
-							printf("%d ",(currblock[ZigZag(row,col)]-predict)*quantization[ZigZag(row,col)]);
+							if((full_y!=0||x!=0)&&row==0&&col==0) predict=lastblock->c[0];
+							printf("%d ",(currblock->c[ZigZag(row,col)]-predict)*quantization->c[ZigZag(row,col)]);
 						}
 						printf("\n");
 					}
@@ -347,7 +356,8 @@ int16_t *lastblock;
 
 
 static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,int x,int y,
-int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
+WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization)
 {
 	// Decode End Of Block value to find out how many AC components there are. (5.6.5)
 
@@ -368,23 +378,25 @@ int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t
 		&self->eobbins[comp][eobcontext][bitstring-1]);
 	}
 	unsigned int eob=bitstring&0x3f;
+	current->eob=eob;
 //printf("eob: %d %d\n",eobcontext*63+321,eob);
 
 	// Fill out the elided block entries with 0.
-	for(unsigned int k=eob+1;k<=63;k++) current[k]=0;
+	for(unsigned int k=eob+1;k<=63;k++) current->c[k]=0;
 
 	// Decode AC components in decreasing order, if any. (5.6.6)
 	for(unsigned int k=eob;k>=1;k--)
 	{
-		current[k]=DecodeACComponent(self,comp,k,k!=eob,current,north,west,quantization);
+		current->c[k]=DecodeACComponent(self,comp,k,k!=eob,current,north,west,quantization);
 	}
 
 	// Decode DC component.
-	current[0]=DecodeDCComponent(self,comp,x,y,current,north,west,quantization);
+	current->c[0]=DecodeDCComponent(self,comp,x,y,current,north,west,quantization);
 }
 
 static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,bool canbezero,
-const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization)
 {
 //printf("decode AC %d\n",k);
 	int val1;
@@ -452,7 +464,8 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 }
 
 static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
-const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization)
 {
 //printf("decode sign\n");
 	// Decode sign. (5.6.6.4)
@@ -469,8 +482,8 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 	}
 	else if(k==4)
 	{
-		int sign1=Sign(north[k]);
-		int sign2=Sign(west[k]);
+		int sign1=Sign(north->c[k]);
+		int sign2=Sign(west->c[k]);
 
 		if(sign1+sign2==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
 
@@ -478,15 +491,15 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 	}
 	else if(IsSecondRow(k))
 	{
-		if(north[k]==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
+		if(north->c[k]==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
 
-		predictedsign=(north[k]<0);
+		predictedsign=(north->c[k]<0);
 	}
 	else if(IsSecondColumn(k))
 	{
-		if(west[k]==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
+		if(west->c[k]==0) return NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,&self->fixedcontext);
 
-		predictedsign=(west[k]<0);
+		predictedsign=(west->c[k]<0);
 	}
 	else
 	{
@@ -519,7 +532,8 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 }
 
 static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,int x,int y,
-const int16_t current[64],const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization)
 {
 	// Decode DC component. (5.6.7)
 
@@ -531,35 +545,35 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 	}
 	else if(x==0)
 	{
-		// NOTE: Spec says north[2].current[2].
-		int t0=north[0]*10000-11038*quantization[2]*(north[2]+current[2])/quantization[0];
+		// NOTE: Spec says north->c[2]-current->c[2].
+		int t0=north->c[0]*10000-11038*quantization->c[2]*(north->c[2]+current->c[2])/quantization->c[0];
 		int p0=((t0<0)?(t0-5000):(t0+5000))/10000;
 		predicted=p0;
 	}
 	else if(y==0)
 	{
 		// NOTE: Spec says west[1]-current[1].
-		int t1=west[0]*10000-11038*quantization[1]*(west[1]+current[1])/quantization[0];
+		int t1=west->c[0]*10000-11038*quantization->c[1]*(west->c[1]+current->c[1])/quantization->c[0];
 		int p1=((t1<0)?(t1-5000):(t1+5000))/10000;
 		predicted=p1;
 	}
 	else
 	{
 		// NOTE: Spec says north[2]-current[2] and west[1]-current[1].
-		int t0=north[0]*10000-11038*quantization[2]*(north[2]+current[2])/quantization[0];
+		int t0=north->c[0]*10000-11038*quantization->c[2]*(north->c[2]+current->c[2])/quantization->c[0];
 		int p0=((t0<0)?(t0-5000):(t0+5000))/10000;
 
-		int t1=west[0]*10000-11038*quantization[1]*(west[1]+current[1])/quantization[0];
+		int t1=west->c[0]*10000-11038*quantization->c[1]*(west->c[1]+current->c[1])/quantization->c[0];
 		int p1=((t1<0)?(t1-5000):(t1+5000))/10000;
 
 		// Prediction refinement. (5.6.7.2)
 		int d0=0,d1=0;
 		for(int i=1;i<8;i++)
 		{
-			// Note: Spec says Abs(Abs(north[ZigZag(i,0)])-
-			// Abs(current[ZigZag(i,0)])) and similarly for west.
-			d0+=Abs(north[ZigZag(i,0)]-current[ZigZag(i,0)]);
-			d1+=Abs(west[ZigZag(0,i)]-current[ZigZag(0,i)]);
+			// Note: Spec says Abs(Abs(north->c[ZigZag(i,0)])-
+			// Abs(current->c[ZigZag(i,0)])) and similarly for west.
+			d0+=Abs(north->c[ZigZag(i,0)]-current->c[ZigZag(i,0)]);
+			d1+=Abs(west->c[ZigZag(0,i)]-current->c[ZigZag(0,i)]);
 		}
 //printf("p0=%d p1=%d d0=%d d1=%d\n",p0,p1,d0,d1);
 
@@ -592,8 +606,8 @@ const int16_t current[64],const int16_t north[64],const int16_t west[64],const i
 
 	// Decode sign. (5.6.7.3.2)
 	// NOTE: Spec says north[0]<0 and west[0]<0.
-	int northsign=(north[0]<predicted);
-	int westsign=(west[0]<predicted);
+	int northsign=(north->c[0]<predicted);
+	int westsign=(west->c[0]<predicted);
 	int predictedsign=(predicted<0);
 //printf("signcontext: %d (%d %d %d)\n",northsign*4+westsign*2+predictedsign+1+13*10+13*14,
 //north[0],west[0],predicted);
@@ -726,12 +740,13 @@ static unsigned int Category(unsigned int val)
 }
 
 // SUM (5.6.2.1)
-static int Sum(unsigned int k,const int16_t block[64])
+static int Sum(unsigned int k,const WinZipJPEGBlock *block)
 {
 	int sum=0;
 	for(unsigned int i=0;i<64;i++)
 	{
-		if(i!=k && Row(i)>=Row(k) && Column(i)>=Column(k)) sum+=Abs(block[i]);
+		if(i!=k && Row(i)>=Row(k) && Column(i)>=Column(k))
+		sum+=Abs(block->c[i]);
 	}
 	return sum;
 }
@@ -741,60 +756,62 @@ static int Sum(unsigned int k,const int16_t block[64])
 // Bw[k] should actually be Bw[x]. Also, the spec does not explicitly mention
 // that the DC component never contributes.
 static int Average(unsigned int k,
-const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
+const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization)
 {
 	if(k==0||k==1||k==2)
 	{
-		return (Abs(north[k])+Abs(west[k])+1)/2;
+		return (Abs(north->c[k])+Abs(west->c[k])+1)/2;
 	}
 	else if(IsFirstRow(k))
 	{
 		return (
-			(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k]+
-			Abs(north[k])+Abs(west[k])+
+			(Abs(north->c[Left(k)])+Abs(west->c[Left(k)]))*quantization->c[Left(k)]/quantization->c[k]+
+			Abs(north->c[k])+Abs(west->c[k])+
 			2
 		)/(2*2);
 	}
 	else if(IsFirstColumn(k))
 	{
 		return (
-			(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Up(k)]/quantization[k]+
-			Abs(north[k])+Abs(west[k])+
+			(Abs(north->c[Up(k)])+Abs(west->c[Up(k)]))*quantization->c[Up(k)]/quantization->c[k]+
+			Abs(north->c[k])+Abs(west->c[k])+
 			2
 		)/(2*2);
 	}
 	else if(k==4)
 	{
 		return (
-			(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Up(k)]/quantization[k]+
-			(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k]+
-			Abs(north[k])+Abs(west[k])+
+			(Abs(north->c[Up(k)])+Abs(west->c[Up(k)]))*quantization->c[Up(k)]/quantization->c[k]+
+			(Abs(north->c[Left(k)])+Abs(west->c[Left(k)]))*quantization->c[Left(k)]/quantization->c[k]+
+			Abs(north->c[k])+Abs(west->c[k])+
 			3
 		)/(2*3);
 	}
 	else
 	{
 		return (
-			(Abs(north[Up(k)])+Abs(west[Up(k)]))*quantization[Up(k)]/quantization[k]+
-			(Abs(north[Left(k)])+Abs(west[Left(k)]))*quantization[Left(k)]/quantization[k]+
-			(Abs(north[UpAndLeft(k)])+Abs(west[UpAndLeft(k)]))*quantization[UpAndLeft(k)]/quantization[k]+
-			Abs(north[k])+Abs(west[k])+
+			(Abs(north->c[Up(k)])+Abs(west->c[Up(k)]))*quantization->c[Up(k)]/quantization->c[k]+
+			(Abs(north->c[Left(k)])+Abs(west->c[Left(k)]))*quantization->c[Left(k)]/quantization->c[k]+
+			(Abs(north->c[UpAndLeft(k)])+Abs(west->c[UpAndLeft(k)]))*quantization->c[UpAndLeft(k)]/quantization->c[k]+
+			Abs(north->c[k])+Abs(west->c[k])+
 			4
 		)/(2*4);
 	}
 }
 
 // BDR (5.6.2.3)
-static int BDR(unsigned int k,const int16_t current[64],
-const int16_t north[64],const int16_t west[64],const int16_t quantization[64])
+static int BDR(unsigned int k,const WinZipJPEGBlock *current,
+const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization)
 {
 	if(IsFirstRow(k))
 	{
-		return north[k]-(north[Down(k)]+current[Down(k)])*quantization[Down(k)]/quantization[k];
+		return north->c[k]-(north->c[Down(k)]+current->c[Down(k)])*quantization->c[Down(k)]/quantization->c[k];
 	}
 	else if(IsFirstColumn(k))
 	{
-		return west[k]-(west[Right(k)]+current[Right(k)])*quantization[Right(k)]/quantization[k];
+		return west->c[k]-(west->c[Right(k)]+current->c[Right(k)])*quantization->c[Right(k)]/quantization->c[k];
 	}
 	else return 0; // Can't happen.
 }

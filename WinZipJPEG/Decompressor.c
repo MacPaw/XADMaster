@@ -184,9 +184,6 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 		self->hasparsedjpeg=true;
 	}
 
-	// Initialize arithmetic coder for reading scans.
-	InitializeWinZipJPEGArithmeticDecoder(&self->decoder,self->readfunc,self->inputcontext);
-
 	return WinZipJPEGNoError;
 }
 
@@ -282,6 +279,9 @@ printf("slice height: %d\n",sliceheight);
 	{
 		for(int i=0;i<numcomps;i++)
 		{
+			// Initialize arithmetic coder for reading one component.
+			InitializeWinZipJPEGArithmeticDecoder(&self->decoder,self->readfunc,self->inputcontext);
+
 			int compindex=self->jpeg.scancomponents[i].componentindex;
 			int hblocks=mcuwidth/self->jpeg.components[compindex].horizontalfactor;
 			int vblocks=mcuheight/self->jpeg.components[compindex].verticalfactor;
@@ -314,6 +314,7 @@ int16_t *lastblock;
 					else westblock=&currblocks[(x-1+y*blocksperrow)*64];
 
 					DecodeMCU(self,i,x,full_y,currblock,northblock,westblock,quantization);
+
 					printf("\n%d,%d %d:\n",x,full_y,i);
 
 					for(int row=0;row<8;row++)
@@ -328,9 +329,11 @@ int16_t *lastblock;
 					}
 					lastblock=currblock;
 
-//if(x==24&&full_y==1) return;
+//if(x==2&&full_y==0&&i==2) return;
 				}
 			}
+
+			FlushWinZipJPEGArithmeticDecoder(&self->decoder);
 		}
 	}
 

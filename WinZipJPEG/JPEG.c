@@ -8,10 +8,10 @@ static int ParseSize(const uint8_t *ptr,const uint8_t *end);
 
 static inline uint16_t ParseUInt16(const uint8_t *ptr) { return (ptr[0]<<8)|ptr[1]; }
 
-const uint8_t *FindStartOfWinZipJPEGImage(const uint8_t *bytes,size_t length)
+const void *FindStartOfWinZipJPEGImage(const void *bytes,size_t length)
 {
 	const uint8_t *ptr=bytes;
-	const uint8_t *end=bytes+length;
+	const uint8_t *end=ptr+length;
 
 	while(ptr+2<=end)
 	{
@@ -27,10 +27,10 @@ void InitializeWinZipJPEGMetadata(WinZipJPEGMetadata *self)
 	memset(self,0,sizeof(*self));
 }
 
-int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const uint8_t *bytes,size_t length)
+int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t length)
 {
 	const uint8_t *ptr=bytes;
-	const uint8_t *end=bytes+length;
+	const uint8_t *end=ptr+length;
 
 	for(;;)
 	{
@@ -75,13 +75,20 @@ fprintf(stderr,"Define huffman table(s)\n");
 
 fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,totalcodes);
 
+					unsigned int code=0;
 					for(int i=0;i<16;i++)
 					{
 						for(int j=0;j<numcodes[i];j++)
 						{
 							int value=*ptr++;
+
+							self->huffmantables[class][index].codes[value].code=code;
 							self->huffmantables[class][index].codes[value].length=i+1;
+
+							code++;
 						}
+
+						code<<=1;
 					}
 				}
 

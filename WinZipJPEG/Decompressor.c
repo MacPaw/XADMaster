@@ -352,6 +352,10 @@ lastblock=currblock;*/
 
 size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,size_t length)
 {
+	uint8_t	*ptr=bytes;
+	uint8_t *end=ptr+length;
+
+
 }
 
 

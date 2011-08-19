@@ -56,10 +56,10 @@ typedef struct WinZipJPEGMetadata
 	WinZipJPEGHuffmanTable huffmantables[2][4];
 } WinZipJPEGMetadata;
 
-const uint8_t *FindStartOfWinZipJPEGImage(const uint8_t *bytes,size_t length);
+const void *FindStartOfWinZipJPEGImage(const void *bytes,size_t length);
 
 void InitializeWinZipJPEGMetadata(WinZipJPEGMetadata *self);
-int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const uint8_t *bytes,size_t length);
+int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t length);
 
 static inline int JPEGMCUWidthInBlocks(WinZipJPEGMetadata *self) { return self->maxhorizontalfactor; }
 static inline int JPEGMCUHeightInBlocks(WinZipJPEGMetadata *self) { return self->maxverticalfactor; }

@@ -5,6 +5,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define WinZipJPEGMetadataFoundStartOfScan 1
+#define WinZipJPEGMetadataFoundEndOfImage 2
+#define WinZipJPEGMetadataParsingFailed 3
+
 typedef struct WinZipJPEGBlock
 {
 	int16_t c[64];
@@ -52,7 +56,10 @@ typedef struct WinZipJPEGMetadata
 	WinZipJPEGHuffmanTable huffmantables[2][4];
 } WinZipJPEGMetadata;
 
-bool ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,uint8_t *bytes,size_t length);
+const uint8_t *FindStartOfWinZipJPEGImage(const uint8_t *bytes,size_t length);
+
+void InitializeWinZipJPEGMetadata(WinZipJPEGMetadata *self);
+int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const uint8_t *bytes,size_t length);
 
 static inline int JPEGMCUWidthInBlocks(WinZipJPEGMetadata *self) { return self->maxhorizontalfactor; }
 static inline int JPEGMCUHeightInBlocks(WinZipJPEGMetadata *self) { return self->maxverticalfactor; }

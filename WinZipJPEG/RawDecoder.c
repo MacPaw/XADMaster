@@ -36,7 +36,7 @@ int main(int argc,const char **argv)
 		return 1;
 	}
 
-	while(!IsFinalWinZipJPEGBundle(decompressor))
+	for(;;)
 	{
 		error=ReadNextWinZipJPEGBundle(decompressor);
 		if(error)
@@ -45,11 +45,15 @@ int main(int argc,const char **argv)
 			return 1;
 		}
 
-		//printf("%d bytes of metadata.\n",WinZipJPEGBundleMetadataLength(decompressor));
-
-TestDecompress(decompressor);
-
+		printf("%d bytes of metadata.\n",WinZipJPEGBundleMetadataLength(decompressor));
 		//fwrite(WinZipJPEGBundleMetadataBytes(decompressor),1,WinZipJPEGBundleMetadataLength(decompressor),stdout);
+
+		if(IsFinalWinZipJPEGBundle(decompressor)) break;
+
+		while(AreMoreWinZipJPEGSlicesAvailable(decompressor))
+		{
+			ReadNextWinZipJPEGSlice(decompressor);
+		}
 	}
 
 	FreeWinZipJPEGDecompressor(decompressor);

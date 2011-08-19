@@ -20,13 +20,12 @@ typedef struct WinZipJPEGDecompressor
 	WinZipJPEGReadFunction *readfunc;
 	void *inputcontext;
 
-	unsigned int slicevalue;
+	unsigned int slicevalue,sliceheight,finishedrows;
 
 	uint32_t metadatalength;
 	uint8_t *metadatabytes;
-	bool isfinalbundle;
 
-	bool hasparsedjpeg;
+	bool isfirstbundle,reachedend;
 	WinZipJPEGMetadata jpeg;
 
 	WinZipJPEGArithmeticDecoder decoder;
@@ -41,18 +40,21 @@ typedef struct WinZipJPEGDecompressor
 	WinZipJPEGContext dcremainderbins[4][13][14]; // 131 in WinZip.
 	WinZipJPEGContext dcsignbins[4][2][2][2]; // 313 in WinZip.
 	WinZipJPEGContext fixedcontext; // 0 in WinZip.
+
+	WinZipJPEGBlock *blocks[4];
 } WinZipJPEGDecompressor;
 
 WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *readfunc,void *inputcontext);
 void FreeWinZipJPEGDecompressor(WinZipJPEGDecompressor *self);
 
 int ReadWinZipJPEGHeader(WinZipJPEGDecompressor *self);
-
 int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self);
+int ReadNextWinZipJPEGSlice(WinZipJPEGDecompressor *self);
 
-void TestDecompress(WinZipJPEGDecompressor *self);
+size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,size_t length);
 
-static inline bool IsFinalWinZipJPEGBundle(WinZipJPEGDecompressor *self) { return self->isfinalbundle; }
+static inline bool IsFinalWinZipJPEGBundle(WinZipJPEGDecompressor *self) { return self->reachedend; }
+static inline bool AreMoreWinZipJPEGSlicesAvailable(WinZipJPEGDecompressor *self) { return !self->reachedend && self->finishedrows<JPEGHeightInMCUs(&self->jpeg); }
 
 static inline uint32_t WinZipJPEGBundleMetadataLength(WinZipJPEGDecompressor *self) { return self->metadatalength; }
 static inline uint8_t *WinZipJPEGBundleMetadataBytes(WinZipJPEGDecompressor *self) { return self->metadatabytes; }

@@ -32,6 +32,7 @@
 		}
 		else
 		{
+// 			printf("TAR: Ustar format.\n" );
 			tarFormat = TAR_FORMAT_USTAR;
 		}
 	}
@@ -106,8 +107,20 @@
 	return( decimal );
 }
 
-+(int64_t)readOctalNumberInRangeFromBuffer:(NSRange)range buffer:(NSData *)buffer
++(uint64_t)readOctalNumberInRangeFromBuffer:(NSRange)range buffer:(NSData *)buffer
 {
+	// This implementation only supports numbers up to 2^64. If we ever need bigger numbers,
+	// that needs to change.
+	// Also, negative values are not supported. This could be an issue if the mtime field was
+	// supposed to be negative, but it is probably fair to assume that we will not be
+	// extracting star archives with files last modified before 1970.
+	uint8_t num_string[8];
+	uint8_t mask = 0x80;
+	[buffer getBytes:num_string range:NSMakeRange(range.location,8)];
+	if( (num_string[0]&mask) == 0x80 ) {
+		[buffer getBytes:num_string range:NSMakeRange(range.location + range.length - 8,8)];
+		return CSUInt64BE(num_string);
+	}
 	return( [XADTarParser octalToDecimal:[XADTarParser readNumberInRangeFromBuffer:range buffer:buffer]] );
 }
 
@@ -173,7 +186,8 @@
 	unsigned int gid = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(116,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:gid] forKey:XADPosixGroupKey];
 
-	off_t size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
+	uint64_t size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
+	
 	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADFileSizeKey];
 	[dict setObject:[NSNumber numberWithLongLong:(size+(512-size%512))] forKey:XADCompressedSizeKey];
 	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADDataLengthKey];
@@ -216,6 +230,8 @@
 	if( strncmp( name, "././@LongLink", 13 ) == 0 ) {
 		return( 1 );
 	}
+
+// 	printf( "Generictar: Name %s / %u\n", name, size );
 
 	return( 0 );
 }
@@ -347,6 +363,8 @@
 
 	// Global header parse.
 	[self parsePaxTarHeader:currentGlobalHeader toDict:dict];
+
+// 	printf( "Ustar header parse after global\n" );
 
 	// Needed later for extended headers, possibly.
 	CSHandle *handle = [self handle];
@@ -523,19 +541,26 @@
 		}
 		else
 		{
-			// TODO: star
-			[XADException raiseNotSupportedException];
+			// Handled like an ustar archive.
+			[self parseUstarTarHeader:header toDict:dict];
+			[self addTarEntryWithDictionaryAndSeek:dict];
 		}
 
 		// Read next header.
 		if([handle atEndOfFile]) break;
 		header = [handle readDataOfLength:512];
 		
-		// See if the first byte is \0. This should mean that the archive is now over.
-		char firstByte = 1;
-		[header getBytes:&firstByte length:1];
-		if( firstByte == '\000' ) {
-			isArchiverOver = YES;
+		// See if there are 512 nullbytes. That means the file is over.
+		char firstBytes[512];
+		for( int i = 0; i < 512; i++ ) {
+			firstBytes[i] = 1;
+		}
+		[header getBytes:firstBytes length:512];
+		isArchiverOver = YES;
+		for( int i = 0; i < 512; i++ ) {		
+			if( firstBytes[i] != '\000' ) {
+				isArchiverOver = NO;
+			}
 		}
 	}
 }

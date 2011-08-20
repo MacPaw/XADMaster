@@ -1,19 +1,10 @@
-#import "XADUnarchiver.h"
+#import "XADSimpleUnarchiver.h"
 #import "NSStringPrinting.h"
 #import "CSCommandLineParser.h"
 #import "CSJSONPrinter.h"
 #import "CommandLineCommon.h"
 
-#define VERSION_STRING @"v0.5"
-
-
-
-BOOL recurse,test;
-NSString *password,*encoding;
-
-int returncode;
-
-
+#define VERSION_STRING @"v0.99"
 
 #define EntryDoesNotNeedTestingResult 0
 #define EntryIsNotSupportedResult 1
@@ -23,7 +14,431 @@ int returncode;
 #define EntryChecksumIsIncorrectResult 5
 #define EntryIsOkResult 6
 
-static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handle)
+static int TestEntry(XADSimpleUnarchiver *unarchiver,NSDictionary *dict);
+
+
+@interface Lister:NSObject {}
+@end
+
+@interface JSONLister:NSObject {}
+@end
+
+int returncode;
+CSJSONPrinter *printer;
+BOOL test,printindexes;
+int passed,failed,unknown;
+
+int main(int argc,const char **argv)
+{
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
+
+	[cmdline setUsageHeader:
+	@"lsar " VERSION_STRING @" (" @__DATE__ @"), a tool for listing the contents of archive files.\n"
+	@"Usage: lsar [options] archive [files ...]\n"
+	@"\n"
+	@"Available options:\n"];
+
+	[cmdline addSwitchOption:@"test" description:
+	@"Test the integrity of the files in the archive, if possible."];
+	[cmdline addAlias:@"t" forOption:@"test"];
+
+	[cmdline addStringOption:@"password" description:
+	@"The password to use for decrypting protected archives."];
+	[cmdline addAlias:@"p" forOption:@"password"];
+
+	[cmdline addStringOption:@"encoding" description:
+	@"The encoding to use for filenames in the archive, when it is not known. "
+	@"If not specified, the program attempts to auto-detect the encoding used. "
+	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."
+	argumentDescription:@"encoding name"];
+	[cmdline addAlias:@"e" forOption:@"encoding"];
+
+	[cmdline addStringOption:@"password-encoding" description:
+	@"The encoding to use for the password for the archive, when it is not known. "
+	@"If not specified, then either the encoding given by the -encoding option "
+	@"or the auto-detected encoding is used."
+	argumentDescription:@"name"];
+	[cmdline addAlias:@"E" forOption:@"password-encoding"];
+
+	[cmdline addSwitchOption:@"print-encoding" description:
+	@"Print the auto-detected encoding and the confidence factor after the file list"];
+	[cmdline addAlias:@"pe" forOption:@"print-encoding"];
+
+	[cmdline addSwitchOption:@"print-indexes" description:
+	@"Include the index numbers of the entries in the archive, for use with unar."];
+	[cmdline addAlias:@"pi" forOption:@"print-indexes"];
+
+	[cmdline addSwitchOption:@"indexes" description:
+	@"Instead of specifying the files to list as filenames or wildcard patterns, "
+	@"specify them as indexes."];
+	[cmdline addAlias:@"i" forOption:@"indexes"];
+
+	[cmdline addSwitchOption:@"json" description:
+	@"Print the listing in JSON format."];
+	[cmdline addAlias:@"j" forOption:@"json"];
+
+	[cmdline addSwitchOption:@"json-ascii" description:
+	@"Print the listing in JSON format, encoded as pure ASCII text."];
+	[cmdline addAlias:@"ja" forOption:@"json-ascii"];
+
+	[cmdline addSwitchOption:@"no-recursion" description:
+	@"Do not attempt to list archives contained in other archives. For instance, "
+	@"when unpacking a .tar.gz file, only list the .gz file and not its contents."];
+	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
+
+	[cmdline addHelpOption];
+
+	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) return 1;
+
+
+
+
+	test=[cmdline boolValueForOption:@"test"];
+	NSString *password=[cmdline stringValueForOption:@"password"];
+	NSString *encoding=[cmdline stringValueForOption:@"encoding"];
+	NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
+	BOOL printencoding=[cmdline boolValueForOption:@"print-encoding"];
+	printindexes=[cmdline boolValueForOption:@"print-indexes"];
+	BOOL indexes=[cmdline boolValueForOption:@"indexes"];
+	BOOL json=[cmdline boolValueForOption:@"json"];
+	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
+	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
+
+	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
+	{
+		[@"Available encodings are:\n" print];
+		PrintEncodingList();
+		return 0;
+	}
+
+	NSArray *files=[cmdline remainingArguments];
+	int numfiles=[files count];
+	if(numfiles==0)
+	{
+		[cmdline printUsage];
+		return 1;
+	}
+
+	NSString *filename=[files objectAtIndex:0];
+
+	if(json)
+	{
+		printer=[CSJSONPrinter new];
+		[printer setIndentString:@"  "];
+		[printer setASCIIMode:jsonascii];
+
+		[printer startPrintingDictionary];
+		[printer printDictionaryKey:@"lsarFormatVersion"];
+		[printer printDictionaryObject:[NSNumber numberWithInt:2]];
+
+		XADError error;
+		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
+		if(!unarchiver)
+		{
+			[printer printDictionaryKey:@"lsarError"];
+			[printer printDictionaryObject:[NSNumber numberWithInt:error]];
+			[printer endPrintingDictionary];
+			[@"\n" print];
+			return 1;
+		}
+
+		if(password) [unarchiver setPassword:password];
+		if(encoding) [[unarchiver archiveParser] setEncodingName:encoding];
+		if(passwordencoding) [[unarchiver archiveParser] setPasswordEncodingName:passwordencoding];
+		[unarchiver setExtractsSubArchives:!norecursion];
+		[unarchiver setAlwaysOverwritesFiles:YES]; // Disable collision checks.
+
+		for(int i=1;i<numfiles;i++)
+		{
+			NSString *filter=[files objectAtIndex:i];
+			if(indexes) [unarchiver addIndexFilter:[filter intValue]];
+			else [unarchiver addGlobFilter:filter];
+		}
+
+		[unarchiver setDelegate:[[JSONLister new] autorelease]];
+
+		[printer printDictionaryKey:@"lsarContents"];
+		[printer startPrintingDictionaryObject];
+		[printer startPrintingArray];
+
+		returncode=0;
+
+		error=[unarchiver parseAndUnarchive];
+
+		[printer endPrintingArray];
+		[printer endPrintingDictionaryObject];
+
+		if(error)
+		{
+			[printer printDictionaryKey:@"lsarError"];
+			[printer printDictionaryObject:[NSNumber numberWithInt:error]];
+			returncode=1;
+		}
+
+		if(test)
+		{
+			XADArchiveParser *subparser=[unarchiver innerArchiveParser];
+			if(subparser)
+			{
+				[printer printDictionaryKey:@"lsarTestResult"];
+
+				CSHandle *handle=[subparser handle];
+				if([handle hasChecksum])
+				{
+					@try
+					{
+						[handle seekToEndOfFile];
+						if([handle isChecksumCorrect]) [printer printDictionaryObject:@"ok"];
+						else { [printer printDictionaryObject:@"wrong_checksum"]; returncode=1; }
+					}
+					@catch(id e) { [printer printDictionaryObject:@"unpacking_failed"]; returncode=1; }
+				}
+				else [printer printDictionaryObject:@"no_checksum"];
+			}
+		}
+
+		XADArchiveParser *parser=[unarchiver archiveParser];
+		[printer printDictionaryKey:@"lsarEncoding"];
+		[printer printDictionaryObject:[parser encodingName]];
+		[printer printDictionaryKey:@"lsarConfidence"];
+		[printer printDictionaryObject:[NSNumber numberWithFloat:[parser encodingConfidence]]];
+
+		XADArchiveParser *outerparser=[unarchiver outerArchiveParser];
+		[printer printDictionaryKey:@"lsarFormatName"];
+		[printer printObject:[outerparser formatName]];
+		[printer printDictionaryKey:@"lsarProperties"];
+		[printer startPrintingDictionary];
+		[printer printDictionaryKeysAndObjects:[outerparser properties]];
+		[printer endPrintingDictionary];
+
+		XADArchiveParser *innerparser=[unarchiver innerArchiveParser];
+		if(innerparser)
+		{
+			[printer printDictionaryKey:@"lsarInnerFormatName"];
+			[printer printObject:[innerparser formatName]];
+			[printer printDictionaryKey:@"lsarInnerProperties"];
+			[printer startPrintingDictionary];
+			[printer printDictionaryKeysAndObjects:[innerparser properties]];
+			[printer endPrintingDictionary];
+		}
+
+		[printer endPrintingDictionary];
+
+		[@"\n" print];
+	}
+	else
+	{
+		[filename print];
+		[@": " print];
+		fflush(stdout);
+
+		XADError error;
+		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
+		if(!unarchiver)
+		{
+			[@"Couldn't open archive. (" print];
+			[[XADException describeXADError:error] print];
+			[@")\n" print];
+			return 1;
+		}
+
+		if(password) [unarchiver setPassword:password];
+		if(encoding) [[unarchiver archiveParser] setEncodingName:encoding];
+		if(passwordencoding) [[unarchiver archiveParser] setPasswordEncodingName:passwordencoding];
+		[unarchiver setExtractsSubArchives:!norecursion];
+		[unarchiver setAlwaysOverwritesFiles:YES]; // Disable collision checks.
+
+		for(int i=1;i<numfiles;i++)
+		{
+			NSString *filter=[files objectAtIndex:i];
+			if(indexes) [unarchiver addIndexFilter:[filter intValue]];
+			else [unarchiver addGlobFilter:filter];
+		}
+
+		[unarchiver setDelegate:[[[Lister alloc] init] autorelease]];
+
+		error=[unarchiver parse];
+		if(error)
+		{
+			[@"Listing failed! (" print];
+			[[XADException describeXADError:error] print];
+			[@")\n" print];
+			return 1;
+		}
+
+		if([unarchiver innerArchiveParser])
+		{
+			[[[unarchiver innerArchiveParser] formatName] print];
+			[@" in " print];
+			[[[unarchiver outerArchiveParser] formatName] print];
+		}
+		else
+		{
+			[[[unarchiver outerArchiveParser] formatName] print];
+		}
+
+		[@"\n" print];
+
+		returncode=0;
+		passed=failed=unknown=0;
+
+		error=[unarchiver unarchive];
+		if(error)
+		{
+			[@"Listing failed! (" print];
+			[[XADException describeXADError:error] print];
+			[@")\n" print];
+			return 1;
+		}
+
+		if(test)
+		{
+			if(unknown)
+			{
+				[[NSString stringWithFormat:@"%d passed, %d failed, %d unknown.",
+				passed,failed,unknown] print];
+			}
+			else
+			{
+				[[NSString stringWithFormat:@"%d passed, %d failed.",
+				passed,failed] print];
+			}
+
+			XADArchiveParser *subparser=[unarchiver innerArchiveParser];
+			if(subparser)
+			{
+				CSHandle *handle=[subparser handle];
+				if([handle hasChecksum])
+				{
+					@try
+					{
+						[handle seekToEndOfFile];
+						if([handle isChecksumCorrect]) [@" Container file checksum is correct." print];
+						else { [@" Container file checksum failed!" print]; returncode=1; }
+					}
+					@catch(id e) { [@" Container file failed while testing checksum!" print]; returncode=1; }
+				}
+				else [@" Container file has no checksum." print];
+			}
+
+			[@"\n" print];
+		}
+
+		if(printencoding)
+		{
+			XADArchiveParser *parser=[unarchiver archiveParser];
+			[[NSString stringWithFormat:@"Encoding: %@ (%d%% confidence)\n",
+			[parser encodingName],(int)([parser encodingConfidence]*100+0.5)] print];
+		}
+	}
+
+	[pool release];
+
+	return returncode;
+}
+
+
+
+@implementation Lister
+
+-(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver
+{
+	// Ask for a password from the user if called in interactive mode,
+	// otherwise just print an error on stderr and exit.
+ 	if(IsInteractive())
+	{
+		NSString *password=AskForPassword(@"This archive requires a password to list.\n");
+		if(!password) exit(2);
+		[unarchiver setPassword:password];
+	}
+	else
+	{
+		[@"This archive requires a password to unpack. Use the -p option to provide one.\n" printToFile:stderr];
+		exit(2);
+	}
+}
+
+-(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
+{
+	[@"  " print];
+
+	if(printindexes)
+	{
+		NSNumber *indexnum=[dict objectForKey:XADIndexKey];
+		[[indexnum description] print];
+		[@". " print];
+	}
+
+	NSString *name=DisplayNameForEntryWithDictionary(dict);
+	[name print];
+
+	if(test)
+	{
+		[@"... " print];
+		fflush(stdout);
+
+		switch(TestEntry(unarchiver,dict))
+		{
+			case EntryDoesNotNeedTestingResult: passed++; break;
+			case EntryIsNotSupportedResult: [@"Unsupported!" print]; failed++; break;
+			case EntryFailsWhileUnpackingResult: [@"Unpacking failed!" print]; failed++; break;
+			case EntrySizeIsWrongResult: [@"Wrong size!" print]; failed++; break;
+			case EntryHasNoChecksumResult: [@"Unknown." print]; unknown++; break;
+			case EntryChecksumIsIncorrectResult: [@"Checksum failed!" print]; failed++; break;
+			case EntryIsOkResult: [@"OK." print]; passed++; break;
+		}
+	}
+
+	[@"\n" print];
+
+	return NO;
+}
+
+@end
+
+@implementation JSONLister
+
+-(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver
+{
+	// Just print an error to stderr and return 2 to indicate a password is needed.
+	// TODO: This breaks the JSON output, should this be fixed?
+	[@"This archive requires a password to unpack. Use the -p option to provide one.\n" printToFile:stderr];
+	exit(2);
+}
+
+-(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
+{
+	[printer startPrintingArrayObject];
+	[printer startPrintingDictionary];
+
+	[printer printDictionaryKeysAndObjects:dict];
+
+	if(test)
+	{
+		[printer printDictionaryKey:@"lsarTestResult"];
+		switch(TestEntry(unarchiver,dict))
+		{
+			case EntryDoesNotNeedTestingResult: [printer printDictionaryObject:@"not_tested"]; break;
+			case EntryIsNotSupportedResult: [printer printDictionaryObject:@"not_supported"]; break;
+			case EntryFailsWhileUnpackingResult: [printer printDictionaryObject:@"unpacking_failed"]; break;
+			case EntrySizeIsWrongResult: [printer printDictionaryObject:@"wrong_size"]; break;
+			case EntryHasNoChecksumResult: [printer printDictionaryObject:@"no_checksum"]; break;
+			case EntryChecksumIsIncorrectResult: [printer printDictionaryObject:@"wrong_checksum"]; break;
+			case EntryIsOkResult: [printer printDictionaryObject:@"ok"]; break;
+		}
+	}
+
+	[printer endPrintingDictionary];
+	[printer endPrintingArrayObject];
+
+	return NO;
+}
+
+@end
+
+static int TestEntry(XADSimpleUnarchiver *unarchiver,NSDictionary *dict)
 {
 	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *link=[dict objectForKey:XADIsLinkKey];
@@ -34,7 +449,8 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 
 	if(isdir||islink) return EntryDoesNotNeedTestingResult;
 
-	if(!handle) handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES error:NULL];
+	XADArchiveParser *parser=[unarchiver archiveParser];
+	CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:YES error:NULL];
 
 	if(!handle)
 	{
@@ -81,383 +497,5 @@ static int TestEntry(XADArchiveParser *parser,NSDictionary *dict,CSHandle *handl
 			return EntryIsOkResult;
 		}
 	}
-}
-
-static XADArchiveParser *ArchiveParserForEntryWithDelegate(XADArchiveParser *parser,NSDictionary *dict,id delegate)
-{
-	CSHandle *handle=[parser handleForEntryWithDictionary:dict wantChecksum:test error:NULL];
-	if(!handle) return nil;
-
-	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle
-	name:[[dict objectForKey:XADFileNameKey] string] error:NULL];
-	if(!subparser) return nil;
-
-	if(password) [subparser setPassword:password];
-	if(encoding) [[subparser stringSource] setFixedEncodingName:encoding];
-	[subparser setDelegate:delegate];
-
-	return subparser;
-}
-
-
-
-@interface Lister:NSObject
-{
-	int indent;
-}
-@end
-
-@implementation Lister
-
--(id)init
-{
-	if((self=[super init]))
-	{
-		indent=0;
-	}
-	return self;
-}
-
--(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
-{
-	[@"This archive requires a password to unpack. Use the -p option to provide one.\n" print];
-	exit(2);
-}
-
--(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
-{
-	for(int i=0;i<indent;i++) [@"  " print];
-
-//	NSNumber *dir=[dict objectForKey:XADIsDirectoryKey];
-//	NSNumber *link=[dict objectForKey:XADIsLinkKey];
-	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
-//	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
-//	NSNumber *size=[dict objectForKey:XADFileSizeKey];
-//	NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
-
-//	BOOL isdir=dir&&[dir boolValue];
-//	BOOL islink=link&&[link boolValue];
-	BOOL isarchive=archive&&[archive boolValue];
-
-	NSString *displayname=[[[dict objectForKey:XADFileNameKey] string] stringByEscapingControlCharacters];
-	[displayname print];
-
-	CSHandle *handle=nil;
-	BOOL failed=NO;
-
-	if(recurse&&isarchive)
-	{
-		XADArchiveParser *subparser=ArchiveParserForEntryWithDelegate(parser,dict,self);
-		if(subparser)
-		{
-			[@":\n" print];
-			indent++;
-
-			if([subparser parseWithoutExceptions]!=XADNoError)
-			{
-				failed=YES;
-				returncode=1;
-			}
-
-			indent--;
-
-			if(test) for(int i=0;i<indent;i++) [@"  " print];
-			handle=[subparser handle];
-		}
-		else
-		{
-			// Currently does not set a return code, as sub-archives might be misidentified.
-			[@" (Couldn't open contained archive!) " print];
-		}
-	}
-	else
-	{
-		if(test) [@" " print];
-	}
-
-	if(failed)
-	{
-		[@" (Failed while reading contained archive!)" print];
-	}
-	else if(test)
-	{
-		switch(TestEntry(parser,dict,handle))
-		{
-			case EntryDoesNotNeedTestingResult: break;
-			case EntryIsNotSupportedResult: [@"(Unsupported!)" print]; break;
-			case EntryFailsWhileUnpackingResult: [@"(Unpacking failed!)" print]; break;
-			case EntrySizeIsWrongResult: [@"(Wrong size!)" print]; break;
-			case EntryHasNoChecksumResult: [@"(Unknown)" print]; break;
-			case EntryChecksumIsIncorrectResult: [@"(Checksum failed!)" print]; break;
-			case EntryIsOkResult: [@"(Ok)" print]; break;
-		}
-	}
-
-	[@"\n" print];
-}
-
-@end
-
-
-
-
-@interface JSONLister:NSObject
-{
-	CSJSONPrinter *printer;
-}
-@end
-
-@implementation JSONLister
-
--(id)initWithJSONPrinter:(CSJSONPrinter *)json
-{
-	if((self=[super init]))
-	{
-		printer=[json retain];
-	}
-	return self;
-}
-
--(void)archiveParserNeedsPassword:(XADArchiveParser *)parser
-{
-	// Return 2 to indicate that a password is needed.
-	// Output will likely be invalid.
-	[printer printArrayObject:@"password_required"];
-	exit(2);
-}
-
--(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict
-{
-	[printer startPrintingArrayObject];
-	[printer startPrintingDictionary];
-
-	[printer printDictionaryKeysAndObjects:dict];
-
-	NSNumber *archive=[dict objectForKey:XADIsArchiveKey];
-	BOOL isarchive=archive&&[archive boolValue];
-
-	CSHandle *handle=nil;
-
-	if(recurse&&isarchive)
-	{
-		XADArchiveParser *subparser=ArchiveParserForEntryWithDelegate(parser,dict,self);
-		if(subparser)
-		{
-			[printer printDictionaryKey:@"lsarContents"];
-			[printer startPrintingDictionaryObject];
-			[printer startPrintingArray];
-
-			if([subparser parseWithoutExceptions]!=XADNoError)
-			{
-				[printer printArrayObject:@"parsing_failed"];
-				returncode=1;
-			}
-
-			[printer endPrintingArray];
-			[printer endPrintingDictionaryObject];
-
-			handle=[subparser handle];
-		}
-		else
-		{
-			// Currently does not set a return code, as sub-archives might be misidentified.
-		}
-	}
-
-	if(test)
-	{
-		[printer printDictionaryKey:@"lsarTestResult"];
-		switch(TestEntry(parser,dict,handle))
-		{
-			case EntryDoesNotNeedTestingResult: [printer printDictionaryObject:@"not_tested"]; break;
-			case EntryIsNotSupportedResult: [printer printDictionaryObject:@"not_supported"]; break;
-			case EntryFailsWhileUnpackingResult: [printer printDictionaryObject:@"unpacking_failed"]; break;
-			case EntrySizeIsWrongResult: [printer printDictionaryObject:@"wrong_size"]; break;
-			case EntryHasNoChecksumResult: [printer printDictionaryObject:@"no_checksum"]; break;
-			case EntryChecksumIsIncorrectResult: [printer printDictionaryObject:@"wrong_checksum"]; break;
-			case EntryIsOkResult: [printer printDictionaryObject:@"ok"]; break;
-		}
-	}
-
-	[printer endPrintingDictionary];
-	[printer endPrintingArrayObject];
-}
-
-@end
-
-
-
-int main(int argc,const char **argv)
-{
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
-
-	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
-
-	[cmdline setUsageHeader:
-	@"lsar " VERSION_STRING @" (" @__DATE__ @"), a tool for listing the contents of archive files.\n"
-	@"Usage: lsar [options] archive...\n"
-	@"\n"
-	@"Available options:\n"];
-
-	[cmdline addStringOption:@"password" description:
-	@"The password to use for decrypting protected archives."];
-	[cmdline addAlias:@"p" forOption:@"password"];
-
-	[cmdline addStringOption:@"encoding" description:
-	@"The encoding to use for filenames in the archive, when it is not known. "
-	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."
-	argumentDescription:@"encoding name"];
-	[cmdline addAlias:@"e" forOption:@"encoding"];
-
-	[cmdline addSwitchOption:@"print-encoding" description:
-	@"Print the auto-detected encoding after the file list, and the "
-	@"confidence factor."];
-	[cmdline addAlias:@"pe" forOption:@"print-encoding"];
-
-	[cmdline addSwitchOption:@"test" description:
-	@"Test the integrity of the files in the archive, if possible."];
-	[cmdline addAlias:@"t" forOption:@"test"];
-
-	[cmdline addSwitchOption:@"no-recursion" description:
-	@"Do not attempt to list the contents of archives contained in other archives. "
-	@"For instance, when listing a .tar.gz file, only list the .tar file and not its contents."];
-	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
-
-	[cmdline addSwitchOption:@"json" description:
-	@"Print the listing in JSON format."];
-	[cmdline addAlias:@"j" forOption:@"json"];
-
-	[cmdline addSwitchOption:@"json-ascii" description:
-	@"Print the listing in JSON format, encoded as pure ASCII text."];
-	[cmdline addAlias:@"ja" forOption:@"json-ascii"];
-
-	[cmdline addHelpOption];
-
-	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
-
-
-
-	password=[cmdline stringValueForOption:@"password"];
-	encoding=[cmdline stringValueForOption:@"encoding"];
-	test=[cmdline boolValueForOption:@"test"];
-	recurse=![cmdline boolValueForOption:@"no-recursion"];
-
-	BOOL json=[cmdline boolValueForOption:@"json"];
-	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
-
-	if(encoding&&([encoding caseInsensitiveCompare:@"list"]==NSOrderedSame||[encoding caseInsensitiveCompare:@"help"]==NSOrderedSame))
-	{
-		[@"Available encodings are:\n" print];
-		PrintEncodingList();
-		return 0;
-	}
-
-
-
-	NSArray *files=[cmdline remainingArguments];
-	int numfiles=[files count];
-
-	if(numfiles==0)
-	{
-		[cmdline printUsage];
-		return 1;
-	}
-
-
-
-	returncode=0;
-
-	if(json||jsonascii)
-	{
-		CSJSONPrinter *printer=[CSJSONPrinter new];
-		[printer setIndentString:@"  "];
-		[printer setASCIIMode:jsonascii];
-		[printer startPrintingArray];
-
-		for(int i=0;i<numfiles;i++)
-		{
-			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-			NSString *filename=[files objectAtIndex:i];
-
-			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename error:NULL];
-			if(parser)
-			{
-				if(password) [parser setPassword:password];
-				if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
-
-				[printer startPrintingArrayObject];
-				[printer startPrintingArray];
-				[parser setDelegate:[[[JSONLister alloc] initWithJSONPrinter:printer] autorelease]];
-
-				if([parser parseWithoutExceptions]!=XADNoError)
-				{
-					[printer printArrayObject:@"parsing_failed"];
-					returncode=1;
-				}
-
-				[printer endPrintingArray];
-				[printer endPrintingArrayObject];
-			}
-			else
-			{
-				[printer printArrayObject:@"opening_failed"];
-				returncode=1;
-			}
-
-			[pool release];
-		}
-
-		[printer endPrintingArray];
-		[@"\n" print];
-	}
-	else
-	{
-		for(int i=0;i<numfiles;i++)
-		{
-			NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-			NSString *filename=[files objectAtIndex:i];
-
-			if(i!=0) [@"\n" print];
-			[filename print];
-			[@":" print];
-			fflush(stdout);
-
-			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename error:NULL];
-			if(parser)
-			{
-				[@"\n" print];
-
-				if(password) [parser setPassword:password];
-				if(encoding) [[parser stringSource] setFixedEncodingName:encoding];
-
-				[parser setDelegate:[[[Lister alloc] init] autorelease]];
-
-				if([parser parseWithoutExceptions]!=XADNoError)
-				{
-					[@"Failed while reading archive!\n" print];
-					returncode=1;
-				}
-
-				if([cmdline boolValueForOption:@"print-encoding"])
-				{
-					XADStringSource *source=[parser stringSource];
-
-					[[NSString stringWithFormat:@"Encoding: %@ (%d%% confidence)\n",
-					[source encodingName],(int)([source confidence]*100+0.5)] print];
-				}
-			}
-			else
-			{
-				[@" Couldn't open archive!\n" print];
-				returncode=1;
-			}
-
-			[pool release];
-		}
-	}
-
-	[pool release];
-
-	return returncode;
 }
 

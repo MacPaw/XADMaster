@@ -624,7 +624,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 -(void)_requireOptionsInArray:(NSArray *)requiredoptions when:(NSString *)when errors:(NSMutableArray *)errors
 {
-	NSMutableSet *set=[NSMutableSet new];
+	NSMutableSet *set=[NSMutableSet set];
 
 	NSEnumerator *enumerator=[requiredoptions objectEnumerator];
 	NSString *requiredoption;

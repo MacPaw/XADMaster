@@ -20,13 +20,15 @@ typedef struct WinZipJPEGDecompressor
 	WinZipJPEGReadFunction *readfunc;
 	void *inputcontext;
 
-	unsigned int slicevalue,sliceheight,finishedrows;
-
 	uint32_t metadatalength;
 	uint8_t *metadatabytes;
 
 	bool isfirstbundle,reachedend;
 	WinZipJPEGMetadata jpeg;
+
+	bool slicesavailable;
+	unsigned int slicevalue,sliceheight;
+	unsigned int currheight,finishedrows;
 
 	WinZipJPEGArithmeticDecoder decoder;
 
@@ -42,6 +44,17 @@ typedef struct WinZipJPEGDecompressor
 	WinZipJPEGContext fixedcontext; // 0 in WinZip.
 
 	WinZipJPEGBlock *blocks[4];
+
+	WinZipJPEGBlock *currblock;
+	bool mcusavailable;
+	unsigned int mcurow,mcucol,mcucomp,mcux,mcuy,mcucoeff;
+	unsigned int mcucounter,restartmarkerindex;
+	bool writerestartmarker;
+	int predicted[4];
+
+	uint64_t bitstring;
+	unsigned int bitlength;
+	bool needsstuffing;
 } WinZipJPEGDecompressor;
 
 WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *readfunc,void *inputcontext);
@@ -53,8 +66,12 @@ int ReadNextWinZipJPEGSlice(WinZipJPEGDecompressor *self);
 
 size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,size_t length);
 
-static inline bool IsFinalWinZipJPEGBundle(WinZipJPEGDecompressor *self) { return self->reachedend; }
-static inline bool AreMoreWinZipJPEGSlicesAvailable(WinZipJPEGDecompressor *self) { return !self->reachedend && self->finishedrows<JPEGHeightInMCUs(&self->jpeg); }
+static inline bool IsFinalWinZipJPEGBundle(WinZipJPEGDecompressor *self)
+{ return self->reachedend; }
+static inline bool AreMoreWinZipJPEGSlicesAvailable(WinZipJPEGDecompressor *self)
+{ return !self->reachedend && self->slicesavailable; }
+static inline bool AreMoreWinZipJPEGBytesAvailable(WinZipJPEGDecompressor *self)
+{ return self->mcusavailable || self->bitlength || self->needsstuffing; }
 
 static inline uint32_t WinZipJPEGBundleMetadataLength(WinZipJPEGDecompressor *self) { return self->metadatalength; }
 static inline uint8_t *WinZipJPEGBundleMetadataBytes(WinZipJPEGDecompressor *self) { return self->metadatabytes; }

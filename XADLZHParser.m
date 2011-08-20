@@ -44,15 +44,16 @@
 
 	int guessedos=0;
 
-	while([self shouldKeepParsing])
+	while([self shouldKeepParsing] && ![fh atEndOfFile])
 	{
 		off_t start=[fh offsetInFile];
 
-		int firstword;
-		@try { firstword=[fh readInt16LE]; }
-		@catch(id e) { break; }
+		uint8_t b1=[fh readUInt8];
+		if(b1==0) break;
 
-		if((firstword&0xff)==0) break;
+		uint8_t b2=[fh readUInt8];
+
+		int firstword=b1|(b2<<8);
 
 		uint8_t method[5];
 		[fh readBytes:5 toBuffer:method];
@@ -105,6 +106,8 @@
 		}
 		else if(level==2)
 		{
+			[self reportInterestingFileWithReason:@"LZH level 2 file"];
+
 			headersize=firstword;
 
 			[dict setObject:[NSDate dateWithTimeIntervalSince1970:time] forKey:XADLastModificationDateKey];
@@ -123,6 +126,8 @@
 		}
 		else if(level==3)
 		{
+			[self reportInterestingFileWithReason:@"LZH level 3 file"];
+
 			if(firstword!=4) [XADException raiseNotSupportedException];
 
 			[dict setObject:[NSDate dateWithTimeIntervalSince1970:time] forKey:XADLastModificationDateKey];
@@ -260,6 +265,7 @@
 
 		case 0x42:
 			// 64-bit file sizes
+			[self reportInterestingFileWithReason:@"64-bit file"];
 			[XADException raiseNotSupportedException];
 		break;
 
@@ -329,11 +335,13 @@
 	}
 	else if([method isEqual:@"-lh2-"])
 	{
+		[self reportInterestingFileWithReason:@"-lh2- compression"];
 		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 		handle=[[[XADLZH2Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
 	}
 	else if([method isEqual:@"-lh3-"])
 	{
+		[self reportInterestingFileWithReason:@"-lh3- compression"];
 		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 		handle=[[[XADLZH3Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
 	}
@@ -371,11 +379,13 @@
 	}
 	else if([method isEqual:@"-pm2-"])
 	{
+		[self reportInterestingFileWithReason:@"-pm2- compression"];
 		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 		handle=[[[XADPMArc2Handle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease];
 	}
 	else // not supported
 	{
+		[self reportInterestingFileWithReason:@"Unsupported compression method %@",method];
 		return nil; 
 	}
 

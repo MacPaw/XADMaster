@@ -7,6 +7,7 @@
 #import "XADSkipHandle.h"
 #import "Checksums.h"
 
+extern NSString *XADIndexKey;
 extern NSString *XADFileNameKey;
 extern NSString *XADFileSizeKey;
 extern NSString *XADCompressedSizeKey;
@@ -14,6 +15,7 @@ extern NSString *XADLastModificationDateKey;
 extern NSString *XADLastAccessDateKey;
 extern NSString *XADLastAttributeChangeDateKey;
 extern NSString *XADCreationDateKey;
+extern NSString *XADExtendedAttributesKey;
 extern NSString *XADFileTypeKey;
 extern NSString *XADFileCreatorKey;
 extern NSString *XADFinderFlagsKey;
@@ -50,7 +52,9 @@ extern NSString *XADSkipLengthKey;
 extern NSString *XADCompressionNameKey;
 
 extern NSString *XADIsSolidKey;
+extern NSString *XADFirstSolidIndexKey;
 extern NSString *XADFirstSolidEntryKey;
+extern NSString *XADNextSolidIndexKey;
 extern NSString *XADNextSolidEntryKey;
 extern NSString *XADSolidObjectKey;
 extern NSString *XADSolidOffsetKey;
@@ -68,9 +72,12 @@ extern NSString *XADDiskLabelKey;
 
 	id delegate;
 	NSString *password;
+	NSString *passwordencodingname;
 
 	NSMutableDictionary *properties;
 	XADStringSource *stringsource;
+
+	int currindex;
 
 	id parsersolidobj;
 	NSMutableDictionary *firstsoliddict,*prevsoliddict;
@@ -91,6 +98,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name error:(XADError *)errorptr;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename error:(XADError *)errorptr;
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum;
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
@@ -108,12 +117,21 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 -(BOOL)hasPassword;
 -(void)setPassword:(NSString *)newpassword;
 
+-(NSString *)encodingName;
+-(float)encodingConfidence;
+-(void)setEncodingName:(NSString *)encodingname;
+-(NSString *)passwordEncodingName;
+-(void)setPasswordEncodingName:(NSString *)encodingname;
 -(XADStringSource *)stringSource;
 
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict;
 -(XADString *)linkDestinationForDictionary:(NSDictionary *)dict error:(XADError *)errorptr;
+-(NSDictionary *)extendedAttributesForDictionary:(NSDictionary *)dict;
 -(NSData *)finderInfoForDictionary:(NSDictionary *)dict;
--(NSData *)finderInfoForDictionary:(NSDictionary *)dict error:(XADError *)errorptr;
+
+-(BOOL)hasChecksum;
+-(BOOL)testChecksum;
+-(XADError)testChecksumWithoutExceptions;
 
 
 
@@ -163,6 +181,8 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 -(NSData *)encodedPassword;
 -(const char *)encodedCStringPassword;
 
+-(void)reportInterestingFileWithReason:(NSString *)reason,...;
+
 
 
 // Subclasses implement these:
@@ -193,6 +213,7 @@ name:(NSString *)name;
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict;
 -(BOOL)archiveParsingShouldStop:(XADArchiveParser *)parser;
 -(void)archiveParserNeedsPassword:(XADArchiveParser *)parser;
+-(void)archiveParser:(XADArchiveParser *)parser findsFileInterestingForReason:(NSString *)reason;
 
 @end
 

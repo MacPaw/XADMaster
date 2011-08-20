@@ -2,6 +2,8 @@
 
 @interface XAD7ZipParser:XADArchiveParser
 {
+	off_t startoffset;
+
 	NSDictionary *mainstreams;
 
 	NSDictionary *currfolder;
@@ -49,6 +51,19 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 -(NSString *)compressorNameForFolder:(NSDictionary *)folder index:(int)index;
 -(NSString *)compressorNameForCoder:(NSDictionary *)coder;
 
+-(NSString *)formatName;
+
+@end
+
+@interface XAD7ZipSFXParser:XAD7ZipParser
+{
+}
+
++(int)requiredHeaderSize;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
+
+-(void)parse;
 -(NSString *)formatName;
 
 @end

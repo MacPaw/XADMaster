@@ -414,6 +414,8 @@
 
 			if((method&0x7f)==5)
 			{
+				[self reportInterestingFileWithReason:@"Untested compression method 5"];
+
 				numtrees=[handle readUInt8];
 				if(numtrees==0) numtrees=256;
 			}
@@ -438,6 +440,8 @@
 
 		case 4: // Huffman - Untested!
 		{
+			[self reportInterestingFileWithReason:@"Untested compression method 4 (huffman)"];
+
 			int xor=0;
 			if(info1>=0x2a&&(info2&0x80)==0) xor=0x5a;
 
@@ -512,7 +516,9 @@
 		}
 		break;
 
-		default: return nil;
+		default:
+			[self reportInterestingFileWithReason:@"Unsupported compression method %d",method&0x7f];
+			return nil;
 	}
 
 	int delta=[[dict objectForKey:@"DiskDoublerDeltaType"] intValue];
@@ -524,7 +530,9 @@
 			handle=[[[XADDeltaHandle alloc] initWithHandle:handle length:size] autorelease];
 		break;
 
-		default: return nil;
+		default:
+			[self reportInterestingFileWithReason:@"Unsupported preprocessing method %d",delta];
+			return nil;
 	}
 
 	return handle;

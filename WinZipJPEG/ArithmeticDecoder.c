@@ -35,7 +35,6 @@ static uint8_t dbli[]; // pointer to q doubled
 
 static uint16_t alogtbl[];
 static uint16_t logtbl[];
-static uint16_t probtbl[]; //250
 static uint8_t chartbl[];
 
 
@@ -45,6 +44,7 @@ void InitializeWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,Win
 {
 	self->readfunc=readfunc;
 	self->inputcontext=inputcontext;
+	self->eof=false;
 
 	InitDec(self);
 }
@@ -270,7 +270,13 @@ static void Renorm(WinZipJPEGArithmeticDecoder *self)
 static uint8_t ByteIn(WinZipJPEGArithmeticDecoder *self)
 {
 	self->lastbyte=self->currbyte;
-	self->readfunc(self->inputcontext,&self->currbyte,1);
+
+	if(self->readfunc(self->inputcontext,&self->currbyte,1)!=1)
+	{
+		self->eof=true;
+		self->currbyte=0;
+	}
+
 	return self->currbyte;
 }
 

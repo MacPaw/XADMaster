@@ -7,6 +7,7 @@
 #import "XADZipCryptHandle.h"
 #import "XADWinZipAESHandle.h"
 #import "XADWinZipWavPackHandle.h"
+#import "XADWinZipJPEGHandle.h"
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
 #import "XADCRCHandle.h"
@@ -546,6 +547,24 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 			[dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:XADPosixUserKey];
 			[dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:XADPosixGroupKey];
 		}
+		else if(extid==0x7875&&size>=8) // Info-ZIP New Unix Extra Field (type 3)
+		{
+			int version=[fh readUInt8];
+			if(version==1)
+			{
+				int uidsize=[fh readUInt8];
+				if(uidsize==2) [dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:XADPosixUserKey];
+				else if(uidsize==4) [dict setObject:[NSNumber numberWithUnsignedInt:[fh readUInt32LE]] forKey:XADPosixUserKey];
+				else if(uidsize==8) [dict setObject:[NSNumber numberWithUnsignedLongLong:[fh readUInt64LE]] forKey:XADPosixUserKey];
+				else [fh skipBytes:uidsize];
+
+				int gidsize=[fh readUInt8];
+				if(gidsize==2) [dict setObject:[NSNumber numberWithInt:[fh readUInt16LE]] forKey:XADPosixGroupKey];
+				else if(gidsize==4) [dict setObject:[NSNumber numberWithUnsignedInt:[fh readUInt32LE]] forKey:XADPosixGroupKey];
+				else if(gidsize==8) [dict setObject:[NSNumber numberWithUnsignedLongLong:[fh readUInt64LE]] forKey:XADPosixGroupKey];
+				else [fh skipBytes:gidsize];
+			}
+		}
 		else if(extid==0x334d&&size>=14) // Info-ZIP Macintosh Extra Field
 		{
 			int len=[fh readUInt32LE];
@@ -740,6 +759,9 @@ isLastEntry:(BOOL)islastentry
 		case 98: compressionname=@"PPMd"; break;
 	}
 	if(compressionname) [dict setObject:[self XADStringWithString:compressionname] forKey:XADCompressionNameKey];
+
+	if(compressionmethod==2||compressionmethod==3||compressionmethod==4||compressionmethod==5)
+	[self reportInterestingFileWithReason:@"Reduce %d compression",compressionmethod-1];
 
 	if(namedata)
 	{
@@ -955,9 +977,10 @@ isLastEntry:(BOOL)islastentry
 		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
 						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
 //		case 8: return [CSZlibHandle deflateHandleWithHandle:parent length:size];
-		case 8: return [CSZlibHandle deflateHandleWithHandle:parent]; // Leave out length,
-		// because some archivers don't bother writing zip64 extensions for >4GB files, so
-		// size might be entirely wrong, and archivers are expected to just keep unarchving anyway.
+		// Leave out length, because some archivers don't bother writing zip64
+		// extensions for >4GB files, so size might be entirely wrong, and
+		// archivers are expected to just keep unarchving anyway.
+		case 8: return [CSZlibHandle deflateHandleWithHandle:parent];
 //		case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size variant:XADDeflate64DeflateVariant] autorelease];
 		case 12: return [CSBzip2Handle bzip2HandleWithHandle:parent length:size];
@@ -969,7 +992,7 @@ isLastEntry:(BOOL)islastentry
 			return [[[XADLZMAHandle alloc] initWithHandle:parent length:size propertyData:props] autorelease];
 		}
 		break;
-		case 96: return parent;
+		case 96: return [[[XADWinZipJPEGHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 97: return [[[XADWinZipWavPackHandle alloc] initWithHandle:parent length:size] autorelease];
 		case 98:
 		{
@@ -981,7 +1004,9 @@ isLastEntry:(BOOL)islastentry
 			maxOrder:maxorder subAllocSize:suballocsize modelRestorationMethod:modelrestoration] autorelease];
 		}
 		break;
-		default: return nil;
+		default:
+			[self reportInterestingFileWithReason:@"Unsupported compression method %d",method];
+			return nil;
 	}
 }
 

@@ -38,10 +38,8 @@ NSString *XADExceptionName=@"XADException";
 		{
 			return [[[e userInfo] objectForKey:@"XADError"] intValue];
 		}
-		else if([name isEqual:CSFileErrorException])
-		{
-			return XADUnknownError; // TODO: use ErrNo in userInfo to figure out better error
-		}
+		else if([name isEqual:CSCannotOpenFileException]) return XADOpenFileError;
+		else if([name isEqual:CSFileErrorException]) return XADUnknownError; // TODO: use ErrNo in userInfo to figure out better error
 		else if([name isEqual:CSOutOfMemoryException]) return XADOutOfMemoryError;
 		else if([name isEqual:CSEndOfFileException]) return XADInputError;
 		else if([name isEqual:CSNotImplementedException]) return XADNotSupportedError;
@@ -60,11 +58,11 @@ NSString *XADExceptionName=@"XADException";
 		case XADNoError:			return nil;
 		case XADUnknownError:		return @"Unknown error";
 		case XADInputError:			return @"Input data buffers border exceeded";
-		case XADOutputError:		return @"Output data buffers border exceeded";
+		case XADOutputError:		return @"Failed to write to file";
 		case XADBadParametersError:	return @"Function called with illegal parameters";
 		case XADOutOfMemoryError:	return @"Not enough memory available";
 		case XADIllegalDataError:	return @"Data is corrupted";
-		case XADNotSupportedError:	return @"Command is not supported";
+		case XADNotSupportedError:	return @"File not fully supported";
 		case XADResourceError:		return @"Required resource missing";
 		case XADDecrunchError:		return @"Error on decrunching";
 		case XADFiletypeError:		return @"Unknown file type";

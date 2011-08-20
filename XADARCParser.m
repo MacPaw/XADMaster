@@ -223,6 +223,9 @@ name:(NSString *)name
 	switch(method&0x7f)
 	{
 		case 0x01: // Stored (untested)
+			[self reportInterestingFileWithReason:@"Untested older stored file"];
+		break;
+
 		case 0x02: // Stored
 		break;
 
@@ -289,6 +292,8 @@ name:(NSString *)name
 
 		case 0x7f: // Compressed (untested)
 		{
+			[self reportInterestingFileWithReason:@"Untested compression method 0x7f (compress)"];
+
 			int byte=[handle readUInt8];
 
 			handle=[[[XADCompressHandle alloc] initWithHandle:handle
@@ -296,7 +301,9 @@ name:(NSString *)name
 		}
 		break;
 
-		default: return nil;
+		default:
+			[self reportInterestingFileWithReason:@"Unsupported compression method %d",method];
+			return nil;
 	}
 
 	if(checksum) handle=[XADCRCHandle IBMCRC16HandleWithHandle:handle length:length correctCRC:crc conditioned:NO];

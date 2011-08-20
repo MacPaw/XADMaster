@@ -1,8 +1,7 @@
 #import "XADNDSParser.h"
 #import "CSMemoryHandle.h"
 #import "CRC.h"
-
-#include <zlib.h>
+#import "XADPNGWriter.h"
 
 static NSData *ConvertTiledIconToPNG(uint8_t *tiledata,uint16_t *palette);
 static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes,int length);
@@ -276,11 +275,9 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 
 static NSData *ConvertTiledIconToPNG(uint8_t *tiledata,uint16_t *palette)
 {
-	NSMutableData *data=[NSMutableData dataWithCapacity:672];
+	XADPNGWriter *png=[XADPNGWriter PNGWriter];
 
-	[data appendBytes:"\211PNG\r\n\032\n" length:8];
-
-	AppendPNGChunk(data,'IHDR',(uint8_t *)"\000\000\000\040\000\000\000\040\004\003\000\000\000",13);
+	[png addIHDRWithWidth:32 height:32 bitDepth:4 colourType:3];
 
 	uint8_t plte[3*16];
 	for(int i=0;i<16;i++)
@@ -293,44 +290,26 @@ static NSData *ConvertTiledIconToPNG(uint8_t *tiledata,uint16_t *palette)
 		plte[3*i+2]=(b*0x21)>>2;
 	}
 
-	AppendPNGChunk(data,'PLTE',plte,sizeof(plte));
+	[png addChunk:'PLTE' bytes:plte length:sizeof(plte)];
 
-	uint8_t idat[7+32*17+4]="\170\234\001\040\002\337\375";
+	[png startIDAT];
 
 	for(int y=0;y<32;y++)
 	{
-		idat[7+y*17]=0;
+		uint8_t row[16];
 		for(int x=0;x<16;x++)
 		{
 			int val=tiledata[(x/4+(y/8)*4)*32+(x&3)+(y&7)*4];
-			idat[7+y*17+1+x]=(val>>4)|(val<<4);
+			row[x]=(val>>4)|(val<<4);
 		}
+		[png addIDATRow:row];
 	}
 
-	CSSetUInt32BE(&idat[sizeof(idat)-4],adler32(1,&idat[7],sizeof(idat)-7-4));
+	[png endIDAT];
 
-	AppendPNGChunk(data,'IDAT',idat,sizeof(idat));
+	[png addIEND];
 
-	AppendPNGChunk(data,'IEND',(uint8_t *)"",0);
-
-	return data;
+	return [png data];
 }
 
-static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes,int length)
-{
-	uint8_t buf[4];
-	uint32_t crc=0xffffffff;
 
-	CSSetUInt32BE(buf,length);
-	[data appendBytes:buf length:4];
-
-	CSSetUInt32BE(buf,chunktype);
-	[data appendBytes:buf length:4];
-	crc=XADCalculateCRC(crc,buf,4,XADCRCTable_edb88320);
-
-	[data appendBytes:bytes length:length];
-	crc=XADCalculateCRC(crc,bytes,length,XADCRCTable_edb88320);
-
-	CSSetUInt32BE(buf,~crc);
-	[data appendBytes:buf length:4];
-}

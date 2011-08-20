@@ -1,4 +1,5 @@
 #import "XADPath.h"
+#import "XADPlatform.h"
 
 static BOOL HasDotPaths(NSArray *array);
 static void StripDotPaths(NSMutableArray *components);
@@ -190,7 +191,8 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	int count=[components count];
 	int first=0;
 
-	// Drop slashes and .. at the start of the path
+	// Drop "/" and ".." components at the start of the path.
+	// "." and ".." components have already been stripped earlier.
 	while(first<count)
 	{
 		NSString *component=[components objectAtIndex:first];
@@ -200,18 +202,6 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 	if(first==0) return self;
 	else return [[[XADPath alloc] initWithComponents:[components subarrayWithRange:NSMakeRange(first,count-first)]] autorelease];
-
-/*	NSMutableArray *safecomponents=[NSMutableArray arrayWithArray:components];
-
-	// Drop slashes and .. at the start of the path
-	while([safecomponents count])
-	{
-		NSString *first=[safecomponents objectAtIndex:0];
-		if([first isEqual:@".."]||[first isEqual:@"/"]) [safecomponents removeObjectAtIndex:0];
-		else break;
-	}
-
-	return [[[XADPath alloc] initWithComponents:safecomponents] autorelease];*/
 }
 
 
@@ -259,6 +249,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 		NSString *compstring=[[components objectAtIndex:i] stringWithEncodingName:encoding];
 
+		// TODO: Should this method really map / to :?
 		if([compstring rangeOfString:@"/"].location==NSNotFound) [string appendString:compstring];
 		else
 		{
@@ -291,9 +282,51 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	return data;
 }
 
+-(NSString *)sanitizedPathString
+{
+	return [self sanitizedPathStringWithEncodingName:[source encodingName]];
+}
+
+-(NSString *)sanitizedPathStringWithEncodingName:(NSString *)encoding
+{
+	int count=[components count];
+	int first=0;
+
+	// Drop "/" and ".." components at the start of the path.
+	// "." and ".." components in the middle have already been stripped out.
+	while(first<count)
+	{
+		NSString *component=[components objectAtIndex:first];
+		if(![component isEqual:@".."]&&![component isEqual:@"/"]) break;
+		first++;
+	}
+
+	if(first==count) return @".";
+
+	NSMutableString *string=[NSMutableString string];
+	for(int i=first;i<count;i++)
+	{
+		if(i!=first) [string appendString:@"/"];
+
+		NSString *compstring=[[components objectAtIndex:i] stringWithEncodingName:encoding];
+		NSString *sanitized=[XADPlatform sanitizedPathComponent:compstring];
+		[string appendString:sanitized];
+	}
+
+	return string;
+}
+
+
+
+
 -(int)depth
 {
 	return [components count];
+}
+
+-(NSArray *)pathComponents
+{
+	return components;
 }
 
 
@@ -351,6 +384,12 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding
 {
 	return [self stringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
+	CFStringConvertNSStringEncodingToEncoding(encoding))];
+}
+
+-(NSString *)sanitizedPathStringWithEncoding:(NSStringEncoding)encoding;
+{
+	return [self sanitizedPathStringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
 	CFStringConvertNSStringEncodingToEncoding(encoding))];
 }
 

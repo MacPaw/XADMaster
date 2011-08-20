@@ -84,6 +84,7 @@ fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,tota
 
 							self->huffmantables[class][index].codes[value].code=code;
 							self->huffmantables[class][index].codes[value].length=i+1;
+//fprintf(stderr," >> Code %x length %d for %d\n",code,i+1,value);
 
 							code++;
 						}
@@ -172,7 +173,8 @@ fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->heig
 					self->components[i].identifier=ptr[8+i*3];
 					self->components[i].horizontalfactor=ptr[9+i*3]>>4;
 					self->components[i].verticalfactor=ptr[9+i*3]&0x0f;
-					self->components[i].quantizationtable=ptr[10+i*3];
+					int quantizationindex=ptr[10+i*3];
+					self->components[i].quantizationtable=&self->quantizationtables[quantizationindex];
 
 					if(self->components[i].horizontalfactor>self->maxhorizontalfactor)
 					self->maxhorizontalfactor=self->components[i].horizontalfactor;
@@ -182,7 +184,18 @@ fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->heig
 fprintf(stderr," > Component id %d, %dx%d, quant %d\n",
 self->components[i].identifier=ptr[8+i*3],
 self->components[i].horizontalfactor,self->components[i].verticalfactor,
-self->components[i].quantizationtable);
+quantizationindex);
+				}
+
+				int mcuwidth=self->maxhorizontalfactor*8;
+				int mcuheight=self->maxverticalfactor*8;
+				self->horizontalmcus=(self->width+mcuwidth-1)/mcuwidth;
+				self->verticalmcus=(self->height+mcuheight-1)/mcuheight;
+
+				for(int i=0;i<self->numcomponents;i++)
+				{
+					self->components[i].horizontalblocks=self->maxhorizontalfactor/self->components[i].horizontalfactor;
+					self->components[i].verticalblocks=self->maxverticalfactor/self->components[i].verticalfactor;
 				}
 
 				ptr=next;
@@ -203,28 +216,30 @@ self->components[i].quantizationtable);
 				for(int i=0;i<self->numscancomponents;i++)
 				{
 					int identifier=ptr[3+i*2];
-					int index=-1;
+					WinZipJPEGComponent *component=NULL;
 					for(int j=0;j<self->numcomponents;j++)
 					{
 						if(self->components[j].identifier==identifier)
 						{
-							index=j;
+							component=&self->components[j];
 							break;
 						}
 					}
-					if(index==-1) return WinZipJPEGMetadataParsingFailed;
+					if(!component) return WinZipJPEGMetadataParsingFailed;
 
-					self->scancomponents[i].componentindex=index;
+					self->scancomponents[i].component=component;
 
-					self->scancomponents[i].dctable=ptr[4+i*2]>>4;
-					self->scancomponents[i].actable=ptr[4+i*2]&0x0f;
+					int dcindex=ptr[4+i*2]>>4;
+					int acindex=ptr[4+i*2]&0x0f;
+					self->scancomponents[i].dctable=&self->huffmantables[0][dcindex];
+					self->scancomponents[i].actable=&self->huffmantables[1][acindex];
 				}
 
 				if(ptr[3+self->numscancomponents*2]!=0) return WinZipJPEGMetadataParsingFailed;
 				if(ptr[4+self->numscancomponents*2]!=63) return WinZipJPEGMetadataParsingFailed;
 				if(ptr[5+self->numscancomponents*2]!=0) return WinZipJPEGMetadataParsingFailed;
 
-fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents,ptr[3+self->numscancomponents*2]);
+fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents);
 
 				return WinZipJPEGMetadataFoundStartOfScan;
 			}

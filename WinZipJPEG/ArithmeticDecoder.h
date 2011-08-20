@@ -3,10 +3,15 @@
 
 #include "InputStream.h"
 
+#include <stdint.h>
+#include <stdbool.h>
+
 typedef struct WinZipJPEGArithmeticDecoder
 {
 	WinZipJPEGReadFunction *readfunc;
 	void *inputcontext;
+
+	bool eof;
 
 	uint8_t currbyte,lastbyte;
 
@@ -39,6 +44,8 @@ void InitializeFixedWinZipJPEGContext(WinZipJPEGContext *self);
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context);
 
 void FlushWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self);
+
+static inline bool WinZipJPEGArithmeticDecoderEncounteredEOF(WinZipJPEGArithmeticDecoder *self) { return self->eof; }
 
 #endif
 

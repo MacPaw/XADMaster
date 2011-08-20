@@ -132,11 +132,11 @@ static NSData *StuffItMD5(NSData *data);
 
 	if(flags&SIT5_ARCHIVEFLAGS_14BYTES) [fh skipBytes:14];
 
-	int length_a=0;
+	int commentsize=0;
 	int length_b=0;
 	if(flags&SIT5_ARCHIVEFLAGS_20)
 	{
-		length_a=[fh readUInt16BE];
+		commentsize=[fh readUInt16BE];
 		length_b=[fh readUInt16BE];
 	}
 
@@ -171,7 +171,11 @@ static NSData *StuffItMD5(NSData *data);
 
 	if(flags&SIT5_ARCHIVEFLAGS_20)
 	{
-		[fh skipBytes:length_a];
+		if(commentsize)
+		{
+			XADString *comment=[self XADStringWithData:[fh readDataOfLength:commentsize]];
+			[self setObject:comment forPropertyKey:XADCommentKey];
+		}
 		[fh skipBytes:length_b];
 	}
 

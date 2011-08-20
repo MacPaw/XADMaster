@@ -56,10 +56,9 @@ int main(int argc,const char **argv)
 			ReadNextWinZipJPEGSlice(decompressor);
 
 			uint8_t buffer[1024];
-			for(;;)
+			while(AreMoreWinZipJPEGBytesAvailable(decompressor))
 			{
 				size_t actual=EncodeWinZipJPEGBlocksToBuffer(decompressor,buffer,sizeof(buffer));
-				if(!actual) break;
 				fwrite(buffer,1,actual,stdout);
 			}
 		}

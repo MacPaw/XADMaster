@@ -1,4 +1,4 @@
-#import "XADUnarchiver.h"
+#import "XADPlatform.h"
 #import "NSDateXAD.h"
 
 #import <fcntl.h>
@@ -6,24 +6,20 @@
 #import <sys/stat.h>
 #import <sys/time.h>
 
-@implementation XADUnarchiver (PlatformSpecific)
 
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asPlatformSpecificForkForFile:(NSString *)destpath
+
+
+@implementation XADPlatform
+
++(XADError)extractResourceForkEntryWithDictionary:(NSDictionary *)dict
+unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 {
 	return XADNotSupportedError;
 }
 
--(XADError)_createPlatformSpecificLinkToPath:(NSString *)link from:(NSString *)path
-{
-	struct stat st;
-	const char *destcstr=[path fileSystemRepresentation];
-	if(lstat(destcstr,&st)==0) unlink(destcstr);
-	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
-
-	return XADNoError;
-}
-
--(XADError)_updatePlatformSpecificFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
++(XADError)updateFileAttributesAtPath:(NSString *)path
+forEntryWithDictionary:(NSDictionary *)dict parser:(XADArchiveParser *)parser
+preservePermissions:(BOOL)preservepermissions
 {
 	const char *cpath=[path fileSystemRepresentation];
 
@@ -79,11 +75,46 @@
 	return XADNoError;
 }
 
-@end
++(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link
+{
+	struct stat st;
+	const char *destcstr=[path fileSystemRepresentation];
+	if(lstat(destcstr,&st)==0) unlink(destcstr);
+	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
 
-double _XADUnarchiverGetTime()
+	return XADNoError;
+}
+
++(id)readCloneableMetadataFromPath:(NSString *)path { return nil; }
++(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path {}
+
++(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent
+{
+	// TODO: ensure this path is actually unique.
+	NSDate *now=[NSDate date];
+	int64_t t=[now timeIntervalSinceReferenceDate]*1000000000;
+	pid_t pid=getpid();
+
+	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd%d",t,pid];
+
+	if(parent) return [parent stringByAppendingPathComponent:dirname];
+	else return dirname;
+}
+
++(NSString *)sanitizedPathComponent:(NSString *)component
+{
+	if([component rangeOfString:@"/"].location==NSNotFound) return component;
+
+	NSMutableString *newstring=[NSMutableString stringWithString:component];
+	[newstring replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[newstring length])];
+	return newstring;
+}
+
++(double)currentTimeInSeconds
 {
 	struct timeval tv;
 	gettimeofday(&tv,NULL);
 	return (double)tv.tv_sec+(double)tv.tv_usec/1000000.0;
 }
+
+@end

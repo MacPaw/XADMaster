@@ -4,76 +4,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Little endian integer parsing functions.
-static inline uint16_t LittleEndianUInt16(uint8_t *ptr) { return ptr[0]|(ptr[1]<<8); }
-static inline uint32_t LittleEndianUInt32(uint8_t *ptr) { return ptr[0]|(ptr[1]<<8)|(ptr[2]<<16)|(ptr[3]<<24); }
-
-// Allocator functions for LZMA.
-static void *Alloc(void *p,size_t size) { return malloc(size); }
-static void Free(void *p,void *address) { return free(address); }
-static ISzAlloc lzmaallocator={Alloc,Free};
-
-// Decoder functions.
-static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
-WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
-const WinZipJPEGQuantizationTable *quantization);
-
-static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,bool canbezero,
-const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
-const WinZipJPEGQuantizationTable *quantization);
-
-static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
-const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
-const WinZipJPEGQuantizationTable *quantization);
-
-static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
-const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
-const WinZipJPEGQuantizationTable *quantization);
-
-static unsigned int DecodeBinarization(WinZipJPEGArithmeticDecoder *decoder,
-WinZipJPEGContext *magnitudebins,WinZipJPEGContext *remainderbins,int maxbits,int cap);
-
-// Coefficient zig-zag ordering functions.
-static bool IsFirstRow(unsigned int k);
-static bool IsFirstColumn(unsigned int k);
-static bool IsFirstRowOrColumn(unsigned int k);
-static bool IsSecondRow(unsigned int k);
-static bool IsSecondColumn(unsigned int k);
-
-static unsigned int Left(unsigned int k);
-static unsigned int Up(unsigned int k);
-static unsigned int UpAndLeft(unsigned int k);
-static unsigned int Right(unsigned int k);
-static unsigned int Down(unsigned int k);
-
-static unsigned int ZigZag(unsigned int row,unsigned int column);
-static unsigned int Row(unsigned int k);
-static unsigned int Column(unsigned int k);
-
-// Compression primitive functions.
-static int Min(int a,int b);
-static int Abs(int x);
-static int Sign(int x);
-static unsigned int Category(unsigned int val);
-
-static int Sum(unsigned int k,const WinZipJPEGBlock *block);
-static int Average(unsigned int k,
-const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
-const WinZipJPEGQuantizationTable *quantization);
-static int BDR(unsigned int k,const WinZipJPEGBlock *current,
-const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
-const WinZipJPEGQuantizationTable *quantization);
-
-// Helper functions for reading from the input stream.
-static int FullRead(WinZipJPEGDecompressor *self,uint8_t *buffer,size_t length);
-static int SkipBytes(WinZipJPEGDecompressor *self,size_t length);
+#include "stdio.h"
 
 
 
+//
+// Constructor and destructor.
+//
 
 WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *readfunc,void *inputcontext)
 {
-	WinZipJPEGDecompressor *self=malloc(sizeof(WinZipJPEGDecompressor));
+	WinZipJPEGDecompressor *self=calloc(sizeof(WinZipJPEGDecompressor),1);
 	if(!self) return NULL;
 
 	self->readfunc=readfunc;
@@ -85,7 +26,11 @@ WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *read
 	self->isfirstbundle=true;
 	self->reachedend=false;
 
+	self->slicesavailable=false;
+
 	memset(self->blocks,0,sizeof(self->blocks));
+
+	self->mcusavailable=false;
 
 	InitializeFixedWinZipJPEGContext(&self->fixedcontext);
 
@@ -103,6 +48,23 @@ void FreeWinZipJPEGDecompressor(WinZipJPEGDecompressor *self)
 
 
 
+
+//
+// Header and bundle reading.
+//
+
+// Little endian integer parsing functions.
+static inline uint16_t LittleEndianUInt16(uint8_t *ptr) { return ptr[0]|(ptr[1]<<8); }
+static inline uint32_t LittleEndianUInt32(uint8_t *ptr) { return ptr[0]|(ptr[1]<<8)|(ptr[2]<<16)|(ptr[3]<<24); }
+
+// Allocator functions for LZMA.
+static void *Alloc(void *p,size_t size) { return malloc(size); }
+static void Free(void *p,void *address) { return free(address); }
+static ISzAlloc lzmaallocator={Alloc,Free};
+
+// Helper functions for reading from the input stream.
+static int FullRead(WinZipJPEGDecompressor *self,uint8_t *buffer,size_t length);
+static int SkipBytes(WinZipJPEGDecompressor *self,size_t length);
 
 int ReadWinZipJPEGHeader(WinZipJPEGDecompressor *self)
 {
@@ -245,100 +207,188 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 	InitializeWinZipJPEGContexts(&self->dcsignbins[0][0][0][0],sizeof(self->dcsignbins));
 
 	// Calculate slize size, if any.
-	int width=JPEGWidthInMCUs(&self->jpeg);
-	int height=JPEGHeightInMCUs(&self->jpeg);
-
 	if(self->slicevalue)
 	{
 		int64_t pow2size=1LL<<(self->slicevalue+6);
-		int64_t div1=pow2size/width;
+		int64_t div1=pow2size/self->jpeg.horizontalmcus;
 		if(div1<1) div1=1;
-		int64_t div2=(height+div1-1)/div1;
-		self->sliceheight=(height+div2-1)/div2;
+		int64_t div2=(self->jpeg.verticalmcus+div1-1)/div1;
+		self->sliceheight=(self->jpeg.verticalmcus+div2-1)/div2;
 	}
 	else
 	{
-		self->sliceheight=height;
+		self->sliceheight=self->jpeg.verticalmcus;
 	}
 
 	// Allocate memory for each component in a slice.
-	int mcuwidth=JPEGMCUWidthInBlocks(&self->jpeg);
-	int mcuheight=JPEGMCUHeightInBlocks(&self->jpeg);
-
 	for(int i=0;i<self->jpeg.numscancomponents;i++)
 	{
-		int compindex=self->jpeg.scancomponents[i].componentindex;
-		int hblocks=mcuwidth/self->jpeg.components[compindex].horizontalfactor;
-		int vblocks=mcuheight/self->jpeg.components[compindex].verticalfactor;
-		self->blocks[i]=malloc(width*self->sliceheight*mcuwidth*mcuheight*sizeof(WinZipJPEGBlock));
+		self->blocks[i]=malloc(self->jpeg.horizontalmcus*self->sliceheight*
+		self->jpeg.scancomponents[i].component->horizontalblocks*
+		self->jpeg.scancomponents[i].component->verticalblocks*
+		sizeof(WinZipJPEGBlock));
+
 		if(!self->blocks[i]) return WinZipJPEGOutOfMemoryError;
 	}
 
+	self->slicesavailable=true;
 	self->finishedrows=0;
 
 	return WinZipJPEGNoError;
 }
 
+// Helper function that makes sure to read as much data as requested, even
+// if the read function returns short buffers, and reports an error if it
+// reaches EOF prematurely.
+static int FullRead(WinZipJPEGDecompressor *self,uint8_t *buffer,size_t length)
+{
+	size_t totalread=0;
+	while(totalread<length)
+	{
+		size_t actual=self->readfunc(self->inputcontext,&buffer[totalread],length-totalread);
+		if(actual==0) return WinZipJPEGEndOfStreamError;
+		totalread+=actual;
+	}
+
+	return WinZipJPEGNoError;
+}
+
+// Helper function to skip data by reading and discarding.
+static int SkipBytes(WinZipJPEGDecompressor *self,size_t length)
+{
+	uint8_t buffer[1024];
+
+	size_t totalread=0;
+	while(totalread<length)
+	{
+		size_t numbytes=length-totalread;
+		if(numbytes>sizeof(buffer)) numbytes=sizeof(buffer);
+		size_t actual=self->readfunc(self->inputcontext,buffer,numbytes);
+		if(actual==0) return WinZipJPEGEndOfStreamError;
+		totalread+=actual;
+	}
+
+	return WinZipJPEGNoError;
+}
+
+
+
+
+//
+// Block decoding.
+//
+
+// Decoder functions.
+static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
+WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
+static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,bool canbezero,
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
+static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int absvalue,
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
+static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
+const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
+static unsigned int DecodeBinarization(WinZipJPEGArithmeticDecoder *decoder,
+WinZipJPEGContext *magnitudebins,WinZipJPEGContext *remainderbins,int maxbits,int cap);
+
+// Coefficient zig-zag ordering functions.
+static bool IsFirstRow(unsigned int k);
+static bool IsFirstColumn(unsigned int k);
+static bool IsFirstRowOrColumn(unsigned int k);
+static bool IsSecondRow(unsigned int k);
+static bool IsSecondColumn(unsigned int k);
+
+static unsigned int Left(unsigned int k);
+static unsigned int Up(unsigned int k);
+static unsigned int UpAndLeft(unsigned int k);
+static unsigned int Right(unsigned int k);
+static unsigned int Down(unsigned int k);
+
+static unsigned int ZigZag(unsigned int row,unsigned int column);
+static unsigned int Row(unsigned int k);
+static unsigned int Column(unsigned int k);
+
+// Compression primitive functions.
+static int Min(int a,int b);
+static int Abs(int x);
+static int Sign(int x);
+static unsigned int Category(unsigned int val);
+
+static int Sum(unsigned int k,const WinZipJPEGBlock *block);
+static int Average(unsigned int k,
+const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+static int BDR(unsigned int k,const WinZipJPEGBlock *current,
+const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
+const WinZipJPEGQuantizationTable *quantization);
+
 int ReadNextWinZipJPEGSlice(WinZipJPEGDecompressor *self)
 {
 	static const WinZipJPEGBlock zeroblock[64]={0};
-	int width=JPEGWidthInMCUs(&self->jpeg);
-	int height=JPEGHeightInMCUs(&self->jpeg);
-	int mcuwidth=JPEGMCUWidthInBlocks(&self->jpeg);
-	int mcuheight=JPEGMCUHeightInBlocks(&self->jpeg);
 
-	int currheight=self->sliceheight;
-	if(self->finishedrows+currheight>height) currheight=height-self->finishedrows;
+	self->currheight=self->sliceheight;
+	if(self->finishedrows+self->currheight>=self->jpeg.verticalmcus)
+	{
+		self->currheight=self->jpeg.verticalmcus-self->finishedrows;
+		self->slicesavailable=false;
+	}
 
 	for(int i=0;i<self->jpeg.numscancomponents;i++)
 	{
 		InitializeWinZipJPEGArithmeticDecoder(&self->decoder,self->readfunc,self->inputcontext);
 
-		int compindex=self->jpeg.scancomponents[i].componentindex;
-		int hblocks=mcuwidth/self->jpeg.components[compindex].horizontalfactor;
-		int vblocks=mcuheight/self->jpeg.components[compindex].verticalfactor;
-		int blocksperrow=width*hblocks;
+		int hblocks=self->jpeg.scancomponents[i].component->horizontalblocks;
+		int vblocks=self->jpeg.scancomponents[i].component->verticalblocks;
+		int blocksperrow=self->jpeg.horizontalmcus*hblocks;
 
-		int quantindex=self->jpeg.components[compindex].quantizationtable;
-		const WinZipJPEGQuantizationTable *quantization=&self->jpeg.quantizationtables[quantindex];
+		const WinZipJPEGQuantizationTable *quantization=self->jpeg.scancomponents[i].component->quantizationtable;
 //const WinZipJPEGBlock *lastblock;
 
-		for(int mcu_y=0;mcu_y<currheight;mcu_y++)
-		for(int mcu_x=0;mcu_x<width;mcu_x++)
+		for(int row=0;row<self->currheight;row++)
+		for(int col=0;col<self->jpeg.horizontalmcus;col++)
 		{
-			for(int block_y=0;block_y<vblocks;block_y++)
-			for(int block_x=0;block_x<hblocks;block_x++)
+			for(int y=0;y<vblocks;y++)
+			for(int x=0;x<hblocks;x++)
 			{
-				int x=mcu_x*hblocks+block_x;
-				int y=mcu_y*vblocks+block_y;
-				bool leftmost=(x==0);
-				bool slicetopmost=(y==0);
+				int blockx=col*hblocks+x;
+				int blocky=row*vblocks+y;
+				bool leftmost=(blockx==0);
+				bool slicetopmost=(blocky==0);
 				bool topmost=slicetopmost&&(self->finishedrows==0);
 
-				WinZipJPEGBlock *currblock=&self->blocks[i][x+y*blocksperrow];
+				WinZipJPEGBlock *currblock=&self->blocks[i][blockx+blocky*blocksperrow];
 
 				const WinZipJPEGBlock *northblock;
 				if(topmost) northblock=zeroblock;
-				else if(slicetopmost) northblock=&self->blocks[i][x+(self->sliceheight-1)*blocksperrow];
-				else northblock=&self->blocks[i][x+(y-1)*blocksperrow];
+				else if(slicetopmost) northblock=&self->blocks[i][blockx+(self->sliceheight-1)*blocksperrow];
+				else northblock=&self->blocks[i][blockx+(blocky-1)*blocksperrow];
 
 				const WinZipJPEGBlock *westblock;
 				if(leftmost) westblock=zeroblock;
-				else westblock=&self->blocks[i][x-1+y*blocksperrow];
+				else westblock=&self->blocks[i][blockx-1+blocky*blocksperrow];
 
 				DecodeMCU(self,i,topmost,leftmost,
 				currblock,northblock,westblock,quantization);
 
-/*printf("\n%d,%d %d:\n",x,y+self->finishedrows,i);
+				if(WinZipJPEGArithmeticDecoderEncounteredEOF(&self->decoder)) return WinZipJPEGEndOfStreamError;
+
+/*fprintf(stderr,"\n%d,%d %d:\n",blockx,blocky+self->finishedrows,i);
 for(int row=0;row<8;row++)
 {
 	for(int col=0;col<8;col++)
 	{
 		int predict=0;
 		if((!slicetopmost||!leftmost)&&row==0&&col==0) predict=lastblock->c[0];
-		printf("%d ",(currblock->c[ZigZag(row,col)]-predict)*quantization->c[ZigZag(row,col)]);
+		fprintf(stderr,"%d ",(currblock->c[ZigZag(row,col)]-predict)*quantization->c[ZigZag(row,col)]);
 	}
-	printf("\n");
+	fprintf(stderr,"\n");
 }
 lastblock=currblock;*/
 			}
@@ -347,19 +397,30 @@ lastblock=currblock;*/
 		FlushWinZipJPEGArithmeticDecoder(&self->decoder);
 	}
 
-	self->finishedrows+=currheight;
+	self->finishedrows+=self->currheight;
+
+	// Initialize writer state.
+	self->mcusavailable=true;
+	self->currblock=self->blocks[0];
+	self->mcurow=0;
+	self->mcucol=0;
+	self->mcucomp=0;
+	self->mcux=0;
+	self->mcuy=0;
+	self->mcucoeff=0;
+	self->mcucounter=0;
+	self->restartmarkerindex=0;
+	self->writerestartmarker=false;
+
+	for(int i=0;i<self->jpeg.numscancomponents;i++) self->predicted[i]=0;
+
+	self->bitstring=0;
+	self->bitlength=0;
+	self->needsstuffing=false;
+
+	// TODO: Error handling.
+	return WinZipJPEGNoError;
 }
-
-size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,size_t length)
-{
-	uint8_t	*ptr=bytes;
-	uint8_t *end=ptr+length;
-
-
-}
-
-
-
 
 static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
 WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
@@ -385,7 +446,7 @@ const WinZipJPEGQuantizationTable *quantization)
 	}
 	unsigned int eob=bitstring&0x3f;
 	current->eob=eob;
-//printf("eob: %d %d\n",eobcontext*63+321,eob);
+//fprintf(stderr,"eob: %d %d\n",eobcontext*63+321,eob);
 
 	// Fill out the elided block entries with 0.
 	for(unsigned int k=eob+1;k<=63;k++) current->c[k]=0;
@@ -404,11 +465,11 @@ static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int 
 const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization)
 {
-//printf("decode AC %d\n",k);
+//fprintf(stderr,"decode AC %d\n",k);
 	int val1;
 	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(k,current,north,west,quantization));
 	else val1=Average(k,north,west,quantization);
-//	else {printf("AVG(%d) ",k);val1=Average(k,north,west,quantization); printf("AVG:%d\n",val1);}
+//	else {fprintf(stderr,"AVG(%d) ",k);val1=Average(k,north,west,quantization); fprintf(stderr,"AVG:%d\n",val1);}
 
 	int val2=Sum(k,current);
 
@@ -417,7 +478,7 @@ const WinZipJPEGQuantizationTable *quantization)
 		// Decode zero/non-zero bit. (5.6.6.1)
 		int zerocontext1=Min(Category(val1),2);
 		int zerocontext2=Min(Category(val2),5);
-//printf("zerocontext: %d %d %d %d\n",(k-1)*6*3+zerocontext1*6+zerocontext2+1140,
+//fprintf(stderr,"zerocontext: %d %d %d %d\n",(k-1)*6*3+zerocontext1*6+zerocontext2+1140,
 //k-1,zerocontext1,zerocontext2);
 
 		int nonzero=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
@@ -433,7 +494,7 @@ const WinZipJPEGQuantizationTable *quantization)
 	// Decode pivot (abs>=2). (5.6.6.2)
 	int pivotcontext1=Min(Category(val1),4);
 	int pivotcontext2=Min(Category(val2),6);
-//printf("pivotcontext: %d %d %d %d\n",(k-1)*5*7+pivotcontext1*7+pivotcontext2+2256,
+//fprintf(stderr,"pivotcontext: %d %d %d %d\n",(k-1)*5*7+pivotcontext1*7+pivotcontext2+2256,
 //k-1,pivotcontext1,pivotcontext2);
 
 	int pivot=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
@@ -473,7 +534,7 @@ static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int
 const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization)
 {
-//printf("decode sign\n");
+//fprintf(stderr,"decode sign\n");
 	// Decode sign. (5.6.6.4)
 
 	// Calculate sign context, or decode with fixed probability. (5.6.6.4.1)
@@ -581,19 +642,19 @@ const WinZipJPEGQuantizationTable *quantization)
 			d0+=Abs(north->c[ZigZag(i,0)]-current->c[ZigZag(i,0)]);
 			d1+=Abs(west->c[ZigZag(0,i)]-current->c[ZigZag(0,i)]);
 		}
-//printf("p0=%d p1=%d d0=%d d1=%d\n",p0,p1,d0,d1);
+//fprintf(stderr,"p0=%d p1=%d d0=%d d1=%d\n",p0,p1,d0,d1);
 
 		if(d0>d1)
 		{
 			int64_t weight=1LL<<Min(d0-d1,31);
 			predicted=(weight*(int64_t)p1+(int64_t)p0)/(1+weight);
-//printf("d0>d1 weight=%llx predicted=%d\n",weight,predicted);
+//fprintf(stderr,"d0>d1 weight=%llx predicted=%d\n",weight,predicted);
 		}
 		else
 		{
 			int64_t weight=1LL<<Min(d1-d0,31);
 			predicted=(weight*(int64_t)p0+(int64_t)p1)/(1+weight);
-//printf("d0<=d1 weight=%llx predicted=%d\n",weight,predicted);
+//fprintf(stderr,"d0<=d1 weight=%llx predicted=%d\n",weight,predicted);
 		}
 	}
 
@@ -615,13 +676,13 @@ const WinZipJPEGQuantizationTable *quantization)
 	int northsign=(north->c[0]<predicted);
 	int westsign=(west->c[0]<predicted);
 	int predictedsign=(predicted<0);
-//printf("signcontext: %d (%d %d %d)\n",northsign*4+westsign*2+predictedsign+1+13*10+13*14,
+//fprintf(stderr,"signcontext: %d (%d %d %d)\n",northsign*4+westsign*2+predictedsign+1+13*10+13*14,
 //north[0],west[0],predicted);
 
 	int sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 	&self->dcsignbins[comp][northsign][westsign][predictedsign]);
-//if(sign) printf("%d-%d=%d\n",predicted,absvalue,predicted-absvalue);
-//else printf("%d+%d=%d\n",predicted,absvalue,predicted+absvalue);
+//if(sign) fprintf(stderr,"%d-%d=%d\n",predicted,absvalue,predicted-absvalue);
+//else fprintf(stderr,"%d+%d=%d\n",predicted,absvalue,predicted+absvalue);
 
 	if(sign) return predicted-absvalue;
 	else return predicted+absvalue;
@@ -824,37 +885,194 @@ const WinZipJPEGQuantizationTable *quantization)
 
 
 
+//
+// Block encoding.
+//
 
-// Helper function that makes sure to read as much data as requested, even
-// if the read function returns short buffers, and reports an error if it
-// reaches EOF prematurely.
-static int FullRead(WinZipJPEGDecompressor *self,uint8_t *buffer,size_t length)
+static void PushEncodedValue(WinZipJPEGDecompressor *self,WinZipJPEGHuffmanTable *table,
+int value,unsigned int highbits);
+static void PushHuffmanCode(WinZipJPEGDecompressor *self,WinZipJPEGHuffmanTable *table,unsigned int code);
+static void PushBitString(WinZipJPEGDecompressor *self,uint32_t bitstring,unsigned int length);
+
+size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,size_t length)
 {
-	size_t totalread=0;
-	while(totalread<length)
-	{
-		size_t actual=self->readfunc(self->inputcontext,&buffer[totalread],length-totalread);
-		if(actual==0) return WinZipJPEGEndOfStreamError;
-		totalread+=actual;
-	}
+	uint8_t	*start=bytes;
+	uint8_t	*ptr=bytes;
+	uint8_t *end=ptr+length;
 
-	return WinZipJPEGNoError;
+	while(ptr<end)
+	{
+		if(self->needsstuffing)
+		{
+			// If we need to add a byte of stuffing, do so.
+			*ptr++=0x00;
+			self->needsstuffing=false;
+//fprintf(stderr,"stuff\n");
+		}
+		else if(self->bitlength>=8)
+		{
+			// If there are enough buffered bits, output one byte.
+			uint8_t byte=self->bitstring>>56LL;
+//fprintf(stderr,"%02x %016llx %d\n",byte,self->bitstring,self->bitlength);
+			*ptr++=byte;
+			self->bitstring<<=8;
+			self->bitlength-=8;
+
+			if(byte==0xff) self->needsstuffing=true;
+		}
+		else if(self->writerestartmarker)
+		{
+			// Output the first half of a restart marker. This has to be done
+			// separately, to avoid stuffing.
+			*ptr++=0xff;
+
+			// Next, push the rest of the marker into the bitstream as usual, as it
+			// will not trigger bit stuffing.
+			PushBitString(self,0xd0+self->restartmarkerindex,8);
+
+			// Cycle the restart marker indexes, reset the MCU counter, and clear predictors.
+			self->restartmarkerindex=(self->restartmarkerindex+1)&7;
+			self->mcucounter=0;
+			memset(self->predicted,0,sizeof(self->predicted));
+
+			self->writerestartmarker=false;
+		}
+		else if(self->mcusavailable)
+		{
+			// If there are still MCUs left to process, check if we need a restart marker,
+			// otherwise output either a DC or AC coefficient as appropriate.
+			if(self->jpeg.restartinterval && self->mcucounter==self->jpeg.restartinterval)
+			{
+				// First, pad with ones to a byte border if needed.
+				if(self->bitlength)
+				{
+					int n=8-self->bitlength;
+					PushBitString(self,(1<<n)-1,n);
+				}
+
+				// Then set a flag to start writing a restart marker. This has to be done
+				// separately, to avoid bit stuffing.
+				self->writerestartmarker=true;
+//fprintf(stderr,"Restart at %d,%d\n",self->mcucol,self->mcurow);
+			}
+			else if(self->mcucoeff==0)
+			{
+				// Output DC coefficient.
+				int diff=self->currblock->c[0]-self->predicted[self->mcucomp];
+//fprintf(stderr,"DC: %d\n",diff);
+				PushEncodedValue(self,self->jpeg.scancomponents[self->mcucomp].dctable,diff,0);
+
+				self->predicted[self->mcucomp]=self->currblock->c[0];
+				self->mcucoeff=1;
+			}
+			else if(self->mcucoeff>self->currblock->eob && self->currblock->eob!=63)
+			{
+//fprintf(stderr,"EOB: %d %d\n",self->mcucoeff,self->currblock->eob);
+				// Output EOB marker.
+				PushHuffmanCode(self,self->jpeg.scancomponents[self->mcucomp].actable,0x00);
+
+				self->mcucoeff=64;
+			}
+			else
+			{
+				// Output AC coefficient.
+
+				// Find the next non-zero coefficient.
+				int firstcoeff=self->mcucoeff;
+				int endrun=self->mcucoeff+15;
+				while(self->mcucoeff<63 && self->mcucoeff<endrun &&
+				self->currblock->c[self->mcucoeff]==0) self->mcucoeff++;
+
+				int zeroes=self->mcucoeff-firstcoeff;
+				int val=self->currblock->c[self->mcucoeff];
+//fprintf(stderr,"AC %d+%d: %d\n",zeroes,self->mcucoeff,val);
+
+				PushEncodedValue(self,self->jpeg.scancomponents[self->mcucomp].actable,val,zeroes);
+
+				self->mcucoeff++;
+			}
+
+			// If we have output all coefficients, update position.
+			if(self->mcucoeff>=64)
+			{
+				self->mcucoeff=0; self->mcux++;
+				if(self->mcux>=self->jpeg.scancomponents[self->mcucomp].component->horizontalblocks)
+				{
+					self->mcux=0; self->mcuy++;
+					if(self->mcuy>=self->jpeg.scancomponents[self->mcucomp].component->verticalblocks)
+					{
+						self->mcuy=0; self->mcucomp++;
+						if(self->mcucomp>=self->jpeg.numscancomponents)
+						{
+							self->mcucomp=0; self->mcucol++;
+							if(self->mcucol>=self->jpeg.horizontalmcus)
+							{
+								self->mcucol=0; self->mcurow++;
+								if(self->mcurow>=self->currheight) self->mcusavailable=false;
+							}
+
+							// Count up towards the restart interval.
+							self->mcucounter++;
+						}
+					}
+				}
+
+				// Find the new block.
+				int hblocks=self->jpeg.scancomponents[self->mcucomp].component->horizontalblocks;
+				int vblocks=self->jpeg.scancomponents[self->mcucomp].component->verticalblocks;
+				int blocksperrow=self->jpeg.horizontalmcus*hblocks;
+
+				int blockx=self->mcucol*hblocks+self->mcux;
+				int blocky=self->mcurow*vblocks+self->mcuy;
+
+				self->currblock=&self->blocks[self->mcucomp][blockx+blocky*blocksperrow];
+			}
+		}
+		else if(self->bitlength)
+		{
+			// No output left, but a few bits are still left in the buffer,
+			// so pad them to a full byte.
+			int n=8-self->bitlength;
+			PushBitString(self,(1<<n)-1,n);
+		}
+		else
+		{
+			// Nothing left to do. Return the partial length of output data.
+			return ptr-start;
+		}
+	}
+	return length;
 }
 
-// Helper function to skip data by reading and discarding.
-static int SkipBytes(WinZipJPEGDecompressor *self,size_t length)
+static void PushEncodedValue(WinZipJPEGDecompressor *self,WinZipJPEGHuffmanTable *table,
+int value,unsigned int highbits)
 {
-	uint8_t buffer[1024];
-
-	size_t totalread=0;
-	while(totalread<length)
+	int category,bitstring;
+	if(value>=0)
 	{
-		size_t numbytes=length-totalread;
-		if(numbytes>sizeof(buffer)) numbytes=sizeof(buffer);
-		size_t actual=self->readfunc(self->inputcontext,buffer,numbytes);
-		if(actual==0) return WinZipJPEGEndOfStreamError;
-		totalread+=actual;
+		category=Category(value);
+		int mask=(1<<category)-1;
+		bitstring=value&mask;
+	}
+	else
+	{
+		category=Category(-value);
+		int mask=(1<<category)-1;
+		bitstring=(value&mask)-1;
 	}
 
-	return WinZipJPEGNoError;
+	PushHuffmanCode(self,table,category|(highbits<<4));
+	PushBitString(self,bitstring,category);
+}
+
+
+static void PushHuffmanCode(WinZipJPEGDecompressor *self,WinZipJPEGHuffmanTable *table,unsigned int code)
+{
+	PushBitString(self,table->codes[code].code,table->codes[code].length);
+}
+
+static void PushBitString(WinZipJPEGDecompressor *self,uint32_t bitstring,unsigned int length)
+{
+	self->bitstring|=(uint64_t)bitstring<<64-self->bitlength-length;
+	self->bitlength+=length;
 }

@@ -9,10 +9,10 @@
 	off_t heapoffset;
 	int state;
 
-	NSDictionary *filedefinitions,*datadefinitions,*resforkdefinitions,*finderdefinitions;
+	NSDictionary *filedefinitions,*datadefinitions,*eadefinitions;
 
-	NSMutableDictionary *currfile,*currext;
-	NSMutableArray *files,*filestack;
+	NSMutableDictionary *currfile,*currea;
+	NSMutableArray *files,*filestack,*curreas;
 	NSMutableString *currstring;
 }
 

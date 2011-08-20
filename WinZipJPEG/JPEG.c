@@ -40,7 +40,7 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 		switch(*ptr++)
 		{
 			case 0xd8: // Start of image
-fprintf(stderr,"Start of image\n");
+//fprintf(stderr,"Start of image\n");
 				// Empty marker, do nothing.
 			break;
 
@@ -52,7 +52,7 @@ fprintf(stderr,"Start of image\n");
 
 				ptr+=2;
 
-fprintf(stderr,"Define huffman table(s)\n");
+//fprintf(stderr,"Define huffman table(s)\n");
 				while(ptr+17<=next)
 				{
 					int class=*ptr>>4;
@@ -73,7 +73,7 @@ fprintf(stderr,"Define huffman table(s)\n");
 
 					if(ptr+totalcodes>next) return WinZipJPEGMetadataParsingFailed;
 
-fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,totalcodes);
+//fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,totalcodes);
 
 					unsigned int code=0;
 					for(int i=0;i<16;i++)
@@ -105,7 +105,7 @@ fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,tota
 
 				ptr+=2;
 
-fprintf(stderr,"Define quantization table(s)\n");
+//fprintf(stderr,"Define quantization table(s)\n");
 				while(ptr+1<=next)
 				{
 					int precision=*ptr>>4;
@@ -116,14 +116,14 @@ fprintf(stderr,"Define quantization table(s)\n");
 
 					if(precision==0)
 					{
-fprintf(stderr," > 8 bit table at %d\n",index);
+//fprintf(stderr," > 8 bit table at %d\n",index);
 						if(ptr+64>next) return WinZipJPEGMetadataParsingFailed;
 						for(int i=0;i<64;i++) self->quantizationtables[index].c[i]=ptr[i];
 						ptr+=64;
 					}
 					else if(precision==1)
 					{
-fprintf(stderr," > 16 bit table at %d\n",index);
+//fprintf(stderr," > 16 bit table at %d\n",index);
 						if(ptr+128>next) return WinZipJPEGMetadataParsingFailed;
 						for(int i=0;i<64;i++) self->quantizationtables[index].c[i]=ParseUInt16(&ptr[2*i]);
 						ptr+=128;
@@ -144,7 +144,7 @@ fprintf(stderr," > 16 bit table at %d\n",index);
 				self->restartinterval=ParseUInt16(&ptr[2]);
 
 				ptr=next;
-fprintf(stderr,"Define restart interval: %d\n",self->restartinterval);
+//fprintf(stderr,"Define restart interval: %d\n",self->restartinterval);
 			}
 			break;
 
@@ -167,7 +167,7 @@ fprintf(stderr,"Define restart interval: %d\n",self->restartinterval);
 				self->maxhorizontalfactor=1;
 				self->maxverticalfactor=1;
 
-fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
+//fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
 				for(int i=0;i<self->numcomponents;i++)
 				{
 					self->components[i].identifier=ptr[8+i*3];
@@ -181,10 +181,10 @@ fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->heig
 
 					if(self->components[i].verticalfactor>self->maxverticalfactor)
 					self->maxverticalfactor=self->components[i].verticalfactor;
-fprintf(stderr," > Component id %d, %dx%d, quant %d\n",
-self->components[i].identifier=ptr[8+i*3],
-self->components[i].horizontalfactor,self->components[i].verticalfactor,
-quantizationindex);
+//fprintf(stderr," > Component id %d, %dx%d, quant %d\n",
+//self->components[i].identifier=ptr[8+i*3],
+//self->components[i].horizontalfactor,self->components[i].verticalfactor,
+//quantizationindex);
 				}
 
 				int mcuwidth=self->maxhorizontalfactor*8;
@@ -239,7 +239,7 @@ quantizationindex);
 				if(ptr[4+self->numscancomponents*2]!=63) return WinZipJPEGMetadataParsingFailed;
 				if(ptr[5+self->numscancomponents*2]!=0) return WinZipJPEGMetadataParsingFailed;
 
-fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents);
+//fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents);
 
 				return WinZipJPEGMetadataFoundStartOfScan;
 			}
@@ -251,7 +251,7 @@ fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents);
 
 			default:
 			{
-fprintf(stderr,"Unknown marker %02x\n",ptr[-1]);
+//fprintf(stderr,"Unknown marker %02x\n",ptr[-1]);
 				int size=ParseSize(ptr,end);
 				if(!size) return WinZipJPEGMetadataParsingFailed;
 				ptr+=size;

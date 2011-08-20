@@ -739,7 +739,8 @@ static unsigned int Down(unsigned int k) { return ZigZag(Row(k)+1,Column(k)); }
 static unsigned int ZigZag(unsigned int row,unsigned int column)
 {
 	if(row>=8||column>=8) return 0; // Can't happen.
-	return (int[8][8]){
+	static const int table[8][8]=
+	{
 		{  0, 1, 5, 6,14,15,27,28, },
 		{  2, 4, 7,13,16,26,29,42, },
 		{  3, 8,12,17,25,30,41,43, },
@@ -748,29 +749,34 @@ static unsigned int ZigZag(unsigned int row,unsigned int column)
 		{ 20,22,33,38,46,51,55,60, },
 		{ 21,34,37,47,50,56,59,61, },
 		{ 35,36,48,49,57,58,62,63, },
-	}[row][column];
+	};
+	return table[row][column];
 }
 
 static unsigned int Row(unsigned int k)
 {
 	if(k>=64) return 0; // Can't happen.
-	return (int[64]){
+	static const int table[64]=
+	{
 		0,0,1,2,1,0,0,1,2,3,4,3,2,1,0,0,
 		1,2,3,4,5,6,5,4,3,2,1,0,0,1,2,3,
 		4,5,6,7,7,6,5,4,3,2,1,2,3,4,5,6,
 		7,7,6,5,4,3,4,5,6,7,7,6,5,6,7,7,
-	}[k];
+	};
+	return table[k];
 }
 
 static unsigned int Column(unsigned int k)
 {
 	if(k>=64) return 0; // Can't happen.
-	return (int[64]){
+	static const int table[64]=
+	{
 		0,1,0,0,1,2,3,2,1,0,0,1,2,3,4,5,
 		4,3,2,1,0,0,1,2,3,4,5,6,7,6,5,4,
 		3,2,1,0,1,2,3,4,5,6,7,7,6,5,4,3,
 		2,3,4,5,6,7,7,6,5,4,5,6,7,7,6,7,
-	}[k];
+	};
+	return table[k];
 }
 
 static int Min(int a,int b)

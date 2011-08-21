@@ -361,6 +361,7 @@ int ReadNextWinZipJPEGSlice(WinZipJPEGDecompressor *self)
 		const WinZipJPEGQuantizationTable *quantization=self->jpeg.scancomponents[i].component->quantizationtable;
 //const WinZipJPEGBlock *lastblock;
 
+		// NOTE: Blocks are processed in cartesian order, not MCU order.
 		for(int y=0;y<self->currheight*vblocks;y++)
 		for(int x=0;x<self->jpeg.horizontalmcus*hblocks;x++)
 		{
@@ -1044,7 +1045,7 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 									{
 										// If we reached the very end, pad with ones
 										// to a byte boundary to finish the stream.
-										int n=8-self->bitlength;
+										int n=(-self->bitlength)&7;
 										PushBitString(self,(1<<n)-1,n);
 									}
 								}

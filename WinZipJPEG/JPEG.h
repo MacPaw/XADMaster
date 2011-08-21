@@ -34,7 +34,6 @@ typedef struct WinZipJPEGComponent
 {
 	unsigned int identifier;
 	unsigned int horizontalfactor,verticalfactor;
-	unsigned int horizontalblocks,verticalblocks;
 	WinZipJPEGQuantizationTable *quantizationtable;
 } WinZipJPEGComponent;
 

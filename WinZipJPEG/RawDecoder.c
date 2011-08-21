@@ -53,7 +53,12 @@ int main(int argc,const char **argv)
 
 		while(AreMoreWinZipJPEGSlicesAvailable(decompressor))
 		{
-			ReadNextWinZipJPEGSlice(decompressor);
+			error=ReadNextWinZipJPEGSlice(decompressor);
+			if(error)
+			{
+				fprintf(stderr,"Error %d while trying to read next slice.\n",error);
+//				return 1;
+			}
 
 			uint8_t buffer[1024];
 			while(AreMoreWinZipJPEGBytesAvailable(decompressor))

@@ -1,7 +1,10 @@
 #include "JPEG.h"
 
-#include <stdio.h>
 #include <string.h>
+
+//#include <stdio.h>
+//#define DebugPrint(...) fprintf(stderr,__VA_ARGS__)
+#define DebugPrint(...)
 
 static const uint8_t *FindNextMarker(const uint8_t *ptr,const uint8_t *end);
 static int ParseSize(const uint8_t *ptr,const uint8_t *end);
@@ -40,8 +43,8 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 		switch(*ptr++)
 		{
 			case 0xd8: // Start of image
-//fprintf(stderr,"Start of image\n");
 				// Empty marker, do nothing.
+				DebugPrint("Start of image\n");
 			break;
 
 			case 0xc4: // Define huffman table
@@ -52,7 +55,8 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 
 				ptr+=2;
 
-//fprintf(stderr,"Define huffman table(s)\n");
+				DebugPrint("Define huffman table(s)\n");
+
 				while(ptr+17<=next)
 				{
 					int class=*ptr>>4;
@@ -73,7 +77,7 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 
 					if(ptr+totalcodes>next) return WinZipJPEGMetadataParsingFailed;
 
-//fprintf(stderr," > %s table at %d with %d codes\n",class==0?"DC":"AC",index,totalcodes);
+					DebugPrint(" > %s table at %d with %d codes\n",class==0?"DC":"AC",index,totalcodes);
 
 					unsigned int code=0;
 					for(int i=0;i<16;i++)
@@ -84,7 +88,7 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 
 							self->huffmantables[class][index].codes[value].code=code;
 							self->huffmantables[class][index].codes[value].length=i+1;
-//fprintf(stderr," >> Code %x length %d for %d\n",code,i+1,value);
+							//DebugPrint(" >> Code %x length %d for %d\n",code,i+1,value);
 
 							code++;
 						}
@@ -105,7 +109,8 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 
 				ptr+=2;
 
-//fprintf(stderr,"Define quantization table(s)\n");
+				DebugPrint("Define quantization table(s)\n");
+
 				while(ptr+1<=next)
 				{
 					int precision=*ptr>>4;
@@ -116,14 +121,16 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 
 					if(precision==0)
 					{
-//fprintf(stderr," > 8 bit table at %d\n",index);
+						DebugPrint(" > 8 bit table at %d\n",index);
+
 						if(ptr+64>next) return WinZipJPEGMetadataParsingFailed;
 						for(int i=0;i<64;i++) self->quantizationtables[index].c[i]=ptr[i];
 						ptr+=64;
 					}
 					else if(precision==1)
 					{
-//fprintf(stderr," > 16 bit table at %d\n",index);
+						DebugPrint(" > 16 bit table at %d\n",index);
+
 						if(ptr+128>next) return WinZipJPEGMetadataParsingFailed;
 						for(int i=0;i<64;i++) self->quantizationtables[index].c[i]=ParseUInt16(&ptr[2*i]);
 						ptr+=128;
@@ -144,7 +151,8 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 				self->restartinterval=ParseUInt16(&ptr[2]);
 
 				ptr=next;
-//fprintf(stderr,"Define restart interval: %d\n",self->restartinterval);
+
+				DebugPrint("Define restart interval: %d\n",self->restartinterval);
 			}
 			break;
 
@@ -167,7 +175,8 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 				self->maxhorizontalfactor=1;
 				self->maxverticalfactor=1;
 
-//fprintf(stderr,"Start of frame: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
+				DebugPrint("Start of frame: %dx%d %d bits %d comps\n",self->width,self->height,self->bits,self->numcomponents);
+
 				for(int i=0;i<self->numcomponents;i++)
 				{
 					self->components[i].identifier=ptr[8+i*3];
@@ -181,22 +190,18 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 
 					if(self->components[i].verticalfactor>self->maxverticalfactor)
 					self->maxverticalfactor=self->components[i].verticalfactor;
-//fprintf(stderr," > Component id %d, %dx%d, quant %d\n",
-//self->components[i].identifier=ptr[8+i*3],
-//self->components[i].horizontalfactor,self->components[i].verticalfactor,
-//quantizationindex);
+
+					DebugPrint(" > Component id %d, %dx%d, quant %d\n",
+					self->components[i].identifier,
+					self->components[i].horizontalfactor,
+					self->components[i].verticalfactor,
+					quantizationindex);
 				}
 
 				int mcuwidth=self->maxhorizontalfactor*8;
 				int mcuheight=self->maxverticalfactor*8;
 				self->horizontalmcus=(self->width+mcuwidth-1)/mcuwidth;
 				self->verticalmcus=(self->height+mcuheight-1)/mcuheight;
-
-				for(int i=0;i<self->numcomponents;i++)
-				{
-					self->components[i].horizontalblocks=self->maxhorizontalfactor/self->components[i].horizontalfactor;
-					self->components[i].verticalblocks=self->maxverticalfactor/self->components[i].verticalfactor;
-				}
 
 				ptr=next;
 			}
@@ -212,6 +217,8 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 				self->numscancomponents=ptr[2];
 				if(self->numscancomponents<1 || self->numscancomponents>4) return WinZipJPEGMetadataParsingFailed;
 				if(size<6+self->numscancomponents*2) return WinZipJPEGMetadataParsingFailed;
+
+				DebugPrint("Start of scan: %d comps\n",self->numscancomponents);
 
 				for(int i=0;i<self->numscancomponents;i++)
 				{
@@ -233,13 +240,17 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 					int acindex=ptr[4+i*2]&0x0f;
 					self->scancomponents[i].dctable=&self->huffmantables[0][dcindex];
 					self->scancomponents[i].actable=&self->huffmantables[1][acindex];
+
+					DebugPrint(" > Component id %d, %dx%d, DC %d, AC %d\n",
+					identifier,
+					self->scancomponents[i].component->horizontalfactor,
+					self->scancomponents[i].component->verticalfactor,
+					dcindex,acindex);
 				}
 
 				if(ptr[3+self->numscancomponents*2]!=0) return WinZipJPEGMetadataParsingFailed;
 				if(ptr[4+self->numscancomponents*2]!=63) return WinZipJPEGMetadataParsingFailed;
 				if(ptr[5+self->numscancomponents*2]!=0) return WinZipJPEGMetadataParsingFailed;
-
-//fprintf(stderr,"Start of scan: %d comps\n",self->numscancomponents);
 
 				return WinZipJPEGMetadataFoundStartOfScan;
 			}
@@ -251,10 +262,11 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 
 			default:
 			{
-//fprintf(stderr,"Unknown marker %02x\n",ptr[-1]);
 				int size=ParseSize(ptr,end);
 				if(!size) return WinZipJPEGMetadataParsingFailed;
 				ptr+=size;
+
+				DebugPrint("Unknown marker %02x\n",ptr[-1]);
 			}
 			break;
 		}

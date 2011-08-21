@@ -71,12 +71,16 @@ void InitializeFixedWinZipJPEGContext(WinZipJPEGContext *self)
 }
 
 //static int n=0;
+//#include <stdio.h>
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
+//if(n>=1716)
+//printf("What");
 self->dx=0; // Otherwise tests don't pass.
 	int bit=LogDecoder(self,context);
 self->lp=logp[context->i];
-//printf("bit %d:%d\n",n++,bit);
+//fprintf(stderr,"bit %d: %d lr:%x lrm:%x x:%x\n",n++,bit,self->lr,self->lrm,self->x);
+//fprintf(stderr,"bit: %d lr:%x lrm:%x x:%x\n",bit,self->lr,self->lrm,self->x); n++;
 	return bit;
 }
 

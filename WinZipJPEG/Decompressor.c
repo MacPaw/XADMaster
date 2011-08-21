@@ -224,8 +224,8 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 	for(int i=0;i<self->jpeg.numscancomponents;i++)
 	{
 		self->blocks[i]=malloc(self->jpeg.horizontalmcus*self->sliceheight*
-		self->jpeg.scancomponents[i].component->horizontalblocks*
-		self->jpeg.scancomponents[i].component->verticalblocks*
+		self->jpeg.scancomponents[i].component->horizontalfactor*
+		self->jpeg.scancomponents[i].component->verticalfactor*
 		sizeof(WinZipJPEGBlock));
 
 		if(!self->blocks[i]) return WinZipJPEGOutOfMemoryError;
@@ -233,6 +233,16 @@ int ReadNextWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 
 	self->slicesavailable=true;
 	self->finishedrows=0;
+
+	self->mcucounter=0;
+	self->restartmarkerindex=0;
+	self->writerestartmarker=false;
+
+	memset(self->predicted,0,sizeof(self->predicted));
+
+	self->bitstring=0;
+	self->bitlength=0;
+	self->needsstuffing=false;
 
 	return WinZipJPEGNoError;
 }
@@ -279,7 +289,7 @@ static int SkipBytes(WinZipJPEGDecompressor *self,size_t length)
 //
 
 // Decoder functions.
-static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
+static void DecodeBlock(WinZipJPEGDecompressor *self,int comp,
 WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization);
 
@@ -291,7 +301,7 @@ static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int
 const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization);
 
-static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
+static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,
 const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization);
 
@@ -329,10 +339,10 @@ static int BDR(unsigned int k,const WinZipJPEGBlock *current,
 const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization);
 
+static const WinZipJPEGBlock ZeroBlock={0};
+
 int ReadNextWinZipJPEGSlice(WinZipJPEGDecompressor *self)
 {
-	static const WinZipJPEGBlock zeroblock[64]={0};
-
 	self->currheight=self->sliceheight;
 	if(self->finishedrows+self->currheight>=self->jpeg.verticalmcus)
 	{
@@ -344,54 +354,47 @@ int ReadNextWinZipJPEGSlice(WinZipJPEGDecompressor *self)
 	{
 		InitializeWinZipJPEGArithmeticDecoder(&self->decoder,self->readfunc,self->inputcontext);
 
-		int hblocks=self->jpeg.scancomponents[i].component->horizontalblocks;
-		int vblocks=self->jpeg.scancomponents[i].component->verticalblocks;
+		int hblocks=self->jpeg.scancomponents[i].component->horizontalfactor;
+		int vblocks=self->jpeg.scancomponents[i].component->verticalfactor;
 		int blocksperrow=self->jpeg.horizontalmcus*hblocks;
 
 		const WinZipJPEGQuantizationTable *quantization=self->jpeg.scancomponents[i].component->quantizationtable;
 //const WinZipJPEGBlock *lastblock;
 
-		for(int row=0;row<self->currheight;row++)
-		for(int col=0;col<self->jpeg.horizontalmcus;col++)
+		for(int y=0;y<self->currheight*vblocks;y++)
+		for(int x=0;x<self->jpeg.horizontalmcus*hblocks;x++)
 		{
-			for(int y=0;y<vblocks;y++)
-			for(int x=0;x<hblocks;x++)
-			{
-				int blockx=col*hblocks+x;
-				int blocky=row*vblocks+y;
-				bool leftmost=(blockx==0);
-				bool slicetopmost=(blocky==0);
-				bool topmost=slicetopmost&&(self->finishedrows==0);
+			WinZipJPEGBlock *currblock=&self->blocks[i][x+y*blocksperrow];
 
-				WinZipJPEGBlock *currblock=&self->blocks[i][blockx+blocky*blocksperrow];
+			const WinZipJPEGBlock *northblock;
+			if(y!=0) northblock=&self->blocks[i][x+(y-1)*blocksperrow];
+			else if(self->finishedrows!=0) northblock=&self->blocks[i][x+(self->sliceheight*vblocks-1)*blocksperrow];
+			else northblock=NULL;
 
-				const WinZipJPEGBlock *northblock;
-				if(topmost) northblock=zeroblock;
-				else if(slicetopmost) northblock=&self->blocks[i][blockx+(self->sliceheight-1)*blocksperrow];
-				else northblock=&self->blocks[i][blockx+(blocky-1)*blocksperrow];
+			const WinZipJPEGBlock *westblock;
+			if(x!=0) westblock=&self->blocks[i][x-1+y*blocksperrow];
+			else westblock=NULL;
 
-				const WinZipJPEGBlock *westblock;
-				if(leftmost) westblock=zeroblock;
-				else westblock=&self->blocks[i][blockx-1+blocky*blocksperrow];
+			DecodeBlock(self,i,currblock,northblock,westblock,quantization);
 
-				DecodeMCU(self,i,topmost,leftmost,
-				currblock,northblock,westblock,quantization);
+			if(WinZipJPEGArithmeticDecoderEncounteredEOF(&self->decoder)) return WinZipJPEGEndOfStreamError;
 
-				if(WinZipJPEGArithmeticDecoderEncounteredEOF(&self->decoder)) return WinZipJPEGEndOfStreamError;
-
-/*fprintf(stderr,"\n%d,%d %d:\n",blockx,blocky+self->finishedrows,i);
+/*fprintf(stderr,"\n%d,%d %d:\n",x,y+self->finishedrows*vblocks,i);
 for(int row=0;row<8;row++)
 {
 	for(int col=0;col<8;col++)
 	{
 		int predict=0;
 		if((!slicetopmost||!leftmost)&&row==0&&col==0) predict=lastblock->c[0];
-		fprintf(stderr,"%d ",(currblock->c[ZigZag(row,col)]-predict)*quantization->c[ZigZag(row,col)]);
+//		fprintf(stderr,"%d ",(currblock->c[ZigZag(row,col)]-predict)*quantization->c[ZigZag(row,col)]);
+		fprintf(stderr,"%d ",(currblock->c[ZigZag(row,col)]-predict));
 	}
 	fprintf(stderr,"\n");
 }
+fprintf(stderr,"SUM: %d\n",Sum(0,currblock));
+fprintf(stderr,"\n");
+
 lastblock=currblock;*/
-			}
 		}
 
 		FlushWinZipJPEGArithmeticDecoder(&self->decoder);
@@ -402,27 +405,19 @@ lastblock=currblock;*/
 	// Initialize writer state.
 	self->mcusavailable=true;
 	self->currblock=self->blocks[0];
+
 	self->mcurow=0;
 	self->mcucol=0;
 	self->mcucomp=0;
 	self->mcux=0;
 	self->mcuy=0;
 	self->mcucoeff=0;
-	self->mcucounter=0;
-	self->restartmarkerindex=0;
-	self->writerestartmarker=false;
-
-	for(int i=0;i<self->jpeg.numscancomponents;i++) self->predicted[i]=0;
-
-	self->bitstring=0;
-	self->bitlength=0;
-	self->needsstuffing=false;
 
 	// TODO: Error handling.
 	return WinZipJPEGNoError;
 }
 
-static void DecodeMCU(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
+static void DecodeBlock(WinZipJPEGDecompressor *self,int comp,
 WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization)
 {
@@ -430,12 +425,18 @@ const WinZipJPEGQuantizationTable *quantization)
 
 	// Calculate EOB context. (5.6.5.2)
 	int average;
-	if(topmost&&leftmost) average=0;
-	else if(topmost) average=Sum(0,west);
-	else if(leftmost) average=Sum(0,north);
+	if(!north&&!west) average=0;
+	else if(!north) average=Sum(0,west);
+	else if(!west) average=Sum(0,north);
 	else average=(Sum(0,north)+Sum(0,west)+1)/2;
+/*fprintf(stderr,"Eob (%d+%d=%d, ->%d)\n",
+Sum(0,north),Sum(0,west),
+Sum(0,north)+Sum(0,west),
+(Sum(0,north)+Sum(0,west)+1)/2
+);*/
 
 	int eobcontext=Min(Category(average),12);
+//fprintf(stderr,"eobcontext: %d (%d)\n",eobcontext*63+321,average);
 
 	// Decode EOB bits using binary tree. (5.6.5.1)
 	unsigned int bitstring=1;
@@ -446,7 +447,7 @@ const WinZipJPEGQuantizationTable *quantization)
 	}
 	unsigned int eob=bitstring&0x3f;
 	current->eob=eob;
-//fprintf(stderr,"eob: %d %d\n",eobcontext*63+321,eob);
+//fprintf(stderr,"eob: %d\n",eob);
 
 	// Fill out the elided block entries with 0.
 	for(unsigned int k=eob+1;k<=63;k++) current->c[k]=0;
@@ -458,7 +459,7 @@ const WinZipJPEGQuantizationTable *quantization)
 	}
 
 	// Decode DC component.
-	current->c[0]=DecodeDCComponent(self,comp,topmost,leftmost,current,north,west,quantization);
+	current->c[0]=DecodeDCComponent(self,comp,current,north,west,quantization);
 }
 
 static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int k,bool canbezero,
@@ -466,10 +467,13 @@ const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBloc
 const WinZipJPEGQuantizationTable *quantization)
 {
 //fprintf(stderr,"decode AC %d\n",k);
+	if(!north) north=&ZeroBlock;
+	if(!west) west=&ZeroBlock;
+
 	int val1;
 	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(k,current,north,west,quantization));
 	else val1=Average(k,north,west,quantization);
-//	else {fprintf(stderr,"AVG(%d) ",k);val1=Average(k,north,west,quantization); fprintf(stderr,"AVG:%d\n",val1);}
+//	else {fprintf(stderr,"AVG(%d) ",k);val1=Average(k,north,west,quantization); fprintf(stderr,"%d\n",val1);}
 
 	int val2=Sum(k,current);
 
@@ -534,7 +538,6 @@ static int DecodeACSign(WinZipJPEGDecompressor *self,int comp,unsigned int k,int
 const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization)
 {
-//fprintf(stderr,"decode sign\n");
 	// Decode sign. (5.6.6.4)
 
 	// Calculate sign context, or decode with fixed probability. (5.6.6.4.1)
@@ -598,26 +601,27 @@ const WinZipJPEGQuantizationTable *quantization)
 	&self->acsignbins[comp][n][signcontext1][predictedsign]);
 }
 
-static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,bool topmost,bool leftmost,
+static int DecodeDCComponent(WinZipJPEGDecompressor *self,int comp,
 const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization)
 {
 	// Decode DC component. (5.6.7)
+//fprintf(stderr,"decode DC\n");
 
 	// DC prediction. (5.6.7.1)
 	int predicted;
-	if(topmost&&leftmost)
+	if(!north&&!west)
 	{
 		predicted=0;
 	}
-	else if(topmost)
+	else if(!north)
 	{
 		// NOTE: Spec says west[1]-current[1].
 		int t1=west->c[0]*10000-11038*quantization->c[1]*(west->c[1]+current->c[1])/quantization->c[0];
 		int p1=((t1<0)?(t1-5000):(t1+5000))/10000;
 		predicted=p1;
 	}
-	else if(leftmost)
+	else if(!west)
 	{
 		// NOTE: Spec says north->c[2]-current->c[2].
 		int t0=north->c[0]*10000-11038*quantization->c[2]*(north->c[2]+current->c[2])/quantization->c[0];
@@ -664,6 +668,7 @@ const WinZipJPEGQuantizationTable *quantization)
 	int absvalue;
 	int sum=Sum(0,current);
 	int valuecontext=Min(Category(sum),12);
+//fprintf(stderr,"DC contexts %d %d\n",valuecontext*10+1,valuecontext*14+131);
 
 	absvalue=DecodeBinarization(&self->decoder,
 	self->dcmagnitudebins[comp][valuecontext],
@@ -673,6 +678,8 @@ const WinZipJPEGQuantizationTable *quantization)
 
 	// Decode sign. (5.6.7.3.2)
 	// NOTE: Spec says north[0]<0 and west[0]<0.
+	if(!north) north=&ZeroBlock;
+	if(!west) west=&ZeroBlock;
 	int northsign=(north->c[0]<predicted);
 	int westsign=(west->c[0]<predicted);
 	int predictedsign=(predicted<0);
@@ -863,6 +870,15 @@ const WinZipJPEGQuantizationTable *quantization)
 	}
 	else
 	{
+/*fprintf(stderr,"[%d]=%d,%d [%d]=%d,%d [%d]=%d,%d %d/8=",
+Left(k),north->c[Left(k)],west->c[Left(k)],
+Up(k),north->c[Up(k)],west->c[Up(k)],
+UpAndLeft(k),north->c[UpAndLeft(k)],west->c[UpAndLeft(k)],
+(Abs(north->c[Up(k)])+Abs(west->c[Up(k)]))*quantization->c[Up(k)]/quantization->c[k]+
+(Abs(north->c[Left(k)])+Abs(west->c[Left(k)]))*quantization->c[Left(k)]/quantization->c[k]+
+(Abs(north->c[UpAndLeft(k)])+Abs(west->c[UpAndLeft(k)]))*quantization->c[UpAndLeft(k)]/quantization->c[k]+
+Abs(north->c[k])+Abs(west->c[k])+4);*/
+
 		return (
 			(Abs(north->c[Up(k)])+Abs(west->c[Up(k)]))*quantization->c[Up(k)]/quantization->c[k]+
 			(Abs(north->c[Left(k)])+Abs(west->c[Left(k)]))*quantization->c[Left(k)]/quantization->c[k]+
@@ -943,25 +959,28 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 
 			self->writerestartmarker=false;
 		}
+		else if(self->jpeg.restartinterval && self->mcucounter==self->jpeg.restartinterval &&
+		(self->mcusavailable || self->slicesavailable))
+		{
+			// If it is time for a restart marker, and if we have not reached the very
+			// end of the scan, start outputting one.
+
+			// First, pad with ones to a byte border if needed.
+			if(self->bitlength)
+			{
+				int n=8-self->bitlength;
+				PushBitString(self,(1<<n)-1,n);
+			}
+
+			// Then set a flag to start writing a restart marker. This has to be done
+			// separately, to avoid bit stuffing.
+			self->writerestartmarker=true;
+//fprintf(stderr,"Restart at %d,%d\n",self->mcucol,self->mcurow);
+		}
 		else if(self->mcusavailable)
 		{
-			// If there are still MCUs left to process, check if we need a restart marker,
-			// otherwise output either a DC or AC coefficient as appropriate.
-			if(self->jpeg.restartinterval && self->mcucounter==self->jpeg.restartinterval)
-			{
-				// First, pad with ones to a byte border if needed.
-				if(self->bitlength)
-				{
-					int n=8-self->bitlength;
-					PushBitString(self,(1<<n)-1,n);
-				}
-
-				// Then set a flag to start writing a restart marker. This has to be done
-				// separately, to avoid bit stuffing.
-				self->writerestartmarker=true;
-//fprintf(stderr,"Restart at %d,%d\n",self->mcucol,self->mcurow);
-			}
-			else if(self->mcucoeff==0)
+			// If there are still MCUs left to process output either a DC or AC coefficient as appropriate.
+			if(self->mcucoeff==0)
 			{
 				// Output DC coefficient.
 				int diff=self->currblock->c[0]-self->predicted[self->mcucomp];
@@ -1001,11 +1020,14 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 			// If we have output all coefficients, update position.
 			if(self->mcucoeff>=64)
 			{
+				int hblocks=self->jpeg.scancomponents[self->mcucomp].component->horizontalfactor;
+				int vblocks=self->jpeg.scancomponents[self->mcucomp].component->verticalfactor;
+
 				self->mcucoeff=0; self->mcux++;
-				if(self->mcux>=self->jpeg.scancomponents[self->mcucomp].component->horizontalblocks)
+				if(self->mcux>=hblocks)
 				{
 					self->mcux=0; self->mcuy++;
-					if(self->mcuy>=self->jpeg.scancomponents[self->mcucomp].component->verticalblocks)
+					if(self->mcuy>=vblocks)
 					{
 						self->mcuy=0; self->mcucomp++;
 						if(self->mcucomp>=self->jpeg.numscancomponents)
@@ -1014,7 +1036,18 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 							if(self->mcucol>=self->jpeg.horizontalmcus)
 							{
 								self->mcucol=0; self->mcurow++;
-								if(self->mcurow>=self->currheight) self->mcusavailable=false;
+								if(self->mcurow>=self->currheight)
+								{
+									self->mcusavailable=false;
+
+									if(!self->slicesavailable)
+									{
+										// If we reached the very end, pad with ones
+										// to a byte boundary to finish the stream.
+										int n=8-self->bitlength;
+										PushBitString(self,(1<<n)-1,n);
+									}
+								}
 							}
 
 							// Count up towards the restart interval.
@@ -1024,8 +1057,8 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 				}
 
 				// Find the new block.
-				int hblocks=self->jpeg.scancomponents[self->mcucomp].component->horizontalblocks;
-				int vblocks=self->jpeg.scancomponents[self->mcucomp].component->verticalblocks;
+				hblocks=self->jpeg.scancomponents[self->mcucomp].component->horizontalfactor;
+				vblocks=self->jpeg.scancomponents[self->mcucomp].component->verticalfactor;
 				int blocksperrow=self->jpeg.horizontalmcus*hblocks;
 
 				int blockx=self->mcucol*hblocks+self->mcux;
@@ -1033,13 +1066,6 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 
 				self->currblock=&self->blocks[self->mcucomp][blockx+blocky*blocksperrow];
 			}
-		}
-		else if(self->bitlength)
-		{
-			// No output left, but a few bits are still left in the buffer,
-			// so pad them to a full byte.
-			int n=8-self->bitlength;
-			PushBitString(self,(1<<n)-1,n);
 		}
 		else
 		{

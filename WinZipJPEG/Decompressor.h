@@ -30,6 +30,12 @@ typedef struct WinZipJPEGDecompressor
 	unsigned int slicevalue,sliceheight;
 	unsigned int currheight,finishedrows;
 
+	int predicted[4];
+
+	uint64_t bitstring;
+	unsigned int bitlength;
+	bool needsstuffing;
+
 	WinZipJPEGArithmeticDecoder decoder;
 
 	WinZipJPEGContext eobbins[4][13][63]; // 321 in WinZip.
@@ -50,11 +56,6 @@ typedef struct WinZipJPEGDecompressor
 	unsigned int mcurow,mcucol,mcucomp,mcux,mcuy,mcucoeff;
 	unsigned int mcucounter,restartmarkerindex;
 	bool writerestartmarker;
-	int predicted[4];
-
-	uint64_t bitstring;
-	unsigned int bitlength;
-	bool needsstuffing;
 } WinZipJPEGDecompressor;
 
 WinZipJPEGDecompressor *AllocWinZipJPEGDecompressor(WinZipJPEGReadFunction *readfunc,void *inputcontext);
@@ -71,7 +72,7 @@ static inline bool IsFinalWinZipJPEGBundle(WinZipJPEGDecompressor *self)
 static inline bool AreMoreWinZipJPEGSlicesAvailable(WinZipJPEGDecompressor *self)
 { return !self->reachedend && self->slicesavailable; }
 static inline bool AreMoreWinZipJPEGBytesAvailable(WinZipJPEGDecompressor *self)
-{ return self->mcusavailable || self->bitlength || self->needsstuffing; }
+{ return self->mcusavailable || self->bitlength>=8 || self->needsstuffing || self->writerestartmarker; }
 
 static inline uint32_t WinZipJPEGBundleMetadataLength(WinZipJPEGDecompressor *self) { return self->metadatalength; }
 static inline uint8_t *WinZipJPEGBundleMetadataBytes(WinZipJPEGDecompressor *self) { return self->metadatabytes; }

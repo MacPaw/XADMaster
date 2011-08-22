@@ -57,7 +57,7 @@ int main(int argc,const char **argv)
 			if(error)
 			{
 				fprintf(stderr,"Error %d while trying to read next slice.\n",error);
-//				return 1;
+				return 1;
 			}
 
 			uint8_t buffer[1024];

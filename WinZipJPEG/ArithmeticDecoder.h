@@ -21,10 +21,10 @@ typedef struct WinZipJPEGArithmeticDecoder
 	//uint8_t kavg; // expected average LPS count
 	uint8_t kmax; // smallest LPS count for larger Q
 	uint32_t x; // finite pricesion window on code stream
-	int16_t lp; // minus log p --- used only for testing
-	int16_t lr; // minus log of the range
-	int16_t lrm; // maximum lr before change index
-	int16_t lx; // decoder - log x
+	int32_t lp; // minus log p --- used only for testing
+	int32_t lr; // minus log of the range
+	int32_t lrm; // maximum lr before change index
+	int32_t lx; // decoder - log x
 	uint32_t dx; // antilog of lr -- used only for testing
 } WinZipJPEGArithmeticDecoder;
 

@@ -71,11 +71,13 @@ void InitializeFixedWinZipJPEGContext(WinZipJPEGContext *self)
 }
 
 //static int n=0;
-//#include <stdio.h>
+#include <stdio.h>
 int NextBitFromWinZipJPEGArithmeticDecoder(WinZipJPEGArithmeticDecoder *self,WinZipJPEGContext *context)
 {
 //if(n>=1716)
+//if(self->x==0x3a50c&&self->lr==0x889)
 //printf("What");
+
 self->dx=0; // Otherwise tests don't pass.
 	int bit=LogDecoder(self,context);
 self->lp=logp[context->i];

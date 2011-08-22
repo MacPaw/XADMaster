@@ -439,6 +439,7 @@ Sum(0,north)+Sum(0,west),
 	int eobcontext=Min(Category(average),12);
 //fprintf(stderr,"eobcontext: %d (%d)\n",eobcontext*63+321,average);
 
+//fprintf(stderr,"decode EOB\n");
 	// Decode EOB bits using binary tree. (5.6.5.1)
 	unsigned int bitstring=1;
 	for(int i=0;i<6;i++)
@@ -456,10 +457,12 @@ Sum(0,north)+Sum(0,west),
 	// Decode AC components in decreasing order, if any. (5.6.6)
 	for(unsigned int k=eob;k>=1;k--)
 	{
+//fprintf(stderr,"decode AC %d\n",k);
 		current->c[k]=DecodeACComponent(self,comp,k,k!=eob,current,north,west,quantization);
 	}
 
 	// Decode DC component.
+//fprintf(stderr,"decode DC\n");
 	current->c[0]=DecodeDCComponent(self,comp,current,north,west,quantization);
 }
 
@@ -467,7 +470,6 @@ static int DecodeACComponent(WinZipJPEGDecompressor *self,int comp,unsigned int 
 const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBlock *west,
 const WinZipJPEGQuantizationTable *quantization)
 {
-//fprintf(stderr,"decode AC %d\n",k);
 	if(!north) north=&ZeroBlock;
 	if(!west) west=&ZeroBlock;
 

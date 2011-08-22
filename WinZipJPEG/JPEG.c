@@ -198,10 +198,23 @@ int ParseWinZipJPEGMetadata(WinZipJPEGMetadata *self,const void *bytes,size_t le
 					quantizationindex);
 				}
 
+				// TODO: This is a kludge for strange one-component files with
+				// 2x2 sampling factor, that are still stored in exactly the same
+				// way as 1x1. Figure out how to actually handle this properly.
+				if(self->numcomponents==1)
+				{
+					self->components[0].horizontalfactor/=self->maxhorizontalfactor;
+					self->components[0].verticalfactor/=self->maxverticalfactor;
+					self->maxhorizontalfactor=1;
+					self->maxverticalfactor=1;
+				}
+
 				int mcuwidth=self->maxhorizontalfactor*8;
 				int mcuheight=self->maxverticalfactor*8;
 				self->horizontalmcus=(self->width+mcuwidth-1)/mcuwidth;
 				self->verticalmcus=(self->height+mcuheight-1)/mcuheight;
+
+				DebugPrint(" > MCU size %dx%d, %d horizontal MCUs, %d vertical MCUs.\n",mcuwidth,mcuheight,self->horizontalmcus,self->verticalmcus);
 
 				ptr=next;
 			}

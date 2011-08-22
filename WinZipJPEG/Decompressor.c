@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "stdio.h"
-
 
 
 //
@@ -359,7 +357,6 @@ int ReadNextWinZipJPEGSlice(WinZipJPEGDecompressor *self)
 		int blocksperrow=self->jpeg.horizontalmcus*hblocks;
 
 		const WinZipJPEGQuantizationTable *quantization=self->jpeg.scancomponents[i].component->quantizationtable;
-//const WinZipJPEGBlock *lastblock;
 
 		// NOTE: Blocks are processed in cartesian order, not MCU order.
 		for(int y=0;y<self->currheight*vblocks;y++)
@@ -379,23 +376,6 @@ int ReadNextWinZipJPEGSlice(WinZipJPEGDecompressor *self)
 			DecodeBlock(self,i,currblock,northblock,westblock,quantization);
 
 			if(WinZipJPEGArithmeticDecoderEncounteredEOF(&self->decoder)) return WinZipJPEGEndOfStreamError;
-
-/*fprintf(stderr,"\n%d,%d %d:\n",x,y+self->finishedrows*vblocks,i);
-for(int row=0;row<8;row++)
-{
-	for(int col=0;col<8;col++)
-	{
-		int predict=0;
-		if((!slicetopmost||!leftmost)&&row==0&&col==0) predict=lastblock->c[0];
-//		fprintf(stderr,"%d ",(currblock->c[ZigZag(row,col)]-predict)*quantization->c[ZigZag(row,col)]);
-		fprintf(stderr,"%d ",(currblock->c[ZigZag(row,col)]-predict));
-	}
-	fprintf(stderr,"\n");
-}
-fprintf(stderr,"SUM: %d\n",Sum(0,currblock));
-fprintf(stderr,"\n");
-
-lastblock=currblock;*/
 		}
 
 		FlushWinZipJPEGArithmeticDecoder(&self->decoder);
@@ -430,16 +410,9 @@ const WinZipJPEGQuantizationTable *quantization)
 	else if(!north) average=Sum(0,west);
 	else if(!west) average=Sum(0,north);
 	else average=(Sum(0,north)+Sum(0,west)+1)/2;
-/*fprintf(stderr,"Eob (%d+%d=%d, ->%d)\n",
-Sum(0,north),Sum(0,west),
-Sum(0,north)+Sum(0,west),
-(Sum(0,north)+Sum(0,west)+1)/2
-);*/
 
 	int eobcontext=Min(Category(average),12);
-//fprintf(stderr,"eobcontext: %d (%d)\n",eobcontext*63+321,average);
 
-//fprintf(stderr,"decode EOB\n");
 	// Decode EOB bits using binary tree. (5.6.5.1)
 	unsigned int bitstring=1;
 	for(int i=0;i<6;i++)
@@ -449,7 +422,6 @@ Sum(0,north)+Sum(0,west),
 	}
 	unsigned int eob=bitstring&0x3f;
 	current->eob=eob;
-//fprintf(stderr,"eob: %d\n",eob);
 
 	// Fill out the elided block entries with 0.
 	for(unsigned int k=eob+1;k<=63;k++) current->c[k]=0;
@@ -457,12 +429,10 @@ Sum(0,north)+Sum(0,west),
 	// Decode AC components in decreasing order, if any. (5.6.6)
 	for(unsigned int k=eob;k>=1;k--)
 	{
-//fprintf(stderr,"decode AC %d\n",k);
 		current->c[k]=DecodeACComponent(self,comp,k,k!=eob,current,north,west,quantization);
 	}
 
 	// Decode DC component.
-//fprintf(stderr,"decode DC\n");
 	current->c[0]=DecodeDCComponent(self,comp,current,north,west,quantization);
 }
 
@@ -476,7 +446,6 @@ const WinZipJPEGQuantizationTable *quantization)
 	int val1;
 	if(IsFirstRowOrColumn(k)) val1=Abs(BDR(k,current,north,west,quantization));
 	else val1=Average(k,north,west,quantization);
-//	else {fprintf(stderr,"AVG(%d) ",k);val1=Average(k,north,west,quantization); fprintf(stderr,"%d\n",val1);}
 
 	int val2=Sum(k,current);
 
@@ -485,8 +454,6 @@ const WinZipJPEGQuantizationTable *quantization)
 		// Decode zero/non-zero bit. (5.6.6.1)
 		int zerocontext1=Min(Category(val1),2);
 		int zerocontext2=Min(Category(val2),5);
-//fprintf(stderr,"zerocontext: %d %d %d %d\n",(k-1)*6*3+zerocontext1*6+zerocontext2+1140,
-//k-1,zerocontext1,zerocontext2);
 
 		int nonzero=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 		&self->zerobins[comp][k-1][zerocontext1][zerocontext2]);
@@ -501,8 +468,6 @@ const WinZipJPEGQuantizationTable *quantization)
 	// Decode pivot (abs>=2). (5.6.6.2)
 	int pivotcontext1=Min(Category(val1),4);
 	int pivotcontext2=Min(Category(val2),6);
-//fprintf(stderr,"pivotcontext: %d %d %d %d\n",(k-1)*5*7+pivotcontext1*7+pivotcontext2+2256,
-//k-1,pivotcontext1,pivotcontext2);
 
 	int pivot=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 	&self->pivotbins[comp][k-1][pivotcontext1][pivotcontext2]);
@@ -609,7 +574,6 @@ const WinZipJPEGBlock *current,const WinZipJPEGBlock *north,const WinZipJPEGBloc
 const WinZipJPEGQuantizationTable *quantization)
 {
 	// Decode DC component. (5.6.7)
-//fprintf(stderr,"decode DC\n");
 
 	// DC prediction. (5.6.7.1)
 	int predicted;
@@ -649,19 +613,16 @@ const WinZipJPEGQuantizationTable *quantization)
 			d0+=Abs(north->c[ZigZag(i,0)]-current->c[ZigZag(i,0)]);
 			d1+=Abs(west->c[ZigZag(0,i)]-current->c[ZigZag(0,i)]);
 		}
-//fprintf(stderr,"p0=%d p1=%d d0=%d d1=%d\n",p0,p1,d0,d1);
 
 		if(d0>d1)
 		{
 			int64_t weight=1LL<<Min(d0-d1,31);
 			predicted=(weight*(int64_t)p1+(int64_t)p0)/(1+weight);
-//fprintf(stderr,"d0>d1 weight=%llx predicted=%d\n",weight,predicted);
 		}
 		else
 		{
 			int64_t weight=1LL<<Min(d1-d0,31);
 			predicted=(weight*(int64_t)p0+(int64_t)p1)/(1+weight);
-//fprintf(stderr,"d0<=d1 weight=%llx predicted=%d\n",weight,predicted);
 		}
 	}
 
@@ -671,7 +632,6 @@ const WinZipJPEGQuantizationTable *quantization)
 	int absvalue;
 	int sum=Sum(0,current);
 	int valuecontext=Min(Category(sum),12);
-//fprintf(stderr,"DC contexts %d %d\n",valuecontext*10+1,valuecontext*14+131);
 
 	absvalue=DecodeBinarization(&self->decoder,
 	self->dcmagnitudebins[comp][valuecontext],
@@ -686,13 +646,9 @@ const WinZipJPEGQuantizationTable *quantization)
 	int northsign=(north->c[0]<predicted);
 	int westsign=(west->c[0]<predicted);
 	int predictedsign=(predicted<0);
-//fprintf(stderr,"signcontext: %d (%d %d %d)\n",northsign*4+westsign*2+predictedsign+1+13*10+13*14,
-//north[0],west[0],predicted);
 
 	int sign=NextBitFromWinZipJPEGArithmeticDecoder(&self->decoder,
 	&self->dcsignbins[comp][northsign][westsign][predictedsign]);
-//if(sign) fprintf(stderr,"%d-%d=%d\n",predicted,absvalue,predicted-absvalue);
-//else fprintf(stderr,"%d+%d=%d\n",predicted,absvalue,predicted+absvalue);
 
 	if(sign) return predicted-absvalue;
 	else return predicted+absvalue;
@@ -873,15 +829,6 @@ const WinZipJPEGQuantizationTable *quantization)
 	}
 	else
 	{
-/*fprintf(stderr,"[%d]=%d,%d [%d]=%d,%d [%d]=%d,%d %d/8=",
-Left(k),north->c[Left(k)],west->c[Left(k)],
-Up(k),north->c[Up(k)],west->c[Up(k)],
-UpAndLeft(k),north->c[UpAndLeft(k)],west->c[UpAndLeft(k)],
-(Abs(north->c[Up(k)])+Abs(west->c[Up(k)]))*quantization->c[Up(k)]/quantization->c[k]+
-(Abs(north->c[Left(k)])+Abs(west->c[Left(k)]))*quantization->c[Left(k)]/quantization->c[k]+
-(Abs(north->c[UpAndLeft(k)])+Abs(west->c[UpAndLeft(k)]))*quantization->c[UpAndLeft(k)]/quantization->c[k]+
-Abs(north->c[k])+Abs(west->c[k])+4);*/
-
 		return (
 			(Abs(north->c[Up(k)])+Abs(west->c[Up(k)]))*quantization->c[Up(k)]/quantization->c[k]+
 			(Abs(north->c[Left(k)])+Abs(west->c[Left(k)]))*quantization->c[Left(k)]/quantization->c[k]+
@@ -932,13 +879,11 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 			// If we need to add a byte of stuffing, do so.
 			*ptr++=0x00;
 			self->needsstuffing=false;
-//fprintf(stderr,"stuff\n");
 		}
 		else if(self->bitlength>=8)
 		{
 			// If there are enough buffered bits, output one byte.
 			uint8_t byte=self->bitstring>>56LL;
-//fprintf(stderr,"%02x %016llx %d\n",byte,self->bitstring,self->bitlength);
 			*ptr++=byte;
 			self->bitstring<<=8;
 			self->bitlength-=8;
@@ -978,7 +923,6 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 			// Then set a flag to start writing a restart marker. This has to be done
 			// separately, to avoid bit stuffing.
 			self->writerestartmarker=true;
-//fprintf(stderr,"Restart at %d,%d\n",self->mcucol,self->mcurow);
 		}
 		else if(self->mcusavailable)
 		{
@@ -987,7 +931,7 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 			{
 				// Output DC coefficient.
 				int diff=self->currblock->c[0]-self->predicted[self->mcucomp];
-//fprintf(stderr,"DC: %d\n",diff);
+
 				PushEncodedValue(self,self->jpeg.scancomponents[self->mcucomp].dctable,diff,0);
 
 				self->predicted[self->mcucomp]=self->currblock->c[0];
@@ -995,7 +939,6 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 			}
 			else if(self->mcucoeff>self->currblock->eob && self->currblock->eob!=63)
 			{
-//fprintf(stderr,"EOB: %d %d\n",self->mcucoeff,self->currblock->eob);
 				// Output EOB marker.
 				PushHuffmanCode(self,self->jpeg.scancomponents[self->mcucomp].actable,0x00);
 
@@ -1013,7 +956,6 @@ size_t EncodeWinZipJPEGBlocksToBuffer(WinZipJPEGDecompressor *self,void *bytes,s
 
 				int zeroes=self->mcucoeff-firstcoeff;
 				int val=self->currblock->c[self->mcucoeff];
-//fprintf(stderr,"AC %d+%d: %d\n",zeroes,self->mcucoeff,val);
 
 				PushEncodedValue(self,self->jpeg.scancomponents[self->mcucomp].actable,val,zeroes);
 

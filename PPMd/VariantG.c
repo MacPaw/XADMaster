@@ -1,9 +1,11 @@
-#import "PPMdVariantG.h"
+#include "VariantG.h"
+
+#include <string.h>
 
 static void RestartModel(PPMdModelVariantG *self);
 
 static void UpdateModel(PPMdModelVariantG *self);
-static BOOL MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *state);
+static bool MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *state);
 
 static void DecodeBinSymbolVariantG(PPMdContext *self,PPMdModelVariantG *model);
 static void DecodeSymbol1VariantG(PPMdContext *self,PPMdModelVariantG *model);
@@ -11,11 +13,12 @@ static void DecodeSymbol2VariantG(PPMdContext *self,PPMdModelVariantG *model);
 
 static int NumberOfStates(PPMdContext *self) { return self->Flags?0:self->LastStateIndex+1; }
 
-void StartPPMdModelVariantG(PPMdModelVariantG *self,CSInputBuffer *input,
-PPMdSubAllocator *alloc,int maxorder,BOOL brimstone)
+void StartPPMdModelVariantG(PPMdModelVariantG *self,
+PPMdReadFunction *readfunc,void *inputcontext,
+PPMdSubAllocator *alloc,int maxorder,bool brimstone)
 {
-	if(brimstone) InitializeRangeCoder(&self->core.coder,input,YES,0x10000);
-	else InitializeRangeCoder(&self->core.coder,input,YES,0x8000);
+	if(brimstone) InitializePPMdRangeCoder(&self->core.coder,readfunc,inputcontext,true,0x10000);
+	else InitializePPMdRangeCoder(&self->core.coder,readfunc,inputcontext,true,0x8000);
 
 	self->core.alloc=alloc;
 
@@ -275,7 +278,7 @@ static void UpdateModel(PPMdModelVariantG *self)
 	self->core.EscCount=0;
 }
 
-static BOOL MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *state)
+static bool MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *state)
 {
 	PPMdContext *context=self->MinContext,*upbranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
 	PPMdState *statelist[MAX_O];
@@ -342,7 +345,7 @@ static BOOL MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *s
 	for(int i=n-1;i>=0;i--)
 	{
 		context=NewPPMdContextAsChildOf(&self->core,context,statelist[i],upstate);
-		if(!context) return NO;
+		if(!context) return false;
 	}
 
 	if(self->core.OrderFall==0)
@@ -352,7 +355,7 @@ static BOOL MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *s
 		SetPPMdContextSuffixPointer(upbranch,context,&self->core);
 	}
 
-	return YES;
+	return true;
 }
 
 
@@ -363,12 +366,12 @@ static void DecodeBinSymbolVariantG(PPMdContext *self,PPMdModelVariantG *model)
 	PPMdState *rs=PPMdContextOneState(self);
 	uint16_t *bs=&model->BinSumm[rs->Freq-1][model->core.PrevSuccess+model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->LastStateIndex]];
 
-	PPMdDecodeBinSymbol(self,&model->core,bs,128,NO);
+	PPMdDecodeBinSymbol(self,&model->core,bs,128,false);
 }
 
 static void DecodeSymbol1VariantG(PPMdContext *self,PPMdModelVariantG *model)
 {
-	PPMdDecodeSymbol1(self,&model->core,NO);
+	PPMdDecodeSymbol1(self,&model->core,false);
 }
 
 static void DecodeSymbol2VariantG(PPMdContext *self,PPMdModelVariantG *model)

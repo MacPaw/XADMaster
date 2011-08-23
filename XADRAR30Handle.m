@@ -388,9 +388,9 @@
 			FreeSubAllocatorVariantH(alloc);
 			alloc=CreateSubAllocatorVariantH((maxalloc+1)<<20);
 
-			StartPPMdModelVariantH(&ppmd,input,alloc,maxorder,NO);
+			StartPPMdModelVariantH(&ppmd,(PPMdReadFunction *)CSInputNextByte,input,alloc,maxorder,NO);
 		}
-		else RestartPPMdVariantHRangeCoder(&ppmd,input,NO);
+		else RestartPPMdVariantHRangeCoder(&ppmd,(PPMdReadFunction *)CSInputNextByte,input,NO);
 
 		return;
 	}

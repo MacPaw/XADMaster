@@ -1,5 +1,8 @@
-#import "PPMdContext.h"
-#import "PPMdSubAllocatorVariantI.h"
+#ifndef __PPMD_VARIANT_I_H__
+#define __PPMD_VARIANT_I_H__
+
+#include "Context.h"
+#include "SubAllocatorVariantI.h"
 
 // PPMd Variant I. Used by WinZip.
 
@@ -21,6 +24,9 @@ typedef struct PPMdModelVariantI
 	uint16_t BinSumm[25][64]; // binary SEE-contexts
 } PPMdModelVariantI;
 
-void StartPPMdModelVariantI(PPMdModelVariantI *self,CSInputBuffer *input,
+void StartPPMdModelVariantI(PPMdModelVariantI *self,
+PPMdReadFunction *readfunc,void *inputcontext,
 PPMdSubAllocatorVariantI *alloc,int maxorder,int restoration);
 int NextPPMdVariantIByte(PPMdModelVariantI *self);
+
+#endif

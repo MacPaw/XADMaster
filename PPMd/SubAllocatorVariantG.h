@@ -1,4 +1,7 @@
-#import "PPMdSubAllocator.h"
+#ifndef __PPMD_SUB_ALLOCATOR_VARIANT_G_H__
+#define __PPMD_SUB_ALLOCATOR_VARIANT_G_H__
+
+#include "SubAllocator.h"
 
 typedef struct PPMdSubAllocatorVariantG
 {
@@ -13,3 +16,5 @@ typedef struct PPMdSubAllocatorVariantG
 
 PPMdSubAllocatorVariantG *CreateSubAllocatorVariantG(int size);
 void FreeSubAllocatorVariantG(PPMdSubAllocatorVariantG *self);
+
+#endif

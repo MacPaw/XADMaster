@@ -1,4 +1,6 @@
-#import "PPMdVariantI.h"
+#include "VariantI.h"
+
+#include <string.h>
 
 #define UP_FREQ 5
 #define O_BOUND 9
@@ -6,11 +8,11 @@
 static void RestartModel(PPMdModelVariantI *self);
 
 static void UpdateModel(PPMdModelVariantI *self,PPMdContext *mincontext);
-static PPMdContext *CreateSuccessors(PPMdModelVariantI *self,BOOL skip,PPMdState *p1,PPMdContext *mincontext);
+static PPMdContext *CreateSuccessors(PPMdModelVariantI *self,bool skip,PPMdState *p1,PPMdContext *mincontext);
 static PPMdContext *ReduceOrder(PPMdModelVariantI *self,PPMdState *state,PPMdContext *startcontext);
 static void RestoreModel(PPMdModelVariantI *self,PPMdContext *currcontext,PPMdContext *mincontext,PPMdContext *FSuccessor);
 
-static void ShrinkContext(PPMdContext *self,int newlastindex,BOOL scale,PPMdModelVariantI *model);
+static void ShrinkContext(PPMdContext *self,int newlastindex,bool scale,PPMdModelVariantI *model);
 static PPMdContext *CutOffContext(PPMdContext *self,int order,PPMdModelVariantI *model);
 static PPMdContext *RemoveBinConts(PPMdContext *self,int order,PPMdModelVariantI *model);
 
@@ -22,10 +24,11 @@ static void RescalePPMdContextVariantI(PPMdContext *self,PPMdModelVariantI *mode
 
 
 
-void StartPPMdModelVariantI(PPMdModelVariantI *self,CSInputBuffer *input,
+void StartPPMdModelVariantI(PPMdModelVariantI *self,
+PPMdReadFunction *readfunc,void *inputcontext,
 PPMdSubAllocatorVariantI *alloc,int maxorder,int restoration)
 {
-	InitializeRangeCoder(&self->core.coder,input,YES,0x8000);
+	InitializePPMdRangeCoder(&self->core.coder,readfunc,inputcontext,true,0x8000);
 
 	if(maxorder<2) // TODO: solid mode
 	{
@@ -188,7 +191,7 @@ static void UpdateModel(PPMdModelVariantI *self,PPMdContext *mincontext)
 
 	if(self->core.OrderFall==0&&fs.Successor)
 	{
-		PPMdContext *newsuccessor=CreateSuccessors(self,YES,state,mincontext);
+		PPMdContext *newsuccessor=CreateSuccessors(self,true,state,mincontext);
 		SetPPMdStateSuccessorPointer(self->core.FoundState,newsuccessor,&self->core);
 		if(!newsuccessor) goto RESTART_MODEL;
 		self->MaxContext=newsuccessor;
@@ -204,7 +207,7 @@ static void UpdateModel(PPMdModelVariantI *self,PPMdContext *mincontext)
 	{
 		if((uint8_t *)PPMdStateSuccessor(&fs,&self->core)<self->alloc->UnitsStart)
 		{
-			SetPPMdStateSuccessorPointer(&fs,CreateSuccessors(self,NO,state,mincontext),&self->core);
+			SetPPMdStateSuccessorPointer(&fs,CreateSuccessors(self,false,state,mincontext),&self->core);
 		}
 	}
 	else
@@ -293,7 +296,7 @@ static void UpdateModel(PPMdModelVariantI *self,PPMdContext *mincontext)
 	RestoreModel(self,currcontext,mincontext,PPMdStateSuccessor(&fs,&self->core));
 }
 
-static PPMdContext *CreateSuccessors(PPMdModelVariantI *self,BOOL skip,PPMdState *state,PPMdContext *context)
+static PPMdContext *CreateSuccessors(PPMdModelVariantI *self,bool skip,PPMdState *state,PPMdContext *context)
 {
 	PPMdContext *upbranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
 	PPMdState *statelist[MAX_O];
@@ -476,7 +479,7 @@ static PPMdContext *ReduceOrder(PPMdModelVariantI *self,PPMdState *state,PPMdCon
 	{
 		PPMdState *tmp=self->core.FoundState;
 		self->core.FoundState=state;
-        SetPPMdStateSuccessorPointer(state,CreateSuccessors(self,NO,NULL,context),&self->core);
+        SetPPMdStateSuccessorPointer(state,CreateSuccessors(self,false,NULL,context),&self->core);
 		self->core.FoundState=tmp;
 	}
 
@@ -510,7 +513,7 @@ static void RestoreModel(PPMdModelVariantI *self,PPMdContext *currcontext,PPMdCo
 		}
 		else
 		{
-			ShrinkContext(context,context->LastStateIndex-1,NO,self);
+			ShrinkContext(context,context->LastStateIndex-1,false,self);
 		}
 
 		context=PPMdContextSuffix(context,&self->core);
@@ -526,7 +529,7 @@ static void RestoreModel(PPMdModelVariantI *self,PPMdContext *currcontext,PPMdCo
 		{
 			context->SummFreq+=4;
 			if(context->SummFreq>128+4*context->LastStateIndex)
-			ShrinkContext(context,context->LastStateIndex,YES,self);
+			ShrinkContext(context,context->LastStateIndex,true,self);
 		}
 
 		context=PPMdContextSuffix(context,&self->core);
@@ -567,7 +570,7 @@ static void RestoreModel(PPMdModelVariantI *self,PPMdContext *currcontext,PPMdCo
 
 
 
-static void ShrinkContext(PPMdContext *self,int newlastindex,BOOL scale,PPMdModelVariantI *model)
+static void ShrinkContext(PPMdContext *self,int newlastindex,bool scale,PPMdModelVariantI *model)
 {
 	self->States=ShrinkUnits(model->core.alloc,self->States,(self->LastStateIndex+2)>>1,(newlastindex+2)>>1);
 	self->LastStateIndex=newlastindex;
@@ -727,12 +730,12 @@ static void DecodeBinSymbolVariantI(PPMdContext *self,PPMdModelVariantI *model)
 	uint8_t index=model->NS2BSIndx[PPMdContextSuffix(self,&model->core)->LastStateIndex]+model->core.PrevSuccess+self->Flags;
 	uint16_t *bs=&model->BinSumm[model->QTable[rs->Freq-1]][index+((model->core.RunLength>>26)&0x20)];
 
-	PPMdDecodeBinSymbol(self,&model->core,bs,196,NO);
+	PPMdDecodeBinSymbol(self,&model->core,bs,196,false);
 }
 
 static void DecodeSymbol1VariantI(PPMdContext *self,PPMdModelVariantI *model)
 {
-	PPMdDecodeSymbol1(self,&model->core,YES);
+	PPMdDecodeSymbol1(self,&model->core,true);
 }
 
 static void DecodeSymbol2VariantI(PPMdContext *self,PPMdModelVariantI *model)

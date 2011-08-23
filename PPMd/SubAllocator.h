@@ -1,4 +1,9 @@
-#import <Foundation/Foundation.h>
+#ifndef __PPMD_SUB_ALLOCATOR_H__
+#define __PPMD_SUB_ALLOCATOR_H__
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct PPMdSubAllocator PPMdSubAllocator;
 
@@ -32,3 +37,5 @@ static inline uint32_t PointerToOffset(PPMdSubAllocator *self,void *pointer)
 	if(!pointer) return 0;
 	return ((uintptr_t)pointer)-(uintptr_t)self;
 }
+
+#endif

@@ -2,8 +2,8 @@
 #import "XADRARParser.h"
 #import "LZSS.h"
 #import "XADPrefixCode.h"
-#import "PPMdVariantH.h"
-#import "PPMdSubAllocatorVariantH.h"
+#import "PPMd/VariantH.h"
+#import "PPMd/SubAllocatorVariantH.h"
 #import "XADRARVirtualMachine.h"
 
 @interface XADRAR30Handle:CSBlockStreamHandle

@@ -1,4 +1,7 @@
-#import "PPMdSubAllocator.h"
+#ifndef __PPMD_SUB_ALLOCATOR_VARIANT_I_H__
+#define __PPMD_SUB_ALLOCATOR_VARIANT_I_H__
+
+#include "SubAllocator.h"
 
 typedef struct PPMdMemoryBlockVariantI
 {
@@ -25,3 +28,5 @@ uint32_t GetUsedMemoryVariantI(PPMdSubAllocatorVariantI *self);
 void SpecialFreeUnitVariantI(PPMdSubAllocatorVariantI *self,uint32_t offs);
 uint32_t MoveUnitsUpVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldoffs,int num);
 void ExpandTextAreaVariantI(PPMdSubAllocatorVariantI *self);
+
+#endif

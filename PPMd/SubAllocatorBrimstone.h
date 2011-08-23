@@ -1,4 +1,7 @@
-#import "PPMdSubAllocator.h"
+#ifndef __PPMD_SUB_ALLOCATOR_BRIMSTONE_H__
+#define __PPMD_SUB_ALLOCATOR_BRIMSTONE_H__
+
+#include "SubAllocator.h"
 
 typedef struct PPMdSubAllocatorBrimstone
 {
@@ -14,3 +17,4 @@ typedef struct PPMdSubAllocatorBrimstone
 PPMdSubAllocatorBrimstone *CreateSubAllocatorBrimstone(int size);
 void FreeSubAllocatorBrimstone(PPMdSubAllocatorBrimstone *self);
 
+#endif

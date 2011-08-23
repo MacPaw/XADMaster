@@ -1,5 +1,11 @@
-#import "CarrylessRangeCoder.h"
-#import "PPMdSubAllocator.h"
+#ifndef __PPMD_CONTEXT_H__
+#define __PPMD_CONTEXT_H__
+
+#include "RangeCoder.h"
+#include "SubAllocator.h"
+
+#include <stdint.h>
+#include <stdbool.h>
 
 #define MAX_O 255
 #define INT_BITS 7
@@ -36,7 +42,7 @@ struct PPMdCoreModel
 {
 	PPMdSubAllocator *alloc;
 
-	CarrylessRangeCoder coder;
+	PPMdRangeCoder coder;
 	uint32_t scale;
 
 	PPMdState *FoundState; // found next state transition
@@ -63,11 +69,13 @@ PPMdState *PPMdContextOneState(PPMdContext *self);
 PPMdContext *NewPPMdContext(PPMdCoreModel *model);
 PPMdContext *NewPPMdContextAsChildOf(PPMdCoreModel *model,PPMdContext *suffixcontext,PPMdState *suffixstate,PPMdState *firststate);
 
-void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int freqlimit,BOOL altnextbit);
-int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,BOOL greaterorequal);
+void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int freqlimit,bool altnextbit);
+int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,bool greaterorequal);
 void UpdatePPMdContext1(PPMdContext *self,PPMdCoreModel *model,PPMdState *state);
 void PPMdDecodeSymbol2(PPMdContext *self,PPMdCoreModel *model,SEE2Context *see);
 void UpdatePPMdContext2(PPMdContext *self,PPMdCoreModel *model,PPMdState *state);
 void RescalePPMdContext(PPMdContext *self,PPMdCoreModel *model);
 
 void ClearPPMdModelMask(PPMdCoreModel *self);
+
+#endif

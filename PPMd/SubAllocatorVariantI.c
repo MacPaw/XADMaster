@@ -1,4 +1,4 @@
-#import "PPMdSubAllocatorVariantI.h"
+#include "SubAllocatorVariantI.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +12,7 @@
 
 static PPMdMemoryBlockVariantI *NextBlock(PPMdMemoryBlockVariantI *self,PPMdSubAllocatorVariantI *alloc);
 static void SetNextBlock(PPMdMemoryBlockVariantI *self,PPMdMemoryBlockVariantI *newnext,PPMdSubAllocatorVariantI *alloc);
-static BOOL AreBlocksAvailable(PPMdMemoryBlockVariantI *self);
+static bool AreBlocksAvailable(PPMdMemoryBlockVariantI *self);
 static void LinkBlockAfter(PPMdMemoryBlockVariantI *self,PPMdMemoryBlockVariantI *p,PPMdSubAllocatorVariantI *alloc);
 static void UnlinkBlockAfter(PPMdMemoryBlockVariantI *self,PPMdSubAllocatorVariantI *alloc);
 static void *RemoveBlockAfter(PPMdMemoryBlockVariantI *self,PPMdSubAllocatorVariantI *alloc);
@@ -310,7 +310,7 @@ static void SetNextBlock(PPMdMemoryBlockVariantI *self,PPMdMemoryBlockVariantI *
 	self->next=PointerToOffset(&alloc->core,newnext);
 }
 
-static BOOL AreBlocksAvailable(PPMdMemoryBlockVariantI *self)
+static bool AreBlocksAvailable(PPMdMemoryBlockVariantI *self)
 {
 	return self->next!=0;
 }

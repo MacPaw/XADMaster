@@ -1,4 +1,6 @@
-#import "PPMdContext.h"
+#include "Context.h"
+
+#include <string.h>
 
 SEE2Context MakeSEE2(int initval,int count)
 {
@@ -95,13 +97,13 @@ static const uint8_t ExpEscape[16]={ 25,14,9,7,5,5,4,4,4,3,3,3,2,2,2,2 };
 
 #define GET_MEAN(SUMM,SHIFT,ROUND) ((SUMM+(1<<(SHIFT-ROUND)))>>(SHIFT))
 
-void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int freqlimit,BOOL altnextbit)
+void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int freqlimit,bool altnextbit)
 {
 	PPMdState *rs=PPMdContextOneState(self);
 
 	int bit;
-	if(altnextbit) bit=NextWeightedBitFromRangeCoder2(&model->coder,*bs,TOT_BITS);
-	else bit=NextWeightedBitFromRangeCoder(&model->coder,*bs,1<<TOT_BITS);
+	if(altnextbit) bit=NextWeightedBitFromPPMdRangeCoder2(&model->coder,*bs,TOT_BITS);
+	else bit=NextWeightedBitFromPPMdRangeCoder(&model->coder,*bs,1<<TOT_BITS);
 
 	if(bit==0)
 	{
@@ -124,18 +126,18 @@ void PPMdDecodeBinSymbol(PPMdContext *self,PPMdCoreModel *model,uint16_t *bs,int
 	}
 }
 
-int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,BOOL greaterorequal)
+int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,bool greaterorequal)
 {
 	model->scale=self->SummFreq;
 
 	PPMdState *states=PPMdContextStates(self,model);
 	int firstcount=states[0].Freq;
-	int count=RangeCoderCurrentCount(&model->coder,model->scale);
+	int count=PPMdRangeCoderCurrentCount(&model->coder,model->scale);
 	int adder=greaterorequal?1:0;
 
 	if(count<firstcount)
 	{
-		RemoveRangeCoderSubRange(&model->coder,0,firstcount);
+		RemovePPMdRangeCoderSubRange(&model->coder,0,firstcount);
 		if(2*firstcount+adder>model->scale)
 		{
 			model->PrevSuccess=1;
@@ -160,7 +162,7 @@ int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,BOOL greaterorequal
 		highcount+=states[i].Freq;
 		if(highcount>count)
 		{
-			RemoveRangeCoderSubRange(&model->coder,highcount-states[i].Freq,highcount);
+			RemovePPMdRangeCoderSubRange(&model->coder,highcount-states[i].Freq,highcount);
 			UpdatePPMdContext1(self,model,&states[i]);
 			return -1;
 		}
@@ -169,7 +171,7 @@ int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,BOOL greaterorequal
 	int lastsym=model->FoundState->Symbol;
 
 	//if ( Suffix ) PrefetchData(Suffix);
-	RemoveRangeCoderSubRange(&model->coder,highcount,model->scale);
+	RemovePPMdRangeCoderSubRange(&model->coder,highcount,model->scale);
 	model->LastMaskIndex=self->LastStateIndex;
 	model->FoundState=NULL;
 
@@ -213,20 +215,20 @@ void PPMdDecodeSymbol2(PPMdContext *self,PPMdCoreModel *model,SEE2Context *see)
 	}
 
 	model->scale+=total;
-	int count=RangeCoderCurrentCount(&model->coder,model->scale);
+	int count=PPMdRangeCoderCurrentCount(&model->coder,model->scale);
 
 	if(count<total)
 	{
 		int i=0,highcount=ps[0]->Freq;
 		while(highcount<=count) highcount+=ps[++i]->Freq;
 
-		RemoveRangeCoderSubRange(&model->coder,highcount-ps[i]->Freq,highcount);
+		RemovePPMdRangeCoderSubRange(&model->coder,highcount-ps[i]->Freq,highcount);
 		UpdateSEE2(see);
 		UpdatePPMdContext2(self,model,ps[i]);
 	}
 	else
 	{
-		RemoveRangeCoderSubRange(&model->coder,total,model->scale);
+		RemovePPMdRangeCoderSubRange(&model->coder,total,model->scale);
 		model->LastMaskIndex=self->LastStateIndex;
 		see->Summ+=model->scale;
 

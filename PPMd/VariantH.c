@@ -1,18 +1,21 @@
-#import "PPMdVariantH.h"
+#include "VariantH.h"
+
+#include <string.h>
 
 static void RestartModel(PPMdModelVariantH *self);
 
 static void UpdateModel(PPMdModelVariantH *self);
-static PPMdContext *CreateSuccessors(PPMdModelVariantH *self,BOOL skip,PPMdState *state);
+static PPMdContext *CreateSuccessors(PPMdModelVariantH *self,bool skip,PPMdState *state);
 
 static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdModelVariantH *model);
 static void DecodeSymbol1VariantH(PPMdContext *self,PPMdModelVariantH *model);
 static void DecodeSymbol2VariantH(PPMdContext *self,PPMdModelVariantH *model);
 
-void StartPPMdModelVariantH(PPMdModelVariantH *self,CSInputBuffer *input,
-PPMdSubAllocatorVariantH *alloc,int maxorder,BOOL sevenzip)
+void StartPPMdModelVariantH(PPMdModelVariantH *self,
+PPMdReadFunction *readfunc,void *inputcontext,
+PPMdSubAllocatorVariantH *alloc,int maxorder,bool sevenzip)
 {
-	RestartPPMdVariantHRangeCoder(self,input,sevenzip);
+	RestartPPMdVariantHRangeCoder(self,readfunc,inputcontext,sevenzip);
 
 	self->alloc=alloc;
 	self->core.alloc=&alloc->core;
@@ -44,14 +47,16 @@ PPMdSubAllocatorVariantH *alloc,int maxorder,BOOL sevenzip)
 	RestartModel(self);
 }
 
-void RestartPPMdVariantHRangeCoder(PPMdModelVariantH *self,CSInputBuffer *input,BOOL sevenzip)
+void RestartPPMdVariantHRangeCoder(PPMdModelVariantH *self,
+PPMdReadFunction *readfunc,void *inputcontext,
+bool sevenzip)
 {
 	if(sevenzip)
 	{
-		CSInputSkipBytes(input,1);
-		InitializeRangeCoder(&self->core.coder,input,NO,0);
+		readfunc(inputcontext); // Skip one byte.
+		InitializePPMdRangeCoder(&self->core.coder,readfunc,inputcontext,false,0);
 	}
-	else InitializeRangeCoder(&self->core.coder,input,YES,0x8000);
+	else InitializePPMdRangeCoder(&self->core.coder,readfunc,inputcontext,true,0x8000);
 }
 
 static void RestartModel(PPMdModelVariantH *self)
@@ -167,7 +172,7 @@ static void UpdateModel(PPMdModelVariantH *self)
 
 	if(self->core.OrderFall==0)
 	{
-		self->MinContext=self->MaxContext=CreateSuccessors(self,YES,state);
+		self->MinContext=self->MaxContext=CreateSuccessors(self,true,state);
 		SetPPMdStateSuccessorPointer(self->core.FoundState,self->MinContext,&self->core);
 		if(!self->MinContext) goto RESTART_MODEL;
 		return;
@@ -182,7 +187,7 @@ static void UpdateModel(PPMdModelVariantH *self)
 	{
 		if((uint8_t *)PPMdStateSuccessor(&fs,&self->core)<=self->alloc->pText)
 		{
-			SetPPMdStateSuccessorPointer(&fs,CreateSuccessors(self,NO,state),&self->core);
+			SetPPMdStateSuccessorPointer(&fs,CreateSuccessors(self,false,state),&self->core);
 			if(!fs.Successor) goto RESTART_MODEL;
 		}
 		if(--self->core.OrderFall==0)
@@ -263,7 +268,7 @@ static void UpdateModel(PPMdModelVariantH *self)
 	self->core.EscCount=0;
 }
 
-static PPMdContext *CreateSuccessors(PPMdModelVariantH *self,BOOL skip,PPMdState *state)
+static PPMdContext *CreateSuccessors(PPMdModelVariantH *self,bool skip,PPMdState *state)
 {
 	PPMdContext *context=self->MinContext,*upbranch=PPMdStateSuccessor(self->core.FoundState,&self->core);
 	PPMdState *statelist[MAX_O];
@@ -359,7 +364,7 @@ static void DecodeBinSymbolVariantH(PPMdContext *self,PPMdModelVariantH *model)
 
 static void DecodeSymbol1VariantH(PPMdContext *self,PPMdModelVariantH *model)
 {
-	int lastsym=PPMdDecodeSymbol1(self,&model->core,NO);
+	int lastsym=PPMdDecodeSymbol1(self,&model->core,false);
 	if(lastsym>=0)
 	{
 		model->HiBitsFlag=model->HB2Flag[lastsym];

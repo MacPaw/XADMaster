@@ -79,14 +79,6 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			CSZlibHandle.m \
 			NSDateXAD.m \
 			NumberParsing.m \
-			PPMdContext.m \
-			PPMdSubAllocatorBrimstone.m \
-			PPMdSubAllocatorVariantG.m \
-			PPMdSubAllocatorVariantH.m \
-			PPMdSubAllocatorVariantI.m \
-			PPMdVariantG.m \
-			PPMdVariantH.m \
-			PPMdVariantI.m \
 			Progress.m \
 			StuffItXUtilities.m \
 			XAD7ZipBCJ2Handle.m \
@@ -208,6 +200,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADUnarchiver.m \
 			XADUnarchiverAppleDouble.m \
 			XADWinZipAESHandle.m \
+			XADWinZipJPEGHandle.m \
 			XADWinZipWavPackHandle.m \
 			XADXARParser.m \
 			XADXORHandle.m \
@@ -237,12 +230,24 @@ LIBRARY_C_FILES =	BWT.c \
 			lzma/Bra86.c \
 			lzma/Bra.c \
 			lzma/Lzma2Dec.c \
+			PPMd/Context.c \
+			PPMd/RangeCoder.c \
+			PPMd/SubAllocatorBrimstone.c \
+			PPMd/SubAllocatorVariantG.c \
+			PPMd/SubAllocatorVariantH.c \
+			PPMd/SubAllocatorVariantI.c \
+			PPMd/VariantG.c \
+			PPMd/VariantH.c \
+			PPMd/VariantI.c \
 			wavpack/bits.c \
 			wavpack/float.c \
 			wavpack/metadata.c \
 			wavpack/unpack.c \
 			wavpack/words.c \
-			wavpack/wputils.c
+			wavpack/wputils.c \
+			WinZipJPEG/ArithmeticDecoder.c \
+			WinZipJPEG/Decompressor.c \
+			WinZipJPEG/JPEG.c
 
 LIBRARY_CXX_FILES =		
 

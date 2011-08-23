@@ -32,9 +32,6 @@ static void FreeUnitsVariantI(PPMdSubAllocatorVariantI *self,uint32_t offs,int n
 
 static inline void GlueFreeBlocks(PPMdSubAllocatorVariantI *self);
 
-static inline void *_OffsetToPointer(PPMdSubAllocatorVariantI *self,uint32_t offset) { return ((uint8_t *)self)+offset; }
-static inline uint32_t _PointerToOffset(PPMdSubAllocatorVariantI *self,void *pointer) { return ((uintptr_t)pointer)-(uintptr_t)self; }
-
 
 
 
@@ -91,9 +88,9 @@ static uint32_t AllocContextVariantI(PPMdSubAllocatorVariantI *self)
     if(self->HighUnit!=self->LowUnit)
 	{
 		self->HighUnit-=UNIT_SIZE;
-		return _PointerToOffset(self,self->HighUnit);
+		return PointerToOffset(self,self->HighUnit);
 	}
-	else if(AreBlocksAvailable(&self->BList[0])) return _PointerToOffset(self,RemoveBlockAfter(&self->BList[0],self));
+	else if(AreBlocksAvailable(&self->BList[0])) return PointerToOffset(self,RemoveBlockAfter(&self->BList[0],self));
 	else return _AllocUnits(self,0);
 }
 
@@ -101,11 +98,11 @@ static uint32_t AllocUnitsVariantI(PPMdSubAllocatorVariantI *self,int num)
 {
 	int index=self->Units2Index[num-1];
 
-	if(AreBlocksAvailable(&self->BList[index])) return _PointerToOffset(self,RemoveBlockAfter(&self->BList[index],self));
+	if(AreBlocksAvailable(&self->BList[index])) return PointerToOffset(self,RemoveBlockAfter(&self->BList[index],self));
 
 	void *units=self->LowUnit;
 	self->LowUnit+=I2B(self,index);
-	if(self->LowUnit<=self->HighUnit) return _PointerToOffset(self,units);
+	if(self->LowUnit<=self->HighUnit) return PointerToOffset(self,units);
 
 	self->LowUnit-=I2B(self,index);
 
@@ -117,7 +114,7 @@ static uint32_t _AllocUnits(PPMdSubAllocatorVariantI *self,int index)
 	if(self->GlueCount==0)
 	{
 		GlueFreeBlocks(self);
-		if(AreBlocksAvailable(&self->BList[index])) return _PointerToOffset(self,RemoveBlockAfter(&self->BList[index],self));
+		if(AreBlocksAvailable(&self->BList[index])) return PointerToOffset(self,RemoveBlockAfter(&self->BList[index],self));
 	}
 
 	for(int i=index+1;i<N_INDEXES;i++)
@@ -126,7 +123,7 @@ static uint32_t _AllocUnits(PPMdSubAllocatorVariantI *self,int index)
 		{
 			void *units=RemoveBlockAfter(&self->BList[i],self);
 			SplitBlock(self,units,i,index);
-			return _PointerToOffset(self,units);
+			return PointerToOffset(self,units);
 		}
 	}
 
@@ -136,7 +133,7 @@ static uint32_t _AllocUnits(PPMdSubAllocatorVariantI *self,int index)
 	if(self->UnitsStart-self->pText>i)
 	{
 		self->UnitsStart-=i;
-		return _PointerToOffset(self,self->UnitsStart);
+		return PointerToOffset(self,self->UnitsStart);
 	}
 
 	return 0;
@@ -144,7 +141,7 @@ static uint32_t _AllocUnits(PPMdSubAllocatorVariantI *self,int index)
 
 static uint32_t ExpandUnitsVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldoffs,int oldnum)
 {
-	void *oldptr=_OffsetToPointer(self,oldoffs);
+	void *oldptr=OffsetToPointer(self,oldoffs);
 	int oldindex=self->Units2Index[oldnum-1];
 	int newindex=self->Units2Index[oldnum];
 	if(oldindex==newindex) return oldoffs;
@@ -152,7 +149,7 @@ static uint32_t ExpandUnitsVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldo
 	uint32_t offs=AllocUnitsVariantI(self,oldnum+1);
 	if(offs)
 	{
-		memcpy(_OffsetToPointer(self,offs),oldptr,oldnum*UNIT_SIZE);
+		memcpy(OffsetToPointer(self,offs),oldptr,oldnum*UNIT_SIZE);
 		InsertBlockAfter(&self->BList[oldindex],oldptr,oldnum,self);
 	}
 	return offs;
@@ -160,7 +157,7 @@ static uint32_t ExpandUnitsVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldo
 
 static uint32_t ShrinkUnitsVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldoffs,int oldnum,int newnum)
 {
-	void *oldptr=_OffsetToPointer(self,oldoffs);
+	void *oldptr=OffsetToPointer(self,oldoffs);
 	int oldindex=self->Units2Index[oldnum-1];
 	int newindex=self->Units2Index[newnum-1];
 	if(oldindex==newindex) return oldoffs;
@@ -170,7 +167,7 @@ static uint32_t ShrinkUnitsVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldo
 		void *ptr=RemoveBlockAfter(&self->BList[newindex],self);
 		memcpy(ptr,oldptr,newnum*UNIT_SIZE);
 		InsertBlockAfter(&self->BList[oldindex],oldptr,self->Index2Units[oldindex],self);
-		return _PointerToOffset(self,ptr);
+		return PointerToOffset(self,ptr);
 	}
 	else
 	{
@@ -182,23 +179,23 @@ static uint32_t ShrinkUnitsVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldo
 static void FreeUnitsVariantI(PPMdSubAllocatorVariantI *self,uint32_t offs,int num)
 {
     int index=self->Units2Index[num-1];
-	InsertBlockAfter(&self->BList[index],_OffsetToPointer(self,offs),self->Index2Units[index],self);
+	InsertBlockAfter(&self->BList[index],OffsetToPointer(self,offs),self->Index2Units[index],self);
 }
 
 
 
 uint32_t GetUsedMemoryVariantI(PPMdSubAllocatorVariantI *self)
 {
-	uint32_t size=self->SubAllocatorSize-(self->HighUnit-self->LowUnit)-(self->UnitsStart-self->pText);
+	size_t size=self->SubAllocatorSize-(self->HighUnit-self->LowUnit)-(self->UnitsStart-self->pText);
 
 	for(int i=0;i<N_INDEXES;i++) size-=UNIT_SIZE*self->Index2Units[i]*self->BList[i].Stamp;
 
-    return size;
+    return (uint32_t)size;
 }
 
 void SpecialFreeUnitVariantI(PPMdSubAllocatorVariantI *self,uint32_t offs)
 {
-	void *ptr=_OffsetToPointer(self,offs);
+	void *ptr=OffsetToPointer(self,offs);
 	if((uint8_t *)ptr==self->UnitsStart)
 	{
 		*(uint32_t *)ptr=0xffffffff;
@@ -209,7 +206,7 @@ void SpecialFreeUnitVariantI(PPMdSubAllocatorVariantI *self,uint32_t offs)
 
 uint32_t MoveUnitsUpVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldoffs,int num)
 {
-	void *oldptr=_OffsetToPointer(self,oldoffs);
+	void *oldptr=OffsetToPointer(self,oldoffs);
 	int index=self->Units2Index[num-1];
 
 	if((uint8_t *)oldptr>self->UnitsStart+16*1024||oldoffs>self->BList[index].next) return oldoffs;
@@ -221,7 +218,7 @@ uint32_t MoveUnitsUpVariantI(PPMdSubAllocatorVariantI *self,uint32_t oldoffs,int
 	if((uint8_t *)oldptr!=self->UnitsStart) InsertBlockAfter(&self->BList[index],oldptr,newnum,self);
 	else self->UnitsStart+=newnum*UNIT_SIZE;
 
-	return _PointerToOffset(self,ptr);
+	return PointerToOffset(self,ptr);
 }
 
 void ExpandTextAreaVariantI(PPMdSubAllocatorVariantI *self)

@@ -22,6 +22,8 @@ typedef struct PPMdModelVariantI
 	int MaxOrder,MRMethod;
 	SEE2Context SEE2Cont[24][32],DummySEE2Cont;
 	uint16_t BinSumm[25][64]; // binary SEE-contexts
+
+	bool endofstream;
 } PPMdModelVariantI;
 
 void StartPPMdModelVariantI(PPMdModelVariantI *self,

@@ -30,23 +30,6 @@ void RemovePPMdRangeCoderSubRange(PPMdRangeCoder *self,uint32_t lowcount,uint32_
 	NormalizePPMdRangeCoder(self);
 }
 
-
-int NextSymbolFromPPMdRangeCoder(PPMdRangeCoder *self,uint32_t *freqtable,int numfreq)
-{
-	uint32_t totalfreq=0;
-	for(int i=0;i<numfreq;i++) totalfreq+=freqtable[i];
-
-	uint32_t tmp=PPMdRangeCoderCurrentCount(self,totalfreq);
-
-	uint32_t cumulativefreq=0;
-	uint32_t n=0;
-	while(n<numfreq-1&&cumulativefreq+freqtable[n]<=tmp) cumulativefreq+=freqtable[n++];
-
-	RemovePPMdRangeCoderSubRange(self,cumulativefreq,cumulativefreq+freqtable[n]);
-
-	return n;
-}
-
 int NextWeightedBitFromPPMdRangeCoder(PPMdRangeCoder *self,int weight,int size)
 {
 	uint32_t val=PPMdRangeCoderCurrentCount(self,size);

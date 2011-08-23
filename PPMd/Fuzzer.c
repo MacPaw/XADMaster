@@ -11,6 +11,8 @@
 static int FuzzerFunction1(void *context);
 static int FuzzerFunction2(void *context);
 static int FuzzerFunction3(void *context);
+static int FuzzerFunction4(void *context);
+static int FuzzerFunction5(void *context);
 
 static void SeedRandom(uint32_t seed);
 static uint32_t Random();
@@ -21,7 +23,7 @@ int main(int argc,const char **argv)
 	{
 		fprintf(stderr,"Usage: %s variant mode [seed [length]]\n",argv[0]);
 		fprintf(stderr,"       \"variant\" is g, h, i, b or 7.\n");
-		fprintf(stderr,"       \"mode\" is 1-3.\n");
+		fprintf(stderr,"       \"mode\" is 1-5.\n");
 		fprintf(stderr,"       \"seed\" is the random seed to use (defaults to 0).\n");
 		fprintf(stderr,"       \"length\" is the number of bytes to read (defaults to infinite).\n");
 		return 1;
@@ -33,6 +35,8 @@ int main(int argc,const char **argv)
 		case '1': readfunc=FuzzerFunction1; break;
 		case '2': readfunc=FuzzerFunction2; break;
 		case '3': readfunc=FuzzerFunction3; break;
+		case '4': readfunc=FuzzerFunction4; break;
+		case '5': readfunc=FuzzerFunction5; break;
 		default:
 			fprintf(stderr,"Unknown mode.\n");
 			return 1;
@@ -43,7 +47,10 @@ int main(int argc,const char **argv)
 	SeedRandom(seed);
 
 	int length=0;
-	if(argc>4) seed=atoi(argv[4]);
+	if(argc>4) length=atoi(argv[4]);
+
+	int lastbyte=0;
+	int numbytes=0;
 
 	switch(argv[1][0])
 	{
@@ -54,8 +61,13 @@ int main(int argc,const char **argv)
 			PPMdModelVariantG model;
 			StartPPMdModelVariantG(&model,readfunc,NULL,&alloc->core,16,false);
 
-			if(length) for(int i=0;i<length;i++) NextPPMdVariantGByte(&model);
-			else for(;;) NextPPMdVariantGByte(&model);
+			for(;;)
+			{
+				lastbyte=NextPPMdVariantGByte(&model);
+				if(lastbyte<0) break;
+				numbytes++;
+				if(length && numbytes==length) break;
+			}
 		}
 		break;
 
@@ -66,8 +78,13 @@ int main(int argc,const char **argv)
 			PPMdModelVariantG model;
 			StartPPMdModelVariantG(&model,readfunc,NULL,&alloc->core,16,true);
 
-			if(length) for(int i=0;i<length;i++) NextPPMdVariantGByte(&model);
-			else for(;;) NextPPMdVariantGByte(&model);
+			for(;;)
+			{
+				lastbyte=NextPPMdVariantGByte(&model);
+				if(lastbyte<0) break;
+				numbytes++;
+				if(length && numbytes==length) break;
+			}
 		}
 		break;
 
@@ -78,8 +95,13 @@ int main(int argc,const char **argv)
 			PPMdModelVariantH model;
 			StartPPMdModelVariantH(&model,readfunc,NULL,alloc,16,false);
 
-			if(length) for(int i=0;i<length;i++) NextPPMdVariantHByte(&model);
-			else for(;;) NextPPMdVariantHByte(&model);
+			for(;;)
+			{
+				lastbyte=NextPPMdVariantHByte(&model);
+				if(lastbyte<0) break;
+				numbytes++;
+				if(length && numbytes==length) break;
+			}
 		}
 		break;
 
@@ -89,8 +111,13 @@ int main(int argc,const char **argv)
 			PPMdModelVariantH model;
 			StartPPMdModelVariantH(&model,readfunc,NULL,alloc,16,true);
 
-			if(length) for(int i=0;i<length;i++) NextPPMdVariantHByte(&model);
-			else for(;;) NextPPMdVariantHByte(&model);
+			for(;;)
+			{
+				lastbyte=NextPPMdVariantHByte(&model);
+				if(lastbyte<0) break;
+				numbytes++;
+				if(length && numbytes==length) break;
+			}
 		}
 		break;
 
@@ -101,8 +128,13 @@ int main(int argc,const char **argv)
 			PPMdModelVariantI model;
 			StartPPMdModelVariantI(&model,readfunc,NULL,alloc,16,0);
 
-			if(length) for(int i=0;i<length;i++) NextPPMdVariantIByte(&model);
-			else for(;;) NextPPMdVariantIByte(&model);
+			for(;;)
+			{
+				lastbyte=NextPPMdVariantIByte(&model);
+				if(lastbyte<0) break;
+				numbytes++;
+				if(length && numbytes==length) break;
+			}
 		}
 		break;
 
@@ -110,6 +142,10 @@ int main(int argc,const char **argv)
 			fprintf(stderr,"Unknown variant.\n");
 			return 1;
 	}
+
+	if(lastbyte==-1) fprintf(stderr,"End of stream after %d bytes.\n",numbytes);
+	else if(lastbyte==-2) fprintf(stderr,"Error after %d bytes.\n",numbytes);
+	else fprintf(stderr,"Stopped after %d bytes.\n",numbytes);
 
 	return 0;
 }
@@ -127,6 +163,16 @@ static int FuzzerFunction2(void *context)
 static int FuzzerFunction3(void *context)
 {
 	return (Random()|Random()|Random())&0xff;
+}
+
+static int FuzzerFunction4(void *context)
+{
+	return 0x00;
+}
+
+static int FuzzerFunction5(void *context)
+{
+	return 0xff;
 }
 
 

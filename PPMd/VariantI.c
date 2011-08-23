@@ -66,6 +66,8 @@ PPMdSubAllocatorVariantI *alloc,int maxorder,int restoration)
 	self->DummySEE2Cont.Count=0x84;
 	self->DummySEE2Cont.Shift=PERIOD_BITS;
 
+	self->endofstream=false;
+
 	RestartModel(self);
 }
 
@@ -114,6 +116,8 @@ static void RestartModel(PPMdModelVariantI *self)
 
 int NextPPMdVariantIByte(PPMdModelVariantI *self)
 {
+	if(self->endofstream) return -1;
+
 	PPMdContext *mincontext=self->MaxContext;
 
 	if(mincontext->LastStateIndex!=0) DecodeSymbol1VariantI(mincontext,self);
@@ -125,7 +129,7 @@ int NextPPMdVariantIByte(PPMdModelVariantI *self)
 		{
 			self->core.OrderFall++;
 			mincontext=PPMdContextSuffix(mincontext,&self->core);
-			if(!mincontext) return -1;
+			if(!mincontext) { self->endofstream=true; return -1; }
 		}
 		while(mincontext->LastStateIndex==self->core.LastMaskIndex);
 

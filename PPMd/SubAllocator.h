@@ -26,16 +26,16 @@ static inline void FreeUnits(PPMdSubAllocator *self,uint32_t offs,int num) { ret
 
 // TODO: Keep pointers as pointers on 32 bit, and offsets on 64 bit.
 
-static inline void *OffsetToPointer(PPMdSubAllocator *self,uint32_t offset)
+static inline void *OffsetToPointer(void *base,uint32_t offset)
 {
 	if(!offset) return NULL;
-	return ((uint8_t *)self)+offset;
+	return ((uint8_t *)base)+offset;
 }
 
-static inline uint32_t PointerToOffset(PPMdSubAllocator *self,void *pointer)
+static inline uint32_t PointerToOffset(void *base,void *pointer)
 {
 	if(!pointer) return 0;
-	return ((uintptr_t)pointer)-(uintptr_t)self;
+	return (uint32_t)(((uintptr_t)pointer)-(uintptr_t)base);
 }
 
 #endif

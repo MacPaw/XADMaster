@@ -26,24 +26,21 @@ static void FreeUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t offs,int n
 
 static inline void GlueFreeBlocks(PPMdSubAllocatorVariantH *self);
 
-static inline void *_OffsetToPointer(PPMdSubAllocatorVariantH *self,uint32_t offset) { return ((uint8_t *)self)+offset; }
-static inline uint32_t _PointerToOffset(PPMdSubAllocatorVariantH *self,void *pointer) { return ((uintptr_t)pointer)-(uintptr_t)self; }
-
 static inline void InsertBlockAfter(PPMdSubAllocatorVariantH *self,struct PPMdMemoryBlockVariantH *block,struct PPMdMemoryBlockVariantH *preceeding)
 {
-	struct PPMdMemoryBlockVariantH *following=_OffsetToPointer(self,preceeding->next);
-	block->prev=_PointerToOffset(self,preceeding);
-	block->next=_PointerToOffset(self,following);
-	preceeding->next=_PointerToOffset(self,block);
-	following->prev=_PointerToOffset(self,block);
+	struct PPMdMemoryBlockVariantH *following=OffsetToPointer(self,preceeding->next);
+	block->prev=PointerToOffset(self,preceeding);
+	block->next=PointerToOffset(self,following);
+	preceeding->next=PointerToOffset(self,block);
+	following->prev=PointerToOffset(self,block);
 }
 
-void RemoveBlock(PPMdSubAllocatorVariantH *self,struct PPMdMemoryBlockVariantH *block)
+static void RemoveBlock(PPMdSubAllocatorVariantH *self,struct PPMdMemoryBlockVariantH *block)
 {
-	struct PPMdMemoryBlockVariantH *preceeding=_OffsetToPointer(self,block->prev);
-	struct PPMdMemoryBlockVariantH *following=_OffsetToPointer(self,block->next);
-	preceeding->next=_PointerToOffset(self,following);
-	following->prev=_PointerToOffset(self,preceeding);
+	struct PPMdMemoryBlockVariantH *preceeding=OffsetToPointer(self,block->prev);
+	struct PPMdMemoryBlockVariantH *following=OffsetToPointer(self,block->next);
+	preceeding->next=PointerToOffset(self,following);
+	following->prev=PointerToOffset(self,preceeding);
 }
 
 
@@ -101,10 +98,10 @@ static uint32_t AllocContextVariantH(PPMdSubAllocatorVariantH *self)
     if(self->HighUnit!=self->LowUnit)
 	{
 		self->HighUnit-=UNIT_SIZE;
-		return _PointerToOffset(self,self->HighUnit);
+		return PointerToOffset(self,self->HighUnit);
 	}
 
-	if(self->FreeList->next) return _PointerToOffset(self,RemoveNode(self,0));
+	if(self->FreeList->next) return PointerToOffset(self,RemoveNode(self,0));
  
     return _AllocUnits(self,0);
 }
@@ -113,11 +110,11 @@ static uint32_t AllocUnitsVariantH(PPMdSubAllocatorVariantH *self,int num)
 {
 	int index=self->Units2Index[num-1];
 
-	if(self->FreeList[index].next) return _PointerToOffset(self,RemoveNode(self,index));
+	if(self->FreeList[index].next) return PointerToOffset(self,RemoveNode(self,index));
 
 	void *units=self->LowUnit;
 	self->LowUnit+=I2B(self,index);
-	if(self->LowUnit<=self->HighUnit) return _PointerToOffset(self,units);
+	if(self->LowUnit<=self->HighUnit) return PointerToOffset(self,units);
 
 	self->LowUnit-=I2B(self,index);
 
@@ -130,7 +127,7 @@ static uint32_t _AllocUnits(PPMdSubAllocatorVariantH *self,int index)
 	{
 		self->GlueCount=255;
 		GlueFreeBlocks(self);
-		if(self->FreeList[index].next) return _PointerToOffset(self,RemoveNode(self,index));
+		if(self->FreeList[index].next) return PointerToOffset(self,RemoveNode(self,index));
 	}
 
 	for(int i=index+1;i<N_INDEXES;i++)
@@ -139,7 +136,7 @@ static uint32_t _AllocUnits(PPMdSubAllocatorVariantH *self,int index)
 		{
 			void *units=RemoveNode(self,i);
 			SplitBlock(self,units,i,index);
-			return _PointerToOffset(self,units);
+			return PointerToOffset(self,units);
 		}
 	}
 
@@ -149,7 +146,7 @@ static uint32_t _AllocUnits(PPMdSubAllocatorVariantH *self,int index)
 	if(self->UnitsStart-self->pText>i)
 	{
 		self->UnitsStart-=i;
-		return _PointerToOffset(self,self->UnitsStart);
+		return PointerToOffset(self,self->UnitsStart);
 	}
 
 	return 0;
@@ -157,7 +154,7 @@ static uint32_t _AllocUnits(PPMdSubAllocatorVariantH *self,int index)
 
 static uint32_t ExpandUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldoffs,int oldnum)
 {
-	void *oldptr=_OffsetToPointer(self,oldoffs);
+	void *oldptr=OffsetToPointer(self,oldoffs);
 	int oldindex=self->Units2Index[oldnum-1];
 	int newindex=self->Units2Index[oldnum];
 	if(oldindex==newindex) return oldoffs;
@@ -165,7 +162,7 @@ static uint32_t ExpandUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldo
 	uint32_t offs=AllocUnitsVariantH(self,oldnum+1);
 	if(offs)
 	{
-		memcpy(_OffsetToPointer(self,offs),oldptr,oldnum*UNIT_SIZE);
+		memcpy(OffsetToPointer(self,offs),oldptr,oldnum*UNIT_SIZE);
 		InsertNode(self,oldptr,oldindex);
 	}
 	return offs;
@@ -173,7 +170,7 @@ static uint32_t ExpandUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldo
 
 static uint32_t ShrinkUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldoffs,int oldnum,int newnum)
 {
-	void *oldptr=_OffsetToPointer(self,oldoffs);
+	void *oldptr=OffsetToPointer(self,oldoffs);
 	int oldindex=self->Units2Index[oldnum-1];
 	int newindex=self->Units2Index[newnum-1];
 	if(oldindex==newindex) return oldoffs;
@@ -183,7 +180,7 @@ static uint32_t ShrinkUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldo
 		void *ptr=RemoveNode(self,newindex);
 		memcpy(ptr,oldptr,newnum*UNIT_SIZE);
 		InsertNode(self,oldptr,oldindex);
-		return _PointerToOffset(self,ptr);
+		return PointerToOffset(self,ptr);
 	}
 	else
 	{
@@ -194,7 +191,7 @@ static uint32_t ShrinkUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t oldo
 
 static void FreeUnitsVariantH(PPMdSubAllocatorVariantH *self,uint32_t offs,int num)
 {
-	InsertNode(self,_OffsetToPointer(self,offs),self->Units2Index[num-1]);
+	InsertNode(self,OffsetToPointer(self,offs),self->Units2Index[num-1]);
 }
 
 
@@ -203,7 +200,7 @@ static inline void GlueFreeBlocks(PPMdSubAllocatorVariantH *self)
 {
 	if(self->LowUnit!=self->HighUnit) *self->LowUnit=0;
 
-	self->sentinel.next=self->sentinel.prev=_PointerToOffset(self,&self->sentinel);
+	self->sentinel.next=self->sentinel.prev=PointerToOffset(self,&self->sentinel);
 	for(int i=0;i<N_INDEXES;i++)
 	{
 		while(self->FreeList[i].next)
@@ -215,8 +212,8 @@ static inline void GlueFreeBlocks(PPMdSubAllocatorVariantH *self)
 		}
 	}
 
-	for(struct PPMdMemoryBlockVariantH *p=_OffsetToPointer(self,self->sentinel.next);
-	p!=&self->sentinel;p=_OffsetToPointer(self,p->next))
+	for(struct PPMdMemoryBlockVariantH *p=OffsetToPointer(self,self->sentinel.next);
+	p!=&self->sentinel;p=OffsetToPointer(self,p->next))
 	{
 		for(;;)
 		{
@@ -232,7 +229,7 @@ static inline void GlueFreeBlocks(PPMdSubAllocatorVariantH *self)
 
 	for(;;)
 	{
-		struct PPMdMemoryBlockVariantH *p=_OffsetToPointer(self,self->sentinel.next);
+		struct PPMdMemoryBlockVariantH *p=OffsetToPointer(self,self->sentinel.next);
 		if(p==&self->sentinel) break;
 		RemoveBlock(self,p);
 

@@ -100,6 +100,8 @@ static void RestartModel(PPMdModelVariantH *self)
 
 int NextPPMdVariantHByte(PPMdModelVariantH *self)
 {
+	if(!self->MinContext) return -1;
+
 	if(self->MinContext->LastStateIndex!=0) DecodeSymbol1VariantH(self->MinContext,self);
 	else DecodeBinSymbolVariantH(self->MinContext,self);
 

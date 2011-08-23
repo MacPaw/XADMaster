@@ -13,7 +13,7 @@ typedef struct PPMdSubAllocatorVariantH
 {
 	PPMdSubAllocator core;
 
-	long SubAllocatorSize;
+	uint32_t SubAllocatorSize;
 	uint8_t Index2Units[38],Units2Index[128],GlueCount;
 	uint8_t *pText,*UnitsStart,*LowUnit,*HighUnit;
 	struct PPMAllocatorNodeVariantH { struct PPMAllocatorNodeVariantH *next; } FreeList[38];

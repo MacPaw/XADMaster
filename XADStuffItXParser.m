@@ -17,7 +17,7 @@
 typedef struct StuffItXElement
 {
 	int something,type;
-	int64_t attribs[9];
+	int64_t attribs[10];
 	int64_t alglist[4];
 	off_t dataoffset,actualsize;
 	uint32_t datacrc;
@@ -30,7 +30,7 @@ static void DumpElement(StuffItXElement *element);
 
 static void ReadElement(CSHandle *fh,StuffItXElement *element)
 {
-	for(int i=0;i<9;i++) element->attribs[i]=-1;
+	for(int i=0;i<10;i++) element->attribs[i]=-1;
 	for(int i=0;i<4;i++) element->alglist[i]=-1;
 
 	element->something=[fh readBitsLE:1];
@@ -41,7 +41,7 @@ static void ReadElement(CSHandle *fh,StuffItXElement *element)
 		int type=ReadSitxP2(fh);
 		if(type==0) break;
 		uint64_t value=ReadSitxP2(fh);
-		if(type<=9) element->attribs[type-1]=value;
+		if(type<=10) element->attribs[type-1]=value;
 		else NSLog(@"attrib type too big: %d",type);
 	}
 
@@ -241,7 +241,7 @@ static void DumpElement(StuffItXElement *element)
 
 	NSLog(@"(%d) %d: %@",element->something,element->type,name);
 
-	for(int i=0;i<9;i++) if(element->attribs[i]>=0) NSLog(@"       attrib %d: %qu",i,element->attribs[i]);
+	for(int i=0;i<10;i++) if(element->attribs[i]>=0) NSLog(@"       attrib %d: %qu",i,element->attribs[i]);
 	for(int i=0;i<4;i++) if(element->alglist[i]>=0) NSLog(@"       alglist %d: %qu",i,element->alglist[i]);
 }
 
@@ -396,29 +396,36 @@ static void DumpElement(StuffItXElement *element)
 					off_t currcompsize=[lengthnum longLongValue]*compsize/uncompsize;
 					NSNumber *currcompsizenum=[NSNumber numberWithLongLong:currcompsize];
 
-					BOOL isfork=[[fork objectForKey:@"Type"] intValue]==1;
-
-					NSEnumerator *entryenumerator=[entries objectEnumerator];
-					NSNumber *entrynum;
-					while((entrynum=[entryenumerator nextObject]))
+					// Type 0 is a data fork, type 1 is a resource fork. There are
+					// furhter types, but these are not understood so ignore them.
+					// Type 3 seems to be a thumbnail?
+					int type=[[fork objectForKey:@"Type"] intValue];
+					if(type==0||type==1)
 					{
-						NSDictionary *entry=[entrydict objectForKey:entrynum];
-						NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
+						BOOL isresfork=(type==1);
 
-						[dict setObject:elementval forKey:XADSolidObjectKey];
-						[dict setObject:offsnum forKey:XADSolidOffsetKey];
-						[dict setObject:lengthnum forKey:XADFileSizeKey];
-						[dict setObject:lengthnum forKey:XADSolidLengthKey];
-						[dict setObject:currcompsizenum forKey:XADCompressedSizeKey];
-						[dict setObject:compnamestr forKey:XADCompressionNameKey];
+						NSEnumerator *entryenumerator=[entries objectEnumerator];
+						NSNumber *entrynum;
+						while((entrynum=[entryenumerator nextObject]))
+						{
+							NSDictionary *entry=[entrydict objectForKey:entrynum];
+							NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
 
-						if(isfork)
-						[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
+							[dict setObject:elementval forKey:XADSolidObjectKey];
+							[dict setObject:offsnum forKey:XADSolidOffsetKey];
+							[dict setObject:lengthnum forKey:XADFileSizeKey];
+							[dict setObject:lengthnum forKey:XADSolidLengthKey];
+							[dict setObject:currcompsizenum forKey:XADCompressedSizeKey];
+							[dict setObject:compnamestr forKey:XADCompressionNameKey];
 
-						if([entries count]>1)
-						[dict setObject:entries forKey:@"StuffItXRepeatedEntries"];
+							if(isresfork)
+							[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
 
-						[self addEntryWithDictionary:dict];
+							if([entries count]>1)
+							[dict setObject:entries forKey:@"StuffItXRepeatedEntries"];
+
+							[self addEntryWithDictionary:dict];
+						}
 					}
 					offs+=[lengthnum longLongValue];
 				}

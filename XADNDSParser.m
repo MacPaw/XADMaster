@@ -116,7 +116,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 		[fh readBytes:sizeof(palette) toBuffer:palette];
 
 		NSData *pngdata=ConvertTiledIconToPNG(tiledata,palette);
-		[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+		[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			[basepath pathByAppendingPathComponent:[self XADStringWithString:@"Icon.png"]],XADFileNameKey,
 			[NSNumber numberWithUnsignedLong:[pngdata length]],XADFileSizeKey,
 			[NSNumber numberWithUnsignedLong:0x210],XADCompressedSizeKey,
@@ -145,7 +145,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 
 			NSData *data=[string dataUsingEncoding:NSUTF8StringEncoding];
 
-			[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+			[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				[basepath pathByAppendingPathComponent:[self XADStringWithString:filenames[i]]],XADFileNameKey,
 				[NSNumber numberWithUnsignedLong:[data length]],XADFileSizeKey,
 				[NSNumber numberWithUnsignedLong:0x100],XADCompressedSizeKey,
@@ -154,7 +154,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 		}
 	}
 
-	[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[basepath pathByAppendingPathComponent:[self XADStringWithString:
 		[NSString stringWithFormat:@"ARM9-%08x-%08x.bin",arm9_addr,arm9_entry]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm9_size],XADFileSizeKey,
@@ -163,7 +163,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 		[NSNumber numberWithUnsignedLong:arm9_offs],XADDataOffsetKey,
 	nil]];
 
-	[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[basepath pathByAppendingPathComponent:[self XADStringWithString:
 		[NSString stringWithFormat:@"ARM7-%08x-%08x.bin",arm7_addr,arm7_entry]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm7_size],XADFileSizeKey,
@@ -173,7 +173,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 	nil]];
 
 	if(arm9_overlay_size)
-	[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[basepath pathByAppendingPathComponent:[self XADStringWithString:
 		[NSString stringWithFormat:@"ARM9.ovt",arm9_addr]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm9_overlay_size],XADFileSizeKey,
@@ -183,7 +183,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 	nil]];
 
 	if(arm7_overlay_size)
-	[self addEntryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[basepath pathByAppendingPathComponent:[self XADStringWithString:
 		[NSString stringWithFormat:@"ARM7.ovt",arm7_addr]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm7_overlay_size],XADFileSizeKey,

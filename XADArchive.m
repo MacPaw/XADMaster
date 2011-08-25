@@ -506,8 +506,10 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		guess:[xadname encoding] confidence:[xadname confidence]];
 		return [xadname sanitizedPathStringWithEncoding:encoding];
 	}
-
-	return [xadname string];
+	else
+	{
+		return [xadname sanitizedPathString];
+	}
 }
 
 -(BOOL)entryHasSize:(int)n

@@ -46,6 +46,8 @@
 	else if([object isKindOfClass:[NSArray class]]) [self printArray:object];
 	else if([object isKindOfClass:[NSDictionary class]]) [self printDictionary:object];
 	else [self printString:[object description]];
+
+	needseparator=YES;
 }
 
 -(void)printNull
@@ -224,9 +226,9 @@
 	// Generally we should call this method from other methods of
 	// this class which have direct print calls, before those print
 	// calls.  This ensures all needed comma separators are printed.
-	// The exceptions are (a) before printing whitespace; and (b)
-	// when printing the end of a JSON Array or Object.  This is to
-	// ensure we print no trailing commas.
+	// The exceptions are (a) before printing only whitespace; and
+	// (b) when printing the end of a JSON Array or Object.  This is
+	// to ensure we print no trailing commas.
 	if(needseparator)
 	{
 		[@"," print];

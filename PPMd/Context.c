@@ -168,6 +168,7 @@ int PPMdDecodeSymbol1(PPMdContext *self,PPMdCoreModel *model,bool greaterorequal
 		}
 	}
 
+	if(!model->FoundState) return -1;
 	int lastsym=model->FoundState->Symbol;
 
 	//if ( Suffix ) PrefetchData(Suffix);

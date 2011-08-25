@@ -112,7 +112,10 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 
 @interface XADString (PlatformSpecific)
 
++(BOOL)canDecodeData:(NSData *)data encodingName:(NSString *)encoding;
++(BOOL)canDecodeBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding;
 +(NSString *)stringForData:(NSData *)data encodingName:(NSString *)encoding;
++(NSString *)stringForBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding;
 +(NSData *)dataForString:(NSString *)string encodingName:(NSString *)encoding;
 +(NSArray *)availableEncodingNames;
 

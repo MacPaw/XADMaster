@@ -77,7 +77,12 @@ static void StripDotPaths(NSMutableArray *components);
 
 static inline BOOL IsSeparator(char c,const char *separators)
 {
-	return strchr(separators,c)!=NULL; // Note: \0 is always considered a separator!
+	while(*separators)
+	{
+		if(c==*separators) return YES;
+		separators++;
+	}
+	return NO;
 }
 
 -(id)initWithBytes:(const char *)bytes length:(int)length
@@ -103,16 +108,35 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 		if(length>0)
 		{
+			// Check for an absolute path, and add a / as the first entry for these.
 			if(IsSeparator(bytes[0],separators)) [array addObject:[XADString XADStringWithString:@"/"]];
 
+			// Iterate through the string.
 			int i=0;
 			while(i<length)
 			{
+				// Skip separator characters.
 				while(i<length&&IsSeparator(bytes[i],separators)) i++;
 				if(i>=length) break;
 
+				// Remember the start of the next component, and find the end.
 				int start=i;
-				while(i<length&&!IsSeparator(bytes[i],separators)) i++;
+				while(i<length)
+				{
+					// If we encounter a separator, first check if it looks like
+					// the current component string can be decoded. This is to avoid
+					// spurious splits in encodings like Shift_JIS.
+					if(IsSeparator(bytes[i],separators))
+					{
+						NSString *currencoding;
+						if(encoding) currencoding=encoding;
+						else currencoding=[stringsource encodingName];
+
+						if([XADString canDecodeBytes:&bytes[start] length:i-start
+						encodingName:currencoding]) break;
+					}
+					i++;
+				}
 
 				NSData *data=[NSData dataWithBytes:&bytes[start] length:i-start];
 

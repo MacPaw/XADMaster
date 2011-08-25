@@ -2,9 +2,28 @@
 
 @implementation XADString (PlatformSpecific)
 
++(BOOL)canDecodeData:(NSData *)data encodingName:(NSString *)encoding
+{
+	return [self canDecodeBytes:[data bytes] length:[data length] encodingName:encoding];
+}
+
++(BOOL)canDecodeBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding
+{
+	// TODO: Is there a faster way?
+	CFStringRef str=CFStringCreateWithBytes(kCFAllocatorDefault,bytes,length,
+	CFStringConvertIANACharSetNameToEncoding((CFStringRef)encoding),false);
+	if(str) { CFRelease(str); return YES; }
+	else return NO;
+}
+
 +(NSString *)stringForData:(NSData *)data encodingName:(NSString *)encoding
 {
-	CFStringRef str=CFStringCreateWithBytes(kCFAllocatorDefault,[data bytes],[data length],
+	return [self stringForBytes:[data bytes] length:[data length] encodingName:encoding];
+}
+
++(NSString *)stringForBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding;
+{
+	CFStringRef str=CFStringCreateWithBytes(kCFAllocatorDefault,bytes,length,
 	CFStringConvertIANACharSetNameToEncoding((CFStringRef)encoding),false);
 	return [(id)str autorelease];
 }

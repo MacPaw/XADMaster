@@ -235,6 +235,11 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	return [components count]>0&&[[components objectAtIndex:0] isEqual:@"/"];
 }
 
+-(BOOL)isEmpty
+{
+	return [components count]==0;
+}
+
 -(BOOL)hasPrefix:(XADPath *)other
 {
 	int count=[components count];
@@ -316,14 +321,8 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	int count=[components count];
 	int first=0;
 
-	// Drop "/" and ".." components at the start of the path.
-	// "." and ".." components in the middle have already been stripped out.
-	while(first<count)
-	{
-		NSString *component=[components objectAtIndex:first];
-		if(![component isEqual:@".."]&&![component isEqual:@"/"]) break;
-		first++;
-	}
+	// Drop "/" at the start of the path.
+	if(count && [[components objectAtIndex:0] isEqual:@"/"]) first++;
 
 	if(first==count) return @".";
 
@@ -332,9 +331,20 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 	{
 		if(i!=first) [string appendString:@"/"];
 
-		NSString *compstring=[[components objectAtIndex:i] stringWithEncodingName:encoding];
-		NSString *sanitized=[XADPlatform sanitizedPathComponent:compstring];
-		[string appendString:sanitized];
+		XADString *component=[components objectAtIndex:i];
+
+		// Replace ".." components with "__Parent__". ".." components in the middle
+		// of the path have already been collapsed.
+		if([component isEqual:@".."])
+		{
+			[string appendString:@"__Parent__"];
+		}
+		else
+		{
+			NSString *compstring=[component stringWithEncodingName:encoding];
+			NSString *sanitized=[XADPlatform sanitizedPathComponent:compstring];
+			[string appendString:sanitized];
+		}
 	}
 
 	return string;

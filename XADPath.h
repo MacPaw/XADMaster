@@ -33,6 +33,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 -(XADPath *)safePath; // Deprecated. Use sanitizedPathString: instead.
 
 -(BOOL)isAbsolute;
+-(BOOL)isEmpty;
 -(BOOL)hasPrefix:(XADPath *)other;
 
 // NOTE: These are not guaranteed to be safe for usage as filesystem paths,

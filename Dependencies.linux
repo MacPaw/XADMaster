@@ -10,7 +10,7 @@ CSBzip2Handle.o: CSBzip2Handle.m CSBzip2Handle.h CSStreamHandle.h \
  CSHandle.h CSInputBuffer.h
 CSFileHandle.o: CSFileHandle.m CSFileHandle.h CSHandle.h
 CSHandle.o: CSHandle.m CSHandle.h CSSubHandle.h
-CSHexDump.o: CSHexDump.m CSHexDump.h
+CSHexDump.o: CSHexDump.m
 CSInputBuffer.o: CSInputBuffer.m CSInputBuffer.h CSHandle.h
 CSMemoryHandle.o: CSMemoryHandle.m CSMemoryHandle.h CSHandle.h
 CSMultiHandle.o: CSMultiHandle.m CSMultiHandle.h CSHandle.h

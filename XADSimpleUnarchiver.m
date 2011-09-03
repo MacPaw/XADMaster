@@ -369,25 +369,25 @@
 	finaldestination=[destpath retain];
 
 	// Run unarchiver on all entries.
-	XADError lasterror=XADNoError;
-
 	[unarchiver setDelegate:self];
 
 	enumerator=[entries objectEnumerator];
 	while((entry=[enumerator nextObject]))
 	{
+		if([self _shouldStop]) return XADBreakError;
+
 		if(totalsize>=0) currsize=[[entry objectForKey:XADFileSizeKey] longLongValue];
 
 		XADError error=[unarchiver extractEntryWithDictionary:entry];
-		if(error!=XADNoError && error!=XADBreakError) lasterror=error;
+		if(error==XADBreakError) return XADBreakError;
 
 		if(totalsize>=0) totalprogress+=currsize;
 	}
 
 	XADError error=[unarchiver finishExtractions];
-	if(error) lasterror=error;
+	if(error) return error;
 
-	return lasterror;
+	return XADNoError;
 }
 
 -(XADError)_unarchiveSubArchive
@@ -610,7 +610,7 @@
 	NSString *encodingname=nil;
 	if(delegate && ![xadpath encodingIsKnown])
 	{
-		encodingname=[delegate simpleUnarchiver:self encodingNameForXADPath:xadpath];
+		encodingname=[delegate simpleUnarchiver:self encodingNameForXADString:xadpath];
 		if(!encodingname) return NO;
 	}
 
@@ -959,8 +959,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 
 -(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver {}
 
--(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADPath:(XADPath *)path { return [path encodingName]; }
--(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string { return [string encodingName]; }
+-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(id <XADString>)string; { return [string encodingName]; }
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path { return YES; }
 -(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path {}

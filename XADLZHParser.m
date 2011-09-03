@@ -218,7 +218,8 @@
 		if(directorydata)
 		{
 			path=[self XADPathWithData:directorydata separators:"\xff"];
-			if(filenamedata) path=[path pathByAppendingPathComponent:[self XADStringWithData:filenamedata]];
+			if(filenamedata&&[filenamedata length])
+			path=[path pathByAppendingPathComponent:[self XADStringWithData:filenamedata]];
 		}
 		else if(filenamedata) path=[self XADPathWithData:filenamedata separators:"\xff\\/"];
 

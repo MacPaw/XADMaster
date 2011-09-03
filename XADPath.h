@@ -36,8 +36,10 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 -(BOOL)isEmpty;
 -(BOOL)hasPrefix:(XADPath *)other;
 
+
 // NOTE: These are not guaranteed to be safe for usage as filesystem paths,
 // only for display!
+-(BOOL)canDecodeWithEncodingName:(NSString *)encoding;
 -(NSString *)string;
 -(NSString *)stringWithEncodingName:(NSString *)encoding;
 -(NSData *)data;
@@ -60,6 +62,7 @@ separators:(const char *)separators source:(XADStringSource *)stringsource;
 -(id)copyWithZone:(NSZone *)zone;
 
 #ifdef __APPLE__
+-(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding;
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
 -(NSString *)sanitizedPathStringWithEncoding:(NSStringEncoding)encoding;
 -(NSStringEncoding)encoding;

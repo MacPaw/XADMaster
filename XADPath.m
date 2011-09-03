@@ -257,6 +257,15 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 
 
+-(BOOL)canDecodeWithEncodingName:(NSString *)encoding
+{
+	int count=[components count];
+	for(int i=0;i<count;i++)
+	if(![[components objectAtIndex:i] canDecodeWithEncodingName:encoding]) return NO;
+
+	return YES;
+}
+
 -(NSString *)string
 {
 	return [self stringWithEncodingName:[source encodingName]];
@@ -415,22 +424,25 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 
 #ifdef __APPLE__
+-(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding
+{
+	return [self canDecodeWithEncodingName:[XADString encodingNameForEncoding:encoding]];
+}
+
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding
 {
-	return [self stringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
-	CFStringConvertNSStringEncodingToEncoding(encoding))];
+	return [self stringWithEncodingName:[XADString encodingNameForEncoding:encoding]];
 }
 
 -(NSString *)sanitizedPathStringWithEncoding:(NSStringEncoding)encoding;
 {
-	return [self sanitizedPathStringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
-	CFStringConvertNSStringEncodingToEncoding(encoding))];
+	return [self sanitizedPathStringWithEncodingName:[XADString encodingNameForEncoding:encoding]];
 }
 
 -(NSStringEncoding)encoding
 {
 	if(!source) return NSUTF8StringEncoding; // TODO: what should this really return?
-	return [source encoding];
+	else return [source encoding];
 }
 #endif
 

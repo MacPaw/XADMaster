@@ -8,7 +8,7 @@
 @interface Unarchiver:NSObject {}
 @end
 
-int returncode;
+int numerrors;
 
 int main(int argc,const char **argv)
 {
@@ -205,18 +205,32 @@ int main(int argc,const char **argv)
 
 	[@"\n" print];
 
-	returncode=0;
+	numerrors=0;
 
 	error=[unarchiver unarchive];
-	if(error)
+
+	NSString *actualdest=[unarchiver actualDestinationPath];
+
+	if(error||numerrors)
 	{
-		[@"Extraction failed! (" print];
-		[[XADException describeXADError:error] print];
-		[@")\n" print];
+		if([actualdest isEqual:@"."])
+		{
+			[@"Extraction to current directory failed! (" print];
+		}
+		else
+		{
+			[@"Extraction to directory \"" print];
+			[actualdest print];
+			[@"\" failed (" print];
+		}
+
+		if(error) [[XADException describeXADError:error] print];
+		else [[NSString stringWithFormat:@"%d files failed",numerrors] print];
+
+		[@").\n" print];
 	}
 	else
 	{
-		NSString *actualdest=[unarchiver actualDestinationPath];
 		if([actualdest isEqual:@"."])
 		{
 			[@"Successfully extracted to current directory.\n" print];
@@ -233,7 +247,7 @@ int main(int argc,const char **argv)
 
 	[pool release];
 
-	return returncode;
+	return error||numerrors;
 }
 
 @implementation Unarchiver
@@ -256,8 +270,7 @@ int main(int argc,const char **argv)
 }
 
 
-//-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADPath:(XADPath *)string;
-//-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(XADString *)string;
+//-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(id <XADString>)string;
 
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver replacementPathForEntryWithDictionary:(NSDictionary *)dict
 originalPath:(NSString *)path suggestedPath:(NSString *)unique
@@ -316,7 +329,7 @@ suggestedPath:(NSString *)unique
 		[[XADException describeXADError:error] print];
 		[@")\n" print];
 
-		returncode=1;
+		numerrors++;
 	}
 }
 

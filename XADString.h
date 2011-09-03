@@ -51,6 +51,7 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 
 @protocol XADString <NSObject>
 
+-(BOOL)canDecodeWithEncodingName:(NSString *)encoding;
 -(NSString *)string;
 -(NSString *)stringWithEncodingName:(NSString *)encoding;
 -(NSData *)data;
@@ -62,6 +63,7 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 -(XADStringSource *)source;
 
 #ifdef __APPLE__
+-(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding;
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
 -(NSStringEncoding)encoding;
 #endif
@@ -84,6 +86,7 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 -(id)initWithString:(NSString *)knownstring;
 -(void)dealloc;
 
+-(BOOL)canDecodeWithEncodingName:(NSString *)encoding;
 -(NSString *)string;
 -(NSString *)stringWithEncodingName:(NSString *)encoding;
 -(NSData *)data;
@@ -104,6 +107,9 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 -(id)copyWithZone:(NSZone *)zone;
 
 #ifdef __APPLE__
++(NSString *)encodingNameForEncoding:(NSStringEncoding)encoding;
+
+-(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding;
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
 -(NSStringEncoding)encoding;
 #endif

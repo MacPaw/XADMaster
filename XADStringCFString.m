@@ -2,6 +2,20 @@
 
 @implementation XADString (PlatformSpecific)
 
++(CFStringEncoding)CFStringEncodingForEncodingName:(NSString *)encodingname
+{
+	if([encodingname isKindOfClass:[NSNumber class]])
+	{
+		// If the encodingname is actually an NSNumber, just unpack it and convert.
+		return CFStringConvertNSStringEncodingToEncoding([(NSNumber *)encodingname longValue]);
+	}
+	else
+	{
+		// Look up the encoding number for the name.
+		return CFStringConvertIANACharSetNameToEncoding((CFStringRef)encodingname);
+	}
+}
+
 +(BOOL)canDecodeData:(NSData *)data encodingName:(NSString *)encoding
 {
 	return [self canDecodeBytes:[data bytes] length:[data length] encodingName:encoding];
@@ -9,9 +23,9 @@
 
 +(BOOL)canDecodeBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding
 {
-	// TODO: Is there a faster way?
-	CFStringRef str=CFStringCreateWithBytes(kCFAllocatorDefault,bytes,length,
-	CFStringConvertIANACharSetNameToEncoding((CFStringRef)encoding),false);
+	CFStringEncoding cfenc=[XADString CFStringEncodingForEncodingName:encoding];
+	if(cfenc==kCFStringEncodingInvalidId) return NO;
+	CFStringRef str=CFStringCreateWithBytes(kCFAllocatorDefault,bytes,length,cfenc,false);
 	if(str) { CFRelease(str); return YES; }
 	else return NO;
 }
@@ -21,10 +35,11 @@
 	return [self stringForBytes:[data bytes] length:[data length] encodingName:encoding];
 }
 
-+(NSString *)stringForBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding;
++(NSString *)stringForBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding
 {
-	CFStringRef str=CFStringCreateWithBytes(kCFAllocatorDefault,bytes,length,
-	CFStringConvertIANACharSetNameToEncoding((CFStringRef)encoding),false);
+	CFStringEncoding cfenc=[XADString CFStringEncodingForEncodingName:encoding];
+	if(cfenc==kCFStringEncodingInvalidId) return nil;
+	CFStringRef str=CFStringCreateWithBytes(kCFAllocatorDefault,bytes,length,cfenc,false);
 	return [(id)str autorelease];
 }
 

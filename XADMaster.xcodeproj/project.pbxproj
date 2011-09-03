@@ -843,7 +843,7 @@
 		1BD3842F125A351400FE08BD /* XADNowCompressHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3842B125A351400FE08BD /* XADNowCompressHandle.m */; };
 		1BD38430125A351400FE08BD /* XADNowCompressHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD3842A125A351400FE08BD /* XADNowCompressHandle.h */; };
 		1BD38431125A351400FE08BD /* XADNowCompressHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3842B125A351400FE08BD /* XADNowCompressHandle.m */; };
-		1BDDC7ED13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
+		1BDDC7ED13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BDDC7EE13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
 		1BDDC7EF13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
 		1BDDC7F013E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */; };
@@ -1826,6 +1826,7 @@
 			children = (
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				1B06D5B80DDA66AA00D9C000 /* Archive Parsers */,
+				1B5F13C514119F2D0078DF5C /* Deprecated */,
 				1BC89A7D0EDB1BA6006B47FE /* Compression Utilities */,
 				1BC886D80ECE18EF006B47FE /* Utilities */,
 				1BC89A7C0EDB1B99006B47FE /* Categories */,
@@ -1870,8 +1871,10 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				1B5A7AF50A24CFD200B189EB /* XADArchive.h */,
-				1B5A80B50A27AA9900B189EB /* XADArchive.m */,
+				1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */,
+				1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */,
+				1B3FAD650EC5D4E8006D2F06 /* XADMacArchiveParser.h */,
+				1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */,
 				1B06D5B90DDA67E000D9C000 /* XADString.h */,
 				1B06D5BA0DDA67E000D9C000 /* XADString.m */,
 				1B91D0AC11DFC0480081E40A /* XADStringCFString.m */,
@@ -2003,10 +2006,6 @@
 		1B06D5B80DDA66AA00D9C000 /* Archive Parsers */ = {
 			isa = PBXGroup;
 			children = (
-				1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */,
-				1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */,
-				1B3FAD650EC5D4E8006D2F06 /* XADMacArchiveParser.h */,
-				1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */,
 				1BC885C60ECD11A9006B47FE /* Zip */,
 				1BC88B750ED0E399006B47FE /* RAR */,
 				1BC88B760ED0E3A2006B47FE /* 7-Zip */,
@@ -2206,6 +2205,15 @@
 				1B3A650110154DCE00AE25A8 /* CSHexDump.m */,
 			);
 			name = XADTest;
+			sourceTree = "<group>";
+		};
+		1B5F13C514119F2D0078DF5C /* Deprecated */ = {
+			isa = PBXGroup;
+			children = (
+				1B5A7AF50A24CFD200B189EB /* XADArchive.h */,
+				1B5A80B50A27AA9900B189EB /* XADArchive.m */,
+			);
+			name = Deprecated;
 			sourceTree = "<group>";
 		};
 		1B690E840F47944400A415E0 /* Wrappers */ = {

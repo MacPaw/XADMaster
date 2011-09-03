@@ -129,6 +129,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 -(NSDictionary *)extendedAttributesForDictionary:(NSDictionary *)dict;
 -(NSData *)finderInfoForDictionary:(NSDictionary *)dict;
 
+-(BOOL)wasStopped;
+
 -(BOOL)hasChecksum;
 -(BOOL)testChecksum;
 -(XADError)testChecksumWithoutExceptions;
@@ -202,6 +204,8 @@ name:(NSString *)name;
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
 
 // Exception-free wrappers for subclass methods:
+// parseWithoutExceptions will in addition return XADBreakError if the delegate
+// requested parsing to stop.
 
 -(XADError)parseWithoutExceptions;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum error:(XADError *)errorptr;

@@ -106,6 +106,11 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 
 
 
+-(BOOL)canDecodeWithEncodingName:(NSString *)encoding
+{
+	return string || [XADString canDecodeData:data encodingName:encoding];
+}
+
 -(NSString *)string
 {
 	return [self stringWithEncodingName:[source encodingName]];
@@ -118,7 +123,7 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 	NSString *decstr=[XADString stringForData:data encodingName:encoding];
 	if(decstr) return decstr;
 
-	// Fall back on escaped ASCII if the encoding was unusable
+	// Fall back on escaped ASCII if the encoding was unusable.
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 	NSMutableString *str=[NSMutableString stringWithCapacity:length];
@@ -258,16 +263,30 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 
 
 #ifdef __APPLE__
++(NSString *)encodingNameForEncoding:(NSStringEncoding)encoding
+{
+	// Internal kludge: Don't actually return an NSString. Instead,
+	// return an NSNumber containing the encoding number, that can
+	// be quickly unpacked later. This should be safe, as the object
+	// will not actually be touched by any other function than the
+	// ones in XADStringCFString.
+	return (NSString *)[NSNumber numberWithLong:encoding];
+}
+
+-(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding
+{
+	return [self canDecodeWithEncodingName:[XADString encodingNameForEncoding:encoding]];
+}
+
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding
 {
-	return [self stringWithEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(
-	CFStringConvertNSStringEncodingToEncoding(encoding))];
+	return [self stringWithEncodingName:[XADString encodingNameForEncoding:encoding]];
 }
 
 -(NSStringEncoding)encoding
 {
 	if(!source) return NSUTF8StringEncoding; // TODO: what should this really return?
-	return [source encoding];
+	else return [source encoding];
 }
 #endif
 
@@ -370,15 +389,13 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 	NSString *encodingname=[self encodingName];
 	if(!encodingname) return 0;
 
-	CFStringEncoding cfenc=CFStringConvertIANACharSetNameToEncoding((CFStringRef)encodingname);
-	if(cfenc==kCFStringEncodingInvalidId) return 0;
-
-	return CFStringConvertEncodingToNSStringEncoding(cfenc);
+	return CFStringConvertEncodingToNSStringEncoding(
+	CFStringConvertIANACharSetNameToEncoding((CFStringRef)encodingname));
 }
 
 -(void)setFixedEncoding:(NSStringEncoding)encoding
 {
-	[self setFixedEncodingName:(NSString *)CFStringConvertEncodingToIANACharSetName(encoding)];
+	[self setFixedEncodingName:[XADString encodingNameForEncoding:encoding]];
 }
 #endif
 

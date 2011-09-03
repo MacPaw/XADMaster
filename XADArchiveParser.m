@@ -567,6 +567,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	}
 }
 
+-(BOOL)wasStopped { return shouldstop; }
+
 -(BOOL)hasChecksum { return [sourcehandle hasChecksum]; }
 
 -(BOOL)testChecksum
@@ -1031,6 +1033,7 @@ name:(NSString *)name { return nil; }
 {
 	@try { [self parse]; }
 	@catch(id exception) { return [XADException parseException:exception]; }
+	if(shouldstop) return XADBreakError;
 	return XADNoError;
 }
 

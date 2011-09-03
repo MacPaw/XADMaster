@@ -451,12 +451,25 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 
 	@try
 	{
-		CSHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
-		if(!srchandle) return XADNotSupportedError;
+		// Send a progress report to show that we are starting.
+		[delegate unarchiver:self extractionProgressForEntryWithDictionary:dict
+		fileFraction:0 estimatedTotalFraction:[[parser handle] estimatedProgress]];
 
+		// Try to find the size of this entry.
 		NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
 		off_t size=0;
-		if(sizenum) size=[sizenum longLongValue];
+		if(sizenum)
+		{
+			size=[sizenum longLongValue];
+
+			// If this file is empty, don't bother reading anything, just
+			// call the output function once with 0 bytes and return.
+			if(size==0) return outputfunc(target,selector,argument,(uint8_t *)"",0);
+		}
+
+		// Create handle and start unpacking.
+		CSHandle *srchandle=[parser handleForEntryWithDictionary:dict wantChecksum:YES];
+		if(!srchandle) return XADNotSupportedError;
 
 		off_t done=0;
 		double updatetime=0;
@@ -466,15 +479,19 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 		{
 			if([self _shouldStop]) return XADBreakError;
 
+			// Read some data, and send it to the output function.
+			// Stop if no more data was available.
 			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
 			if(actual)
 			{
 				XADError error=outputfunc(target,selector,argument,buf,actual);
 				if(error) return error;
 			}
+			else break;
 
 			done+=actual;
 
+			// Occasionally, send a progress message.
 			double currtime=[XADPlatform currentTimeInSeconds];
 			if(currtime-updatetime>updateinterval)
 			{
@@ -487,13 +504,15 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 				[delegate unarchiver:self extractionProgressForEntryWithDictionary:dict
 				fileFraction:progress estimatedTotalFraction:[[parser handle] estimatedProgress]];
 			}
-
-			if(actual==0) break;
 		}
 
+		// Check if the file has already been marked as corrupt, and
+		// give up without testing checksum if so.
 		NSNumber *iscorrupt=[dict objectForKey:XADIsCorruptedKey];
 		if(iscorrupt&&[iscorrupt boolValue]) return XADDecrunchError;
 
+		// If the file has a checksum, check it. Otherwise, if it has a
+		// size, check that the size ended up correct.
 		if([srchandle hasChecksum])
 		{
 			if(![srchandle isChecksumCorrect]) return XADChecksumError;
@@ -502,6 +521,10 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 		{
 			if(sizenum&&done!=size) return XADDecrunchError; // kind of hacky
 		}
+
+		// Send a final progress report.
+		[delegate unarchiver:self extractionProgressForEntryWithDictionary:dict
+		fileFraction:1 estimatedTotalFraction:[[parser handle] estimatedProgress]];
 	}
 	@catch(id e)
 	{

@@ -384,10 +384,7 @@
 		if(totalsize>=0) totalprogress+=currsize;
 	}
 
-	XADError error=[unarchiver finishExtractions];
-	if(error) return error;
-
-	return XADNoError;
+	return [self _finalizeExtraction];
 }
 
 -(XADError)_unarchiveSubArchive
@@ -521,13 +518,16 @@
 		finaldestination=[destpath retain];
 	}
 
-	[self _finalizeExtraction];
+	if(error) return error;
 
-	return error;
+	return [self _finalizeExtraction];
 }
 
--(void)_finalizeExtraction
+-(XADError)_finalizeExtraction
 {
+	XADError error=[unarchiver finishExtractions];
+	if(error) return error;
+
 /*		BOOL alwayscreatepref=[[NSUserDefaults standardUserDefaults] integerForKey:@"createFolder"]==2;
 		BOOL copydatepref=[[NSUserDefaults standardUserDefaults] integerForKey:@"folderModifiedDate"]==2;
 		BOOL changefilespref=[[NSUserDefaults standardUserDefaults] boolForKey:@"changeDateOfFiles"];
@@ -573,6 +573,8 @@
 			UCConvertCFAbsoluteTimeToUTCDateTime(CFAbsoluteTimeGetCurrent(),&newinfo.contentModDate);
 			SetCatalogInfoForFilename(finaldest,kFSCatInfoContentMod,&newinfo);
 		}*/
+
+	return XADNoError;
 }
 
 

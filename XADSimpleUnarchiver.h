@@ -109,7 +109,7 @@
 -(XADError)_unarchiveRegularArchive;
 -(XADError)_unarchiveSubArchive;
 
--(void)_finalizeExtraction;
+-(XADError)_finalizeExtraction;
 
 -(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred;
 -(NSString *)_findUniquePathForCollidingPath:(NSString *)path;

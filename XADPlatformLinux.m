@@ -102,7 +102,7 @@ preservePermissions:(BOOL)preservepermissions
 +(BOOL)copyDateFromPath:(NSString *)src toPath:(NSString *)dest
 {
 	struct stat st;
-	const char *csrc=[path fileSystemRepresentation];
+	const char *csrc=[src fileSystemRepresentation];
 	if(stat(csrc,&st)!=0) return NO;
 
 	struct timeval times[2]={

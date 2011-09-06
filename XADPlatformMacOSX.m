@@ -322,10 +322,12 @@ fromCatalogInfo:(FSCatalogInfo *)info
 
 +(NSString *)sanitizedPathComponent:(NSString *)component
 {
-	if([component rangeOfString:@"/"].location==NSNotFound) return component;
+	if([component rangeOfString:@"/"].location==NSNotFound&&
+	[component rangeOfString:@"\000"].location==NSNotFound) return component;
 
 	NSMutableString *newstring=[NSMutableString stringWithString:component];
 	[newstring replaceOccurrencesOfString:@"/" withString:@":" options:0 range:NSMakeRange(0,[newstring length])];
+	[newstring replaceOccurrencesOfString:@"\000" withString:@"_" options:0 range:NSMakeRange(0,[newstring length])];
 	return newstring;
 }
 

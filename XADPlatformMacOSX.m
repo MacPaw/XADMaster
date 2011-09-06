@@ -17,6 +17,10 @@ struct ResourceOutputArguments
 @interface XADPlatform (Private)
 
 +(void)setComment:(NSString *)comment forPath:(NSString *)path;
++(BOOL)readCatalogInfoForFilename:(NSString *)filename infoBitmap:(FSCatalogInfoBitmap)bitmap
+toCatalogInfo:(FSCatalogInfo *)info;
++(BOOL)writeCatalogInfoForFilename:(NSString *)filename infoBitmap:(FSCatalogInfoBitmap)bitmap
+fromCatalogInfo:(FSCatalogInfo *)info;
 
 @end
 
@@ -24,6 +28,10 @@ struct ResourceOutputArguments
 
 
 @implementation XADPlatform
+
+//
+// Archive entry extraction.
+//
 
 +(XADError)extractResourceForkEntryWithDictionary:(NSDictionary *)dict
 unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
@@ -163,87 +171,6 @@ preservePermissions:(BOOL)preservepermissions
 	return XADNoError;
 }
 
-
-
-
-+(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link
-{
-	struct stat st;
-	const char *destcstr=[path fileSystemRepresentation];
-	if(lstat(destcstr,&st)==0) unlink(destcstr);
-	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
-
-	return XADNoError;
-}
-
-
-
-
-+(id)readCloneableMetadataFromPath:(NSString *)path
-{
-	if(!LSSetItemAttribute) return nil;
-
-	FSRef ref;
-	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
-	{
-		CFDictionaryRef quarantinedict;
-		LSCopyItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,
-		(CFTypeRef*)&quarantinedict);
-
-		return [(id)quarantinedict autorelease];
-	}
-	return nil;
-}
-
-+(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path
-{
-	if(!LSSetItemAttribute) return;
-
-	FSRef ref;
-	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
-	LSSetItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,metadata);
-}
-
-
-
-+(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent
-{
-	// TODO: ensure this path is actually unique.
-	NSDate *now=[NSDate date];
-	int64_t t=[now timeIntervalSinceReferenceDate]*1000000000;
-	pid_t pid=getpid();
-
-	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd%d",t,pid];
-
-	if(parent) return [parent stringByAppendingPathComponent:dirname];
-	else return dirname;
-}
-
-
-
-
-+(NSString *)sanitizedPathComponent:(NSString *)component
-{
-	if([component rangeOfString:@"/"].location==NSNotFound) return component;
-
-	NSMutableString *newstring=[NSMutableString stringWithString:component];
-	[newstring replaceOccurrencesOfString:@"/" withString:@":" options:0 range:NSMakeRange(0,[newstring length])];
-	return newstring;
-}
-
-
-
-
-+(double)currentTimeInSeconds
-{
-	struct timeval tv;
-	gettimeofday(&tv,NULL);
-	return (double)tv.tv_sec+(double)tv.tv_usec/1000000.0;
-}
-
-
-
-
 +(void)setComment:(NSString *)comment forPath:(NSString *)path;
 {
 	if(!comment||![comment length]) return;
@@ -292,5 +219,132 @@ preservePermissions:(BOOL)preservepermissions
 	AEDisposeDesc(&builtevent);
 	AEDisposeDesc(&replyevent);
 }
+
+
+
+
++(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link
+{
+	struct stat st;
+	const char *destcstr=[path fileSystemRepresentation];
+	if(lstat(destcstr,&st)==0) unlink(destcstr);
+	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
+
+	return XADNoError;
+}
+
+
+
+
+//
+// Archive post-processing.
+//
+
++(id)readCloneableMetadataFromPath:(NSString *)path
+{
+	if(!LSSetItemAttribute) return nil;
+
+	FSRef ref;
+	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
+	{
+		CFDictionaryRef quarantinedict;
+		LSCopyItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,
+		(CFTypeRef*)&quarantinedict);
+
+		return [(id)quarantinedict autorelease];
+	}
+	return nil;
+}
+
++(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path
+{
+	if(!LSSetItemAttribute) return;
+
+	FSRef ref;
+	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
+	LSSetItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,metadata);
+}
+
++(BOOL)copyDateFromPath:(NSString *)src toPath:(NSString *)dest
+{
+	FSCatalogInfo info;
+
+	if(![self readCatalogInfoForFilename:src infoBitmap:kFSCatInfoContentMod toCatalogInfo:&info]) return NO;
+	return [self writeCatalogInfoForFilename:dest infoBitmap:kFSCatInfoContentMod fromCatalogInfo:&info];
+}
+
++(BOOL)resetDateAtPath:(NSString *)path
+{
+	FSCatalogInfo info;
+
+	UCConvertCFAbsoluteTimeToUTCDateTime(CFAbsoluteTimeGetCurrent(),&info.contentModDate);
+	return [self writeCatalogInfoForFilename:path infoBitmap:kFSCatInfoContentMod fromCatalogInfo:&info];
+}
+
++(BOOL)readCatalogInfoForFilename:(NSString *)filename infoBitmap:(FSCatalogInfoBitmap)bitmap
+toCatalogInfo:(FSCatalogInfo *)info
+{
+	FSRef ref;
+	if(FSPathMakeRefWithOptions((const UInt8 *)[filename fileSystemRepresentation],
+	kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
+	if(FSGetCatalogInfo(&ref,bitmap,info,NULL,NULL,NULL)!=noErr) return NO;
+	return YES;
+}
+
++(BOOL)writeCatalogInfoForFilename:(NSString *)filename infoBitmap:(FSCatalogInfoBitmap)bitmap
+fromCatalogInfo:(FSCatalogInfo *)info
+{
+	FSRef ref;
+	if(FSPathMakeRefWithOptions((const UInt8 *)[filename fileSystemRepresentation],
+	kFSPathMakeRefDoNotFollowLeafSymlink,&ref,NULL)!=noErr) return NO;
+	if(FSSetCatalogInfo(&ref,bitmap,info)!=noErr) return NO;
+	return YES;
+}
+
+
+
+//
+// Path functions.
+//
+
++(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent
+{
+	// TODO: ensure this path is actually unique.
+	NSDate *now=[NSDate date];
+	int64_t t=[now timeIntervalSinceReferenceDate]*1000000000;
+	pid_t pid=getpid();
+
+	NSString *dirname=[NSString stringWithFormat:@"XADTemp%qd%d",t,pid];
+
+	if(parent) return [parent stringByAppendingPathComponent:dirname];
+	else return dirname;
+}
+
++(NSString *)sanitizedPathComponent:(NSString *)component
+{
+	if([component rangeOfString:@"/"].location==NSNotFound) return component;
+
+	NSMutableString *newstring=[NSMutableString stringWithString:component];
+	[newstring replaceOccurrencesOfString:@"/" withString:@":" options:0 range:NSMakeRange(0,[newstring length])];
+	return newstring;
+}
+
+
+
+
+//
+// Time functions.
+//
+
++(double)currentTimeInSeconds
+{
+	struct timeval tv;
+	gettimeofday(&tv,NULL);
+	return (double)tv.tv_sec+(double)tv.tv_usec/1000000.0;
+}
+
+
+
+
 
 @end

@@ -11,6 +11,10 @@
 
 @implementation XADPlatform
 
+//
+// Archive entry extraction.
+//
+
 +(XADError)extractResourceForkEntryWithDictionary:(NSDictionary *)dict
 unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 {
@@ -85,8 +89,47 @@ preservePermissions:(BOOL)preservepermissions
 	return XADNoError;
 }
 
+
+
+
+//
+// Archive post-processing.
+//
+
 +(id)readCloneableMetadataFromPath:(NSString *)path { return nil; }
 +(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path {}
+
++(BOOL)copyDateFromPath:(NSString *)src toPath:(NSString *)dest
+{
+	struct stat st;
+	const char *csrc=[path fileSystemRepresentation];
+	if(stat(csrc,&st)!=0) return NO;
+
+	struct timeval times[2]={
+		{st.st_atim.tv_sec,st.st_atim.tv_nsec/1000},
+		{st.st_mtim.tv_sec,st.st_mtim.tv_nsec/1000},
+	};
+
+	const char *cdest=[dest fileSystemRepresentation];
+	if(utimes(cdest,times)!=0) return NO;
+
+	return YES;
+}
+
++(BOOL)resetDateAtPath:(NSString *)path
+{
+	const char *cpath=[path fileSystemRepresentation];
+	if(utimes(cpath,NULL)!=0) return NO;
+
+	return YES;
+}
+
+
+
+
+//
+// Path functions.
+//
 
 +(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent
 {
@@ -109,6 +152,13 @@ preservePermissions:(BOOL)preservepermissions
 	[newstring replaceOccurrencesOfString:@"/" withString:@"_" options:0 range:NSMakeRange(0,[newstring length])];
 	return newstring;
 }
+
+
+
+
+//
+// Time functions.
+//
 
 +(double)currentTimeInSeconds
 {

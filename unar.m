@@ -79,6 +79,11 @@ int main(int argc,const char **argv)
 	@"when unpacking a .tar.gz file, only unpack the .gz file and not its contents."];
 	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
 
+	[cmdline addSwitchOption:@"copy-time" description:
+	@"Copy the file modification time from the archive file to the containing directory, "
+	@"if one is created."];
+	[cmdline addAlias:@"t" forOption:@"copy-time"];
+
 	#ifdef __APPLE__
 
 	[cmdline addSwitchOption:@"no-quarantine" description:
@@ -127,6 +132,7 @@ int main(int argc,const char **argv)
 	NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
 	BOOL indexes=[cmdline boolValueForOption:@"indexes"];
 	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
+	BOOL copytime=[cmdline boolValueForOption:@"copy-time"];
 	BOOL noquarantine=[cmdline boolValueForOption:@"no-quarantine"];
 	int forkstyle=forkvalues[[cmdline intValueForOption:@"forks"]];
 
@@ -172,6 +178,7 @@ int main(int argc,const char **argv)
 	[unarchiver setAlwaysSkipsFiles:forceskip];
 	[unarchiver setExtractsSubArchives:!norecursion];
 	[unarchiver setPropagatesRelevantMetadata:!noquarantine];
+	[unarchiver setCopiesArchiveModificationTimeToEnclosingDirectory:copytime];
 	[unarchiver setMacResourceForkStyle:forkstyle];
 
 	for(int i=1;i<numfiles;i++)
@@ -231,8 +238,7 @@ int main(int argc,const char **argv)
 	}
 	else if([unarchiver numberOfItemsExtracted])
 	{
-		NSString *result=[unarchiver createdItem];
-		if(!result) result=[unarchiver actualDestination];
+		NSString *result=[unarchiver createdItemOrActualDestination];
 
 		if([result isEqual:@"."])
 		{

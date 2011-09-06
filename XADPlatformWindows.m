@@ -11,6 +11,10 @@
 
 @implementation XADPlatform
 
+//
+// Archive entry extraction.
+//
+
 +(XADError)extractResourceForkEntryWithDictionary:(NSDictionary *)dict
 unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 {
@@ -38,7 +42,8 @@ preservePermissions:(BOOL)preservepermissions
 
 	if(modification||creation||access)
 	{
-		HANDLE handle=CreateFileW(wpath,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
+		HANDLE handle=CreateFileW(wpath,GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,
+		NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
 		if(handle==INVALID_HANDLE_VALUE) return XADUnknownError; // TODO: better error
 
 		FILETIME creationtime,lastaccesstime,lastwritetime;
@@ -76,8 +81,66 @@ preservePermissions:(BOOL)preservepermissions
 	return XADNotSupportedError;
 }
 
+
+
+
+//
+// Archive post-processing.
+//
+
 +(id)readCloneableMetadataFromPath:(NSString *)path { return nil; }
 +(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path {}
+
++(BOOL)copyDateFromPath:(NSString *)src toPath:(NSString *)dest
+{
+	const wchar_t *wsrc=[src fileSystemRepresentationW];
+    HANDLE srchandle=CreateFileW(wsrc,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE, 
+	NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
+	if(srchandle==INVALID_HANDLE_VALUE) return NO;
+
+	FILETIME time;
+	if(!GetFileTime(srchandle,NULL,NULL,&time)) { CloseHandle(srchandle); return NO; }
+
+	CloseHandle(srchandle);
+
+	const wchar_t *wdest=[dest fileSystemRepresentationW];
+	HANDLE desthandle=CreateFileW(wdest,GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,
+	NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
+	if(desthandle==INVALID_HANDLE_VALUE) return NO;
+
+	if(!SetFileTime(desthandle,NULL,NULL,&time)) { CloseHandle(desthandle); return NO; }
+
+	CloseHandle(desthandle);
+
+	return YES;
+}
+
++(BOOL)resetDateAtPath:(NSString *)path
+{
+	SYSTEMTIME now;
+	GetSystemTime(&now);
+
+	FILETIME time;
+	if(!SystemTimeToFileTime(&now,&time)) return NO;
+
+	const wchar_t *wpath=[path fileSystemRepresentationW];
+	HANDLE handle=CreateFileW(wpath,GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,
+	NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
+	if(handle==INVALID_HANDLE_VALUE) return NO;
+
+	if(!SetFileTime(handle,NULL,NULL,&time)) { CloseHandle(handle); return NO; }
+
+	CloseHandle(handle);
+
+	return YES;
+}
+
+
+
+
+//
+// Path functions.
+//
 
 +(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent
 {
@@ -133,6 +196,13 @@ preservePermissions:(BOOL)preservepermissions
 
 	return component;
 }
+
+
+
+
+//
+// Time functions.
+//
 
 +(double)currentTimeInSeconds
 {

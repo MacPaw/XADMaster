@@ -108,6 +108,7 @@
 -(NSString *)actualDestination;
 -(NSString *)soloItem;
 -(NSString *)createdItem;
+-(NSString *)createdItemOrActualDestination;
 
 
 

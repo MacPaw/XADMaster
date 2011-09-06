@@ -69,7 +69,10 @@
 		reasonsforinterest=[NSMutableArray new];
 		renames=[NSMutableDictionary new];
 		resourceforks=[NSMutableSet new];
-		metadata=[[XADPlatform readCloneableMetadataFromPath:[parser filename]] retain];
+
+		NSString *archivename=[parser filename];
+		if(archivename) metadata=[[XADPlatform readCloneableMetadataFromPath:archivename] retain];
+		else metadata=nil;
 
 		unpackdestination=nil;
 		finaldestination=nil;
@@ -237,6 +240,12 @@
 {
 	if(!enclosingdir) return nil;
 	else if(lookslikesolo && removesolo) return soloitem;
+	else return finaldestination;
+}
+
+-(NSString *)createdItemOrActualDestination
+{
+	if(lookslikesolo && enclosingdir && removesolo) return soloitem;
 	else return finaldestination;
 }
 
@@ -556,36 +565,25 @@
 	XADError error=[unarchiver finishExtractions];
 	if(error) return error;
 
-/*		BOOL alwayscreatepref=[[NSUserDefaults standardUserDefaults] integerForKey:@"createFolder"]==2;
-		BOOL copydatepref=[[NSUserDefaults standardUserDefaults] integerForKey:@"folderModifiedDate"]==2;
-		BOOL changefilespref=[[NSUserDefaults standardUserDefaults] boolForKey:@"changeDateOfFiles"];
-		BOOL deletearchivepref=[[NSUserDefaults standardUserDefaults] boolForKey:@"deleteExtractedArchive"];
-		BOOL openfolderpref=[[NSUserDefaults standardUserDefaults] boolForKey:@"openExtractedFolder"];
-
-		BOOL singlefile=[files count]==1;
-
-		BOOL makefolder=!singlefile || alwayscreatepref;
-		BOOL copydate=(makefolder&&copydatepref)||(!makefolder&&changefilespref&&copydatepref);
-		BOOL resetdate=!makefolder&&changefilespref&&!copydatepref;*/
-
-/*		NSString *finaldest;
-
-		// Set correct date for extracted directory
-		if(copydate)
+	// Update date of the enclosing directory (or single item), if requested.
+	if(enclosingdir)
+	{
+		NSString *archivename=[[unarchiver archiveParser] filename];
+		if(archivename)
 		{
-			FSCatalogInfo archiveinfo,newinfo;
-
-			GetCatalogInfoForFilename(archivename,kFSCatInfoContentMod,&archiveinfo);
-			newinfo.contentModDate=archiveinfo.contentModDate;
-			SetCatalogInfoForFilename(finaldest,kFSCatInfoContentMod,&newinfo);
+			if(lookslikesolo && removesolo)
+			{
+				// We are dealing with a solo item removed from the enclosing directory.
+				if(copydatetosolo) [XADPlatform copyDateFromPath:archivename toPath:soloitem];
+				else if(resetsolodate) [XADPlatform resetDateAtPath:soloitem];
+			}
+			else
+			{
+				// We are dealing with an enclosing directory.
+				if(copydatetoenclosing) [XADPlatform copyDateFromPath:archivename toPath:finaldestination];
+			}
 		}
-		else if(resetdate)
-		{
-			FSCatalogInfo newinfo;
-
-			UCConvertCFAbsoluteTimeToUTCDateTime(CFAbsoluteTimeGetCurrent(),&newinfo.contentModDate);
-			SetCatalogInfoForFilename(finaldest,kFSCatInfoContentMod,&newinfo);
-		}*/
+	}
 
 	return XADNoError;
 }

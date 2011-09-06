@@ -68,7 +68,7 @@ NSString *XADExceptionName=@"XADException";
 		case XADFiletypeError:		return @"Unknown file type";
 		case XADOpenFileError:		return @"Opening file failed";
 		case XADSkipError:			return @"File, disk has been skipped";
-		case XADBreakError:			return @"User break in progress hook";
+		case XADBreakError:			return @"User cancelled extraction";
 		case XADFileExistsError:	return @"File already exists";
 		case XADPasswordError:		return @"Missing or wrong password";
 		case XADMakeDirectoryError:	return @"Could not create directory";

@@ -209,18 +209,18 @@ int main(int argc,const char **argv)
 
 	error=[unarchiver unarchive];
 
-	NSString *actualdest=[unarchiver actualDestinationPath];
-
 	if(error||numerrors)
 	{
-		if([actualdest isEqual:@"."])
+		NSString *destination=[unarchiver destination];
+
+		if([destination isEqual:@"."])
 		{
 			[@"Extraction to current directory failed! (" print];
 		}
 		else
 		{
 			[@"Extraction to directory \"" print];
-			[actualdest print];
+			[destination print];
 			[@"\" failed (" print];
 		}
 
@@ -229,18 +229,25 @@ int main(int argc,const char **argv)
 
 		[@").\n" print];
 	}
-	else
+	else if([unarchiver numberOfItemsExtracted])
 	{
-		if([actualdest isEqual:@"."])
+		NSString *result=[unarchiver createdItem];
+		if(!result) result=[unarchiver actualDestination];
+
+		if([result isEqual:@"."])
 		{
 			[@"Successfully extracted to current directory.\n" print];
 		}
 		else
 		{
-			[@"Successfully extracted to directory \"" print];
-			[actualdest print];
+			[@"Successfully extracted to \"" print];
+			[result print];
 			[@"\".\n" print];
 		}
+	}
+	else
+	{
+		[@"No files extracted.\n" print];
 	}
 
 	// TODO: Print interest?

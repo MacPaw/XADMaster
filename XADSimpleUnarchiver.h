@@ -19,7 +19,7 @@
 	NSString *destination,*enclosingdir;
 	BOOL extractsubarchives,removesolo;
 	BOOL overwrite,rename,skip;
-	BOOL updateenclosing,updatesolo;
+	BOOL copydatetoenclosing,copydatetosolo,resetsolodate;
 	BOOL propagatemetadata;
 
 	NSMutableArray *regexes;
@@ -29,8 +29,11 @@
 	NSMutableDictionary *renames;
 	NSMutableSet *resourceforks;
 	id metadata;
-	NSString *actualdestination,*finaldestination;
-	BOOL enclosingcollision;
+	NSString *unpackdestination,*finaldestination,*soloitem;
+	int numextracted;
+
+	XADString *toplevelname;
+	BOOL lookslikesolo;
 
 	off_t totalsize,currsize,totalprogress;
 }
@@ -72,14 +75,17 @@
 -(BOOL)alwaysSkipsFiles;
 -(void)setAlwaysSkipsFiles:(BOOL)skipflag;
 
--(BOOL)updatesEnclosingDirectoryModificationTime;
--(void)setUpdatesEnclosingDirectoryModificationTime:(BOOL)modificationflag;
-
--(BOOL)updatesSoloItemModificationTime;
--(void)setUpdatesSoloItemModificationTime:(BOOL)modificationflag;
-
 -(BOOL)extractsSubArchives;
 -(void)setExtractsSubArchives:(BOOL)extractflag;
+
+-(BOOL)copiesArchiveModificationTimeToEnclosingDirectory;
+-(void)setCopiesArchiveModificationTimeToEnclosingDirectory:(BOOL)copyflag;
+
+-(BOOL)copiesArchiveModificationTimeToSoloItems;
+-(void)setCopiesArchiveModificationTimeToSoloItems:(BOOL)copyflag;
+
+-(BOOL)resetsDateForSoloItems;
+-(void)setResetsDateForSoloItems:(BOOL)resetflag;
 
 -(BOOL)propagatesRelevantMetadata;
 -(void)setPropagatesRelevantMetadata:(BOOL)propagateflag;
@@ -97,7 +103,12 @@
 -(void)addRegexFilter:(XADRegex *)regex;
 -(void)addIndexFilter:(int)index;
 
--(NSString *)actualDestinationPath;
+-(int)numberOfItemsExtracted;
+-(BOOL)wasSoloItem;
+-(NSString *)actualDestination;
+-(NSString *)soloItem;
+-(NSString *)createdItem;
+
 
 
 -(XADError)parseAndUnarchive;
@@ -111,8 +122,11 @@
 
 -(XADError)_finalizeExtraction;
 
+-(void)_testForSoloItems:(NSDictionary *)entry;
+-(NSString *)_findPathForSoloItem;
+
 -(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred;
--(NSString *)_findUniquePathForCollidingPath:(NSString *)path;
+-(NSString *)_findUniquePathForOriginalPath:(NSString *)path;
 -(BOOL)_fileExistsAtPath:(NSString *)path;
 -(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr;
 -(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path;

@@ -48,6 +48,8 @@
 			enclosingdir=[[name stringByDeletingPathExtension] retain];
 		}
 
+		// TODO: Check if we accidentally create a package. Seems impossible, though.
+
 		extractsubarchives=YES;
 		removesolo=YES;
 
@@ -55,8 +57,9 @@
 		rename=NO;
 		skip=NO;
 
-		updateenclosing=NO;
-		updatesolo=NO;
+		copydatetoenclosing=NO;
+		copydatetosolo=NO;
+		resetsolodate=NO;
 		propagatemetadata=YES;
 
 		regexes=nil;
@@ -68,9 +71,14 @@
 		resourceforks=[NSMutableSet new];
 		metadata=[[XADPlatform readCloneableMetadataFromPath:[parser filename]] retain];
 
-		actualdestination=nil;
+		unpackdestination=nil;
 		finaldestination=nil;
-	
+		soloitem=nil;
+
+		toplevelname=nil;
+		lookslikesolo=NO;
+
+		numextracted=0;
 	}
 
 	return self;
@@ -94,8 +102,11 @@
 	[resourceforks release];
 	[metadata release];
 
-	[actualdestination release];
+	[unpackdestination release];
 	[finaldestination release];
+	[soloitem release];
+
+	[toplevelname release];
 
 	[super dealloc];
 }
@@ -153,14 +164,17 @@
 -(BOOL)alwaysSkipsFiles { return skip; }
 -(void)setAlwaysSkipsFiles:(BOOL)skipflag { skip=skipflag; }
 
--(BOOL)updatesEnclosingDirectoryModificationTime { return updateenclosing; }
--(void)setUpdatesEnclosingDirectoryModificationTime:(BOOL)modificationflag { updateenclosing=modificationflag; }
-
--(BOOL)updatesSoloItemModificationTime { return updatesolo; }
--(void)setUpdatesSoloItemModificationTime:(BOOL)modificationflag { updatesolo=modificationflag; }
-
 -(BOOL)extractsSubArchives { return extractsubarchives; }
 -(void)setExtractsSubArchives:(BOOL)extractflag { extractsubarchives=extractflag; }
+
+-(BOOL)copiesArchiveModificationTimeToEnclosingDirectory { return copydatetoenclosing; }
+-(void)setCopiesArchiveModificationTimeToEnclosingDirectory:(BOOL)copyflag { copydatetoenclosing=copyflag; }
+
+-(BOOL)copiesArchiveModificationTimeToSoloItems { return copydatetosolo; }
+-(void)setCopiesArchiveModificationTimeToSoloItems:(BOOL)copyflag { copydatetosolo=copyflag; }
+
+-(BOOL)resetsDateForSoloItems { return resetsolodate; }
+-(void)setResetsDateForSoloItems:(BOOL)resetflag { resetsolodate=resetflag; }
 
 -(BOOL)propagatesRelevantMetadata { return propagatemetadata; }
 -(void)setPropagatesRelevantMetadata:(BOOL)propagateflag { propagatemetadata=propagateflag; }
@@ -209,10 +223,21 @@
 	[indices addIndex:index];
 }
 
--(NSString *)actualDestinationPath
+
+
+-(int)numberOfItemsExtracted { return numextracted; }
+
+-(BOOL)wasSoloItem { return lookslikesolo; }
+
+-(NSString *)actualDestination { return finaldestination; }
+
+-(NSString *)soloItem { return soloitem; }
+
+-(NSString *)createdItem
 {
-	if(!finaldestination||[finaldestination length]==0) return @".";
-	return finaldestination;
+	if(!enclosingdir) return nil;
+	else if(lookslikesolo && removesolo) return soloitem;
+	else return finaldestination;
 }
 
 
@@ -309,13 +334,9 @@
 	NSEnumerator *enumerator;
 	NSDictionary *entry;
 
-	// Calculate total size and, if needed, check if there is a single
-	// top-level item.
+	// Calculate total size and check if there is a single top-level item.
 	totalsize=0;
 	totalprogress=0;
-
-	XADString *toplevelname=nil;
-	BOOL shouldremove=removesolo;
 
 	enumerator=[entries objectEnumerator];
 	while((entry=[enumerator nextObject]))
@@ -331,25 +352,13 @@
 			else totalsize=-1;
 		}
 
-		// If we are interested in single top-level items and haven't already
-		// discovered there are multiple, check if this one has the same first
-		// first path component as the earlier ones.
-		if(shouldremove)
-		{
-			XADString *firstcomp=[[entry objectForKey:XADFileNameKey] firstPathComponent];
-			if(!toplevelname)
-			{
-				toplevelname=firstcomp;
-			}
-			else
-			{
-				if(![toplevelname isEqual:firstcomp]) shouldremove=NO;
-			}
-		}
+		// Run test for single top-level items.
+		[self _testForSoloItems:entry];
 	}
 
 	// Figure out actual destination to write to.
 	NSString *destpath;
+	BOOL shouldremove=removesolo && lookslikesolo;
 	if(enclosingdir && !shouldremove)
 	{
 		if(destination) destpath=[destination stringByAppendingPathComponent:enclosingdir];
@@ -357,7 +366,7 @@
 
 		// Check for collision.
 		destpath=[self _checkPath:destpath forEntryWithDictionary:nil deferred:NO];
-		if(!destpath) return XADBreakError;
+		if(!destpath) return XADNoError;
 	}
 	else
 	{
@@ -365,7 +374,7 @@
 		else destpath=@".";
 	}
 
-	actualdestination=[destpath retain];
+	unpackdestination=[destpath retain];
 	finaldestination=[destpath retain];
 
 	// Run unarchiver on all entries.
@@ -384,6 +393,12 @@
 		if(totalsize>=0) totalprogress+=currsize;
 	}
 
+	// If we ended up extracting nothing, give up.
+	if(!numextracted) return XADNoError;
+
+	// If we unpacked a solo item, remember its path.
+	soloitem=[[self _findPathForSoloItem] retain];
+
 	return [self _finalizeExtraction];
 }
 
@@ -393,7 +408,6 @@
 
 	// Figure out actual destination to write to.
 	NSString *destpath,*originaldest=nil;
-	BOOL needsolocheck=NO;
 	if(enclosingdir)
 	{
 		if(destination) destpath=[destination stringByAppendingPathComponent:enclosingdir];
@@ -407,15 +421,14 @@
 			if([self _fileExistsAtPath:destpath])
 			{
 				originaldest=destpath;
-				destpath=[self _findUniquePathForCollidingPath:destpath];
+				destpath=[self _findUniquePathForOriginalPath:destpath];
 			}
-			needsolocheck=YES;
 		}
 		else
 		{
 			// Check for collision.
 			destpath=[self _checkPath:destpath forEntryWithDictionary:nil deferred:NO];
-			if(!destpath) return XADBreakError;
+			if(!destpath) return XADNoError;
 		}
 	}
 	else
@@ -424,32 +437,40 @@
 		else destpath=@".";
 	}
 
-	actualdestination=[destpath retain];
+	unpackdestination=[destpath retain];
 
 	// Disable accurate progress calculation.
 	totalsize=-1;
 
 	// Parse sub-archive and automatically unarchive its contents.
+	// At this stage, files are guaranteed to be written to unpackdestination
+	// and never outside it.
 	[subunarchiver setDelegate:self];
 	error=[subunarchiver parseAndUnarchive];
 
+	// If we ended up extracting nothing, give up.
+	if(!numextracted) return error;
+
+	// If we extracted a single item, remember its path.
+	NSString *soloitempath=[self _findPathForSoloItem];
+
 	// If we are removing the enclosing directory for solo items, check
-	// how many items were extracted, and handle collision and moving files.
-	if(needsolocheck)
+	// how many items were extracted, and handle collisions and moving files.
+	if(enclosingdir && removesolo)
 	{
-		NSString *enclosingpath=destpath;
-		NSArray *files=[self _contentsOfDirectoryAtPath:enclosingpath];
-		if([files count]==1)
+		if(lookslikesolo)
 		{
 			// Only one top-level item was unpacked. Move it to the parent
 			// directory and remove the enclosing directory.
-			NSString *itemname=[files objectAtIndex:0];
+			NSString *itemname=[soloitempath lastPathComponent];
 
 			// To avoid trouble, first rename the enclosing directory
 			// to something unique.
+			NSString *enclosingpath=destpath;
 			NSString *newenclosingpath=[XADPlatform uniqueDirectoryPathWithParentDirectory:destination];
-			NSString *newitempath=[newenclosingpath stringByAppendingPathComponent:itemname];
 			[self _moveItemAtPath:enclosingpath toPath:newenclosingpath];
+
+			NSString *newitempath=[newenclosingpath stringByAppendingPathComponent:itemname];
 
 			// Figure out the new path, and check it for collisions.
 			NSString *finalitempath;
@@ -461,7 +482,7 @@
 			{
 				// In case skipping was requested, delete everything and give up.
 				[self _removeItemAtPath:newenclosingpath];
-				finaldestination=[destination retain]; // Lie about where the item ended up.
+				numextracted=0;
 				return error;
 			}
 
@@ -473,19 +494,23 @@
 
 			// Remember where the item ended up.
 			finaldestination=[[finalitempath stringByDeletingLastPathComponent] retain];
+			soloitempath=finalitempath;
+
 		}
-		else if([files count]>1)
+		else
 		{
 			// Multiple top-level items were unpacked, so we keep the enclosing
 			// directory, but we need to check if there was a collision while
 			// creating it, and handle this.
 			if(originaldest)
 			{
+				NSString *enclosingpath=destpath;
 				NSString *newenclosingpath=[self _checkPath:originaldest forEntryWithDictionary:nil deferred:YES];
 				if(!newenclosingpath)
 				{
 					// In case skipping was requested, delete everything and give up.
 					[self _removeItemAtPath:enclosingpath];
+					numextracted=0;
 					return error;
 				}
 				else if([newenclosingpath isEqual:enclosingpath])
@@ -518,6 +543,9 @@
 		finaldestination=[destpath retain];
 	}
 
+	// Save the final path to the solo item, if any.
+	soloitem=[soloitempath retain];
+
 	if(error) return error;
 
 	return [self _finalizeExtraction];
@@ -542,23 +570,8 @@
 
 /*		NSString *finaldest;
 
-			// Check if we accidentally created a package.
-			if([[NSWorkspace sharedWorkspace] isFilePackageAtPath:finaldest])
-			{
-				NSString *newfinaldest=[finaldest stringByDeletingPathExtension];
-
-				#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-				[fm moveItemAtPath:finaldest toPath:newfinaldest error:NULL];
-				#else
-				[fm movePath:finaldest toPath:newfinaldest handler:nil];
-				#endif
-
-				finaldest=newfinaldest;
-			}
-		}*/
-
 		// Set correct date for extracted directory
-/*		if(copydate)
+		if(copydate)
 		{
 			FSCatalogInfo archiveinfo,newinfo;
 
@@ -575,6 +588,39 @@
 		}*/
 
 	return XADNoError;
+}
+
+-(void)_testForSoloItems:(NSDictionary *)entry
+{
+	// If we haven't already discovered there are multiple top-level items, check
+	// if this one has the same first first path component as the earlier ones.
+	if(lookslikesolo || !toplevelname)
+	{
+		XADString *firstcomp=[[entry objectForKey:XADFileNameKey] firstPathComponent];
+		if(!toplevelname)
+		{
+			toplevelname=[firstcomp retain];
+			lookslikesolo=YES;
+		}
+		else
+		{
+			if(![toplevelname isEqual:firstcomp]) lookslikesolo=NO;
+		}
+	}
+}
+
+-(NSString *)_findPathForSoloItem
+{
+	if(lookslikesolo)
+	{
+		NSArray *keys=[renames allKeys];
+		if([keys count]==1)
+		{
+			id value=[[renames objectForKey:[keys objectAtIndex:0]] objectForKey:@"."];
+			if(value!=[NSNull null]) return value;
+		}
+	}
+	return nil;
 }
 
 
@@ -605,8 +651,11 @@
 	[delegate simpleUnarchiverNeedsPassword:self];
 }
 
--(BOOL)unarchiver:(XADUnarchiver *)unarch shouldExtractEntryWithDictionary:(NSDictionary *)dict suggestedPath:(NSString **)pathptr
+-(BOOL)unarchiver:(XADUnarchiver *)currunarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict suggestedPath:(NSString **)pathptr
 {
+	// If this is a sub-archive, we need to run the test for solo top-level items.
+	if(currunarchiver==subunarchiver) [self _testForSoloItems:dict];
+
 	// Decode name.
 	XADPath *xadpath=[dict objectForKey:XADFileNameKey];
 	NSString *encodingname=nil;
@@ -616,9 +665,9 @@
 		if(!encodingname) return NO;
 	}
 
-	NSString *filename;
-	if(encodingname) filename=[xadpath sanitizedPathStringWithEncodingName:encodingname];
-	else filename=[xadpath sanitizedPathString];
+	NSString *safefilename;
+	if(encodingname) safefilename=[xadpath sanitizedPathStringWithEncodingName:encodingname];
+	else safefilename=[xadpath sanitizedPathString];
 
 	// Apply filters.
 	if(delegate)
@@ -632,7 +681,7 @@
 			XADRegex *regex;
 			while(!found && (regex=[enumerator nextObject]))
 			{
-				if([regex matchesString:filename]) found=YES;
+				if([regex matchesString:safefilename]) found=YES;
 			}
 
 			if(!found) return NO;
@@ -650,8 +699,8 @@
 	// Walk through the path, and check if any parts that have not already been
 	// encountered collide, and cache results in the path hierarchy.
 	NSMutableDictionary *parent=renames;
-	NSString *path=actualdestination;
-	NSArray *components=[filename pathComponents];
+	NSString *path=unpackdestination;
+	NSArray *components=[safefilename pathComponents];
 	int numcomponents=[components count];
 	for(int i=0;i<numcomponents;i++)
 	{
@@ -666,7 +715,7 @@
 			// Check it for collisions.
 			if(i==numcomponents-1)
 			{
-				path=[unarch adjustPathString:path forEntryWithDictionary:dict];
+				path=[currunarchiver adjustPathString:path forEntryWithDictionary:dict];
 				path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
 			}
 			else
@@ -724,6 +773,8 @@
 
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
 {
+	numextracted++;
+
 	if(propagatemetadata && metadata) [XADPlatform writeCloneableMetadata:metadata toPath:path];
 
 	[delegate simpleUnarchiver:self didExtractEntryWithDictionary:dict to:path error:error];
@@ -809,7 +860,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 		// If set to always skip, just return nil.
 		if(skip) return nil;
 
-		NSString *unique=[self _findUniquePathForCollidingPath:path];
+		NSString *unique=[self _findUniquePathForOriginalPath:path];
 
 		if(rename)
 		{
@@ -835,16 +886,35 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	else return path;
 }
 
--(NSString *)_findUniquePathForCollidingPath:(NSString *)path
+-(NSString *)findUniqueDestinationWithDirectory:(NSString *)directory andFilename:(NSString *)filename
+{
+	NSString *basename=[filename stringByDeletingPathExtension];
+	NSString *extension=[filename pathExtension];
+	if([extension length]) extension=[@"." stringByAppendingString:extension];
+
+	NSString *dest=[directory stringByAppendingPathComponent:filename];
+	int n=1;
+
+	while([[NSFileManager defaultManager] fileExistsAtPath:dest])
+	{
+		dest=[directory stringByAppendingPathComponent:
+		[NSString stringWithFormat:@"%@-%d%@",basename,n++,extension]];
+	}
+
+	return dest;
+}
+
+-(NSString *)_findUniquePathForOriginalPath:(NSString *)path
 {
 	NSString *base=[path stringByDeletingPathExtension];
 	NSString *extension=[path pathExtension];
 	if([extension length]) extension=[@"." stringByAppendingString:extension];
 
-	NSString *dest;
+	NSString *dest=path;
 	int n=1;
-	do { dest=[NSString stringWithFormat:@"%@-%d%@",base,n++,extension]; }
-	while([self _fileExistsAtPath:dest]);
+
+	while([self _fileExistsAtPath:dest])
+	dest=[NSString stringWithFormat:@"%@-%d%@",base,n++,extension];
 
 	return dest;
 }

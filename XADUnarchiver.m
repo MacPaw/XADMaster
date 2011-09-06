@@ -166,7 +166,7 @@
 		if(![delegate unarchiver:self shouldExtractEntryWithDictionary:dict suggestedPath:&path])
 		{
 			[pool release];
-			return XADBreakError;
+			return XADNoError;
 		}
 		[delegate unarchiver:self willExtractEntryWithDictionary:dict to:path];
 	}

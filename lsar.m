@@ -106,6 +106,9 @@ int main(int argc,const char **argv)
 	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
 	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
 
+	// -json-ascii implies -json.
+	if(jsonascii) json=YES;
+
 	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
 	{
 		[@"Available encodings are:\n" print];

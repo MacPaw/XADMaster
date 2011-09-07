@@ -126,8 +126,19 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 	if(pos<0)
 	{
-		// Could not find a zip64 end of central directory locator, but proceed anyway.
-		[self parseWithCentralDirectoryAtOffset:centraloffs zip64Offset:-1];
+		// Could not find a zip64 end of central directory locator.
+		if(end>0x100000000)
+		{
+			// If the file is larger than 4GB, this means some genius wrote a
+			// 64-bit file without 64-bit extensions, and we have to just give up on the
+			// central directory entirely.
+			[self parseWithoutCentralDirectory];
+		}
+		else
+		{
+			// If the file is small enough, everything is fine, and we continue.
+			[self parseWithCentralDirectoryAtOffset:centraloffs zip64Offset:-1];
+		}
 	}
 	else
 	{

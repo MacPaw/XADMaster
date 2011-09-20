@@ -3,12 +3,12 @@
 
 @implementation XADRAR20Handle
 
--(id)initWithRARParser:(XADRARParser *)parent parts:(NSArray *)partarray
+-(id)initWithRARParser:(XADRARParser *)parent files:(NSArray *)filearray
 {
 	if((self=[super initWithName:[parent filename] windowSize:0x100000]))
 	{
 		parser=parent;
-		parts=[partarray retain];
+		files=[filearray retain];
 
 		maincode=nil;
 		offsetcode=nil;
@@ -20,7 +20,7 @@
 
 -(void)dealloc
 {
-	[parts release];
+	[files release];
 	[maincode release];
 	[offsetcode release];
 	[lengthcode release];
@@ -30,7 +30,7 @@
 
 -(void)resetLZSSHandle
 {
-	part=0;
+	file=0;
 	endpos=0;
 
 	lastoffset=0;
@@ -43,14 +43,15 @@
 
 	memset(lengthtable,0,sizeof(lengthtable));
 
-	[self startNextPart];
+	[self startNextFile];
 	[self allocAndParseCodes];
 }
 
--(void)startNextPart
+-(void)startNextFile
 {
-	off_t partlength;
-	CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:&partlength];
+	CSInputBuffer *buf=[parser inputBufferForFileWithIndex:file files:files];
+	off_t partlength=[parser outputLengthOfFileWithIndex:file files:files];
+	file++;
 
 	[self setInputBuffer:buf];
 	endpos+=partlength;
@@ -74,17 +75,7 @@
 	{
 		if(pos==endpos)
 		{
-/*			if(1) //if(ReadTop>=InAddr+5)
-			if(audioblock)
-			{
-				//if (DecodeNumber((struct Decode *)&MD[UnpCurChannel])==256)ReadTables20();
-			}
-			else
-			{
-				if(CSInputNextSymbolUsingCode(input,maincode)==269) [self allocAndParseCodes];
-			}*/
-
-			[self startNextPart];
+			[self startNextFile];
 		}
 
 		if(audioblock)

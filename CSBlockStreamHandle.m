@@ -33,14 +33,6 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 }
 
 
--(uint8_t *)blockPointer { return _currblock; }
-
--(int)blockLength { return _blocklength; }
-
--(off_t)blockStartOffset { return _blockstartpos; }
-
--(void)skipToNextBlock { [self seekToFileOffset:_blockstartpos+_blocklength]; }
-
 
 
 -(void)seekToFileOffset:(off_t)offs
@@ -49,7 +41,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 	if(offs<_blockstartpos) [super seekToFileOffset:0];
 
-	while(_blockstartpos+_blocklength<=offs)
+	while(_blockstartpos+_blocklength<offs)
 	{
 		[self _readNextBlock];
 		if(endofstream)
@@ -68,7 +60,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	_blocklength=0;
 	_endofblocks=NO;
 	[self resetBlockStream];
-	[self _readNextBlock];
+	[self _readNextBlock]; // TODO: Is this necessary?
 }
 
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer

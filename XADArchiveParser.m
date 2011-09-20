@@ -396,6 +396,18 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 -(NSArray *)allFilenames { return [properties objectForKey:XADVolumesKey]; }
 
+-(NSString *)currentFilename
+{
+	if([sourcehandle isKindOfClass:[XADMultiHandle class]])
+	{
+		return [[(XADMultiHandle *)sourcehandle currentHandle] name];
+	}
+	else
+	{
+		return [self filename];
+	}
+}
+
 -(BOOL)isEncrypted
 {
 	NSNumber *isencrypted=[properties objectForKey:XADIsEncryptedKey];

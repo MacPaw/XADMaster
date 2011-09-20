@@ -108,6 +108,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 -(NSString *)name;
 -(NSString *)filename;
 -(NSArray *)allFilenames;
+-(NSString *)currentFilename;
 -(BOOL)isEncrypted;
 
 -(id)delegate;

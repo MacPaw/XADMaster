@@ -10,12 +10,12 @@ static void ResetTable(int *table,int *reverse);
 
 @implementation XADRAR15Handle
 
--(id)initWithRARParser:(XADRARParser *)parent parts:(NSArray *)partarray
+-(id)initWithRARParser:(XADRARParser *)parent files:(NSArray *)filearray
 {
 	if((self=[super initWithName:[parent filename] windowSize:0x10000]))
 	{
 		parser=parent;
-		parts=[partarray retain];
+		files=[filearray retain];
 
 		lengthcode1=[[XADPrefixCode alloc] initWithLengths:(int[256]){
 		2,2,3,4,4,5,5,6,6,6,6,7,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,10,10,10,10,12,12,
@@ -185,7 +185,7 @@ static void ResetTable(int *table,int *reverse);
 
 -(void)resetLZSSHandle
 {
-	part=0;
+	file=0;
 	endpos=0;
 
 	numrepeatedliterals=0;
@@ -217,17 +217,18 @@ static void ResetTable(int *table,int *reverse);
 	memset(oldoffset,0,sizeof(oldoffset));
 	oldoffsetindex=0;
 
-	[self startNextPart];
+	[self startNextFile];
 }
 
--(void)startNextPart
+-(void)startNextFile
 {
 	flagbits=0;
 	storedblock=NO;
 	numrepeatedlastmatches=0;
 
-	off_t partlength;
-	CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:&partlength];
+	CSInputBuffer *buf=[parser inputBufferForFileWithIndex:file files:files];
+	off_t partlength=[parser outputLengthOfFileWithIndex:file files:files];
+	file++;
 
 	[self setInputBuffer:buf];
 	endpos+=partlength;
@@ -237,7 +238,7 @@ static void ResetTable(int *table,int *reverse);
 {
 	while(XADLZSSShouldKeepExpanding(self))
 	{
-		if(pos==endpos) [self startNextPart];
+		if(pos==endpos) [self startNextFile];
 
 		if(storedblock)
 		{

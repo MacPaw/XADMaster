@@ -57,12 +57,12 @@ NSString *XADExceptionName=@"XADException";
 	{
 		case XADNoError:			return nil;
 		case XADUnknownError:		return @"Unknown error";
-		case XADInputError:			return @"Input data buffers border exceeded";
+		case XADInputError:			return @"Attempted to read more data than was available";
 		case XADOutputError:		return @"Failed to write to file";
 		case XADBadParametersError:	return @"Function called with illegal parameters";
 		case XADOutOfMemoryError:	return @"Not enough memory available";
 		case XADIllegalDataError:	return @"Data is corrupted";
-		case XADNotSupportedError:	return @"File not fully supported";
+		case XADNotSupportedError:	return @"File is not fully supported";
 		case XADResourceError:		return @"Required resource missing";
 		case XADDecrunchError:		return @"Error on decrunching";
 		case XADFiletypeError:		return @"Unknown file type";

@@ -6,14 +6,14 @@
 #import "PPMd/SubAllocatorVariantH.h"
 #import "XADRARVirtualMachine.h"
 
-@interface XADRAR30Handle:CSBlockStreamHandle
+@interface XADRAR30Handle:CSBlockStreamHandle 
 {
 	XADRARParser *parser;
 
-	NSArray *parts;
-	int part;
+	NSArray *files;
+	int file;
 	off_t lastend;
-	BOOL startnewpart,startnewtable;
+	BOOL startnewfile,startnewtable;
 
 	LZSS lzss;
 
@@ -38,7 +38,7 @@
 	int lengthtable[299+60+17+28];
 }
 
--(id)initWithRARParser:(XADRARParser *)parent parts:(NSArray *)partarray;
+-(id)initWithRARParser:(XADRARParser *)parent files:(NSArray *)filearray;
 -(void)dealloc;
 
 -(void)resetBlockStream;

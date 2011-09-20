@@ -4,12 +4,12 @@
 
 @implementation XADRAR30Handle
 
--(id)initWithRARParser:(XADRARParser *)parent parts:(NSArray *)partarray
+-(id)initWithRARParser:(XADRARParser *)parent files:(NSArray *)filearray
 {
 	if((self=[super initWithName:[parent filename]]))
 	{
 		parser=parent;
-		parts=[partarray retain];
+		files=[filearray retain];
 
 		InitializeLZSS(&lzss,0x400000);
 
@@ -27,7 +27,7 @@
 
 -(void)dealloc
 {
-	[parts release];
+	[files release];
 	CleanupLZSS(&lzss);
 	[maincode release];
 	[offsetcode release];
@@ -42,7 +42,7 @@
 
 -(void)resetBlockStream
 {
-	part=0;
+	file=0;
 	lastend=0;
 
 	RestartLZSS(&lzss);
@@ -61,20 +61,22 @@
 	lastfilternum=0;
 	currfilestartpos=0;
 
-	startnewpart=startnewtable=YES;
+	startnewfile=startnewtable=YES;
 }
 
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	if(startnewpart)
+	if(startnewfile)
 	{
-		CSInputBuffer *buf=[parser inputBufferForNextPart:&part parts:parts length:NULL];
+		CSInputBuffer *buf=[parser inputBufferForFileWithIndex:file files:files];
 		[self setInputBuffer:buf];
+
+		file++;
 
 		if(startnewtable) [self allocAndParseCodes];
 
-		startnewpart=startnewtable=NO;
+		startnewfile=startnewtable=NO;
 	}
 
 	if(lastend==filterstart)
@@ -135,6 +137,7 @@
 		[self setBlockPointer:&memory[lastfilteraddress]];
 
 		lastend=end;
+
 		return lastfilterlength;
 	}
 	else
@@ -198,7 +201,7 @@
 					break;
 
 					case 2:
-						startnewpart=YES;
+						startnewfile=YES;
 						startnewtable=YES;
 						currfilestartpos=LZSSPosition(&lzss);
 						return LZSSPosition(&lzss);
@@ -255,7 +258,7 @@
 
 				if(newfile)
 				{
-					startnewpart=YES;
+					startnewfile=YES;
 					startnewtable=CSInputNextBit(input);
 					currfilestartpos=LZSSPosition(&lzss);
 					return LZSSPosition(&lzss);

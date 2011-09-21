@@ -194,7 +194,18 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 	while([self shouldKeepParsing])
 	{
 		block=[self readBlockHeader];
-		if(IsZeroBlock(block)) break;
+		if(IsZeroBlock(block))
+		{
+			// We hit the end of the file. If we have parts that have no been
+			// emitted yet, do so now, and mark as corrupted as we are missing the
+			// last part.
+			if(currparts)
+			[self addEntryWithBlock:&previousblock header:&previousheader
+			compressedSize:totalfilesize files:currfiles solidOffset:totalsolidsize
+			isCorrupted:YES];
+
+			break;
+		}
 
 		CSHandle *fh=block.fh;
 

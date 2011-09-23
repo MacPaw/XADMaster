@@ -112,8 +112,6 @@
 
 
 
--(XADError)parseAndUnarchive;
-
 -(XADError)parse;
 -(XADError)_setupSubArchiveForEntryWithDictionary:(NSDictionary *)dict;
 

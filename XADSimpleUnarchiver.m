@@ -252,16 +252,6 @@
 
 
 
--(XADError)parseAndUnarchive
-{
-	XADError error=[self parse];
-	if(error) return error;
-	else return [self unarchive];
-}
-
-
-
-
 -(XADError)parse
 {
 	if([entries count]) [NSException raise:NSInternalInconsistencyException format:@"You can not call parseAndUnarchive twice"];
@@ -402,6 +392,8 @@
 		if(totalsize>=0) totalprogress+=currsize;
 	}
 
+	if([self _shouldStop]) return XADBreakError;
+
 	// If we ended up extracting nothing, give up.
 	if(!numextracted) return XADNoError;
 
@@ -456,6 +448,10 @@
 	// and never outside it.
 	[subunarchiver setDelegate:self];
 	error=[subunarchiver parseAndUnarchive];
+
+	// Check if the caller wants to give up.
+	if(error==XADBreakError) return XADBreakError;
+	if([self _shouldStop]) return XADBreakError;
 
 	// If we ended up extracting nothing, give up.
 	if(!numextracted) return error;

@@ -86,6 +86,8 @@
 	[parser setDelegate:olddelegate];
 	if(error) return error;
 
+	if([self _shouldStop]) return XADBreakError;
+
 	error=[self finishExtractions];
 	if(error) return error;
 
@@ -342,7 +344,7 @@ wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 
 	NSString *linkdest=nil;
 	if(delegate) linkdest=[delegate unarchiver:self destinationForLink:link from:destpath];
-	if(!linkdest) return XADBreakError;
+	if(!linkdest) return XADNoError; // Handle nil returns as a request to skip.
 
 	// TODO: handle link safety?
 
@@ -414,7 +416,7 @@ deferDirectories:(BOOL)defer
 
 		if(delegate)
 		{
-			if(![delegate unarchiver:self shouldCreateDirectory:path]) return XADBreakError;
+			if(![delegate unarchiver:self shouldCreateDirectory:path]) return XADMakeDirectoryError;
 		}
 
 		#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050

@@ -157,12 +157,12 @@ int main(int argc,const char **argv)
 	[@": " print];
 	fflush(stdout);
 
-	XADError error;
-	XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
+	XADError openerror;
+	XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
 	if(!unarchiver)
 	{
 		[@"Couldn't open archive. (" print];
-		[[XADException describeXADError:error] print];
+		[[XADException describeXADError:openerror] print];
 		[@")\n" print];
 		return 1;
 	}
@@ -190,14 +190,7 @@ int main(int argc,const char **argv)
 
 	[unarchiver setDelegate:[[Unarchiver new] autorelease]];
 
-	error=[unarchiver parse];
-	if(error)
-	{
-		[@"Extraction failed! (" print];
-		[[XADException describeXADError:error] print];
-		[@")\n" print];
-		return 1;
-	}
+	XADError parseerror=[unarchiver parse];
 
 	if([unarchiver innerArchiveParser])
 	{
@@ -214,13 +207,20 @@ int main(int argc,const char **argv)
 
 	numerrors=0;
 
-	error=[unarchiver unarchive];
+	XADError unarchiveerror=[unarchiver unarchive];
 
-	if(error||numerrors)
+	if(parseerror)
+	{
+		[@"Archive parsing failed! (" print];
+		[[XADException describeXADError:parseerror] print];
+		[@".)\n" print];
+	}
+
+	if(unarchiveerror||numerrors)
 	{
 		NSString *destination=[unarchiver destination];
 
-		if([destination isEqual:@"."])
+		if(!destination||[destination isEqual:@"."])
 		{
 			[@"Extraction to current directory failed! (" print];
 		}
@@ -231,10 +231,11 @@ int main(int argc,const char **argv)
 			[@"\" failed (" print];
 		}
 
-		if(error) [[XADException describeXADError:error] print];
-		else [[NSString stringWithFormat:@"%d files failed",numerrors] print];
+		if(error) [[XADException describeXADError:unarchiveerror] print];
+		else [[NSString stringWithFormat:@"%d file%s failed",
+		numerrors,numerrors==1?"":"s"] print];
 
-		[@").\n" print];
+		[@".)\n" print];
 	}
 	else if([unarchiver numberOfItemsExtracted])
 	{
@@ -260,7 +261,7 @@ int main(int argc,const char **argv)
 
 	[pool release];
 
-	return error||numerrors;
+	return parseerror||unarchiveerror||numerrors;
 }
 
 @implementation Unarchiver

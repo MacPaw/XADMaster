@@ -60,7 +60,6 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	_blocklength=0;
 	_endofblocks=NO;
 	[self resetBlockStream];
-	[self _readNextBlock]; // TODO: Is this necessary?
 }
 
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer

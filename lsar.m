@@ -136,12 +136,12 @@ int main(int argc,const char **argv)
 		[printer printDictionaryKey:@"lsarFormatVersion"];
 		[printer printDictionaryObject:[NSNumber numberWithInt:2]];
 
-		XADError error;
-		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
+		XADError openerror;
+		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
 		if(!unarchiver)
 		{
 			[printer printDictionaryKey:@"lsarError"];
-			[printer printDictionaryObject:[NSNumber numberWithInt:error]];
+			[printer printDictionaryObject:[NSNumber numberWithInt:openerror]];
 			[printer endPrintingDictionary];
 			[@"\n" print];
 			return 1;
@@ -168,15 +168,17 @@ int main(int argc,const char **argv)
 
 		returncode=0;
 
-		error=[unarchiver parseAndUnarchive];
+		XADError parseerror=[unarchiver parse];
+		XADError unarchiveerror=[unarchiver unarchive];
 
 		[printer endPrintingArray];
 		[printer endPrintingDictionaryObject];
 
-		if(error)
+		if(parseerror||unarchiveerror)
 		{
 			[printer printDictionaryKey:@"lsarError"];
-			[printer printDictionaryObject:[NSNumber numberWithInt:error]];
+			if(parseerror) [printer printDictionaryObject:[NSNumber numberWithInt:parseerror]];
+			else [printer printDictionaryObject:[NSNumber numberWithInt:unarchiveerror]];
 			returncode=1;
 		}
 
@@ -237,12 +239,12 @@ int main(int argc,const char **argv)
 		[@": " print];
 		fflush(stdout);
 
-		XADError error;
-		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&error];
+		XADError openerror;
+		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
 		if(!unarchiver)
 		{
 			[@"Couldn't open archive. (" print];
-			[[XADException describeXADError:error] print];
+			[[XADException describeXADError:openerror] print];
 			[@")\n" print];
 			return 1;
 		}
@@ -262,14 +264,7 @@ int main(int argc,const char **argv)
 
 		[unarchiver setDelegate:[[[Lister alloc] init] autorelease]];
 
-		error=[unarchiver parse];
-		if(error)
-		{
-			[@"Listing failed! (" print];
-			[[XADException describeXADError:error] print];
-			[@")\n" print];
-			return 1;
-		}
+		XADError parseerror=[unarchiver parse];
 
 		if([unarchiver innerArchiveParser])
 		{
@@ -287,13 +282,22 @@ int main(int argc,const char **argv)
 		returncode=0;
 		passed=failed=unknown=0;
 
-		error=[unarchiver unarchive];
-		if(error)
+		XADError unarchiveerror=[unarchiver unarchive];
+
+		if(parseerror)
+		{
+			[@"Archive parsing failed! (" print];
+			[[XADException describeXADError:parseerror] print];
+			[@".)\n" print];
+			returncode=1;
+		}
+
+		if(unarchiveerror)
 		{
 			[@"Listing failed! (" print];
-			[[XADException describeXADError:error] print];
-			[@")\n" print];
-			return 1;
+			[[XADException describeXADError:unarchiveerror] print];
+			[@".)\n" print];
+			returncode=1;
 		}
 
 		if(test)

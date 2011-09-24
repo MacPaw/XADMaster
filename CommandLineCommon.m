@@ -57,41 +57,50 @@ void PrintEncodingList()
 
 NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 {
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
 	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
 	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+	NSNumber *corruptednum=[dict objectForKey:XADIsCorruptedKey];
 	NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
 //	NSNumber *compsize=[dict objectForKey:XADCompressedSizeKey];
 
 	BOOL isdir=dirnum && [dirnum boolValue];
 	BOOL islink=linknum && [linknum boolValue];
 	BOOL isres=resnum && [resnum boolValue];
+	BOOL iscorrupted=corruptednum && [corruptednum boolValue];
 	BOOL hassize=(sizenum!=nil);
 
 	NSString *name=[[dict objectForKey:XADFileNameKey] string];
 	name=[name stringByEscapingControlCharacters];
 	if(!isdir && !islink && !isres && !hassize) return name;
 
-	NSMutableString *str=[NSMutableString stringWithString:name];
+	NSMutableString *str=[[NSMutableString alloc] initWithString:name];
 
 	if(isdir) [str appendString:@"/"];
 	// TODO: What about Windows?
 
-	[str appendString:@"  ("];
+	NSMutableArray *tags=[NSMutableArray array];
 
-	if(isdir) [str appendString:@"dir"];
-	else if(islink) [str appendString:@"link"];
-	else if(hassize) [str appendFormat:@"%lld B",[sizenum longLongValue]];
+	if(isdir) [tags addObject:@"dir"];
+	else if(islink) [tags addObject:@"link"];
+	else if(hassize) [tags addObject:[NSString stringWithFormat:@"%lld B",[sizenum longLongValue]]];
 
-	if(isres)
+	if(isres) [tags addObject:@"rsrc"];
+
+	if(iscorrupted) [tags addObject:@"corrupted"];
+
+	if([tags count])
 	{
-		if(isdir||islink||hassize) [str appendString:@", "];
-		[str appendString:@"rsrc"];
+		[str appendString:@"  ("];
+		[str appendString:[tags componentsJoinedByString:@", "]];
+		[str appendString:@")"];
 	}
 
-	[str appendString:@")"];
+	[pool release];
 
-	return str;
+	return [str autorelease];
 }
 
 

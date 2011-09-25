@@ -74,6 +74,116 @@ NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 
 	NSString *name=[[dict objectForKey:XADFileNameKey] string];
 	name=[name stringByEscapingControlCharacters];
+
+	NSMutableString *str=[[NSMutableString alloc] initWithString:name];
+
+	if(isdir) [str appendString:@"/"]; // TODO: What about Windows?
+
+	NSMutableArray *tags=[NSMutableArray array];
+
+	if(isdir) [tags addObject:@"dir"];
+	else if(islink) [tags addObject:@"link"];
+	else if(hassize) [tags addObject:[NSString stringWithFormat:@"%lld B",[sizenum longLongValue]]];
+
+	if(isres) [tags addObject:@"rsrc"];
+
+	if(iscorrupted) [tags addObject:@"corrupted"];
+
+	if([tags count])
+	{
+		[str appendString:@"  ("];
+		[str appendString:[tags componentsJoinedByString:@", "]];
+		[str appendString:@")"];
+	}
+
+	[pool release];
+
+	return [str autorelease];
+}
+
+NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
+{
+	//NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+	NSNumber *indexnum=[dict objectForKey:XADIndexKey];
+	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
+	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
+	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+	NSNumber *encryptednum=[dict objectForKey:XADIsEncryptedKey];
+	NSNumber *corruptednum=[dict objectForKey:XADIsCorruptedKey];
+	BOOL isdir=dirnum && [dirnum boolValue];
+	BOOL islink=linknum && [linknum boolValue];
+	BOOL isres=resnum && [resnum boolValue];
+	BOOL isencrypted=encryptednum && [encryptednum boolValue];
+	BOOL iscorrupted=corruptednum && [corruptednum boolValue];
+
+	NSObject *extattrs=[dict objectForKey:XADExtendedAttributesKey];
+	// TODO: check for non-empty finder info &c
+	BOOL hasextattrs=extattrs?YES:NO;
+
+	NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
+	NSNumber *compsizenum=[dict objectForKey:XADCompressedSizeKey];
+	off_t size=sizenum?[sizenum longLongValue]:0;
+	off_t compsize=compsizenum?[compsizenum longLongValue]:0;
+
+	NSString *sizestr;
+	if(sizenum)
+	{
+		sizestr=[NSString stringWithFormat:@"%11lld",[sizenum longLongValue]];
+	}
+	else
+	{
+		sizestr=@" ----------";
+	}
+
+	NSString *compstr;
+	if(size&&compsize)
+	{
+		double compression=100*(1-(double)compsize/(double)size);
+		if(compression<=-100) compstr=[NSString stringWithFormat:@"%5.0f%%",compression];
+		else compstr=[NSString stringWithFormat:@"%5.1f%%",compression];
+	}
+	else
+	{
+		compstr=@" -----";
+	}
+
+	NSDate *date=[dict objectForKey:XADLastModificationDateKey];
+	if(!date) date=[dict objectForKey:XADCreationDateKey];
+	if(!date) date=[dict objectForKey:XADLastAccessDateKey];
+
+	NSString *datestr;
+	if(date)
+	{
+		time_t t=[date timeIntervalSince1970];
+		struct tm *tm=localtime(&t);
+		datestr=[NSString stringWithFormat:@"%4d-%02d-%02d %02d:%02d",
+		tm->tm_year+1900,tm->tm_mon+1,tm->tm_mday,tm->tm_hour,tm->tm_min];
+	}
+	else
+	{
+		datestr=@"----------------";
+	}
+
+	NSString *compname=[dict objectForKey:XADCompressionNameKey];
+
+	NSString *name=[[dict objectForKey:XADFileNameKey] string];
+	name=[name stringByEscapingControlCharacters];
+
+	NSString *str=[NSString stringWithFormat:@"%3d. %c%c%c%c%c %@ %@  %@  %@  %@",
+	[indexnum intValue],
+	isdir?'D':'-',
+	isres?'R':'-',
+	islink?'L':'-',
+	isencrypted?'E':'-',
+	hasextattrs?'@':'-',
+	sizestr,
+	compstr,
+	datestr,
+	compname,
+	name];
+/*
+	name=[name stringByEscapingControlCharacters];
 	if(!isdir && !islink && !isres && !hassize) return name;
 
 	NSMutableString *str=[[NSMutableString alloc] initWithString:name];
@@ -96,11 +206,11 @@ NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 		[str appendString:@"  ("];
 		[str appendString:[tags componentsJoinedByString:@", "]];
 		[str appendString:@")"];
-	}
+	}*/
 
-	[pool release];
+	//[pool release];
 
-	return [str autorelease];
+	return str;
 }
 
 

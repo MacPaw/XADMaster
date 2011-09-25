@@ -25,7 +25,7 @@ static int TestEntry(XADSimpleUnarchiver *unarchiver,NSDictionary *dict);
 
 int returncode;
 CSJSONPrinter *printer;
-BOOL test,printindexes;
+BOOL longformat,test;
 int passed,failed,unknown;
 
 int main(int argc,const char **argv)
@@ -39,6 +39,10 @@ int main(int argc,const char **argv)
 	@"Usage: lsar [options] archive [files ...]\n"
 	@"\n"
 	@"Available options:\n"];
+
+	[cmdline addSwitchOption:@"long" description:
+	@"Print more information about each file in the archive."];
+	[cmdline addAlias:@"l" forOption:@"long"];
 
 	[cmdline addSwitchOption:@"test" description:
 	@"Test the integrity of the files in the archive, if possible."];
@@ -66,10 +70,6 @@ int main(int argc,const char **argv)
 	@"Print the auto-detected encoding and the confidence factor after the file list"];
 	[cmdline addAlias:@"pe" forOption:@"print-encoding"];
 
-	[cmdline addSwitchOption:@"print-indexes" description:
-	@"Include the index numbers of the entries in the archive, for use with unar."];
-	[cmdline addAlias:@"pi" forOption:@"print-indexes"];
-
 	[cmdline addSwitchOption:@"indexes" description:
 	@"Instead of specifying the files to list as filenames or wildcard patterns, "
 	@"specify them as indexes."];
@@ -95,12 +95,12 @@ int main(int argc,const char **argv)
 
 
 
+	longformat=[cmdline boolValueForOption:@"long"];
 	test=[cmdline boolValueForOption:@"test"];
 	NSString *password=[cmdline stringValueForOption:@"password"];
 	NSString *encoding=[cmdline stringValueForOption:@"encoding"];
 	NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
 	BOOL printencoding=[cmdline boolValueForOption:@"print-encoding"];
-	printindexes=[cmdline boolValueForOption:@"print-indexes"];
 	BOOL indexes=[cmdline boolValueForOption:@"indexes"];
 	BOOL json=[cmdline boolValueForOption:@"json"];
 	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
@@ -369,17 +369,17 @@ int main(int argc,const char **argv)
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	[@"  " print];
-
-	if(printindexes)
+	if(longformat)
 	{
-		NSNumber *indexnum=[dict objectForKey:XADIndexKey];
-		[[indexnum description] print];
-		[@". " print];
+		NSString *infoline=LongInfoLineForEntryWithDictionary(dict);
+		[infoline print];
 	}
-
-	NSString *name=DisplayNameForEntryWithDictionary(dict);
-	[name print];
+	else
+	{
+		NSString *name=DisplayNameForEntryWithDictionary(dict);
+		[@"  " print];
+		[name print];
+	}
 
 	if(test)
 	{

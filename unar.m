@@ -238,7 +238,7 @@ int main(int argc,const char **argv)
 			[@"\" failed (" print];
 		}
 
-		if(error) [[XADException describeXADError:unarchiveerror] print];
+		if(unarchiveerror) [[XADException describeXADError:unarchiveerror] print];
 		else [[NSString stringWithFormat:@"%d file%s failed",
 		numerrors,numerrors==1?"":"s"] print];
 

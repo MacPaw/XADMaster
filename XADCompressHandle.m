@@ -1,7 +1,5 @@
 #import "XADCompressHandle.h"
 #import "XADException.h"
-#import "SystemSpecific.h"
-
 
 @implementation XADCompressHandle
 

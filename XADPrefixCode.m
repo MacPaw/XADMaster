@@ -1,5 +1,5 @@
 #import "XADPrefixCode.h"
-#import "SystemSpecific.h"
+#import "Realloc.h"
 
 NSString *XADInvalidPrefixCodeException=@"XADInvalidPrefixCodeException";
 
@@ -39,7 +39,7 @@ static inline BOOL IsLeafNode(XADPrefixCode *self,int node) { return LeftBranch(
 
 static inline int NewNode(XADPrefixCode *self)
 {
-	self->tree=reallocf(self->tree,(self->numentries+1)*sizeof(XADCodeTreeNode));
+	self->tree=Realloc(self->tree,(self->numentries+1)*sizeof(XADCodeTreeNode));
 	SetEmptyNode(self,self->numentries);
 	return self->numentries++;
 }

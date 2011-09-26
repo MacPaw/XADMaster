@@ -2,7 +2,6 @@
 #import "XADException.h"
 #import "CarrylessRangeCoder.h"
 #import "BWT.h"
-#import "SystemSpecific.h"
 
 
 
@@ -13,6 +12,7 @@
 	if((self=[super initWithHandle:handle length:length]))
 	{
 		block=NULL;
+		currsize=0;
 	}
 	return self;
 }
@@ -38,9 +38,14 @@
 	uint32_t firstindex=CSInputNextUInt32BE(input);
 	int numsymbols=CSInputNextByte(input);
 
-	block=reallocf(block,blocksize*6);
-	sorted=block+blocksize;
-	table=(uint32_t *)(block+2*blocksize);
+	if(blocksize>currsize)
+	{
+		free(block);
+		block=malloc(blocksize*6);
+		sorted=block+blocksize;
+		table=(uint32_t *)(block+2*blocksize);
+		currsize=blocksize;
+	}
 
 	[self readTernaryCodedBlock:blocksize numberOfSymbols:numsymbols];
 

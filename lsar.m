@@ -323,6 +323,14 @@ int main(int argc,const char **argv)
 				[compkey print];
 				[@")\n" print];
 			}
+
+			XADString *comment=[[[unarchiver archiveParser] properties] objectForKey:XADCommentKey];
+			if(comment)
+			{
+				[@"Archive comment:\n" print];
+				[[comment string] print];
+				[@"\n" print];
+			}
 		}
 
 		if(test)
@@ -424,6 +432,17 @@ int main(int argc,const char **argv)
 	}
 
 	[@"\n" print];
+
+	if(longformat)
+	{
+		XADString *comment=[dict objectForKey:XADCommentKey];
+		if(comment)
+		{
+			[@"     File comment: " print];
+			[[comment string] print];
+			[@"\n" print];
+		}
+	}
 
 	return NO;
 }

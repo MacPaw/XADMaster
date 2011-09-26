@@ -161,9 +161,16 @@ int main(int argc,const char **argv)
 	XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
 	if(!unarchiver)
 	{
-		[@"Couldn't open archive. (" print];
-		[[XADException describeXADError:openerror] print];
-		[@")\n" print];
+		if(openerror)
+		{
+			[@"Couldn't open archive. (" print];
+			[[XADException describeXADError:openerror] print];
+			[@".)\n" print];
+		}
+		else
+		{
+			[@"Couldn't recognize the archive format.\n" print];
+		}
 		return 1;
 	}
 

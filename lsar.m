@@ -243,9 +243,16 @@ int main(int argc,const char **argv)
 		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
 		if(!unarchiver)
 		{
-			[@"Couldn't open archive. (" print];
-			[[XADException describeXADError:openerror] print];
-			[@")\n" print];
+			if(openerror)
+			{
+				[@"Couldn't open archive. (" print];
+				[[XADException describeXADError:openerror] print];
+				[@".)\n" print];
+			}
+			else
+			{
+				[@"Couldn't recognize the archive format.\n" print];
+			}
 			return 1;
 		}
 
@@ -279,6 +286,12 @@ int main(int argc,const char **argv)
 
 		[@"\n" print];
 
+		if(longformat)
+		{
+			[@"     Flags  File size   Ratio  Mode  Date       Time   Name\n" print];
+			[@"     =====  ==========  =====  ====  ========== =====  ====\n" print];
+		}
+
 		returncode=0;
 		passed=failed=unknown=0;
 
@@ -298,6 +311,18 @@ int main(int argc,const char **argv)
 			[[XADException describeXADError:unarchiveerror] print];
 			[@".)\n" print];
 			returncode=1;
+		}
+
+		if(longformat)
+		{
+			[@"(Flags: D=Directory, R=Resource fork, L=Link, E=Encrypted, @=Extended attributes)\n" print];
+			NSString *compkey=CompressionNameExplanationForLongInfo();
+			if(compkey)
+			{
+				[@"(Mode: " print];
+				[compkey print];
+				[@")\n" print];
+			}
 		}
 
 		if(test)

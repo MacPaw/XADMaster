@@ -101,9 +101,13 @@ NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 	return [str autorelease];
 }
 
+
+
+static NSString *CodeForCompressionName(NSString *compname);
+
 NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
 {
-	//NSAutoreleasePool *pool=[NSAutoreleasePool new];
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
 	NSNumber *indexnum=[dict objectForKey:XADIndexKey];
 	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
@@ -148,6 +152,18 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
 		compstr=@" -----";
 	}
 
+	XADString *compname=[dict objectForKey:XADCompressionNameKey];
+	NSString *compcode;
+	if(compname)
+	{
+		compcode=CodeForCompressionName([compname string]);
+		if([compcode length]<4) compcode=[NSString stringWithFormat:@"%@%s",compcode,"    "+[compcode length]];
+	}
+	else
+	{
+		compcode=@"----";
+	}
+
 	NSDate *date=[dict objectForKey:XADLastModificationDateKey];
 	if(!date) date=[dict objectForKey:XADCreationDateKey];
 	if(!date) date=[dict objectForKey:XADLastAccessDateKey];
@@ -165,12 +181,10 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
 		datestr=@"----------------";
 	}
 
-	NSString *compname=[dict objectForKey:XADCompressionNameKey];
-
 	NSString *name=[[dict objectForKey:XADFileNameKey] string];
 	name=[name stringByEscapingControlCharacters];
 
-	NSString *str=[NSString stringWithFormat:@"%3d. %c%c%c%c%c %@ %@  %@  %@  %@",
+	NSString *str=[[NSString alloc] initWithFormat:@"%3d. %c%c%c%c%c %@ %@  %@  %@  %@%s",
 	[indexnum intValue],
 	isdir?'D':'-',
 	isres?'R':'-',
@@ -179,38 +193,123 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
 	hasextattrs?'@':'-',
 	sizestr,
 	compstr,
+	compcode,
 	datestr,
-	compname,
-	name];
-/*
-	name=[name stringByEscapingControlCharacters];
-	if(!isdir && !islink && !isres && !hassize) return name;
+	name,
+	isdir?"/":""];
 
-	NSMutableString *str=[[NSMutableString alloc] initWithString:name];
+	[pool release];
 
-	if(isdir) [str appendString:@"/"];
-	// TODO: What about Windows?
+	return [str autorelease];
+}
 
-	NSMutableArray *tags=[NSMutableArray array];
+static NSMutableDictionary *codeforname=nil;
+static NSMutableSet *usedcodes;
+static NSDictionary *abbreviations=nil;
 
-	if(isdir) [tags addObject:@"dir"];
-	else if(islink) [tags addObject:@"link"];
-	else if(hassize) [tags addObject:[NSString stringWithFormat:@"%lld B",[sizenum longLongValue]]];
+static NSString *CodeForCompressionName(NSString *compname)
+{
+	if(!codeforname) codeforname=[NSMutableDictionary new];
+	NSString *cachedcode=[codeforname objectForKey:compname];
+	if(cachedcode) return cachedcode;
 
-	if(isres) [tags addObject:@"rsrc"];
+	if(!usedcodes) usedcodes=[NSMutableSet new];
+	if(!abbreviations) abbreviations=[[NSDictionary alloc] initWithObjectsAndKeys:
+		@"Df64",@"Deflate64",
+		@"LZBC",@"LZMA+BCJ",
+		@"LZB2",@"LZMA+BCJ2",
+		@"PPBC",@"PPMd+BCJ",
+		@"PPB2",@"PPMd+BCJ2",
+		@"Ftst",@"Fastest",
+		@"MSZP",@"MSZIP",
+		@"Qua0",@"Quantum:0",@"Qua1",@"Quantum:1",@"Qua2",@"Quantum:2",@"Qua3",@"Quantum:3",
+		@"Qua4",@"Quantum:4",@"Qua5",@"Quantum:5",@"Qua6",@"Quantum:6",@"Qua7",@"Quantum:7",
+		@"Qua8",@"Quantum:8",@"Qua9",@"Quantum:9",@"Qu10",@"Quantum:10",@"Qu11",@"Quantum:11",
+		@"Qu12",@"Quantum:12",@"Qu13",@"Quantum:13",@"Qu14",@"Quantum:14",@"Qu15",@"Quantum:15",
+		@"Qu16",@"Quantum:16",@"Qu17",@"Quantum:17",@"Qu18",@"Quantum:18",@"Qu19",@"Quantum:19",
+		@"Qu20",@"Quantum:20",@"Qu21",@"Quantum:21",@"Qu22",@"Quantum:22",@"Qu23",@"Quantum:23",
+		@"Qu24",@"Quantum:24",@"Qu25",@"Quantum:25",@"Qu26",@"Quantum:26",@"Qu27",@"Quantum:27",
+		@"Qu28",@"Quantum:28",@"Qu29",@"Quantum:29",@"Qu30",@"Quantum:30",@"Qu31",@"Quantum:31",
+		@"LZX0",@"LZX:0",@"LZX1",@"LZX:1",@"LZX2",@"LZX:2",@"LZX3",@"LZX:3",
+		@"LZX4",@"LZX:4",@"LZX5",@"LZX:5",@"LZX6",@"LZX:6",@"LZX7",@"LZX:7",
+		@"LZX8",@"LZX:8",@"LZX9",@"LZX:9",@"LZ10",@"LZX:10",@"LZ11",@"LZX:11",
+		@"LZ12",@"LZX:12",@"LZ13",@"LZX:13",@"LZ14",@"LZX:14",@"LZ15",@"LZX:15",
+		@"LZ16",@"LZX:16",@"LZ17",@"LZX:17",@"LZ18",@"LZX:18",@"LZ19",@"LZX:19",
+		@"LZ20",@"LZX:20",@"LZ21",@"LZX:21",@"LZ22",@"LZX:22",@"LZ23",@"LZX:23",
+		@"LZ24",@"LZX:24",@"LZ25",@"LZX:25",@"LZ26",@"LZX:26",@"LZ27",@"LZX:27",
+		@"LZ28",@"LZX:28",@"LZ29",@"LZX:29",@"LZ30",@"LZX:30",@"LZ31",@"LZX:31",
+		@"Mth1",@"Method 1",@"Mth2",@"Method 2",@"Mth3",@"Method 3",@"Mth4",@"Method 4",
+		@"Mth5",@"Method 5",@"Mth6",@"Method 6",@"Mth7",@"Method 7",@"Mth8",@"Method 8",
+		@"Mth9",@"Method 9",@"Mt10",@"Method 10",@"Mt11",@"Method 11",@"Mt12",@"Method 12",
+		@"Mt13",@"Method 13",@"Mt14",@"Method 14",@"Mt15",@"Method 15",@"Mt16",@"Method 16",
+		@"AD2",@"ADS/AD2",
+		@"CPT",@"Compact Pro",
+		@"AD1",@"AD/AD1",
+		@"None",@"-lh0-",
+		@"lh1",@"-lh1-",
+		@"lh2",@"-lh2-",
+		@"lh3",@"-lh3-",
+		@"lh4",@"-lh4-",
+		@"lh5",@"-lh5-",
+		@"lh6",@"-lh6-",
+		@"lh7",@"-lh7-",
+		@"lzs",@"-lzs-",
+		@"lz4",@"-lz4-",
+		@"lz5",@"-lz5-",
+		@"None",@"-pm0-",
+		@"pm2",@"-pm2-",
+		@"PPck",@"PowerPacker",
+		@"Ft15",@"Fastest v1.5",@"Ft20",@"Fastest v2.0",@"Ft29",@"Fastest v2.9",
+		@"Fs15",@"Fast v1.5",@"Fs20",@"Fast v2.0",@"Fs29",@"Fast v2.9",
+		@"Nr15",@"Normal v1.5",@"Nr20",@"Normal v2.0",@"Nr29",@"Normal v2.9",
+		@"Gd15",@"Good v1.5",@"Gd20",@"Good v2.0",@"Gd29",@"Good v2.9",
+		@"Bs15",@"Best v1.5",@"Bs20",@"Best v2.0",@"Bs29",@"Best v2.9",
+	nil];
 
-	if(iscorrupted) [tags addObject:@"corrupted"];
-
-	if([tags count])
+	NSString *code=[abbreviations objectForKey:compname];
+	if(!code)
 	{
-		[str appendString:@"  ("];
-		[str appendString:[tags componentsJoinedByString:@", "]];
-		[str appendString:@")"];
-	}*/
+		if([compname length]<=4) code=compname;
+		else code=[compname substringWithRange:NSMakeRange(0,4)];
+	}
 
-	//[pool release];
+	if([usedcodes containsObject:code])
+	{
+		int i=0;
+		do
+		{
+			if(i<=9) code=[code stringByReplacingCharactersInRange:NSMakeRange(3,1) withString:[NSString stringWithFormat:@"%d",i]];
+			else if(i<=99) code=[code stringByReplacingCharactersInRange:NSMakeRange(2,2) withString:[NSString stringWithFormat:@"%d",i]];
+			else if(i<=999) code=[code stringByReplacingCharactersInRange:NSMakeRange(1,3) withString:[NSString stringWithFormat:@"%d",i]];
+			else if(i<=9999) code=[code stringByReplacingCharactersInRange:NSMakeRange(0,4) withString:[NSString stringWithFormat:@"%d",i]];
+			else return @"@@@@";
+			i++;
+		}
+		while([usedcodes containsObject:code]);
+	}
 
-	return str;
+	[usedcodes addObject:code];
+	[codeforname setObject:code forKey:compname];
+
+	return code;
+}
+
+NSString *CompressionNameExplanationForLongInfo()
+{
+	NSMutableString *res=nil;
+
+	NSEnumerator *enumerator=[[[codeforname allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
+	NSString *compname;
+	while((compname=[enumerator nextObject]))
+	{
+		NSString *code=[codeforname objectForKey:compname];
+		if([code isEqualToString:compname]) continue;
+
+		if(res) [res appendFormat:@", %@=%@",code,compname];
+		else res=[NSMutableString stringWithFormat:@"%@=%@",code,compname];
+	}
+
+	return res;
 }
 
 

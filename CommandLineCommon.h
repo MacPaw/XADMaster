@@ -5,6 +5,7 @@ void PrintEncodingList();
 
 NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict);
 NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict);
+NSString *CompressionNameExplanationForLongInfo();
 
 BOOL IsInteractive();
 int GetPromptCharacter();

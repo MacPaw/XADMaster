@@ -291,8 +291,8 @@
 				}
 				else
 				{
-					datafork=second;
-					resourcefork=first;
+					datafork=first;
+					resourcefork=second;
 				}
 
 				// TODO: Handle resource forks for archives that require them.

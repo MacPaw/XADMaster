@@ -4,6 +4,8 @@
 #import "XADString.h"
 #import "NSStringPrinting.h"
 
+#include <time.h>
+
 #ifndef __MINGW32__
 #import <unistd.h>
 #endif
@@ -275,15 +277,22 @@ static NSString *CodeForCompressionName(NSString *compname)
 
 	if([usedcodes containsObject:code])
 	{
-		int i=0;
+		int i=2;
 		do
 		{
-			if(i<=9) code=[code stringByReplacingCharactersInRange:NSMakeRange(3,1) withString:[NSString stringWithFormat:@"%d",i]];
-			else if(i<=99) code=[code stringByReplacingCharactersInRange:NSMakeRange(2,2) withString:[NSString stringWithFormat:@"%d",i]];
-			else if(i<=999) code=[code stringByReplacingCharactersInRange:NSMakeRange(1,3) withString:[NSString stringWithFormat:@"%d",i]];
-			else if(i<=9999) code=[code stringByReplacingCharactersInRange:NSMakeRange(0,4) withString:[NSString stringWithFormat:@"%d",i]];
-			else return @"@@@@";
+			unichar c[4];
+
+			c[3]=i%10;
+			if(i>=10) c[2]=(i/10)%10;
+			else c[2]=[code characterAtIndex:2];
+			if(i>=100) c[1]=(i/100)%10;
+			else c[1]=[code characterAtIndex:1];
+			if(i>=1000) c[0]=(i/1000)%10;
+			else c[0]=[code characterAtIndex:0];
+			if(i>=10000) return @"@@@@";
 			i++;
+
+			code=[NSString stringWithCharacters:c length:4];
 		}
 		while([usedcodes containsObject:code]);
 	}

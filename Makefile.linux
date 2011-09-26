@@ -36,9 +36,9 @@ C_OPTS =	-std=gnu99
 
 CXX_OPTS =
 
-OBJCFLAGS = $(OBJC_OPTS) $(GCC_OPTS) $(GNUSTEP_OPTS)
-CFLAGS = $(C_OPTS) $(GCC_OPTS)
-CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS)
+ALL_OBJCFLAGS = $(OBJC_OPTS) $(GCC_OPTS) $(GNUSTEP_OPTS) $(OBJCFLAGS)
+ALL_CFLAGS = $(C_OPTS) $(GCC_OPTS) $(CFLAGS)
+ALL_CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS) $(CXXFLAGS)
 
 
 
@@ -54,9 +54,10 @@ LIBS =	-Wl,--no-whole-archive \
 	-lstdc++ \
 	-lm
 
-LDFLAGS =	-Wl,--whole-archive \
+ALL_LDFLAGS =	-Wl,--whole-archive \
 		-fexceptions \
-		-fgnu-runtime
+		-fgnu-runtime \
+		$(LDFLAGS)
 
 
 
@@ -344,13 +345,13 @@ LIBRARY_FILES = 	libXADMaster.a
 .SUFFIXES: .o .m .c
 
 .m.o:
-	$(OBJCC) $(OBJCFLAGS) $< -o $@	
+	$(OBJCC) $(ALL_OBJCFLAGS) $< -o $@
 
 .c.o:
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(ALL_CFLAGS) $< -o $@
 
 .cpp.o:
-	$(CXX) $(CXXFLAGS) $< -o $@
+	$(CXX) $(ALL_CXXFLAGS) $< -o $@
 
 
 
@@ -367,25 +368,25 @@ libXADMaster.a: $(LIBRARY_OBJS)
 	make -C ../UniversalDetector -f Makefile.linux
 
 XADTest2: $(XADTEST2_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 XADTest3: $(XADTEST3_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 XADTest4: $(XADTEST4_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 XADTest5: $(XADTEST5_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 XADTest6: $(XADTEST6_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 unar: $(UNAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 clean:
 	rm -f 	$(ALL_OBJS) \
@@ -397,9 +398,9 @@ clean:
 	make -C ../UniversalDetector -f Makefile.linux clean
 
 depend:
-	$(OBJCC) -MM $(OBJCFLAGS) $(ALL_OBJC_FILES) >Dependencies.linux.tmp
-	$(CC) -MM $(CFLAGS) $(ALL_C_FILES) >>Dependencies.linux.tmp
-	#$(CXX) -MM $(CXXFLAGS) $(ALL_CXX_FILES) >>Dependencies.linux.tmp
+	$(OBJCC) -MM $(ALL_OBJCFLAGS) $(ALL_OBJC_FILES) >Dependencies.linux.tmp
+	$(CC) -MM $(ALL_CFLAGS) $(ALL_C_FILES) >>Dependencies.linux.tmp
+	#$(CXX) -MM $(ALL_CXXFLAGS) $(ALL_CXX_FILES) >>Dependencies.linux.tmp
 	sed 's/.*: *\([^ ]*\)\.\([^ ]*\)/\1.o: \1.\2/g' <Dependencies.linux.tmp >Dependencies.linux
 	rm Dependencies.linux.tmp
 

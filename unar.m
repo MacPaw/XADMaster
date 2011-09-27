@@ -41,13 +41,13 @@ int main(int argc,const char **argv)
 	[cmdline addAlias:@"s" forOption:@"force-skip"];
 
 	[cmdline addSwitchOption:@"force-directory" description:
-	@"Always create a containing directory for for the contents of the "
+	@"Always create a containing directory for the contents of the "
 	@"unpacked archive. By default, a directory is created if there is more "
 	@"than one top-level file or folder."];
 	[cmdline addAlias:@"d" forOption:@"force-directory"];
 
 	[cmdline addSwitchOption:@"no-directory" description:
-	@"Never create a containing directory for for the contents of the "
+	@"Never create a containing directory for the contents of the "
 	@"unpacked archive."];
 	[cmdline addAlias:@"D" forOption:@"no-directory"];
 
@@ -108,7 +108,7 @@ int main(int argc,const char **argv)
 	description:@"How to handle Mac OS resource forks. "
 	@"\"visible\" creates AppleDouble files with the extension \".rsrc\", "
 	@"\"hidden\" creates AppleDouble files with the prefix \"._\", "
-	@"and \"skip\" discards all resource forks. Defaults to \"visisble\"."];
+	@"and \"skip\" discards all resource forks. Defaults to \"visible\"."];
  	[cmdline addAlias:@"k" forOption:@"forks"];
 
 	int forkvalues[]={XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADIgnoredForkStyle};

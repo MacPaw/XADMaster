@@ -49,13 +49,13 @@
 
 	CFIndex numbytes;
 	if(CFStringGetBytes((CFStringRef)string,CFRangeMake(0,numchars),
-	CFStringConvertIANACharSetNameToEncoding((CFStringRef)encoding),0,false,
+	[self CFStringEncodingForEncodingName:encoding],0,false,
 	NULL,0,&numbytes)!=numchars) return nil;
 
 	uint8_t *bytes=malloc(numbytes);
 
 	CFStringGetBytes((CFStringRef)string,CFRangeMake(0,numchars),
-	CFStringConvertIANACharSetNameToEncoding((CFStringRef)encoding),0,false,
+	[self CFStringEncodingForEncodingName:encoding],0,false,
 	bytes,numbytes,NULL);
 
 	return [NSData dataWithBytesNoCopy:bytes length:numbytes freeWhenDone:YES];

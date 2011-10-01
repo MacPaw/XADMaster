@@ -348,6 +348,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		delegate=nil;
 		password=nil;
 		passwordencodingname=nil;
+		caresaboutpasswordencoding=NO;
 
 		stringsource=[XADStringSource new];
 
@@ -455,6 +456,11 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 -(void)setEncodingName:(NSString *)encodingname
 {
 	[stringsource setFixedEncodingName:encodingname];
+}
+
+-(BOOL)caresAboutPasswordEncoding
+{
+	return caresaboutpasswordencoding;
 }
 
 -(NSString *)passwordEncodingName
@@ -992,7 +998,12 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 -(NSData *)encodedPassword
 {
-	return [XADString dataForString:[self password] encodingName:[self passwordEncodingName]];
+	caresaboutpasswordencoding=YES;
+
+	NSString *pass=[self password];
+	NSString *encodingname=[self passwordEncodingName];
+
+	return [XADString dataForString:pass encodingName:encodingname];
 }
 
 -(const char *)encodedCStringPassword

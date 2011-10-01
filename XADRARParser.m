@@ -633,7 +633,10 @@ isCorrupted:(BOOL)iscorrupted
 	// Give the caller some ahead notice if we will be using a password.
 	NSNumber *encryptnum=[dict objectForKey:XADIsEncryptedKey];
 	if(encryptnum && [encryptnum boolValue])
-	if([self password]==nil) return nil;
+	{
+		if([[dict objectForKey:@"RARCompressionVersion"] intValue]<=20) caresaboutpasswordencoding=YES;
+		if([self password]==nil) return nil;
+	}
 
 	CSHandle *handle;
 	if([[dict objectForKey:@"RARCompressionMethod"] intValue]==0x30)

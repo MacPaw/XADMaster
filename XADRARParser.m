@@ -367,7 +367,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 -(RARFileHeader)readFileHeaderWithBlock:(RARBlock *)block
 {
-	CSHandle *fh=[self handle];
+	CSHandle *fh=block->fh;
 
 	RARFileHeader header;
 

@@ -635,7 +635,8 @@ isCorrupted:(BOOL)iscorrupted
 	if(encryptnum && [encryptnum boolValue])
 	{
 		if([[dict objectForKey:@"RARCompressionVersion"] intValue]<=20) caresaboutpasswordencoding=YES;
-		if([self password]==nil) return nil;
+		[self password];
+		if(![self hasPassword]) return nil;
 	}
 
 	CSHandle *handle;

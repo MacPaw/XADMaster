@@ -107,7 +107,7 @@ NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 
 static NSString *CodeForCompressionName(NSString *compname);
 
-NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
+NSString *LongInfoLineForEntryWithDictionary(XADArchiveParser *parser,NSDictionary *dict)
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
@@ -186,7 +186,16 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
 	NSString *name=[[dict objectForKey:XADFileNameKey] string];
 	name=[name stringByEscapingControlCharacters];
 
-	NSString *str=[[NSString alloc] initWithFormat:@"%3d. %c%c%c%c%c %@ %@  %@  %@  %@%s",
+	NSString *linkstr=@"";
+	if(islink)
+	{
+		XADError error;
+		XADString *link=[parser linkDestinationForDictionary:dict error:&error];
+		if(link) linkstr=[NSString stringWithFormat:@" -> %@",link];
+	}
+
+
+	NSString *str=[[NSString alloc] initWithFormat:@"%3d. %c%c%c%c%c %@ %@  %@  %@  %@%s%@",
 	[indexnum intValue],
 	isdir?'D':'-',
 	isres?'R':'-',
@@ -198,7 +207,8 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
 	compcode,
 	datestr,
 	name,
-	isdir?"/":""];
+	isdir?"/":"",
+	linkstr];
 
 	[pool release];
 

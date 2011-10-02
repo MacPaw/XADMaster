@@ -404,7 +404,7 @@ int main(int argc,const char **argv)
 {
 	if(longformat)
 	{
-		NSString *infoline=LongInfoLineForEntryWithDictionary(dict);
+		NSString *infoline=LongInfoLineForEntryWithDictionary([unarchiver archiveParser],dict);
 		[infoline print];
 	}
 	else

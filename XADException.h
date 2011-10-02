@@ -28,6 +28,7 @@ typedef int XADError;
 #define XADFileDirectoryError    0x0017 /* name of file exists as directory */
 #define XADShortBufferError      0x0018 /* buffer was too short */
 #define XADEncodingError         0x0019 /* text encoding was defective */
+#define XADLinkError             0x001a /* could not create link */
 
 #define XADSubArchiveError 0x10000
 

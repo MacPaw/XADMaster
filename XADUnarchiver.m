@@ -35,6 +35,7 @@
 		shouldstop=NO;
 
 		deferreddirectories=[NSMutableArray new];
+		deferredlinks=[NSMutableArray new];
 	}
 	return self;
 }
@@ -44,6 +45,7 @@
 	[parser release];
 	[destination release];
 	[deferreddirectories release];
+	[deferredlinks release];
 	[super dealloc];
 }
 
@@ -278,6 +280,43 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 -(XADError)finishExtractions
 {
+	XADError error;
+
+	error=[self _fixDeferredLinks];
+	if(error) return error;
+
+	error=[self _fixDeferredDirectories];
+	if(error) return error;
+
+	return XADNoError;
+}
+
+-(XADError)_fixDeferredLinks
+{
+	NSEnumerator *enumerator=[deferredlinks objectEnumerator];
+	NSArray *entry;
+	while((entry=[enumerator nextObject]))
+	{
+		NSString *path=[entry objectAtIndex:0];
+		NSString *linkdest=[entry objectAtIndex:1];
+		NSDictionary *dict=[entry objectAtIndex:2];
+
+		XADError error;
+
+		error=[XADPlatform createLinkAtPath:path withDestinationPath:linkdest];
+		if(error) return error;
+
+		error=[self _updateFileAttributesAtPath:path forEntryWithDictionary:dict deferDirectories:NO];
+		if(error) return error;
+	}
+
+	[deferredlinks removeAllObjects];
+
+	return XADNoError;
+}
+
+-(XADError)_fixDeferredDirectories
+{
 	[deferreddirectories sortUsingFunction:SortDirectoriesByDepthAndResource context:NULL];
 
 	NSEnumerator *enumerator=[deferreddirectories objectEnumerator];
@@ -295,6 +334,8 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 	return XADNoError;
 }
+
+
 
 
 -(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
@@ -346,9 +387,31 @@ wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 	if(delegate) linkdest=[delegate unarchiver:self destinationForLink:link from:destpath];
 	if(!linkdest) return XADNoError; // Handle nil returns as a request to skip.
 
-	// TODO: handle link safety?
+	// Check if the link destination is an absolute path, or if it contains
+	// any .. path components.
+	if([linkdest hasPrefix:@"/"] || [linkdest isEqual:@".."] ||
+	[linkdest hasPrefix:@"../"] || [linkdest hasSuffix:@"/.."] ||
+	[linkdest rangeOfString:@"/../"].location!=NSNotFound)
+	{
+		// If so, consider it unsafe, and create a placeholder file instead,
+		// and create the real link only in finishExtractions.
+		CSHandle *fh;
+		@try { fh=[CSFileHandle fileHandleForWritingAtPath:destpath]; }
+		@catch(id e)
+		{
+			unlink([destpath fileSystemRepresentation]);
+			@try { fh=[CSFileHandle fileHandleForWritingAtPath:destpath]; }
+			@catch(id e) { return XADOpenFileError; }
+		}
+		[fh close];
 
-	return [XADPlatform createLinkAtPath:destpath withDestinationPath:linkdest];
+		[deferredlinks addObject:[NSArray arrayWithObjects:destpath,linkdest,dict,nil]];
+	
+	}
+	else
+	{
+		return [XADPlatform createLinkAtPath:destpath withDestinationPath:linkdest];
+	}
 }
 
 -(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename

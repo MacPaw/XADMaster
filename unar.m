@@ -225,7 +225,8 @@ int main(int argc,const char **argv)
 
 	if(unarchiveerror||numerrors)
 	{
-		NSString *destination=[unarchiver destination];
+		NSString *destination=[unarchiver actualDestination];
+		if(!destination) destination=[unarchiver destination];
 
 		if(!destination||[destination isEqual:@"."])
 		{

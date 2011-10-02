@@ -116,12 +116,12 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict)
 	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
 	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
 	NSNumber *encryptednum=[dict objectForKey:XADIsEncryptedKey];
-	NSNumber *corruptednum=[dict objectForKey:XADIsCorruptedKey];
+	//NSNumber *corruptednum=[dict objectForKey:XADIsCorruptedKey];
 	BOOL isdir=dirnum && [dirnum boolValue];
 	BOOL islink=linknum && [linknum boolValue];
 	BOOL isres=resnum && [resnum boolValue];
 	BOOL isencrypted=encryptednum && [encryptednum boolValue];
-	BOOL iscorrupted=corruptednum && [corruptednum boolValue];
+	//BOOL iscorrupted=corruptednum && [corruptednum boolValue];
 
 	NSObject *extattrs=[dict objectForKey:XADExtendedAttributesKey];
 	// TODO: check for non-empty finder info &c

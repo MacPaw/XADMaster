@@ -81,6 +81,7 @@ NSString *XADExceptionName=@"XADException";
 		case XADFileDirectoryError:	return @"Name of file exists as directory";
 		case XADShortBufferError:	return @"Buffer was too short";
 		case XADEncodingError:		return @"Text encoding was defective";
+		case XADLinkError:			return @"Could not create symlink";
 	}
 	return nil;
 }

@@ -24,7 +24,7 @@
 	id delegate;
 	BOOL shouldstop;
 
-	NSMutableArray *deferreddirectories;
+	NSMutableArray *deferreddirectories,*deferredlinks;
 }
 
 +(XADUnarchiver *)unarchiverForArchiveParser:(XADArchiveParser *)archiveparser;
@@ -57,7 +57,10 @@
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict forceDirectories:(BOOL)force;
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path;
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path forceDirectories:(BOOL)force;
+
 -(XADError)finishExtractions;
+-(XADError)_fixDeferredLinks;
+-(XADError)_fixDeferredDirectories;
 
 -(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
 wantChecksum:(BOOL)checksum error:(XADError *)errorptr;

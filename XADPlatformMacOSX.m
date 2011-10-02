@@ -90,7 +90,7 @@ preservePermissions:(BOOL)preservepermissions
 
 	// Read file permissions.
 	struct stat st;
-	if(stat(cpath,&st)!=0) return XADOpenFileError; // TODO: better error
+	if(lstat(cpath,&st)!=0) return XADOpenFileError; // TODO: better error
 
 	// If the file does not have write permissions, change this temporarily.
 	if(!(st.st_mode&S_IWUSR)) chmod(cpath,0700);
@@ -228,7 +228,7 @@ preservePermissions:(BOOL)preservepermissions
 	struct stat st;
 	const char *destcstr=[path fileSystemRepresentation];
 	if(lstat(destcstr,&st)==0) unlink(destcstr);
-	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADOutputError;
+	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADLinkError;
 
 	return XADNoError;
 }

@@ -27,6 +27,9 @@ preservePermissions:(BOOL)preservepermissions
 {
 	const char *cpath=[path fileSystemRepresentation];
 
+	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
+	BOOL islink=linknum&&[linknum boolValue];
+
 	struct stat st;
 	if(lstat(cpath,&st)!=0) return XADOpenFileError; // TODO: better error
 
@@ -35,7 +38,7 @@ preservePermissions:(BOOL)preservepermissions
 	BOOL changedpermissions=NO;
 	if(!(st.st_mode&S_IWUSR))
 	{
-		chmod(cpath,0700);
+		if(!islink) chmod(cpath,0700);
 		changedpermissions=YES;
 	}
 
@@ -53,7 +56,8 @@ preservePermissions:(BOOL)preservepermissions
 		if(access) times[0]=[access timevalStruct];
 		if(modification) times[1]=[modification timevalStruct];
 
-		if(utimes(cpath,times)!=0) return XADUnknownError; // TODO: better error
+		int res=lutimes(cpath,times);
+		if(res!=0&&res!=ENOSYS) return XADUnknownError; // TODO: better error
 	}
 
 	// Handle permissions (or change back to original permissions if they were changed).
@@ -73,6 +77,7 @@ preservePermissions:(BOOL)preservepermissions
 			}
 		}
 
+		if(!islink)
 		if(chmod(cpath,mode&~S_IFMT)!=0) return XADUnknownError; // TODO: bette error
 	}
 

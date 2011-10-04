@@ -406,7 +406,7 @@ wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 		[fh close];
 
 		[deferredlinks addObject:[NSArray arrayWithObjects:destpath,linkdest,dict,nil]];
-	
+		return XADNoError;
 	}
 	else
 	{

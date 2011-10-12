@@ -6,6 +6,7 @@
 #define TAR_FORMAT_GNU 1 // GNU and OLDGNU are basically identical
 #define TAR_FORMAT_USTAR 2 // POSIX-ish tar formats
 #define TAR_FORMAT_STAR 3 // STAR is POSIX-ish, but not similiar enough to ustar and posix.2001 tar.
+#define TAR_FORMAT_V7_RECOGNIZED 4
 
 // TODO: star.
 
@@ -21,8 +22,15 @@
 	int tarFormat = TAR_FORMAT_V7;
 	unsigned char magic[8];
 	[header getBytes:magic range:NSMakeRange(257,8)]; // "ustar\000" (ustar) / "ustar  \0" (gnu)
+	
 	unsigned char starExtendedMagic[4];
 	[header getBytes:starExtendedMagic range:NSMakeRange(508,4)]; // "tar\0"
+	
+	unsigned int checksum = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(148,8) buffer:header];
+	if( [XADTarParser isTarChecksumCorrect:header checksum:checksum] == YES )
+	{
+		tarFormat = TAR_FORMAT_V7_RECOGNIZED;
+	}
 
 	if( memcmp( magic, (unsigned char[]){ 117, 115, 116, 97, 114, 0, 48, 48 }, 8 ) == 0 )
 	{
@@ -44,7 +52,7 @@
 	return( tarFormat );
 }
 
-// Recognize files by name or magic. (tar v7 files have no magic.)
+// Recognize files by name or magic. (tar v7 files have no magic, are recognized as TAR_FORMAT_V7_RECOGNIZED)
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
 	if([data length]<512) return NO;
@@ -526,7 +534,7 @@
 			tarFormat = TAR_FORMAT_GNU;
 		}
 
-		if( tarFormat == TAR_FORMAT_V7 ) {
+		if( tarFormat == TAR_FORMAT_V7 || TAR_FORMAT_V7_RECOGNIZED ) {
 			[self addTarEntryWithDictionaryAndSeek:dict];
 		}
 		else if( tarFormat == TAR_FORMAT_USTAR )

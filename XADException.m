@@ -82,8 +82,9 @@ NSString *XADExceptionName=@"XADException";
 		case XADShortBufferError:	return @"Buffer was too short";
 		case XADEncodingError:		return @"Text encoding was defective";
 		case XADLinkError:			return @"Could not create symlink";
+		default:					return [NSString stringWithFormat:@"Error %d",error];
 	}
-	return nil;
 }
 
 @end
+

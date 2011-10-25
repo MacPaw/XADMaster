@@ -181,12 +181,13 @@ static NSData *StuffItMD5(NSData *data);
 
 	[fh seekToFileOffset:firstoffs+base];
 
-	[self parseDirectoryWithNumberOfEntries:numfiles parent:[self XADPath]];
+	[self parseWithNumberOfTopLevelEntries:numfiles];
 }
 
--(void)parseDirectoryWithNumberOfEntries:(int)numentries parent:(XADPath *)parent
+-(void)parseWithNumberOfTopLevelEntries:(int)numentries
 {
 	CSHandle *fh=[self handle];
+	NSMutableDictionary *dirs=[NSMutableDictionary dictionary];
 
 	for(int i=0;i<numentries;i++)
 	{
@@ -207,7 +208,7 @@ static NSData *StuffItMD5(NSData *data);
 		uint32_t modificationdate=[fh readUInt32BE];
 		/*uint32_t prevoffs=*/[fh readUInt32BE];
 		/*uint32_t nextoffs=*/[fh readUInt32BE];
-		/*uint32_t diroffs=*/[fh readUInt32BE];
+		uint32_t diroffs=[fh readUInt32BE];
 		int namelength=[fh readUInt16BE];
 		/*int headercrc=*/[fh readUInt16BE];
 		uint32_t datalength=[fh readUInt32BE];
@@ -279,10 +280,13 @@ static NSData *StuffItMD5(NSData *data);
 
 		off_t datastart=[fh offsetInFile];
 
+		XADPath *parent=[dirs objectForKey:[NSNumber numberWithInt:diroffs]];
+		if(!parent) parent=[self XADPath];
 		XADPath *path=[parent pathByAppendingPathComponent:[self XADStringWithData:namedata]];
 
 		if(flags&SIT5FLAGS_DIRECTORY)
 		{
+			[dirs setObject:path forKey:[NSNumber numberWithInt:offs]];
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				path,XADFileNameKey,
 				[NSDate XADDateWithTimeIntervalSince1904:modificationdate],XADLastModificationDateKey,
@@ -295,7 +299,7 @@ static NSData *StuffItMD5(NSData *data);
 
 			[self addEntryWithDictionary:dict];
 			[fh seekToFileOffset:datastart];
-			[self parseDirectoryWithNumberOfEntries:numfiles parent:path];
+			numentries+=numfiles;
 		}
 		else
 		{

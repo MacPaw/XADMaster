@@ -52,7 +52,8 @@
 	return( tarFormat );
 }
 
-// Recognize files by name or magic. (tar v7 files have no magic, are recognized as TAR_FORMAT_V7_RECOGNIZED)
+// Recognize files by name or magic. (tar v7 files have no magic, are recognized as
+// TAR_FORMAT_V7_RECOGNIZED via checksums)
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
 	if([data length]<512) return NO;
@@ -534,7 +535,7 @@
 			tarFormat = TAR_FORMAT_GNU;
 		}
 
-		if( tarFormat == TAR_FORMAT_V7 || TAR_FORMAT_V7_RECOGNIZED ) {
+		if( tarFormat == TAR_FORMAT_V7 || tarFormat == TAR_FORMAT_V7_RECOGNIZED ) {
 			[self addTarEntryWithDictionaryAndSeek:dict];
 		}
 		else if( tarFormat == TAR_FORMAT_USTAR )

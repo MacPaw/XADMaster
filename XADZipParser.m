@@ -843,30 +843,28 @@ isLastEntry:(BOOL)islastentry
 			if(extfileattrib&0x10) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 			[dict setObject:[NSNumber numberWithUnsignedInt:extfileattrib] forKey:XADDOSFileAttributesKey];
 		}
-
-		if(system==1) // Amiga
+		else if(system==1) // Amiga
 		{
 			[dict setObject:[NSNumber numberWithUnsignedInt:extfileattrib] forKey:XADAmigaProtectionBitsKey];
 		}
-
-		if(system==3) // Unix
+		else if(system==3) // Unix
 		{
-			int perm=extfileattrib>>16;
-			[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
-		}
-		else
-		{
-			#ifndef __MINGW32__
-			// Several amazingly broken archivers on OS X create files that do
-			// not contain proper permissions extra records, and use non-sensical
-			// OS field values. They still expect apps and scripts to be executable,
-			// though, because Archive Utility by default makes all files executable.
-			// Don't bother with this on Windows.
-			mode_t mask=umask(0); umask(mask);
-			[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
-			#endif
+			// This is completely unreliable, so don't do it.
+			//int perm=extfileattrib>>16;
+			//[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
 		}
 	}
+
+	#ifdef __APPLE__
+	// Several amazingly broken archivers on OS X create files that do
+	// not contain proper permissions extra records. They still expect apps
+	// and scripts to be executable, though, because Archive Utility by
+	// default makes all files executable. Therefore, create permissions
+	// entries based on the default permissions mask, but only on OS X. 
+	// These will be overridden by extra records right afterwards, if present.
+	mode_t mask=umask(0); umask(mask);
+	[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
+	#endif
 
 	if(extradict) [dict addEntriesFromDictionary:extradict];
 

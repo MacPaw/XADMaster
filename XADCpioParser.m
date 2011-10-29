@@ -93,16 +93,18 @@
 			mtime=[fh readUInt32BE];
 			namesize=[fh readUInt16BE];
 			filesize=[fh readUInt32BE];
+
 			namedata=[fh readDataOfLength:namesize-1];
 			[fh skipBytes:1+(namesize&1)];
-			pad=filesize&1;
 
 			devmajor=dev>>9;
 			devminor=dev&0x1ff;
 			rdevmajor=rdev>>9;
 			rdevminor=rdev&0x1ff;
+
+			pad=filesize&1;
 		}
-		else if(magic[0]==0x71&&magic[1]==0xc7) // little-endian binary
+		else if(magic[0]==0xc7&&magic[1]==0x71) // little-endian binary
 		{
 			int dev=[fh readUInt16LE];
 			ino=[fh readUInt16LE];
@@ -111,17 +113,24 @@
 			gid=[fh readUInt16LE];
 			nlink=[fh readUInt16LE];
 			int rdev=[fh readUInt16LE];
-			mtime=[fh readUInt32LE];
+			int mtimehigh=[fh readUInt16LE];
+			int mtimelow=[fh readUInt16LE];
 			namesize=[fh readUInt16LE];
-			filesize=[fh readUInt32LE];
+			int filesizehigh=[fh readUInt16LE];
+			int filesizelow=[fh readUInt16LE];
+
 			namedata=[fh readDataOfLength:namesize-1];
 			[fh skipBytes:1+(namesize&1)];
-			pad=filesize&1;
+
+			mtime=(mtimehigh<<16)+mtimelow;
+			filesize=(filesizehigh<<16)+filesizelow;
 
 			devmajor=dev>>9;
 			devminor=dev&0x1ff;
 			rdevmajor=rdev>>9;
 			rdevminor=rdev&0x1ff;
+
+			pad=filesize&1;
 		}
 		else [XADException raiseIllegalDataException];
 
@@ -140,7 +149,7 @@
 			[self XADPathWithData:namedata separators:XADUnixPathSeparator],XADFileNameKey,
 			[NSDate dateWithTimeIntervalSince1970:mtime],XADLastModificationDateKey,
 			[NSNumber numberWithLongLong:filesize],XADFileSizeKey,
-			[NSNumber numberWithLongLong:filesize],XADCompressedSizeKey,
+			[NSNumber numberWithLongLong:filesize+pad],XADCompressedSizeKey,
 			[NSNumber numberWithLongLong:filesize],XADDataLengthKey,
 			[NSNumber numberWithLongLong:pos],XADDataOffsetKey,
 		nil];

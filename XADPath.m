@@ -273,19 +273,21 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 -(NSString *)stringWithEncodingName:(NSString *)encoding
 {
+	int count=[components count];
+
+	if(count==0) return @".";
+	else if(count==1) return [[components objectAtIndex:0] stringWithEncodingName:encoding];
+
 	NSMutableString *string=[NSMutableString string];
 
-	int count=[components count];
-	if(count==0) return @".";
-
-	int i=0;
-	if(count>1&&[[components objectAtIndex:0] isEqual:@"/"]) i++;
-
-	for(;i<count;i++)
+	for(int i=0;i<count;i++)
 	{
+		XADString *component=[components objectAtIndex:i];
+
+		if(i==0 && [component isEqual:@"/"]) continue;
 		if(i!=0) [string appendString:@"/"];
 
-		NSString *compstring=[[components objectAtIndex:i] stringWithEncodingName:encoding];
+		NSString *compstring=[component stringWithEncodingName:encoding];
 
 		// TODO: Should this method really map / to :?
 		if([compstring rangeOfString:@"/"].location==NSNotFound) [string appendString:compstring];
@@ -303,18 +305,22 @@ separators:(const char *)separators source:(XADStringSource *)stringsource
 
 -(NSData *)data
 {
+	int count=[components count];
+
+	if(count==0) return [NSData data];
+	else if(count==1) return [[components objectAtIndex:0] data];
+
 	NSMutableData *data=[NSMutableData data];
 
-	int count=[components count];
-	int i=0;
-
-	if(count>1&&[[components objectAtIndex:0] isEqual:@"/"]) i++;
-
-	for(;i<count;i++)
+	for(int i=0;i<count;i++)
 	{
+		XADString *component=[components objectAtIndex:i];
+
+		if(i==0 && [component isEqual:@"/"]) continue;
 		if(i!=0) [data appendBytes:"/" length:1];
+
 		// NOTE: Doesn't map '/' to ':'.
-		[data appendData:[[components objectAtIndex:i] data]];
+		[data appendData:[component data]];
 	}
 
 	return data;

@@ -110,6 +110,8 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADCpioParser.m \
 			XADCRCHandle.m \
 			XADCRCSuffixHandle.m \
+			XADCrunchHandles.m \
+			XADCrunchParser.m \
 			XADDeflateHandle.m \
 			XADDeltaHandle.m \
 			XADDigestHandle.m \

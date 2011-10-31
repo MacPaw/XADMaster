@@ -4,15 +4,8 @@
 #import "XADChecksumHandle.h"
 #import "NSDateXAD.h"
 
-@implementation XADSqueezeParser
-
-+(int)requiredHeaderSize { return 5; }
-
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
+BOOL IsSqueezeHeader(const uint8_t *bytes,int length)
 {
-	const uint8_t *bytes=[data bytes];
-	int length=[data length];
-
 	if(length<5) return NO;
 
 	if(bytes[0]!=0x76||bytes[1]!=0xff) return NO;
@@ -20,11 +13,23 @@
 	if(bytes[4]==0) return NO;
 	for(int i=4;i<length;i++)
 	{
-		if(bytes[i]==0) break;
+		if(bytes[i]==0)
+		{
+			return YES;
+		}
 		if(bytes[i]<32) return NO;
 	}
 
-	return YES;
+	return NO;
+}
+
+@implementation XADSqueezeParser
+
++(int)requiredHeaderSize { return 1024; }
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
+{
+	return IsSqueezeHeader([data bytes],[data length]);
 }
 
 -(void)parse

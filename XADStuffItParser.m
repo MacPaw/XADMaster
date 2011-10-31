@@ -213,12 +213,11 @@
 
 	int compressionmethod=[[dict objectForKey:@"StuffItCompressionMethod"] intValue];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
-	off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
 	if(enc&&[enc boolValue])
 	{
-		fh = [self decryptHandleForEntryWithDictionary:dict handle:fh];
+		fh=[self decryptHandleForEntryWithDictionary:dict handle:fh];
 	}
 	
 	CSHandle *handle;
@@ -235,13 +234,13 @@
 		case 8:
 		{
 			[self reportInterestingFileWithReason:@"Compression method 8 (MW)"];
-			handle=[[[XADStuffItMWHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
+			handle=[[[XADStuffItMWHandle alloc] initWithHandle:fh length:size] autorelease]; break;
 		}
 		case 13: handle=[[[XADStuffIt13Handle alloc] initWithHandle:fh length:size] autorelease]; break;
 		case 14:
 		{
 			[self reportInterestingFileWithReason:@"Compression method 14"];
-			handle=[[[XADStuffIt14Handle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
+			handle=[[[XADStuffIt14Handle alloc] initWithHandle:fh length:size] autorelease]; break;
 		}
 		case 15: handle=[[[XADStuffItArsenicHandle alloc] initWithHandle:fh length:size] autorelease]; break;
 

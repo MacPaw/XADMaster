@@ -1,4 +1,8 @@
 #import "XADLBRParser.h"
+#import "XADSqueezeParser.h"
+#import "XADSqueezeHandle.h"
+#import "XADCrunchParser.h"
+#import "XADCrunchHandles.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 
@@ -71,19 +75,23 @@
 		[data appendBytes:(uint8_t []){'.'} length:1];
 
 		int extlength=3;
-		while(extlength>1 && namebuf[extlength+8]==' ') extlength--;
+		while(extlength>1 && namebuf[extlength+7]==' ') extlength--;
 		[data appendBytes:&namebuf[8] length:extlength];
+
+		BOOL lookslikesqueeze=(namebuf[9]=='q' || namebuf[9]=='Q');
+		BOOL lookslikecrunch=(namebuf[9]=='z' || namebuf[9]=='Z');
 
 		int index=[fh readUInt16LE];
 		int length=[fh readUInt16LE];
 		int crc=[fh readUInt16LE];
-
 		int creationdate=[fh readUInt16LE];
 		int modificationdate=[fh readUInt16LE];
 		int creationtime=[fh readUInt16LE];
 		int modificationtime=[fh readUInt16LE];
 		int padding=[fh readUInt8];
 
+		int filesize=length*128-padding;
+	
 		if(!modificationdate)
 		{
 			modificationdate=creationdate;
@@ -91,14 +99,45 @@
 		}
 
 		[fh skipBytes:5];
+		off_t currpos=[fh offsetInFile];
+
+		BOOL issqueeze=NO;
+		BOOL iscrunch=NO;
+		if(lookslikesqueeze || lookslikecrunch)
+		{
+			int headsize=128;
+			if(headsize>filesize) headsize=filesize;
+
+			[fh seekToFileOffset:index*128];
+
+			uint8_t header[headsize];
+			[fh readBytes:headsize toBuffer:header];
+
+			if(lookslikesqueeze)
+			{
+				if(IsSqueezeHeader(header,headsize))
+				{
+					issqueeze=YES;
+				}
+			}
+			else if(lookslikecrunch)
+			{
+				if(IsCrunchHeader(header,headsize))
+				{
+					iscrunch=YES;
+				}
+			}
+		}
 
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			[self XADPathWithData:data separators:XADNoPathSeparator],XADFileNameKey,
-			[NSNumber numberWithLongLong:length*128-padding],XADFileSizeKey,
+			[NSNumber numberWithLongLong:filesize],XADFileSizeKey,
 			[NSNumber numberWithLongLong:length*128],XADCompressedSizeKey,
-			[NSNumber numberWithLongLong:length*128-padding],XADDataLengthKey,
+			[NSNumber numberWithLongLong:filesize],XADDataLengthKey,
 			[NSNumber numberWithLongLong:index*128],XADDataOffsetKey,
 			[NSNumber numberWithInt:crc],@"LBRCRC16",
+			[NSNumber numberWithBool:iscrunch],@"LBRIsCrunch",
+			[NSNumber numberWithBool:issqueeze],@"LBRIsSqueeze",
 		nil];
 
 		if(creationdate)
@@ -109,8 +148,8 @@
 		[dict setObject:[NSDate XADDateWithCPMDate:modificationdate
 		time:modificationtime] forKey:XADLastModificationDateKey];
 
-
-		[self addEntryWithDictionary:dict retainPosition:YES];
+		[self addEntryWithDictionary:dict];
+		[fh seekToFileOffset:currpos];
 	}
 }
 

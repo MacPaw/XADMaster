@@ -1,8 +1,8 @@
 #import "XADArchiveParser.h"
 
-BOOL IsSqueezeHeader(const uint8_t *bytes,int length);
+BOOL IsCrunchHeader(const uint8_t *bytes,int length);
 
-@interface XADSqueezeParser:XADArchiveParser
+@interface XADCrunchParser:XADArchiveParser
 {
 }
 

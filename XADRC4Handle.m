@@ -6,7 +6,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
 {
-	if((self=[super initWithName:[handle name]]))
+	if((self=[super initWithName:[handle name] length:[handle fileSize]]))
 	{
 		parent=[handle retain];
 		startoffs=[parent offsetInFile];

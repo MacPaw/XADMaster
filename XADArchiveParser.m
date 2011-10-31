@@ -34,6 +34,7 @@
 #import "XADARJParser.h"
 #import "XADARCParser.h"
 #import "XADSqueezeParser.h"
+#import "XADCrunchParser.h"
 #import "XADLBRParser.h"
 #import "XADZooParser.h"
 #import "XADNSISParser.h"
@@ -178,6 +179,7 @@ static int maxheader=0;
 		[XADARCParser class],
 		[XADARCSFXParser class],
 		[XADSqueezeParser class],
+		[XADCrunchParser class],
 		[XADLBRParser class],
 		[XADLZMAAloneParser class],
 		[XADCpioParser class],

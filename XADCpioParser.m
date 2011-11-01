@@ -156,6 +156,11 @@
 
 		int type=mode&0xf000;
 
+		if(type==0x4000)
+		{
+			[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
+		}
+
 		if(type==0x2000||type==0x6000)
 		{
 			[dict setObject:[NSNumber numberWithInt:rdevmajor] forKey:XADDeviceMajorKey];

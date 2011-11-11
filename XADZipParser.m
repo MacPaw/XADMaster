@@ -660,9 +660,10 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 				if((XADCalculateCRC(0xffffffff,[namedata bytes],[namedata length],
 				XADCRCTable_edb88320)^0xffffffff)==crc)
 				{
-					[dict setObject:[dict objectForKey:XADFileNameKey] forKey:@"ZipRegularFilename"];
-					[dict setObject:[self XADPathWithData:unicodedata encodingName:XADUTF8StringEncodingName
-					separators:XADEitherPathSeparator] forKey:XADFileNameKey];
+					XADPath *oldname=[dict objectForKey:XADFileNameKey];
+					XADPath *newname=[self XADPathWithData:unicodedata encodingName:XADUTF8StringEncodingName separators:XADEitherPathSeparator];
+					if(oldname) [dict setObject:oldname forKey:@"ZipRegularFilename"];
+					[dict setObject:newname forKey:XADFileNameKey];
 					// Apparently at least some files use Windows path separators instead of the
 					// usual Unix. Not sure what to expect here, so using both.
 				}

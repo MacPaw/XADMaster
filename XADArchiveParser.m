@@ -581,7 +581,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		// Check if any data was filled in at all. If not, return nil.
 		bool zero=true;
 		for(int i=0;zero && i<sizeof(finderinfo);i++) if(finderinfo[i]!=0) zero=false;
-		if(!zero) return nil;
+		if(zero) return nil;
 
 		return [NSData dataWithBytes:finderinfo length:32];
 	}

@@ -69,6 +69,7 @@ wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractLinkEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)destpath name:(NSString *)filename;
+-(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath;
 
 -(XADError)_updateFileAttributesAtPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict
 deferDirectories:(BOOL)defer;
@@ -84,11 +85,7 @@ outputTarget:(id)target selector:(SEL)sel argument:(id)arg;
 
 @end
 
-@interface XADUnarchiver (AppleDouble)
 
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath;
-
-@end
 
 
 @interface NSObject (XADUnarchiverDelegate)

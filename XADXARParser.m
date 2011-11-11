@@ -115,7 +115,7 @@ static const NSString *DateFormat=@"Date";
 	[file removeObjectForKey:@"Files"];
 	[file removeObjectForKey:@"ExtendedAttributes"];
 
-	XADPath *path=[parentpath pathByAppendingPathComponent:[self XADStringWithString:name]];
+	XADPath *path=[parentpath pathByAppendingXADStringComponent:[self XADStringWithString:name]];
 	[file setObject:path forKey:XADFileNameKey];
 
 	if([type isEqual:@"directory"]||filearray)

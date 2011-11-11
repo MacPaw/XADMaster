@@ -170,7 +170,7 @@
 					namedata=mutablenamedata;
 				}
 
-				path=[parent pathByAppendingPathComponent:[self XADStringWithData:namedata]];
+				path=[parent pathByAppendingXADStringComponent:[self XADStringWithData:namedata]];
 			}
 		}
 

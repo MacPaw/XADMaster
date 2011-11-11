@@ -113,7 +113,7 @@
 		int rsrccrc=[fh readUInt16BE];
 		[fh skipBytes:2];
 
-		XADPath *name=[currdir pathByAppendingPathComponent:[self XADStringWithBytes:namebuf length:namelen]];
+		XADPath *name=[currdir pathByAppendingXADStringComponent:[self XADStringWithBytes:namebuf length:namelen]];
 
 		off_t start=[fh offsetInFile];
 		uint32_t totalsize=0;
@@ -229,7 +229,7 @@
 		for(int i=dirlevel;i<lastdirlevel;i++) currdir=[currdir pathByDeletingLastPathComponent];
 		lastdirlevel=dirlevel;
 
-		XADPath *name=[currdir pathByAppendingPathComponent:[self XADStringWithBytes:namebuf length:namelen]];
+		XADPath *name=[currdir pathByAppendingXADStringComponent:[self XADStringWithBytes:namebuf length:namelen]];
 
 		if(entrytype&0x8000)
 		{

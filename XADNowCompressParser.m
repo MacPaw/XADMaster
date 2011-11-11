@@ -97,7 +97,7 @@
 		[fh skipBytes:4]; // Skip checksum.
 
 		XADString *name=[self XADStringWithData:namedata];
-		XADPath *path=[parent pathByAppendingPathComponent:name];
+		XADPath *path=[parent pathByAppendingXADStringComponent:name];
 
 		NSMutableDictionary *shareddict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			path,XADFileNameKey,

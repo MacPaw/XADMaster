@@ -32,7 +32,7 @@
 	NSString *unpackdestination,*finaldestination,*soloitem;
 	int numextracted;
 
-	XADString *toplevelname;
+	NSString *toplevelname;
 	BOOL lookslikesolo;
 
 	off_t totalsize,currsize,totalprogress;

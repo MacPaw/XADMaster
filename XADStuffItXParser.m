@@ -611,7 +611,7 @@ static void DumpElement(StuffItXElement *element)
 					NSDictionary *parent=[dict objectForKey:[entry objectForKey:@"StuffItXParent"]];
 
 					if(parent) path=[[parent objectForKey:XADFileNameKey]
-					pathByAppendingPathComponent:[self XADStringWithData:filename]];
+					pathByAppendingXADStringComponent:[self XADStringWithData:filename]];
 					else path=[self XADPathWithData:filename separators:XADNoPathSeparator];
 
 					[entry setObject:path forKey:XADFileNameKey];

@@ -96,7 +96,7 @@
 			if(namelen>63) namelen=63;
 
 			XADString *name=[self XADStringWithBytes:header+SITFH_FNAME length:namelen];
-			XADPath *path=[currdir pathByAppendingPathComponent:name];
+			XADPath *path=[currdir pathByAppendingXADStringComponent:name];
 
 			off_t start=[fh offsetInFile];
 

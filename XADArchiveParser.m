@@ -909,92 +909,92 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 -(XADString *)XADStringWithString:(NSString *)string
 {
-	return [[[XADString alloc] initWithString:string] autorelease];
+	return [XADString XADStringWithString:string];
 }
 
 -(XADString *)XADStringWithData:(NSData *)data
 {
-	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
+	return [XADString analyzedXADStringWithData:data source:stringsource];
 }
 
 -(XADString *)XADStringWithData:(NSData *)data encodingName:(NSString *)encoding
 {
-	return [[[XADString alloc] initWithData:data encodingName:encoding] autorelease];
+	return [XADString decodedXADStringWithData:data encodingName:encoding];
 }
 
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length
 {
 	NSData *data=[NSData dataWithBytes:bytes length:length];
-	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
+	return [XADString analyzedXADStringWithData:data source:stringsource];
 }
 
 -(XADString *)XADStringWithBytes:(const void *)bytes length:(int)length encodingName:(NSString *)encoding
 {
 	NSData *data=[NSData dataWithBytes:bytes length:length];
-	return [[[XADString alloc] initWithData:data encodingName:encoding] autorelease];
+	return [XADString decodedXADStringWithData:data encodingName:encoding];
 }
 
 -(XADString *)XADStringWithCString:(const char *)cstring
 {
 	NSData *data=[NSData dataWithBytes:cstring length:strlen(cstring)];
-	return [[[XADString alloc] initWithData:data source:stringsource] autorelease];
+	return [XADString analyzedXADStringWithData:data source:stringsource];
 }
 
 -(XADString *)XADStringWithCString:(const char *)cstring encodingName:(NSString *)encoding
 {
 	NSData *data=[NSData dataWithBytes:cstring length:strlen(cstring)];
-	return [[[XADString alloc] initWithData:data encodingName:encoding] autorelease];
+	return [XADString decodedXADStringWithData:data encodingName:encoding];
 }
 
 
 
 -(XADPath *)XADPath
 {
-	return [[XADPath new] autorelease];
+	return [XADPath emptyPath];
 }
 
 -(XADPath *)XADPathWithString:(NSString *)string
 {
-	return [[[XADPath alloc] initWithString:string] autorelease];
+	return [XADPath separatedPathWithString:string];
 }
 
 -(XADPath *)XADPathWithUnseparatedString:(NSString *)string
 {
-	return [[[XADPath alloc] initWithComponents:[NSArray arrayWithObject:[self XADStringWithString:string]]] autorelease];
+	return [XADPath pathWithString:string];
 }
 
 -(XADPath *)XADPathWithData:(NSData *)data separators:(const char *)separators
 {
-	return [[[XADPath alloc] initWithBytes:[data bytes] length:[data length]
-	separators:separators source:stringsource] autorelease];
+	return [XADPath analyzedPathWithData:data source:stringsource separators:separators];
 }
 
 -(XADPath *)XADPathWithData:(NSData *)data encodingName:(NSString *)encoding separators:(const char *)separators
 {
-	return [[[XADPath alloc] initWithBytes:[data bytes] length:[data length]
-	encodingName:encoding separators:separators] autorelease];
+	return [XADPath decodedPathWithData:data encodingName:encoding separators:separators];
 }
 
 -(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length separators:(const char *)separators
 {
-	return [[[XADPath alloc] initWithBytes:bytes length:length separators:separators source:stringsource] autorelease];
+	NSData *data=[NSData dataWithBytes:bytes length:length];
+	return [XADPath analyzedPathWithData:data source:stringsource separators:separators];
 }
 
 -(XADPath *)XADPathWithBytes:(const void *)bytes length:(int)length encodingName:(NSString *)encoding separators:(const char *)separators
 {
-	return [[[XADPath alloc] initWithBytes:bytes length:length encodingName:encoding separators:separators] autorelease];
+	NSData *data=[NSData dataWithBytes:bytes length:length];
+	return [XADPath decodedPathWithData:data encodingName:encoding separators:separators];
 }
 
 -(XADPath *)XADPathWithCString:(const char *)cstring separators:(const char *)separators
 {
-	return [[[XADPath alloc] initWithBytes:cstring length:strlen(cstring)
-	separators:separators source:stringsource] autorelease];
+	NSData *data=[NSData dataWithBytes:cstring length:strlen(cstring)];
+	return [XADPath analyzedPathWithData:data source:stringsource separators:separators];
 }
 
 -(XADPath *)XADPathWithCString:(const char *)cstring encodingName:(NSString *)encoding separators:(const char *)separators
 {
-	return [[[XADPath alloc] initWithBytes:cstring length:strlen(cstring)
-	encodingName:encoding separators:separators] autorelease];
+	NSData *data=[NSData dataWithBytes:cstring length:strlen(cstring)];
+	return [XADPath decodedPathWithData:data encodingName:encoding separators:separators];
 }
 
 

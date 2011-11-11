@@ -108,7 +108,7 @@ name:(NSString *)name
 
 		if(method==0x1f || method==0x80)
 		{
-			if([parent depth]==0) break;
+			if([parent isEmpty]) break;
 			parent=[parent pathByDeletingLastPathComponent];
 			continue;
 		}
@@ -142,7 +142,7 @@ name:(NSString *)name
 		off_t dataoffset=[fh offsetInFile];
 
 		XADString *name=[self XADStringWithData:namedata];
-		XADPath *path=[parent pathByAppendingPathComponent:name];
+		XADPath *path=[parent pathByAppendingXADStringComponent:name];
 
 		if(method==0x1e || (method==0x82&&((loadaddress&0xffffff00)==0xfffddc00)))
 		{

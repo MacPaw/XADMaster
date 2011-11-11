@@ -282,7 +282,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 			filename=[self XADStringWithBytes:name length:namelength];
 		}
 
-		XADPath *currpath=[path pathByAppendingPathComponent:filename];
+		XADPath *currpath=[path pathByAppendingXADStringComponent:filename];
 
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			currpath,XADFileNameKey,
@@ -569,7 +569,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 			if(namedata)
 			{
 				XADString *correctfilename=[self XADStringWithData:namedata];
-				currpath=[path pathByAppendingPathComponent:correctfilename];
+				currpath=[path pathByAppendingXADStringComponent:correctfilename];
 				[dict setObject:filename forKey:@"ISO9660OriginalFileName"];
 				[dict setObject:currpath forKey:XADFileNameKey];
 			}

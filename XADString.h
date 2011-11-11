@@ -79,10 +79,16 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 	XADStringSource *source;
 }
 
-+(XADString *)XADStringWithString:(NSString *)knownstring;
++(XADString *)XADStringWithString:(NSString *)string;
++(XADString *)analyzedXADStringWithData:(NSData *)bytedata source:(XADStringSource *)stringsource;
++(XADString *)decodedXADStringWithData:(NSData *)bytedata encodingName:(NSString *)encoding;
+
++(NSString *)escapedStringForData:(NSData *)data encodingName:(NSString *)encoding;
++(NSString *)escapedStringForBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding;
++(NSString *)escapedASCIIStringForBytes:(const void *)bytes length:(size_t)length;
++(NSData *)escapedASCIIDataForString:(NSString *)string;
 
 -(id)initWithData:(NSData *)bytedata source:(XADStringSource *)stringsource;
--(id)initWithData:(NSData *)bytedata encodingName:(NSString *)encoding;
 -(id)initWithString:(NSString *)knownstring;
 -(void)dealloc;
 
@@ -144,7 +150,7 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 -(id)init;
 -(void)dealloc;
 
--(BOOL)analyzeDataAndCheckForASCII:(NSData *)data;
+-(void)analyzeData:(NSData *)data;
 
 -(NSString *)encodingName;
 -(float)confidence;

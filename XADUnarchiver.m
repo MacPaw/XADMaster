@@ -1,5 +1,6 @@
 #import "XADUnarchiver.h"
 #import "XADPlatform.h"
+#import "XADAppleDouble.h"
 #import "CSFileHandle.h"
 #import "Progress.h"
 
@@ -427,14 +428,41 @@ wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 
 	error=[subunarchiver parseAndUnarchive];
 
-	
-
 	[delegate unarchiver:self didExtractArchiveEntryWithDictionary:dict
 	withUnarchiver:subunarchiver to:destpath error:error];
 
 	return error;
 }
 
+
+-(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath
+{
+	CSHandle *fh;
+	@try { fh=[CSFileHandle fileHandleForWritingAtPath:destpath]; }
+	@catch(id e) { return XADOpenFileError; }
+
+	off_t ressize=0;
+	NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
+	if(sizenum) ressize=[sizenum longLongValue];
+
+	NSDictionary *extattrs=[parser extendedAttributesForDictionary:dict];
+
+	@try
+	{
+		// TODO: Should this function handle exceptions itself?
+		[XADAppleDouble writeAppleDoubleHeaderToHandle:fh resourceForkSize:ressize
+		extendedAttributes:extattrs];
+	}
+	@catch(id e) { return [XADException parseException:e]; }
+
+	// Write resource fork.
+	XADError error=XADNoError;
+	if(ressize) error=[self runExtractorWithDictionary:dict outputHandle:fh];
+
+	[fh close];
+
+	return error;
+}
 
 
 

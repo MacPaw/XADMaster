@@ -109,7 +109,7 @@
 
 		int namelen=[fh readUInt8];
 		NSData *namedata=[fh readDataOfLength:namelen&0x7f];
-		XADPath *path=[parent pathByAppendingPathComponent:[self XADStringWithData:namedata]];
+		XADPath *path=[parent pathByAppendingXADStringComponent:[self XADStringWithData:namedata]];
 
 		if(namelen&0x80)
 		{

@@ -117,7 +117,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 
 		NSData *pngdata=ConvertTiledIconToPNG(tiledata,palette);
 		[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-			[basepath pathByAppendingPathComponent:[self XADStringWithString:@"Icon.png"]],XADFileNameKey,
+			[basepath pathByAppendingXADStringComponent:[self XADStringWithString:@"Icon.png"]],XADFileNameKey,
 			[NSNumber numberWithUnsignedLong:[pngdata length]],XADFileSizeKey,
 			[NSNumber numberWithUnsignedLong:0x210],XADCompressedSizeKey,
 			pngdata,@"NDSData",
@@ -146,7 +146,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 			NSData *data=[string dataUsingEncoding:NSUTF8StringEncoding];
 
 			[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-				[basepath pathByAppendingPathComponent:[self XADStringWithString:filenames[i]]],XADFileNameKey,
+				[basepath pathByAppendingXADStringComponent:[self XADStringWithString:filenames[i]]],XADFileNameKey,
 				[NSNumber numberWithUnsignedLong:[data length]],XADFileSizeKey,
 				[NSNumber numberWithUnsignedLong:0x100],XADCompressedSizeKey,
 				data,@"NDSData",
@@ -155,7 +155,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 	}
 
 	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[basepath pathByAppendingPathComponent:[self XADStringWithString:
+		[basepath pathByAppendingXADStringComponent:[self XADStringWithString:
 		[NSString stringWithFormat:@"ARM9-%08x-%08x.bin",arm9_addr,arm9_entry]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm9_size],XADFileSizeKey,
 		[NSNumber numberWithUnsignedLong:arm9_size],XADCompressedSizeKey,
@@ -164,7 +164,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 	nil]];
 
 	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[basepath pathByAppendingPathComponent:[self XADStringWithString:
+		[basepath pathByAppendingXADStringComponent:[self XADStringWithString:
 		[NSString stringWithFormat:@"ARM7-%08x-%08x.bin",arm7_addr,arm7_entry]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm7_size],XADFileSizeKey,
 		[NSNumber numberWithUnsignedLong:arm7_size],XADCompressedSizeKey,
@@ -174,7 +174,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 
 	if(arm9_overlay_size)
 	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[basepath pathByAppendingPathComponent:[self XADStringWithString:
+		[basepath pathByAppendingXADStringComponent:[self XADStringWithString:
 		[NSString stringWithFormat:@"ARM9.ovt",arm9_addr]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm9_overlay_size],XADFileSizeKey,
 		[NSNumber numberWithUnsignedLong:arm9_overlay_size],XADCompressedSizeKey,
@@ -184,7 +184,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 
 	if(arm7_overlay_size)
 	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[basepath pathByAppendingPathComponent:[self XADStringWithString:
+		[basepath pathByAppendingXADStringComponent:[self XADStringWithString:
 		[NSString stringWithFormat:@"ARM7.ovt",arm7_addr]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm7_overlay_size],XADFileSizeKey,
 		[NSNumber numberWithUnsignedLong:arm7_overlay_size],XADCompressedSizeKey,
@@ -197,7 +197,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 		XADPath *directories[4096];
 		memset(directories,0,sizeof(directories));
 
-		directories[0]=[basepath pathByAppendingPathComponent:[self XADStringWithString:@"Datafiles"]];
+		directories[0]=[basepath pathByAppendingXADStringComponent:[self XADStringWithString:@"Datafiles"]];
 
 		[fh seekToFileOffset:fnt_offs+6];
 		int numdirs=[fh readUInt16LE];
@@ -221,7 +221,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 
 				NSData *namedata=[fh readDataOfLength:len&0x7f];
 				XADString *name=[self XADStringWithData:namedata];
-				XADPath *path=[dirpath pathByAppendingPathComponent:name];
+				XADPath *path=[dirpath pathByAppendingXADStringComponent:name];
 
 				if(len&0x80) // directory
 				{

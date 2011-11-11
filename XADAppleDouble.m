@@ -1,17 +1,143 @@
-#import "XADUnarchiver.h"
-#import "CSFileHandle.h"
+#import "XADAppleDouble.h"
+#import "XADException.h"
 
-@implementation XADUnarchiver (AppleDouble)
+// AppleDouble format referenced from:
+// http://www.opensource.apple.com/source/Libc/Libc-391.2.3/darwin/copyfile.c
 
--(XADError)_extractResourceForkEntryWithDictionary:(NSDictionary *)dict asAppleDoubleFile:(NSString *)destpath
+@implementation XADAppleDouble
+
++(BOOL)parseAppleDoubleWithHandle:(CSHandle *)fh resourceForkOffset:(off_t *)resourceoffsetptr
+resourceForkLength:(off_t *)resourcelengthptr extendedAttributes:(NSDictionary **)extattrsptr
 {
-	// AppleDouble format referenced from:
-	// http://www.opensource.apple.com/source/Libc/Libc-391.2.3/darwin/copyfile.c
+	if([fh readUInt32BE]!=0x00051607) return NO;
+	if([fh readUInt32BE]!=0x00020000) return NO;
 
-	CSHandle *fh;
-	@try { fh=[CSFileHandle fileHandleForWritingAtPath:destpath]; }
-	@catch(id e) { return XADOpenFileError; }
+	[fh skipBytes:16];
 
+	int num=[fh readUInt16BE];
+
+	uint32_t rsrcoffs=0,rsrclen=0;
+	uint32_t finderoffs=0,finderlen=0;
+
+	for(int i=0;i<num;i++)
+	{
+		uint32_t entryid=[fh readUInt32BE];
+		uint32_t entryoffs=[fh readUInt32BE];
+		uint32_t entrylen=[fh readUInt32BE];
+
+		switch(entryid)
+		{
+			case 2: // resource fork
+				rsrcoffs=entryoffs;
+				rsrclen=entrylen;
+			break;
+			case 9: // finder
+				finderoffs=entryoffs;
+				finderlen=entrylen;
+			break;
+		}
+	}
+
+	if(!rsrcoffs&&!finderoffs) return NO;
+
+	// Load FinderInfo struct and extended attributes if available.
+	NSData *finderinfo=nil;
+	NSMutableDictionary *extattrs=nil;
+ 	if(finderoffs)
+	{
+		// First 32 bytes are the FinderInfo struct.
+		[fh seekToFileOffset:finderoffs];
+		if(finderlen>32) finderinfo=[fh readDataOfLength:32];
+		else finderinfo=[fh readDataOfLength:finderlen];
+
+		// Add FinderInfo to extended attributes only if it is not empty.
+		static const uint8_t zerobytes[32]={0x00};
+		if(memcmp([finderinfo bytes],zerobytes,[finderinfo length])!=0)
+		{
+			extattrs=[NSMutableDictionary dictionaryWithObject:finderinfo
+			forKey:@"com.apple.FinderInfo"];
+		}
+
+		// The FinderInfo struct is optionally followed by the extended attributes.
+		if(finderlen>70)
+		{
+			if(!extattrs) extattrs=[NSMutableDictionary dictionary];
+			[self _parseAppleDoubleExtendedAttributesWithHandle:fh intoDictionary:extattrs];
+		}
+	}
+
+	if(resourceoffsetptr) *resourceoffsetptr=rsrcoffs;
+	if(resourcelengthptr) *resourcelengthptr=rsrclen;
+	if(extattrsptr) *extattrsptr=extattrs;
+
+	return YES;
+}
+
++(void)_parseAppleDoubleExtendedAttributesWithHandle:(CSHandle *)fh intoDictionary:(NSMutableDictionary *)extattrs
+{
+	[fh skipBytes:2];
+	uint32_t magic=[fh readUInt32BE];
+
+	if(magic!=0x41545452) return;
+
+	/*uint32_t debug=*/[fh readUInt32BE];
+	/*uint32_t totalsize=*/[fh readUInt32BE];
+	/*uint32_t datastart=*/[fh readUInt32BE];
+	/*uint32_t datalength=*/[fh readUInt32BE];
+	[fh skipBytes:12];
+	/*int flags=*/[fh readUInt16BE];
+	int numattrs=[fh readUInt16BE];
+
+	struct
+	{
+		int offset,length,namelen;
+		uint8_t namebytes[256];
+	} entries[numattrs];
+
+	for(int i=0;i<numattrs;i++)
+	{
+		entries[i].offset=[fh readUInt32BE];
+		entries[i].length=[fh readUInt32BE];
+		/*int flags=*/[fh readUInt16BE];
+		entries[i].namelen=[fh readUInt8];
+		[fh readBytes:entries[i].namelen toBuffer:entries[i].namebytes];
+
+		int padbytes=(-(entries[i].namelen+11))&3;
+		[fh skipBytes:padbytes]; // Align to 4 bytes.
+	}
+
+	for(int i=0;i<numattrs;i++)
+	{
+		off_t curroffset=[fh offsetInFile];
+
+		// Find the entry that comes next in the file to avoid seeks.
+		int minoffset=INT_MAX;
+		int minindex=-1;
+		for(int j=0;j<numattrs;j++)
+		{
+			if(entries[j].offset>=curroffset && entries[j].offset<minoffset)
+			{
+				minoffset=entries[j].offset;
+				minindex=j;
+			}
+		}
+		if(minindex<0) break; // File structure was messed up, so give up.
+
+		if(minoffset!=curroffset) [fh seekToFileOffset:minoffset];
+		NSData *data=[fh readDataOfLength:entries[minindex].length];
+
+		NSString *name=[[[NSString alloc] initWithBytes:entries[minindex].namebytes
+		length:entries[minindex].namelen-1 encoding:NSUTF8StringEncoding] autorelease];
+
+		[extattrs setObject:data forKey:name];
+	}
+}
+
+
+
++(void)writeAppleDoubleHeaderToHandle:(CSHandle *)fh resourceForkSize:(int)ressize
+extendedAttributes:(NSDictionary *)extattrs
+{
 	// AppleDouble header template.
 	uint8_t header[0x32]=
 	{
@@ -22,8 +148,6 @@
 		/* 38 */ 0x00,0x00,0x00,0x02, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,
 		/* 50 */
 	};
-
-	NSDictionary *extattrs=[parser extendedAttributesForDictionary:dict];
 
 	// Calculate FinderInfo and extended attributes size field.
 	int numattributes=0,attributeentrysize=0,attributedatasize=0;
@@ -59,9 +183,6 @@
 	}
 
 	// Set resource fork size field.
-	off_t ressize=0;
-	NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
-	if(sizenum) ressize=[sizenum longLongValue];
 	CSSetUInt32BE(&header[46],ressize);
 
 	// Write AppleDouble header.
@@ -71,7 +192,7 @@
 	NSData *finderinfo=[extattrs objectForKey:@"com.apple.FinderInfo"];
 	if(finderinfo)
 	{
-		if([finderinfo length]<32) return XADUnknownError;
+		if([finderinfo length]<32) [XADException raiseUnknownException];
 		[fh writeBytes:32 fromBuffer:[finderinfo bytes]];
 	}
 	else
@@ -162,14 +283,6 @@
 			[fh writeData:data];
 		}
 	}
-
-	// Write resource fork.
-	XADError error=XADNoError;
-	if(ressize) error=[self runExtractorWithDictionary:dict outputHandle:fh];
-
-	[fh close];
-
-	return error;
 }
 
 @end

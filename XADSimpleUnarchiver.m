@@ -590,7 +590,7 @@
 	// if this one has the same first first path component as the earlier ones.
 	if(lookslikesolo || !toplevelname)
 	{
-		XADString *firstcomp=[[entry objectForKey:XADFileNameKey] firstPathComponent];
+		NSString *firstcomp=[[entry objectForKey:XADFileNameKey] firstCanonicalPathComponent];
 		if(!toplevelname)
 		{
 			toplevelname=[firstcomp retain];

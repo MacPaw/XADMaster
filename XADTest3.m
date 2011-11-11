@@ -71,7 +71,13 @@ NSString *EscapeString(NSString *str)
 	NSString *name=EscapeString([[dict objectForKey:XADFileNameKey] string]);
 	printf("%s (",[name UTF8String]);
 
-	if(dir&&[dir boolValue]) printf("dir");
+	if(dir&&[dir boolValue])
+	{
+		printf("dir");
+
+		NSNumber *rsrc=[dict objectForKey:XADIsResourceForkKey];
+		if(rsrc&&[rsrc boolValue]) printf(", rsrc");
+	}
 	else if(link) printf("-> %s",[link UTF8String]);
 	else
 	{

@@ -282,7 +282,7 @@ static NSData *StuffItMD5(NSData *data);
 
 		XADPath *parent=[dirs objectForKey:[NSNumber numberWithInt:diroffs]];
 		if(!parent) parent=[self XADPath];
-		XADPath *path=[parent pathByAppendingPathComponent:[self XADStringWithData:namedata]];
+		XADPath *path=[parent pathByAppendingXADStringComponent:[self XADStringWithData:namedata]];
 
 		if(flags&SIT5FLAGS_DIRECTORY)
 		{

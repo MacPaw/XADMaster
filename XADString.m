@@ -53,34 +53,110 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 
 @implementation XADString
 
-+(XADString *)XADStringWithString:(NSString *)knownstring
+static BOOL IsASCII(const char *bytes,int length)
 {
-	return [[[self alloc] initWithString:knownstring] autorelease];
+	for(int i=0;i<length;i++) if(bytes[i]&0x80) return NO;
+	return YES;
 }
+
++(XADString *)XADStringWithString:(NSString *)string
+{
+	return [[[self alloc] initWithString:string] autorelease];
+}
+
++(XADString *)analyzedXADStringWithData:(NSData *)bytedata source:(XADStringSource *)stringsource
+{
+	[stringsource analyzeData:bytedata];
+
+	if(IsASCII([bytedata bytes],[bytedata length]))
+	{
+		NSString *string=[[[NSString alloc] initWithData:bytedata encoding:NSASCIIStringEncoding] autorelease];
+		return [[[self alloc] initWithString:string] autorelease];
+	}
+	else
+	{
+		return [[[self alloc] initWithData:bytedata source:stringsource] autorelease];
+	}
+}
+
++(XADString *)decodedXADStringWithData:(NSData *)bytedata encodingName:(NSString *)encoding
+{
+	NSString *string=[XADString stringForData:bytedata encodingName:encoding];
+	return [[[self alloc] initWithString:string] autorelease];
+}
+
+
+
+
++(NSString *)escapedStringForData:(NSData *)data encodingName:(NSString *)encoding
+{
+	NSString *decstr=[XADString stringForData:data encodingName:encoding];
+	if(decstr) return decstr;
+
+	// Fall back on escaped ASCII if the encoding was unusable.
+	return [self escapedASCIIStringForBytes:[data bytes] length:[data length]];
+}
+
++(NSString *)escapedStringForBytes:(const void *)bytes length:(size_t)length
+encodingName:(NSString *)encoding
+{
+	NSString *decstr=[XADString stringForBytes:bytes length:length encodingName:encoding];
+	if(decstr) return decstr;
+
+	// Fall back on escaped ASCII if the encoding was unusable.
+	return [self escapedASCIIStringForBytes:bytes length:length];
+}
+
++(NSString *)escapedASCIIStringForBytes:(const void *)bytes length:(size_t)length
+{
+	NSMutableString *str=[NSMutableString stringWithCapacity:length];
+
+	const uint8_t *byteptr=bytes;
+	for(int i=0;i<length;i++)
+	{
+		if(byteptr[i]<0x80) [str appendFormat:@"%c",byteptr[i]];
+		else [str appendFormat:@"%%%02x",byteptr[i]];
+	}
+
+	return [NSString stringWithString:str];
+}
+
++(NSData *)escapedASCIIDataForString:(NSString *)string
+{
+	int length=[string length];
+	NSMutableData *encdata=[NSMutableData dataWithCapacity:length];
+
+	for(int i=0;i<length;i++)
+	{
+		char bytes[8];
+		unichar c=[string characterAtIndex:i];
+		if(c<0x80)
+		{
+			bytes[0]=c;
+			[encdata appendBytes:bytes length:1];
+		}
+		else
+		{
+			sprintf(bytes,"%%u%04x",c&0xffff);
+			[encdata appendBytes:bytes length:6];
+		}
+	}
+
+	return [NSData dataWithData:encdata];
+	// Do not use this because Cocotron doesn't support it.
+	//return [string dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+}
+
+
+
 
 -(id)initWithData:(NSData *)bytedata source:(XADStringSource *)stringsource
 {
-	// Make sure the detector sees the data, and decode it directly if it is just ASCII
-	if([stringsource analyzeDataAndCheckForASCII:bytedata])
-	return [self initWithString:[[[NSString alloc] initWithData:bytedata encoding:NSASCIIStringEncoding] autorelease]];
-
 	if((self=[super init]))
 	{
 		data=[bytedata retain];
 		string=nil;
 		source=[stringsource retain];
-	}
-	return self;
-}
-
--(id)initWithData:(NSData *)bytedata encodingName:(NSString *)encoding
-{
-	if((self=[super init]))
-	{
-		// TODO: handle decoding failures
-		string=[[XADString stringForData:bytedata encodingName:encoding] retain];
-		data=nil;
-		source=nil;
 	}
 	return self;
 }
@@ -108,7 +184,8 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 
 -(BOOL)canDecodeWithEncodingName:(NSString *)encoding
 {
-	return string || [XADString canDecodeData:data encodingName:encoding];
+	if(string) return YES;
+	return [XADString canDecodeData:data encodingName:encoding];
 }
 
 -(NSString *)string
@@ -119,51 +196,13 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 -(NSString *)stringWithEncodingName:(NSString *)encoding
 {
 	if(string) return string;
-
-	NSString *decstr=[XADString stringForData:data encodingName:encoding];
-	if(decstr) return decstr;
-
-	// Fall back on escaped ASCII if the encoding was unusable.
-	const uint8_t *bytes=[data bytes];
-	int length=[data length];
-	NSMutableString *str=[NSMutableString stringWithCapacity:length];
-
-	for(int i=0;i<length;i++)
-	{
-		if(bytes[i]<0x80) [str appendFormat:@"%c",bytes[i]];
-		else [str appendFormat:@"%%%02x",bytes[i]];
-	}
-
-	return [NSString stringWithString:str];
+	return [XADString escapedStringForData:data encodingName:encoding];
 }
 
 -(NSData *)data
 {
 	if(data) return data;
-
-	int length=[string length];
-	NSMutableData *encdata=[NSMutableData dataWithCapacity:length];
-
-	for(int i=0;i<length;i++)
-	{
-		char bytes[8];
-		unichar c=[string characterAtIndex:i];
-		if(c<0x80)
-		{
-			bytes[0]=c;
-			[encdata appendBytes:bytes length:1];
-		}
-		else
-		{
-			sprintf(bytes,"%%u%04x",c&0xffff);
-			[encdata appendBytes:bytes length:6];
-		}
-	}
-
-	return [NSData dataWithData:encdata];
-
-	// Do not use this because Cocotron doesn't support it.
-	//return [string dataUsingEncoding:NSNonLossyASCIIStringEncoding];
+	return [XADString escapedASCIIDataForString:string];
 }
 
 
@@ -314,16 +353,9 @@ NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 	[super dealloc];
 }
 
--(BOOL)analyzeDataAndCheckForASCII:(NSData *)data
+-(void)analyzeData:(NSData *)data
 {
 	[detector analyzeData:data];
-
-	// check if string is ASCII
-	const char *ptr=[data bytes];
-	int length=[data length];
-	for(int i=0;i<length;i++) if(ptr[i]&0x80) return NO;
-
-	return YES;
 }
 
 -(NSString *)encodingName

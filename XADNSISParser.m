@@ -1061,12 +1061,8 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath
 	NSArray *parts;
 	if([string length]==0) parts=[NSArray array];
 	else parts=[string componentsSeparatedByString:@"\\"];
-	NSMutableArray *array=[NSMutableArray arrayWithCapacity:[parts count]];
-	NSEnumerator *enumerator=[parts objectEnumerator];
-	NSString *part;
-	while((part=[enumerator nextObject])) [array addObject:[self XADStringWithString:part]];
 
-	XADPath *path=[[[XADPath alloc] initWithComponents:array] autorelease];
+	XADPath *path=[XADPath pathWithStringComponents:parts];
 
 	if(prependdir) return [prependdir pathByAppendingPath:path];
 	else return path;

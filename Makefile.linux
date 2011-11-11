@@ -86,6 +86,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XAD7ZipBranchHandles.m \
 			XAD7ZipParser.m \
 			XADALZipParser.m \
+			XADAppleDouble.m \
 			XADArParser.m \
 			XADArchiveParser.m \
 			XADARCCrunchHandle.m \
@@ -202,7 +203,6 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADTarParser.m \
 			XADTarSparseHandle.m \
 			XADUnarchiver.m \
-			XADUnarchiverAppleDouble.m \
 			XADWinZipAESHandle.m \
 			XADWinZipJPEGHandle.m \
 			XADWinZipWavPackHandle.m \

@@ -5,6 +5,7 @@ static BOOL IsSeparator(char c,const char *separators);
 static BOOL NextComponent(const char *bytes,int length,int *start,int *end,NSString *encoding,const char *separators);
 static NSString *StringForComponent(const char *bytes,int start,int end,NSString *encoding,const char *separators);
 static BOOL IsComponentLeadingSlash(const char *bytes,int start,int end,const char *separators);
+static BOOL IsDataASCIIOrSeparator(NSData *data,const char *separators);
 
 @implementation XADPath
 
@@ -86,25 +87,32 @@ separators:(const char *)pathseparators
 {
 	[stringsource analyzeData:bytedata];
 
-/*	const char *bytes=[bytedata bytes];
-	int length=[bytedata length];
-
-	// Skip leading . paths.
-	if(length>=1 && bytes[0]=='.')
+	if(IsDataASCIIOrSeparator(bytedata,pathseparators))
 	{
-		if(length==1) return [XADPath emptyPath];
-		if(IsSeparator(bytes[1],pathseparators))
+		return [self decodedPathWithData:bytedata encodingName:XADASCIIStringEncodingName separators:pathseparators];
+	}
+	else
+	{
+/*		const char *bytes=[bytedata bytes];
+		int length=[bytedata length];
+
+		// Skip leading . paths.
+		if(length>=1 && bytes[0]=='.')
 		{
-			int start=2;
-			while(start<length && IsSeparator(bytes[start],pathseparators)) start++;
-			if(start==length) return [XADPath emptyPath];
+			if(length==1) return [XADPath emptyPath];
+			if(IsSeparator(bytes[1],pathseparators))
+			{
+				int start=2;
+				while(start<length && IsSeparator(bytes[start],pathseparators)) start++;
+				if(start==length) return [XADPath emptyPath];
 
-			NSData *subdata=[bytedata subdataWithRange:NSMakeRange(start,length-start)];
-			return [[[XADRawPath alloc] initWithData:subdata source:stringsource separators:pathseparators] autorelease];
-		}
-	}*/
+				NSData *subdata=[bytedata subdataWithRange:NSMakeRange(start,length-start)];
+				return [[[XADRawPath alloc] initWithData:subdata source:stringsource separators:pathseparators] autorelease];
+			}
+		}*/
 
-	return [[[XADRawPath alloc] initWithData:bytedata source:stringsource separators:pathseparators] autorelease];
+		return [[[XADRawPath alloc] initWithData:bytedata source:stringsource separators:pathseparators] autorelease];
+	}
 }
 
 
@@ -213,18 +221,6 @@ separators:(const char *)pathseparators
 
 	return YES;
 }
-
-/*-(BOOL)isEqual:(id)other
-{
-	if(![other isKindOfClass:[XADPath class]]) return NO;
-WithEncoding:encoding
-
-	XADPath *path=other;
-	if(parent && path->parent) return [parent isEqual:path->parent];
-	else if(parent && !path->parent) return NO;
-	else if(!parent && path->parent) return NO;
-	else return YES;
-}*/
 
 
 
@@ -991,4 +987,12 @@ NSString *encoding,const char *separators)
 static BOOL IsComponentLeadingSlash(const char *bytes,int start,int end,const char *separators)
 {
 	return start==0 && end==1 && IsSeparator(bytes[0],separators);
+}
+
+static BOOL IsDataASCIIOrSeparator(NSData *data,const char *separators)
+{
+	const char *bytes=[data bytes];
+	int length=[data length];
+	for(int i=0;i<length;i++) if(bytes[i]&0x80 && !IsSeparator(bytes[i],separators)) return NO;
+	return YES;
 }

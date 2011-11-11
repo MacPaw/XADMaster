@@ -49,15 +49,9 @@ NSString *XADMacOSIcelandicStringEncodingName=@"x-mac-icelandic";
 NSString *XADMacOSTurkishStringEncodingName=@"x-mac-turkish";
 NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 
-
+static BOOL IsDataASCII(NSData *data);
 
 @implementation XADString
-
-static BOOL IsASCII(const char *bytes,int length)
-{
-	for(int i=0;i<length;i++) if(bytes[i]&0x80) return NO;
-	return YES;
-}
 
 +(XADString *)XADStringWithString:(NSString *)string
 {
@@ -68,10 +62,9 @@ static BOOL IsASCII(const char *bytes,int length)
 {
 	[stringsource analyzeData:bytedata];
 
-	if(IsASCII([bytedata bytes],[bytedata length]))
+	if(IsDataASCII(bytedata))
 	{
-		NSString *string=[[[NSString alloc] initWithData:bytedata encoding:NSASCIIStringEncoding] autorelease];
-		return [[[self alloc] initWithString:string] autorelease];
+		return [self decodedXADStringWithData:bytedata encodingName:XADASCIIStringEncodingName];
 	}
 	else
 	{
@@ -432,3 +425,14 @@ encodingName:(NSString *)encoding
 #endif
 
 @end
+
+
+
+
+static BOOL IsDataASCII(NSData *data)
+{
+	const char *bytes=[data bytes];
+	int length=[data length];
+	for(int i=0;i<length;i++) if(bytes[i]&0x80) return NO;
+	return YES;
+}

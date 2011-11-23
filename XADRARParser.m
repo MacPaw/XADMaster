@@ -483,7 +483,11 @@ NSLog(@"%04x %04x %s",~crc&0xffff,block.crc,(~crc&0xffff)==block.crc?"<-------":
 		[fh seekToFileOffset:pos];
 	}*/
 
-	if(block.flags&RARFLAG_LONG_BLOCK) block.datasize=[fh readUInt32LE];
+	// RAR ignores the LONG_BLOCK flag for most chunks. FILE_HEAD, NEWSUB_HEAD,
+	// PROTECT_HEAD, and SUB_HEAD are always treated as long, while most others
+	// are always treated as short. The flag is only used for unknown blocks.
+	// To work around broken archives, we add an exception for FILE_HEAD, at least.
+	if((block.flags&RARFLAG_LONG_BLOCK)||block.type==0x74) block.datasize=[fh readUInt32LE];
 	else block.datasize=0;
 
 	if(archiveflags&MHD_PASSWORD) block.datastart=block.start+((block.headersize+15)&~15)+8;

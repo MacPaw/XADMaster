@@ -26,10 +26,10 @@ extern NSString *XADDisableMacForkExpansionKey;
 -(void)parse;
 -(void)parseWithSeparateMacForks;
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos;
 
--(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
-retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools;
+-(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict
+name:(XADPath *)name retainPosition:(BOOL)retainpos;
 
 -(void)setPreviousFilename:(XADPath *)prevname;
 -(XADPath *)topOfDittoDirectoryStack;
@@ -41,13 +41,13 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools;
 -(void)addQueuedDittoDictionaryWithName:(XADPath *)newname
 isDirectory:(BOOL)isdir retainPosition:(BOOL)retainpos;
 
--(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
-retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools;
+-(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict
+name:(XADPath *)name retainPosition:(BOOL)retainpos;
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
-cyclePools:(BOOL)cyclepools data:(NSData *)data;
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
-cyclePools:(BOOL)cyclepools handle:(CSHandle *)handle;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict
+retainPosition:(BOOL)retainpos data:(NSData *)data;
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict
+retainPosition:(BOOL)retainpos handle:(CSHandle *)handle;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 

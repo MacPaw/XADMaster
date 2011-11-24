@@ -80,7 +80,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 -(void)parseWithSeparateMacForks {}
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
 {
 	if(retainpos) [XADException raiseNotSupportedException];
 
@@ -91,7 +91,7 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		NSNumber *isbin=[dict objectForKey:XADIsMacBinaryKey];
 		if(isbin&&[isbin boolValue]) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
 
-		[super addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools];
+		[super addEntryWithDictionary:dict retainPosition:retainpos];
 		return;
 	}
 
@@ -129,22 +129,22 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	else
 	{
 		// Check for MacBinary files.
-		if([self parseMacBinaryWithDictionary:dict name:name retainPosition:retainpos cyclePools:cyclepools]) return;
+		if([self parseMacBinaryWithDictionary:dict name:name retainPosition:retainpos]) return;
 
 		// Check if the file is a ditto fork.
-		if([self parseAppleDoubleWithDictionary:dict name:name retainPosition:retainpos cyclePools:cyclepools]) return;
+		if([self parseAppleDoubleWithDictionary:dict name:name retainPosition:retainpos]) return;
 
 	}
 
 	// Nothing else worked, it's a normal file. Remember its filename, and output it.
 	[self setPreviousFilename:[dict objectForKey:XADFileNameKey]];
-	[super addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools];
+	[super addEntryWithDictionary:dict retainPosition:retainpos];
 }
 
 
 
--(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
-retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
+-(BOOL)parseAppleDoubleWithDictionary:(NSMutableDictionary *)dict
+name:(XADPath *)name retainPosition:(BOOL)retainpos
 {
 	// Ditto forks are only ever UTF-8.
 	if(![name canDecodeWithEncodingName:XADUTF8StringEncodingName]) return NO;
@@ -216,7 +216,7 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 	{
 		// Reading or parsing failed, so add this as a regular entry with the
 		// cached data, if any.
-		[self addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools data:dittodata];
+		[self addEntryWithDictionary:dict retainPosition:retainpos data:dittodata];
 		return YES;
 	}
 
@@ -247,7 +247,7 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 		// If we matched this entry with the name of an earlier one, it is done,
 		// and we can output it.
 		[self inspectEntryDictionary:newdict]; // This is probably not necessary.
-		[self addEntryWithDictionary:newdict retainPosition:retainpos cyclePools:cyclepools data:dittodata];
+		[self addEntryWithDictionary:newdict retainPosition:retainpos data:dittodata];
 	}
 	else
 	{
@@ -312,8 +312,7 @@ isDirectory:(BOOL)isdir retainPosition:(BOOL)retainpos
 	if(isdir) [queueddittoentry setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 
 	[self inspectEntryDictionary:queueddittoentry];
-	[self addEntryWithDictionary:queueddittoentry retainPosition:retainpos
-	cyclePools:NO data:queueddittodata];
+	[self addEntryWithDictionary:queueddittoentry retainPosition:retainpos data:queueddittodata];
 
 	[queueddittoentry release];
 	queueddittoentry=nil;
@@ -324,8 +323,8 @@ isDirectory:(BOOL)isdir retainPosition:(BOOL)retainpos
 
 
 
--(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict name:(XADPath *)name
-retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
+-(BOOL)parseMacBinaryWithDictionary:(NSMutableDictionary *)dict
+name:(XADPath *)name retainPosition:(BOOL)retainpos
 {
 	NSNumber *isbinobj=[dict objectForKey:XADIsMacBinaryKey];
 	BOOL isbin=isbinobj?[isbinobj boolValue]:NO;
@@ -384,7 +383,7 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 		[newdict setObject:[NSNumber numberWithUnsignedInt:BlockSize(datasize)] forKey:XADCompressedSizeKey];
 
 		[self inspectEntryDictionary:newdict];
-		[self addEntryWithDictionary:newdict retainPosition:retainpos cyclePools:cyclepools&&!rsrcsize handle:fh];
+		[self addEntryWithDictionary:newdict retainPosition:retainpos handle:fh];
 	}
 
 	if(rsrcsize)
@@ -397,7 +396,7 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 		[newdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
 
 		[self inspectEntryDictionary:newdict];
-		[self addEntryWithDictionary:newdict retainPosition:retainpos cyclePools:cyclepools handle:fh];
+		[self addEntryWithDictionary:newdict retainPosition:retainpos handle:fh];
 	}
 
 	return YES;
@@ -406,24 +405,24 @@ retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 
 
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
-cyclePools:(BOOL)cyclepools data:(NSData *)data
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict
+retainPosition:(BOOL)retainpos data:(NSData *)data
 {
 	cachedentry=dict;
 	cacheddata=data;
 	cachedhandle=nil;
-	[super addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools];
+	[super addEntryWithDictionary:dict retainPosition:retainpos];
 	cachedentry=nil;
 	cacheddata=nil;
 }
 
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
-cyclePools:(BOOL)cyclepools handle:(CSHandle *)handle
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict
+retainPosition:(BOOL)retainpos handle:(CSHandle *)handle
 {
 	cachedentry=dict;
 	cacheddata=nil;
 	cachedhandle=handle;
-	[super addEntryWithDictionary:dict retainPosition:retainpos cyclePools:cyclepools];
+	[super addEntryWithDictionary:dict retainPosition:retainpos];
 	cachedentry=nil;
 	cachedhandle=nil;
 }

@@ -367,9 +367,6 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		firstsoliddict=prevsoliddict=nil;
 
 		shouldstop=NO;
-
-		autopool=nil;
-
 	}
 	return self;
 }
@@ -756,22 +753,13 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 
 
+
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict
 {
-	[self addEntryWithDictionary:dict retainPosition:NO cyclePools:NO];
+	[self addEntryWithDictionary:dict retainPosition:NO];
 }
 
 -(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos
-{
-	[self addEntryWithDictionary:dict retainPosition:retainpos cyclePools:NO];
-}
-
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict cyclePools:(BOOL)cyclepools
-{
-	[self addEntryWithDictionary:dict retainPosition:NO cyclePools:cyclepools];
-}
-
--(void)addEntryWithDictionary:(NSMutableDictionary *)dict retainPosition:(BOOL)retainpos cyclePools:(BOOL)cyclepools
 {
 	// If the caller has requested to stop parsing, discard entry.
 	if(![self shouldKeepParsing]) return;
@@ -897,12 +885,6 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	else [delegate archiveParser:self foundEntryWithDictionary:dict];
 
 	[delegatepool release];
-
-	if(cyclepools)
-	{
-		[autopool release];
-		autopool=[NSAutoreleasePool new];
-	}
 }
 
 

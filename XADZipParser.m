@@ -205,6 +205,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	{
 		if(![self shouldKeepParsing]) break;
 
+		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
 		// Read central directory record.
 		uint32_t centralid=[fh readID];
 		if(centralid!=0x504b0102) [XADException raiseIllegalDataException]; // could try recovering here
@@ -298,6 +300,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		else [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 
 		[fh seekToFileOffset:next];
+
+		[pool release];
 	}
 }
 
@@ -311,6 +315,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 	while([self shouldKeepParsing])
 	{
+		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
 		uint32_t localid;
 		@try { localid=[fh readID]; }
 		@catch(id e) { break; }
@@ -371,6 +377,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			break;
 
 			case 0x504b0102: // central record - stop scanning
+				[pool release];
 				goto end;
 			break;
 
@@ -386,6 +393,8 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 				[self findNextEntry];
 			break;
 		}
+
+		[pool release];
 	}
 
 	end:
@@ -881,7 +890,7 @@ isLastEntry:(BOOL)islastentry
 	}
 	else
 	{
-		[self addEntryWithDictionary:dict cyclePools:YES];
+		[self addEntryWithDictionary:dict];
 	}
 }
 
@@ -895,7 +904,7 @@ isLastEntry:(BOOL)islastentry
 
 -(void)addRemeberedEntryAndForget
 {
-	[self addEntryWithDictionary:prevdict cyclePools:NO];
+	[self addEntryWithDictionary:prevdict];
 	[prevdict release];
 	[prevname release];
 	prevdict=nil;

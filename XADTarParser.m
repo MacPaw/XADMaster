@@ -502,7 +502,7 @@
 	off_t size = [[dict objectForKey:XADDataLengthKey] longLongValue];
 	off_t offset = [handle offsetInFile];
 	[dict setObject:[NSNumber numberWithLong:offset] forKey:XADDataOffsetKey];
-	[self addEntryWithDictionary:dict cyclePools:YES];
+	[self addEntryWithDictionary:dict];
 	offset += size;
 	offset += (offset % 512 == 0 ? 0 : 512 - (offset % 512) );
 	[handle seekToFileOffset:offset];
@@ -514,21 +514,37 @@
 	currentGlobalHeader = [NSData data];
 	
 	CSHandle *handle = [self handle];
+	int tarFormat = -1;
 
-	// Be a little more memory-efficient.
-
-	NSData *header = [handle readDataOfLength:512];
-		
-	int tarFormat = [XADTarParser getTarType:header];
-
-	BOOL isArchiverOver = NO;
-	while( !isArchiverOver && [self shouldKeepParsing])
+	while([self shouldKeepParsing])
 	{
+		NSAutoreleasePool *pool = [NSAutoreleasePool new];
+
+		// Read next header.
+		if([handle atEndOfFile]) break;
+		NSData *header = [handle readDataOfLength:512];
+
+		// Figure out format if we haven't yet done so.
+		if( tarFormat == -1 ) tarFormat = [XADTarParser getTarType:header];
+		
+		// See if there are 512 nullbytes. That means the file is over.
+		const char *firstBytes = [header bytes];
+		BOOL isArchiverOver = YES;
+		for( int i = 0; i < 512; i++ ) {		
+			if( firstBytes[i] != '\000' ) {
+				isArchiverOver = NO;
+			}
+		}
+		if( isArchiverOver )
+		{
+			[pool release];
+			break;
+		}
+
 		NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
 		// Reset sparseity.
 		[dict setObject:[NSNumber numberWithBool:NO] forKey:@"TARIsSparseFile"];
-
 
 		int wrongFormat = [self parseGenericTarHeader:header toDict:dict];
 		if( wrongFormat == 1 ) {
@@ -555,22 +571,7 @@
 			[self addTarEntryWithDictionaryAndSeek:dict];
 		}
 
-		// Read next header.
-		if([handle atEndOfFile]) break;
-		header = [handle readDataOfLength:512];
-		
-		// See if there are 512 nullbytes. That means the file is over.
-		char firstBytes[512];
-		for( int i = 0; i < 512; i++ ) {
-			firstBytes[i] = 1;
-		}
-		[header getBytes:firstBytes length:512];
-		isArchiverOver = YES;
-		for( int i = 0; i < 512; i++ ) {		
-			if( firstBytes[i] != '\000' ) {
-				isArchiverOver = NO;
-			}
-		}
+		[pool release];
 	}
 }
 

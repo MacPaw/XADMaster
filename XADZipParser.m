@@ -228,12 +228,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		uint32_t extfileattrib=[fh readUInt32LE];
 		off_t locheaderoffset=[fh readUInt32LE];
 
-		[fh skipBytes:namelength+extralength];
-
-		NSData *commentdata=nil;
-		if(commentlength) commentdata=[fh readDataOfLength:commentlength];
-
-		off_t next=[fh offsetInFile];
+		[fh skipBytes:namelength];
 
 		// Read central directory extra fields, just to find the Zip64 field.
 		int length=extralength;
@@ -258,6 +253,11 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 			[fh seekToFileOffset:nextextra];
 		}
+
+		NSData *commentdata=nil;
+		if(commentlength) commentdata=[fh readDataOfLength:commentlength];
+        
+		off_t next=[fh offsetInFile];
 
 		// Read local header
 		[fh seekToFileOffset:[self offsetForVolume:startdisk offset:locheaderoffset]];

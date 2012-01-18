@@ -24,6 +24,11 @@
 
 -(id)initWithArchiveParser:(XADArchiveParser *)archiveparser
 {
+	return [self initWithArchiveParser:archiveparser entries:nil];
+}
+
+-(id)initWithArchiveParser:(XADArchiveParser *)archiveparser entries:(NSArray *)entryarray
+{
 	if((self=[super init]))
 	{
 		parser=[archiveparser retain];
@@ -65,7 +70,9 @@
 		regexes=nil;
 		indices=nil;
 
-		entries=[NSMutableArray new];
+		if(entryarray) entries=[NSMutableArray arrayWithArray:entryarray];
+		else entries=[NSMutableArray new];
+
 		reasonsforinterest=[NSMutableArray new];
 		renames=[NSMutableDictionary new];
 		resourceforks=[NSMutableSet new];
@@ -419,10 +426,10 @@
 			// If there is a possibility we might remove the enclosing directory
 			// later, do not handle collisions until after extraction is finished.
 			// For now, just pick a unique name if necessary.
-			if([self _fileExistsAtPath:destpath])
+			if([XADSimpleUnarchiver _fileExistsAtPath:destpath])
 			{
 				originaldest=destpath;
-				destpath=[self _findUniquePathForOriginalPath:destpath];
+				destpath=[XADSimpleUnarchiver _findUniquePathForOriginalPath:destpath];
 			}
 		}
 		else
@@ -473,7 +480,7 @@
 			// to something unique.
 			NSString *enclosingpath=destpath;
 			NSString *newenclosingpath=[XADPlatform uniqueDirectoryPathWithParentDirectory:destination];
-			[self _moveItemAtPath:enclosingpath toPath:newenclosingpath];
+			[XADSimpleUnarchiver _moveItemAtPath:enclosingpath toPath:newenclosingpath];
 
 			NSString *newitempath=[newenclosingpath stringByAppendingPathComponent:itemname];
 
@@ -486,7 +493,7 @@
 			if(!finalitempath)
 			{
 				// In case skipping was requested, delete everything and give up.
-				[self _removeItemAtPath:newenclosingpath];
+				[XADSimpleUnarchiver _removeItemAtPath:newenclosingpath];
 				numextracted=0;
 				return error;
 			}
@@ -495,7 +502,7 @@
 			if(![self _recursivelyMoveItemAtPath:newitempath toPath:finalitempath overwrite:YES])
 			error=XADFileExistsError; // TODO: Better error handling.
 
-			[self _removeItemAtPath:newenclosingpath];
+			[XADSimpleUnarchiver _removeItemAtPath:newenclosingpath];
 
 			// Remember where the item ended up.
 			finaldestination=[[finalitempath stringByDeletingLastPathComponent] retain];
@@ -514,7 +521,7 @@
 				if(!newenclosingpath)
 				{
 					// In case skipping was requested, delete everything and give up.
-					[self _removeItemAtPath:enclosingpath];
+					[XADSimpleUnarchiver _removeItemAtPath:enclosingpath];
 					numextracted=0;
 					return error;
 				}
@@ -815,6 +822,13 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	[reasonsforinterest addObject:reason];
 }
 
+-(BOOL)_shouldStop
+{
+	if(!delegate) return NO;
+	if(shouldstop) return YES;
+
+	return shouldstop=[delegate extractionShouldStopForSimpleUnarchiver:self];
+}
 
 
 
@@ -825,7 +839,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	if(overwrite) return path;
 
 	// Check for collision.
-	if([self _fileExistsAtPath:path])
+	if([XADSimpleUnarchiver _fileExistsAtPath:path])
 	{
 		// When writing OS X data forks, some collisions will happen. Try
 		// to handle these.
@@ -854,7 +868,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 		// If set to always skip, just return nil.
 		if(skip) return nil;
 
-		NSString *unique=[self _findUniquePathForOriginalPath:path];
+		NSString *unique=[XADSimpleUnarchiver _findUniquePathForOriginalPath:path];
 
 		if(rename)
 		{
@@ -880,25 +894,58 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	else return path;
 }
 
--(NSString *)findUniqueDestinationWithDirectory:(NSString *)directory andFilename:(NSString *)filename
+-(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest overwrite:(BOOL)overwritethislevel
 {
-	NSString *basename=[filename stringByDeletingPathExtension];
-	NSString *extension=[filename pathExtension];
-	if([extension length]) extension=[@"." stringByAppendingString:extension];
+	// Check path unless we are sure we are overwriting, and skip if requested.
+	if(!overwritethislevel) dest=[self _checkPath:dest forEntryWithDictionary:nil deferred:YES];
+	if(!dest) return YES;
 
-	NSString *dest=[directory stringByAppendingPathComponent:filename];
-	int n=1;
-
-	while([[NSFileManager defaultManager] fileExistsAtPath:dest])
+	BOOL isdestdir;
+	if([XADSimpleUnarchiver _fileExistsAtPath:dest isDirectory:&isdestdir])
 	{
-		dest=[directory stringByAppendingPathComponent:
-		[NSString stringWithFormat:@"%@-%d%@",basename,n++,extension]];
-	}
+		BOOL issrcdir;
+		if(![XADSimpleUnarchiver _fileExistsAtPath:src isDirectory:&issrcdir]) return NO;
 
-	return dest;
+		if(issrcdir&&isdestdir)
+		{
+			// If both source and destinaton are directories, iterate over the
+			// contents and recurse.
+			NSArray *files=[XADSimpleUnarchiver _contentsOfDirectoryAtPath:src];
+			NSEnumerator *enumerator=[files objectEnumerator];
+			NSString *file;
+			while((file=[enumerator nextObject]))
+			{
+				NSString *newsrc=[src stringByAppendingPathComponent:file];
+				NSString *newdest=[dest stringByAppendingPathComponent:file];
+				BOOL res=[self _recursivelyMoveItemAtPath:newsrc toPath:newdest overwrite:NO];
+				if(!res) return NO; // TODO: Should this try to move the remaining items?
+			}
+			return YES;
+		}
+		else if(!issrcdir&&!isdestdir)
+		{
+			// If both are files, remove any existing file, then move.
+			[XADSimpleUnarchiver _removeItemAtPath:dest];
+			return [XADSimpleUnarchiver _moveItemAtPath:src toPath:dest];
+		}
+		else
+		{
+			// Can't overwrite a file with a directory or vice versa.
+			return NO;
+		}
+	}
+	else
+	{
+		return [XADSimpleUnarchiver _moveItemAtPath:src toPath:dest];
+	}
 }
 
--(NSString *)_findUniquePathForOriginalPath:(NSString *)path
++(NSString *)_findUniquePathForOriginalPath:(NSString *)path
+{
+	return [self _findUniquePathForOriginalPath:path reservedPaths:nil];
+}
+
++(NSString *)_findUniquePathForOriginalPath:(NSString *)path reservedPaths:(NSSet *)reserved
 {
 	NSString *base=[path stringByDeletingPathExtension];
 	NSString *extension=[path pathExtension];
@@ -907,15 +954,15 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	NSString *dest=path;
 	int n=1;
 
-	while([self _fileExistsAtPath:dest])
+	while([self _fileExistsAtPath:dest] || (reserved&&[reserved containsObject:dest]))
 	dest=[NSString stringWithFormat:@"%@-%d%@",base,n++,extension];
 
 	return dest;
 }
 
--(BOOL)_fileExistsAtPath:(NSString *)path { return [self _fileExistsAtPath:path isDirectory:NULL]; }
++(BOOL)_fileExistsAtPath:(NSString *)path { return [self _fileExistsAtPath:path isDirectory:NULL]; }
 
--(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr
++(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr
 {
 	// [NSFileManager fileExistsAtPath:] is broken. It will happily return NO
 	// for some symbolic links. We need to implement our own.
@@ -936,7 +983,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	return YES;
 }
 
--(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path
++(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path
 {
 	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
 	return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
@@ -945,7 +992,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	#endif
 }
 
--(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest
++(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest
 {
 	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
 	return [[NSFileManager defaultManager] moveItemAtPath:src toPath:dest error:NULL];
@@ -954,7 +1001,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	#endif
 }
 
--(BOOL)_removeItemAtPath:(NSString *)path
++(BOOL)_removeItemAtPath:(NSString *)path
 {
 	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
 	return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
@@ -963,59 +1010,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	#endif
 }
 
--(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest overwrite:(BOOL)overwritethislevel
-{
-	// Check path unless we are sure we are overwriting, and skip if requested.
-	if(!overwritethislevel) dest=[self _checkPath:dest forEntryWithDictionary:nil deferred:YES];
-	if(!dest) return YES;
 
-	BOOL isdestdir;
-	if([self _fileExistsAtPath:dest isDirectory:&isdestdir])
-	{
-		BOOL issrcdir;
-		if(![self _fileExistsAtPath:src isDirectory:&issrcdir]) return NO;
-
-		if(issrcdir&&isdestdir)
-		{
-			// If both source and destinaton are directories, iterate over the
-			// contents and recurse.
-			NSArray *files=[self _contentsOfDirectoryAtPath:src];
-			NSEnumerator *enumerator=[files objectEnumerator];
-			NSString *file;
-			while((file=[enumerator nextObject]))
-			{
-				NSString *newsrc=[src stringByAppendingPathComponent:file];
-				NSString *newdest=[dest stringByAppendingPathComponent:file];
-				BOOL res=[self _recursivelyMoveItemAtPath:newsrc toPath:newdest overwrite:NO];
-				if(!res) return NO; // TODO: Should this try to move the remaining items?
-			}
-			return YES;
-		}
-		else if(!issrcdir&&!isdestdir)
-		{
-			// If both are files, remove any existing file, then move.
-			[self _removeItemAtPath:dest];
-			return [self _moveItemAtPath:src toPath:dest];
-		}
-		else
-		{
-			// Can't overwrite a file with a directory or vice versa.
-			return NO;
-		}
-	}
-	else
-	{
-		return [self _moveItemAtPath:src toPath:dest];
-	}
-}
-
--(BOOL)_shouldStop
-{
-	if(!delegate) return NO;
-	if(shouldstop) return YES;
-
-	return shouldstop=[delegate extractionShouldStopForSimpleUnarchiver:self];
-}
 
 @end
 

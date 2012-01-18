@@ -42,6 +42,7 @@
 +(XADSimpleUnarchiver *)simpleUnarchiverForPath:(NSString *)path error:(XADError *)errorptr;
 
 -(id)initWithArchiveParser:(XADArchiveParser *)archiveparser;
+-(id)initWithArchiveParser:(XADArchiveParser *)archiveparser entries:(NSArray *)entryarray;
 -(void)dealloc;
 
 -(XADArchiveParser *)archiveParser;
@@ -124,15 +125,18 @@
 -(void)_testForSoloItems:(NSDictionary *)entry;
 -(NSString *)_findPathForSoloItem;
 
--(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred;
--(NSString *)_findUniquePathForOriginalPath:(NSString *)path;
--(BOOL)_fileExistsAtPath:(NSString *)path;
--(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr;
--(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path;
--(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest;
--(BOOL)_removeItemAtPath:(NSString *)path;
--(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest overwrite:(BOOL)overwritethislevel;
 -(BOOL)_shouldStop;
+
+-(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred;
+-(BOOL)_recursivelyMoveItemAtPath:(NSString *)src toPath:(NSString *)dest overwrite:(BOOL)overwritethislevel;
+
++(NSString *)_findUniquePathForOriginalPath:(NSString *)path;
++(NSString *)_findUniquePathForOriginalPath:(NSString *)path reservedPaths:(NSSet *)reserved;
++(BOOL)_fileExistsAtPath:(NSString *)path;
++(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr;
++(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path;
++(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest;
++(BOOL)_removeItemAtPath:(NSString *)path;
 
 @end
 

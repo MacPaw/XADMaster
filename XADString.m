@@ -5,7 +5,7 @@
 
 
 NSString *XADASCIIStringEncodingName=@"US-ASCII";
-NSString *XADUTF8StringEncodingName=@"utf-8";
+NSString *XADUTF8StringEncodingName=@"UTF-8";
 
 NSString *XADISOLatin1StringEncodingName=@"iso-8859-1";
 NSString *XADISOLatin2StringEncodingName=@"iso-8859-2";
@@ -24,7 +24,7 @@ NSString *XADISOLatin14StringEncodingName=@"iso-8859-14";
 NSString *XADISOLatin15StringEncodingName=@"iso-8859-15";
 NSString *XADISOLatin16StringEncodingName=@"iso-8859-16";
 
-NSString *XADShiftJISStringEncodingName=@"shift_jis";
+NSString *XADShiftJISStringEncodingName=@"Shift_JIS";
 
 NSString *XADWindowsCP1250StringEncodingName=@"windows-1250";
 NSString *XADWindowsCP1251StringEncodingName=@"windows-1251";

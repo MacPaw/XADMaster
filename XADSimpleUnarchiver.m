@@ -275,7 +275,8 @@
 		{
 			NSDictionary *entry=[entries objectAtIndex:0];
 			NSNumber *archnum=[entry objectForKey:XADIsArchiveKey];
-			if(archnum&&[archnum boolValue]) return [self _setupSubArchiveForEntryWithDictionary:entry];
+			BOOL isarc=archnum&&[archnum boolValue];
+			if(isarc) return [self _setupSubArchiveForEntryWithDictionary:entry];
 		}
 
 		// Check if we have two entries, which are data and resource forks
@@ -286,8 +287,12 @@
 			NSDictionary *second=[entries objectAtIndex:1];
 			XADPath *name1=[first objectForKey:XADFileNameKey];
 			XADPath *name2=[second objectForKey:XADFileNameKey];
+			NSNumber *archnum1=[first objectForKey:XADIsArchiveKey];
+			NSNumber *archnum2=[second objectForKey:XADIsArchiveKey];
+			BOOL isarc1=archnum1&&[archnum1 boolValue];
+			BOOL isarc2=archnum2&&[archnum2 boolValue];
 
-			if([name1 isEqual:name2])
+			if([name1 isEqual:name2] && (isarc1||isarc2))
 			{
 				NSNumber *resnum=[first objectForKey:XADIsResourceForkKey];
 				NSDictionary *datafork,*resourcefork;

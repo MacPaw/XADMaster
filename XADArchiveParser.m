@@ -2,6 +2,7 @@
 #import "CSFileHandle.h"
 #import "CSMultiHandle.h"
 #import "CSMemoryHandle.h"
+#import "CSStreamHandle.h"
 #import "XADCRCHandle.h"
 
 #import "XADZipParser.h"
@@ -365,6 +366,14 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 		parsersolidobj=nil;
 		firstsoliddict=prevsoliddict=nil;
+
+		// If the handle is a CSStreamHandle, it can not seek, so treat
+		// this like a solid archive (for instance, .tar.gz). Also, it will
+		// usually be wrapped in a CSSubHandle so unwrap it first.
+		CSHandle *testhandle=handle;
+		if([handle isKindOfClass:[CSSubHandle class]]) testhandle=[(CSSubHandle *)handle parentHandle];
+
+		if([testhandle isKindOfClass:[CSStreamHandle class]]) forcesolid=YES;
 
 		shouldstop=NO;
 	}
@@ -833,6 +842,9 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		int finderflags=CSUInt16BE(bytes+8);
 		if(finderflags) [dict setObject:[NSNumber numberWithInt:finderflags] forKey:XADFinderFlagsKey];
 	}
+
+	// If this is an embedded archive that can't seek, force a solid flag.
+	if(forcesolid) [dict setObject:sourcehandle forKey:XADSolidObjectKey];
 
 	// Handle solidness - set FirstSolid, NextSolid and IsSolid depending on SolidObject.
 	id solidobj=[dict objectForKey:XADSolidObjectKey];

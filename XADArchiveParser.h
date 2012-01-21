@@ -84,6 +84,7 @@ extern NSString *XADDiskLabelKey;
 	NSMutableDictionary *firstsoliddict,*prevsoliddict;
 	id currsolidobj;
 	CSHandle *currsolidhandle;
+	BOOL forcesolid;
 
 	BOOL shouldstop;
 }

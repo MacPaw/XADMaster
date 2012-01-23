@@ -103,6 +103,7 @@
 -(void)addGlobFilter:(NSString *)wildcard;
 -(void)addRegexFilter:(XADRegex *)regex;
 -(void)addIndexFilter:(int)index;
+-(void)setIndices:(NSIndexSet *)indices;
 
 -(int)numberOfItemsExtracted;
 -(BOOL)wasSoloItem;

@@ -70,7 +70,7 @@
 		regexes=nil;
 		indices=nil;
 
-		if(entryarray) entries=[NSMutableArray arrayWithArray:entryarray];
+		if(entryarray) entries=[[NSMutableArray alloc] initWithArray:entryarray];
 		else entries=[NSMutableArray new];
 
 		reasonsforinterest=[NSMutableArray new];
@@ -231,6 +231,13 @@
 {
 	if(!indices) indices=[NSMutableIndexSet new];
 	[indices addIndex:index];
+}
+
+-(void)setIndices:(NSIndexSet *)newindices
+{
+	if(!indices) indices=[NSMutableIndexSet new];
+	[indices removeAllIndexes];
+	[indices addIndexes:newindices];
 }
 
 

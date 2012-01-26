@@ -163,6 +163,14 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 	[super dealloc];
 }
 
+-(void)setPassword:(NSString *)newpassword
+{
+	// Make sure to clear key cache if password changes.
+	[keys release];
+	keys=nil;
+	[super setPassword:newpassword];
+}
+
 -(void)parse
 {
 	CSHandle *handle=[self handle];

@@ -32,6 +32,8 @@ typedef struct RARFileHeader
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
+-(void)setPassword:(NSString *)newpassword;
+
 -(void)parse;
 
 -(RARFileHeader)readFileHeaderWithBlock:(RARBlock *)block;

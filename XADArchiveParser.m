@@ -449,6 +449,13 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	[password autorelease];
 	password=[newpassword retain];
+
+	// Make sure to invalidate any remaining solid handles, as they will need to change
+	// for the new password.
+	[currsolidobj release];
+	currsolidobj=nil;
+	[currsolidhandle release];
+	currsolidhandle=nil;
 }
 
 -(NSString *)encodingName

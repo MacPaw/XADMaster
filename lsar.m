@@ -25,7 +25,7 @@ static int TestEntry(XADSimpleUnarchiver *unarchiver,NSDictionary *dict);
 
 int returncode;
 CSJSONPrinter *printer;
-BOOL longformat,test;
+BOOL longformat,verylongformat,test;
 int passed,failed,unknown;
 
 int main(int argc,const char **argv)
@@ -43,6 +43,10 @@ int main(int argc,const char **argv)
 	[cmdline addSwitchOption:@"long" description:
 	@"Print more information about each file in the archive."];
 	[cmdline addAlias:@"l" forOption:@"long"];
+
+	[cmdline addSwitchOption:@"verylong" description:
+	@"Print all available information about each file in the archive."];
+	[cmdline addAlias:@"L" forOption:@"verylong"];
 
 	[cmdline addSwitchOption:@"test" description:
 	@"Test the integrity of the files in the archive, if possible."];
@@ -96,6 +100,7 @@ int main(int argc,const char **argv)
 
 
 	longformat=[cmdline boolValueForOption:@"long"];
+	verylongformat=[cmdline boolValueForOption:@"verylong"];
 	test=[cmdline boolValueForOption:@"test"];
 	NSString *password=[cmdline stringValueForOption:@"password"];
 	NSString *encoding=[cmdline stringValueForOption:@"encoding"];
@@ -108,6 +113,9 @@ int main(int argc,const char **argv)
 
 	// -json-ascii implies -json.
 	if(jsonascii) json=YES;
+
+	// -verylong and -long are exclusive.
+	if(verylongformat) longformat=NO;
 
 	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
 	{
@@ -284,6 +292,9 @@ int main(int argc,const char **argv)
 			[[[unarchiver outerArchiveParser] formatName] print];
 		}
 
+		NSArray *volumes=[[unarchiver outerArchiveParser] volumes];
+		if([volumes count]>1) [[NSString stringWithFormat:@" (%d volumes)",[volumes count]] print];
+
 		[@"\n" print];
 
 		if(longformat)
@@ -402,7 +413,10 @@ int main(int argc,const char **argv)
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	if(longformat)
+	if(verylongformat)
+	{
+	}
+	else if(longformat)
 	{
 		NSString *infoline=LongInfoLineForEntryWithDictionary([unarchiver archiveParser],dict);
 		[infoline print];

@@ -772,6 +772,8 @@
 		1BBCC4FA0EE73AC9006C3AE2 /* CSBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */; };
 		1BBCC54D0EE73B7F006C3AE2 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */; };
 		1BBCC5790EE747F6006C3AE2 /* XADBzip2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */; };
+		1BBEF8B014D8A31800790E4B /* XADArchiveParserDescriptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBEF8AE14D8A31700790E4B /* XADArchiveParserDescriptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1BBEF8B114D8A31800790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
 		1BC574B810EEDA700056F44C /* XADDiskDoublerADnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */; };
 		1BC5753A10F0F62B0056F44C /* XADDiskDoublerDDnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC5753810F0F62B0056F44C /* XADDiskDoublerDDnHandle.m */; };
 		1BC882B20ECA4D67006B47FE /* XADZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */; };
@@ -1529,6 +1531,8 @@
 		1BBC42DE10BA065D00A05E29 /* XADCABBlockHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCABBlockHandle.h; sourceTree = "<group>"; };
 		1BBC42DF10BA065D00A05E29 /* XADCABBlockHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCABBlockHandle.m; sourceTree = "<group>"; };
 		1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = /usr/lib/libbz2.dylib; sourceTree = "<absolute>"; };
+		1BBEF8AE14D8A31700790E4B /* XADArchiveParserDescriptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADArchiveParserDescriptions.h; sourceTree = "<group>"; };
+		1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADArchiveParserDescriptions.m; sourceTree = "<group>"; };
 		1BC574B510EEDA700056F44C /* XADDiskDoublerADnHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDiskDoublerADnHandle.h; sourceTree = "<group>"; };
 		1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADDiskDoublerADnHandle.m; sourceTree = "<group>"; };
 		1BC5753710F0F62B0056F44C /* XADDiskDoublerDDnHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDiskDoublerDDnHandle.h; sourceTree = "<group>"; };
@@ -1903,6 +1907,8 @@
 			children = (
 				1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */,
 				1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */,
+				1BBEF8AE14D8A31700790E4B /* XADArchiveParserDescriptions.h */,
+				1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */,
 				1B3FAD650EC5D4E8006D2F06 /* XADMacArchiveParser.h */,
 				1B3FAD660EC5D4E8006D2F06 /* XADMacArchiveParser.m */,
 				1B06D5B90DDA67E000D9C000 /* XADString.h */,
@@ -3035,6 +3041,7 @@
 				1B06CD13145CFF2A003907F9 /* XADCrunchParser.h in Headers */,
 				1B06CD1C145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F82146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
+				1BBEF8B014D8A31800790E4B /* XADArchiveParserDescriptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4048,6 +4055,7 @@
 				1B4E97401426147D00640F59 /* XADRARInputHandle.m in Sources */,
 				1B06CD16145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
 				1B06CD1F145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
+				1BBEF8B114D8A31800790E4B /* XADArchiveParserDescriptions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

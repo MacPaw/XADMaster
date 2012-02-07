@@ -89,6 +89,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADAppleDouble.m \
 			XADArParser.m \
 			XADArchiveParser.m \
+			XADArchiveParserDescriptions.m \
 			XADARCCrunchHandle.m \
 			XADARCCrushHandle.m \
 			XADARCDistillHandle.m \

@@ -7,14 +7,32 @@
 #import "XADSkipHandle.h"
 #import "Checksums.h"
 
-extern NSString *XADIndexKey;
 extern NSString *XADFileNameKey;
+extern NSString *XADCommentKey;
 extern NSString *XADFileSizeKey;
 extern NSString *XADCompressedSizeKey;
+extern NSString *XADCompressionNameKey;
+
 extern NSString *XADLastModificationDateKey;
 extern NSString *XADLastAccessDateKey;
 extern NSString *XADLastAttributeChangeDateKey;
 extern NSString *XADCreationDateKey;
+
+extern NSString *XADIsDirectoryKey;
+extern NSString *XADIsResourceForkKey;
+extern NSString *XADIsArchiveKey;
+extern NSString *XADIsHiddenKey;
+extern NSString *XADIsLinkKey;
+extern NSString *XADIsHardLinkKey;
+extern NSString *XADLinkDestinationKey;
+extern NSString *XADIsCharacterDeviceKey;
+extern NSString *XADIsBlockDeviceKey;
+extern NSString *XADDeviceMajorKey;
+extern NSString *XADDeviceMinorKey;
+extern NSString *XADIsFIFOKey;
+extern NSString *XADIsEncryptedKey;
+extern NSString *XADIsCorruptedKey;
+
 extern NSString *XADExtendedAttributesKey;
 extern NSString *XADFileTypeKey;
 extern NSString *XADFileCreatorKey;
@@ -29,27 +47,11 @@ extern NSString *XADDOSFileAttributesKey;
 extern NSString *XADWindowsFileAttributesKey;
 extern NSString *XADAmigaProtectionBitsKey;
 
-extern NSString *XADIsEncryptedKey;
-extern NSString *XADIsCorruptedKey;
-extern NSString *XADIsDirectoryKey;
-extern NSString *XADIsResourceForkKey;
-extern NSString *XADIsArchiveKey;
-extern NSString *XADIsHiddenKey;
-extern NSString *XADIsLinkKey;
-extern NSString *XADIsHardLinkKey;
-extern NSString *XADLinkDestinationKey;
-extern NSString *XADIsCharacterDeviceKey;
-extern NSString *XADIsBlockDeviceKey;
-extern NSString *XADDeviceMajorKey;
-extern NSString *XADDeviceMinorKey;
-extern NSString *XADIsFIFOKey;
-
-extern NSString *XADCommentKey;
+extern NSString *XADIndexKey;
 extern NSString *XADDataOffsetKey;
 extern NSString *XADDataLengthKey;
 extern NSString *XADSkipOffsetKey;
 extern NSString *XADSkipLengthKey;
-extern NSString *XADCompressionNameKey;
 
 extern NSString *XADIsSolidKey;
 extern NSString *XADFirstSolidIndexKey;

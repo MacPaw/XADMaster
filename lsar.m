@@ -413,19 +413,15 @@ int main(int argc,const char **argv)
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	if(verylongformat)
-	{
-	}
-	else if(longformat)
+	if(longformat)
 	{
 		NSString *infoline=LongInfoLineForEntryWithDictionary([unarchiver archiveParser],dict);
 		[infoline print];
 	}
-	else
+	else // Short or very long format.
 	{
-		NSString *name=DisplayNameForEntryWithDictionary(dict);
-		[@"  " print];
-		[name print];
+		NSString *infoline=ShortInfoLineForEntryWithDictionary(dict);
+		[infoline print];
 	}
 
 	if(test)
@@ -447,6 +443,10 @@ int main(int argc,const char **argv)
 
 	[@"\n" print];
 
+	if(verylongformat)
+	{
+		PrintFullDescriptionOfEntryWithDictionary([unarchiver archiveParser],dict);
+	}
 	if(longformat)
 	{
 		XADString *comment=[dict objectForKey:XADCommentKey];

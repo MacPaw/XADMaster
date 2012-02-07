@@ -1,6 +1,7 @@
 #import "CommandLineCommon.h"
 
 #import "XADArchiveParser.h"
+#import "XADArchiveParserDescriptions.h"
 #import "XADString.h"
 #import "NSStringPrinting.h"
 
@@ -57,7 +58,22 @@ void PrintEncodingList()
 
 
 
-NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
+NSString *ShortInfoLineForEntryWithDictionary(NSDictionary *dict)
+{
+	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
+	BOOL isdir=dirnum && [dirnum boolValue];
+
+	NSString *name=[[dict objectForKey:XADFileNameKey] string];
+	name=[name stringByEscapingControlCharacters];
+
+	NSMutableString *str=[NSMutableString stringWithString:name];
+
+	if(isdir) [str appendString:@"/"]; // TODO: What about Windows?
+
+	return [str autorelease];
+}
+
+NSString *MediumInfoLineForEntryWithDictionary(NSDictionary *dict)
 {
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
@@ -102,8 +118,6 @@ NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict)
 
 	return [str autorelease];
 }
-
-
 
 static NSString *CodeForCompressionName(NSString *compname);
 
@@ -331,6 +345,59 @@ NSString *CompressionNameExplanationForLongInfo()
 	return res;
 }
 
+static NSString *Indent(NSString *string,int spaces);
+
+void PrintFullDescriptionOfEntryWithDictionary(XADArchiveParser *parser,NSDictionary *dict)
+{
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+	NSArray *keys=[parser descriptiveOrderingOfKeysInDictionary:dict];
+
+	int maxlen=0;
+	NSEnumerator *enumerator=[keys objectEnumerator];
+	NSString *key;
+	while((key=[enumerator nextObject]))
+	{
+		NSString *keydesc=[parser descriptionOfKey:key];
+		int len=[keydesc length];
+		if(len>maxlen) maxlen=len;
+	}
+
+	enumerator=[keys objectEnumerator];
+	while((key=[enumerator nextObject]))
+	{
+		NSString *keydesc=[parser descriptionOfKey:key];
+		NSString *valuedesc=[parser descriptionOfValueInDictionary:dict key:key];
+		int len=[keydesc length];
+
+		[@"  " print];
+
+		[keydesc print];
+		[@": " print];
+
+		for(int i=len;i<maxlen;i++) printf(" ");
+
+		[Indent(valuedesc,maxlen+4) print];
+
+		[@"\n" print];
+	}
+
+	[pool release];
+}
+
+static NSString *Indent(NSString *string,int spaces)
+{
+	if([string rangeOfString:@"\n"].location==NSNotFound) return string;
+
+	char spacestring[spaces+2];
+	spacestring[0]='\n';
+	for(int i=0;i<spaces;i++) spacestring[i+1]=' ';
+	spacestring[spaces+1]=0;
+
+	NSString *indent=[NSString stringWithUTF8String:spacestring];
+
+	return [string stringByReplacingOccurrencesOfString:@"\n" withString:indent];
+}
 
 
 

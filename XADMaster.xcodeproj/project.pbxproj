@@ -774,6 +774,8 @@
 		1BBCC5790EE747F6006C3AE2 /* XADBzip2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */; };
 		1BBEF8B014D8A31800790E4B /* XADArchiveParserDescriptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBEF8AE14D8A31700790E4B /* XADArchiveParserDescriptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BBEF8B114D8A31800790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
+		1BBEF8F414E0964E00790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
+		1BBEF8F614E0964F00790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
 		1BC574B810EEDA700056F44C /* XADDiskDoublerADnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */; };
 		1BC5753A10F0F62B0056F44C /* XADDiskDoublerDDnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC5753810F0F62B0056F44C /* XADDiskDoublerDDnHandle.m */; };
 		1BC882B20ECA4D67006B47FE /* XADZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */; };
@@ -3591,6 +3593,7 @@
 				1B4E97411426147D00640F59 /* XADRARInputHandle.m in Sources */,
 				1B06CD17145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
 				1B06CD20145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
+				1BBEF8F414E0964E00790E4B /* XADArchiveParserDescriptions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3805,6 +3808,7 @@
 				1B4E97421426147D00640F59 /* XADRARInputHandle.m in Sources */,
 				1B06CD18145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
 				1B06CD21145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
+				1BBEF8F614E0964F00790E4B /* XADArchiveParserDescriptions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

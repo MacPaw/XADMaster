@@ -3,7 +3,7 @@
 #import "CSCommandLineParser.h"
 #import "CommandLineCommon.h"
 
-#define VERSION_STRING @"v0.99"
+#define VERSION_STRING @"v1.0"
 
 @interface Unarchiver:NSObject {}
 @end
@@ -335,7 +335,7 @@ suggestedPath:(NSString *)unique
 {
 	[@"  " print];
 
-	NSString *name=DisplayNameForEntryWithDictionary(dict);
+	NSString *name=MediumInfoLineForEntryWithDictionary(dict);
 	[name print];
 
 	[@"... " print];

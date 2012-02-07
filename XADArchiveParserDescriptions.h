@@ -2,7 +2,8 @@
 
 @interface XADArchiveParser (Descriptions)
 
--(NSString *)descriptionOfEntryInDictionary:(NSDictionary *)dict key:(NSString *)key;
+-(NSString *)descriptionOfValueInDictionary:(NSDictionary *)dict key:(NSString *)key;
 -(NSString *)descriptionOfKey:(NSString *)key;
+-(NSArray *)descriptiveOrderingOfKeysInDictionary:(NSDictionary *)dict;
 
 @end

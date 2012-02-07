@@ -53,10 +53,27 @@
 
 #include <dirent.h>
 
-NSString *XADIndexKey=@"XADIndex";
 NSString *XADFileNameKey=@"XADFileName";
+NSString *XADCommentKey=@"XADComment";
 NSString *XADFileSizeKey=@"XADFileSize";
 NSString *XADCompressedSizeKey=@"XADCompressedSize";
+NSString *XADCompressionNameKey=@"XADCompressionName";
+
+NSString *XADIsDirectoryKey=@"XADIsDirectory";
+NSString *XADIsResourceForkKey=@"XADIsResourceFork";
+NSString *XADIsArchiveKey=@"XADIsArchive";
+NSString *XADIsHiddenKey=@"XADIsHidden";
+NSString *XADIsLinkKey=@"XADIsLink";
+NSString *XADIsHardLinkKey=@"XADIsHardLink";
+NSString *XADLinkDestinationKey=@"XADLinkDestination";
+NSString *XADIsCharacterDeviceKey=@"XADIsCharacterDevice";
+NSString *XADIsBlockDeviceKey=@"XADIsBlockDevice";
+NSString *XADDeviceMajorKey=@"XADDeviceMajor";
+NSString *XADDeviceMinorKey=@"XADDeviceMinor";
+NSString *XADIsFIFOKey=@"XADIsFIFO";
+NSString *XADIsEncryptedKey=@"XADIsEncrypted";
+NSString *XADIsCorruptedKey=@"XADIsCorrupted";
+
 NSString *XADLastModificationDateKey=@"XADLastModificationDate";
 NSString *XADLastAccessDateKey=@"XADLastAccessDate";
 NSString *XADLastAttributeChangeDateKey=@"XADLastAttributeChangeDate";
@@ -75,27 +92,11 @@ NSString *XADDOSFileAttributesKey=@"XADDOSFileAttributes";
 NSString *XADWindowsFileAttributesKey=@"XADWindowsFileAttributes";
 NSString *XADAmigaProtectionBitsKey=@"XADAmigaProtectionBits";
 
-NSString *XADIsEncryptedKey=@"XADIsEncrypted";
-NSString *XADIsCorruptedKey=@"XADIsCorrupted";
-NSString *XADIsDirectoryKey=@"XADIsDirectory";
-NSString *XADIsResourceForkKey=@"XADIsResourceFork";
-NSString *XADIsArchiveKey=@"XADIsArchive";
-NSString *XADIsHiddenKey=@"XADIsHidden";
-NSString *XADIsLinkKey=@"XADIsLink";
-NSString *XADIsHardLinkKey=@"XADIsHardLink";
-NSString *XADLinkDestinationKey=@"XADLinkDestination";
-NSString *XADIsCharacterDeviceKey=@"XADIsCharacterDevice";
-NSString *XADIsBlockDeviceKey=@"XADIsBlockDevice";
-NSString *XADDeviceMajorKey=@"XADDeviceMajor";
-NSString *XADDeviceMinorKey=@"XADDeviceMinor";
-NSString *XADIsFIFOKey=@"XADIsFIFO";
-
-NSString *XADCommentKey=@"XADComment";
+NSString *XADIndexKey=@"XADIndex";
 NSString *XADDataOffsetKey=@"XADDataOffset";
 NSString *XADDataLengthKey=@"XADDataLength";
 NSString *XADSkipOffsetKey=@"XADSkipOffset";
 NSString *XADSkipLengthKey=@"XADSkipLength";
-NSString *XADCompressionNameKey=@"XADCompressionName";
 
 NSString *XADIsSolidKey=@"XADIsSolid";
 NSString *XADFirstSolidIndexKey=@"XADFirstSolidIndex";

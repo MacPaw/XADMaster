@@ -5,9 +5,12 @@
 BOOL IsListRequest(NSString *encoding);
 void PrintEncodingList();
 
-NSString *DisplayNameForEntryWithDictionary(NSDictionary *dict);
+NSString *ShortInfoLineForEntryWithDictionary(NSDictionary *dict);
+NSString *MediumInfoLineForEntryWithDictionary(NSDictionary *dict);
 NSString *LongInfoLineForEntryWithDictionary(XADArchiveParser *parser,NSDictionary *dict);
 NSString *CompressionNameExplanationForLongInfo();
+
+void PrintFullDescriptionOfEntryWithDictionary(XADArchiveParser *parser,NSDictionary *dict);
 
 BOOL IsInteractive();
 int GetPromptCharacter();

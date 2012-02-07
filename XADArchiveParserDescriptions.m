@@ -21,39 +21,35 @@
 	else if([key matchedByPattern:@"Is[A-Z0-9]"])
 	{
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
-		if([object longLongValue]==1) return @"Yes";
-		else if ([object longLongValue]==0) return @"No";
-		else return [object description];
+		return XADHumanReadableBoolean([object longLongValue]);
 	}
 	else if([key isEqual:XADFileSizeKey]||[key isEqual:XADCompressedSizeKey])
 	{
-		return [object description];
-	}
-	else if([key isEqual:XADFileTypeKey]||[key isEqual:XADFileCreatorKey])
-	{
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
-		int64_t code=[object longLongValue];
-		char str[5]={0};
-		for(int i=0;i<4;i++)
-		{
-			uint8_t c=(code>>(24-i*8))&0xff;
-			if(c>=32&&c<=127) str[i]=c;
-			else str[i]='?';
-		}
-		return [NSString stringWithFormat:@"%s (0x%08llx)",str,code];
+		return XADHumanReadableFileSize([object longLongValue]);
 	}
 	else if([key isEqual:XADPosixPermissionsKey])
 	{
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
-		int64_t perms=[object longLongValue];
-		char str[10]="rwxrwxrwx";
-		for(int i=0;i<9;i++) if(!(perms&(0400>>i))) str[i]='-';
-		return [NSString stringWithFormat:@"%s (%llo)",str,perms];
+		return XADHumanReadablePOSIXPermissions([object longLongValue]);
+	}
+	else if([key isEqual:XADFileTypeKey]||[key isEqual:XADFileCreatorKey])
+	{
+		if(![object isKindOfClass:[NSNumber class]]) return [object description];
+		return XADHumanReadableOSType([object longLongValue]);
+	}
+	else if([key isEqual:XADExtendedAttributesKey])
+	{
+		if(![object isKindOfClass:[NSDictionary class]]) return [object description];
+		return XADHumanReadableExtendedAttributes(object);
 	}
 	else if([object isKindOfClass:[NSDate class]])
 	{
-		return [NSDateFormatter localizedStringFromDate:object
-		dateStyle:NSDateFormatterFullStyle timeStyle:NSDateFormatterMediumStyle];
+		return XADHumanReadableDate(object);
+	}
+	else if([object isKindOfClass:[NSData class]])
+	{
+		return XADHumanReadableData(object);
 	}
 	else
 	{
@@ -65,64 +61,64 @@
 {
 	static NSDictionary *descriptions=nil;
 	if(!descriptions) descriptions=[[NSDictionary alloc] initWithObjectsAndKeys:
-		@"Comment",XADCommentKey,
-		@"Name",XADFileNameKey,
-		@"Size",XADFileSizeKey,
-		@"Compressed size",XADCompressedSizeKey,
-		@"Compression type",XADCompressionNameKey,
+		NSLocalizedString(@"Comment",@""),XADCommentKey,
+		NSLocalizedString(@"Name",@""),XADFileNameKey,
+		NSLocalizedString(@"Size",@""),XADFileSizeKey,
+		NSLocalizedString(@"Compressed size",@""),XADCompressedSizeKey,
+		NSLocalizedString(@"Compression type",@""),XADCompressionNameKey,
 
-		@"Is directory",XADIsDirectoryKey,
-		@"Is Mac OS resource fork",XADIsResourceForkKey,
-		@"Is an archive",XADIsArchiveKey,
-		@"Is hidden",XADIsHiddenKey,
-		@"Is a link",XADIsLinkKey,
-		@"Is a hard link",XADIsHardLinkKey,
-		@"Link destination",XADLinkDestinationKey,
-		@"Is a Unix character device",XADIsCharacterDeviceKey,
-		@"Is a Unix block device",XADIsBlockDeviceKey,
-		@"Unix major device number",XADDeviceMajorKey,
-		@"Unix minor device number",XADDeviceMinorKey,
-		@"Is a Unix FIFO",XADIsFIFOKey,
-		@"Is encrypted",XADIsEncryptedKey,
-		@"Is corrupted",XADIsCorruptedKey,
+		NSLocalizedString(@"Is directory",@""),XADIsDirectoryKey,
+		NSLocalizedString(@"Is Mac OS resource fork",@""),XADIsResourceForkKey,
+		NSLocalizedString(@"Is an archive",@""),XADIsArchiveKey,
+		NSLocalizedString(@"Is hidden",@""),XADIsHiddenKey,
+		NSLocalizedString(@"Is a link",@""),XADIsLinkKey,
+		NSLocalizedString(@"Is a hard link",@""),XADIsHardLinkKey,
+		NSLocalizedString(@"Link destination",@""),XADLinkDestinationKey,
+		NSLocalizedString(@"Is a Unix character device",@""),XADIsCharacterDeviceKey,
+		NSLocalizedString(@"Is a Unix block device",@""),XADIsBlockDeviceKey,
+		NSLocalizedString(@"Unix major device number",@""),XADDeviceMajorKey,
+		NSLocalizedString(@"Unix minor device number",@""),XADDeviceMinorKey,
+		NSLocalizedString(@"Is a Unix FIFO",@""),XADIsFIFOKey,
+		NSLocalizedString(@"Is encrypted",@""),XADIsEncryptedKey,
+		NSLocalizedString(@"Is corrupted",@""),XADIsCorruptedKey,
 
-		@"Last modification time",XADLastModificationDateKey,
-		@"Last access time",XADLastAccessDateKey,
-		@"Last attribute change time",XADLastAttributeChangeDateKey,
-		@"Creation time",XADCreationDateKey,
+		NSLocalizedString(@"Last modification time",@""),XADLastModificationDateKey,
+		NSLocalizedString(@"Last access time",@""),XADLastAccessDateKey,
+		NSLocalizedString(@"Last attribute change time",@""),XADLastAttributeChangeDateKey,
+		NSLocalizedString(@"Creation time",@""),XADCreationDateKey,
 
-		@"Extended attributes",XADExtendedAttributesKey,
-		@"Mac OS type code",XADFileTypeKey,
-		@"Mac OS creator code",XADFileCreatorKey,
-		@"Mac OS Finder flags",XADFinderFlagsKey,
-		@"Mac OS Finder info",XADFinderInfoKey,
-		@"Unix permissions",XADPosixPermissionsKey,
-		@"Unix user number",XADPosixUserKey,
-		@"Unix group number",XADPosixGroupKey,
-		@"Unix user name",XADPosixUserNameKey,
-		@"Unix group name",XADPosixGroupNameKey,
-		@"DOS file attributes",XADDOSFileAttributesKey,
-		@"Windows file attributes",XADWindowsFileAttributesKey,
-		@"Amiga protection bits",XADAmigaProtectionBitsKey,
+		NSLocalizedString(@"Extended attributes",@""),XADExtendedAttributesKey,
+		NSLocalizedString(@"Mac OS type code",@""),XADFileTypeKey,
+		NSLocalizedString(@"Mac OS creator code",@""),XADFileCreatorKey,
+		NSLocalizedString(@"Mac OS Finder flags",@""),XADFinderFlagsKey,
+		NSLocalizedString(@"Mac OS Finder info",@""),XADFinderInfoKey,
+		NSLocalizedString(@"Unix permissions",@""),XADPosixPermissionsKey,
+		NSLocalizedString(@"Unix user number",@""),XADPosixUserKey,
+		NSLocalizedString(@"Unix group number",@""),XADPosixGroupKey,
+		NSLocalizedString(@"Unix user name",@""),XADPosixUserNameKey,
+		NSLocalizedString(@"Unix group name",@""),XADPosixGroupNameKey,
+		NSLocalizedString(@"DOS file attributes",@""),XADDOSFileAttributesKey,
+		NSLocalizedString(@"Windows file attributes",@""),XADWindowsFileAttributesKey,
+		NSLocalizedString(@"Amiga protection bits",@""),XADAmigaProtectionBitsKey,
 
-		@"Index in file",XADIndexKey,
-		@"Start of data",XADDataOffsetKey,
-		@"Length of data",XADDataLengthKey,
-		@"Start of data (minus skips)",XADSkipOffsetKey,
-		@"Length of data (minus skips)",XADSkipLengthKey,
+		NSLocalizedString(@"Index in file",@""),XADIndexKey,
+		NSLocalizedString(@"Start of data",@""),XADDataOffsetKey,
+		NSLocalizedString(@"Length of data",@""),XADDataLengthKey,
+		NSLocalizedString(@"Start of data (minus skips)",@""),XADSkipOffsetKey,
+		NSLocalizedString(@"Length of data (minus skips)",@""),XADSkipLengthKey,
 
-		@"Is a solid archive file",XADIsSolidKey,
-		@"Index of first solid file",XADFirstSolidIndexKey,
-		@"Pointer to first solid file",XADFirstSolidEntryKey,
-		@"Index of next solid file",XADNextSolidIndexKey,
-		@"Pointer to next solid file",XADNextSolidEntryKey,
-		@"Internal solid identifier",XADSolidObjectKey,
-		@"Start of data in solid stream",XADSolidOffsetKey,
-		@"Length of data in solid stream",XADSolidLengthKey,
+		NSLocalizedString(@"Is a solid archive file",@""),XADIsSolidKey,
+		NSLocalizedString(@"Index of first solid file",@""),XADFirstSolidIndexKey,
+		NSLocalizedString(@"Pointer to first solid file",@""),XADFirstSolidEntryKey,
+		NSLocalizedString(@"Index of next solid file",@""),XADNextSolidIndexKey,
+		NSLocalizedString(@"Pointer to next solid file",@""),XADNextSolidEntryKey,
+		NSLocalizedString(@"Internal solid identifier",@""),XADSolidObjectKey,
+		NSLocalizedString(@"Start of data in solid stream",@""),XADSolidOffsetKey,
+		NSLocalizedString(@"Length of data in solid stream",@""),XADSolidLengthKey,
 
-		@"Archive name",XADArchiveNameKey,
-		@"Archive volumes",XADVolumesKey,
-		@"Disk label",XADDiskLabelKey,
+		NSLocalizedString(@"Archive name",@""),XADArchiveNameKey,
+		NSLocalizedString(@"Archive volumes",@""),XADVolumesKey,
+		NSLocalizedString(@"Disk label",@""),XADDiskLabelKey,
 		nil];
 
 	NSString *description=[descriptions objectForKey:key];
@@ -210,6 +206,141 @@ static NSInteger OrderKeys(id first,id second,void *context)
 	else if(firstorder) return NSOrderedAscending;
 	else if(secondorder) return NSOrderedDescending;
 	else return [first compare:second];
+}
+
+
+
+
+static NSString *DottedNumber(uint64_t size);
+
+NSString *XADHumanReadableFileSize(uint64_t size)
+{
+	if(size<1000) return [NSString localizedStringWithFormat:
+	NSLocalizedString(@"%lld bytes",@"Format string for human-redable sizes <1000"),
+	size];
+	else return [NSString localizedStringWithFormat:
+	NSLocalizedString(@"%@ (%@ bytes)",@"Format string for human-readable sizes >=1000"),
+	XADShortHumanReadableFileSize(size),DottedNumber(size)];
+}
+
+NSString *XADShortHumanReadableFileSize(uint64_t size)
+{
+	if(size<1000)
+	{
+		return [NSString stringWithFormat:
+		NSLocalizedString(@"%lld B",@"Format string for short sizes expressed in bytes"),
+		size];
+	}
+
+	double value;
+	NSString *unitformat;
+	if(size<1000000)
+	{
+		value=size/1000.0;
+		unitformat=NSLocalizedString(@"%@ KB",@"Format string for short sizes expressed in kilobytes");
+	}
+	else if(size<1000000000)
+	{
+		value=size/1000000.0;
+		unitformat=NSLocalizedString(@"%@ MB",@"Format string for short sizes expressed in megabytes");
+	}
+	else
+	{
+		value=size/1000000000.0;
+		unitformat=NSLocalizedString(@"%@ GB",@"Format string for short sizes expressed in gigabytes");
+	}
+
+	NSString *number;
+	if(value<10) number=[NSString localizedStringWithFormat:@"%.2f",value];
+	else if(value<100) number=[NSString localizedStringWithFormat:@"%.1f",value];
+	else number=[NSString localizedStringWithFormat:@"%.0f",value];
+
+	return [NSString stringWithFormat:unitformat,number];
+}
+
+static NSString *DottedNumber(uint64_t size)
+{
+	NSNumberFormatter *formatter=[[NSNumberFormatter new] autorelease];
+	formatter.formatterBehavior=NSNumberFormatterBehavior10_4;
+	formatter.numberStyle=NSNumberFormatterDecimalStyle;
+	return [formatter stringFromNumber:[NSNumber numberWithLongLong:size]];
+}
+
+NSString *XADHumanReadableDate(NSDate *date)
+{
+	return [NSDateFormatter localizedStringFromDate:date
+	dateStyle:NSDateFormatterFullStyle timeStyle:NSDateFormatterMediumStyle];
+}
+
+NSString *XADHumanReadableBoolean(uint64_t boolean)
+{
+	if(boolean==1) return NSLocalizedString(@"Yes","String for true values");
+	else if (boolean==0) return NSLocalizedString(@"No","String for false values");
+	else return [NSString stringWithFormat:@"%llx",boolean];
+}
+
+NSString *XADHumanReadablePOSIXPermissions(uint64_t permissions)
+{
+	char str[10]="rwxrwxrwx";
+	for(int i=0;i<9;i++) if(!(permissions&(0400>>i))) str[i]='-';
+	return [NSString stringWithFormat:@"%s (%llo)",str,permissions];
+}
+
+NSString *XADHumanReadableOSType(uint64_t ostype)
+{
+	char str[5]={0};
+	for(int i=0;i<4;i++)
+	{
+		uint8_t c=(ostype>>(24-i*8))&0xff;
+		if(c>=32&&c<=127) str[i]=c;
+		else str[i]='?';
+	}
+	return [NSString stringWithFormat:@"%s (0x%08llx)",str,ostype];
+
+}
+
+NSString *XADHumanReadableData(NSData *data)
+{
+	NSMutableString *string=[NSMutableString string];
+
+	NSInteger length=[data length];
+	const uint8_t *bytes=[data bytes];
+
+	[string appendFormat:
+	NSLocalizedString(@"%llu bytes (",@"Format string for raw data objects"),
+	(uint64_t)length];
+
+	for(int i=0;i<length && i<256;i++)
+	{
+		if(i!=0 && (i&3)==0) [string appendString:@" "];
+		[string appendFormat:@"%02x",bytes[i]];
+	}
+
+	if(length>256) [string appendString:@"..."];
+	[string appendString:@")"];
+
+	return string;
+}
+
+NSString *XADHumanReadableExtendedAttributes(NSDictionary *dict)
+{
+	NSMutableString *string=[NSMutableString string];
+
+	NSArray *keys=[[dict allKeys] sortedArrayUsingSelector:@selector(compare:)];
+	NSInteger count=[keys count];
+
+	for(int i=0;i<count;i++)
+	{
+		NSString *key=[keys objectAtIndex:i];
+		NSData *value=[dict objectForKey:key];
+
+		if(i!=0) [string appendString:@"\n"];
+		[string appendString:key];
+		[string appendString:@": "];
+		[string appendString:XADHumanReadableData(value)];
+	}
+
+	return string;
 }
 
 @end

@@ -51,6 +51,9 @@ retainPosition:(BOOL)retainpos handle:(CSHandle *)handle;
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 
+-(NSString *)descriptionOfValueInDictionary:(NSDictionary *)dict key:(NSString *)key;
+-(NSString *)descriptionOfKey:(NSString *)key;
+
 -(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(void)inspectEntryDictionary:(NSMutableDictionary *)dict;
 

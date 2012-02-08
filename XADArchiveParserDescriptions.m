@@ -38,22 +38,9 @@
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
 		return XADHumanReadableOSType([object longLongValue]);
 	}
-	else if([key isEqual:XADExtendedAttributesKey])
-	{
-		if(![object isKindOfClass:[NSDictionary class]]) return [object description];
-		return XADHumanReadableExtendedAttributes(object);
-	}
-	else if([object isKindOfClass:[NSDate class]])
-	{
-		return XADHumanReadableDate(object);
-	}
-	else if([object isKindOfClass:[NSData class]])
-	{
-		return XADHumanReadableData(object);
-	}
 	else
 	{
-		return [object description];
+		return XADHumanReadableObject(object);
 	}
 }
 
@@ -266,12 +253,6 @@ static NSString *DottedNumber(uint64_t size)
 	return [formatter stringFromNumber:[NSNumber numberWithLongLong:size]];
 }
 
-NSString *XADHumanReadableDate(NSDate *date)
-{
-	return [NSDateFormatter localizedStringFromDate:date
-	dateStyle:NSDateFormatterFullStyle timeStyle:NSDateFormatterMediumStyle];
-}
-
 NSString *XADHumanReadableBoolean(uint64_t boolean)
 {
 	if(boolean==1) return NSLocalizedString(@"Yes","String for true values");
@@ -299,6 +280,44 @@ NSString *XADHumanReadableOSType(uint64_t ostype)
 
 }
 
+NSString *XADHumanReadableEntryWithDictionary(NSDictionary *dict,XADArchiveParser *parser)
+{
+	NSArray *keys=[parser descriptiveOrderingOfKeysInDictionary:dict];
+	NSMutableArray *labels=[NSMutableArray array];
+	NSMutableArray *values=[NSMutableArray array];
+
+	NSEnumerator *enumerator=[keys objectEnumerator];
+	NSString *key;
+	while((key=[enumerator nextObject]))
+	{
+		NSString *label=[parser descriptionOfKey:key];
+		NSString *value=[parser descriptionOfValueInDictionary:dict key:key];
+		[labels addObject:label];
+		[values addObject:value];
+	}
+
+	return XADHumanReadableList(labels,values);
+}
+
+
+
+
+NSString *XADHumanReadableObject(id object)
+{
+	if ([object isKindOfClass:[NSDate class]]) return XADHumanReadableDate(object);
+	else if([object isKindOfClass:[NSData class]]) return XADHumanReadableData(object);
+	else if([object isKindOfClass:[NSArray class]]) return XADHumanReadableArray(object);
+	else if([object isKindOfClass:[NSDictionary class]]) return XADHumanReadableDictionary(object);
+	else return [object description];
+
+}
+
+NSString *XADHumanReadableDate(NSDate *date)
+{
+	return [NSDateFormatter localizedStringFromDate:date
+	dateStyle:NSDateFormatterFullStyle timeStyle:NSDateFormatterMediumStyle];
+}
+
 NSString *XADHumanReadableData(NSData *data)
 {
 	NSMutableString *string=[NSMutableString string];
@@ -322,25 +341,84 @@ NSString *XADHumanReadableData(NSData *data)
 	return string;
 }
 
-NSString *XADHumanReadableExtendedAttributes(NSDictionary *dict)
+NSString *XADHumanReadableArray(NSArray *array)
 {
-	NSMutableString *string=[NSMutableString string];
-
-	NSArray *keys=[[dict allKeys] sortedArrayUsingSelector:@selector(compare:)];
-	NSInteger count=[keys count];
+	NSInteger count=[array count];
+	NSMutableArray *labels=[NSMutableArray array];
+	NSMutableArray *values=[NSMutableArray array];
 
 	for(int i=0;i<count;i++)
 	{
-		NSString *key=[keys objectAtIndex:i];
-		NSData *value=[dict objectForKey:key];
+		id value=[array objectAtIndex:i];
+		[labels addObject:[NSString stringWithFormat:@"%d",i]];
+		[values addObject:XADHumanReadableObject(value)];
+	}
 
-		if(i!=0) [string appendString:@"\n"];
-		[string appendString:key];
+	return XADHumanReadableList(labels,values);
+}
+
+NSString *XADHumanReadableDictionary(NSDictionary *dict)
+{
+	NSArray *keys=[[dict allKeys] sortedArrayUsingSelector:@selector(compare:)];
+	NSMutableArray *labels=[NSMutableArray array];
+	NSMutableArray *values=[NSMutableArray array];
+
+	NSEnumerator *enumerator=[keys objectEnumerator];
+	NSString *key;
+	while((key=[enumerator nextObject]))
+	{
+		id value=[dict objectForKey:key];
+		[labels addObject:key];
+		[values addObject:XADHumanReadableObject(value)];
+	}
+
+	return XADHumanReadableList(labels,values);
+}
+
+NSString *XADHumanReadableList(NSArray *labels,NSArray *values)
+{
+	int maxlen=0;
+	NSInteger count=[labels count];
+	for(int i=0;i<count;i++)
+	{
+		NSString *label=[labels objectAtIndex:i];
+		int len=[label length];
+
+		if(len>maxlen) maxlen=len;
+	}
+
+	NSMutableString *string=[NSMutableString string];
+	for(int i=0;i<count;i++)
+	{
+		NSString *label=[labels objectAtIndex:i];
+		NSString *value=[values objectAtIndex:i];
+		int len=[label length];
+
+		[string appendString:label];
 		[string appendString:@": "];
-		[string appendString:XADHumanReadableData(value)];
+
+		for(int i=len;i<maxlen;i++) [string appendString:@" "];
+
+		[string appendString:XADIndentTextWithSpaces(value,maxlen+2)];
+
+		if(i!=count-1) [string appendString:@"\n"];
 	}
 
 	return string;
+}
+
+NSString *XADIndentTextWithSpaces(NSString *text,int spaces)
+{
+	if([text rangeOfString:@"\n"].location==NSNotFound) return text;
+
+	char spacestring[spaces+2];
+	spacestring[0]='\n';
+	for(int i=0;i<spaces;i++) spacestring[i+1]=' ';
+	spacestring[spaces+1]=0;
+
+	NSString *indentstring=[NSString stringWithUTF8String:spacestring];
+
+	return [text stringByReplacingOccurrencesOfString:@"\n" withString:indentstring];
 }
 
 @end

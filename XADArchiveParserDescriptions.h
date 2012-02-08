@@ -10,9 +10,15 @@
 
 NSString *XADHumanReadableFileSize(uint64_t size);
 NSString *XADShortHumanReadableFileSize(uint64_t size);
-NSString *XADHumanReadableDate(NSDate *date);
 NSString *XADHumanReadableBoolean(uint64_t boolean);
 NSString *XADHumanReadablePOSIXPermissions(uint64_t permissions);
 NSString *XADHumanReadableOSType(uint64_t ostype);
+NSString *XADHumanReadableEntryWithDictionary(NSDictionary *dict,XADArchiveParser *parser);
+
+NSString *XADHumanReadableObject(id object);
+NSString *XADHumanReadableDate(NSDate *date);
 NSString *XADHumanReadableData(NSData *data);
-NSString *XADHumanReadableExtendedAttributes(NSDictionary *dict);
+NSString *XADHumanReadableArray(NSArray *array);
+NSString *XADHumanReadableDictionary(NSDictionary *dict);
+NSString *XADHumanReadableList(NSArray *labels,NSArray *values);
+NSString *XADIndentTextWithSpaces(NSString *text,int spaces);

@@ -1,4 +1,5 @@
 #import "XADSimpleUnarchiver.h"
+#import "XADArchiveParserDescriptions.h"
 #import "NSStringPrinting.h"
 #import "CSCommandLineParser.h"
 #import "CSJSONPrinter.h"
@@ -413,9 +414,11 @@ int main(int argc,const char **argv)
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
 	if(longformat)
 	{
-		NSString *infoline=LongInfoLineForEntryWithDictionary([unarchiver archiveParser],dict);
+		NSString *infoline=LongInfoLineForEntryWithDictionary(dict,[unarchiver archiveParser]);
 		[infoline print];
 	}
 	else // Short or very long format.
@@ -440,12 +443,19 @@ int main(int argc,const char **argv)
 			case EntryIsOkResult: [@"OK." print]; passed++; break;
 		}
 	}
+	else if(verylongformat)
+	{
+		[@": " print];
+	}
 
 	[@"\n" print];
 
 	if(verylongformat)
 	{
-		PrintFullDescriptionOfEntryWithDictionary([unarchiver archiveParser],dict);
+		[@"  " print];
+		NSString *description=XADHumanReadableEntryWithDictionary(dict,[unarchiver archiveParser]);
+		[XADIndentTextWithSpaces(description,2) print];
+		[@"\n" print];
 	}
 	if(longformat)
 	{
@@ -457,6 +467,8 @@ int main(int argc,const char **argv)
 			[@"\n" print];
 		}
 	}
+
+	[pool release];
 
 	return NO;
 }

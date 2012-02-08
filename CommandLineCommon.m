@@ -75,8 +75,6 @@ NSString *ShortInfoLineForEntryWithDictionary(NSDictionary *dict)
 
 NSString *MediumInfoLineForEntryWithDictionary(NSDictionary *dict)
 {
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
-
 	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
 	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
@@ -93,9 +91,9 @@ NSString *MediumInfoLineForEntryWithDictionary(NSDictionary *dict)
 	NSString *name=[[dict objectForKey:XADFileNameKey] string];
 	name=[name stringByEscapingControlCharacters];
 
-	NSMutableString *str=[[NSMutableString alloc] initWithString:name];
+	NSMutableString *string=[NSMutableString stringWithString:name];
 
-	if(isdir) [str appendString:@"/"]; // TODO: What about Windows?
+	if(isdir) [string appendString:@"/"]; // TODO: What about Windows?
 
 	NSMutableArray *tags=[NSMutableArray array];
 
@@ -109,22 +107,18 @@ NSString *MediumInfoLineForEntryWithDictionary(NSDictionary *dict)
 
 	if([tags count])
 	{
-		[str appendString:@"  ("];
-		[str appendString:[tags componentsJoinedByString:@", "]];
-		[str appendString:@")"];
+		[string appendString:@"  ("];
+		[string appendString:[tags componentsJoinedByString:@", "]];
+		[string appendString:@")"];
 	}
 
-	[pool release];
-
-	return [str autorelease];
+	return string;
 }
 
 static NSString *CodeForCompressionName(NSString *compname);
 
-NSString *LongInfoLineForEntryWithDictionary(XADArchiveParser *parser,NSDictionary *dict)
+NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict,XADArchiveParser *parser)
 {
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
-
 	NSNumber *indexnum=[dict objectForKey:XADIndexKey];
 	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
 	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
@@ -208,8 +202,8 @@ NSString *LongInfoLineForEntryWithDictionary(XADArchiveParser *parser,NSDictiona
 		if(link) linkstr=[NSString stringWithFormat:@" -> %@",link];
 	}
 
-
-	NSString *str=[[NSString alloc] initWithFormat:@"%3d. %c%c%c%c%c %@ %@  %@  %@  %@%s%@",
+	return [NSString stringWithFormat:
+	@"%3d. %c%c%c%c%c %@ %@  %@  %@  %@%s%@",
 	[indexnum intValue],
 	isdir?'D':'-',
 	isres?'R':'-',
@@ -223,10 +217,6 @@ NSString *LongInfoLineForEntryWithDictionary(XADArchiveParser *parser,NSDictiona
 	name,
 	isdir?"/":"",
 	linkstr];
-
-	[pool release];
-
-	return [str autorelease];
 }
 
 static NSMutableDictionary *codeforname=nil;
@@ -345,59 +335,6 @@ NSString *CompressionNameExplanationForLongInfo()
 	return res;
 }
 
-static NSString *Indent(NSString *string,int spaces);
-
-void PrintFullDescriptionOfEntryWithDictionary(XADArchiveParser *parser,NSDictionary *dict)
-{
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
-
-	NSArray *keys=[parser descriptiveOrderingOfKeysInDictionary:dict];
-
-	int maxlen=0;
-	NSEnumerator *enumerator=[keys objectEnumerator];
-	NSString *key;
-	while((key=[enumerator nextObject]))
-	{
-		NSString *keydesc=[parser descriptionOfKey:key];
-		int len=[keydesc length];
-		if(len>maxlen) maxlen=len;
-	}
-
-	enumerator=[keys objectEnumerator];
-	while((key=[enumerator nextObject]))
-	{
-		NSString *keydesc=[parser descriptionOfKey:key];
-		NSString *valuedesc=[parser descriptionOfValueInDictionary:dict key:key];
-		int len=[keydesc length];
-
-		[@"  " print];
-
-		[keydesc print];
-		[@": " print];
-
-		for(int i=len;i<maxlen;i++) printf(" ");
-
-		[Indent(valuedesc,maxlen+4) print];
-
-		[@"\n" print];
-	}
-
-	[pool release];
-}
-
-static NSString *Indent(NSString *string,int spaces)
-{
-	if([string rangeOfString:@"\n"].location==NSNotFound) return string;
-
-	char spacestring[spaces+2];
-	spacestring[0]='\n';
-	for(int i=0;i<spaces;i++) spacestring[i+1]=' ';
-	spacestring[spaces+1]=0;
-
-	NSString *indent=[NSString stringWithUTF8String:spacestring];
-
-	return [string stringByReplacingOccurrencesOfString:@"\n" withString:indent];
-}
 
 
 

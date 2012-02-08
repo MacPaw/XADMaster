@@ -1,4 +1,5 @@
 #import "XADMacArchiveParser.h"
+#import "XADArchiveParserDescriptions.h"
 #import "XADAppleDouble.h"
 #import "CSMemoryHandle.h"
 #import "NSDateXAD.h"
@@ -456,6 +457,49 @@ retainPosition:(BOOL)retainpos handle:(CSHandle *)handle
 		return [self rawHandleForEntryWithDictionary:dict wantChecksum:checksum];
 	}
 }
+
+
+
+
+-(NSString *)descriptionOfValueInDictionary:(NSDictionary *)dict key:(NSString *)key
+{
+	id object=[dict objectForKey:key];
+	if(!object) return nil;
+
+	if([key isEqual:@"MacOriginalDictionary"])
+	{
+		if(![object isKindOfClass:[NSDictionary class]]) return [object description];
+		return XADHumanReadableEntryWithDictionary(object,self);
+	}
+	else if([key isEqual:XADMightBeMacBinaryKey])
+	{
+		if(![object isKindOfClass:[NSNumber class]]) return [object description];
+		return XADHumanReadableBoolean([object longLongValue]);
+	}
+	else
+	{
+		return [super descriptionOfValueInDictionary:dict key:key];
+	}
+}
+
+-(NSString *)descriptionOfKey:(NSString *)key
+{
+	static NSDictionary *descriptions=nil;
+	if(!descriptions) descriptions=[[NSDictionary alloc] initWithObjectsAndKeys:
+		NSLocalizedString(@"Is an embedded MacBinary file",@""),XADIsMacBinaryKey,
+		NSLocalizedString(@"Could be an embedded MacBinary file",@""),XADMightBeMacBinaryKey,
+		NSLocalizedString(@"Mac OS fork handling is disabled",@""),XADDisableMacForkExpansionKey,
+		NSLocalizedString(@"Original archive entry",@""),@"MacOriginalDictionary",
+		NSLocalizedString(@"Start of embedded data",@""),@"MacDataOffset",
+		NSLocalizedString(@"Length of embedded data",@""),@"MacDataLength",
+		nil];
+
+	NSString *description=[descriptions objectForKey:key];
+	if(description) return description;
+
+	return [super descriptionOfKey:key];
+}
+
 
 
 

@@ -7,10 +7,8 @@ void PrintEncodingList();
 
 NSString *ShortInfoLineForEntryWithDictionary(NSDictionary *dict);
 NSString *MediumInfoLineForEntryWithDictionary(NSDictionary *dict);
-NSString *LongInfoLineForEntryWithDictionary(XADArchiveParser *parser,NSDictionary *dict);
+NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict,XADArchiveParser *parser);
 NSString *CompressionNameExplanationForLongInfo();
-
-void PrintFullDescriptionOfEntryWithDictionary(XADArchiveParser *parser,NSDictionary *dict);
 
 BOOL IsInteractive();
 int GetPromptCharacter();

@@ -12,6 +12,9 @@ NSString *XADHumanReadableFileSize(uint64_t size);
 NSString *XADShortHumanReadableFileSize(uint64_t size);
 NSString *XADHumanReadableBoolean(uint64_t boolean);
 NSString *XADHumanReadablePOSIXPermissions(uint64_t permissions);
+NSString *XADHumanReadableAmigaProtectionBits(uint64_t protection);
+NSString *XADHumanReadableDOSFileAttributes(uint64_t attributes);
+NSString *XADHumanReadableWindowsFileAttributes(uint64_t attributes);
 NSString *XADHumanReadableOSType(uint64_t ostype);
 NSString *XADHumanReadableEntryWithDictionary(NSDictionary *dict,XADArchiveParser *parser);
 

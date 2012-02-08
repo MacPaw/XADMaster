@@ -413,7 +413,7 @@ errors:(NSMutableArray *)errors
 	while((argument=[enumerator nextObject]))
 	{
 		// Check for options, unless we have seen a stop marker.
-		if(stillparsing && [argument characterAtIndex:0]=='-')
+		if(stillparsing && [argument length]>1 && [argument characterAtIndex:0]=='-')
 		{
 			// Check for a stop marker.
 			if([argument isEqual:@"--"])

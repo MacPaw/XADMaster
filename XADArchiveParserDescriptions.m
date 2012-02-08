@@ -33,6 +33,21 @@
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
 		return XADHumanReadablePOSIXPermissions([object longLongValue]);
 	}
+	else if([key isEqual:XADAmigaProtectionBitsKey])
+	{
+		if(![object isKindOfClass:[NSNumber class]]) return [object description];
+		return XADHumanReadableAmigaProtectionBits([object longLongValue]);
+	}
+	else if([key isEqual:XADDOSFileAttributesKey])
+	{
+		if(![object isKindOfClass:[NSNumber class]]) return [object description];
+		return XADHumanReadableDOSFileAttributes([object longLongValue]);
+	}
+	else if([key isEqual:XADWindowsFileAttributesKey])
+	{
+		if(![object isKindOfClass:[NSNumber class]]) return [object description];
+		return XADHumanReadableWindowsFileAttributes([object longLongValue]);
+	}
 	else if([key isEqual:XADFileTypeKey]||[key isEqual:XADFileCreatorKey])
 	{
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
@@ -266,6 +281,27 @@ NSString *XADHumanReadablePOSIXPermissions(uint64_t permissions)
 	char str[10]="rwxrwxrwx";
 	for(int i=0;i<9;i++) if(!(permissions&(0400>>i))) str[i]='-';
 	return [NSString stringWithFormat:@"%s (%llo)",str,permissions];
+}
+
+NSString *XADHumanReadableAmigaProtectionBits(uint64_t protection)
+{
+	char str[9]="hsparwed";
+	for(int i=0;i<8;i++) if(!((protection^0x0f)&(0x80>>i))) str[i]='-';
+	return [NSString stringWithFormat:@"%s (0x%02llx)",str,protection];
+}
+
+NSString *XADHumanReadableDOSFileAttributes(uint64_t attributes)
+{
+	char str[9]="ADVSHR";
+	for(int i=0;i<6;i++) if(!(attributes&(0x20>>i))) str[i]='-';
+	return [NSString stringWithFormat:@"%s (0x%02llx)",str,attributes];
+}
+
+NSString *XADHumanReadableWindowsFileAttributes(uint64_t attributes)
+{
+	char str[16]="EIOCLPTN AD SHR";
+	for(int i=0;i<15;i++) if(!(attributes&(0x4000>>i))) str[i]='-';
+	return [NSString stringWithFormat:@"%s (0x%04llx)",str,attributes];
 }
 
 NSString *XADHumanReadableOSType(uint64_t ostype)

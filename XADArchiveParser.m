@@ -810,6 +810,14 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		case 0xa000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsLinkKey]; break;
 	}
 
+	// Set hidden flag if DOS or Windows file attributes are available and indicate it.
+	NSNumber *attrs=[dict objectForKey:XADDOSFileAttributesKey];
+	if(!attrs) attrs=[dict objectForKey:XADWindowsFileAttributesKey];
+	if(attrs)
+	{
+		if([attrs intValue]&0x02) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsHiddenKey];
+	}
+
 	// Extract finderinfo from extended attributes, if present.
 	// Overwrite whatever finderinfo was provided, on the assumption that
 	// the extended attributes are more authoritative.

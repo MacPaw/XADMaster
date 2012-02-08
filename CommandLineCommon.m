@@ -66,11 +66,8 @@ NSString *ShortInfoLineForEntryWithDictionary(NSDictionary *dict)
 	NSString *name=[[dict objectForKey:XADFileNameKey] string];
 	name=[name stringByEscapingControlCharacters];
 
-	NSMutableString *str=[NSMutableString stringWithString:name];
-
-	if(isdir) [str appendString:@"/"]; // TODO: What about Windows?
-
-	return [str autorelease];
+	if(isdir) return [name stringByAppendingString:@"/"]; // TODO: What about Windows?
+	else return name;
 }
 
 NSString *MediumInfoLineForEntryWithDictionary(NSDictionary *dict)

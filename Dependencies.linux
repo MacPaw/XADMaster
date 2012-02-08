@@ -78,6 +78,10 @@ XADArchiveParser.o: XADArchiveParser.m XADArchiveParser.h XADException.h \
  XADSplitFileParser.h XADISO9660Parser.h XADLibXADParser.h \
  libxad/include/functions.h libxad/include/xadmaster.h \
  libxad/include/privdefs.h libxad/include/../unix/emulation.h
+XADArchiveParserDescriptions.o: XADArchiveParserDescriptions.m \
+ XADArchiveParserDescriptions.h XADArchiveParser.h XADException.h \
+ XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
+ CSSubHandle.h CSStreamHandle.h CSInputBuffer.h
 XADARCCrunchHandle.o: XADARCCrunchHandle.m XADARCCrunchHandle.h \
  CSByteStreamHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
  XADException.h
@@ -278,7 +282,8 @@ XADLZXParser.o: XADLZXParser.m XADLZXParser.h XADArchiveParser.h \
 XADMacArchiveParser.o: XADMacArchiveParser.m XADMacArchiveParser.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h CSStreamHandle.h \
- CSInputBuffer.h XADAppleDouble.h CSMemoryHandle.h NSDateXAD.h CRC.h
+ CSInputBuffer.h XADArchiveParserDescriptions.h XADAppleDouble.h \
+ CSMemoryHandle.h NSDateXAD.h CRC.h
 XADMacBinaryParser.o: XADMacBinaryParser.m XADMacBinaryParser.h \
  XADMacArchiveParser.h XADArchiveParser.h XADException.h XADString.h \
  XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
@@ -613,15 +618,15 @@ unar.o: unar.m XADSimpleUnarchiver.h XADArchiveParser.h XADException.h \
 lsar.o: lsar.m XADSimpleUnarchiver.h XADArchiveParser.h XADException.h \
  XADString.h XADPath.h XADRegex.h CSHandle.h XADSkipHandle.h Checksums.h \
  CSSubHandle.h CSStreamHandle.h CSInputBuffer.h XADUnarchiver.h \
- NSStringPrinting.h CSCommandLineParser.h CSJSONPrinter.h \
- CommandLineCommon.h
+ XADArchiveParserDescriptions.h NSStringPrinting.h CSCommandLineParser.h \
+ CSJSONPrinter.h CommandLineCommon.h
 CSJSONPrinter.o: CSJSONPrinter.m CSJSONPrinter.h NSStringPrinting.h
 CSCommandLineParser.o: CSCommandLineParser.m CSCommandLineParser.h \
  NSStringPrinting.h
 CommandLineCommon.o: CommandLineCommon.m CommandLineCommon.h \
  XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
  CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h CSStreamHandle.h \
- CSInputBuffer.h NSStringPrinting.h
+ CSInputBuffer.h XADArchiveParserDescriptions.h NSStringPrinting.h
 NSStringPrinting.o: NSStringPrinting.m NSStringPrinting.h
 BWT.o: BWT.c BWT.h
 LZSS.o: LZSS.c LZSS.h

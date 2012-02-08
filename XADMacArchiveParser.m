@@ -487,7 +487,7 @@ retainPosition:(BOOL)retainpos handle:(CSHandle *)handle
 	static NSDictionary *descriptions=nil;
 	if(!descriptions) descriptions=[[NSDictionary alloc] initWithObjectsAndKeys:
 		NSLocalizedString(@"Is an embedded MacBinary file",@""),XADIsMacBinaryKey,
-		NSLocalizedString(@"Could be an embedded MacBinary file",@""),XADMightBeMacBinaryKey,
+		NSLocalizedString(@"Check for MacBinary",@""),XADMightBeMacBinaryKey,
 		NSLocalizedString(@"Mac OS fork handling is disabled",@""),XADDisableMacForkExpansionKey,
 		NSLocalizedString(@"Original archive entry",@""),@"MacOriginalDictionary",
 		NSLocalizedString(@"Start of embedded data",@""),@"MacDataOffset",

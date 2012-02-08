@@ -195,6 +195,7 @@ static NSInteger OrderKeys(id first,id second,void *context)
 	else return [first compare:second];
 }
 
+@end
 
 
 
@@ -302,12 +303,19 @@ NSString *XADHumanReadableEntryWithDictionary(NSDictionary *dict,XADArchiveParse
 
 
 
+#ifdef GNUSTEP
+static NSString *GNUSTEPKludge_HumanReadableValue(NSValue *value);
+#endif
+
 NSString *XADHumanReadableObject(id object)
 {
 	if ([object isKindOfClass:[NSDate class]]) return XADHumanReadableDate(object);
 	else if([object isKindOfClass:[NSData class]]) return XADHumanReadableData(object);
 	else if([object isKindOfClass:[NSArray class]]) return XADHumanReadableArray(object);
 	else if([object isKindOfClass:[NSDictionary class]]) return XADHumanReadableDictionary(object);
+	#ifdef GNUSTEP
+	else if([object isKindOfClass:[NSValue class]]) return GNUSTEPKludge_HumanReadableValue(object);
+	#endif
 	else return [object description];
 
 }
@@ -421,4 +429,21 @@ NSString *XADIndentTextWithSpaces(NSString *text,int spaces)
 	return [text stringByReplacingOccurrencesOfString:@"\n" withString:indentstring];
 }
 
-@end
+
+
+#ifdef GNUSTEP
+// GNUstep will dereference non-retained objects in NSValues. This is not safe, so avoid it.
+static NSString *GNUSTEPKludge_HumanReadableValue(NSValue *value)
+{
+	if(strcmp([value objCType],@encode(id))==0)
+	{
+		return [NSString stringWithFormat:@"<%p>",[value nonretainedObjectValue]];
+	}
+	else
+	{
+		return [value description];
+	}
+}
+#endif
+
+

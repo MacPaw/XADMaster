@@ -11,12 +11,12 @@
 	if([key matchedByPattern:@"CRC32$"])
 	{
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
-		return [NSString stringWithFormat:@"0x%08x",[object unsignedLongValue]];
+		return [NSString stringWithFormat:@"0x%08llx",[object longLongValue]];
 	}
 	else if([key matchedByPattern:@"CRC16$"])
 	{
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
-		return [NSString stringWithFormat:@"0x%04x",[object unsignedShortValue]];
+		return [NSString stringWithFormat:@"0x%04llx",[object longLongValue]];
 	}
 	else if([key matchedByPattern:@"Is[A-Z0-9]"])
 	{
@@ -53,6 +53,11 @@
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
 		return XADHumanReadableOSType([object longLongValue]);
 	}
+	else if([key isEqual:XADFinderFlagsKey])
+	{
+		if(![object isKindOfClass:[NSNumber class]]) return [object description];
+		return [NSString stringWithFormat:@"0x%04llx",[object longLongValue]];
+	}
 	else
 	{
 		return XADHumanReadableObject(object);
@@ -69,8 +74,8 @@
 		NSLocalizedString(@"Compressed size",@""),XADCompressedSizeKey,
 		NSLocalizedString(@"Compression type",@""),XADCompressionNameKey,
 
-		NSLocalizedString(@"Is directory",@""),XADIsDirectoryKey,
-		NSLocalizedString(@"Is Mac OS resource fork",@""),XADIsResourceForkKey,
+		NSLocalizedString(@"Is a directory",@""),XADIsDirectoryKey,
+		NSLocalizedString(@"Is a Mac OS resource fork",@""),XADIsResourceForkKey,
 		NSLocalizedString(@"Is an archive",@""),XADIsArchiveKey,
 		NSLocalizedString(@"Is hidden",@""),XADIsHiddenKey,
 		NSLocalizedString(@"Is a link",@""),XADIsLinkKey,
@@ -84,10 +89,10 @@
 		NSLocalizedString(@"Is encrypted",@""),XADIsEncryptedKey,
 		NSLocalizedString(@"Is corrupted",@""),XADIsCorruptedKey,
 
-		NSLocalizedString(@"Last modification time",@""),XADLastModificationDateKey,
-		NSLocalizedString(@"Last access time",@""),XADLastAccessDateKey,
-		NSLocalizedString(@"Last attribute change time",@""),XADLastAttributeChangeDateKey,
-		NSLocalizedString(@"Creation time",@""),XADCreationDateKey,
+		NSLocalizedString(@"Last modified",@""),XADLastModificationDateKey,
+		NSLocalizedString(@"Last accessed",@""),XADLastAccessDateKey,
+		NSLocalizedString(@"Last attribute change",@""),XADLastAttributeChangeDateKey,
+		NSLocalizedString(@"Created",@""),XADCreationDateKey,
 
 		NSLocalizedString(@"Extended attributes",@""),XADExtendedAttributesKey,
 		NSLocalizedString(@"Mac OS type code",@""),XADFileTypeKey,

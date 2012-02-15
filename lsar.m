@@ -335,7 +335,10 @@ int main(int argc,const char **argv)
 				[compkey print];
 				[@")\n" print];
 			}
+		}
 
+		if(longformat||verylongformat)
+		{
 			XADString *comment=[[[unarchiver archiveParser] properties] objectForKey:XADCommentKey];
 			if(comment)
 			{

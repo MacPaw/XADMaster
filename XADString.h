@@ -113,8 +113,6 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 -(id)copyWithZone:(NSZone *)zone;
 
 #ifdef __APPLE__
-+(NSString *)encodingNameForEncoding:(NSStringEncoding)encoding;
-
 -(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding;
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
 -(NSStringEncoding)encoding;
@@ -131,6 +129,11 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 +(NSData *)dataForString:(NSString *)string encodingName:(NSString *)encoding;
 +(NSArray *)availableEncodingNames;
 
+#ifdef __APPLE__
++(NSString *)encodingNameForEncoding:(NSStringEncoding)encoding;
++(NSStringEncoding)encodingForEncodingName:(NSString *)encoding;
+#endif
+
 @end
 
 
@@ -140,7 +143,7 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 {
 	UniversalDetector *detector;
 	NSString *fixedencodingname;
-	BOOL mac;
+	BOOL mac,hasanalyzeddata;
 
 	#ifdef __APPLE__
 	NSStringEncoding fixedencoding;
@@ -152,6 +155,7 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 
 -(void)analyzeData:(NSData *)data;
 
+-(BOOL)hasAnalyzedData;
 -(NSString *)encodingName;
 -(float)confidence;
 -(UniversalDetector *)detector;

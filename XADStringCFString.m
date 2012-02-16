@@ -2,18 +2,34 @@
 
 @implementation XADString (PlatformSpecific)
 
-+(CFStringEncoding)CFStringEncodingForEncodingName:(NSString *)encodingname
++(NSString *)encodingNameForEncoding:(NSStringEncoding)encoding
 {
-	if([encodingname isKindOfClass:[NSNumber class]])
+	// Internal kludge: Don't actually return an NSString. Instead,
+	// return an NSNumber containing the encoding number, that can
+	// be quickly unpacked later. This should be safe, as the object
+	// will not actually be touched by any other function than the
+	// ones in XADStringCFString.
+	return (NSString *)[NSNumber numberWithLong:encoding];
+}
+
++(NSStringEncoding)encodingForEncodingName:(NSString *)encoding
+{
+	if([encoding isKindOfClass:[NSNumber class]])
 	{
 		// If the encodingname is actually an NSNumber, just unpack it and convert.
-		return CFStringConvertNSStringEncodingToEncoding([(NSNumber *)encodingname longValue]);
+		return [(NSNumber *)encoding longValue];
 	}
 	else
 	{
 		// Look up the encoding number for the name.
-		return CFStringConvertIANACharSetNameToEncoding((CFStringRef)encodingname);
+		return CFStringConvertEncodingToNSStringEncoding(
+		CFStringConvertIANACharSetNameToEncoding((CFStringRef)encoding));
 	}
+}
+
++(CFStringEncoding)CFStringEncodingForEncodingName:(NSString *)encodingname
+{
+	return CFStringConvertNSStringEncodingToEncoding([self encodingForEncodingName:encodingname]);
 }
 
 +(BOOL)canDecodeData:(NSData *)data encodingName:(NSString *)encoding

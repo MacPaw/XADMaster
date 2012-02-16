@@ -295,16 +295,6 @@ encodingName:(NSString *)encoding
 
 
 #ifdef __APPLE__
-+(NSString *)encodingNameForEncoding:(NSStringEncoding)encoding
-{
-	// Internal kludge: Don't actually return an NSString. Instead,
-	// return an NSNumber containing the encoding number, that can
-	// be quickly unpacked later. This should be safe, as the object
-	// will not actually be touched by any other function than the
-	// ones in XADStringCFString.
-	return (NSString *)[NSNumber numberWithLong:encoding];
-}
-
 -(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding
 {
 	return [self canDecodeWithEncodingName:[XADString encodingNameForEncoding:encoding]];
@@ -335,6 +325,7 @@ encodingName:(NSString *)encoding
 		detector=[UniversalDetector new]; // can return nil if UniversalDetector is not found
 		fixedencodingname=nil;
 		mac=NO;
+		hasanalyzeddata=NO;
 	}
 	return self;
 }
@@ -348,8 +339,11 @@ encodingName:(NSString *)encoding
 
 -(void)analyzeData:(NSData *)data
 {
+	hasanalyzeddata=YES;
 	[detector analyzeData:data];
 }
+
+-(BOOL)hasAnalyzedData { return hasanalyzeddata; }
 
 -(NSString *)encodingName
 {
@@ -414,13 +408,13 @@ encodingName:(NSString *)encoding
 	NSString *encodingname=[self encodingName];
 	if(!encodingname) return 0;
 
-	return CFStringConvertEncodingToNSStringEncoding(
-	CFStringConvertIANACharSetNameToEncoding((CFStringRef)encodingname));
+	return [XADString encodingForEncodingName:encodingname];
 }
 
 -(void)setFixedEncoding:(NSStringEncoding)encoding
 {
-	[self setFixedEncodingName:[XADString encodingNameForEncoding:encoding]];
+	if(!encoding) [self setFixedEncodingName:nil];
+	else [self setFixedEncodingName:[XADString encodingNameForEncoding:encoding]];
 }
 #endif
 

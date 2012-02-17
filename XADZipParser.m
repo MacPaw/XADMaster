@@ -860,21 +860,24 @@ isLastEntry:(BOOL)islastentry
 		}
 		else if(system==3) // Unix
 		{
-			// This is completely unreliable, so don't do it.
-			//int perm=extfileattrib>>16;
-			//[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
+			int perm=extfileattrib>>16;
+			// Ignore permissions set to 0, as these are most likely writte by buggy archivers.
+			if(perm!=0) [dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
 		}
 	}
 
 	#ifdef __APPLE__
 	// Several amazingly broken archivers on OS X create files that do
-	// not contain proper permissions extra records. They still expect apps
-	// and scripts to be executable, though, because Archive Utility by
-	// default makes all files executable. Therefore, create permissions
-	// entries based on the default permissions mask, but only on OS X. 
-	// These will be overridden by extra records right afterwards, if present.
-	mode_t mask=umask(0); umask(mask);
-	[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
+	// not contain proper permissions. They still expect apps and scripts
+	// to be executable, though, because Archive Utility by default makes
+	// all files executable. Therefore, for files lacking permissions entries,
+	// make up permissions based on the default mask.
+	// This is only done on OS X.
+	if(![dict objectForKey:XADPosixPermissionsKey])
+	{
+		mode_t mask=umask(0); umask(mask);
+		[dict setObject:[NSNumber numberWithUnsignedShort:0777&~mask] forKey:XADPosixPermissionsKey];
+	}
 	#endif
 
 	if(extradict) [dict addEntriesFromDictionary:extradict];

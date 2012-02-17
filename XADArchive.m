@@ -780,7 +780,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 			return NO;
 		}
 
-		extractsize+=[self sizeOfEntry:i];
+		extractsize+=[self representativeSizeOfEntry:i];
 
 		[delegate archive:self extractionProgressFiles:i+1 of:numentries];
 		[delegate archive:self extractionProgressBytes:extractsize of:totalsize];

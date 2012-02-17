@@ -253,6 +253,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 			[fh seekToFileOffset:nextextra];
 		}
+		if(length) [fh skipBytes:length];
 
 		NSData *commentdata=nil;
 		if(commentlength) commentdata=[fh readDataOfLength:commentlength];

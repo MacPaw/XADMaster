@@ -1,7 +1,7 @@
 #import "XADStuffItSplitParser.h"
 #import "CSMultiHandle.h"
 #import "CSFileHandle.h"
-#import "CRC.h"
+#import "NSDateXAD.h"
 
 @implementation XADStuffItSplitParser
 
@@ -55,8 +55,8 @@
 			if(header[1]!=0x56) continue;
 			if(header[2]!=0x00) continue;
 			if(header[4]!=bytes[4]) continue;
-			if(memcmp(&header[5],&header[5],header[4])!=0) continue;
-			if(memcmp(&header[68],&header[68],28)!=0) continue;
+			if(memcmp(&header[5],&bytes[5],header[4])!=0) continue;
+			if(memcmp(&header[68],&bytes[68],26)!=0) continue;
 
 			int partnum=header[3];
 			parts[partnum]=fullpath;
@@ -87,7 +87,6 @@
 
 	XADSkipHandle *sh=[self skipHandle];
 	off_t curroffset=0;
-	off_t size=0;
 
 	NSEnumerator *enumerator=[handles objectEnumerator];
 	CSHandle *handle;
@@ -96,7 +95,6 @@
 		[sh addSkipFrom:curroffset length:100];
 		off_t volumesize=[handle fileSize];
 		curroffset+=volumesize;
-		size+=volumesize-100;
 	}
 
 	[fh skipBytes:4];
@@ -106,17 +104,13 @@
 	[fh seekToFileOffset:68];
 	uint32_t type=[fh readUInt32BE];
 	uint32_t creator=[fh readUInt32BE];
+	int finderflags=[fh readUInt16BE];
+	uint32_t creation=[fh readUInt32BE];
+	uint32_t modification=[fh readUInt32BE];
+	uint32_t rsrclength=[fh readUInt32BE];
+	uint32_t datalength=[fh readUInt32BE];
 
-	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-		[self XADPathWithData:namedata separators:XADNoPathSeparator],XADFileNameKey,
-		[NSNumber numberWithLongLong:size],XADFileSizeKey,
-		[NSNumber numberWithLongLong:curroffset],XADCompressedSizeKey,
-		[NSNumber numberWithLongLong:0],XADSkipOffsetKey,
-		[NSNumber numberWithLongLong:size],XADSkipLengthKey,
-		[NSNumber numberWithUnsignedInt:type],XADFileTypeKey,
-		[NSNumber numberWithUnsignedInt:creator],XADFileCreatorKey,
-	nil];
-
+	BOOL isarchive=NO;
 	const uint8_t *namebytes=[namedata bytes];
 
 	if(namelength>4)
@@ -124,21 +118,61 @@
 	if(namebytes[namelength-3]=='s'||namebytes[namelength-3]=='S')
 	if(namebytes[namelength-2]=='i'||namebytes[namelength-2]=='I')
 	if(namebytes[namelength-1]=='t'||namebytes[namelength-1]=='T')
-	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+	isarchive=YES;
 
 	if(namelength>4)
 	if(namebytes[namelength-4]=='.')
 	if(namebytes[namelength-3]=='s'||namebytes[namelength-3]=='S')
 	if(namebytes[namelength-2]=='e'||namebytes[namelength-2]=='E')
 	if(namebytes[namelength-1]=='a'||namebytes[namelength-1]=='A')
-	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+	isarchive=YES;
 
-	[self addEntryWithDictionary:dict];
+	if(rsrclength)
+	{
+		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+			[self XADPathWithData:namedata separators:XADNoPathSeparator],XADFileNameKey,
+			[NSNumber numberWithLongLong:rsrclength],XADFileSizeKey,
+			[NSNumber numberWithLongLong:curroffset*rsrclength/(datalength+rsrclength)],XADCompressedSizeKey,
+			[NSNumber numberWithLongLong:0],XADSkipOffsetKey,
+			[NSNumber numberWithLongLong:rsrclength],XADSkipLengthKey,
+			[NSNumber numberWithUnsignedInt:type],XADFileTypeKey,
+			[NSNumber numberWithUnsignedInt:creator],XADFileCreatorKey,
+			[NSNumber numberWithInt:finderflags],XADFinderFlagsKey,
+			[NSDate XADDateWithTimeIntervalSince1904:creation],XADCreationDateKey,
+			[NSDate XADDateWithTimeIntervalSince1904:modification],XADLastModificationDateKey,
+			[NSNumber numberWithBool:YES],XADIsResourceForkKey,
+		nil];
+
+		if(isarchive) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+
+		[self addEntryWithDictionary:dict];
+	}
+
+	if(datalength || !rsrclength)
+	{
+		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+			[self XADPathWithData:namedata separators:XADNoPathSeparator],XADFileNameKey,
+			[NSNumber numberWithLongLong:datalength],XADFileSizeKey,
+			[NSNumber numberWithLongLong:curroffset*datalength/(datalength+rsrclength)],XADCompressedSizeKey,
+			[NSNumber numberWithLongLong:rsrclength],XADSkipOffsetKey,
+			[NSNumber numberWithLongLong:datalength],XADSkipLengthKey,
+			[NSNumber numberWithUnsignedInt:type],XADFileTypeKey,
+			[NSNumber numberWithUnsignedInt:creator],XADFileCreatorKey,
+			[NSNumber numberWithInt:finderflags],XADFinderFlagsKey,
+			[NSDate XADDateWithTimeIntervalSince1904:creation],XADCreationDateKey,
+			[NSDate XADDateWithTimeIntervalSince1904:modification],XADLastModificationDateKey,
+		nil];
+
+		if(isarchive) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+
+		[self addEntryWithDictionary:dict];
+	}
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	return [self handleAtDataOffsetForDictionary:dict];
+	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
+	return handle;
 }
 
 -(NSString *)formatName { return @"StuffIt split file"; }

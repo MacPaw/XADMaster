@@ -290,7 +290,15 @@ static void DumpElement(StuffItXElement *element)
 
 	CSHandle *fh=[self handle];
 
-	[fh skipBytes:8];
+	[fh skipBytes:7];
+
+	uint8_t encodingmarker=[fh readUInt8];
+	if(encodingmarker=='?')
+	{
+		// The file has been encoded using a base-N encoder.
+		// TODO: Support these encodings.
+		[XADException raiseNotSupportedException];
+	}
 
 	NSMutableArray *entries=[NSMutableArray array];
 	NSMutableDictionary *entrydict=[NSMutableDictionary dictionary];

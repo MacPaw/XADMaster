@@ -18,7 +18,8 @@ typedef struct StuffItXElement
 {
 	int something,type;
 	int64_t attribs[10];
-	int64_t alglist[4];
+	int64_t alglist[6];
+	int64_t alglist3_extra;
 	off_t dataoffset,actualsize;
 	uint32_t datacrc;
 } StuffItXElement;
@@ -31,7 +32,8 @@ static void DumpElement(StuffItXElement *element);
 static void ReadElement(CSHandle *fh,StuffItXElement *element)
 {
 	for(int i=0;i<10;i++) element->attribs[i]=-1;
-	for(int i=0;i<4;i++) element->alglist[i]=-1;
+	for(int i=0;i<6;i++) element->alglist[i]=-1;
+	element->alglist3_extra=-1;
 
 	element->something=[fh readBitsLE:1];
 	element->type=ReadSitxP2(fh);
@@ -50,9 +52,9 @@ static void ReadElement(CSHandle *fh,StuffItXElement *element)
 		int type=ReadSitxP2(fh);
 		if(type==0) break;
 		uint64_t value=ReadSitxP2(fh);
-		if(type<=4) element->alglist[type-1]=value;
+		if(type<=6) element->alglist[type-1]=value;
 		else NSLog(@"alglist type too big: %d",type);
-		if(type==4) NSLog(@"4 extra: %qu",ReadSitxP2(fh));
+		if(type==4) element->alglist3_extra=ReadSitxP2(fh);
 	}
 
 	element->dataoffset=[fh offsetInFile];
@@ -99,6 +101,9 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 	int64_t compressionalgorithm=element->alglist[0];
 	int64_t checksumalgorithm=element->alglist[1];
 	int64_t preprocessalgorithm=element->alglist[2];
+	int64_t cryptoalgorithm=element->alglist[3];
+
+	if(cryptoalgorithm>=0) [XADException raiseNotSupportedException];
 
 	[fh seekToFileOffset:element->dataoffset];
 	[fh flushReadBits];

@@ -738,7 +738,6 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 	switch([self IDForCoder:coder])
 	{
 		case 0x00000000: return inhandle;
-		case 0x00000021: return [[[XADLZMA2Handle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
 		//case 0x02030200: return @"Swap2";
 		//case 0x02030400: return @"Swap4";
 		case 0x02040000: return [[[XADDeltaHandle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
@@ -786,6 +785,7 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 		//case 0x04080000: return @"Cab";
 		//case 0x04090100: return @"DeflateNSIS";
 		//case 0x04090200: return @"Bzip2NSIS";
+		case 0x21000000: return [[[XADLZMA2Handle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
 		default: return nil;
 	}
 
@@ -920,6 +920,7 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 		case 0x04080000: return @"Cab";
 		case 0x04090100: return @"DeflateNSIS";
 		case 0x04090200: return @"Bzip2NSIS";
+		case 0x21000000: return @"LZMA2";
 		default: return nil;
 	}
 }

@@ -124,7 +124,7 @@ static off_t ActualOffsetToSkip(XADSkipHandle *self,off_t pos)
 
 -(void)addSkipFrom:(off_t)start length:(off_t)length
 {
-	[self addSkipFrom:start length:start+length];
+	[self addSkipFrom:start to:start+length];
 }
 
 -(void)addSkipFrom:(off_t)start to:(off_t)end

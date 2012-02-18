@@ -776,6 +776,12 @@
 		1BBEF8B114D8A31800790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
 		1BBEF8F414E0964E00790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
 		1BBEF8F614E0964F00790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
+		1BBEFA5B14EF375400790E4B /* XADStuffItSplitParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBEFA5914EF375400790E4B /* XADStuffItSplitParser.h */; };
+		1BBEFA5C14EF375400790E4B /* XADStuffItSplitParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBEFA5914EF375400790E4B /* XADStuffItSplitParser.h */; };
+		1BBEFA5D14EF375400790E4B /* XADStuffItSplitParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBEFA5914EF375400790E4B /* XADStuffItSplitParser.h */; };
+		1BBEFA5E14EF375400790E4B /* XADStuffItSplitParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEFA5A14EF375400790E4B /* XADStuffItSplitParser.m */; };
+		1BBEFA5F14EF375400790E4B /* XADStuffItSplitParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEFA5A14EF375400790E4B /* XADStuffItSplitParser.m */; };
+		1BBEFA6014EF375400790E4B /* XADStuffItSplitParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEFA5A14EF375400790E4B /* XADStuffItSplitParser.m */; };
 		1BC574B810EEDA700056F44C /* XADDiskDoublerADnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */; };
 		1BC5753A10F0F62B0056F44C /* XADDiskDoublerDDnHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC5753810F0F62B0056F44C /* XADDiskDoublerDDnHandle.m */; };
 		1BC882B20ECA4D67006B47FE /* XADZipParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B06D5A30DDA666C00D9C000 /* XADZipParser.m */; };
@@ -1535,6 +1541,8 @@
 		1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = /usr/lib/libbz2.dylib; sourceTree = "<absolute>"; };
 		1BBEF8AE14D8A31700790E4B /* XADArchiveParserDescriptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADArchiveParserDescriptions.h; sourceTree = "<group>"; };
 		1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADArchiveParserDescriptions.m; sourceTree = "<group>"; };
+		1BBEFA5914EF375400790E4B /* XADStuffItSplitParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItSplitParser.h; sourceTree = "<group>"; };
+		1BBEFA5A14EF375400790E4B /* XADStuffItSplitParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItSplitParser.m; sourceTree = "<group>"; };
 		1BC574B510EEDA700056F44C /* XADDiskDoublerADnHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDiskDoublerADnHandle.h; sourceTree = "<group>"; };
 		1BC574B610EEDA700056F44C /* XADDiskDoublerADnHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADDiskDoublerADnHandle.m; sourceTree = "<group>"; };
 		1BC5753710F0F62B0056F44C /* XADDiskDoublerDDnHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADDiskDoublerDDnHandle.h; sourceTree = "<group>"; };
@@ -2508,6 +2516,8 @@
 				1BC890400ED47D76006B47FE /* XADStuffItOldHandles.m */,
 				1BCE688F126517C2007FB44E /* XADRLE90Handle.h */,
 				1BCE6890126517C2007FB44E /* XADRLE90Handle.m */,
+				1BBEFA5914EF375400790E4B /* XADStuffItSplitParser.h */,
+				1BBEFA5A14EF375400790E4B /* XADStuffItSplitParser.m */,
 			);
 			name = StuffIt;
 			sourceTree = "<group>";
@@ -2787,6 +2797,7 @@
 				1B06CD14145CFF2A003907F9 /* XADCrunchParser.h in Headers */,
 				1B06CD1D145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F83146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
+				1BBEFA5C14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2843,6 +2854,7 @@
 				1B06CD15145CFF2A003907F9 /* XADCrunchParser.h in Headers */,
 				1B06CD1E145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F84146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
+				1BBEFA5D14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3044,6 +3056,7 @@
 				1B06CD1C145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F82146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
 				1BBEF8B014D8A31800790E4B /* XADArchiveParserDescriptions.h in Headers */,
+				1BBEFA5B14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3594,6 +3607,7 @@
 				1B06CD17145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
 				1B06CD20145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8F414E0964E00790E4B /* XADArchiveParserDescriptions.m in Sources */,
+				1BBEFA5F14EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3809,6 +3823,7 @@
 				1B06CD18145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
 				1B06CD21145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8F614E0964F00790E4B /* XADArchiveParserDescriptions.m in Sources */,
+				1BBEFA6014EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4060,6 +4075,7 @@
 				1B06CD16145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
 				1B06CD1F145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8B114D8A31800790E4B /* XADArchiveParserDescriptions.m in Sources */,
+				1BBEFA5E14EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

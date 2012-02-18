@@ -11,6 +11,7 @@
 #import "XAD7ZipParser.h"
 #import "XADStuffItParser.h"
 #import "XADStuffIt5Parser.h"
+#import "XADStuffItSplitParser.h"
 #import "XADStuffItXParser.h"
 #import "XADCompactProParser.h"
 #import "XADDiskDoublerParser.h"
@@ -136,6 +137,7 @@ static int maxheader=0;
 		[XADStuffItParser class],
 		[XADStuffIt5Parser class],
 		[XADStuffIt5ExeParser class],
+		[XADStuffItSplitParser class],
 		[XADStuffItXParser class],
 		[XADBinHexParser class],
 		[XADMacBinaryParser class],

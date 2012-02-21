@@ -247,7 +247,8 @@ static void DumpElement(StuffItXElement *element)
 	NSLog(@"(%d) %d: %@",element->something,element->type,name);
 
 	for(int i=0;i<10;i++) if(element->attribs[i]>=0) NSLog(@"       attrib %d: %qu",i,element->attribs[i]);
-	for(int i=0;i<4;i++) if(element->alglist[i]>=0) NSLog(@"       alglist %d: %qu",i,element->alglist[i]);
+	for(int i=0;i<6;i++) if(element->alglist[i]>=0) NSLog(@"       alglist %d: %qu",i,element->alglist[i]);
+	if(element->alglist3_extra>=0) NSLog(@"       alglist 3 extra: %qu",element->alglist3_extra);
 }
 
 
@@ -705,7 +706,7 @@ static void DumpElement(StuffItXElement *element)
 				break;
 
 				default:
-					NSLog(@"unknown tag");
+					NSLog(@"unknown tag %d",key);
 					[XADException raiseNotSupportedException];
 				break;
 			}

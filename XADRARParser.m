@@ -438,6 +438,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 -(RARBlock)readBlockHeader
 {
 	CSHandle *fh=[self handle];
+	if([fh atEndOfFile]) return ZeroBlock;
 
 	RARBlock block;
 	block.start=[[self handle] offsetInFile];
@@ -450,7 +451,6 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 	block.fh=fh;
 
-	if([fh atEndOfFile]) return ZeroBlock;
 	@try
 	{
 		block.crc=[fh readUInt16LE];
@@ -656,7 +656,11 @@ isCorrupted:(BOOL)iscorrupted
 	{
 		NSArray *files=[dict objectForKey:XADSolidObjectKey];
 		int index=[[dict objectForKey:@"RARSolidIndex"] intValue];
+
 		handle=[self inputHandleForFileWithIndex:index files:files];
+
+		off_t length=[[dict objectForKey:XADSolidLengthKey] longLongValue];
+		if(length!=[handle fileSize]) handle=[handle nonCopiedSubHandleOfLength:length];
 	}
 	else
 	{
@@ -726,16 +730,17 @@ cryptoVersion:(int)version salt:(NSData *)salt
 		switch(version)
 		{
 			case 13: return [[[XADRAR13CryptHandle alloc] initWithHandle:handle
-			password:[self encodedPassword]] autorelease];
+			length:[handle fileSize] password:[self encodedPassword]] autorelease];
 
 			case 15: return [[[XADRAR15CryptHandle alloc] initWithHandle:handle
-			password:[self encodedPassword]] autorelease];
+			length:[handle fileSize] password:[self encodedPassword]] autorelease];
 
 			case 20: return [[[XADRAR20CryptHandle alloc] initWithHandle:handle
-			password:[self encodedPassword]] autorelease];
+			length:[handle fileSize] password:[self encodedPassword]] autorelease];
 
 			default:
-			return [[[XADRARAESHandle alloc] initWithHandle:handle key:[self keyForSalt:salt]] autorelease];
+			return [[[XADRARAESHandle alloc] initWithHandle:handle
+			length:[handle fileSize] key:[self keyForSalt:salt]] autorelease];
 		}
 	}
 	else return handle;

@@ -156,6 +156,9 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 			isjoliet=YES;
 			[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:@"ISO9660IsJoliet"];
+
+			[self parseVolumeDescriptorAtBlock:block];
+			return;
 		}
 		else if(type==255)
 		{

@@ -60,30 +60,28 @@
 #define RARMETHOD_GOOD 0x34
 #define RARMETHOD_BEST 0x35
 
-#define RAR_NOSIGNATURE 0
-#define RAR_OLDSIGNATURE 1
-#define RAR_SIGNATURE 2
-
 
 
 static RARBlock ZeroBlock={0};
 
 static inline BOOL IsZeroBlock(RARBlock block) { return block.start==0; }
 
-static int TestSignature(const uint8_t *ptr)
+static BOOL IsRARSignature(const uint8_t *ptr)
 {
-	if(ptr[0]==0x52)
-	if(ptr[1]==0x45&&ptr[2]==0x7e&&ptr[3]==0x5e) return RAR_OLDSIGNATURE;
-	else if(ptr[1]==0x61&&ptr[2]==0x72&&ptr[3]==0x21&&ptr[4]==0x1a&&ptr[5]==0x07&&ptr[6]==0x00) return RAR_SIGNATURE;
+	return ptr[0]==0x52 && ptr[1]==0x61 && ptr[2]==0x72 && ptr[3]==0x21 &&
+	ptr[4]==0x1a && ptr[5]==0x07 && ptr[6]==0x00;
+}
 
-	return RAR_NOSIGNATURE;
+static BOOL IsAncientRARSignature(const uint8_t *ptr)
+{
+	return ptr[0]==0x52 && ptr[1]==0x45 && ptr[2]==0x7e && ptr[3]==0x5e;
 }
 
 static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 {
 	if(length<7) return NULL;
 
-	for(int i=0;i<=length-7;i++) if(TestSignature(&ptr[i])) return &ptr[i];
+	for(int i=0;i<=length-7;i++) if(IsRARSignature(&ptr[i])) return &ptr[i];
 
 	return NULL;
 }
@@ -104,7 +102,8 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 	if(length<7) return NO; // TODO: fix to use correct min size
 
-	if(TestSignature(bytes)) return YES;
+	if(IsRARSignature(bytes)) return YES;
+	if(IsAncientRARSignature(bytes)) return YES;
 
 	return NO;
 }
@@ -178,7 +177,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 	uint8_t buf[7];
 	[handle readBytes:7 toBuffer:buf];	
 
-	if(TestSignature(buf)==RAR_OLDSIGNATURE)
+	if(IsAncientRARSignature(buf))
 	{
 		[self reportInterestingFileWithReason:@"Very old RAR file"];
 		[XADException raiseNotSupportedException];

@@ -18,7 +18,22 @@ static BOOL IsISO9660PrimaryVolumeDescriptor(const uint8_t *bytes,int length,int
 	if(block[4]!='0') return NO;
 	if(block[5]!='1') return NO;
 	if(block[6]!=1) return NO;
-	if(block[7]!=0) return NO;
+
+	return YES;
+}
+
+static BOOL IsHighSierraPrimaryVolumeDescriptor(const uint8_t *bytes,int length,int offset)
+{
+	if(offset+2048>length) return NO;
+
+	const uint8_t *block=bytes+offset;
+	if(block[8]!=1) return NO;
+	if(block[9]!='C') return NO;
+	if(block[10]!='D') return NO;
+	if(block[11]!='R') return NO;
+	if(block[12]!='O') return NO;
+	if(block[13]!='M') return NO;
+	if(block[14]!=1) return NO;
 
 	return YES;
 }
@@ -32,7 +47,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	// Scan for a primary volume descriptor to find the start of the image.
 	for(int i=0x8000;i<length-2048-6;i++)
 	{
-		if(memcmp(&bytes[i],"\001CD001\001\0",8)==0)
+		if(IsISO9660PrimaryVolumeDescriptor(bytes,length,i))
 		{
 			// Then, scan for the volume descriptor on the next block to find the block size.
 			for(int j=2048;j<2448;j++)
@@ -40,6 +55,22 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 				if(i+j+6>length) break;
 				if(memcmp(&bytes[i+j+1],"CD001",5)==0)
 				{
+					[props setObject:[NSNumber numberWithInt:j] forKey:@"ISO9660ImageBlockSize"];
+					[props setObject:[NSNumber numberWithInt:i-j*16] forKey:@"ISO9660ImageBlockOffset"];
+					return YES;
+				}
+			}
+		}
+
+		if(IsHighSierraPrimaryVolumeDescriptor(bytes,length,i))
+		{
+			// Then, scan for the volume descriptor on the next block to find the block size.
+			for(int j=2048;j<2448;j++)
+			{
+				if(i+j+6>length) break;
+				if(memcmp(&bytes[i+j+9],"CDROM",5)==0)
+				{
+					[props setObject:[NSNumber numberWithBool:YES] forKey:@"ISO9660ImageIsHighSierra"];
 					[props setObject:[NSNumber numberWithInt:j] forKey:@"ISO9660ImageBlockSize"];
 					[props setObject:[NSNumber numberWithInt:i-j*16] forKey:@"ISO9660ImageBlockOffset"];
 					return YES;
@@ -59,6 +90,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	if((self=[super initWithHandle:handle name:name]))
 	{
 		fh=nil;
+		isjoliet=NO;
+		ishighsierra=NO;
 	}
 	return self;
 }
@@ -74,8 +107,10 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 -(void)parse
 {
-	int blockoffset=[[[self properties] objectForKey:@"ISO9660ImageBlockOffset"] intValue];
-	blocksize=[[[self properties] objectForKey:@"ISO9660ImageBlockSize"] intValue];
+	NSDictionary *props=[self properties];
+	int blockoffset=[[props objectForKey:@"ISO9660ImageBlockOffset"] intValue];
+	blocksize=[[props objectForKey:@"ISO9660ImageBlockSize"] intValue];
+	ishighsierra=[[props objectForKey:@"ISO9660ImageIsHighSierra"] boolValue];
 
 	if(blocksize!=2048)
 	{
@@ -91,6 +126,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		fh=[[self handle] retain];
 	}
 
+	if(!ishighsierra)
 	for(int block=17;;block++)
 	{
 		[fh seekToFileOffset:block*2048];
@@ -118,9 +154,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 			if(esc2!=0x2f) continue;
 			if(esc3!=0x40 && esc3!=0x43 && esc3!=0x45) continue;
 
+			isjoliet=YES;
 			[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:@"ISO9660IsJoliet"];
-			[self parseVolumeDescriptorAtBlock:block isJoliet:YES];
-			return;
 		}
 		else if(type==255)
 		{
@@ -128,51 +163,98 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		}
 	}
 
-	[self parseVolumeDescriptorAtBlock:16 isJoliet:NO];
+	[self parseVolumeDescriptorAtBlock:16];
 }
 
--(void)parseVolumeDescriptorAtBlock:(uint32_t)block isJoliet:(BOOL)isjoliet
+-(void)parseVolumeDescriptorAtBlock:(uint32_t)block
 {
-	[fh seekToFileOffset:block*2048+8];
+	XADString *system,*volume;
+	uint32_t volumesetsize,volumesequencenumber,logicalblocksize;
+	uint32_t rootblock,rootlength;
 
-	XADString *system=[self readStringOfLength:32 isJoliet:isjoliet]; 
-	XADString *volume=[self readStringOfLength:32 isJoliet:isjoliet]; 
-	[fh skipBytes:8];
-	/*uint32_t volumespacesize=*/[fh readUInt32LE];
-	[fh skipBytes:36];
-	uint32_t volumesetsize=[fh readUInt16LE];
-	[fh skipBytes:2];
-	uint32_t volumesequencenumber=[fh readUInt16LE];
-	[fh skipBytes:2];
-	uint32_t logicalblocksize=[fh readUInt16LE];
-	[fh skipBytes:2];
-	/*uint32_t pathtablesize=*/[fh readUInt32LE];
-	[fh skipBytes:4];
-	/*uint32_t pathtablelocation=*/[fh readUInt32LE];
-	/*uint32_t optionalpathtablelocation=*/[fh readUInt32LE];
-	[fh skipBytes:8];
+	XADString *volumeset,*publisher,*datapreparer,*application;
+	XADString *copyrightfile,*abstractfile,*bibliographicfile;
 
-	// Root directory record
-	[fh skipBytes:2];
-	uint32_t rootblock=[fh readUInt32LE];
-	[fh skipBytes:4];
-	uint32_t rootlength=[fh readUInt32LE];
-	[fh skipBytes:20];
+	NSDate *creation,*modification,*expiration,*effective;
 
-	XADString *volumeset=[self readStringOfLength:128 isJoliet:isjoliet]; 
-	XADString *publisher=[self readStringOfLength:128 isJoliet:isjoliet]; 
-	XADString *datapreparer=[self readStringOfLength:128 isJoliet:isjoliet];
-	XADString *application=[self readStringOfLength:128 isJoliet:isjoliet];
-	XADString *copyrightfile=[self readStringOfLength:37 isJoliet:isjoliet];
-	XADString *abstractfile=[self readStringOfLength:37 isJoliet:isjoliet];
-	XADString *bibliographicfile=[self readStringOfLength:37 isJoliet:isjoliet];
+	if(!ishighsierra)
+	{
+		[fh seekToFileOffset:block*2048+8];
 
-	NSDate *creation=[self readLongDateAndTime];
-	NSDate *modification=[self readLongDateAndTime];
-	NSDate *expiration=[self readLongDateAndTime];
-	NSDate *effective=[self readLongDateAndTime];
+		system=[self readStringOfLength:32]; 
+		volume=[self readStringOfLength:32]; 
+		[fh skipBytes:8];
+		/*uint32_t volumespacesize=*/[fh readUInt32LE];
+		[fh skipBytes:36];
+		volumesetsize=[fh readUInt16LE];
+		[fh skipBytes:2];
+		volumesequencenumber=[fh readUInt16LE];
+		[fh skipBytes:2];
+		logicalblocksize=[fh readUInt16LE];
+		[fh skipBytes:2];
+		/*uint32_t pathtablesize=*/[fh readUInt32LE];
+		[fh skipBytes:4];
+		/*uint32_t pathtablelocation=*/[fh readUInt32LE];
+		/*uint32_t optionalpathtablelocation=*/[fh readUInt32LE];
+		[fh skipBytes:8];
 
-	//int version=[fh readUInt8];
+		// Root directory record
+		[fh skipBytes:2];
+		rootblock=[fh readUInt32LE];
+		[fh skipBytes:4];
+		rootlength=[fh readUInt32LE];
+		[fh skipBytes:20];
+
+		volumeset=[self readStringOfLength:128]; 
+		publisher=[self readStringOfLength:128]; 
+		datapreparer=[self readStringOfLength:128];
+		application=[self readStringOfLength:128];
+		copyrightfile=[self readStringOfLength:37];
+		abstractfile=[self readStringOfLength:37];
+		bibliographicfile=[self readStringOfLength:37];
+
+		creation=[self readLongDateAndTime];
+		modification=[self readLongDateAndTime];
+		expiration=[self readLongDateAndTime];
+		effective=[self readLongDateAndTime];
+	}
+	else
+	{
+		[fh seekToFileOffset:block*2048+16];
+
+		system=[self readStringOfLength:32]; 
+		volume=[self readStringOfLength:32]; 
+		[fh skipBytes:8];
+		/*uint32_t volumespacesize=*/[fh readUInt32LE];
+		[fh skipBytes:36];
+		volumesetsize=[fh readUInt16LE];
+		[fh skipBytes:2];
+		volumesequencenumber=[fh readUInt16LE];
+		[fh skipBytes:2];
+		logicalblocksize=[fh readUInt16LE];
+		[fh skipBytes:42];
+
+		// Root directory record
+		[fh skipBytes:2];
+		rootblock=[fh readUInt32LE];
+		[fh skipBytes:4];
+		rootlength=[fh readUInt32LE];
+		[fh skipBytes:20];
+
+		volumeset=[self readStringOfLength:128]; 
+		publisher=[self readStringOfLength:128]; 
+		datapreparer=[self readStringOfLength:128];
+		application=[self readStringOfLength:128];
+		[fh skipBytes:192]; // Not sure what this part is.
+		copyrightfile=nil;
+		abstractfile=nil;
+		bibliographicfile=nil;
+
+		creation=[self readLongDateAndTime];
+		modification=[self readLongDateAndTime];
+		expiration=[self readLongDateAndTime];
+		effective=[self readLongDateAndTime];
+	}
 
 	if(logicalblocksize!=2048) [XADException raiseIllegalDataException];
 
@@ -198,14 +280,13 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	[self setObject:[NSNumber numberWithInt:volumesetsize] forPropertyKey:@"ISO9660VolumeSetSize"];
 	[self setObject:[NSNumber numberWithInt:volumesequencenumber] forPropertyKey:@"ISO9660VolumeSequenceNumber"];
 
-	[self parseDirectoryWithPath:[self XADPath] atBlock:rootblock
-	length:rootlength isJoliet:isjoliet];
+	[self parseDirectoryWithPath:[self XADPath] atBlock:rootblock length:rootlength];
 }
 
 #define TypeID(a,b) (((a)<<8)|(b))
 
 -(void)parseDirectoryWithPath:(XADPath *)path atBlock:(uint32_t)block
-length:(uint32_t)length isJoliet:(BOOL)isjoliet
+length:(uint32_t)length
 {
 	off_t extentstart=block*2048;
 	off_t extentend=extentstart+length;
@@ -241,8 +322,9 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 		[fh skipBytes:4];
 
 		NSDate *date=[self readShortDateAndTime];
-
 		int flags=[fh readUInt8];
+		if(ishighsierra) [fh skipBytes:1];
+
 		int unitsize=[fh readUInt8];
 		int gapsize=[fh readUInt8];
 		int volumesequencenumber=[fh readUInt16LE];
@@ -584,7 +666,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 		[self addEntryWithDictionary:dict];
 
 		if(flags&0x02)
-		[self parseDirectoryWithPath:currpath atBlock:location length:length isJoliet:isjoliet];
+		[self parseDirectoryWithPath:currpath atBlock:location length:length];
 
 		[fh seekToFileOffset:endpos];
 	}
@@ -593,7 +675,7 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 
 
 
--(XADString *)readStringOfLength:(int)length isJoliet:(BOOL)isjoliet
+-(XADString *)readStringOfLength:(int)length
 {
 	uint8_t buffer[length];
 	[fh readBytes:length toBuffer:buffer];
@@ -625,14 +707,16 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 -(NSDate *)readLongDateAndTime
 {
 	uint8_t buffer[17];
-	[fh readBytes:17 toBuffer:buffer];
+	if(ishighsierra) [fh readBytes:16 toBuffer:buffer];
+	else [fh readBytes:16 toBuffer:buffer];
 	return [self parseLongDateAndTimeWithBytes:buffer];
 }
 
 -(NSDate *)readShortDateAndTime
 {
 	uint8_t buffer[7];
-	[fh readBytes:7 toBuffer:buffer];
+	if(ishighsierra) [fh readBytes:6 toBuffer:buffer];
+	else [fh readBytes:7 toBuffer:buffer];
 	return [self parseShortDateAndTimeWithBytes:buffer];
 }
 
@@ -654,9 +738,14 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 	int minute=(buffer[10]-'0')*10+(buffer[11]-'0');
 	int second=(buffer[12]-'0')*10+(buffer[13]-'0');
 	//int hundreths=(buffer[14]-'0')*10+(buffer[15]-'0');
-	int offset=(int8_t)buffer[16];
 
-	NSTimeZone *tz=[NSTimeZone timeZoneForSecondsFromGMT:offset*15*60];
+	NSTimeZone *tz=nil;
+	if(!ishighsierra)
+	{
+		int offset=(int8_t)buffer[16];
+		tz=[NSTimeZone timeZoneForSecondsFromGMT:offset*15*60];
+	}
+
 	return [NSCalendarDate dateWithYear:year month:month day:day
 	hour:hour minute:minute second:second timeZone:tz];
 }
@@ -669,9 +758,14 @@ length:(uint32_t)length isJoliet:(BOOL)isjoliet
 	int hour=buffer[3];
 	int minute=buffer[4];
 	int second=buffer[5];
-	int offset=(int8_t)buffer[6];
 
-	NSTimeZone *tz=[NSTimeZone timeZoneForSecondsFromGMT:offset*15*60];
+	NSTimeZone *tz=nil;
+	if(!ishighsierra)
+	{
+		int offset=(int8_t)buffer[6];
+		tz=[NSTimeZone timeZoneForSecondsFromGMT:offset*15*60];
+	}
+
 	return [NSCalendarDate dateWithYear:year month:month day:day
 	hour:hour minute:minute second:second timeZone:tz];
 }

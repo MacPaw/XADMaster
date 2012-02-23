@@ -79,7 +79,8 @@ static BOOL IsDataASCIIOrSeparator(NSData *data,const char *separators);
 		lastpath=path;
 	}
 
-	return lastpath;
+	if(!lastpath) return [XADPath emptyPath];
+	else return lastpath;
 }
 
 +(XADPath *)analyzedPathWithData:(NSData *)bytedata source:(XADStringSource *)stringsource

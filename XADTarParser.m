@@ -159,6 +159,12 @@
 	return( checksum == signedChecksum || checksum == unsignedChecksum );
 }
 
+-(void)dealloc
+{
+	[currentGlobalHeader release];
+	[super dealloc];
+}
+
 -(void)parseSparseHeadersFromData:(NSData*)header numHeaders:(int)num toDict:(NSMutableDictionary *)dict
 {
 	for( int i = 0; i < num; i++ )
@@ -403,7 +409,8 @@
 		// POSIX.2001 global header.
 		case 'g': {
 			// Read in the header and store for parsing
-			currentGlobalHeader = [handle readDataOfLength:size];
+			[currentGlobalHeader release];
+			currentGlobalHeader = [[handle readDataOfLength:size] retain];
 			[handle seekToFileOffset:offset];
 
 			// Parse next header.
@@ -511,7 +518,7 @@
 -(void)parseWithSeparateMacForks
 {
 	// Reset global current header for posix.2001;
-	currentGlobalHeader = [NSData data];
+	currentGlobalHeader = [NSData new];
 	
 	CSHandle *handle = [self handle];
 	int tarFormat = -1;

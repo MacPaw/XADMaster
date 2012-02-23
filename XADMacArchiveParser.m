@@ -356,10 +356,17 @@ name:(XADPath *)name retainPosition:(BOOL)retainpos
 	uint32_t rsrcsize=CSUInt32BE(bytes+87);
 	int extsize=CSUInt16BE(bytes+120);
 
-	XADPath *filename=[dict objectForKey:XADFileNameKey];
-	XADPath *parent=[filename pathByDeletingLastPathComponent];
-	XADString *namepart=[self XADStringWithBytes:bytes+2 length:bytes[1]];
-	XADPath *newpath=[parent pathByAppendingXADStringComponent:namepart];
+	XADPath *newpath;
+	if(name)
+	{
+		XADPath *parent=[name pathByDeletingLastPathComponent];
+		XADString *namepart=[self XADStringWithBytes:bytes+2 length:bytes[1]];
+		newpath=[parent pathByAppendingXADStringComponent:namepart];
+	}
+	else
+	{
+		newpath=[self XADPathWithBytes:bytes+2 length:bytes[1] separators:XADNoPathSeparator];
+	}
 
 	NSMutableDictionary *template=[NSMutableDictionary dictionaryWithDictionary:dict];
 	[template setObject:dict forKey:@"MacOriginalDictionary"];

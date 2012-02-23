@@ -47,6 +47,7 @@ extern NSString *XADExceptionName;
 +(void)raisePasswordException;
 +(void)raiseChecksumException;
 +(void)raiseDataFormatException;
++(void)raiseOutOfMemoryException;
 +(void)raiseExceptionWithXADError:(XADError)errnum;
 
 +(XADError)parseException:(id)exception;

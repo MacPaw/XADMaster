@@ -537,6 +537,8 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 	XADError (*outputfunc)(id,SEL,id,uint8_t *,int);
 	outputfunc=(void *)[target methodForSelector:selector];
 
+	uint8_t *buf=NULL;
+
 	@try
 	{
 		// Send a progress report to show that we are starting.
@@ -561,7 +563,10 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 
 		off_t done=0;
 		double updatetime=0;
-		uint8_t buf[0x40000];
+
+		const int bufsize=0x40000;
+		buf=malloc(bufsize);
+		if(!buf) [XADException raiseOutOfMemoryException];
 
 		for(;;)
 		{
@@ -569,7 +574,7 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 
 			// Read some data, and send it to the output function.
 			// Stop if no more data was available.
-			int actual=[srchandle readAtMost:sizeof(buf) toBuffer:buf];
+			int actual=[srchandle readAtMost:bufsize toBuffer:buf];
 			if(actual)
 			{
 				XADError error=outputfunc(target,selector,argument,buf,actual);
@@ -618,6 +623,8 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 	{
 		return [XADException parseException:e];
 	}
+
+	free(buf);
 
 	return XADNoError;
 }

@@ -17,6 +17,7 @@ NSString *XADExceptionName=@"XADException";
 +(void)raiseDecrunchException { [self raiseExceptionWithXADError:XADDecrunchError]; }
 +(void)raiseChecksumException { [self raiseExceptionWithXADError:XADChecksumError]; }
 +(void)raiseDataFormatException { [self raiseExceptionWithXADError:XADDataFormatError]; }
++(void)raiseOutOfMemoryException { [self raiseExceptionWithXADError:XADOutOfMemoryError]; }
 
 +(void)raiseExceptionWithXADError:(XADError)errnum
 {

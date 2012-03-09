@@ -190,6 +190,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADStuffItHuffmanHandle.m \
 			XADStuffItOldHandles.m \
 			XADStuffItParser.m \
+			XADStuffItSplitParser.m \
 			XADStuffItXBlendHandle.m \
 			XADStuffItXBlockHandle.m \
 			XADStuffItXCyanideHandle.m \

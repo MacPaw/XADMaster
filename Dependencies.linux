@@ -63,19 +63,19 @@ XADArchiveParser.o: XADArchiveParser.m XADArchiveParser.h XADException.h \
  CSMultiHandle.h CSMemoryHandle.h XADCRCHandle.h Progress.h \
  CSZlibHandle.h CSBzip2Handle.h CRC.h XADZipParser.h \
  XADMacArchiveParser.h XADZipSFXParsers.h XADRARParser.h XAD7ZipParser.h \
- XADStuffItParser.h XADStuffIt5Parser.h XADStuffItXParser.h \
- XADCompactProParser.h XADDiskDoublerParser.h XADBinHexParser.h \
- CSByteStreamHandle.h XADMacBinaryParser.h XADPackItParser.h \
- CSBlockStreamHandle.h XADNowCompressParser.h XADGzipParser.h \
- XADBzip2Parser.h XADLZMAAloneParser.h XADXZParser.h XADCompressParser.h \
- XADTarParser.h XADTarSparseHandle.h XADCpioParser.h XADXARParser.h \
- XADArParser.h XADRPMParser.h XADLZXParser.h XADPowerPackerParser.h \
- XADLZHParser.h XADLZHSFXParsers.h XADARJParser.h XADARCParser.h \
- XADSqueezeParser.h XADCrunchParser.h XADLBRParser.h XADZooParser.h LZW.h \
- XADNSISParser.h XADCABParser.h XADPPMdParser.h XADSWFParser.h \
- XADSWFTagParser.h XADSWFGeometry.h XADALZipParser.h XADCFBFParser.h \
- XADNDSParser.h XADNSAParser.h XADLZSSHandle.h XADSARParser.h \
- XADSplitFileParser.h XADISO9660Parser.h XADLibXADParser.h \
+ XADStuffItParser.h XADStuffIt5Parser.h XADStuffItSplitParser.h \
+ XADStuffItXParser.h XADCompactProParser.h XADDiskDoublerParser.h \
+ XADBinHexParser.h CSByteStreamHandle.h XADMacBinaryParser.h \
+ XADPackItParser.h CSBlockStreamHandle.h XADNowCompressParser.h \
+ XADGzipParser.h XADBzip2Parser.h XADLZMAAloneParser.h XADXZParser.h \
+ XADCompressParser.h XADTarParser.h XADTarSparseHandle.h XADCpioParser.h \
+ XADXARParser.h XADArParser.h XADRPMParser.h XADLZXParser.h \
+ XADPowerPackerParser.h XADLZHParser.h XADLZHSFXParsers.h XADARJParser.h \
+ XADARCParser.h XADSqueezeParser.h XADCrunchParser.h XADLBRParser.h \
+ XADZooParser.h LZW.h XADNSISParser.h XADCABParser.h XADPPMdParser.h \
+ XADSWFParser.h XADSWFTagParser.h XADSWFGeometry.h XADALZipParser.h \
+ XADCFBFParser.h XADNDSParser.h XADNSAParser.h XADLZSSHandle.h \
+ XADSARParser.h XADSplitFileParser.h XADISO9660Parser.h XADLibXADParser.h \
  libxad/include/functions.h libxad/include/xadmaster.h \
  libxad/include/privdefs.h libxad/include/../unix/emulation.h
 XADArchiveParserDescriptions.o: XADArchiveParserDescriptions.m \
@@ -470,6 +470,10 @@ XADStuffItParser.o: XADStuffItParser.m XADStuffItParser.h \
  XADLZSSHandle.h XADStuffItOldHandles.h XADLibXADIOHandle.h \
  CSMemoryHandle.h XADRLE90Handle.h XADCompressHandle.h LZW.h \
  XADLZHDynamicHandle.h
+XADStuffItSplitParser.o: XADStuffItSplitParser.m XADStuffItSplitParser.h \
+ XADArchiveParser.h XADException.h XADString.h XADPath.h XADRegex.h \
+ CSHandle.h XADSkipHandle.h Checksums.h CSSubHandle.h CSStreamHandle.h \
+ CSInputBuffer.h CSMultiHandle.h CSFileHandle.h NSDateXAD.h
 XADStuffItXBlendHandle.o: XADStuffItXBlendHandle.m \
  XADStuffItXBlendHandle.h CSStreamHandle.h CSHandle.h CSInputBuffer.h \
  XADStuffItXDarkhorseHandle.h XADLZSSHandle.h CSByteStreamHandle.h \

@@ -406,7 +406,7 @@ length:(uint32_t)length
 				[fh seekToFileOffset:curroffset];
 				[fh readBytes:currlength toBuffer:system];
 
-//NSLog(@"---%d %@",currlength,[NSData dataWithBytes:system length:currlength]);
+//NSLog(@"%qd %d %@",curroffset,currlength,[NSData dataWithBytes:system length:currlength]);
 
 				int pos=0;
 				while(pos+4<=currlength)
@@ -415,6 +415,7 @@ length:(uint32_t)length
 					int length=system[pos+2];
 
 					if(pos+length>currlength) break;
+					if(length==0) break; // Sanity check.
 
 //NSLog(@"%c%c: %@",type>>8,type&0xff,[NSData dataWithBytes:&system[pos+3] length:length-3]);
 

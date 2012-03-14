@@ -1,16 +1,10 @@
-# Lets roll our own makefile, with blackjack and hookers [because GNUSteps sucks.
-
-
-
 # Compilers and linkers
 
 OBJCC = gcc
 CC = gcc
-CPP = g++
+CXX = g++
 LD = gcc
 AR = ar
-
-
 
 # Options for compilation
 
@@ -36,11 +30,11 @@ C_OPTS =	-std=gnu99
 
 CXX_OPTS =
 
-ALL_OBJCFLAGS = $(OBJC_OPTS) $(GCC_OPTS) $(GNUSTEP_OPTS) $(OBJCFLAGS)
-ALL_CFLAGS = $(C_OPTS) $(GCC_OPTS) $(CFLAGS)
-ALL_CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS) $(CXXFLAGS)
+AUTODEPENDENCY_CFLAGS=-MMD -MF$(@:.o=.d) -MT$@
 
-
+ALL_OBJCFLAGS = $(OBJC_OPTS) $(GCC_OPTS) $(GNUSTEP_OPTS) $(OBJCFLAGS) $(AUTODEPENDENCY_CFLAGS)
+ALL_CFLAGS = $(C_OPTS) $(GCC_OPTS) $(CFLAGS) $(AUTODEPENDENCY_CFLAGS)
+ALL_CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS) $(CXXFLAGS) $(AUTODEPENDENCY_CFLAGS)
 
 # Options for linking
 
@@ -59,9 +53,13 @@ ALL_LDFLAGS =	-Wl,--whole-archive \
 		-fgnu-runtime \
 		$(LDFLAGS)
 
+# Paths
+
+SOURCE_DIR = .
+BUILD_DIR = Build
 
 
-# Files for compilation
+# Source files
 
 LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			Checksums.m \
@@ -257,80 +255,48 @@ LIBRARY_C_FILES =	BWT.c \
 
 LIBRARY_CXX_FILES =		
 
-XADTEST2_FILES =	XADTest2.m
+XADTEST2_OBJC_FILES =	XADTest2.m
 
-XADTEST3_FILES =	XADTest3.m
+XADTEST3_OBJC_FILES =	XADTest3.m
 
-XADTEST4_FILES =	XADTest4.m
+XADTEST4_OBJC_FILES =	XADTest4.m
 
-XADTEST5_FILES =	XADTest5.m
+XADTEST5_OBJC_FILES =	XADTest5.m
 
-XADTEST6_FILES =	XADTest6.m
+XADTEST6_OBJC_FILES =	XADTest6.m
 
-UNAR_FILES =		unar.m
+UNAR_OBJC_FILES =	unar.m
 
-LSAR_FILES =		lsar.m \
+LSAR_OBJC_FILES =	lsar.m \
 			CSJSONPrinter.m
 
-CMDLINE_FILES =		CSCommandLineParser.m \
+CMDLINE_OBJC_FILES =	CSCommandLineParser.m \
 			CommandLineCommon.m \
 			NSStringPrinting.m
 
-ALL_OBJC_FILES =	$(LIBRARY_OBJC_FILES) \
-			$(XADTEST2_FILES) \
-			$(XADTEST3_FILES) \
-			$(XADTEST4_FILES) \
-			$(XADTEST5_FILES) \
-			$(XADTEST6_FILES) \
-			$(UNAR_FILES) \
-			$(LSAR_FILES) \
-			$(CMDLINE_FILES)
+# Object files
 
-ALL_C_FILES = 		$(LIBRARY_C_FILES)
+LIBRARY_OBJS =		$(LIBRARY_OBJC_FILES:.m=.o) \
+			$(LIBRARY_C_FILES:.c=.o) \
+			$(LIBRARY_CXX_FILES:.cpp=.o)
 
-ALL_CXX_FILES = 	$(LIBRARY_CXX_FILES)
+XADTEST2_OBJS =		$(XADTEST2_OBJC_FILES:.m=.o)
 
+XADTEST3_OBJS =		$(XADTEST3_OBJC_FILES:.m=.o)
 
+XADTEST4_OBJS =		$(XADTEST4_OBJC_FILES:.m=.o)
 
+XADTEST5_OBJS =		$(XADTEST5_OBJC_FILES:.m=.o)
 
-LIBRARY_OBJC_OBJS =	$(LIBRARY_OBJC_FILES:.m=.o)
+XADTEST6_OBJS =		$(XADTEST6_OBJC_FILES:.m=.o)
 
-LIBRARY_C_OBJS =	$(LIBRARY_C_FILES:.c=.o)
+UNAR_OBJS =		$(UNAR_OBJC_FILES:.m=.o)
 
-LIBRARY_CXX_OBJS =	$(LIBRARY_CXX_FILES:.cpp=.o)
+LSAR_OBJS =		$(LSAR_OBJC_FILES:.m=.o)
 
-LIBRARY_OBJS =		$(LIBRARY_OBJC_OBJS) \
-			$(LIBRARY_C_OBJS) \
-			$(LIBRARY_CXX_OBJS)
+CMDLINE_OBJS=		$(CMDLINE_OBJC_FILES:.m=.o)
 
-XADTEST2_OBJS =		$(XADTEST2_FILES:.m=.o)
-
-XADTEST3_OBJS =		$(XADTEST3_FILES:.m=.o)
-
-XADTEST4_OBJS =		$(XADTEST4_FILES:.m=.o)
-
-XADTEST5_OBJS =		$(XADTEST5_FILES:.m=.o)
-
-XADTEST6_OBJS =		$(XADTEST6_FILES:.m=.o)
-
-UNAR_OBJS =		$(UNAR_FILES:.m=.o)
-
-LSAR_OBJS =		$(LSAR_FILES:.m=.o)
-
-CMDLINE_OBJS=		$(CMDLINE_FILES:.m=.o)
-
-ALL_OBJS = 		$(LIBRARY_OBJS) \
-			$(XADTEST2_OBJS) \
-			$(XADTEST3_OBJS) \
-			$(XADTEST4_OBJS) \
-			$(XADTEST5_OBJS) \
-			$(XADTEST6_OBJS) \
-			$(UNAR_OBJS) \
-			$(LSAR_OBJS) \
-			$(CMDLINE_OBJS)
-
-
-
+# Other files
 
 EXECUTABLE_FILES =	XADTest2 \
 			XADTest3 \
@@ -341,24 +307,6 @@ EXECUTABLE_FILES =	XADTest2 \
 			lsar
 
 LIBRARY_FILES = 	libXADMaster.a
-
-
-
-# Suffix rules
-
-.SUFFIXES: .o .m .c
-
-.m.o:
-	$(OBJCC) $(ALL_OBJCFLAGS) $< -o $@
-
-.c.o:
-	$(CC) $(ALL_CFLAGS) $< -o $@
-
-.cpp.o:
-	$(CXX) $(ALL_CXXFLAGS) $< -o $@
-
-
-
 
 # Compilation rules
 
@@ -393,20 +341,23 @@ lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniver
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm -f 	$(ALL_OBJS) \
-		$(EXECUTABLE_FILES) \
-		$(LIBRARY_FILES) \
-		*~ \
-		lzma/*~ \
-		unrar/*~
+	rm -rf $(BUILD_DIR) $(EXECUTABLE_FILES) $(LIBRARY_FILES)
 	make -C ../UniversalDetector -f Makefile.linux clean
 
-depend:
-	$(OBJCC) -MM $(ALL_OBJCFLAGS) $(ALL_OBJC_FILES) >Dependencies.linux.tmp
-	$(CC) -MM $(ALL_CFLAGS) $(ALL_C_FILES) >>Dependencies.linux.tmp
-	#$(CXX) -MM $(ALL_CXXFLAGS) $(ALL_CXX_FILES) >>Dependencies.linux.tmp
-	sed 's/.*: *\([^ ]*\)\.\([^ ]*\)/\1.o: \1.\2/g' <Dependencies.linux.tmp >Dependencies.linux
-	rm Dependencies.linux.tmp
+# Suffix rules
 
-include Dependencies.linux
+.SUFFIXES: .o .c .m .cpp
 
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(ALL_CFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.m
+	@mkdir -p $(dir $@)
+	$(OBJCC) $(ALL_OBJCFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(ALL_CXXFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@
+
+-include $(OBJS:.o=.d)

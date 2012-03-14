@@ -5,7 +5,7 @@
 #import "CSJSONPrinter.h"
 #import "CommandLineCommon.h"
 
-#define VERSION_STRING @"v0.99"
+#define VERSION_STRING @"v1.0"
 
 #define EntryDoesNotNeedTestingResult 0
 #define EntryIsNotSupportedResult 1

@@ -276,8 +276,8 @@ static NSString *DottedNumber(uint64_t size)
 
 NSString *XADHumanReadableBoolean(uint64_t boolean)
 {
-	if(boolean==1) return NSLocalizedString(@"Yes","String for true values");
-	else if (boolean==0) return NSLocalizedString(@"No","String for false values");
+	if(boolean==1) return NSLocalizedString(@"Yes",@"String for true values");
+	else if (boolean==0) return NSLocalizedString(@"No",@"String for false values");
 	else return [NSString stringWithFormat:@"%llx",boolean];
 }
 
@@ -363,8 +363,12 @@ NSString *XADHumanReadableObject(id object)
 
 NSString *XADHumanReadableDate(NSDate *date)
 {
+	#ifdef __COCOTRON__
+	return [[[NSDateFormatter new] autorelease] stringFromDate:date];
+	#else
 	return [NSDateFormatter localizedStringFromDate:date
 	dateStyle:NSDateFormatterFullStyle timeStyle:NSDateFormatterMediumStyle];
+	#endif
 }
 
 NSString *XADHumanReadableData(NSData *data)

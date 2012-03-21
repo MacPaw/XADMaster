@@ -4,6 +4,10 @@
 #define _LZMA_UINT32_IS_ULONG
 #endif
 
+#define Byte LzmaByte
+#define UInt16 LzmaUInt16
+#define UInt32 LzmaUInt32
+#define UInt64 LzmaUInt64
 #import "lzma/Bra.h"
 
 @implementation XAD7ZipBranchHandle

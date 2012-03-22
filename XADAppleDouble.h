@@ -1,6 +1,6 @@
 #import "CSHandle.h"
 
-@interface XADAppleDouble
+@interface XADAppleDouble:NSObject
 {
 }
 

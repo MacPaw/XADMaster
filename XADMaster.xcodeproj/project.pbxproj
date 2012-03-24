@@ -1289,6 +1289,8 @@
 		1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADBinHexParser.m; sourceTree = "<group>"; };
 		1B06D5B90DDA67E000D9C000 /* XADString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADString.h; sourceTree = "<group>"; };
 		1B06D5BA0DDA67E000D9C000 /* XADString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADString.m; sourceTree = "<group>"; };
+		1B09AC7D151E27B900356B93 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = "/Users/dag/Code/The Unarchiver/XADMaster/sv.lproj/InfoPlist.strings"; sourceTree = "<absolute>"; };
+		1B09AC89151E27BF00356B93 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = "/Users/dag/Code/The Unarchiver/XADMaster/fr.lproj/InfoPlist.strings"; sourceTree = "<absolute>"; };
 		1B21106F0A4452C2005ED2AF /* XADRegex.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XADRegex.m; sourceTree = "<group>"; };
 		1B2110700A4452C2005ED2AF /* XADRegex.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XADRegex.h; sourceTree = "<group>"; };
 		1B216A730F8E8ADE001207C9 /* Progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Progress.h; sourceTree = "<group>"; };
@@ -4209,6 +4211,8 @@
 			isa = PBXVariantGroup;
 			children = (
 				089C1667FE841158C02AAC07 /* English */,
+				1B09AC7D151E27B900356B93 /* sv */,
+				1B09AC89151E27BF00356B93 /* fr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

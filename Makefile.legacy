@@ -8,7 +8,7 @@ AR = ar
 
 # Options for compilation
 
-GCC_OPTS =	-O2 -v \
+GCC_OPTS =	-O2 \
 		-Wno-import \
 		-Wno-multichar
 
@@ -38,10 +38,12 @@ LIBS =	-framework Foundation \
 ALL_LDFLAGS =	-ObjC \
 		$(LDFLAGS)
 
+FRAMEWORK_LIBS =	$(LIBS) \
+			-F../UniversalDetector \
+			-framework UniversalDetector
+
 FRAMEWORK_LDFLAGS =	-dynamiclib \
 			-install_name @executable_path/../Frameworks \
-			-F../UniversalDetector \
-			-framework UniversalDetector \
 			$(LDFLAGS)
 
 # Paths
@@ -81,16 +83,15 @@ $(FRAMEWORK_HEADER_FILES:%=$(FRAMEWORK_NAME).framework/Versions/A/Headers/%)
 	ln -sf Versions/Current/Resources $(FRAMEWORK_NAME).framework/Resources
 	ln -sf Versions/Current/Headers $(FRAMEWORK_NAME).framework/Headers
 
-$(FRAMEWORK_NAME).framework/Versions/A/$(FRAMEWORK_NAME): $(LIBRARY_OBJS)
-	make -C ../UniversalDetector -f Makefile.legacy
+$(FRAMEWORK_NAME).framework/Versions/A/$(FRAMEWORK_NAME): $(LIBRARY_OBJS) ../UniversalDetector/UniversalDetector.framework
 	@mkdir -p $(dir $@)
-	$(LD) $(FRAMEWORK_LDFLAGS) -o $@ $^ $(LIBS)
+	$(LD) $(FRAMEWORK_LDFLAGS) -o $@ $(LIBRARY_OBJS) $(FRAMEWORK_LIBS)
 
 $(FRAMEWORK_NAME).framework/Versions/A/Resources/Info.plist: Info.plist
 	@mkdir -p $(dir $@)
 	cat $^ |\
-	perl -pe 's/\$$\{EXECUTABLE_NAME\}/$(FRAMEWORK_NAME)/sge' |\
-	perl -pe 's/\$$\{PRODUCT_NAME\}/$(FRAMEWORK_NAME)/sge' |\
+	perl -pe 's/\$$\{EXECUTABLE_NAME\}/$(FRAMEWORK_NAME)/sg' |\
+	perl -pe 's/\$$\{PRODUCT_NAME\}/$(FRAMEWORK_NAME)/sg' |\
 	cat >$@
 
 $(FRAMEWORK_NAME).framework/Versions/A/Resources/en.lproj/InfoPlist.strings: English.lproj/InfoPlist.strings
@@ -104,6 +105,9 @@ $(FRAMEWORK_NAME).framework/Versions/A/Headers/%: %
 libXADMaster.a: $(LIBRARY_OBJS)
 	rm -f $@
 	$(AR) rcs $@ $^
+
+../UniversalDetector/UniversalDetector.framework:
+	make -C ../UniversalDetector -f Makefile.legacy
 
 ../UniversalDetector/libUniversalDetector.a:
 	make -C ../UniversalDetector -f Makefile.legacy
@@ -130,8 +134,8 @@ lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniver
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm -rf $(BUILD_DIR) XADMaster.framework $(EXECUTABLE_FILES) $(LIBRARY_FILES)
-	make -C ../UniversalDetector -f Makefile.linux clean
+	rm -rf $(BUILD_DIR) $(FRAMEWORK_FILES) $(EXECUTABLE_FILES) $(LIBRARY_FILES)
+	make -C ../UniversalDetector -f Makefile.legacy clean
 
 # Suffix rules
 

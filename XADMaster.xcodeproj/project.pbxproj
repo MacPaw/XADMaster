@@ -4260,25 +4260,6 @@
 			};
 			name = Release;
 		};
-		1B31CB9113C6423600ED119E /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PRODUCT_NAME = XADTest6;
-			};
-			name = Old;
-		};
 		1B34238E131D8B5B00CCDF77 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4853,343 +4834,6 @@
 			};
 			name = Debug;
 		};
-		1BAF0138132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				GCC_VERSION = 4.0;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
-				SDKROOT = macosx10.5;
-				USE_HEADERMAP = NO;
-			};
-			name = Old;
-		};
-		1BAF0139132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					UniversalDetector,
-				);
-				PRODUCT_NAME = XADMaster;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Old;
-		};
-		1BAF013A132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = XADTest;
-			};
-			name = Old;
-		};
-		1BAF013B132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = XADTest2;
-			};
-			name = Old;
-		};
-		1BAF013C132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PRODUCT_NAME = XADTest3;
-			};
-			name = Old;
-		};
-		1BAF013D132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PRODUCT_NAME = XADTest4;
-			};
-			name = Old;
-		};
-		1BAF013E132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PRODUCT_NAME = XADTest5;
-			};
-			name = Old;
-		};
-		1BAF013F132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = XADMaster;
-			};
-			name = Old;
-		};
-		1BAF0140132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				OTHER_LDFLAGS = (
-					"-fexceptions",
-					"-all_load",
-					"-ObjC",
-				);
-				PRODUCT_NAME = unar;
-			};
-			name = Old;
-		};
-		1BAF0141132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				OTHER_LDFLAGS = (
-					"-fexceptions",
-					"-all_load",
-					"-ObjC",
-				);
-				PRODUCT_NAME = lsar;
-			};
-			name = Old;
-		};
-		1BAF0142132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_MODULE_STATIC_INITIALIZER = NO;
-				GCC_FAST_OBJC_DISPATCH = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = "";
-				GCC_VERSION_i386 = "";
-				GCC_VERSION_ppc = "";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
-				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Windows/lib\"",
-				);
-				LIBTOOL = "$(SRCROOT)/Windows/bin/libtoolstub.pl";
-				MACOSX_DEPLOYMENT_TARGET_i386 = "";
-				MACOSX_DEPLOYMENT_TARGET_ppc = "";
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = XADMaster.win;
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
-				SDKROOT_x86_64 = "";
-				WARNING_CFLAGS = "-Wno-multichar";
-				ZERO_LINK = NO;
-			};
-			name = Old;
-		};
-		1BAF0143132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_FAST_OBJC_DISPATCH = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = "";
-				GCC_VERSION_i386 = "";
-				GCC_VERSION_ppc = "";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
-				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Windows/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-					"\"$(DEVELOPER_DIR)/Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = "";
-				MACOSX_DEPLOYMENT_TARGET_i386 = "";
-				MACOSX_DEPLOYMENT_TARGET_ppc = "";
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-Wl,--whole-archive",
-					"-lXADMaster.win",
-					"-lUniversalDetector.win",
-					"-Wl,--no-whole-archive",
-					"-Wl,--enable-auto-import",
-				);
-				PRODUCT_NAME = unar.exe;
-				SDKROOT = "";
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
-				SDKROOT_x86_64 = "";
-				ZERO_LINK = NO;
-			};
-			name = Old;
-		};
-		1BAF0144132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					/Developer/Cocotron/1.0/Windows/i386/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_FAST_OBJC_DISPATCH = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
-				GCC_VERSION = "";
-				GCC_VERSION_i386 = "";
-				GCC_VERSION_ppc = "";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Windows/include\"";
-				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../Build/Windows/Debug\"",
-					"\"$(SRCROOT)/Windows/lib\"",
-					"\"$(DEVELOPER_DIR)/Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = "";
-				MACOSX_DEPLOYMENT_TARGET_i386 = "";
-				MACOSX_DEPLOYMENT_TARGET_ppc = "";
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-Wl,--whole-archive",
-					"-lXADMaster.win",
-					"-lUniversalDetector.win",
-					"-Wl,--no-whole-archive",
-					"-Wl,--enable-auto-import",
-				);
-				PRODUCT_NAME = lsar.exe;
-				SDKROOT = "";
-				SDKROOT_i386 = "";
-				SDKROOT_ppc = "";
-				SDKROOT_x86_64 = "";
-				ZERO_LINK = NO;
-			};
-			name = Old;
-		};
-		1BAF0145132A9C0F002B6FE0 /* Old */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				PRODUCT_NAME = Everything;
-				ZERO_LINK = NO;
-			};
-			name = Old;
-		};
 		1BBAB6890EC274A3007FE6A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5277,7 +4921,6 @@
 			buildConfigurations = (
 				1B23DDC21185EBA500620319 /* Debug */,
 				1B68D26413282D2500A8121A /* Release */,
-				1BAF0140132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5287,7 +4930,6 @@
 			buildConfigurations = (
 				1B31CB8F13C6423600ED119E /* Debug */,
 				1B31CB9013C6423600ED119E /* Release */,
-				1B31CB9113C6423600ED119E /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5297,7 +4939,6 @@
 			buildConfigurations = (
 				1B34238E131D8B5B00CCDF77 /* Debug */,
 				1B68D26213282D2500A8121A /* Release */,
-				1BAF013E132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5307,7 +4948,6 @@
 			buildConfigurations = (
 				1B34A97811C2FD0700396C26 /* Debug */,
 				1B68D26313282D2500A8121A /* Release */,
-				1BAF013F132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5317,7 +4957,6 @@
 			buildConfigurations = (
 				1B3A68A0101BA12C00AE25A8 /* Debug */,
 				1B68D26113282D2500A8121A /* Release */,
-				1BAF013D132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5327,7 +4966,6 @@
 			buildConfigurations = (
 				1B433E2711E945D300DA1EFB /* Debug */,
 				1B68D26913282D2500A8121A /* Release */,
-				1BAF0145132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5337,7 +4975,6 @@
 			buildConfigurations = (
 				1B5A7BA70A24F9E300B189EB /* Debug */,
 				1B68D25E13282D2500A8121A /* Release */,
-				1BAF013A132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5347,7 +4984,6 @@
 			buildConfigurations = (
 				1B91CD5C11D97E7C0081E40A /* Debug */,
 				1B68D26613282D2500A8121A /* Release */,
-				1BAF0142132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5357,7 +4993,6 @@
 			buildConfigurations = (
 				1B91CDAA11D981E20081E40A /* Debug */,
 				1B68D26713282D2500A8121A /* Release */,
-				1BAF0143132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5367,7 +5002,6 @@
 			buildConfigurations = (
 				1B91D18D11E1677B0081E40A /* Debug */,
 				1B68D26513282D2500A8121A /* Release */,
-				1BAF0141132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5377,7 +5011,6 @@
 			buildConfigurations = (
 				1B91D2EC11E694860081E40A /* Debug */,
 				1B68D26813282D2500A8121A /* Release */,
-				1BAF0144132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5387,7 +5020,6 @@
 			buildConfigurations = (
 				1BBAB6890EC274A3007FE6A2 /* Debug */,
 				1B68D25F13282D2500A8121A /* Release */,
-				1BAF013B132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5397,7 +5029,6 @@
 			buildConfigurations = (
 				1BC8931D0ED6F285006B47FE /* Debug */,
 				1B68D26013282D2500A8121A /* Release */,
-				1BAF013C132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5407,7 +5038,6 @@
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,
 				1B68D25D13282D2500A8121A /* Release */,
-				1BAF0139132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -5417,7 +5047,6 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1B68D25C13282D2500A8121A /* Release */,
-				1BAF0138132A9C0F002B6FE0 /* Old */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

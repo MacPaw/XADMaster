@@ -206,10 +206,24 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 			// We hit the end of the file. If we have parts that have no been
 			// emitted yet, do so now, and mark as corrupted as we are missing the
 			// last part.
+
 			if(currparts)
-			[self addEntryWithBlock:&previousblock header:&previousheader
-			compressedSize:totalfilesize files:currfiles solidOffset:totalsolidsize
-			isCorrupted:YES];
+			{
+				// Add current file to solid file list, creating it if necessary.
+				if(!currfiles) currfiles=[NSMutableArray array];
+
+				[currfiles addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+					currparts,@"Parts",
+					[NSNumber numberWithLongLong:previousheader.size],@"OutputLength",
+					[NSNumber numberWithInt:previousheader.version],@"Version",
+					[NSNumber numberWithBool:(block.flags&LHD_PASSWORD)?YES:NO],@"Encrypted",
+					previousheader.salt,@"Salt", // Ends the list if nil.
+				nil]];
+
+				[self addEntryWithBlock:&previousblock header:&previousheader
+				compressedSize:totalfilesize files:currfiles solidOffset:totalsolidsize
+				isCorrupted:YES];
+			}
 
 			break;
 		}

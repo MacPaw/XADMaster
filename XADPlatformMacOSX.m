@@ -198,7 +198,7 @@ preservePermissions:(BOOL)preservepermissions
 	AEDesc filedesc;
 	AEInitializeDesc(&filedesc);
 	if(AECoercePtr(typeFSRef,&ref,sizeof(ref),typeAlias,&filedesc)!=noErr) return;
-	
+
 	AEDesc builtevent,replyevent;
 	AEInitializeDesc(&builtevent);
 	AEInitializeDesc(&replyevent);
@@ -211,11 +211,11 @@ preservePermissions:(BOOL)preservepermissions
 	&builtevent,NULL,eventformat,&filedesc,[commentdesc aeDesc]);
 
 	AEDisposeDesc(&filedesc);
-	
+
 	if(err!=noErr) return;
-	
+
 	AESendMessage(&builtevent,&replyevent,kAENoReply,kAEDefaultTimeout);
-	
+
 	AEDisposeDesc(&builtevent);
 	AEDisposeDesc(&replyevent);
 }

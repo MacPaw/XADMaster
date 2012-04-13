@@ -44,9 +44,18 @@ unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 	int fd=open(cpath,O_WRONLY|O_CREAT|O_NOFOLLOW,0666);
 	if(fd==-1) 
 	{
-		// If opening the file failed, try changing permissions.
+		// If opening the file failed, check if it is a link and skip if it is.
 		struct stat st;
-		stat(cpath,&st);
+		lstat(cpath,&st);
+
+		if(S_ISLNK(st.st_mode))
+		{
+			NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
+			if(!sizenum) return XADNoError;
+			else if([sizenum longLongValue]==0) return XADNoError;
+		}
+
+		// Otherwise, try changing permissions.
 		originalpermissions=st.st_mode;
 
 		chmod(cpath,0700);

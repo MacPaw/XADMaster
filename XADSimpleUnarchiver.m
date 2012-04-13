@@ -682,6 +682,9 @@
 	if(encodingname) safefilename=[xadpath sanitizedPathStringWithEncodingName:encodingname];
 	else safefilename=[xadpath sanitizedPathString];
 
+	// Make sure to update path for resource forks.
+	safefilename=[currunarchiver adjustPathString:safefilename forEntryWithDictionary:dict];
+
 	// Apply filters.
 	if(delegate)
 	{
@@ -726,15 +729,7 @@
 			path=[path stringByAppendingPathComponent:component];
 
 			// Check it for collisions.
-			if(i==numcomponents-1)
-			{
-				path=[currunarchiver adjustPathString:path forEntryWithDictionary:dict];
-				path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
-			}
-			else
-			{
-				path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
-			}
+			path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
 
 			if(path)
 			{

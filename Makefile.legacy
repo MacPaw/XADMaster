@@ -1,10 +1,11 @@
 # Compilers and linkers
 
-OBJCC = gcc
-CC = gcc
-CXX = g++
-LD = gcc
+OBJCC = /Xcode3/usr/bin/gcc-4.2
+CC = /Xcode3/usr/bin/gcc-4.2
+CXX = /Xcode3/usr/bin/g++-4.2
+LD = /Xcode3/usr/bin/gcc-4.2
 AR = ar
+SDK = -isysroot /Xcode3/SDKs/MacOSX10.5.sdk
 
 # Options for compilation
 
@@ -13,11 +14,13 @@ GCC_OPTS =	-O2 \
 		-Wno-multichar \
 		-mmacosx-version-min=10.3.9
 
-OBJC_OPTS =	-std=gnu99
+OBJC_OPTS =	-std=gnu99 \
+		$(SDK)
 
-C_OPTS =	-std=gnu99
+C_OPTS =	-std=gnu99 \
+		$(SDK)
 
-CXX_OPTS =
+CXX_OPTS =	$(SDK)
 
 AUTODEPENDENCY_CFLAGS=-MMD -MF$(@:.o=.d) -MT$@
 
@@ -39,6 +42,7 @@ LIBS =	-framework Foundation \
 ALL_LDFLAGS =	-arch i386 -arch ppc \
 		-mmacosx-version-min=10.3.9 \
 		-ObjC \
+		$(SDK) \
 		$(LDFLAGS)
 
 # Paths
@@ -71,6 +75,7 @@ FRAMEWORK_LDFLAGS =	-arch i386 -arch ppc \
 			-mmacosx-version-min=10.3.9 \
 			-dynamiclib \
 			-install_name @executable_path/../Frameworks/$(FRAMEWORK_NAME).framework/$(FRAMEWORK_NAME) \
+			$(SDK) \
 			$(LDFLAGS)
 
 # Compilation rules

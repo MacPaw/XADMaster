@@ -105,6 +105,9 @@
 -(void)addIndexFilter:(int)index;
 -(void)setIndices:(NSIndexSet *)indices;
 
+-(off_t)predictedTotalSize;
+-(off_t)predictedTotalSizeIgnoringUnknownFiles:(BOOL)ignoreunknown;
+
 -(int)numberOfItemsExtracted;
 -(BOOL)wasSoloItem;
 -(NSString *)actualDestination;

@@ -242,6 +242,33 @@
 
 
 
+
+-(off_t)predictedTotalSize { return [self predictedTotalSizeIgnoringUnknownFiles:NO]; }
+
+-(off_t)predictedTotalSizeIgnoringUnknownFiles:(BOOL)ignoreunknown
+{
+	off_t total=0;
+
+	NSEnumerator *enumerator=[entries objectEnumerator];
+	NSDictionary *dict;
+	while((dict=[enumerator nextObject]))
+	{
+		NSNumber *num=[dict objectForKey:XADFileSizeKey];
+		if(!num)
+		{
+			if(ignoreunknown) continue;
+			else return -1;
+		}
+
+		total+=[num longLongValue];
+	}
+
+	return total;
+}
+
+
+
+
 -(int)numberOfItemsExtracted { return numextracted; }
 
 -(BOOL)wasSoloItem { return lookslikesolo; }

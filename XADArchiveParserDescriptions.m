@@ -363,11 +363,13 @@ NSString *XADHumanReadableObject(id object)
 
 NSString *XADHumanReadableDate(NSDate *date)
 {
-    NSDateFormatter *formatter=[[NSDateFormatter new] autorelease];
-    [formatter setFormatterBehavior:NSDateFormatterBehavior10_4];
-    [formatter setDateStyle:NSDateFormatterFullStyle];
-    [formatter setTimeStyle:NSDateFormatterMediumStyle];
-    return [formatter stringForObjectValue:date];
+	NSDateFormatter *formatter=[[NSDateFormatter new] autorelease];
+	[formatter setFormatterBehavior:NSDateFormatterBehavior10_4];
+	#ifndef __COCOTRON__
+	[formatter setDateStyle:NSDateFormatterFullStyle];
+	[formatter setTimeStyle:NSDateFormatterMediumStyle];
+	#endif
+	return [formatter stringForObjectValue:date];
 }
 
 NSString *XADHumanReadableData(NSData *data)

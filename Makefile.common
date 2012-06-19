@@ -90,6 +90,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADPackItParser.m \
 			XADPaddedBlockHandle.m \
 			XADPath.m \
+			XADPDFParser.m \
 			XADPNGWriter.m \
 			XADPowerPackerParser.m \
 			XADPPMdHandles.m \
@@ -153,7 +154,14 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADZipParser.m \
 			XADZipSFXParsers.m \
 			XADZipShrinkHandle.m \
-			XADZooParser.m
+			XADZooParser.m \
+			PDF/CCITTHandle.m \
+			PDF/LZWHandle.m \
+			PDF/NSDictionaryNumberExtension.m \
+			PDF/PDFEncryptionHandler.m \
+			PDF/PDFEncryptionUtils.m \
+			PDF/PDFParser.m \
+			PDF/PDFStream.m
 
 LIBRARY_C_FILES =	BWT.c \
 			LZSS.c \

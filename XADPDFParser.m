@@ -111,14 +111,66 @@ static int SortPages(id first,id second,void *context);
 			NSString *imgname=[[image dictionary] objectForKey:@"Name"];
 			if(imgname) name=[NSString stringWithFormat:@"%@ (%@)",imgname,name];
 
+			NSNumber *length=[[image dictionary] objectForKey:@"Length"];
+			//NSArray *decode=[object decodeArray];
+			int bpc=[object bitsPerComponent];
+
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-				[self XADPathWithString:name],XADFileNameKey,
 				//[self XADStringWithString:[parser isCompressed]?@"Zlib":@"None"],XADCompressionNameKey,
+				length,XADCompressedSizeKey,
 				image,@"PDFStream",
 			nil];
+
+			if([image isJPEG])
+			{
+				[dict setObject:length forKey:XADFileSizeKey];
+				[dict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey];
+				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
+				name=[name stringByAppendingPathExtension:@"jpg"];
+			}
+			else if([object isJPEG2000])
+			{
+				[dict setObject:length forKey:XADFileSizeKey];
+				[dict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey];
+				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
+				name=[name stringByAppendingPathExtension:@"jp2"];
+				[self reportInterestingFileWithReason:@"JPEG2000 embedded in PDF"];
+			}
+			else if([object isBitmap]||[object isMask])
+			{
+			}
+			else if((bpc==8||bpc==16)&&[object isGrey])
+			{
+			}
+			else if((bpc==8||bpc==16)&&[object isRGB])
+			{
+			}
+			else if((bpc==8||bpc==16)&&[object isCMYK])
+			{
+			}
+			else if((bpc==8||bpc==16)&&[object isLab])
+			{
+			}
+			else if([object isIndexed])
+			{
+				NSString *subcolourspace=[object subColourSpaceOrAlternate];
+				if([subcolourspace isEqual:@"DeviceRGB"]||[subcolourspace isEqual:@"CalRGB"])
+				{
+					int colours=[object numberOfColours];
+					NSData *palettedata=[object paletteData];
+
+					if(palettedata)
+					{
+						[dict setObject:[NSNumber numberWithInt:colours] forKey:@"PDFNumberOfColours"];
+						[dict setObject:palettedata forKey:@"PDFPaletteData"];
+					}
+				}
+			}
+
+			[dict setObject:[self XADPathWithString:name] forKey:XADFileNameKey];
+
 			[self addEntryWithDictionary:dict];
 		}
-
 	}
 	@catch(id e)
 	{
@@ -130,7 +182,17 @@ static int SortPages(id first,id second,void *context);
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	return nil;
+	NSString *streamtype=[dict objectForKey:@"PDFStreamType"];
+	PDFStream *stream=[dict objectForKey:@"PDFStream"];
+
+	if([streamtype isEqual:@"JPEG"])
+	{
+		return [stream JPEGHandle];
+	}
+	else
+	{
+		return nil;
+	}
 }
 
 -(NSString *)formatName { return @"PDF"; }
@@ -155,28 +217,6 @@ static int SortPages(id first,id second,void *context)
 
 
 /*
-
-@implementation XeePDFEntry
-
--(id)initWithPDFStream:(PDFStream *)stream name:(NSString *)descname
-{
-	if(self=[super init])
-	{
-		object=[stream retain];
-		name=[descname retain];
-		complained=NO;
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[object release];
-	[name release];
-	[super dealloc];
-}
-
--(NSString *)descriptiveName { return name; }
 
 -(XeeImage *)produceImage
 {

@@ -51,71 +51,76 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 	return (!type||[type isEqual:@"XObject"])&&subtype&&[subtype isEqual:@"Image"]; // kludge for broken Ghostscript PDFs
 }
 
--(BOOL)isJPEG
+-(BOOL)isJPEGImage
 {
-	return [[self finalFilter] isEqual:@"DCTDecode"]&&[self bitsPerComponent]==8;
+	return [[self finalFilter] isEqual:@"DCTDecode"]&&[self imageBitsPerComponent]==8;
 }
 
--(BOOL)isJPEG2000
+-(BOOL)isJPEG2000Image
 {
 	return [[self finalFilter] isEqual:@"JPXDecode"];
 }
 
--(BOOL)isMask
+-(BOOL)isMaskImage
 {
-	return [dict boolValueForKey:@"ImageMask" default:NO]&&[self bitsPerComponent]==1;
+	return [dict boolValueForKey:@"ImageMask" default:NO]&&[self imageBitsPerComponent]==1;
 }
 
--(BOOL)isBitmap
+-(BOOL)isBitmapImage
 {
-	return [self isGrey]&&[self bitsPerComponent]==1;
+	return [self isGreyImage]&&[self imageBitsPerComponent]==1;
 }
 
--(BOOL)isIndexed
+-(BOOL)isIndexedImage
 {
 	NSString *colourspace=[self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"Indexed"];
 }
 
--(BOOL)isGrey
+-(BOOL)isGreyImage
 {
 	NSString *colourspace=[self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"DeviceGray"]||[colourspace isEqual:@"CalGray"];
 }
 
--(BOOL)isRGB
+-(BOOL)isRGBImage
 {
 	NSString *colourspace=[self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"DeviceRGB"]||[colourspace isEqual:@"CalRGB"];
 }
 
--(BOOL)isCMYK
+-(BOOL)isCMYKImage
 {
 	NSString *colourspace=[self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"DeviceCMYK"]||[colourspace isEqual:@"CalCMYK"];
 }
 
--(BOOL)isLab
+-(BOOL)isLabImage
 {
 	NSString *colourspace=[self colourSpaceOrAlternate];
 	return [colourspace isEqual:@"DeviceLab"]||[colourspace isEqual:@"CalLab"];
 }
 
--(NSString *)finalFilter
-{
-	id filter=[dict objectForKey:@"Filter"];
 
-	if(!filter) return NO;
-	else if([filter isKindOfClass:[NSArray class]]) return [filter lastObject];
-	else return filter;
+
+
+-(int)imageWidth
+{
+	return [dict intValueForKey:@"Width" default:0];
 }
 
--(int)bitsPerComponent
+-(int)imageHeight
 {
-	NSNumber *val=[dict objectForKey:@"BitsPerComponent"];
-	if(val&&[val isKindOfClass:[NSNumber class]]) return [val intValue];
-	return 0;
+	return [dict intValueForKey:@"Height" default:0];
 }
+
+-(int)imageBitsPerComponent
+{
+	return [dict intValueForKey:@"BitsPerComponent" default:0];
+}
+
+
+
 
 -(NSString *)colourSpaceOrAlternate
 {
@@ -148,6 +153,8 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 		NSString *name=[colourspace objectAtIndex:0];
 		if([name isEqual:@"ICCBased"])
 		{
+			if(count<2) return nil;
+
 			PDFStream *def=[colourspace objectAtIndex:1];
 			if(![def isKindOfClass:[PDFStream class]]) return nil;
 
@@ -203,13 +210,34 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 	if(![decode isKindOfClass:[NSArray class]]) return nil;
 
 	int n;
-	if([self isGrey]||[self isMask]) n=1;
-	else if([self isRGB]||[self isLab]) n=3;
-	else if([self isCMYK]) n=4;
+	if([self isGreyImage]||[self isMaskImage]) n=1;
+	else if([self isRGBImage]||[self isLabImage]) n=3;
+	else if([self isCMYKImage]) n=4;
 	else return nil;
 	if([decode count]!=n*2) return nil;
 
 	return decode;
+}
+
+
+
+
+-(BOOL)hasMultipleFilters
+{
+	id filter=[dict objectForKey:@"Filter"];
+
+	if(!filter) return NO;
+	else if([filter isKindOfClass:[NSArray class]]) return [filter count]>1;
+	else NO;
+}
+
+-(NSString *)finalFilter
+{
+	id filter=[dict objectForKey:@"Filter"];
+
+	if(!filter) return NO;
+	else if([filter isKindOfClass:[NSArray class]]) return [filter lastObject];
+	else return filter;
 }
 
 

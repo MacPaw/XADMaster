@@ -5,6 +5,11 @@
 
 static int SortPages(id first,id second,void *context);
 
+static CSMemoryHandle *CreateTIFFHeaderWithNumberOfIFDs(int numifds);
+static void WriteTIFFShortEntry(CSMemoryHandle *header,int tag,int value);
+static void WriteTIFFLongEntry(CSMemoryHandle *header,int tag,int value);
+static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentries,int offset);
+
 @implementation XADPDFParser
 
 +(int)requiredHeaderSize { return 5+48; }
@@ -112,8 +117,11 @@ static int SortPages(id first,id second,void *context);
 			if(imgname) name=[NSString stringWithFormat:@"%@ (%@)",imgname,name];
 
 			NSNumber *length=[[image dictionary] objectForKey:@"Length"];
-			//NSArray *decode=[object decodeArray];
-			int bpc=[object bitsPerComponent];
+			NSArray *decode=[image decodeArray];
+
+			int width=[image imageWidth];
+			int height=[image imageHeight];
+			int bpc=[image imageBitsPerComponent];
 
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				//[self XADStringWithString:[parser isCompressed]?@"Zlib":@"None"],XADCompressionNameKey,
@@ -121,56 +129,216 @@ static int SortPages(id first,id second,void *context);
 				image,@"PDFStream",
 			nil];
 
-			if([image isJPEG])
+			if([image isJPEGImage])
 			{
-				[dict setObject:length forKey:XADFileSizeKey];
-				[dict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey];
-				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
 				name=[name stringByAppendingPathExtension:@"jpg"];
-			}
-			else if([object isJPEG2000])
-			{
-				[dict setObject:length forKey:XADFileSizeKey];
+
+				if(![image hasMultipleFilters]) [dict setObject:length forKey:XADFileSizeKey];
 				[dict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey];
 				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
+			}
+			else if([image isJPEG2000Image])
+			{
 				name=[name stringByAppendingPathExtension:@"jp2"];
+
+				if(![image hasMultipleFilters]) [dict setObject:length forKey:XADFileSizeKey];
+				[dict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey];
+				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
+
 				[self reportInterestingFileWithReason:@"JPEG2000 embedded in PDF"];
 			}
-			else if([object isBitmap]||[object isMask])
+			else if([image isBitmapImage]||[image isMaskImage])
 			{
-			}
-			else if((bpc==8||bpc==16)&&[object isGrey])
-			{
-			}
-			else if((bpc==8||bpc==16)&&[object isRGB])
-			{
-			}
-			else if((bpc==8||bpc==16)&&[object isCMYK])
-			{
-			}
-			else if((bpc==8||bpc==16)&&[object isLab])
-			{
-			}
-			else if([object isIndexed])
-			{
-				NSString *subcolourspace=[object subColourSpaceOrAlternate];
-				if([subcolourspace isEqual:@"DeviceRGB"]||[subcolourspace isEqual:@"CalRGB"])
-				{
-					int colours=[object numberOfColours];
-					NSData *palettedata=[object paletteData];
+				name=[name stringByAppendingPathExtension:@"tiff"];
 
-					if(palettedata)
-					{
-						[dict setObject:[NSNumber numberWithInt:colours] forKey:@"PDFNumberOfColours"];
-						[dict setObject:palettedata forKey:@"PDFPaletteData"];
-					}
+				CSMemoryHandle *header=CreateTIFFHeaderWithNumberOfIFDs(8);
+
+				WriteTIFFShortEntry(header,256,width);
+				WriteTIFFShortEntry(header,257,height);
+				WriteTIFFShortEntry(header,258,bpc);
+				WriteTIFFShortEntry(header,259,1); // Compression
+
+				if([object isMaskImage])
+				{
+					WriteTIFFShortEntry(header,262,4); // PhotoMetricInterpretation = Mask
 				}
+				else if(decode)
+				{
+					float zeropoint=[[decode objectAtIndex:0] floatValue];
+					float onepoint=[[decode objectAtIndex:1] floatValue];
+					if(zeropoint>onepoint) WriteTIFFShortEntry(header,262,0); // PhotoMetricInterpretation = WhiteIsZero
+					else WriteTIFFShortEntry(header,262,1); // PhotoMetricInterpretation = BlackIsZero
+				}
+				else
+				{
+					WriteTIFFShortEntry(header,262,1); // PhotoMetricInterpretation = BlackIsZero
+				}
+
+				WriteTIFFLongEntry(header,273,8+8*12+4); // StripOffsets
+				WriteTIFFLongEntry(header,278,height); // RowsPerStrip
+				WriteTIFFLongEntry(header,279,((width+7)/8)*height); // StripByteCounts
+
+				[header writeUInt32LE:0]; // Next IFD offset.
+
+				[dict setObject:@"TIFF" forKey:@"PDFStreamType"];
+				[dict setObject:[header data] forKey:@"PDFTIFFHeader"];
+			}
+			else if([image isGreyImage])
+			{
+				name=[name stringByAppendingPathExtension:@"tiff"];
+
+				CSMemoryHandle *header=CreateTIFFHeaderWithNumberOfIFDs(8);
+
+				WriteTIFFShortEntry(header,256,width);
+				WriteTIFFShortEntry(header,257,height);
+				WriteTIFFShortEntry(header,258,bpc);
+				WriteTIFFShortEntry(header,259,1); // Compression
+
+				if(decode)
+				{
+					float zeropoint=[[decode objectAtIndex:0] floatValue];
+					float onepoint=[[decode objectAtIndex:1] floatValue];
+					if(zeropoint>onepoint) WriteTIFFShortEntry(header,262,0); // PhotoMetricInterpretation = WhiteIsZero
+					else WriteTIFFShortEntry(header,262,1); // PhotoMetricInterpretation = BlackIsZero
+				}
+				else
+				{
+					WriteTIFFShortEntry(header,262,1); // PhotoMetricInterpretation = BlackIsZero
+				}
+
+				WriteTIFFLongEntry(header,273,8+8*12+4); // StripOffsets
+				WriteTIFFLongEntry(header,278,height); // RowsPerStrip
+				WriteTIFFLongEntry(header,279,((width*bpc+7)/8)*height); // StripByteCounts
+
+				[header writeUInt32LE:0]; // Next IFD offset.
+
+				[dict setObject:@"TIFF" forKey:@"PDFStreamType"];
+				[dict setObject:[header data] forKey:@"PDFTIFFHeader"];
+			}
+			else if([image isRGBImage])
+			{
+				name=[name stringByAppendingPathExtension:@"tiff"];
+
+				CSMemoryHandle *header=CreateTIFFHeaderWithNumberOfIFDs(9);
+
+				WriteTIFFShortEntry(header,256,width);
+				WriteTIFFShortEntry(header,257,height);
+				WriteTIFFShortArrayEntry(header,258,3,8+9*12+4); // BitsPerSample
+				WriteTIFFShortEntry(header,259,1); // Compression
+				WriteTIFFShortEntry(header,262,2); // PhotoMetricInterpretation = RGB
+				WriteTIFFLongEntry(header,273,8+9*12+4+6); // StripOffsets
+				WriteTIFFShortEntry(header,277,3); // SamplesPerPixel
+				WriteTIFFLongEntry(header,278,height); // RowsPerStrip
+				WriteTIFFLongEntry(header,279,((3*width*bpc+7)/8)*height); // StripByteCounts
+
+				[header writeUInt32LE:0]; // Next IFD offset.
+
+				[header writeUInt16LE:bpc]; // Write BitsPerSample array.
+				[header writeUInt16LE:bpc];
+				[header writeUInt16LE:bpc];
+
+				[dict setObject:@"TIFF" forKey:@"PDFStreamType"];
+				[dict setObject:[header data] forKey:@"PDFTIFFHeader"];
+			}
+			else if([image isCMYKImage])
+			{
+			}
+			else if([image isLabImage])
+			{
+			}
+			else if([image isIndexedImage])
+			{
 			}
 
 			[dict setObject:[self XADPathWithString:name] forKey:XADFileNameKey];
 
 			[self addEntryWithDictionary:dict];
 		}
+
+/*				[header writeUInt8:'I']; // Magic number for little-endian TIFF.
+				[header writeUInt8:'I'];
+				[header writeUInt16LE:42];
+				[header writeUInt32LE:8]; // Offset of IFD.
+				[header writeUInt16LE:.]; // Number of IFD entries.
+
+				[header writeUInt16LE:256]; // ImageWidth
+				[header writeUInt16LE:3];
+				[header writeUInt32LE:1];
+				[header writeUInt32LE:[image imageWidth]];
+
+				[header writeUInt16LE:257]; // ImageHeight
+				[header writeUInt16LE:3];
+				[header writeUInt32LE:1];
+				[header writeUInt32LE:[image imageHeight]];
+
+				[header writeUInt16LE:258]; // BitsPerSample
+				[header writeUInt16LE:3];
+				[header writeUInt32LE:1];
+				[header writeUInt32LE:8]; // RGB=8,8,8
+
+				if([object isIndexed])
+				{
+					NSString *subcolourspace=[object subColourSpaceOrAlternate];
+					if([subcolourspace isEqual:@"DeviceRGB"]||[subcolourspace isEqual:@"CalRGB"])
+					{
+						int colours=[object numberOfColours];
+						NSData *palettedata=[object paletteData];
+
+						if(palettedata)
+						{
+							[dict setObject:[NSNumber numberWithInt:colours] forKey:@"PDFNumberOfColours"];
+							[dict setObject:palettedata forKey:@"PDFPaletteData"];
+						}
+					}
+				}
+
+				[object isGrey]
+				[object isRGB]
+				[object isCMYK]
+				[object isLab]
+
+		[header writeUInt16LE:259]; // Compression
+		[header writeUInt16LE:3];
+		[header writeUInt32LE:1];
+		[header writeUInt32LE:1]; // None
+
+		[header writeUInt16LE:262]; // PhotoMetricInterpretation
+		[header writeUInt16LE:3];
+		[header writeUInt32LE:1];
+		[header writeUInt32LE:1]; // BlackIsZero // 2= RGB // 3=Palette // 4=Mask // 5=CMYK // 8=Lab
+
+		[header writeUInt16LE:273]; // StripOffsets
+		[header writeUInt16LE:4];
+		[header writeUInt32LE:1];
+		[header writeUInt32LE:0];
+
+/ *		[header writeUInt16LE:277]; // SamplesPerPixel
+		[header writeUInt16LE:3];
+		[header writeUInt32LE:1];
+		[header writeUInt32LE:3];* /
+
+		[header writeUInt16LE:278]; // RowsPerStrip
+		[header writeUInt16LE:3];
+		[header writeUInt32LE:1];
+		[header writeUInt32LE:1];
+
+		[header writeUInt16LE:279]; // StripByteCounts
+		[header writeUInt16LE:4];
+		[header writeUInt32LE:1];
+		[header writeUInt32LE:0];
+
+/ *		[header writeUInt16LE:320]; // ColorMap
+		[header writeUInt16LE:3];
+		[header writeUInt32LE:3*2^bitspersample];
+		[header writeUInt32LE:offset];* /
+
+/ *		[header writeUInt16LE:322]; // InkSet
+		[header writeUInt16LE:3];
+		[header writeUInt32LE:1];
+		[header writeUInt32LE:1]; // CMYK* /
+
+		[header writeUInt32LE:0]; // Next IFD offset.
+*/
 	}
 	@catch(id e)
 	{
@@ -189,9 +357,15 @@ static int SortPages(id first,id second,void *context);
 	{
 		return [stream JPEGHandle];
 	}
-	else
+	else if([streamtype isEqual:@"TIFF"])
 	{
-		return nil;
+		CSHandle *handle=[stream handle];
+		if(!handle) return nil;
+
+		NSData *header=[dict objectForKey:@"PDFTIFFHeader"];
+
+		return [CSMultiHandle multiHandleWithHandles:
+		[CSMemoryHandle memoryHandleForReadingData:header],handle,nil];
 	}
 }
 
@@ -213,8 +387,41 @@ static int SortPages(id first,id second,void *context)
 	else return [firstpage compare:secondpage];
 }
 
+static CSMemoryHandle *CreateTIFFHeaderWithNumberOfIFDs(int numifds)
+{
+	CSMemoryHandle *header=[CSMemoryHandle memoryHandleForWriting];
+	[header writeUInt8:'I']; // Magic number for little-endian TIFF.
+	[header writeUInt8:'I'];
+	[header writeUInt16LE:42];
+	[header writeUInt32LE:8]; // Offset of IFD.
+	[header writeUInt16LE:numifds]; // Number of IFD entries.
+	return header;
+}
+
+static void WriteTIFFShortEntry(CSMemoryHandle *header,int tag,int value)
+{
+	[header writeUInt16LE:tag];
+	[header writeUInt16LE:3];
+	[header writeUInt32LE:1];
+	[header writeUInt32LE:value];
+}
 
 
+static void WriteTIFFLongEntry(CSMemoryHandle *header,int tag,int value)
+{
+	[header writeUInt16LE:tag];
+	[header writeUInt16LE:4];
+	[header writeUInt32LE:1];
+	[header writeUInt32LE:value];
+}
+
+static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentries,int offset)
+{
+	[header writeUInt16LE:tag];
+	[header writeUInt16LE:3];
+	[header writeUInt32LE:numentries];
+	[header writeUInt32LE:offset];
+}
 
 /*
 

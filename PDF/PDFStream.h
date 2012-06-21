@@ -24,17 +24,19 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 -(PDFObjectReference *)reference;
 
 -(BOOL)isImage;
--(BOOL)isJPEG;
--(BOOL)isJPEG2000;
--(BOOL)isMask;
--(BOOL)isBitmap;
--(BOOL)isIndexed;
--(BOOL)isGrey;
--(BOOL)isRGB;
--(BOOL)isCMYK;
--(BOOL)isLab;
--(NSString *)finalFilter;
--(int)bitsPerComponent;
+-(BOOL)isJPEGImage;
+-(BOOL)isJPEG2000Image;
+-(BOOL)isMaskImage;
+-(BOOL)isBitmapImage;
+-(BOOL)isIndexedImage;
+-(BOOL)isGreyImage;
+-(BOOL)isRGBImage;
+-(BOOL)isCMYKImage;
+-(BOOL)isLabImage;
+
+-(int)imageWidth;
+-(int)imageHeight;
+-(int)imageBitsPerComponent;
 
 -(NSString *)colourSpaceOrAlternate;
 -(NSString *)subColourSpaceOrAlternate;
@@ -42,6 +44,9 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 -(int)numberOfColours;
 -(NSData *)paletteData;
 -(NSArray *)decodeArray;
+
+-(BOOL)hasMultipleFilters;
+-(NSString *)finalFilter;
 
 -(CSHandle *)rawHandle;
 -(CSHandle *)handle;

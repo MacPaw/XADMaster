@@ -25,8 +25,12 @@ unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 forEntryWithDictionary:(NSDictionary *)dict parser:(XADArchiveParser *)parser
 preservePermissions:(BOOL)preservepermissions
 {
+	#if defined(__COCOTRON__)
 	const wchar_t *wpath=[path fileSystemRepresentationW];
-
+	#else
+	const wchar_t *wpath=(const wchar_t *)[path fileSystemRepresentation];
+	#endif
+	
 	// If the file is read-only, change this temporarily and remember to change back.
 	BOOL changedattributes=NO;
 	DWORD oldattributes=GetFileAttributesW(wpath);
@@ -93,7 +97,12 @@ preservePermissions:(BOOL)preservepermissions
 
 +(BOOL)copyDateFromPath:(NSString *)src toPath:(NSString *)dest
 {
+	#if defined(__COCOTRON__)
 	const wchar_t *wsrc=[src fileSystemRepresentationW];
+	#else
+	const wchar_t *wsrc=(const wchar_t *)[src fileSystemRepresentation];
+	#endif
+
     HANDLE srchandle=CreateFileW(wsrc,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE, 
 	NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
 	if(srchandle==INVALID_HANDLE_VALUE) return NO;
@@ -103,7 +112,12 @@ preservePermissions:(BOOL)preservepermissions
 
 	CloseHandle(srchandle);
 
+	#if defined(__COCOTRON__)
 	const wchar_t *wdest=[dest fileSystemRepresentationW];
+	#else
+	const wchar_t *wdest=(const wchar_t *)[dest fileSystemRepresentation];
+	#endif
+
 	HANDLE desthandle=CreateFileW(wdest,GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,
 	NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
 	if(desthandle==INVALID_HANDLE_VALUE) return NO;
@@ -123,7 +137,12 @@ preservePermissions:(BOOL)preservepermissions
 	FILETIME time;
 	if(!SystemTimeToFileTime(&now,&time)) return NO;
 
+	#if defined(__COCOTRON__)
 	const wchar_t *wpath=[path fileSystemRepresentationW];
+	#else
+	const wchar_t *wpath=(const wchar_t *)[path fileSystemRepresentation];
+	#endif
+
 	HANDLE handle=CreateFileW(wpath,GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,
 	NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
 	if(handle==INVALID_HANDLE_VALUE) return NO;

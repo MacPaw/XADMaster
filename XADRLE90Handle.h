@@ -2,7 +2,7 @@
 
 @interface XADRLE90Handle:CSByteStreamHandle
 {
-	int byte,count;
+	int repeatedbyte,count;
 }
 
 -(void)resetByteStream;

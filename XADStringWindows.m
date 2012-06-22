@@ -21,7 +21,7 @@ static NSDictionary *DescriptionForWindowsCodePageDictionary();
 +(BOOL)canDecodeBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding
 {
 	int codepage=EncodingNameToWindowsCodePage(encoding);
-	if(!codepage) return nil;
+	if(!codepage) return NO;
 
 	int numchars=MultiByteToWideChar(codepage,MB_ERR_INVALID_CHARS,bytes,length,NULL,0);
 	return numchars!=0;

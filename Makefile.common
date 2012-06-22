@@ -214,6 +214,7 @@ CMDLINE_OBJC_FILES =	CSCommandLineParser.m \
 # Object files
 
 LIBRARY_OBJS =		$(LIBRARY_OBJC_FILES:%.m=$(BUILD_DIR)/%.o) \
+			$(PLATFORM_C_FILES:%.c=$(BUILD_DIR)/%.o) \
 			$(PLATFORM_OBJC_FILES:%.m=$(BUILD_DIR)/%.o) \
 			$(LIBRARY_C_FILES:%.c=$(BUILD_DIR)/%.o) \
 			$(LIBRARY_CXX_FILES:%.cpp=$(BUILD_DIR)/%.o)
@@ -233,6 +234,16 @@ UNAR_OBJS =		$(UNAR_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
 LSAR_OBJS =		$(LSAR_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
 
 CMDLINE_OBJS=		$(CMDLINE_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
+
+OBJS = 	$(LIBRARY_OBJS) \
+	$(XADTEST2_OBJS) \
+	$(XADTEST3_OBJS) \
+	$(XADTEST4_OBJS) \
+	$(XADTEST5_OBJS) \
+	$(XADTEST6_OBJS) \
+	$(UNAR_OBJS) \
+	$(LSAR_OBJS) \
+	$(CMDLINE_OBJS)
 
 # Other files
 

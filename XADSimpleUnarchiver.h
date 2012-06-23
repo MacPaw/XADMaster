@@ -136,8 +136,6 @@
 
 +(NSString *)_findUniquePathForOriginalPath:(NSString *)path;
 +(NSString *)_findUniquePathForOriginalPath:(NSString *)path reservedPaths:(NSSet *)reserved;
-+(BOOL)_fileExistsAtPath:(NSString *)path;
-+(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr;
 +(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path;
 +(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest;
 +(BOOL)_removeItemAtPath:(NSString *)path;

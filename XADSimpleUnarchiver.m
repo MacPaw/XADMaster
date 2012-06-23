@@ -2,7 +2,6 @@
 #import "XADPlatform.h"
 #import "XADException.h"
 
-#include <sys/stat.h>
 #ifdef __APPLE__
 #include <sys/xattr.h>
 #endif
@@ -465,7 +464,7 @@
 			// If there is a possibility we might remove the enclosing directory
 			// later, do not handle collisions until after extraction is finished.
 			// For now, just pick a unique name if necessary.
-			if([XADSimpleUnarchiver _fileExistsAtPath:destpath])
+			if([XADPlatform fileExistsAtPath:destpath])
 			{
 				originaldest=destpath;
 				destpath=[XADSimpleUnarchiver _findUniquePathForOriginalPath:destpath];
@@ -873,7 +872,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	if(overwrite) return path;
 
 	// Check for collision.
-	if([XADSimpleUnarchiver _fileExistsAtPath:path])
+	if([XADPlatform fileExistsAtPath:path])
 	{
 		// When writing OS X data forks, some collisions will happen. Try
 		// to handle these.
@@ -935,10 +934,10 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	if(!dest) return YES;
 
 	BOOL isdestdir;
-	if([XADSimpleUnarchiver _fileExistsAtPath:dest isDirectory:&isdestdir])
+	if([XADPlatform fileExistsAtPath:dest isDirectory:&isdestdir])
 	{
 		BOOL issrcdir;
-		if(![XADSimpleUnarchiver _fileExistsAtPath:src isDirectory:&issrcdir]) return NO;
+		if(![XADPlatform fileExistsAtPath:src isDirectory:&issrcdir]) return NO;
 
 		if(issrcdir&&isdestdir)
 		{
@@ -988,33 +987,10 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	NSString *dest=path;
 	int n=1;
 
-	while([self _fileExistsAtPath:dest] || (reserved&&[reserved containsObject:dest]))
+	while([XADPlatform fileExistsAtPath:dest] || (reserved&&[reserved containsObject:dest]))
 	dest=[NSString stringWithFormat:@"%@-%d%@",base,n++,extension];
 
 	return dest;
-}
-
-+(BOOL)_fileExistsAtPath:(NSString *)path { return [self _fileExistsAtPath:path isDirectory:NULL]; }
-
-+(BOOL)_fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr
-{
-	// [NSFileManager fileExistsAtPath:] is broken. It will happily return NO
-	// for some symbolic links. We need to implement our own.
-
-	struct stat st;
-	#ifdef __MINGW32__
-	if(stat([path fileSystemRepresentation],&st)!=0) return NO;
-	#else
-	if(lstat([path fileSystemRepresentation],&st)!=0) return NO;
-	#endif
-
-	if(isdirptr)
-	{
-		if((st.st_mode&S_IFMT)==S_IFDIR) *isdirptr=YES;
-		else *isdirptr=NO;
-	}
-
-	return YES;
 }
 
 +(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path

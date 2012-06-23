@@ -161,6 +161,28 @@ preservePermissions:(BOOL)preservepermissions
 // Path functions.
 //
 
++(BOOL)fileExistsAtPath:(NSString *)path { return [self fileExistsAtPath:path isDirectory:NULL]; }
+
++(BOOL)fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr
+{
+	#if defined(__COCOTRON__)
+	const wchar_t *wpath=[path fileSystemRepresentationW];
+	#else
+	const wchar_t *wpath=(const wchar_t *)[path fileSystemRepresentation];
+	#endif
+
+	struct _stat st;
+	if(_wstat(wpath,&st)!=0) return NO;
+
+	if(isdirptr)
+	{
+		if((st.st_mode&S_IFMT)==S_IFDIR) *isdirptr=YES;
+		else *isdirptr=NO;
+	}
+
+	return YES;
+}
+
 +(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent
 {
 	NSDate *now=[NSDate date];

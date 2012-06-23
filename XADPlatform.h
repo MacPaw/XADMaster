@@ -17,6 +17,8 @@ preservePermissions:(BOOL)preservepermissions;
 +(BOOL)resetDateAtPath:(NSString *)path;
 
 // Path functions.
++(BOOL)fileExistsAtPath:(NSString *)path;
++(BOOL)fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr;
 +(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent;
 +(NSString *)sanitizedPathComponent:(NSString *)component;
 

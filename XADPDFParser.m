@@ -210,10 +210,26 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				}
 				else if([image isCMYKImage])
 				{
-/*		[header writeUInt16LE:322]; // InkSet
-		[header writeUInt16LE:3];
-		[header writeUInt32LE:1];
-		[header writeUInt32LE:1]; // CMYK*/
+					header=CreateTIFFHeaderWithNumberOfIFDs(10);
+					bytesperrow=(4*width*bpc+7)/8;
+
+					WriteTIFFShortEntry(header,256,width);
+					WriteTIFFShortEntry(header,257,height);
+					WriteTIFFShortArrayEntry(header,258,4,8+2+10*12+4); // BitsPerSample
+					WriteTIFFShortEntry(header,259,1); // Compression
+					WriteTIFFShortEntry(header,262,2); // PhotoMetricInterpretation = RGB
+					WriteTIFFLongEntry(header,273,8+2+10*12+4+8); // StripOffsets
+					WriteTIFFShortEntry(header,277,4); // SamplesPerPixel
+					WriteTIFFLongEntry(header,278,height); // RowsPerStrip
+					WriteTIFFLongEntry(header,279,bytesperrow*height); // StripByteCounts
+					WriteTIFFShortEntry(header,322,1); // InkSet = CMYK
+
+					[header writeUInt32LE:0]; // Next IFD offset.
+
+					[header writeUInt16LE:bpc]; // Write BitsPerSample array.
+					[header writeUInt16LE:bpc];
+					[header writeUInt16LE:bpc];
+					[header writeUInt16LE:bpc];
 				}
 				else if([image isLabImage])
 				{

@@ -136,6 +136,25 @@ preservePermissions:(BOOL)preservepermissions
 // Path functions.
 //
 
++(BOOL)fileExistsAtPath:(NSString *)path { return [self fileExistsAtPath:path isDirectory:NULL]; }
+
++(BOOL)fileExistsAtPath:(NSString *)path isDirectory:(BOOL *)isdirptr
+{
+	// [NSFileManager fileExistsAtPath:] is broken. It will happily return NO
+	// for some symbolic links. We need to implement our own.
+
+	struct stat st;
+	if(lstat([path fileSystemRepresentation],&st)!=0) return NO;
+
+	if(isdirptr)
+	{
+		if((st.st_mode&S_IFMT)==S_IFDIR) *isdirptr=YES;
+		else *isdirptr=NO;
+	}
+
+	return YES;
+}
+
 +(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent
 {
 	// TODO: ensure this path is actually unique.

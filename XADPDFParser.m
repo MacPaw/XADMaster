@@ -1,5 +1,4 @@
 #import "XADPDFParser.h"
-#import "PDF/PDFParser.h"
 #import "CSMemoryHandle.h"
 #import "CSMultiHandle.h"
 
@@ -130,23 +129,24 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				image,@"PDFStream",
 			nil];
 
-			if([image isJPEGImage])
+			if([image isJPEGImage]||[image isJPEG2000Image])
 			{
-				name=[name stringByAppendingPathExtension:@"jpg"];
+				if([image isJPEGImage])
+				{
+					name=[name stringByAppendingPathExtension:@"jpg"];
+				}
+				else
+				{
+					name=[name stringByAppendingPathExtension:@"jp2"];
+					[self reportInterestingFileWithReason:@"JPEG2000 embedded in PDF"];
+				}
+
+				NSString *compname=[self compressionNameForStream:image excludingLast:YES];
+				[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
 
 				if(![image hasMultipleFilters]) [dict setObject:length forKey:XADFileSizeKey];
-				[dict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey];
-				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
-			}
-			else if([image isJPEG2000Image])
-			{
-				name=[name stringByAppendingPathExtension:@"jp2"];
 
-				if(![image hasMultipleFilters]) [dict setObject:length forKey:XADFileSizeKey];
-				[dict setObject:[self XADStringWithString:@"None"] forKey:XADCompressionNameKey];
 				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
-
-				[self reportInterestingFileWithReason:@"JPEG2000 embedded in PDF"];
 			}
 			else
 			{
@@ -217,7 +217,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 					WriteTIFFShortEntry(header,257,height);
 					WriteTIFFShortArrayEntry(header,258,4,8+2+10*12+4); // BitsPerSample
 					WriteTIFFShortEntry(header,259,1); // Compression
-					WriteTIFFShortEntry(header,262,2); // PhotoMetricInterpretation = RGB
+					WriteTIFFShortEntry(header,262,5); // PhotoMetricInterpretation = Separated
 					WriteTIFFLongEntry(header,273,8+2+10*12+4+8); // StripOffsets
 					WriteTIFFShortEntry(header,277,4); // SamplesPerPixel
 					WriteTIFFLongEntry(header,278,height); // RowsPerStrip
@@ -286,6 +286,9 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 					NSData *headerdata=[header data];
 					off_t headersize=[headerdata length];
 
+					NSString *compname=[self compressionNameForStream:image excludingLast:NO];
+					[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
+
 					[dict setObject:[NSNumber numberWithLongLong:headersize+bytesperrow*height] forKey:XADFileSizeKey];
 					[dict setObject:[NSNumber numberWithLongLong:bytesperrow*height] forKey:@"PDFTIFFDataLength"];
 					[dict setObject:[header data] forKey:@"PDFTIFFHeader"];
@@ -304,7 +307,31 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 		NSLog(@"Error parsing PDF file %@: %@",[[self handle] name],e);
 		[XADException raiseDecrunchException];
 	}
+}
 
+-(NSString *)compressionNameForStream:(PDFStream *)stream excludingLast:(BOOL)excludelast
+{
+	NSMutableString *string=[NSMutableString string];
+
+	NSDictionary *dict=[stream dictionary];
+	NSArray *filter=[dict arrayForKey:@"Filter"];
+
+	if(filter)
+	{
+		int count=[filter count];
+		if(excludelast) count--;
+
+		for(int i=count-1;i>=0;i--)
+		{
+			NSString *name=[filter objectAtIndex:i];
+			if([name hasSuffix:@"Decode"]) name=[name substringToIndex:[name length]-6];
+			if(i!=count-1) [string appendString:@"+"];
+			[string appendString:name];
+		}
+	}
+
+	if(![string length]) return @"None";
+	return string;
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum

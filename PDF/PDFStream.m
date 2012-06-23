@@ -196,10 +196,19 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 	if([colourspace count]!=4) return nil;
 	if(![[colourspace objectAtIndex:0] isEqual:@"Indexed"]) return nil;
 
+	int numcolours=[[colourspace objectAtIndex:2] intValue]+1;
+
 	id palette=[colourspace objectAtIndex:3];
-	if([palette isKindOfClass:[PDFStream class]]) return [[palette handle] remainingFileContents];
-	else if([palette isKindOfClass:[PDFString class]]) return [palette data];
+
+	NSData *data;
+	if([palette isKindOfClass:[PDFStream class]]) data=[[palette handle] remainingFileContents];
+	else if([palette isKindOfClass:[PDFString class]]) data=[palette data];
 	else return nil;
+
+	if(!data) return nil;
+	if([data length]<3*numcolours) return nil;
+
+	return data;
 }
 
 -(NSArray *)decodeArray

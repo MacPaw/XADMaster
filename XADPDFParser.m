@@ -157,7 +157,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				if([image isGreyImage]||[image isMaskImage])
 				{
 					header=CreateTIFFHeaderWithNumberOfIFDs(8);
-					bytesperrow=(width+7)/8;
+					bytesperrow=(width*bpc+7)/8;
 
 					WriteTIFFShortEntry(header,256,width);
 					WriteTIFFShortEntry(header,257,height);
@@ -180,9 +180,11 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 						WriteTIFFShortEntry(header,262,1); // PhotoMetricInterpretation = BlackIsZero
 					}
 
-					WriteTIFFLongEntry(header,273,8+8*12+4); // StripOffsets
+					WriteTIFFLongEntry(header,273,8+2+8*12+4); // StripOffsets
 					WriteTIFFLongEntry(header,278,height); // RowsPerStrip
 					WriteTIFFLongEntry(header,279,bytesperrow*height); // StripByteCounts
+
+					[header writeUInt32LE:0]; // Next IFD offset.
 				}
 				else if([image isRGBImage])
 				{
@@ -191,10 +193,10 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 
 					WriteTIFFShortEntry(header,256,width);
 					WriteTIFFShortEntry(header,257,height);
-					WriteTIFFShortArrayEntry(header,258,3,8+9*12+4); // BitsPerSample
+					WriteTIFFShortArrayEntry(header,258,3,8+2+9*12+4); // BitsPerSample
 					WriteTIFFShortEntry(header,259,1); // Compression
 					WriteTIFFShortEntry(header,262,2); // PhotoMetricInterpretation = RGB
-					WriteTIFFLongEntry(header,273,8+9*12+4+6); // StripOffsets
+					WriteTIFFLongEntry(header,273,8+2+9*12+4+6); // StripOffsets
 					WriteTIFFShortEntry(header,277,3); // SamplesPerPixel
 					WriteTIFFLongEntry(header,278,height); // RowsPerStrip
 					WriteTIFFLongEntry(header,279,bytesperrow*height); // StripByteCounts
@@ -217,29 +219,53 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				}
 				else if([image isIndexedImage])
 				{
-/*						NSString *subcolourspace=[object subColourSpaceOrAlternate];
-						if([subcolourspace isEqual:@"DeviceRGB"]||[subcolourspace isEqual:@"CalRGB"])
+					NSString *subcolourspace=[image subColourSpaceOrAlternate];
+					if([subcolourspace isEqual:@"DeviceRGB"]||[subcolourspace isEqual:@"CalRGB"])
+					{
+						int numpalettecolours=[image numberOfColours];
+						NSData *palettedata=[image paletteData];
+
+						if(palettedata)
 						{
-							int colours=[object numberOfColours];
-							NSData *palettedata=[object paletteData];
+							header=CreateTIFFHeaderWithNumberOfIFDs(9);
+							bytesperrow=(width*bpc+7)/8;
 
-							if(palettedata)
+							int numtiffcolours=1<<bpc;
+
+							WriteTIFFShortEntry(header,256,width);
+							WriteTIFFShortEntry(header,257,height);
+							WriteTIFFShortEntry(header,258,bpc);
+							WriteTIFFShortEntry(header,259,1); // Compression
+							WriteTIFFShortEntry(header,262,3); // PhotoMetricInterpretation = Palette
+
+							WriteTIFFLongEntry(header,273,8+2+9*12+4+6*numtiffcolours); // StripOffsets
+							WriteTIFFLongEntry(header,278,height); // RowsPerStrip
+							WriteTIFFLongEntry(header,279,bytesperrow*height); // StripByteCounts
+
+							WriteTIFFShortArrayEntry(header,320,3*numtiffcolours,8+2+9*12+4); // StripByteCounts
+
+							[header writeUInt32LE:0]; // Next IFD offset.
+
+							const uint8_t *palettebytes=[palettedata bytes];
+
+							for(int col=0;col<3;col++)
+							for(int i=0;i<numtiffcolours;i++)
 							{
-								[dict setObject:[NSNumber numberWithInt:colours] forKey:@"PDFNumberOfColours"];
-								[dict setObject:palettedata forKey:@"PDFPaletteData"];
+								if(i<numpalettecolours)
+								{
+									[header writeUInt16LE:palettebytes[3*i+col]*0x101];
+								}
+								else
+								{
+									[header writeUInt16LE:0];
+								}
 							}
-						}*/
-
-/*		[header writeUInt16LE:320]; // ColorMap
-		[header writeUInt16LE:3];
-		[header writeUInt32LE:3*2^bitspersample];
-		[header writeUInt32LE:offset];*/
+						}
+					}
 				}
 
 				if(header)
 				{
-					[header writeUInt32LE:0]; // Next IFD offset.
-
 					NSData *headerdata=[header data];
 					off_t headersize=[headerdata length];
 
@@ -385,7 +411,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 		if(decode) [(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
 
 		[newimage setDepthGrey:bpc];
-		//[newimage setFormat:@"Raw greyscale // TODO - add format names
+		//[newimage setFormat:@"Raw greyscale" // TODO - add format names
 	}
 	else if((bpc==8||bpc==16)&&[object isRGB])
 	{

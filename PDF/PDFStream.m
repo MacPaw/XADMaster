@@ -92,13 +92,19 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 -(BOOL)isCMYKImage
 {
 	NSString *colourspace=[self colourSpaceOrAlternate];
-	return [colourspace isEqual:@"DeviceCMYK"]||[colourspace isEqual:@"CalCMYK"];
+	return [colourspace isEqual:@"DeviceCMYK"];
 }
 
 -(BOOL)isLabImage
 {
 	NSString *colourspace=[self colourSpaceOrAlternate];
-	return [colourspace isEqual:@"DeviceLab"]||[colourspace isEqual:@"CalLab"];
+	return [colourspace isEqual:@"Lab"];
+}
+
+-(BOOL)isSeparationImage
+{
+	NSString *colourspace=[self colourSpaceOrAlternate];
+	return [colourspace isEqual:@"Separation"];
 }
 
 
@@ -228,6 +234,21 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 	return decode;
 }
 
+-(NSString *)separationName
+{
+	id colourspace=[dict objectForKey:@"ColorSpace"];
+	if(!colourspace) return nil;
+
+	if(![colourspace isKindOfClass:[NSArray class]]) return nil;
+
+	int count=[colourspace count];
+	if(count<2) return nil;
+
+	NSString *name=[colourspace objectAtIndex:0];
+	if(![name isEqual:@"Separation"]) return nil;
+
+	return [colourspace objectAtIndex:1];
+}
 
 
 

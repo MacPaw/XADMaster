@@ -33,6 +33,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 -(BOOL)isRGBImage;
 -(BOOL)isCMYKImage;
 -(BOOL)isLabImage;
+-(BOOL)isSeparationImage;
 
 -(int)imageWidth;
 -(int)imageHeight;
@@ -44,6 +45,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 -(int)numberOfColours;
 -(NSData *)paletteData;
 -(NSArray *)decodeArray;
+-(NSString *)separationName;
 
 -(BOOL)hasMultipleFilters;
 -(NSString *)finalFilter;

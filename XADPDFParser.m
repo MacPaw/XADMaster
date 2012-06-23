@@ -138,7 +138,6 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				else
 				{
 					name=[name stringByAppendingPathExtension:@"jp2"];
-					[self reportInterestingFileWithReason:@"JPEG2000 embedded in PDF"];
 				}
 
 				NSString *compname=[self compressionNameForStream:image excludingLast:YES];
@@ -153,8 +152,6 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 			{
 				CSMemoryHandle *header=nil;
 				int bytesperrow=0;
-
-				name=[name stringByAppendingPathExtension:@"tiff"];
 
 				if([image isGreyImage]||[image isMaskImage])
 				{
@@ -288,6 +285,24 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 						}
 					}
 				}
+				else if([image isSeparationImage])
+				{
+					name=[NSString stringWithFormat:@"%@ (%@)",name,[image separationName]];
+
+					header=CreateTIFFHeaderWithNumberOfIFDs(8);
+					bytesperrow=(width*bpc+7)/8;
+
+					WriteTIFFShortEntry(header,256,width);
+					WriteTIFFShortEntry(header,257,height);
+					WriteTIFFShortEntry(header,258,bpc);
+					WriteTIFFShortEntry(header,259,1); // Compression
+					WriteTIFFShortEntry(header,262,0); // PhotoMetricInterpretation = WhiteIsZero
+					WriteTIFFLongEntry(header,273,8+2+8*12+4); // StripOffsets
+					WriteTIFFLongEntry(header,278,height); // RowsPerStrip
+					WriteTIFFLongEntry(header,279,bytesperrow*height); // StripByteCounts
+
+					[header writeUInt32LE:0]; // Next IFD offset.
+				}
 
 				if(header)
 				{
@@ -303,6 +318,8 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 					[dict setObject:@"TIFF" forKey:@"PDFStreamType"];
 				}
 			}
+
+			name=[name stringByAppendingPathExtension:@"tiff"];
 
 			[dict setObject:[self XADPathWithString:name] forKey:XADFileNameKey];
 			if(isencrypted) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];

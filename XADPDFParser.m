@@ -144,7 +144,8 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				NSString *compname=[self compressionNameForStream:image excludingLast:YES];
 				[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
 
-				if(![image hasMultipleFilters]) [dict setObject:length forKey:XADFileSizeKey];
+				if(![image hasMultipleFilters] && !isencrypted)
+				[dict setObject:length forKey:XADFileSizeKey];
 
 				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
 			}

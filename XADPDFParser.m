@@ -53,7 +53,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 
 		if([parser needsPassword])
 		{
-			if(![parser setPassword:password]) [XADException raisePasswordException];
+			if(![parser setPassword:[self password]]) [XADException raisePasswordException];
 		}
 
 		// Find image objects in object list

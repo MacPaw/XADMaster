@@ -371,6 +371,13 @@ NSString *AskForPassword(NSString *prompt)
 	char pass[1024];
 	fgets(pass,sizeof(pass),stdin);
 
+	int length=strlen(pass);
+	if(pass[length-1]=='\n')
+	{
+		pass[length-1]=0;
+		if(pass[length-2]=='\r') pass[length-2]=0;
+	}
+
 	#else
 
 	char *pass=getpass("Password (will not be shown): ");

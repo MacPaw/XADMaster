@@ -51,7 +51,8 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 
 		[parser parse];
 
-		if([parser needsPassword])
+		BOOL isencrypted=[parser needsPassword];
+		if(isencrypted)
 		{
 			if(![parser setPassword:[self password]]) [XADException raisePasswordException];
 		}
@@ -277,6 +278,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 			}
 
 			[dict setObject:[self XADPathWithString:name] forKey:XADFileNameKey];
+			if(isencrypted) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 
 			[self addEntryWithDictionary:dict];
 		}

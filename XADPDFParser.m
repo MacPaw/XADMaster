@@ -187,7 +187,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 
 					[header writeUInt32LE:0]; // Next IFD offset.
 				}
-				else if([image isRGBImage])
+				else if([image isRGBImage]||[image isLabImage])
 				{
 					header=CreateTIFFHeaderWithNumberOfIFDs(9);
 					bytesperrow=(3*width*bpc+7)/8;
@@ -196,7 +196,17 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 					WriteTIFFShortEntry(header,257,height);
 					WriteTIFFShortArrayEntry(header,258,3,8+2+9*12+4); // BitsPerSample
 					WriteTIFFShortEntry(header,259,1); // Compression
-					WriteTIFFShortEntry(header,262,2); // PhotoMetricInterpretation = RGB
+
+					if([image isRGBImage])
+					{
+						WriteTIFFShortEntry(header,262,2); // PhotoMetricInterpretation = RGB
+					}
+					else
+					{
+						WriteTIFFShortEntry(header,262,8); // PhotoMetricInterpretation = CIELAB
+						[self reportInterestingFileWithReason:@"CIELAB image in in PDF"];
+					}
+
 					WriteTIFFLongEntry(header,273,8+2+9*12+4+6); // StripOffsets
 					WriteTIFFShortEntry(header,277,3); // SamplesPerPixel
 					WriteTIFFLongEntry(header,278,height); // RowsPerStrip
@@ -230,9 +240,6 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 					[header writeUInt16LE:bpc];
 					[header writeUInt16LE:bpc];
 					[header writeUInt16LE:bpc];
-				}
-				else if([image isLabImage])
-				{
 				}
 				else if([image isIndexedImage])
 				{
@@ -412,144 +419,3 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 	[header writeUInt32LE:numentries];
 	[header writeUInt32LE:offset];
 }
-
-/*
-
--(XeeImage *)produceImage
-{
-	NSDictionary *dict=[object dictionary];
-	XeeImage *newimage=nil;
-	NSArray *decode=[object decodeArray];
-	int bpc=[object bitsPerComponent];
-
-	if([object isJPEG])
-	{
-		CSHandle *subhandle=[object JPEGHandle];
-		if(subhandle) newimage=[[[XeeJPEGImage alloc] initWithHandle:subhandle] autorelease];
-	}
-	else if([object isJPEG2000])
-	{
-		CSHandle *subhandle=[object JPEGHandle];
-		if(subhandle) newimage=[[[XeeImageIOImage alloc] initWithHandle:subhandle] autorelease];
-	}
-	else if([object isBitmap]||[object isMask])
-	{
-		CSHandle *subhandle=[object handle];
-
-		newimage=[[[XeeBitmapRawImage alloc] initWithHandle:subhandle
-		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]]
-		autorelease];
-
-		if(decode) [(XeeBitmapRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue]];
-		else [(XeeBitmapRawImage *)newimage setZeroPoint:0 onePoint:1];
-
-		[newimage setDepthBitmap];
-	}
-	else if((bpc==8||bpc==16)&&[object isGrey])
-	{
-		CSHandle *subhandle=[object handle];
-
-		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
-		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
-		depth:bpc colourSpace:XeeGreyRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
-
-		if(decode) [(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
-
-		[newimage setDepthGrey:bpc];
-		//[newimage setFormat:@"Raw greyscale" // TODO - add format names
-	}
-	else if((bpc==8||bpc==16)&&[object isRGB])
-	{
-		CSHandle *subhandle=[object handle];
-
-		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
-		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
-		depth:bpc colourSpace:XeeRGBRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
-
-		if(decode)
-		{
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:2] floatValue] onePoint:[[decode objectAtIndex:3] floatValue] forChannel:1];
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:4] floatValue] onePoint:[[decode objectAtIndex:5] floatValue] forChannel:2];
-		}
-
-		[newimage setDepthRGB:bpc];
-	}
-	else if((bpc==8||bpc==16)&&[object isCMYK])
-	{
-		CSHandle *subhandle=[object handle];
-
-		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
-		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
-		depth:bpc colourSpace:XeeCMYKRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
-
-		if(decode)
-		{
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:2] floatValue] onePoint:[[decode objectAtIndex:3] floatValue] forChannel:1];
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:4] floatValue] onePoint:[[decode objectAtIndex:5] floatValue] forChannel:2];
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:6] floatValue] onePoint:[[decode objectAtIndex:7] floatValue] forChannel:3];
-		}
-
-		[newimage setDepthCMYK:bpc alpha:NO];
-	}
-	else if((bpc==8||bpc==16)&&[object isLab])
-	{
-		CSHandle *subhandle=[object handle];
-
-		if(subhandle) newimage=[[[XeeRawImage alloc] initWithHandle:subhandle
-		width:[dict intValueForKey:@"Width" default:0] height:[dict intValueForKey:@"Height" default:0]
-		depth:bpc colourSpace:XeeLabRawColourSpace flags:XeeNoAlphaRawFlag] autorelease];
-
-		if(decode)
-		{
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:0] floatValue] onePoint:[[decode objectAtIndex:1] floatValue] forChannel:0];
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:2] floatValue] onePoint:[[decode objectAtIndex:3] floatValue] forChannel:1];
-			[(XeeRawImage *)newimage setZeroPoint:[[decode objectAtIndex:4] floatValue] onePoint:[[decode objectAtIndex:5] floatValue] forChannel:2];
-		}
-
-		[newimage setDepthLab:bpc alpha:NO];
-	}
-	else if([object isIndexed])
-	{
-		NSString *subcolourspace=[object subColourSpaceOrAlternate];
-		if([subcolourspace isEqual:@"DeviceRGB"]||[subcolourspace isEqual:@"CalRGB"])
-		{
-			int colours=[object numberOfColours];
-			NSData *palettedata=[object paletteData];
-
-			if(palettedata)
-			{
-				const uint8_t *palettebytes=[palettedata bytes];
-				int count=[palettedata length]/3;
-				if(count>256) count=256;
-
-				XeePalette *pal=[XeePalette palette];
-				for(int i=0;i<count;i++)
-				[pal setColourAtIndex:i red:palettebytes[3*i] green:palettebytes[3*i+1] blue:palettebytes[3*i+2]];
-
-				int subwidth=[[dict objectForKey:@"Width"] intValue];
-				int subheight=[[dict objectForKey:@"Height"] intValue];
-				CSHandle *subhandle=[object handle];
-
-				if(subhandle) newimage=[[[XeeIndexedRawImage alloc] initWithHandle:subhandle
-				width:subwidth height:subheight depth:bpc palette:pal] autorelease];
-				[newimage setDepthIndexed:colours];
-			}
-		}
-	}
-
-	if(!newimage&&!complained)
-	{
-		NSLog(@"Unsupported image in PDF: ColorSpace=%@, BitsPerComponent=%@, Filter=%@, DecodeParms=%@",
-		[dict objectForKey:@"ColorSpace"],[dict objectForKey:@"BitsPerComponent"],[dict objectForKey:@"Filter"],[dict objectForKey:@"DecodeParms"]);
-		complained=YES;
-	}
-
-	return newimage;
-}
-
-
-@end
-*/
-

@@ -153,7 +153,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				CSMemoryHandle *header=nil;
 				int bytesperrow=0;
 
-				if([image isGreyImage]||[image isMaskImage])
+				if([image isGreyImage] || [image isMaskImage])
 				{
 					header=CreateTIFFHeaderWithNumberOfIFDs(8);
 					bytesperrow=(width*bpc+7)/8;
@@ -185,7 +185,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 
 					[header writeUInt32LE:0]; // Next IFD offset.
 				}
-				else if([image isRGBImage]||[image isLabImage])
+				else if([image isRGBImage] || [image isLabImage])
 				{
 					header=CreateTIFFHeaderWithNumberOfIFDs(9);
 					bytesperrow=(3*width*bpc+7)/8;
@@ -242,7 +242,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				else if([image isIndexedImage])
 				{
 					NSString *subcolourspace=[image subColourSpaceOrAlternate];
-					if([subcolourspace isEqual:@"DeviceRGB"]||[subcolourspace isEqual:@"CalRGB"])
+					if([subcolourspace isEqual:@"DeviceRGB"] || [subcolourspace isEqual:@"CalRGB"])
 					{
 						int numpalettecolours=[image numberOfColours];
 						NSData *palettedata=[image paletteData];
@@ -282,6 +282,38 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 									[header writeUInt16LE:0];
 								}
 							}
+						}
+					}
+					else if([subcolourspace isEqual:@"DeviceCMYK"] && bpc==8)
+					{
+						int numpalettecolours=[image numberOfColours];
+						NSData *palettedata=[image paletteData];
+
+						if(palettedata)
+						{
+							header=CreateTIFFHeaderWithNumberOfIFDs(10);
+							bytesperrow=4*width;
+
+							WriteTIFFShortEntry(header,256,width);
+							WriteTIFFShortEntry(header,257,height);
+							WriteTIFFShortArrayEntry(header,258,4,8+2+10*12+4); // BitsPerSample
+							WriteTIFFShortEntry(header,259,1); // Compression
+							WriteTIFFShortEntry(header,262,5); // PhotoMetricInterpretation = Separated
+							WriteTIFFLongEntry(header,273,8+2+10*12+4+8); // StripOffsets
+							WriteTIFFShortEntry(header,277,4); // SamplesPerPixel
+							WriteTIFFLongEntry(header,278,height); // RowsPerStrip
+							WriteTIFFLongEntry(header,279,bytesperrow*height); // StripByteCounts
+							WriteTIFFShortEntry(header,322,1); // InkSet = CMYK
+
+							[header writeUInt32LE:0]; // Next IFD offset.
+
+							[header writeUInt16LE:8]; // Write BitsPerSample array.
+							[header writeUInt16LE:8];
+							[header writeUInt16LE:8];
+							[header writeUInt16LE:8];
+
+							[dict setObject:palettedata forKey:@"PDFTIFFPaletteData"];
+							[dict setObject:[NSNumber numberWithLongLong:width*height*4] forKey:@"PDFTIFFExpandedLength"];
 						}
 					}
 				}
@@ -379,6 +411,14 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 		NSData *header=[dict objectForKey:@"PDFTIFFHeader"];
 		if(!header) return nil;
 
+		NSData *palette=[dict objectForKey:@"PDFTIFFPaletteData"];
+		if(palette)
+		{
+			NSNumber *length=[dict objectForKey:@"PDFTIFFExpandedLength"];
+			handle=[[[XAD8BitPaletteExpansionHandle alloc] initWithHandle:handle
+			length:[length longLongValue] numberOfChannels:4 palette:palette] autorelease];
+		}
+
 		return [CSMultiHandle multiHandleWithHandles:
 		[CSMemoryHandle memoryHandleForReadingData:header],handle,nil];
 	}
@@ -437,3 +477,49 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 	[header writeUInt32LE:numentries];
 	[header writeUInt32LE:offset];
 }
+
+
+
+@implementation XAD8BitPaletteExpansionHandle
+
+-(id)initWithHandle:(CSHandle *)parent length:(off_t)length
+numberOfChannels:(int)numberofchannels palette:(NSData *)palettedata
+{
+	if((self=[super initWithHandle:parent length:length]))
+	{
+		palette=[palettedata retain];
+		numchannels=numberofchannels;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[palette release];
+	[super dealloc];
+}
+
+-(void)resetByteStream
+{
+	currentchannel=numchannels;
+}
+
+-(uint8_t)produceByteAtOffset:(off_t)pos
+{
+	if(currentchannel>=numchannels)
+	{
+		const uint8_t *palettebytes=[palette bytes];
+		int palettelength=[palette length];
+
+		int pixel=CSInputNextByte(input);
+
+		if(pixel<palettelength/numchannels) memcpy(bytebuffer,&palettebytes[pixel*numchannels],numchannels);
+		else memset(bytebuffer,0,numchannels);
+
+		currentchannel=0;
+	}
+
+	return bytebuffer[currentchannel++];
+}
+
+@end

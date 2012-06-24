@@ -202,6 +202,13 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 	if([colourspace count]!=4) return nil;
 	if(![[colourspace objectAtIndex:0] isEqual:@"Indexed"]) return nil;
 
+	NSString *subcolourspace=[self subColourSpaceOrAlternate];
+
+	int numchannels;
+	if([subcolourspace isEqual:@"DeviceRGB"] || [subcolourspace isEqual:@"CalRGB"]) numchannels=3;
+	else if([subcolourspace isEqual:@"DeviceCMYK"]) numchannels=4;
+	else return nil;
+
 	int numcolours=[[colourspace objectAtIndex:2] intValue]+1;
 
 	id palette=[colourspace objectAtIndex:3];
@@ -212,7 +219,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 	else return nil;
 
 	if(!data) return nil;
-	if([data length]<3*numcolours) return nil;
+	if([data length]<numchannels*numcolours) return nil;
 
 	return data;
 }

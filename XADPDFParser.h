@@ -19,3 +19,19 @@
 -(NSString *)formatName;
 
 @end
+
+@interface XAD8BitPaletteExpansionHandle:CSByteStreamHandle
+{
+	NSData *palette;
+
+	uint8_t bytebuffer[8];	
+	int numchannels,currentchannel;
+}
+
+-(id)initWithHandle:(CSHandle *)parent length:(off_t)length
+numberOfChannels:(int)numberofchannels palette:(NSData *)palettedata;
+
+-(void)resetByteStream;
+-(uint8_t)produceByteAtOffset:(off_t)pos;
+
+@end

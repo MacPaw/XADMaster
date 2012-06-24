@@ -131,6 +131,14 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 
 			if([image isJPEGImage]||[image isJPEG2000Image])
 			{
+				NSString *compname=[self compressionNameForStream:image excludingLast:YES];
+				[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
+
+				if(![image hasMultipleFilters] && !isencrypted)
+				[dict setObject:length forKey:XADFileSizeKey];
+
+				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
+
 				if([image isJPEGImage])
 				{
 					name=[name stringByAppendingPathExtension:@"jpg"];
@@ -139,14 +147,6 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 				{
 					name=[name stringByAppendingPathExtension:@"jp2"];
 				}
-
-				NSString *compname=[self compressionNameForStream:image excludingLast:YES];
-				[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
-
-				if(![image hasMultipleFilters] && !isencrypted)
-				[dict setObject:length forKey:XADFileSizeKey];
-
-				[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
 			}
 			else
 			{
@@ -348,10 +348,10 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 					[dict setObject:[NSNumber numberWithLongLong:bytesperrow*height] forKey:@"PDFTIFFDataLength"];
 					[dict setObject:[header data] forKey:@"PDFTIFFHeader"];
 					[dict setObject:@"TIFF" forKey:@"PDFStreamType"];
+
+					name=[name stringByAppendingPathExtension:@"tiff"];
 				}
 			}
-
-			name=[name stringByAppendingPathExtension:@"tiff"];
 
 			[dict setObject:[self XADPathWithString:name] forKey:XADFileNameKey];
 			if(isencrypted) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];

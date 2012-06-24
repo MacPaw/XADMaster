@@ -21,7 +21,7 @@ typedef int (*CCITTCodeTablePointer)[2];
 //static CCITTCodeTable T41DWhiteCodeTable;
 static int T41DWhiteCodeTable[][2];
 static int T41DBlackCodeTable[][2];
-static int T42DCodeTable[][2];
+//static int T42DCodeTable[][2];
 static int T62DCodeTable[][2];
 
 NSString *CCITTCodeException=@"CCITTCodeException";

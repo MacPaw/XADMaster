@@ -374,7 +374,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(NSString *)parsePDFStringWithParent:(PDFObjectReference *)parent
+-(PDFString *)parsePDFStringWithParent:(PDFObjectReference *)parent
 {
 	NSMutableData *data=[NSMutableData data];
 	int nesting=1;
@@ -431,7 +431,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(NSData *)parsePDFHexStringStartingWith:(int)c parent:(PDFObjectReference *)parent
+-(PDFString *)parsePDFHexStringStartingWith:(int)c parent:(PDFObjectReference *)parent
 {
 	NSMutableData *data=[NSMutableData data];
 

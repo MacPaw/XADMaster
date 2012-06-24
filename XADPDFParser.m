@@ -99,7 +99,7 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 		}
 
 		// Sort images in page order.
-		[images sortUsingFunction:SortPages context:order];
+		[images sortUsingFunction:(void *)SortPages context:order];
 
 		// Output images.
 		enumerator=[images objectEnumerator];
@@ -286,7 +286,6 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 					}
 					else if([subcolourspace isEqual:@"DeviceCMYK"] && bpc==8)
 					{
-						int numpalettecolours=[image numberOfColours];
 						NSData *palettedata=[image paletteData];
 
 						if(palettedata)
@@ -421,6 +420,10 @@ static void WriteTIFFShortArrayEntry(CSMemoryHandle *header,int tag,int numentri
 
 		return [CSMultiHandle multiHandleWithHandles:
 		[CSMemoryHandle memoryHandleForReadingData:header],handle,nil];
+	}
+	else
+	{
+		return nil;
 	}
 }
 

@@ -265,7 +265,7 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 
 	if(!filter) return NO;
 	else if([filter isKindOfClass:[NSArray class]]) return [filter count]>1;
-	else NO;
+	else return NO;
 }
 
 -(NSString *)finalFilter

@@ -553,6 +553,54 @@
 		1B78A34C1431339100E4AB87 /* Realloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78A34B1431339100E4AB87 /* Realloc.h */; };
 		1B78A34D1431339100E4AB87 /* Realloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78A34B1431339100E4AB87 /* Realloc.h */; };
 		1B78A34E1431339100E4AB87 /* Realloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78A34B1431339100E4AB87 /* Realloc.h */; };
+		1B78E7601597D73400C6BA6A /* XADPDFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E75E1597D73400C6BA6A /* XADPDFParser.h */; };
+		1B78E7611597D73400C6BA6A /* XADPDFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E75E1597D73400C6BA6A /* XADPDFParser.h */; };
+		1B78E7621597D73400C6BA6A /* XADPDFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E75E1597D73400C6BA6A /* XADPDFParser.h */; };
+		1B78E7631597D73400C6BA6A /* XADPDFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E75F1597D73400C6BA6A /* XADPDFParser.m */; };
+		1B78E7641597D73400C6BA6A /* XADPDFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E75F1597D73400C6BA6A /* XADPDFParser.m */; };
+		1B78E7651597D73400C6BA6A /* XADPDFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E75F1597D73400C6BA6A /* XADPDFParser.m */; };
+		1B78E7771597D76200C6BA6A /* CCITTHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7691597D76200C6BA6A /* CCITTHandle.h */; };
+		1B78E7781597D76200C6BA6A /* CCITTHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7691597D76200C6BA6A /* CCITTHandle.h */; };
+		1B78E7791597D76200C6BA6A /* CCITTHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7691597D76200C6BA6A /* CCITTHandle.h */; };
+		1B78E77A1597D76200C6BA6A /* CCITTHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76A1597D76200C6BA6A /* CCITTHandle.m */; };
+		1B78E77B1597D76200C6BA6A /* CCITTHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76A1597D76200C6BA6A /* CCITTHandle.m */; };
+		1B78E77C1597D76200C6BA6A /* CCITTHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76A1597D76200C6BA6A /* CCITTHandle.m */; };
+		1B78E77D1597D76200C6BA6A /* LZWHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76B1597D76200C6BA6A /* LZWHandle.h */; };
+		1B78E77E1597D76200C6BA6A /* LZWHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76B1597D76200C6BA6A /* LZWHandle.h */; };
+		1B78E77F1597D76200C6BA6A /* LZWHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76B1597D76200C6BA6A /* LZWHandle.h */; };
+		1B78E7801597D76200C6BA6A /* LZWHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76C1597D76200C6BA6A /* LZWHandle.m */; };
+		1B78E7811597D76200C6BA6A /* LZWHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76C1597D76200C6BA6A /* LZWHandle.m */; };
+		1B78E7821597D76200C6BA6A /* LZWHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76C1597D76200C6BA6A /* LZWHandle.m */; };
+		1B78E7831597D76200C6BA6A /* NSDictionaryNumberExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76D1597D76200C6BA6A /* NSDictionaryNumberExtension.h */; };
+		1B78E7841597D76200C6BA6A /* NSDictionaryNumberExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76D1597D76200C6BA6A /* NSDictionaryNumberExtension.h */; };
+		1B78E7851597D76200C6BA6A /* NSDictionaryNumberExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76D1597D76200C6BA6A /* NSDictionaryNumberExtension.h */; };
+		1B78E7861597D76200C6BA6A /* NSDictionaryNumberExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76E1597D76200C6BA6A /* NSDictionaryNumberExtension.m */; };
+		1B78E7871597D76200C6BA6A /* NSDictionaryNumberExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76E1597D76200C6BA6A /* NSDictionaryNumberExtension.m */; };
+		1B78E7881597D76200C6BA6A /* NSDictionaryNumberExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E76E1597D76200C6BA6A /* NSDictionaryNumberExtension.m */; };
+		1B78E7891597D76200C6BA6A /* PDFEncryptionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76F1597D76200C6BA6A /* PDFEncryptionHandler.h */; };
+		1B78E78A1597D76200C6BA6A /* PDFEncryptionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76F1597D76200C6BA6A /* PDFEncryptionHandler.h */; };
+		1B78E78B1597D76200C6BA6A /* PDFEncryptionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E76F1597D76200C6BA6A /* PDFEncryptionHandler.h */; };
+		1B78E78C1597D76200C6BA6A /* PDFEncryptionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7701597D76200C6BA6A /* PDFEncryptionHandler.m */; };
+		1B78E78D1597D76200C6BA6A /* PDFEncryptionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7701597D76200C6BA6A /* PDFEncryptionHandler.m */; };
+		1B78E78E1597D76200C6BA6A /* PDFEncryptionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7701597D76200C6BA6A /* PDFEncryptionHandler.m */; };
+		1B78E78F1597D76200C6BA6A /* PDFEncryptionUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7711597D76200C6BA6A /* PDFEncryptionUtils.h */; };
+		1B78E7901597D76200C6BA6A /* PDFEncryptionUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7711597D76200C6BA6A /* PDFEncryptionUtils.h */; };
+		1B78E7911597D76200C6BA6A /* PDFEncryptionUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7711597D76200C6BA6A /* PDFEncryptionUtils.h */; };
+		1B78E7921597D76200C6BA6A /* PDFEncryptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7721597D76200C6BA6A /* PDFEncryptionUtils.m */; };
+		1B78E7931597D76200C6BA6A /* PDFEncryptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7721597D76200C6BA6A /* PDFEncryptionUtils.m */; };
+		1B78E7941597D76200C6BA6A /* PDFEncryptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7721597D76200C6BA6A /* PDFEncryptionUtils.m */; };
+		1B78E7951597D76200C6BA6A /* PDFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7731597D76200C6BA6A /* PDFParser.h */; };
+		1B78E7961597D76200C6BA6A /* PDFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7731597D76200C6BA6A /* PDFParser.h */; };
+		1B78E7971597D76200C6BA6A /* PDFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7731597D76200C6BA6A /* PDFParser.h */; };
+		1B78E7981597D76200C6BA6A /* PDFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7741597D76200C6BA6A /* PDFParser.m */; };
+		1B78E7991597D76200C6BA6A /* PDFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7741597D76200C6BA6A /* PDFParser.m */; };
+		1B78E79A1597D76200C6BA6A /* PDFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7741597D76200C6BA6A /* PDFParser.m */; };
+		1B78E79B1597D76200C6BA6A /* PDFStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7751597D76200C6BA6A /* PDFStream.h */; };
+		1B78E79C1597D76200C6BA6A /* PDFStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7751597D76200C6BA6A /* PDFStream.h */; };
+		1B78E79D1597D76200C6BA6A /* PDFStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78E7751597D76200C6BA6A /* PDFStream.h */; };
+		1B78E79E1597D76200C6BA6A /* PDFStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7761597D76200C6BA6A /* PDFStream.m */; };
+		1B78E79F1597D76200C6BA6A /* PDFStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7761597D76200C6BA6A /* PDFStream.m */; };
+		1B78E7A01597D76200C6BA6A /* PDFStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B78E7761597D76200C6BA6A /* PDFStream.m */; };
 		1B7F3CB313147CD6008238BF /* XADPaddedBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */; };
 		1B7F3CB413147CD6008238BF /* XADPaddedBlockHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7F3CB013147CD6008238BF /* XADPaddedBlockHandle.h */; };
 		1B7F3CB513147CD6008238BF /* XADPaddedBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */; };
@@ -1473,6 +1521,22 @@
 		1B7451A713081B89008D80FE /* XADISO9660Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADISO9660Parser.h; sourceTree = "<group>"; };
 		1B7451A813081B89008D80FE /* XADISO9660Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADISO9660Parser.m; sourceTree = "<group>"; };
 		1B78A34B1431339100E4AB87 /* Realloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = Realloc.h; sourceTree = "<group>"; };
+		1B78E75E1597D73400C6BA6A /* XADPDFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPDFParser.h; sourceTree = "<group>"; };
+		1B78E75F1597D73400C6BA6A /* XADPDFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPDFParser.m; sourceTree = "<group>"; };
+		1B78E7691597D76200C6BA6A /* CCITTHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCITTHandle.h; sourceTree = "<group>"; };
+		1B78E76A1597D76200C6BA6A /* CCITTHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCITTHandle.m; sourceTree = "<group>"; };
+		1B78E76B1597D76200C6BA6A /* LZWHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZWHandle.h; sourceTree = "<group>"; };
+		1B78E76C1597D76200C6BA6A /* LZWHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LZWHandle.m; sourceTree = "<group>"; };
+		1B78E76D1597D76200C6BA6A /* NSDictionaryNumberExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDictionaryNumberExtension.h; sourceTree = "<group>"; };
+		1B78E76E1597D76200C6BA6A /* NSDictionaryNumberExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionaryNumberExtension.m; sourceTree = "<group>"; };
+		1B78E76F1597D76200C6BA6A /* PDFEncryptionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFEncryptionHandler.h; sourceTree = "<group>"; };
+		1B78E7701597D76200C6BA6A /* PDFEncryptionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFEncryptionHandler.m; sourceTree = "<group>"; };
+		1B78E7711597D76200C6BA6A /* PDFEncryptionUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFEncryptionUtils.h; sourceTree = "<group>"; };
+		1B78E7721597D76200C6BA6A /* PDFEncryptionUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFEncryptionUtils.m; sourceTree = "<group>"; };
+		1B78E7731597D76200C6BA6A /* PDFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFParser.h; sourceTree = "<group>"; };
+		1B78E7741597D76200C6BA6A /* PDFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFParser.m; sourceTree = "<group>"; };
+		1B78E7751597D76200C6BA6A /* PDFStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFStream.h; sourceTree = "<group>"; };
+		1B78E7761597D76200C6BA6A /* PDFStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFStream.m; sourceTree = "<group>"; };
 		1B7F3CB013147CD6008238BF /* XADPaddedBlockHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPaddedBlockHandle.h; sourceTree = "<group>"; };
 		1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPaddedBlockHandle.m; sourceTree = "<group>"; };
 		1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADUnarchiver.h; sourceTree = "<group>"; };
@@ -2271,6 +2335,37 @@
 			name = Wrappers;
 			sourceTree = "<group>";
 		};
+		1B78E7671597D74600C6BA6A /* PDF */ = {
+			isa = PBXGroup;
+			children = (
+				1B78E75E1597D73400C6BA6A /* XADPDFParser.h */,
+				1B78E75F1597D73400C6BA6A /* XADPDFParser.m */,
+				1B78E7681597D76200C6BA6A /* PDF */,
+			);
+			name = PDF;
+			sourceTree = "<group>";
+		};
+		1B78E7681597D76200C6BA6A /* PDF */ = {
+			isa = PBXGroup;
+			children = (
+				1B78E7691597D76200C6BA6A /* CCITTHandle.h */,
+				1B78E76A1597D76200C6BA6A /* CCITTHandle.m */,
+				1B78E76B1597D76200C6BA6A /* LZWHandle.h */,
+				1B78E76C1597D76200C6BA6A /* LZWHandle.m */,
+				1B78E76D1597D76200C6BA6A /* NSDictionaryNumberExtension.h */,
+				1B78E76E1597D76200C6BA6A /* NSDictionaryNumberExtension.m */,
+				1B78E76F1597D76200C6BA6A /* PDFEncryptionHandler.h */,
+				1B78E7701597D76200C6BA6A /* PDFEncryptionHandler.m */,
+				1B78E7711597D76200C6BA6A /* PDFEncryptionUtils.h */,
+				1B78E7721597D76200C6BA6A /* PDFEncryptionUtils.m */,
+				1B78E7731597D76200C6BA6A /* PDFParser.h */,
+				1B78E7741597D76200C6BA6A /* PDFParser.m */,
+				1B78E7751597D76200C6BA6A /* PDFStream.h */,
+				1B78E7761597D76200C6BA6A /* PDFStream.m */,
+			);
+			path = PDF;
+			sourceTree = "<group>";
+		};
 		1B7E88FD0F45B5DF005B1246 /* DiskDoubler */ = {
 			isa = PBXGroup;
 			children = (
@@ -2618,6 +2713,7 @@
 				1BBC410510B79CDE00A05E29 /* CAB */,
 				1B880CFE0F0AAB360061CCBE /* PPMd */,
 				1B31CB6613C288AD00ED119E /* SWF */,
+				1B78E7671597D74600C6BA6A /* PDF */,
 				1BC8A07B0EE4C4DA006B47FE /* XADALZipParser.h */,
 				1BC8A07A0EE4C4DA006B47FE /* XADALZipParser.m */,
 				1B32D0FA10F6E461002A2C76 /* XADCFBFParser.h */,
@@ -2795,6 +2891,14 @@
 				1B06CD1D145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F83146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
 				1BBEFA5C14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
+				1B78E7611597D73400C6BA6A /* XADPDFParser.h in Headers */,
+				1B78E7781597D76200C6BA6A /* CCITTHandle.h in Headers */,
+				1B78E77E1597D76200C6BA6A /* LZWHandle.h in Headers */,
+				1B78E7841597D76200C6BA6A /* NSDictionaryNumberExtension.h in Headers */,
+				1B78E78A1597D76200C6BA6A /* PDFEncryptionHandler.h in Headers */,
+				1B78E7901597D76200C6BA6A /* PDFEncryptionUtils.h in Headers */,
+				1B78E7961597D76200C6BA6A /* PDFParser.h in Headers */,
+				1B78E79C1597D76200C6BA6A /* PDFStream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2852,6 +2956,14 @@
 				1B06CD1E145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F84146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
 				1BBEFA5D14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
+				1B78E7621597D73400C6BA6A /* XADPDFParser.h in Headers */,
+				1B78E7791597D76200C6BA6A /* CCITTHandle.h in Headers */,
+				1B78E77F1597D76200C6BA6A /* LZWHandle.h in Headers */,
+				1B78E7851597D76200C6BA6A /* NSDictionaryNumberExtension.h in Headers */,
+				1B78E78B1597D76200C6BA6A /* PDFEncryptionHandler.h in Headers */,
+				1B78E7911597D76200C6BA6A /* PDFEncryptionUtils.h in Headers */,
+				1B78E7971597D76200C6BA6A /* PDFParser.h in Headers */,
+				1B78E79D1597D76200C6BA6A /* PDFStream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3054,6 +3166,14 @@
 				1B5F3F82146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
 				1BBEF8B014D8A31800790E4B /* XADArchiveParserDescriptions.h in Headers */,
 				1BBEFA5B14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
+				1B78E7601597D73400C6BA6A /* XADPDFParser.h in Headers */,
+				1B78E7771597D76200C6BA6A /* CCITTHandle.h in Headers */,
+				1B78E77D1597D76200C6BA6A /* LZWHandle.h in Headers */,
+				1B78E7831597D76200C6BA6A /* NSDictionaryNumberExtension.h in Headers */,
+				1B78E7891597D76200C6BA6A /* PDFEncryptionHandler.h in Headers */,
+				1B78E78F1597D76200C6BA6A /* PDFEncryptionUtils.h in Headers */,
+				1B78E7951597D76200C6BA6A /* PDFParser.h in Headers */,
+				1B78E79B1597D76200C6BA6A /* PDFStream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3604,6 +3724,14 @@
 				1B06CD20145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8F414E0964E00790E4B /* XADArchiveParserDescriptions.m in Sources */,
 				1BBEFA5F14EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
+				1B78E7641597D73400C6BA6A /* XADPDFParser.m in Sources */,
+				1B78E77B1597D76200C6BA6A /* CCITTHandle.m in Sources */,
+				1B78E7811597D76200C6BA6A /* LZWHandle.m in Sources */,
+				1B78E7871597D76200C6BA6A /* NSDictionaryNumberExtension.m in Sources */,
+				1B78E78D1597D76200C6BA6A /* PDFEncryptionHandler.m in Sources */,
+				1B78E7931597D76200C6BA6A /* PDFEncryptionUtils.m in Sources */,
+				1B78E7991597D76200C6BA6A /* PDFParser.m in Sources */,
+				1B78E79F1597D76200C6BA6A /* PDFStream.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3820,6 +3948,14 @@
 				1B06CD21145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8F614E0964F00790E4B /* XADArchiveParserDescriptions.m in Sources */,
 				1BBEFA6014EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
+				1B78E7651597D73400C6BA6A /* XADPDFParser.m in Sources */,
+				1B78E77C1597D76200C6BA6A /* CCITTHandle.m in Sources */,
+				1B78E7821597D76200C6BA6A /* LZWHandle.m in Sources */,
+				1B78E7881597D76200C6BA6A /* NSDictionaryNumberExtension.m in Sources */,
+				1B78E78E1597D76200C6BA6A /* PDFEncryptionHandler.m in Sources */,
+				1B78E7941597D76200C6BA6A /* PDFEncryptionUtils.m in Sources */,
+				1B78E79A1597D76200C6BA6A /* PDFParser.m in Sources */,
+				1B78E7A01597D76200C6BA6A /* PDFStream.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4072,6 +4208,14 @@
 				1B06CD1F145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8B114D8A31800790E4B /* XADArchiveParserDescriptions.m in Sources */,
 				1BBEFA5E14EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
+				1B78E7631597D73400C6BA6A /* XADPDFParser.m in Sources */,
+				1B78E77A1597D76200C6BA6A /* CCITTHandle.m in Sources */,
+				1B78E7801597D76200C6BA6A /* LZWHandle.m in Sources */,
+				1B78E7861597D76200C6BA6A /* NSDictionaryNumberExtension.m in Sources */,
+				1B78E78C1597D76200C6BA6A /* PDFEncryptionHandler.m in Sources */,
+				1B78E7921597D76200C6BA6A /* PDFEncryptionUtils.m in Sources */,
+				1B78E7981597D76200C6BA6A /* PDFParser.m in Sources */,
+				1B78E79E1597D76200C6BA6A /* PDFStream.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -52,8 +52,8 @@ extern NSString *PDFParserException;
 -(NSNumber *)parsePDFBoolStartingWith:(int)c;
 -(NSNumber *)parsePDFNumberStartingWith:(int)c;
 -(NSString *)parsePDFWord;
--(NSString *)parsePDFStringWithParent:(PDFObjectReference *)parent;
--(NSData *)parsePDFHexStringStartingWith:(int)c parent:(PDFObjectReference *)parent;
+-(PDFString *)parsePDFStringWithParent:(PDFObjectReference *)parent;
+-(PDFString *)parsePDFHexStringStartingWith:(int)c parent:(PDFObjectReference *)parent;
 -(NSArray *)parsePDFArrayWithParent:(PDFObjectReference *)parent;
 -(NSDictionary *)parsePDFDictionaryWithParent:(PDFObjectReference *)parent;
 

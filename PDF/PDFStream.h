@@ -5,6 +5,15 @@
 #import "../CSHandle.h"
 #import "../CSByteStreamHandle.h"
 
+#define PDFUnsupportedImageType 0
+#define PDFIndexedImageType 1
+#define PDFGrayImageType 2
+#define PDFRGBImageType 3
+#define PDFCMYKImageType 4
+#define PDFLabImageType 5
+#define PDFSeparationImageType 6
+#define PDFMaskImageType 7
+
 @class PDFParser,PDFObjectReference;
 
 @interface PDFStream:NSObject
@@ -26,26 +35,31 @@ reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 -(BOOL)isImage;
 -(BOOL)isJPEGImage;
 -(BOOL)isJPEG2000Image;
--(BOOL)isMaskImage;
--(BOOL)isBitmapImage;
--(BOOL)isIndexedImage;
--(BOOL)isGreyImage;
--(BOOL)isRGBImage;
--(BOOL)isCMYKImage;
--(BOOL)isLabImage;
--(BOOL)isSeparationImage;
 
 -(int)imageWidth;
 -(int)imageHeight;
 -(int)imageBitsPerComponent;
 
--(NSString *)colourSpaceOrAlternate;
--(NSString *)subColourSpaceOrAlternate;
--(NSString *)_parseColourSpace:(id)colourspace;
--(int)numberOfColours;
--(NSData *)paletteData;
--(NSArray *)decodeArray;
--(NSString *)separationName;
+-(int)imageType;
+-(int)numberOfImageComponents;
+-(NSString *)imageColourSpaceName;
+
+-(int)imagePaletteType;
+-(int)numberOfImagePaletteComponents;
+-(NSString *)imagePaletteColourSpaceName;
+-(int)numberOfImagePaletteColours;
+-(NSData *)imagePaletteData;
+-(id)_paletteColourSpaceObject;
+
+-(int)_typeForColourSpaceObject:(id)colourspace;
+-(int)_numberOfComponentsForColourSpaceObject:(id)colourspace;
+-(NSString *)_nameForColourSpaceObject:(id)colourspace;
+
+-(NSData *)imageICCColourProfile;
+-(NSData *)_ICCColourProfileForColourSpaceObject:(id)colourspace;
+
+-(NSString *)imageSeparationName;
+-(NSArray *)imageDecodeArray;
 
 -(BOOL)hasMultipleFilters;
 -(NSString *)finalFilter;

@@ -9,7 +9,7 @@ extern NSString *PDFParserException;
 
 @interface PDFParser:NSObject
 {
-	CSHandle *fh;
+	CSHandle *mainhandle,*fh;
 
 	NSMutableDictionary *objdict;
 	NSMutableArray *unresolved;
@@ -40,12 +40,19 @@ extern NSString *PDFParserException;
 
 -(PDFEncryptionHandler *)encryptionHandler;
 
+-(void)setHandle:(CSHandle *)newhandle;
+-(void)restoreDefaultHandle;
+
 -(void)parse;
 
 -(NSDictionary *)parsePDFXref;
--(int)parseSimpleInteger;
+-(NSDictionary *)parsePDFXrefTable;
+-(NSDictionary *)parsePDFXrefStream;
+-(uint64_t)parseIntegerOfSize:(int)size fromHandle:(CSHandle *)handle default:(uint64_t)def;
+-(void)parsePDFCompressedObjectStream:(PDFStream *)stream;
 
 -(id)parsePDFObject;
+-(uint64_t)parseSimpleInteger;
 
 -(id)parsePDFTypeWithParent:(PDFObjectReference *)parent;
 -(NSNull *)parsePDFNull;

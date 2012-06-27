@@ -33,6 +33,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 {
 	if(self=[super init])
 	{
+		mainhandle=[handle retain];
 		fh=[handle retain];
 
 		objdict=[[NSMutableDictionary dictionary] retain];
@@ -52,6 +53,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 -(void)dealloc
 {
+	[mainhandle release];
 	[fh release];
 	[objdict release];
 	[unresolved release];
@@ -110,6 +112,21 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 
 
+
+-(void)setHandle:(CSHandle *)newhandle
+{
+	[fh autorelease];
+	fh=[newhandle retain];
+}
+
+-(void)restoreDefaultHandle
+{
+	[self setHandle:mainhandle];
+}
+
+
+
+
 -(void)parse
 {
 	[fh seekToEndOfFile];
@@ -143,6 +160,15 @@ static BOOL IsWhiteSpace(uint8_t c);
 }
 
 -(NSDictionary *)parsePDFXref
+{
+	int c=[fh readUInt8];
+	[fh skipBytes:-1];
+
+	if(c=='x') return [self parsePDFXrefTable];
+	else return [self parsePDFXrefStream];
+}
+
+-(NSDictionary *)parsePDFXrefTable
 {
 	int c;
 
@@ -183,7 +209,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 			off_t objoffs=atoll(entry);
 			int objgen=atol(entry+11);
 
-			if(!objoffs) continue; // kludge to handle broken Apple PDF files
+			if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
 
 			off_t curroffs=[fh offsetInFile];
 			[fh seekToFileOffset:objoffs];
@@ -191,11 +217,143 @@ static BOOL IsWhiteSpace(uint8_t c);
 			[fh seekToFileOffset:curroffs];
 
 			PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:objgen];
-			if(obj&&![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
+			if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
 		}
 	}
 	return nil;
 }
+
+-(NSDictionary *)parsePDFXrefStream
+{
+	PDFStream *stream=[self parsePDFObject];
+
+	if(![stream isKindOfClass:[PDFStream class]]) [self _raiseParserException:@"Error parsing xref stream"];
+
+	NSDictionary *dict=[stream dictionary];
+	if(![[dict objectForKey:@"Type"] isEqual:@"XRef"]) [self _raiseParserException:@"Error parsing xref stream"];
+
+	NSArray *w=[dict objectForKey:@"W"];
+	if(!w) [self _raiseParserException:@"Error parsing xref stream"];
+	if(![w isKindOfClass:[NSArray class]]) [self _raiseParserException:@"Error parsing xref stream"];
+	if([w count]!=3) [self _raiseParserException:@"Error parsing xref stream"];
+
+	int typesize=[[w objectAtIndex:0] intValue];
+	int value1size=[[w objectAtIndex:1] intValue];
+	int value2size=[[w objectAtIndex:2] intValue];
+
+	NSArray *index=[dict objectForKey:@"Index"];
+	if(index)
+	{
+		if(![index isKindOfClass:[NSArray class]]) [self _raiseParserException:@"Error parsing xref stream"];
+	}
+	else
+	{
+		NSNumber *size=[dict objectForKey:@"Size"];
+		if(!size) [self _raiseParserException:@"Error parsing xref stream"];
+		if(![size isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error parsing xref stream"];
+
+		index=[NSArray arrayWithObjects:[NSNumber numberWithInt:0],size,nil];
+	}
+
+	CSHandle *handle=[stream handle];
+	if(!handle) [self _raiseParserException:@"Error decoding xref stream"];
+
+	for(int i=0;i<[index count];i+=2)
+	{
+		NSNumber *firstnum=[index objectAtIndex:i];
+		NSNumber *numnum=[index objectAtIndex:i+1];
+
+		if(![firstnum isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error decoding xref stream"];
+		if(![numnum isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error decoding xref stream"];
+
+		int first=[firstnum intValue];
+		int num=[numnum intValue];
+
+		for(int n=first;n<first+num;n++)
+		{
+			int type=[self parseIntegerOfSize:typesize fromHandle:handle default:1];
+			uint64_t value1=[self parseIntegerOfSize:value1size fromHandle:handle default:0];
+			uint64_t value2=[self parseIntegerOfSize:value2size fromHandle:handle default:0];
+
+			if(type!=1) continue;
+			if(!value1) continue; // Kludge to handle broken Apple PDF files. TODO: Is this actually needed here?
+
+			off_t curroffs=[fh offsetInFile];
+			[fh seekToFileOffset:value1];
+			id obj=[self parsePDFObject];
+			[fh seekToFileOffset:curroffs];
+
+			PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:value2];
+			if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
+
+			if([obj isKindOfClass:[PDFStream class]])
+			{
+				if([[[obj dictionary] objectForKey:@"Type"] isEqual:@"ObjStm"])
+				{
+					[self parsePDFCompressedObjectStream:obj];
+				}
+			}
+		}
+
+	}
+
+	return dict;
+}
+
+-(uint64_t)parseIntegerOfSize:(int)size fromHandle:(CSHandle *)handle default:(uint64_t)def
+{
+	if(!size) return def;
+
+	uint64_t res=0;
+	for(int i=0;i<size;i++) res=(res<<8)|[handle readUInt8];
+
+	return res;
+}
+
+-(void)parsePDFCompressedObjectStream:(PDFStream *)stream
+{
+	NSDictionary *dict=[stream dictionary];
+
+	NSNumber *n=[dict objectForKey:@"N"];
+	if(!n) [self _raiseParserException:@"Error decoding compressed object stream"];
+	if(![n isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error decoding compressed object stream"];
+
+	NSNumber *first=[dict objectForKey:@"First"];
+	if(!first) [self _raiseParserException:@"Error decoding compressed object stream"];
+	if(![first isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error decoding compressed object stream"];
+
+	CSHandle *handle=[stream handle];
+	if(!handle) [self _raiseParserException:@"Error decoding compressed object stream"];
+
+	[self setHandle:handle];
+
+	int num=[n intValue];
+	off_t startoffset=[first longLongValue];
+
+	int objnums[num];
+	off_t offsets[num];
+
+	for(int i=0;i<num;i++)
+	{
+		objnums[i]=[self parseSimpleInteger];
+		offsets[i]=[self parseSimpleInteger];
+	}
+
+	for(int i=0;i<num;i++)
+	{
+		[fh seekToFileOffset:offsets[i]+startoffset];
+
+		PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnums[i] generation:0];
+		id value=[self parsePDFTypeWithParent:ref];
+
+		if(value && ![objdict objectForKey:ref]) [objdict setObject:value forKey:ref];
+	}
+
+	[self restoreDefaultHandle];
+}
+
+
+
 
 -(id)parsePDFObject
 {
@@ -239,9 +397,10 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return nil; // shut up, gcc
 }
 
--(int)parseSimpleInteger
+-(uint64_t)parseSimpleInteger
 {
-	int c,val=0;
+	uint64_t val=0;
+	int c;
 
 	do { c=[fh readUInt8]; } while(IsWhiteSpace(c));
 
@@ -256,6 +415,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 		c=[fh readUInt8];
 	}
  }
+
 
 
 

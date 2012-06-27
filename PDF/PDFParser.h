@@ -45,6 +45,7 @@ extern NSString *PDFParserException;
 -(void)startParsingFromHandle:(CSHandle *)handle atOffset:(off_t)offset;
 -(off_t)parserFileOffset;
 -(void)proceed;
+-(void)proceedWithoutCommentHandling;
 -(void)skipWhitespace;
 -(void)proceedAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error;
 

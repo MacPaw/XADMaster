@@ -134,6 +134,17 @@ static BOOL IsDelimiter(uint8_t c);
 
 -(void)proceed
 {
+	[self proceedWithoutCommentHandling];
+
+	while(currchar=='%')
+	{
+		while(currchar!='\n' && currchar!='\r') [self proceedWithoutCommentHandling];
+		while(currchar=='\n' || currchar=='\r') [self proceedWithoutCommentHandling];
+	}
+}
+
+-(void)proceedWithoutCommentHandling
+{
 	if(currchar==-1) [fh _raiseEOF];
 
 	uint8_t byte;
@@ -380,12 +391,16 @@ static BOOL IsDelimiter(uint8_t c);
 
 			if(currchar=='\r')
 			{
-				[self proceed];
-				if(currchar=='\n') [self proceed];
+				[self proceedWithoutCommentHandling];
+				if(currchar=='\n') [self proceedWithoutCommentHandling];
+			}
+			else if(currchar=='\n')
+			{
+				[self proceedWithoutCommentHandling];
 			}
 			else
 			{
-				[self proceedAssumingCharacter:'\n' errorMessage:@"Error parsing stream object"];
+				[self _raiseParserException:@"Error parsing stream object"];
 			}
 
 			if(![value isKindOfClass:[NSDictionary class]]) [self _raiseParserException:@"Error parsing stream object"];
@@ -634,7 +649,7 @@ static BOOL IsDelimiter(uint8_t c);
 	NSMutableData *data=[NSMutableData data];
 	int nesting=1;
 
-	[self proceedAssumingCharacter:'(' errorMessage:@""];
+	[self proceedWithoutCommentHandling];
 
 	for(;;)
 	{
@@ -664,14 +679,14 @@ static BOOL IsDelimiter(uint8_t c);
 			break;
 
 			case '\\':
-				[self proceed];
+				[self proceedWithoutCommentHandling];
 				switch(currchar)
 				{
 					default: b=currchar; break;
-					case '\n': { [self proceed]; continue; } // Ignore newlines.
+					case '\n': { [self proceedWithoutCommentHandling]; continue; } // Ignore newlines.
 					case '\r': // Ignore carriage return.
-						[self proceed];
-						if(currchar=='\n') [self proceed]; // Ignore CRLF.
+						[self proceedWithoutCommentHandling];
+						if(currchar=='\n') [self proceedWithoutCommentHandling]; // Ignore CRLF.
 						continue;
  					break;
 					case 'n': b='\n'; break; // Line feed.
@@ -682,11 +697,11 @@ static BOOL IsDelimiter(uint8_t c);
 					case '0': case '1': case '2': case '3': // Octal character code.
 					case '4': case '5': case '6': case '7':
 						b=currchar-'0';
-						[self proceed];
+						[self proceedWithoutCommentHandling];
 						if(currchar>='0'&&currchar<='7')
 						{
 							b=b*8+currchar-'0';
-							[self proceed];
+							[self proceedWithoutCommentHandling];
 							if(currchar>='0'&&currchar<='7')
 							{
 								b=b*8+currchar-'0';
@@ -699,7 +714,7 @@ static BOOL IsDelimiter(uint8_t c);
 
 		[data appendBytes:&b length:1];
 
-		[self proceed];
+		[self proceedWithoutCommentHandling];
 	}
 }
 

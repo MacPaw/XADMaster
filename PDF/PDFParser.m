@@ -215,10 +215,10 @@ static BOOL IsDelimiter(uint8_t c);
 	[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing xref"];
 	[self proceedAssumingCharacter:'f' errorMessage:@"Error parsing xref"];
 
-	[self skipWhitespace];
-
 	for(;;)
 	{
+		[self skipWhitespace];
+
 		if(currchar=='t')
 		{
 			[self proceedAssumingCharacter:'t' errorMessage:@"Error parsing xref trailer"];

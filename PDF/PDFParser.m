@@ -636,8 +636,15 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 		switch(currchar)
 		{
-			default: b=currchar; break;
-			case '(': nesting++; b='('; break;
+			default:
+				b=currchar;
+			break;
+
+			case '(':
+				nesting++;
+				b='(';
+			break;
+
 			case ')':
 				if(--nesting==0)
 				{
@@ -649,6 +656,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 					b=')';
 				}
 			break;
+
 			case '\\':
 				[self proceed];
 				switch(currchar)
@@ -657,9 +665,9 @@ static BOOL IsWhiteSpace(uint8_t c);
 					case '\n': { [self proceed]; continue; } // Ignore newlines.
 					case '\r': // Ignore carriage return.
 						[self proceed];
-						if(currchar=='\n') { [self proceed]; continue; } // Ignore CRLF.
-						else b=currchar;
-					break;
+						if(currchar=='\n') [self proceed]; // Ignore CRLF.
+						continue;
+ 					break;
 					case 'n': b='\n'; break; // Line feed.
 					case 'r': b='\r'; break; // Carriage return.
 					case 't': b='\t'; break; // Tab.

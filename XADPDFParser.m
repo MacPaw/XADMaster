@@ -242,9 +242,9 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 						goto giveup;
 				}
 
-if([[image imageColourSpaceName] isEqual:@"CalRGB"]) [self reportInterestingFileWithReason:@"CalRGB image in PDF"];
-if([[image imageColourSpaceName] isEqual:@"CalGray"]) [self reportInterestingFileWithReason:@"CalGray image in PDF"];
-if([[image imageColourSpaceName] isEqual:@"Lab"]) [self reportInterestingFileWithReason:@"Lab image in PDF"];
+				if([[image imageColourSpaceName] isEqual:@"CalRGB"]) [self reportInterestingFileWithReason:@"CalRGB image"];
+				if([[image imageColourSpaceName] isEqual:@"CalGray"]) [self reportInterestingFileWithReason:@"CalGray image"];
+				if([[image imageColourSpaceName] isEqual:@"Lab"]) [self reportInterestingFileWithReason:@"Lab image"];
 
 				NSMutableArray *entries=[NSMutableArray array];
 

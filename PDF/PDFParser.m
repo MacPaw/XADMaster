@@ -355,84 +355,108 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 
 
+-(void)skipWhitespace
+{
+	while(IsWhiteSpace(currchar)) [self proceed];
+}
+
+-(void)proceed
+{
+	currchar=[fh readUInt8];
+}
+
+-(void)proceedAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error
+{
+	if(currchar!=c) [self _raiseParserException:error];
+	[self proceed];
+}
+
+-(void)skipOptionalCharacter:(uint8_t)c
+{
+	if(currchar==c) [self proceed];
+}
+
 -(id)parsePDFObject
 {
-	int c;
-
 	int objnum=[self parseSimpleInteger];
 	int objgen=[self parseSimpleInteger];
 	PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnum generation:objgen];
 
-	do { c=[fh readUInt8]; } while(IsWhiteSpace(c));
+	[self skipWhitespace];
 
-	if(c!='o'||[fh readUInt8]!='b'||[fh readUInt8]!='j')
-	[self _raiseParserException:@"Error parsing object"];
+	[self proceedAssumingCharacter:'o' errorMessage:@"Error parsing object"];
+	[self proceedAssumingCharacter:'b' errorMessage:@"Error parsing object"];
+	[self proceedAssumingCharacter:'j' errorMessage:@"Error parsing object"];
 
 	id value=[self parsePDFTypeWithParent:ref];
 
-	do { c=[fh readUInt8]; } while(IsWhiteSpace(c));
+	[self skipWhitespace];
 
-	switch(c)
+	switch(currchar)
 	{
 		case 's':
-			if([fh readUInt8]!='t'||[fh readUInt8]!='r'||[fh readUInt8]!='e'
-			||[fh readUInt8]!='a'||[fh readUInt8]!='m') [self _raiseParserException:@"Error parsing stream object"];
+			[self proceedAssumingCharacter:'s' errorMessage:@"Error parsing stream object"];
+			[self proceedAssumingCharacter:'t' errorMessage:@"Error parsing stream object"];
+			[self proceedAssumingCharacter:'r' errorMessage:@"Error parsing stream object"];
+			[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing stream object"];
+			[self proceedAssumingCharacter:'a' errorMessage:@"Error parsing stream object"];
+			[self proceedAssumingCharacter:'m' errorMessage:@"Error parsing stream object"];
+			[self skipOptionalCharacter:'\r'];
+			[self proceedAssumingCharacter:'\n' errorMessage:@"Error parsing stream object"];
 
-			c=[fh readUInt8];
-			if(c=='\r') c=[fh readUInt8];
-			if(c!='\n') [self _raiseParserException:@"Error parsing stream object"];
+			if(![value isKindOfClass:[NSDictionary class]]) [self _raiseParserException:@"Error parsing stream object"];
 
 			return [[[PDFStream alloc] initWithDictionary:value fileHandle:fh
 			reference:ref parser:self] autorelease];
 		break;
 
 		case 'e':
-			if([fh readUInt8]!='n'||[fh readUInt8]!='d'||[fh readUInt8]!='o'
-			||[fh readUInt8]!='b'||[fh readUInt8]!='j') [self _raiseParserException:@"Error parsing object"];
+			[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing object"];
+			[self proceedAssumingCharacter:'n' errorMessage:@"Error parsing object"];
+			[self proceedAssumingCharacter:'d' errorMessage:@"Error parsing object"];
+			[self proceedAssumingCharacter:'o' errorMessage:@"Error parsing object"];
+			[self proceedAssumingCharacter:'b' errorMessage:@"Error parsing object"];
+			[self proceedAssumingCharacter:'j' errorMessage:@"Error parsing object"];
+
 			return value;
 		break;
 
 		default: [self _raiseParserException:@"Error parsing obj"];
 	}
-	return nil; // shut up, gcc
+	return nil; // Shut up, gcc.
 }
 
 -(uint64_t)parseSimpleInteger
 {
 	uint64_t val=0;
-	int c;
 
-	do { c=[fh readUInt8]; } while(IsWhiteSpace(c));
+	[self skipWhitespace];
 
-	for(;;)
+	while(isdigit(currchar))
 	{
-		if(!isdigit(c))
-		{
-			[fh skipBytes:-1];
-			return val;
-		}
-		val=val*10+(c-'0');
-		c=[fh readUInt8];
+		val=val*10+(currchar-'0');
+		[self proceed];
 	}
- }
+
+	return val;
+}
 
 
 
 
 -(id)parsePDFTypeWithParent:(PDFObjectReference *)parent
 {
-	int c;
-	do { c=[fh readUInt8]; } while(IsWhiteSpace(c));
+	[self skipWhitespace];
 
-	switch(c)
+	switch(currchar)
 	{
 		case 'n': return [self parsePDFNull];
 
-		case 't': case 'f': return [self parsePDFBoolStartingWith:c];
+		case 't': case 'f': return [self parsePDFBool];
 
 		case '0': case '1': case '2': case '3': case '4': case '5':
 		case '6': case '7': case '8': case '9': case '-': case '.':
-			return [self parsePDFNumberStartingWith:c];
+			return [self parsePDFNumber];
 
 		case '/': return [self parsePDFWord];
 
@@ -441,57 +465,63 @@ static BOOL IsWhiteSpace(uint8_t c);
 		case '[': return [self parsePDFArrayWithParent:parent];
 
 		case '<':
-			c=[fh readUInt8];
-			switch(c)
+			[self proceed];
+			switch(currchar)
 			{
 				case '0': case '1': case '2': case '3': case '4':
 				case '5': case '6': case '7': case '8': case '9':
 				case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
 				case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-					return [self parsePDFHexStringStartingWith:c parent:parent];
+					return [self parsePDFHexStringWithParent:parent];
 
 				case '<': return [self parsePDFDictionaryWithParent:parent];
-				default: return nil;
+
+				default: return nil; // TODO: Should this be an exception?
 			}
 
-		default: [fh skipBytes:-1]; return nil;
+		default: return nil; // TODO: Should this be an exception?
 	}
 }
 
 -(NSNull *)parsePDFNull
 {
-	char rest[3];
-	[fh readBytes:3 toBuffer:rest];
-	if(rest[0]=='u'&&rest[1]=='l'&&rest[2]=='l') return [NSNull null];
-	else [self _raiseParserException:@"Error parsing null value"];
-	return nil; // shut up, gcc
+	[self proceedAssumingCharacter:'n' errorMessage:@"Error parsing null value"];
+	[self proceedAssumingCharacter:'u' errorMessage:@"Error parsing null value"];
+	[self proceedAssumingCharacter:'l' errorMessage:@"Error parsing null value"];
+	[self proceedAssumingCharacter:'l' errorMessage:@"Error parsing null value"];
+
+	return [NSNull null];
 }
 
 -(NSNumber *)parsePDFBoolStartingWith:(int)c
 {
-	if(c=='t')
+	if(currchar=='t')
 	{
-		char rest[3];
-		[fh readBytes:3 toBuffer:rest];
-		if(rest[0]=='r'&&rest[1]=='u'&&rest[2]=='e') return [NSNumber numberWithBool:YES];
-		else [self _raiseParserException:@"Error parsing boolean true value"];
+		[self proceedAssumingCharacter:'t' errorMessage:@"Error parsing boolean true value"];
+		[self proceedAssumingCharacter:'r' errorMessage:@"Error parsing boolean true value"];
+		[self proceedAssumingCharacter:'u' errorMessage:@"Error parsing boolean true value"];
+		[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing boolean true value"];
+
+		return [NSNumber numberWithBool:YES];
 	}
 	else
 	{
-		char rest[4];
-		[fh readBytes:4 toBuffer:rest];
-		if(rest[0]=='a'&&rest[1]=='l'&&rest[2]=='s'&&rest[3]=='e') return [NSNumber numberWithBool:NO];
-		else [self _raiseParserException:@"Error parsing boolean false value"];
+		[self proceedAssumingCharacter:'f' errorMessage:@"Error parsing boolean false value"];
+		[self proceedAssumingCharacter:'a' errorMessage:@"Error parsing boolean false value"];
+		[self proceedAssumingCharacter:'l' errorMessage:@"Error parsing boolean false value"];
+		[self proceedAssumingCharacter:'s' errorMessage:@"Error parsing boolean false value"];
+		[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing boolean false value"];
+
+		return [NSNumber numberWithBool:NO];
 	}
-	return nil; // shut up, gcc
 }
 
 -(NSNumber *)parsePDFNumberStartingWith:(int)c
 {
-	char str[32]={c};
-	int i;
+	char str[32];
 
-	for(i=1;i<sizeof(str);i++)
+	while(isdigit(currchar) || currchar=='.')
+	for(i=0;i<sizeof(str);i++)
 	{
 		int c=[fh readUInt8];
 		if(!isdigit(c)&&c!='.')
@@ -513,24 +543,34 @@ static BOOL IsWhiteSpace(uint8_t c);
 {
 	NSMutableString *str=[NSMutableString string];
 
+	[self proceedAssumingCharacter:'/' errorMessage:@""];
+
 	for(;;)
 	{
-		int c=[fh readUInt8];
-		if(c=='#')
+		if(currchar=='#')
 		{
-			int c1=[fh readUInt8];
-			int c2=[fh readUInt8];
+			[self proceed];
+			int c1=currchar;
+			[self proceed];
+			int c2=currchar;
+
 			if(!IsHexDigit(c1)||!IsHexDigit(c2)) [self _raiseParserException:@"Error parsing hex escape in name"];
 
 			[str appendFormat:@"%c",HexDigit(c1)*16+HexDigit(c2)];
 		}
-		else if(c<0x21||c>0x7e||c=='%'||c=='('||c==')'||c=='<'||c=='>'||c=='['||c==']'
-		||c=='{'||c=='}'||c=='/')
+		else if(currchar<0x21||currchar>0x7e||currchar=='%'||
+		currchar=='('||currchar==')'||currchar=='<'||currchar=='>'||
+		currchar=='['||currchar==']'||currchar=='{'||currchar=='}'||
+		currchar=='/')
 		{
-			[fh skipBytes:-1];
 			return str;
 		}
-		else [str appendFormat:@"%c",c];
+		else
+		{
+			[str appendFormat:@"%c",currchar];
+		}
+
+		[self proceed];
 	}
 }
 
@@ -539,55 +579,64 @@ static BOOL IsWhiteSpace(uint8_t c);
 	NSMutableData *data=[NSMutableData data];
 	int nesting=1;
 
+	[self proceedAssumingCharacter:'(' errorMessage:@""];
+
 	for(;;)
 	{
-		int c=[fh readUInt8];
 		uint8_t b=0;
 
-		switch(c)
+		switch(currchar)
 		{
-			default: b=c; break;
+			default: b=currchar; break;
 			case '(': nesting++; b='('; break;
 			case ')':
-				if(--nesting==0) return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
-				else b=')';
+				if(--nesting==0)
+				{
+					[self proceed];
+					return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+				}
+				else
+				{
+					b=')';
+				}
 			break;
 			case '\\':
-				c=[fh readUInt8];
-				switch(c)
+				[self proceed];
+				switch(currchar)
 				{
-					default: b=c; break;
-					case '\n': continue; // ignore newlines
-					case '\r': // ignore carriage return
-						c=[fh readUInt8];
-						if(c=='\n') continue; // ignore CRLF
-						else b=c;
+					default: b=currchar; break;
+					case '\n': { [self proceed]; continue; } // Ignore newlines.
+					case '\r': // Ignore carriage return.
+						[self proceed];
+						if(currchar=='\n') { [self proceed]; continue; } // Ignore CRLF.
+						else b=currchar;
 					break;
-					case 'n': b='\n'; break;
-					case 'r': b='\r'; break;
-					case 't': b='\t'; break;
-					case 'b': b='\b'; break;
-					case 'f': b='\f'; break;
-					case '0': case '1': case '2': case '3':
+					case 'n': b='\n'; break; // Line feed.
+					case 'r': b='\r'; break; // Carriage return.
+					case 't': b='\t'; break; // Tab.
+					case 'b': b='\b'; break; // Backspace.
+					case 'f': b='\f'; break; // Form feed.
+					case '0': case '1': case '2': case '3': // Octal character code.
 					case '4': case '5': case '6': case '7':
-						b=c-'0';
-						c=[fh readUInt8];
-						if(c>='0'&&c<='7')
+						b=currchar-'0';
+						[self proceed];
+						if(currchar>='0'&&currchar<='7')
 						{
-							b=b*8+c-'0';
-							c=[fh readUInt8];
-							if(c>='0'&&c<='7')
+							b=b*8+currchar-'0';
+							[self proceed];
+							if(currchar>='0'&&currchar<='7')
 							{
-								b=b*8+c-'0';
+								b=b*8+currchar-'0';
 							}
-							else [fh skipBytes:-1];
 						}
-						else [fh skipBytes:-1];
 					break;
 				}
 			break;
 		}
+
 		[data appendBytes:&b length:1];
+
+		[self proceed];
 	}
 }
 
@@ -595,20 +644,18 @@ static BOOL IsWhiteSpace(uint8_t c);
 {
 	NSMutableData *data=[NSMutableData data];
 
-	[fh skipBytes:-1];
-
 	for(;;)
 	{
-		int c1;
-		do { c1=[fh readUInt8]; }
-		while(IsWhiteSpace(c1));
-		if(c1=='>') return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
-		if(!IsHexDigit(c1)) [self _raiseParserException:@"Error parsing hex data value"];
+		[self skipWhitespace];
+		if(currchar=='>') return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+		if(!IsHexDigit(currchar)) [self _raiseParserException:@"Error parsing hex data value"];
+		int c1=currchar;
+		[self proceed];
 
-		int c2;
-		do { c2=[fh readUInt8]; }
-		while(IsWhiteSpace(c2));
-		if(!IsHexDigit(c2)&&c2!='>') [self _raiseParserException:@"Error parsing hex data value"];
+		[self skipWhitespace];
+		if(!IsHexDigit(currchar)&&currchar!='>') [self _raiseParserException:@"Error parsing hex data value"];
+		int c2=currchar;
+		[self proceed];
 
 		uint8_t byte=HexDigit(c1)*16+HexDigit(c2);
 		[data appendBytes:&byte length:1];

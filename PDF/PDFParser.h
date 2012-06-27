@@ -16,6 +16,8 @@ extern NSString *PDFParserException;
 
 	NSDictionary *trailerdict;
 	PDFEncryptionHandler *encryption;
+
+	uint8_t currchar;
 }
 
 +(PDFParser *)parserWithHandle:(CSHandle *)handle;
@@ -42,6 +44,7 @@ extern NSString *PDFParserException;
 
 -(void)setHandle:(CSHandle *)newhandle;
 -(void)restoreDefaultHandle;
+-(uint8_t)currentCharacter;
 
 -(void)parse;
 
@@ -56,11 +59,11 @@ extern NSString *PDFParserException;
 
 -(id)parsePDFTypeWithParent:(PDFObjectReference *)parent;
 -(NSNull *)parsePDFNull;
--(NSNumber *)parsePDFBoolStartingWith:(int)c;
--(NSNumber *)parsePDFNumberStartingWith:(int)c;
+-(NSNumber *)parsePDFBool;
+-(NSNumber *)parsePDFNumber;
 -(NSString *)parsePDFWord;
 -(PDFString *)parsePDFStringWithParent:(PDFObjectReference *)parent;
--(PDFString *)parsePDFHexStringStartingWith:(int)c parent:(PDFObjectReference *)parent;
+-(PDFString *)parsePDFHexStringWithParent:(PDFObjectReference *)parent;
 -(NSArray *)parsePDFArrayWithParent:(PDFObjectReference *)parent;
 -(NSDictionary *)parsePDFDictionaryWithParent:(PDFObjectReference *)parent;
 

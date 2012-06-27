@@ -42,20 +42,22 @@ extern NSString *PDFParserException;
 
 -(PDFEncryptionHandler *)encryptionHandler;
 
--(void)setHandle:(CSHandle *)newhandle;
--(void)restoreDefaultHandle;
--(uint8_t)currentCharacter;
+-(void)startParsingFromHandle:(CSHandle *)handle atOffset:(off_t)offset;
+-(void)proceed;
+-(void)skipWhitespace;
+-(void)proceedAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error;
+-(void)skipOptionalCharacter:(uint8_t)c;
 
 -(void)parse;
 
 -(NSDictionary *)parsePDFXref;
 -(NSDictionary *)parsePDFXrefTable;
 -(NSDictionary *)parsePDFXrefStream;
--(uint64_t)parseIntegerOfSize:(int)size fromHandle:(CSHandle *)handle default:(uint64_t)def;
--(void)parsePDFCompressedObjectStream:(PDFStream *)stream;
-
 -(id)parsePDFObject;
 -(uint64_t)parseSimpleInteger;
+-(uint64_t)parseIntegerOfSize:(int)size fromHandle:(CSHandle *)handle default:(uint64_t)def;
+
+-(void)parsePDFCompressedObjectStream:(PDFStream *)stream;
 
 -(id)parsePDFTypeWithParent:(PDFObjectReference *)parent;
 -(NSNull *)parsePDFNull;

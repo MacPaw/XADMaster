@@ -34,7 +34,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	if(self=[super init])
 	{
 		mainhandle=[handle retain];
-		fh=[handle retain];
+		fh=nil;
 
 		objdict=[[NSMutableDictionary dictionary] retain];
 		unresolved=[[NSMutableArray array] retain];
@@ -43,7 +43,8 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 		@try
 		{
-			if([fh readUInt8]!='%'||[fh readUInt8]!='P'||[fh readUInt8]!='D'||[fh readUInt8]!='F'||[fh readUInt8]!='-')
+			if([handle readUInt8]!='%'||[handle readUInt8]!='P'||
+			[handle readUInt8]!='D'||[handle readUInt8]!='F'||[handle readUInt8]!='-')
 			[NSException raise:PDFWrongMagicException format:@"Not a PDF file."];
 		}
 		@catch(id e) { [self release]; @throw; }
@@ -113,15 +114,33 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 
 
--(void)setHandle:(CSHandle *)newhandle
+-(void)startParsingFromHandle:(CSHandle *)handle atOffset:(off_t)offset
 {
 	[fh autorelease];
-	fh=[newhandle retain];
+	fh=[handle retain];
+	[fh seekToFileOffset:offset];
+	[self proceed];
 }
 
--(void)restoreDefaultHandle
+-(void)proceed
 {
-	[self setHandle:mainhandle];
+	currchar=[fh readUInt8];
+}
+
+-(void)skipWhitespace
+{
+	while(IsWhiteSpace(currchar)) [self proceed];
+}
+
+-(void)proceedAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error
+{
+	if(currchar!=c) [self _raiseParserException:error];
+	[self proceed];
+}
+
+-(void)skipOptionalCharacter:(uint8_t)c
+{
+	if(currchar==c) [self proceed];
 }
 
 
@@ -129,23 +148,24 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 -(void)parse
 {
-	[fh seekToEndOfFile];
-	[fh skipBytes:-48];
-	NSData *enddata=[fh readDataOfLength:48];
+	[mainhandle seekToEndOfFile];
+	[mainhandle skipBytes:-48];
+	NSData *enddata=[mainhandle readDataOfLength:48];
 	NSString *end=[[[NSString alloc] initWithData:enddata encoding:NSISOLatin1StringEncoding] autorelease];
 
 	NSString *startxref=[[end substringsCapturedByPattern:@"startxref[\n\r ]+([0-9]+)[\n\r ]+%%EOF"] objectAtIndex:1];
 	if(!startxref) [NSException raise:PDFInvalidFormatException format:@"Missing PDF trailer."];
-	[fh seekToFileOffset:[startxref intValue]];
 
-	// Read newest xrefs and trailer
+	[self startParsingFromHandle:mainhandle atOffset:[startxref longLongValue]];
+
+	// Read newest xrefs and trailer.
 	trailerdict=[[self parsePDFXref] retain];
 
-	// Read older xrefs, ignore their trailers
+	// Read older xrefs, ignoring their trailers.
 	NSNumber *prev=[trailerdict objectForKey:@"Prev"];
 	while(prev)
 	{
-		[fh seekToFileOffset:[prev intValue]];
+		[self startParsingFromHandle:mainhandle atOffset:[prev longLongValue]];
 		NSDictionary *oldtrailer=[self parsePDFXref];
 		prev=[oldtrailer objectForKey:@"Prev"];
 	}
@@ -161,63 +181,70 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 -(NSDictionary *)parsePDFXref
 {
-	int c=[fh readUInt8];
-	[fh skipBytes:-1];
-
-	if(c=='x') return [self parsePDFXrefTable];
+	if(currchar=='x') return [self parsePDFXrefTable];
 	else return [self parsePDFXrefStream];
 }
 
 -(NSDictionary *)parsePDFXrefTable
 {
-	int c;
+	[self proceedAssumingCharacter:'x' errorMessage:@"Error parsing xref"];
+	[self proceedAssumingCharacter:'r' errorMessage:@"Error parsing xref"];
+	[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing xref"];
+	[self proceedAssumingCharacter:'f' errorMessage:@"Error parsing xref"];
 
-	if([fh readUInt8]!='x'||[fh readUInt8]!='r'||[fh readUInt8]!='e'||[fh readUInt8]!='f')
-	[self _raiseParserException:@"Error parsing xref"];
-
-	do { c=[fh readUInt8]; } while(IsWhiteSpace(c));
-	[fh skipBytes:-1];
+	[self skipWhitespace];
 
 	for(;;)
 	{
-		c=[fh readUInt8];
-		if(c=='t')
+		if(currchar=='t')
 		{
-			if([fh readUInt8]!='r'||[fh readUInt8]!='a'||[fh readUInt8]!='i'
-			||[fh readUInt8]!='l'||[fh readUInt8]!='e'||[fh readUInt8]!='r')  [self _raiseParserException:@"Error parsing xref trailer"];
+			[self proceedAssumingCharacter:'t' errorMessage:@"Error parsing xref trailer"];
+			[self proceedAssumingCharacter:'r' errorMessage:@"Error parsing xref trailer"];
+			[self proceedAssumingCharacter:'a' errorMessage:@"Error parsing xref trailer"];
+			[self proceedAssumingCharacter:'i' errorMessage:@"Error parsing xref trailer"];
+			[self proceedAssumingCharacter:'l' errorMessage:@"Error parsing xref trailer"];
+			[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing xref trailer"];
+			[self proceedAssumingCharacter:'r' errorMessage:@"Error parsing xref trailer"];
 
 			id trailer=[self parsePDFTypeWithParent:nil];
-			if([trailer isKindOfClass:[NSDictionary class]]) return trailer;
-			else [self _raiseParserException:@"Error parsing xref trailer"];
+
+			if(![trailer isKindOfClass:[NSDictionary class]])
+			[self _raiseParserException:@"Error parsing xref trailer"];
+
+			return trailer;
 		}
-		else if(c<'0'||c>'9') [self _raiseParserException:@"Error parsing xref table"];
-		else [fh skipBytes:-1];
-
-		int first=[self parseSimpleInteger];
-		int num=[self parseSimpleInteger];
-
-		do { c=[fh readUInt8]; } while(IsWhiteSpace(c));
-		[fh skipBytes:-1];
-
-		for(int n=first;n<first+num;n++)
+		else if(currchar>='0' && currchar<='9')
 		{
-			char entry[21];
-			[fh readBytes:20 toBuffer:entry];
+			int first=[self parseSimpleInteger];
+			int num=[self parseSimpleInteger];
 
-			if(entry[17]!='n') continue;
+			[self skipWhitespace];
+			[mainhandle skipBytes:-1];
 
-			off_t objoffs=atoll(entry);
-			int objgen=atol(entry+11);
+			for(int n=first;n<first+num;n++)
+			{
+				char entry[21];
+				[mainhandle readBytes:20 toBuffer:entry];
 
-			if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
+				if(entry[17]!='n') continue;
 
-			off_t curroffs=[fh offsetInFile];
-			[fh seekToFileOffset:objoffs];
-			id obj=[self parsePDFObject];
-			[fh seekToFileOffset:curroffs];
+				off_t objoffs=atoll(entry);
+				int objgen=atol(entry+11);
 
-			PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:objgen];
-			if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
+				if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
+
+				off_t curroffs=[mainhandle offsetInFile];
+				[self startParsingFromHandle:mainhandle atOffset:objoffs];
+				id obj=[self parsePDFObject];
+				[mainhandle seekToFileOffset:curroffs];
+
+				PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:objgen];
+				if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
+			}
+		}
+		else
+		{
+			[self _raiseParserException:@"Error parsing xref table"];
 		}
 	}
 	return nil;
@@ -278,10 +305,10 @@ static BOOL IsWhiteSpace(uint8_t c);
 			if(type!=1) continue;
 			if(!value1) continue; // Kludge to handle broken Apple PDF files. TODO: Is this actually needed here?
 
-			off_t curroffs=[fh offsetInFile];
-			[fh seekToFileOffset:value1];
+			off_t curroffs=[mainhandle offsetInFile];
+			[self startParsingFromHandle:mainhandle atOffset:value1];
 			id obj=[self parsePDFObject];
-			[fh seekToFileOffset:curroffs];
+			[mainhandle seekToFileOffset:curroffs];
 
 			PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:value2];
 			if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
@@ -290,7 +317,9 @@ static BOOL IsWhiteSpace(uint8_t c);
 			{
 				if([[[obj dictionary] objectForKey:@"Type"] isEqual:@"ObjStm"])
 				{
+					off_t curroffs=[mainhandle offsetInFile];
 					[self parsePDFCompressedObjectStream:obj];
+					[mainhandle seekToFileOffset:curroffs];
 				}
 			}
 		}
@@ -298,82 +327,6 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 
 	return dict;
-}
-
--(uint64_t)parseIntegerOfSize:(int)size fromHandle:(CSHandle *)handle default:(uint64_t)def
-{
-	if(!size) return def;
-
-	uint64_t res=0;
-	for(int i=0;i<size;i++) res=(res<<8)|[handle readUInt8];
-
-	return res;
-}
-
--(void)parsePDFCompressedObjectStream:(PDFStream *)stream
-{
-	NSDictionary *dict=[stream dictionary];
-
-	NSNumber *n=[dict objectForKey:@"N"];
-	if(!n) [self _raiseParserException:@"Error decoding compressed object stream"];
-	if(![n isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error decoding compressed object stream"];
-
-	NSNumber *first=[dict objectForKey:@"First"];
-	if(!first) [self _raiseParserException:@"Error decoding compressed object stream"];
-	if(![first isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error decoding compressed object stream"];
-
-	CSHandle *handle=[stream handle];
-	if(!handle) [self _raiseParserException:@"Error decoding compressed object stream"];
-
-	[self setHandle:handle];
-
-	int num=[n intValue];
-	off_t startoffset=[first longLongValue];
-
-	int objnums[num];
-	off_t offsets[num];
-
-	for(int i=0;i<num;i++)
-	{
-		objnums[i]=[self parseSimpleInteger];
-		offsets[i]=[self parseSimpleInteger];
-	}
-
-	for(int i=0;i<num;i++)
-	{
-		[fh seekToFileOffset:offsets[i]+startoffset];
-
-		PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnums[i] generation:0];
-		id value=[self parsePDFTypeWithParent:ref];
-
-		if(value && ![objdict objectForKey:ref]) [objdict setObject:value forKey:ref];
-	}
-
-	[self restoreDefaultHandle];
-}
-
-
-
-
--(void)skipWhitespace
-{
-	while(IsWhiteSpace(currchar)) [self proceed];
-}
-
--(void)proceed
-{
-	currchar=[fh readUInt8];
-}
-
--(void)proceedAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error
-{
-	if(currchar!=c) [self _raiseParserException:error];
-	[self proceed];
-}
-
--(void)skipOptionalCharacter:(uint8_t)c
-{
-	if(currchar==c) [self proceed];
 }
 
 -(id)parsePDFObject
@@ -406,7 +359,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 			if(![value isKindOfClass:[NSDictionary class]]) [self _raiseParserException:@"Error parsing stream object"];
 
-			return [[[PDFStream alloc] initWithDictionary:value fileHandle:fh
+			return [[[PDFStream alloc] initWithDictionary:value fileHandle:mainhandle
 			reference:ref parser:self] autorelease];
 		break;
 
@@ -439,6 +392,57 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 
 	return val;
+}
+
+-(uint64_t)parseIntegerOfSize:(int)size fromHandle:(CSHandle *)handle default:(uint64_t)def
+{
+	if(!size) return def;
+
+	uint64_t res=0;
+	for(int i=0;i<size;i++) res=(res<<8)|[handle readUInt8];
+
+	return res;
+}
+
+
+
+
+-(void)parsePDFCompressedObjectStream:(PDFStream *)stream
+{
+	NSDictionary *dict=[stream dictionary];
+
+	NSNumber *n=[dict objectForKey:@"N"];
+	if(!n) [self _raiseParserException:@"Error decoding compressed object stream"];
+	if(![n isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error decoding compressed object stream"];
+
+	NSNumber *first=[dict objectForKey:@"First"];
+	if(!first) [self _raiseParserException:@"Error decoding compressed object stream"];
+	if(![first isKindOfClass:[NSNumber class]]) [self _raiseParserException:@"Error decoding compressed object stream"];
+
+	CSHandle *handle=[stream handle];
+	if(!handle) [self _raiseParserException:@"Error decoding compressed object stream"];
+
+	int num=[n intValue];
+	off_t startoffset=[first longLongValue];
+
+	int objnums[num];
+	off_t offsets[num];
+
+	for(int i=0;i<num;i++)
+	{
+		objnums[i]=[self parseSimpleInteger];
+		offsets[i]=[self parseSimpleInteger];
+	}
+
+	for(int i=0;i<num;i++)
+	{
+		PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnums[i] generation:0];
+
+		[self startParsingFromHandle:handle atOffset:offsets[i]+startoffset];
+		id value=[self parsePDFTypeWithParent:ref];
+
+		if(value && ![objdict objectForKey:ref]) [objdict setObject:value forKey:ref];
+	}
 }
 
 
@@ -493,7 +497,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 	return [NSNull null];
 }
 
--(NSNumber *)parsePDFBoolStartingWith:(int)c
+-(NSNumber *)parsePDFBool
 {
 	if(currchar=='t')
 	{
@@ -516,28 +520,42 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(NSNumber *)parsePDFNumberStartingWith:(int)c
+-(NSNumber *)parsePDFNumber
 {
-	char str[32];
+	NSMutableData *data=[NSMutableData data];
 
-	while(isdigit(currchar) || currchar=='.')
-	for(i=0;i<sizeof(str);i++)
+	if(currchar=='-')
 	{
-		int c=[fh readUInt8];
-		if(!isdigit(c)&&c!='.')
-		{
-			[fh skipBytes:-1];
-			break;
-		}
-		str[i]=c;
+		[data appendBytes:(uint8_t [1]){'-'} length:1];
+		[self proceed];
 	}
 
-	if(i==sizeof(str)) [self _raiseParserException:@"Error parsing numeric value"];
-	str[i]=0;
+	while(isdigit(currchar))
+	{
+		[data appendBytes:(uint8_t [1]){currchar} length:1];
+		[self proceed];
+	}
 
-	if(strchr(str,'.')) return [NSNumber numberWithDouble:atof(str)];
-	else return [NSNumber numberWithLongLong:atoll(str)];
- }
+	if(currchar=='.')
+	{
+		[data appendBytes:(uint8_t [1]){'.'} length:1];
+		[self proceed];
+
+		while(isdigit(currchar))
+		{
+			[data appendBytes:(uint8_t [1]){currchar} length:1];
+			[self proceed];
+		}
+
+		[data appendBytes:(uint8_t [1]){0} length:1];
+		return [NSNumber numberWithDouble:atof([data bytes])];
+	}
+	else
+	{
+		[data appendBytes:(uint8_t [1]){0} length:1];
+		return [NSNumber numberWithLongLong:atoll([data bytes])];
+	}
+}
 
 -(NSString *)parsePDFWord
 {
@@ -640,20 +658,23 @@ static BOOL IsWhiteSpace(uint8_t c);
 	}
 }
 
--(PDFString *)parsePDFHexStringStartingWith:(int)c parent:(PDFObjectReference *)parent
+-(PDFString *)parsePDFHexStringWithParent:(PDFObjectReference *)parent
 {
 	NSMutableData *data=[NSMutableData data];
+
+	// Initial character has been consumed.
 
 	for(;;)
 	{
 		[self skipWhitespace];
-		if(currchar=='>') return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
-		if(!IsHexDigit(currchar)) [self _raiseParserException:@"Error parsing hex data value"];
+		if(!IsHexDigit(currchar) && currchar!='>') [self _raiseParserException:@"Error parsing hex data value"];
 		int c1=currchar;
 		[self proceed];
 
+		if(c1=='>') return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+
 		[self skipWhitespace];
-		if(!IsHexDigit(currchar)&&currchar!='>') [self _raiseParserException:@"Error parsing hex data value"];
+		if(!IsHexDigit(currchar) && currchar!='>') [self _raiseParserException:@"Error parsing hex data value"];
 		int c2=currchar;
 		[self proceed];
 
@@ -668,33 +689,40 @@ static BOOL IsWhiteSpace(uint8_t c);
 {
 	NSMutableArray *array=[NSMutableArray array];
 
+	[self proceedAssumingCharacter:'[' errorMessage:@""];
+
 	for(;;)
 	{
-		id value=[self parsePDFTypeWithParent:parent];
-		if(!value)
+		[self skipWhitespace];
+
+		if(currchar==']')
 		{
-			int c=[fh readUInt8];
-			if(c==']')
-			{
-				[unresolved addObject:array];
-				return array;
-			}
-			else if(c=='R')
-			{
-				id num=[array objectAtIndex:[array count]-2];
-				id gen=[array objectAtIndex:[array count]-1];
-				if([num isKindOfClass:[NSNumber class]]&&[gen isKindOfClass:[NSNumber class]])
-				{
-					PDFObjectReference *obj=[PDFObjectReference referenceWithNumberObject:num generationObject:gen];
-					[array removeLastObject];
-					[array removeLastObject];
-					[array addObject:obj];
-				}
-				else [self _raiseParserException:@"Error parsing indirect object in array"];
-			}
-			else [self _raiseParserException:@"Error parsing array"];
+			[self proceed];
+			[unresolved addObject:array];
+			return array;
 		}
-		else [array addObject:value];
+		else if(currchar=='R')
+		{
+			[self proceed];
+
+			id num=[array objectAtIndex:[array count]-2];
+			id gen=[array objectAtIndex:[array count]-1];
+
+			if(![num isKindOfClass:[NSNumber class]] || ![gen isKindOfClass:[NSNumber class]])
+			[self _raiseParserException:@"Error parsing indirect object in array"];
+
+			PDFObjectReference *obj=[PDFObjectReference referenceWithNumberObject:num generationObject:gen];
+			[array removeLastObject];
+			[array removeLastObject];
+			[array addObject:obj];
+		}
+		else
+		{
+			id value=[self parsePDFTypeWithParent:parent];
+			if(!value) [self _raiseParserException:@"Error parsing array"]; // TODO: Replace with exception in method?
+
+			[array addObject:value];
+		}
 	}
 }
 
@@ -703,32 +731,44 @@ static BOOL IsWhiteSpace(uint8_t c);
 	NSMutableDictionary *dict=[NSMutableDictionary dictionary];
 	id prev_key=nil,prev_value=nil;
 
+	[self proceedAssumingCharacter:'<' errorMessage:@""];
+
 	for(;;)
 	{
-		id key=[self parsePDFTypeWithParent:nil];
-		if(!key)
+		[self skipWhitespace];
+
+		if(currchar=='>')
 		{
-			if([fh readUInt8]=='>'&&[fh readUInt8]=='>')
-			{
-				[unresolved addObject:dict];
-				return dict;
-			}
-			else [self _raiseParserException:@"Error parsing dictionary"];
+			[self proceedAssumingCharacter:'>' errorMessage:@"Error parsing dictionary"];
+			[self proceedAssumingCharacter:'>' errorMessage:@"Error parsing dictionary"];
+
+			[unresolved addObject:dict];
+			return dict;
 		}
-		else if([key isKindOfClass:[NSString class]])
+
+		id key=[self parsePDFTypeWithParent:nil];
+		if(!key) [self _raiseParserException:@"Error parsing dictionary"]; // TODO: Replace with exception in method?
+
+		if([key isKindOfClass:[NSString class]])
 		{
 			id value=[self parsePDFTypeWithParent:parent];
-			if(!value) [self _raiseParserException:@"Error parsing dictionary value"];
+			if(!value) [self _raiseParserException:@"Error parsing dictionary value"]; // TODO: Replace with exception in method?
+
 			[dict setObject:value forKey:key];
 			prev_key=key;
 			prev_value=value;
 		}
 		else if([key isKindOfClass:[NSNumber class]])
 		{
-			int c;
-			do { c=[fh readUInt8]; } while(IsWhiteSpace(c));
-			if(c=='R')
+			[self skipWhitespace];
+
+			if(currchar=='R')
 			{
+				[self proceed];
+
+				if(![prev_value isKindOfClass:[NSNumber class]])
+				[self _raiseParserException:@"Error parsing indirect object in dictionary"];
+
 				[dict setObject:[PDFObjectReference referenceWithNumberObject:prev_value generationObject:key] forKey:prev_key];
 				prev_key=nil;
 				prev_value=nil;

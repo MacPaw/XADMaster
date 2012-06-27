@@ -166,65 +166,59 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 			switch(type)
 			{
 				case PDFIndexedImageType:
-					switch([image imagePaletteType])
+					if([image imagePaletteType]==PDFRGBImageType)
 					{
-						case PDFRGBImageType:
+						// Build TIFF palette data.
+
+						int numpalettecolours=[image numberOfImagePaletteColours];
+						NSData *pdfpalette=[image imagePaletteData];
+
+						if(pdfpalette)
 						{
-							// Build TIFF palette data.
+							int numtiffcolours=1<<bpc;
+							uint8_t bytes[3*2*numtiffcolours];
+							uint8_t *ptr=bytes;
 
-							int numpalettecolours=[image numberOfImagePaletteColours];
-							NSData *pdfpalette=[image imagePaletteData];
+							const uint8_t *palettebytes=[pdfpalette bytes];
 
-							if(pdfpalette)
+							for(int col=0;col<3;col++)
+							for(int i=0;i<numtiffcolours;i++)
 							{
-								int numtiffcolours=1<<bpc;
-								uint8_t bytes[3*2*numtiffcolours];
-								uint8_t *ptr=bytes;
-
-								const uint8_t *palettebytes=[pdfpalette bytes];
-
-								for(int col=0;col<3;col++)
-								for(int i=0;i<numtiffcolours;i++)
+								if(i<numpalettecolours)
 								{
-									if(i<numpalettecolours)
-									{
-										CSSetUInt16LE(ptr,palettebytes[3*i+col]*0x101);
-									}
-									else
-									{
-										CSSetUInt16LE(ptr,0);
-									}
-									ptr+=2;
+									CSSetUInt16LE(ptr,palettebytes[3*i+col]*0x101);
 								}
+								else
+								{
+									CSSetUInt16LE(ptr,0);
+								}
+								ptr+=2;
+							}
 
-								palettedata=[NSData dataWithBytes:bytes length:sizeof(bytes)];
+							palettedata=[NSData dataWithBytes:bytes length:sizeof(bytes)];
+						}
+					}
+					else
+					{
+						// Unpack other palette images if possible.
+						if(bpc==8)
+						{
+							NSData *palettedata=[image imagePaletteData];
+
+							if(palettedata)
+							{
+								int palettecomponents=[image numberOfImagePaletteComponents];
+
+								[dict setObject:palettedata forKey:@"PDFTIFFExpandedPaletteData"];
+								[dict setObject:[NSNumber numberWithInt:palettecomponents] forKey:@"PDFTIFFExpandedComponents"];
+
+								// Override image parameters.
+								type=[image imagePaletteType];
+								components=palettecomponents;
+								bytesperrow=palettecomponents*width;
 							}
 						}
-						break;
-
-						case PDFCMYKImageType:
-							// Unpack CMYK palette images if possible.
-
-							if(bpc==8)
-							{
-								NSData *palettedata=[image imagePaletteData];
-
-								if(palettedata)
-								{
-									[dict setObject:palettedata forKey:@"PDFTIFFPaletteData"];
-									[dict setObject:[NSNumber numberWithLongLong:width*height*4] forKey:@"PDFTIFFExpandedLength"];
-
-									// Override image parameters.
-									type=PDFCMYKImageType;
-									components=4;
-									bytesperrow=4*width;
-								}
-							}
-							else goto giveup;
-						break;
-
-						default:
-							goto giveup;
+						else goto giveup;
 					}
 				break;
 
@@ -292,7 +286,9 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 				break;
 
 				case PDFMaskImageType:
-					[entries addObject:TIFFShortEntry(262,4)]; // PhotoMetricInterpretation = Mask
+					//[entries addObject:TIFFShortEntry(262,4)]; // PhotoMetricInterpretation = Mask
+					// Apparently no program knows what to do with TIFF masks, so use BlackIsZero instead.
+					[entries addObject:TIFFShortEntry(262,1)]; // PhotoMetricInterpretation = BlackIsZero
 				break;
 
 				case PDFCMYKImageType:
@@ -322,7 +318,6 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 			[dict setObject:[NSNumber numberWithLongLong:headersize+bytesperrow*height] forKey:XADFileSizeKey];
 			[dict setObject:[NSNumber numberWithLongLong:bytesperrow*height] forKey:@"PDFTIFFDataLength"];
 			[dict setObject:headerdata forKey:@"PDFTIFFHeader"];
-			[dict setObject:entries forKey:@"PDFTIFFHeaderEntries"];
 			[dict setObject:@"TIFF" forKey:@"PDFStreamType"];
 
 			name=[name stringByAppendingPathExtension:@"tiff"];
@@ -386,12 +381,14 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 		NSData *header=[dict objectForKey:@"PDFTIFFHeader"];
 		if(!header) return nil;
 
-		NSData *palette=[dict objectForKey:@"PDFTIFFPaletteData"];
+		NSData *palette=[dict objectForKey:@"PDFTIFFExpandedPaletteData"];
 		if(palette)
 		{
-			NSNumber *length=[dict objectForKey:@"PDFTIFFExpandedLength"];
+			int components=[[dict objectForKey:@"PDFTIFFExpandedComponents"] intValue];
+
 			handle=[[[XAD8BitPaletteExpansionHandle alloc] initWithHandle:handle
-			length:[length longLongValue] numberOfChannels:4 palette:palette] autorelease];
+			length:[stream imageWidth]*[stream imageHeight]*components
+			numberOfChannels:components palette:palette] autorelease];
 		}
 
 		return [CSMultiHandle multiHandleWithHandles:

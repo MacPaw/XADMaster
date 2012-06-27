@@ -77,7 +77,8 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 -(int)imageBitsPerComponent
 {
 	if([dict boolValueForKey:@"ImageMask" default:NO]) return 1;
-	else return [dict intValueForKey:@"BitsPerComponent" default:0];
+
+	return [dict intValueForKey:@"BitsPerComponent" default:0];
 }
 
 
@@ -85,8 +86,7 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 
 -(int)imageType
 {
-	if([dict boolValueForKey:@"ImageMask" default:NO] && [self imageBitsPerComponent]==1)
-	return PDFMaskImageType;
+	if([dict boolValueForKey:@"ImageMask" default:NO]) return PDFMaskImageType;
 
 	id colourspace=[dict objectForKey:@"ColorSpace"];
 	return [self _typeForColourSpaceObject:colourspace];
@@ -94,6 +94,8 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 
 -(int)numberOfImageComponents
 {
+	if([dict boolValueForKey:@"ImageMask" default:NO]) return 1;
+
 	id colourspace=[dict objectForKey:@"ColorSpace"];
 	return [self _numberOfComponentsForColourSpaceObject:colourspace];
 }

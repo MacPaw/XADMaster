@@ -13,7 +13,8 @@ NSString *PDFParserException=@"PDFParserException";
 
 static int HexDigit(uint8_t c);
 static BOOL IsHexDigit(uint8_t c);
-static BOOL IsWhiteSpace(uint8_t c);
+static BOOL IsWhitespace(uint8_t c);
+static BOOL IsDelimiter(uint8_t c);
 
 
 @implementation PDFParser
@@ -143,18 +144,13 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 -(void)skipWhitespace
 {
-	while(IsWhiteSpace(currchar)) [self proceed];
+	while(IsWhitespace(currchar)) [self proceed];
 }
 
 -(void)proceedAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error
 {
 	if(currchar!=c) [self _raiseParserException:error];
 	[self proceed];
-}
-
--(void)skipOptionalCharacter:(uint8_t)c
-{
-	if(currchar==c) [self proceed];
 }
 
 
@@ -378,8 +374,16 @@ static BOOL IsWhiteSpace(uint8_t c);
 			[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing stream object"];
 			[self proceedAssumingCharacter:'a' errorMessage:@"Error parsing stream object"];
 			[self proceedAssumingCharacter:'m' errorMessage:@"Error parsing stream object"];
-			[self skipOptionalCharacter:'\r'];
-			[self proceedAssumingCharacter:'\n' errorMessage:@"Error parsing stream object"];
+
+			if(currchar=='\r')
+			{
+				[self proceed];
+				if(currchar=='\n') [self proceed];
+			}
+			else
+			{
+				[self proceedAssumingCharacter:'\n' errorMessage:@"Error parsing stream object"];
+			}
 
 			if(![value isKindOfClass:[NSDictionary class]]) [self _raiseParserException:@"Error parsing stream object"];
 
@@ -555,9 +559,9 @@ static BOOL IsWhiteSpace(uint8_t c);
 {
 	NSMutableData *data=[NSMutableData data];
 
-	if(currchar=='-')
+	if(currchar=='-' || currchar=='+')
 	{
-		[data appendBytes:(uint8_t [1]){'-'} length:1];
+		[data appendBytes:(uint8_t [1]){currchar} length:1];
 		[self proceed];
 	}
 
@@ -569,7 +573,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 	if(currchar=='.')
 	{
-		[data appendBytes:(uint8_t [1]){'.'} length:1];
+		[data appendBytes:(uint8_t [1]){currchar} length:1];
 		[self proceed];
 
 		while(isdigit(currchar))
@@ -607,10 +611,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 			[str appendFormat:@"%c",HexDigit(c1)*16+HexDigit(c2)];
 		}
-		else if(currchar<0x21||currchar>0x7e||currchar=='%'||
-		currchar=='('||currchar==')'||currchar=='<'||currchar=='>'||
-		currchar=='['||currchar==']'||currchar=='{'||currchar=='}'||
-		currchar=='/')
+		else if(IsWhitespace(currchar)||IsDelimiter(currchar))
 		{
 			return str;
 		}
@@ -1013,9 +1014,14 @@ static BOOL IsHexDigit(uint8_t c)
 	return (c>='0'&&c<='9')||(c>='A'&&c<='F')||(c>='a'&&c<='f');
 }
 
-static BOOL IsWhiteSpace(uint8_t c)
+static BOOL IsWhitespace(uint8_t c)
 {
 	return c==' '||c=='\t'||c=='\r'||c=='\n'||c=='\f';
+}
+
+static BOOL IsDelimiter(uint8_t c)
+{
+	return c=='%'||c=='('||c==')'||c=='<'||c=='>'||c=='['||c==']'||c=='{'||c=='}'||c=='/';
 }
 
 static int HexDigit(uint8_t c)

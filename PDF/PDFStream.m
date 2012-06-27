@@ -155,12 +155,20 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 	id palette=[colourspace objectAtIndex:3];
 
 	NSData *data;
-	if([palette isKindOfClass:[PDFStream class]]) data=[[palette handle] remainingFileContents];
-	else if([palette isKindOfClass:[PDFString class]]) data=[palette data];
-	else return nil;
-
-	if(!data) return nil;
-	if([data length]<numcomponents*numcolours) return nil;
+	if([palette isKindOfClass:[PDFStream class]])
+	{
+		data=[[palette handle] readDataOfLength:numcomponents*numcolours];
+		if(!data) return nil;
+	}
+	else if([palette isKindOfClass:[PDFString class]])
+	{
+		data=[palette data];
+		if([data length]<numcomponents*numcolours) return nil;
+	}
+	else
+	{
+		return nil;
+	}
 
 	return data;
 }

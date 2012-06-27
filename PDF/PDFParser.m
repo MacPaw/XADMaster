@@ -197,6 +197,8 @@ static BOOL IsDelimiter(uint8_t c);
 
 -(NSDictionary *)parsePDFXrefTable
 {
+	off_t totalsize=[mainhandle fileSize];
+
 	[self proceedAssumingCharacter:'x' errorMessage:@"Error parsing xref"];
 	[self proceedAssumingCharacter:'r' errorMessage:@"Error parsing xref"];
 	[self proceedAssumingCharacter:'e' errorMessage:@"Error parsing xref"];
@@ -247,6 +249,7 @@ static BOOL IsDelimiter(uint8_t c);
 				int objgen=atol(entry+11);
 
 				if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
+				if(objoffs>totalsize) continue; // Kludge to handle some other broken files.
 
 				[self startParsingFromHandle:mainhandle atOffset:objoffs];
 				id obj=[self parsePDFObject];
@@ -505,18 +508,20 @@ static BOOL IsDelimiter(uint8_t c);
 
 		case '<':
 			[self proceed];
-			switch(currchar)
+
+			if(currchar=='<')
 			{
-				case '0': case '1': case '2': case '3': case '4':
-				case '5': case '6': case '7': case '8': case '9':
-				case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-				case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-					return [self parsePDFHexStringWithParent:parent];
-
-				case '<': return [self parsePDFDictionaryWithParent:parent];
-
-				default: return nil; // TODO: Should this be an exception?
+				return [self parsePDFDictionaryWithParent:parent];
 			}
+			else if(IsHexDigit(currchar)||IsWhitespace(currchar))
+			{
+				return [self parsePDFHexStringWithParent:parent];
+			}
+			else
+			{
+				return nil; // TODO: Should this be an exception?
+			}
+		break;
 
 		default: return nil; // TODO: Should this be an exception?
 	}

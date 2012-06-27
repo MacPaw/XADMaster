@@ -109,7 +109,7 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 		int val=streambuffer[15];
 		if(val>0&&val<=16)
 		{
-			for(int i=1;i<val;i++) if(streambuffer[15-val]!=val) return 0;
+			for(int i=1;i<val;i++) if(streambuffer[15-i]!=val) return 0;
 			return 16-val;
 		}
 		else return 0;

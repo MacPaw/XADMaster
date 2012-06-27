@@ -17,7 +17,7 @@ extern NSString *PDFParserException;
 	NSDictionary *trailerdict;
 	PDFEncryptionHandler *encryption;
 
-	uint8_t currchar;
+	int currchar;
 }
 
 +(PDFParser *)parserWithHandle:(CSHandle *)handle;
@@ -43,6 +43,7 @@ extern NSString *PDFParserException;
 -(PDFEncryptionHandler *)encryptionHandler;
 
 -(void)startParsingFromHandle:(CSHandle *)handle atOffset:(off_t)offset;
+-(off_t)parserFileOffset;
 -(void)proceed;
 -(void)skipWhitespace;
 -(void)proceedAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error;

@@ -41,6 +41,8 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 		encryption=nil;
 
+		currchar=0;
+
 		@try
 		{
 			if([handle readUInt8]!='%'||[handle readUInt8]!='P'||
@@ -119,12 +121,24 @@ static BOOL IsWhiteSpace(uint8_t c);
 	[fh autorelease];
 	fh=[handle retain];
 	[fh seekToFileOffset:offset];
+
+	currchar=0;
 	[self proceed];
+}
+
+-(off_t)parserFileOffset
+{
+	return [fh offsetInFile]-1;
 }
 
 -(void)proceed
 {
-	currchar=[fh readUInt8];
+	if(currchar==-1) [fh _raiseEOF];
+
+	uint8_t byte;
+	int actual=[fh readAtMost:1 toBuffer:&byte];
+	if(actual!=0) currchar=byte;
+	else currchar=-1;
 }
 
 -(void)skipWhitespace
@@ -219,12 +233,17 @@ static BOOL IsWhiteSpace(uint8_t c);
 			int num=[self parseSimpleInteger];
 
 			[self skipWhitespace];
-			[mainhandle skipBytes:-1];
 
-			for(int n=first;n<first+num;n++)
+			off_t tableoffset=[self parserFileOffset];
+
+			for(int i=0;i<num;i++)
 			{
+				NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
 				char entry[21];
+				[mainhandle seekToFileOffset:tableoffset+i*20];
 				[mainhandle readBytes:20 toBuffer:entry];
+				entry[20]=0; // Not strictly necessary?
 
 				if(entry[17]!='n') continue;
 
@@ -233,14 +252,16 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 				if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
 
-				off_t curroffs=[mainhandle offsetInFile];
 				[self startParsingFromHandle:mainhandle atOffset:objoffs];
 				id obj=[self parsePDFObject];
-				[mainhandle seekToFileOffset:curroffs];
 
-				PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:objgen];
+				PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:first+i generation:objgen];
 				if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
+
+				[pool release];
 			}
+
+			[self startParsingFromHandle:mainhandle atOffset:tableoffset+num*20];
 		}
 		else
 		{
@@ -298,6 +319,8 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 		for(int n=first;n<first+num;n++)
 		{
+			NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
 			int type=[self parseIntegerOfSize:typesize fromHandle:handle default:1];
 			uint64_t value1=[self parseIntegerOfSize:value1size fromHandle:handle default:0];
 			uint64_t value2=[self parseIntegerOfSize:value2size fromHandle:handle default:0];
@@ -322,8 +345,9 @@ static BOOL IsWhiteSpace(uint8_t c);
 					[mainhandle seekToFileOffset:curroffs];
 				}
 			}
-		}
 
+			[pool release];
+		}
 	}
 
 	return dict;
@@ -360,7 +384,7 @@ static BOOL IsWhiteSpace(uint8_t c);
 			if(![value isKindOfClass:[NSDictionary class]]) [self _raiseParserException:@"Error parsing stream object"];
 
 			return [[[PDFStream alloc] initWithDictionary:value fileHandle:mainhandle
-			reference:ref parser:self] autorelease];
+			offset:[self parserFileOffset] reference:ref parser:self] autorelease];
 		break;
 
 		case 'e':
@@ -374,9 +398,10 @@ static BOOL IsWhiteSpace(uint8_t c);
 			return value;
 		break;
 
-		default: [self _raiseParserException:@"Error parsing obj"];
+		default:
+			[self _raiseParserException:@"Error parsing obj"];
+			return nil; // Shut up, gcc.
 	}
-	return nil; // Shut up, gcc.
 }
 
 -(uint64_t)parseSimpleInteger
@@ -428,6 +453,8 @@ static BOOL IsWhiteSpace(uint8_t c);
 	int objnums[num];
 	off_t offsets[num];
 
+	[self startParsingFromHandle:handle atOffset:0];
+
 	for(int i=0;i<num;i++)
 	{
 		objnums[i]=[self parseSimpleInteger];
@@ -436,12 +463,16 @@ static BOOL IsWhiteSpace(uint8_t c);
 
 	for(int i=0;i<num;i++)
 	{
+		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
 		PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnums[i] generation:0];
 
 		[self startParsingFromHandle:handle atOffset:offsets[i]+startoffset];
 		id value=[self parsePDFTypeWithParent:ref];
 
 		if(value && ![objdict objectForKey:ref]) [objdict setObject:value forKey:ref];
+
+		[pool release];
 	}
 }
 
@@ -986,4 +1017,3 @@ static int HexDigit(uint8_t c)
 	else if(c>='A'&&c<='F') return c-'A'+10;
 	else return 0; 
 }
-

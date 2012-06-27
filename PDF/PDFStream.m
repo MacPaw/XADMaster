@@ -14,13 +14,13 @@
 @implementation PDFStream
 
 -(id)initWithDictionary:(NSDictionary *)dictionary fileHandle:(CSHandle *)filehandle
-reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
+offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser *)owner
 {
 	if(self=[super init])
 	{
 		dict=[dictionary retain];
 		fh=[filehandle retain];
-		offs=[fh offsetInFile];
+		offs=offset;
 		ref=[reference retain];
 		parser=owner;
 	}

@@ -26,7 +26,7 @@
 }
 
 -(id)initWithDictionary:(NSDictionary *)dictionary fileHandle:(CSHandle *)filehandle
-reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
+offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser *)owner;
 -(void)dealloc;
 
 -(NSDictionary *)dictionary;

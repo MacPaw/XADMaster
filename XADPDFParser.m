@@ -11,6 +11,8 @@ static NSDictionary *TIFFShortArrayEntry(int tag,NSData *data);
 static NSDictionary *TIFFUndefinedArrayEntry(int tag,NSData *data);
 static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 
+static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *profile,int *skiplength);
+
 @implementation XADPDFParser
 
 +(int)requiredHeaderSize { return 5+48; }
@@ -358,7 +360,9 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 
 -(NSData *)defaultCMYKProfile
 {
-	return [NSData dataWithContentsOfFile:@"/System/Library/ColorSync/Profiles/Generic CMYK Profile.icc"];
+	NSData *data=[NSData dataWithContentsOfFile:@"/System/Library/ColorSync/Profiles/Generic CMYK Profile.icc"];
+	if(data) return data;
+	else return [NSData dataWithBytes:"test" length:4];
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
@@ -368,7 +372,32 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 
 	if([streamtype isEqual:@"JPEG"])
 	{
-		return [stream JPEGHandle];
+		CSHandle *handle=[stream JPEGHandle];
+
+		NSData *profile=[dict objectForKey:@"PDFJPEGColourProfile"];
+		if(profile)
+		{
+			NSData *fileheader=[handle readDataOfLengthAtMost:256];
+
+			int skiplength;
+			NSData *newheader=CreateNewJPEGHeaderWithColourProfile(fileheader,profile,&skiplength);
+			if(newheader)
+			{
+				return [CSMultiHandle multiHandleWithHandles:
+				[CSMemoryHandle memoryHandleForReadingData:newheader],
+				[handle nonCopiedSubHandleToEndOfFileFrom:skiplength],
+				nil];
+			}
+			else
+			{
+				[handle seekToFileOffset:0];
+				return handle;
+			}
+		}
+		else
+		{
+			return handle;
+		}
 	}
 	else if([streamtype isEqual:@"TIFF"])
 	{
@@ -539,6 +568,59 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries)
 	}
 
 	return [header data];
+}
+
+static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *profile,int *skiplength)
+{
+	int length=[fileheader length];
+	const uint8_t *bytes=[fileheader bytes];
+
+	if(length<4) return nil;
+	if(bytes[0]!=0xff && bytes[1]!=0xd8) return nil;
+
+	NSMutableData *newheader=[NSMutableData data];
+
+	if(bytes[2]==0xff && bytes[3]==0xe0) // JFIF.
+	{
+		if(length<6) return nil;
+		int jfiflength=CSUInt16BE(&bytes[4]);
+		if(length<4+jfiflength) return nil;
+
+		[newheader appendBytes:bytes length:4+jfiflength];
+		*skiplength=4+jfiflength;
+	}
+	else if(bytes[2]==0xff && (bytes[3]>=0xda && bytes[3]<=0xfe)) // Some other JPEG chunk.
+	{
+		[newheader appendBytes:bytes length:2];
+		*skiplength=2;
+	}
+	else
+	{
+		return nil;
+	}
+
+	int profilelength=[profile length];
+	const uint8_t *profilebytes=[profile bytes];
+
+	int numchunks=(profilelength+65518)/65519;
+
+	for(int i=0;i<numchunks;i++)
+	{
+		int chunkbytes;
+		if(i==numchunks-1) chunkbytes=profilelength-i*65519;
+		else chunkbytes=65519;
+
+		int chunksize=chunkbytes+16;
+
+		[newheader appendBytes:(uint8_t [18]){
+			0xff,0xe2,chunksize>>8,chunksize&0xff,
+			'I','C','C','_','P','R','O','F','I','L','E',0,
+			i+1,numchunks} length:18];
+
+		[newheader appendBytes:&profilebytes[i*65519] length:chunkbytes];
+	}
+
+	return newheader;
 }
 
 

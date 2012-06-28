@@ -460,9 +460,8 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 		int cols=[decodeparms intValueForKey:@"Columns" default:1728];
 		int white=[decodeparms intValueForKey:@"BlackIs1" default:NO]?0:1;
 
-		if(k==0) return nil;
+		if(k==0) return [[[CCITTFaxT41DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
 		else if(k>0) return nil;
-//		if(k==0) return [[[CCITTFaxT41DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
 //		else if(k>0) return [[[CCITTFaxT42DHandle alloc] initWithHandle:parent columns:cols white:white] autorelease];
 		else return [[[CCITTFaxT6Handle alloc] initWithHandle:parent columns:cols white:white] autorelease];
 	}

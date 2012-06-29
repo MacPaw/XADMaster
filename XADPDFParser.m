@@ -1,6 +1,7 @@
 #import "XADPDFParser.h"
 #import "CSMemoryHandle.h"
 #import "CSMultiHandle.h"
+#import "XADLZMAHandle.h"
 
 static int SortPages(id first,id second,void *context);
 
@@ -11,7 +12,7 @@ static NSDictionary *TIFFShortArrayEntry(int tag,NSData *data);
 static NSDictionary *TIFFUndefinedArrayEntry(int tag,NSData *data);
 static NSData *CreateTIFFHeaderWithEntries(NSArray *entries);
 
-static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *profile,int *skiplength);
+static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *profile,int *skiplength);
 
 @implementation XADPDFParser
 
@@ -136,7 +137,23 @@ static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *
 			image,@"PDFStream",
 		nil];
 
-		if([image isJPEGImage]||[image isJPEG2000Image])
+		if([image isJPEGImage])
+		{
+//if([image imageType]==PDFCMYKImageType) [self reportInterestingFileWithReason:@"CMYK JPEG"];
+//if([[image imageColourSpaceName] isEqual:@"ICCBased"]) [self reportInterestingFileWithReason:@"JPEG with ICC profile"];
+			NSString *compname=[self compressionNameForStream:image excludingLast:YES];
+			[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
+
+			if(![image hasMultipleFilters] && !isencrypted && !colourprofile)
+			[dict setObject:length forKey:XADFileSizeKey];
+
+			[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
+
+			if(colourprofile) [dict setObject:colourprofile forKey:@"PDFJPEGColourProfile"];
+
+			name=[name stringByAppendingPathExtension:@"jpg"];
+		}
+		else if([image isJPEG2000Image])
 		{
 			NSString *compname=[self compressionNameForStream:image excludingLast:YES];
 			[dict setObject:[self XADStringWithString:compname] forKey:XADCompressionNameKey];
@@ -146,18 +163,7 @@ static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *
 
 			[dict setObject:@"JPEG" forKey:@"PDFStreamType"];
 
-			if([image isJPEGImage])
-			{
-				if([[image imageColourSpaceName] isEqual:@"DeviceCMYK"]) colourprofile=[self defaultCMYKProfile];
-
-				if(colourprofile) [dict setObject:colourprofile forKey:@"PDFJPEGColourProfile"];
-
-				name=[name stringByAppendingPathExtension:@"jpg"];
-			}
-			else
-			{
-				name=[name stringByAppendingPathExtension:@"jp2"];
-			}
+			name=[name stringByAppendingPathExtension:@"jp2"];
 		}
 		else
 		{
@@ -358,13 +364,6 @@ static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *
 	return string;
 }
 
--(NSData *)defaultCMYKProfile
-{
-	NSData *data=[NSData dataWithContentsOfFile:@"/System/Library/ColorSync/Profiles/Generic CMYK Profile.icc"];
-	if(data) return data;
-	else return [NSData dataWithBytes:"test" length:4];
-}
-
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	NSString *streamtype=[dict objectForKey:@"PDFStreamType"];
@@ -378,6 +377,7 @@ static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *
 		if(profile)
 		{
 			NSData *fileheader=[handle readDataOfLengthAtMost:256];
+			[handle seekToFileOffset:0];
 
 			int skiplength;
 			NSData *newheader=CreateNewJPEGHeaderWithColourProfile(fileheader,profile,&skiplength);
@@ -390,7 +390,6 @@ static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *
 			}
 			else
 			{
-				[handle seekToFileOffset:0];
 				return handle;
 			}
 		}
@@ -570,7 +569,7 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries)
 	return [header data];
 }
 
-static 	NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *profile,int *skiplength)
+static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *profile,int *skiplength)
 {
 	int length=[fileheader length];
 	const uint8_t *bytes=[fileheader bytes];

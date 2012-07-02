@@ -328,10 +328,12 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 		}
 		else if([name isEqual:@"CalRGB"])
 		{
+			// TODO: Generate a profile.
 			return nil;
 		}
 		else if([name isEqual:@"CalGray"])
 		{
+			// TODO: Generate a profile.
 			return nil;
 		}
 		else if([name isEqual:@"Indexed"])
@@ -339,6 +341,11 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 			if(count!=4) return nil;
 			id palettespace=[colourspace objectAtIndex:1];
 			return [self _ICCColourProfileForColourSpaceObject:palettespace];
+		}
+		else if([name isEqual:@"Separation"])
+		{
+			// TODO: Generate an inverted gray profile.
+			return nil;
 		}
 		else
 		{

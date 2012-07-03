@@ -178,10 +178,16 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict,XADArchiveParser
 	NSString *datestr;
 	if(date)
 	{
+		#ifndef __COCOTRON__
 		NSDateFormatter *formatter=[[NSDateFormatter new] autorelease];
 		[formatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 		[formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
 		datestr=[formatter stringFromDate:date];
+		#else
+		NSDateFormatter *formatter=[[NSDateFormatter new] autorelease];
+		[formatter setDateFormat:@"%Y-%m-%d %H:%M"];
+		datestr=[formatter stringFromDate:date];
+		#endif
 	}
 	else
 	{

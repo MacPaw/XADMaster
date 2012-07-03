@@ -2,7 +2,6 @@
 
 #ifdef WINDOWS
 #import "regex.h"
-asdasd
 #else
 #import <regex.h>
 #endif

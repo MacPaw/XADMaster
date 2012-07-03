@@ -178,10 +178,10 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict,XADArchiveParser
 	NSString *datestr;
 	if(date)
 	{
-		time_t t=[date timeIntervalSince1970];
-		struct tm *tm=localtime(&t);
-		datestr=[NSString stringWithFormat:@"%4d-%02d-%02d %02d:%02d",
-		tm->tm_year+1900,tm->tm_mon+1,tm->tm_mday,tm->tm_hour,tm->tm_min];
+		NSDateFormatter *formatter=[[NSDateFormatter new] autorelease];
+		[formatter setFormatterBehavior:NSDateFormatterBehavior10_4];
+		[formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+		datestr=[formatter stringFromDate:date];
 	}
 	else
 	{

@@ -329,14 +329,14 @@ static BOOL IsDelimiter(uint8_t c);
 
 		for(int n=first;n<first+num;n++)
 		{
-			NSAutoreleasePool *pool=[NSAutoreleasePool new];
-
 			int type=[self parseIntegerOfSize:typesize fromHandle:handle default:1];
 			uint64_t value1=[self parseIntegerOfSize:value1size fromHandle:handle default:0];
 			uint64_t value2=[self parseIntegerOfSize:value2size fromHandle:handle default:0];
 
 			if(type!=1) continue;
 			if(!value1) continue; // Kludge to handle broken Apple PDF files. TODO: Is this actually needed here?
+
+			NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
 			off_t curroffs=[mainhandle offsetInFile];
 			[self startParsingFromHandle:mainhandle atOffset:value1];

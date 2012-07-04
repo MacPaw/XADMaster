@@ -27,11 +27,11 @@ resourceForkLength:(off_t *)resourcelengthptr extendedAttributes:(NSDictionary *
 
 		switch(entryid)
 		{
-			case 2: // resource fork
+			case 2: // Resource fork
 				rsrcoffs=entryoffs;
 				rsrclen=entrylen;
 			break;
-			case 9: // finder
+			case 9: // Finder info
 				finderoffs=entryoffs;
 				finderlen=entrylen;
 			break;
@@ -62,7 +62,7 @@ resourceForkLength:(off_t *)resourcelengthptr extendedAttributes:(NSDictionary *
 		if(finderlen>70)
 		{
 			if(!extattrs) extattrs=[NSMutableDictionary dictionary];
-			[self _parseAppleDoubleExtendedAttributesWithHandle:fh intoDictionary:extattrs];
+			[self parseAppleDoubleExtendedAttributesWithHandle:fh intoDictionary:extattrs];
 		}
 	}
 
@@ -73,7 +73,7 @@ resourceForkLength:(off_t *)resourcelengthptr extendedAttributes:(NSDictionary *
 	return YES;
 }
 
-+(void)_parseAppleDoubleExtendedAttributesWithHandle:(CSHandle *)fh intoDictionary:(NSMutableDictionary *)extattrs
++(void)parseAppleDoubleExtendedAttributesWithHandle:(CSHandle *)fh intoDictionary:(NSMutableDictionary *)extattrs
 {
 	[fh skipBytes:2];
 	uint32_t magic=[fh readUInt32BE];

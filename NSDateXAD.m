@@ -2,11 +2,17 @@
 
 #import <math.h>
 
+#define SecondsFrom2000To2001 31622400
 #define SecondsFrom1904To1970 2082844800
 #define SecondsFrom1601To1970 11644473600
 #define SecondsFrom1970ToLastDayOf1978 283910400
 
 @implementation NSDate (XAD)
+
++(NSDate *)XADDateWithTimeIntervalSince2000:(NSTimeInterval)interval
+{
+	return [NSDate dateWithTimeIntervalSinceReferenceDate:interval-SecondsFrom2000To2001];
+}
 
 +(NSDate *)XADDateWithTimeIntervalSince1904:(NSTimeInterval)interval
 {

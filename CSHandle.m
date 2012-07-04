@@ -116,6 +116,13 @@ CSReadValueImpl(uint16_t,readUInt16LE,CSUInt16LE)
 CSReadValueImpl(uint32_t,readUInt32LE,CSUInt32LE)
 CSReadValueImpl(uint64_t,readUInt64LE,CSUInt64LE)
 
+-(int16_t)readInt16InBigEndianOrder:(BOOL)isbigendian { if(isbigendian) return [self readInt16BE]; else return [self readInt16LE]; }
+-(int32_t)readInt32InBigEndianOrder:(BOOL)isbigendian { if(isbigendian) return [self readInt32BE]; else return [self readInt32LE]; }
+-(int64_t)readInt64InBigEndianOrder:(BOOL)isbigendian { if(isbigendian) return [self readInt64BE]; else return [self readInt64LE]; }
+-(uint16_t)readUInt16InBigEndianOrder:(BOOL)isbigendian { if(isbigendian) return [self readUInt16BE]; else return [self readUInt16LE]; }
+-(uint32_t)readUInt32InBigEndianOrder:(BOOL)isbigendian { if(isbigendian) return [self readUInt32BE]; else return [self readUInt32LE]; }
+-(uint64_t)readUInt64InBigEndianOrder:(BOOL)isbigendian { if(isbigendian) return [self readUInt64BE]; else return [self readUInt64LE]; }
+
 CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 
 -(uint32_t)readBits:(int)bits

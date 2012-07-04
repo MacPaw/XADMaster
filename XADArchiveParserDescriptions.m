@@ -92,6 +92,7 @@
 		NSLocalizedString(@"Last modified",@""),XADLastModificationDateKey,
 		NSLocalizedString(@"Last accessed",@""),XADLastAccessDateKey,
 		NSLocalizedString(@"Last attribute change",@""),XADLastAttributeChangeDateKey,
+		NSLocalizedString(@"Last backup",@""),XADLastBackupDateKey,
 		NSLocalizedString(@"Created",@""),XADCreationDateKey,
 
 		NSLocalizedString(@"Extended attributes",@""),XADExtendedAttributesKey,
@@ -164,7 +165,8 @@ static NSInteger OrderKeys(id first,id second,void *context);
 		[NSNumber numberWithInt:300],XADLastModificationDateKey,
 		[NSNumber numberWithInt:301],XADLastAccessDateKey,
 		[NSNumber numberWithInt:302],XADLastAttributeChangeDateKey,
-		[NSNumber numberWithInt:303],XADCreationDateKey,
+		[NSNumber numberWithInt:303],XADLastBackupDateKey,
+		[NSNumber numberWithInt:304],XADCreationDateKey,
 
 		[NSNumber numberWithInt:400],XADExtendedAttributesKey,
 		[NSNumber numberWithInt:401],XADFileTypeKey,

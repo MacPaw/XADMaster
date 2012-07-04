@@ -24,6 +24,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XAD7ZipParser.m \
 			XADALZipParser.m \
 			XADAppleDouble.m \
+			XADAppleSingleParser.m \
 			XADArParser.m \
 			XADArchiveParser.m \
 			XADArchiveParserDescriptions.m \

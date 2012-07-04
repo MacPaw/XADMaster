@@ -16,6 +16,7 @@ extern NSString *XADCompressionNameKey;
 extern NSString *XADLastModificationDateKey;
 extern NSString *XADLastAccessDateKey;
 extern NSString *XADLastAttributeChangeDateKey;
+extern NSString *XADLastBackupDateKey;
 extern NSString *XADCreationDateKey;
 
 extern NSString *XADIsDirectoryKey;

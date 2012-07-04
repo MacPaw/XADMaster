@@ -332,6 +332,12 @@
 		1B34AC0F11CED29A00396C26 /* CSCommandLineParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */; };
 		1B34AC1311CED9E900396C26 /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
 		1B34AC1411CED9F100396C26 /* CSCommandLineParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */; };
+		1B3581A715A4CFE90002A4C9 /* XADAppleSingleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3581A515A4CFE90002A4C9 /* XADAppleSingleParser.h */; };
+		1B3581A815A4CFE90002A4C9 /* XADAppleSingleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3581A515A4CFE90002A4C9 /* XADAppleSingleParser.h */; };
+		1B3581A915A4CFE90002A4C9 /* XADAppleSingleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3581A515A4CFE90002A4C9 /* XADAppleSingleParser.h */; };
+		1B3581AA15A4CFE90002A4C9 /* XADAppleSingleParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3581A615A4CFE90002A4C9 /* XADAppleSingleParser.m */; };
+		1B3581AB15A4CFE90002A4C9 /* XADAppleSingleParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3581A615A4CFE90002A4C9 /* XADAppleSingleParser.m */; };
+		1B3581AC15A4CFE90002A4C9 /* XADAppleSingleParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3581A615A4CFE90002A4C9 /* XADAppleSingleParser.m */; };
 		1B3A64B71015030700AE25A8 /* XADLZHSFXParsers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */; };
 		1B3A64C910150DB600AE25A8 /* XADLZHOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */; };
 		1B3A66D81017B7E000AE25A8 /* XADNSISParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */; };
@@ -1377,6 +1383,8 @@
 		1B34AB2C11C3196800396C26 /* StuffItXEnglishDictionary.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StuffItXEnglishDictionary.c; sourceTree = "<group>"; };
 		1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSCommandLineParser.h; sourceTree = "<group>"; };
 		1B34AC0E11CED29A00396C26 /* CSCommandLineParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSCommandLineParser.m; sourceTree = "<group>"; };
+		1B3581A515A4CFE90002A4C9 /* XADAppleSingleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADAppleSingleParser.h; sourceTree = "<group>"; };
+		1B3581A615A4CFE90002A4C9 /* XADAppleSingleParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADAppleSingleParser.m; sourceTree = "<group>"; };
 		1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHSFXParsers.h; sourceTree = "<group>"; };
 		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
 		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
@@ -2530,6 +2538,8 @@
 				1B06D5B30DDA669C00D9C000 /* XADBinHexParser.m */,
 				1BC88D730ED31EC3006B47FE /* XADMacBinaryParser.h */,
 				1BC88D740ED31EC3006B47FE /* XADMacBinaryParser.m */,
+				1B3581A515A4CFE90002A4C9 /* XADAppleSingleParser.h */,
+				1B3581A615A4CFE90002A4C9 /* XADAppleSingleParser.m */,
 				1B690E4D0F466C5400A415E0 /* XADPackItParser.h */,
 				1B690E4E0F466C5400A415E0 /* XADPackItParser.m */,
 				1B23DB8C117BA91D00620319 /* XADNowCompressParser.h */,
@@ -2795,6 +2805,7 @@
 				1B06CD1D145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F83146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
 				1BBEFA5C14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
+				1B3581A815A4CFE90002A4C9 /* XADAppleSingleParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2852,6 +2863,7 @@
 				1B06CD1E145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F84146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
 				1BBEFA5D14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
+				1B3581A915A4CFE90002A4C9 /* XADAppleSingleParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3054,6 +3066,7 @@
 				1B5F3F82146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
 				1BBEF8B014D8A31800790E4B /* XADArchiveParserDescriptions.h in Headers */,
 				1BBEFA5B14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
+				1B3581A715A4CFE90002A4C9 /* XADAppleSingleParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3604,6 +3617,7 @@
 				1B06CD20145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8F414E0964E00790E4B /* XADArchiveParserDescriptions.m in Sources */,
 				1BBEFA5F14EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
+				1B3581AB15A4CFE90002A4C9 /* XADAppleSingleParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3820,6 +3834,7 @@
 				1B06CD21145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8F614E0964F00790E4B /* XADArchiveParserDescriptions.m in Sources */,
 				1BBEFA6014EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
+				1B3581AC15A4CFE90002A4C9 /* XADAppleSingleParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4072,6 +4087,7 @@
 				1B06CD1F145CFF36003907F9 /* XADCrunchHandles.m in Sources */,
 				1BBEF8B114D8A31800790E4B /* XADArchiveParserDescriptions.m in Sources */,
 				1BBEFA5E14EF375400790E4B /* XADStuffItSplitParser.m in Sources */,
+				1B3581AA15A4CFE90002A4C9 /* XADAppleSingleParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

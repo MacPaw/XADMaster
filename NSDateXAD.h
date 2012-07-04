@@ -7,6 +7,7 @@
 
 @interface NSDate (XAD)
 
++(NSDate *)XADDateWithTimeIntervalSince2000:(NSTimeInterval)interval;
 +(NSDate *)XADDateWithTimeIntervalSince1904:(NSTimeInterval)interval;
 +(NSDate *)XADDateWithTimeIntervalSince1601:(NSTimeInterval)interval;
 +(NSDate *)XADDateWithMSDOSDate:(uint16_t)date time:(uint16_t)time;

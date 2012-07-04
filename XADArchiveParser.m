@@ -17,6 +17,7 @@
 #import "XADDiskDoublerParser.h"
 #import "XADBinHexParser.h"
 #import "XADMacBinaryParser.h"
+#import "XADAppleSingleParser.h"
 #import "XADPackItParser.h"
 #import "XADNowCompressParser.h"
 #import "XADGzipParser.h"
@@ -78,7 +79,9 @@ NSString *XADIsCorruptedKey=@"XADIsCorrupted";
 NSString *XADLastModificationDateKey=@"XADLastModificationDate";
 NSString *XADLastAccessDateKey=@"XADLastAccessDate";
 NSString *XADLastAttributeChangeDateKey=@"XADLastAttributeChangeDate";
+NSString *XADLastBackupDateKey=@"XADLastBackupDate";
 NSString *XADCreationDateKey=@"XADCreationDate";
+
 NSString *XADExtendedAttributesKey=@"XADExtendedAttributes";
 NSString *XADFileTypeKey=@"XADFileType";
 NSString *XADFileCreatorKey=@"XADFileCreator";
@@ -141,6 +144,7 @@ static int maxheader=0;
 		[XADStuffItXParser class],
 		[XADBinHexParser class],
 		[XADMacBinaryParser class],
+		[XADAppleSingleParser class],
 		[XADDiskDoublerParser class],
 		[XADPackItParser class],
 		[XADNowCompressParser class],

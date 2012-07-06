@@ -26,6 +26,7 @@
 
 -(void)resetStream
 {
+	[parent seekToFileOffset:startoffs];
 	[rc4 release];
 	rc4=[(XADRC4Engine *)[XADRC4Engine alloc] initWithKey:key];
 }

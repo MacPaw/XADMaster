@@ -1,9 +1,12 @@
 # Compilers and linkers
 
-OBJCC = /Xcode3/usr/bin/gcc-4.2
-CC = /Xcode3/usr/bin/gcc-4.2
-CXX = /Xcode3/usr/bin/g++-4.2
-LD = /Xcode3/usr/bin/gcc-4.2
+OBJCC_I386 = /Xcode3/usr/bin/gcc-4.2 -arch i386
+OBJCC_PPC = /Xcode3/usr/bin/gcc-4.0 -arch ppc
+CC_I386 = /Xcode3/usr/bin/gcc-4.2 -arch i386
+CC_PPC = /Xcode3/usr/bin/gcc-4.0 -arch ppc
+CXX_I386 = /Xcode3/usr/bin/g++-4.2 -arch i386
+CXX_PPC = /Xcode3/usr/bin/g++-4.0 -arch ppc
+LD = /Xcode3/usr/bin/gcc-4.0
 AR = ar
 SDK = -isysroot /Xcode3/SDKs/MacOSX10.5.sdk
 
@@ -152,20 +155,20 @@ clean:
 
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) -arch i386 $(ALL_CFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@.i386
-	$(CC) -arch ppc $(ALL_CFLAGS) -c $< -o $@.ppc
+	$(CC_I386) $(ALL_CFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@.i386
+	$(CC_PPC) $(ALL_CFLAGS) -c $< -o $@.ppc
 	lipo -create $@.i386 $@.ppc -output $@
 
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.m
 	@mkdir -p $(dir $@)
-	$(OBJCC) -arch i386 $(ALL_OBJCFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@.i386
-	$(OBJCC) -arch ppc $(ALL_OBJCFLAGS) -c $< -o $@.ppc
+	$(OBJCC_I386) $(ALL_OBJCFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@.i386
+	$(OBJCC_PPC) $(ALL_OBJCFLAGS) -c $< -o $@.ppc
 	lipo -create $@.i386 $@.ppc -output $@
 
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -arch i386 $(ALL_CXXFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@.i386
-	$(CXX) -arch ppc $(ALL_CXXFLAGS) -c $< -o $@.ppc
+	$(CXX_I386) $(ALL_CXXFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@.i386
+	$(CXX_PPC) $(ALL_CXXFLAGS) -c $< -o $@.ppc
 	lipo -create $@.i386 $@.ppc -output $@
 
 -include $(OBJS:.o=.d)

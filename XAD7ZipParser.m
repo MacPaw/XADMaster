@@ -114,7 +114,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	[super dealloc];
 }
 
--(void)parse
+-(void)parseWithSeparateMacForks
 {
 	CSHandle *handle=[self handle];
 
@@ -695,7 +695,7 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 
 
 
--(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
+-(CSHandle *)rawHandleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
 	NSNumber *isempty=[dict objectForKey:@"7zIsEmptyFile"];
 	if(isempty&&[isempty boolValue]) return [self zeroLengthHandleWithChecksum:checksum];

@@ -84,7 +84,7 @@ int main(int argc,const char **argv)
 	@"if one is created."];
 	[cmdline addAlias:@"t" forOption:@"copy-time"];
 
-	#ifdef __APPLE__
+	#if defined(__APPLE__)
 
 	[cmdline addSwitchOption:@"no-quarantine" description:
 	@"Do not copy Finder quarantine metadata from the archive to the extracted files."];
@@ -100,6 +100,19 @@ int main(int argc,const char **argv)
  	[cmdline addAlias:@"k" forOption:@"forks"];
 
 	int forkvalues[]={XADMacOSXForkStyle,XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADIgnoredForkStyle};
+
+	#elif defined(_WIN32)
+
+	[cmdline addMultipleChoiceOption:@"forks"
+	allowedValues:[NSArray arrayWithObjects:@"visible",@"hidden",@"hfv",@"skip",nil] defaultValue:@"visible"
+	description:@"How to handle Mac OS resource forks. "
+	@"\"visible\" creates AppleDouble files with the extension \".rsrc\", "
+	@"\"hidden\" creates AppleDouble files with the prefix \"._\", "
+	@"\"hfv\" creates AppleDouble files with the prefix \"%\", "
+	@"and \"skip\" discards all resource forks. Defaults to \"visible\"."];
+ 	[cmdline addAlias:@"k" forOption:@"forks"];
+
+	int forkvalues[]={XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADHFVExplorerAppleDoubleForkStyle,XADIgnoredForkStyle};
 
 	#else
 

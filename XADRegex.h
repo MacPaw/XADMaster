@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-#ifdef WINDOWS
+#ifdef _WIN32
 #import "regex.h"
 #else
 #import <regex.h>

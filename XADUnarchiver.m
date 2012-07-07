@@ -210,6 +210,7 @@
 
 			case XADHiddenAppleDoubleForkStyle:
 			case XADVisibleAppleDoubleForkStyle:
+			case XADHFVExplorerAppleDoubleForkStyle:
 				error=[self _extractResourceForkEntryWithDictionary:dict asAppleDoubleFile:path];
 			break;
 
@@ -645,6 +646,12 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 
 			case XADVisibleAppleDoubleForkStyle:
 				return [path stringByAppendingPathExtension:@"rsrc"];
+			break;
+
+			case XADHFVExplorerAppleDoubleForkStyle:
+				// TODO: is this path generation correct?
+				return [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:
+				[@"%" stringByAppendingString:[path lastPathComponent]]];
 			break;
 		}
 	}

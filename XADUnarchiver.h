@@ -6,6 +6,7 @@
 #define XADMacOSXForkStyle 1
 #define XADHiddenAppleDoubleForkStyle 2
 #define XADVisibleAppleDoubleForkStyle 3
+#define XADHFVExplorerAppleDoubleForkStyle 4
 
 #ifdef __APPLE__
 #define XADDefaultForkStyle XADMacOSXForkStyle

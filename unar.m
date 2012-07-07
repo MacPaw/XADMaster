@@ -3,7 +3,7 @@
 #import "CSCommandLineParser.h"
 #import "CommandLineCommon.h"
 
-#define VERSION_STRING @"v1.1"
+#define VERSION_STRING @"v1.2"
 
 @interface Unarchiver:NSObject {}
 @end

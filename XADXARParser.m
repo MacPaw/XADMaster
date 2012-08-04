@@ -5,6 +5,7 @@
 #import "XADDigestHandle.h"
 #import "XADXZHandle.h"
 #import "XADRegex.h"
+#import "NSDateXAD.h"
 
 #define GroundState 0
 #define XarState 1
@@ -436,7 +437,7 @@ destinationDictionary:(NSMutableDictionary *)dest
 			}
 			NSTimeZone *tz=[NSTimeZone timeZoneForSecondsFromGMT:timeoffs*60];
 
-			obj=[NSCalendarDate dateWithYear:year month:month day:day hour:hour minute:minute second:second timeZone:tz];
+			obj=[NSDate XADDateWithYear:year month:month day:day hour:hour minute:minute second:second timeZone:tz];
 		}
 	}
 

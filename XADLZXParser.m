@@ -1,6 +1,7 @@
 #import "XADLZXParser.h"
 #import "XADLZXHandle.h"
 #import "XADCRCHandle.h"
+#import "NSDateXAD.h"
 
 
 
@@ -65,7 +66,7 @@
 		// Dates from 2000 to 2005 LZX/Dr.Titus patch are correct
 		// Dates from 2034 to 2041 Dr.Titus patch are correct
 
-		NSDate *dateobj=[NSCalendarDate dateWithYear:year month:month day:day hour:hour minute:minute second:second timeZone:nil];
+		NSDate *dateobj=[NSDate XADDateWithYear:year month:month day:day hour:hour minute:minute second:second timeZone:nil];
 
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			[self XADPathWithData:namedata separators:XADUnixPathSeparator],XADFileNameKey,

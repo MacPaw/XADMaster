@@ -1,5 +1,6 @@
 #import "XADISO9660Parser.h"
 #import "XADPaddedBlockHandle.h"
+#import "NSDateXAD.h"
 
 @implementation XADISO9660Parser
 
@@ -750,7 +751,7 @@ length:(uint32_t)length
 		tz=[NSTimeZone timeZoneForSecondsFromGMT:offset*15*60];
 	}
 
-	return [NSCalendarDate dateWithYear:year month:month day:day
+	return [NSDate XADDateWithYear:year month:month day:day
 	hour:hour minute:minute second:second timeZone:tz];
 }
 
@@ -770,7 +771,7 @@ length:(uint32_t)length
 		tz=[NSTimeZone timeZoneForSecondsFromGMT:offset*15*60];
 	}
 
-	return [NSCalendarDate dateWithYear:year month:month day:day
+	return [NSDate XADDateWithYear:year month:month day:day
 	hour:hour minute:minute second:second timeZone:tz];
 }
 

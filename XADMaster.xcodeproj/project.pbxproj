@@ -870,6 +870,7 @@
 		1B7F3CB613147CD6008238BF /* XADPaddedBlockHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7F3CB013147CD6008238BF /* XADPaddedBlockHandle.h */; };
 		1B7F3CB713147CD6008238BF /* XADPaddedBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */; };
 		1B81DD460FFEB87B005C5B23 /* XADUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1B83727D15CEA27000B0DC9D /* XADPlatformiOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B83727C15CEA27000B0DC9D /* XADPlatformiOS.m */; };
 		1B880C280F09A23B0061CCBE /* XADStuffItXBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */; };
 		1B880D040F0AAB700061CCBE /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
 		1B880D080F0AAB970061CCBE /* XADPPMdHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */; };
@@ -1814,6 +1815,7 @@
 		1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPaddedBlockHandle.m; sourceTree = "<group>"; };
 		1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADUnarchiver.h; sourceTree = "<group>"; };
 		1B81DD450FFEB87B005C5B23 /* XADUnarchiver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADUnarchiver.m; sourceTree = "<group>"; };
+		1B83727C15CEA27000B0DC9D /* XADPlatformiOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPlatformiOS.m; sourceTree = "<group>"; };
 		1B880C250F09A23B0061CCBE /* XADStuffItXBlockHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXBlockHandle.h; sourceTree = "<group>"; };
 		1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXBlockHandle.m; sourceTree = "<group>"; };
 		1B880D010F0AAB6F0061CCBE /* XADPPMdParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPPMdParser.h; sourceTree = "<group>"; };
@@ -2280,6 +2282,7 @@
 				1B349EF011BACA2900396C26 /* XADPlatformMacOSX.m */,
 				1B349EF711BACA4F00396C26 /* XADPlatformWindows.m */,
 				1B349EF511BACA3C00396C26 /* XADPlatformLinux.m */,
+				1B83727C15CEA27000B0DC9D /* XADPlatformiOS.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -3854,7 +3857,7 @@
 		1B467B2A15CD9B4D001AB1DD /* liblibUniversalDetector.ios.a.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = liblibUniversalDetector.ios.a.a;
+			path = libUniversalDetector.ios.a;
 			remoteRef = 1B467B2915CD9B4D001AB1DD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -4325,6 +4328,7 @@
 				1B467AFA15CD9A73001AB1DD /* PDFEncryptionUtils.m in Sources */,
 				1B467AFB15CD9A73001AB1DD /* PDFParser.m in Sources */,
 				1B467AFC15CD9A73001AB1DD /* PDFStream.m in Sources */,
+				1B83727D15CEA27000B0DC9D /* XADPlatformiOS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,20 +9,6 @@
 #import <sys/attr.h>
 #import <sys/xattr.h>
 
-struct ResourceOutputArguments
-{
-	int fd,offset;
-};
-
-@interface XADPlatform (Private)
-
-+(void)setComment:(NSString *)comment forPath:(NSString *)path;
-
-@end
-
-
-
-
 @implementation XADPlatform
 
 //
@@ -32,60 +18,8 @@ struct ResourceOutputArguments
 +(XADError)extractResourceForkEntryWithDictionary:(NSDictionary *)dict
 unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 {
-	const char *cpath=[destpath fileSystemRepresentation];
-	int originalpermissions=-1;
-
-	// Open the file for writing, creating it if it doesn't exist.
-	// TODO: Does it need to be opened for writing or is read enough?
-	int fd=open(cpath,O_WRONLY|O_CREAT|O_NOFOLLOW,0666);
-	if(fd==-1) 
-	{
-		// If opening the file failed, check if it is a link and skip if it is.
-		struct stat st;
-		lstat(cpath,&st);
-
-		if(S_ISLNK(st.st_mode))
-		{
-			NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
-			if(!sizenum) return XADNoError;
-			else if([sizenum longLongValue]==0) return XADNoError;
-		}
-
-		// Otherwise, try changing permissions.
-		originalpermissions=st.st_mode;
-
-		chmod(cpath,0700);
-
-		fd=open(cpath,O_WRONLY|O_CREAT|O_NOFOLLOW,0666);
-		if(fd==-1) return XADOpenFileError; // TODO: Better error.
-	}
-
-	struct ResourceOutputArguments args={ .fd=fd, .offset=0 };
-
-	XADError error=[unarchiver runExtractorWithDictionary:dict
-	outputTarget:self selector:@selector(outputToResourceFork:bytes:length:)
-	argument:[NSValue valueWithPointer:&args]];
-
-	close(fd);
-
-	if(originalpermissions!=-1) chmod(cpath,originalpermissions);
-
-	return error;
+	return XADNotSupportedError;
 }
-
-+(XADError)outputToResourceFork:(NSValue *)pointerval bytes:(uint8_t *)bytes length:(int)length
-{
-	struct ResourceOutputArguments *args=[pointerval pointerValue];
-	if(fsetxattr(args->fd,XATTR_RESOURCEFORK_NAME,bytes,length,
-	args->offset,0)) return XADOutputError;
-
-	args->offset+=length;
-
-	return XADNoError;
-}
-
-
-
 
 +(XADError)updateFileAttributesAtPath:(NSString *)path
 forEntryWithDictionary:(NSDictionary *)dict parser:(XADArchiveParser *)parser
@@ -117,10 +51,6 @@ preservePermissions:(BOOL)preservepermissions
 			setxattr(cpath,namebytes,[data bytes],[data length],0,XATTR_NOFOLLOW);
 		}
 	}
-
-	// Set comment.
-	XADString *comment=[dict objectForKey:XADCommentKey];
-	if(comment) [self setComment:[comment string] forPath:path];
 
 	// Attrlist structures.
 	struct attrlist list={ ATTR_BIT_MAP_COUNT };
@@ -176,58 +106,6 @@ preservePermissions:(BOOL)preservepermissions
 	return XADNoError;
 }
 
-+(void)setComment:(NSString *)comment forPath:(NSString *)path;
-{
-	if(!comment||![comment length]) return;
-
-	const char *eventformat =
-	"'----': 'obj '{ "         // Direct object is the file comment we want to modify
-	"  form: enum(prop), "     //  ... the comment is an object's property...
-	"  seld: type(comt), "     //  ... selected by the 'comt' 4CC ...
-	"  want: type(prop), "     //  ... which we want to interpret as a property (not as e.g. text).
-	"  from: 'obj '{ "         // It's the property of an object...
-	"      form: enum(indx), "
-	"      want: type(file), " //  ... of type 'file' ...
-	"      seld: @,"           //  ... selected by an alias ...
-	"      from: null() "      //  ... according to the receiving application.
-	"              }"
-	"             }, "
-	"data: @";                 // The data is what we want to set the direct object to.
-
-	NSAppleEventDescriptor *commentdesc=[NSAppleEventDescriptor descriptorWithString:comment];
-
-	FSRef ref;
-	bzero(&ref,sizeof(ref));
-	if(FSPathMakeRef((UInt8 *)[path fileSystemRepresentation],&ref,NULL)!=noErr) return;
-
-	AEDesc filedesc;
-	AEInitializeDesc(&filedesc);
-	if(AECoercePtr(typeFSRef,&ref,sizeof(ref),typeAlias,&filedesc)!=noErr) return;
-
-	AEDesc builtevent,replyevent;
-	AEInitializeDesc(&builtevent);
-	AEInitializeDesc(&replyevent);
-
-	static OSType findersignature='MACS';
-
-	OSErr err=AEBuildAppleEvent(kAECoreSuite,kAESetData,
-	typeApplSignature,&findersignature,sizeof(findersignature),
-	kAutoGenerateReturnID,kAnyTransactionID,
-	&builtevent,NULL,eventformat,&filedesc,[commentdesc aeDesc]);
-
-	AEDisposeDesc(&filedesc);
-
-	if(err!=noErr) return;
-
-	AESendMessage(&builtevent,&replyevent,kAENoReply,kAEDefaultTimeout);
-
-	AEDisposeDesc(&builtevent);
-	AEDisposeDesc(&replyevent);
-}
-
-
-
-
 +(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link
 {
 	struct stat st;
@@ -245,30 +123,8 @@ preservePermissions:(BOOL)preservepermissions
 // Archive post-processing.
 //
 
-+(id)readCloneableMetadataFromPath:(NSString *)path
-{
-	if(!LSSetItemAttribute) return nil;
-
-	FSRef ref;
-	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
-	{
-		CFDictionaryRef quarantinedict;
-		LSCopyItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,
-		(CFTypeRef*)&quarantinedict);
-
-		return [(id)quarantinedict autorelease];
-	}
-	return nil;
-}
-
-+(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path
-{
-	if(!LSSetItemAttribute) return;
-
-	FSRef ref;
-	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
-	LSSetItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,metadata);
-}
++(id)readCloneableMetadataFromPath:(NSString *)path { return nil; }
++(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path {}
 
 +(BOOL)copyDateFromPath:(NSString *)src toPath:(NSString *)dest
 {

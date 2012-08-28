@@ -186,6 +186,7 @@ static int maxheader=0;
 		[XADGzipSFXParser class],
 		[XADCompactProParser class],
 		[XADARJParser class],
+		[XADZipMultiPartParser class],
 
 		// Over-eager detectors
 		[XADARCParser class],
@@ -285,6 +286,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	@try
 	{
 		NSArray *volumes=[parserclass volumesForHandle:handle firstBytes:header name:filename];
+		[handle seekToFileOffset:0];
+
 		if(volumes)
 		{
 			if([volumes count]>1)

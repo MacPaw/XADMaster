@@ -359,6 +359,15 @@ fromCatalogInfo:(FSCatalogInfo *)info
 	return newstring;
 }
 
++(NSArray *)contentsOfDirectoryAtPath:(NSString *)path
+{
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
+	#else
+	return [[NSFileManager defaultManager] directoryContentsAtPath:path];
+	#endif
+}
+
 
 
 

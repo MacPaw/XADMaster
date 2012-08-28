@@ -26,7 +26,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 +(int)requiredHeaderSize { return 8; }
 
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];

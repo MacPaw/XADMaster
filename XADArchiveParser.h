@@ -66,6 +66,7 @@ extern NSString *XADSolidLengthKey;
 // Archive properties only
 extern NSString *XADArchiveNameKey;
 extern NSString *XADVolumesKey;
+extern NSString *XADVolumeScanningFailedKey;
 extern NSString *XADDiskLabelKey;
 
 @interface XADArchiveParser:NSObject
@@ -103,7 +104,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename error:(XADError *)errorptr;
 +(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum;
 +(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
-
+ 
 -(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
 -(void)dealloc;
 

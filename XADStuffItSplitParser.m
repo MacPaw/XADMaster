@@ -2,6 +2,7 @@
 #import "CSMultiHandle.h"
 #import "CSFileHandle.h"
 #import "NSDateXAD.h"
+#import "XADPlatform.h"
 
 @implementation XADStuffItSplitParser
 
@@ -30,11 +31,10 @@
 	NSString *basename=[[name lastPathComponent] stringByDeletingPathExtension];
 
 	NSString *dirname=[name stringByDeletingLastPathComponent];
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	NSArray *dircontents=[[NSFileManager defaultManager] contentsOfDirectoryAtPath:dirname error:NULL];
-	#else
-	NSArray *dircontents=[[NSFileManager defaultManager] directoryContentsAtPath:dirname];
-	#endif
+	if(!dirname) dirname=@".";
+
+	NSArray *dircontents=[XADPlatform contentsOfDirectoryAtPath:dirname];
+	if(!dircontents) return [NSArray array];
 
 	NSString *parts[256]={nil};
 

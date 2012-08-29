@@ -943,7 +943,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 		{
 			// If both source and destinaton are directories, iterate over the
 			// contents and recurse.
-			NSArray *files=[XADSimpleUnarchiver _contentsOfDirectoryAtPath:src];
+			NSArray *files=[XADPlatform contentsOfDirectoryAtPath:src];
 			NSEnumerator *enumerator=[files objectEnumerator];
 			NSString *file;
 			while((file=[enumerator nextObject]))
@@ -991,15 +991,6 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	dest=[NSString stringWithFormat:@"%@-%d%@",base,n++,extension];
 
 	return dest;
-}
-
-+(NSArray *)_contentsOfDirectoryAtPath:(NSString *)path
-{
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
-	#else
-	return [[NSFileManager defaultManager] directoryContentsAtPath:path];
-	#endif
 }
 
 +(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest

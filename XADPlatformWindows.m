@@ -238,6 +238,11 @@ preservePermissions:(BOOL)preservepermissions
 	return component;
 }
 
++(NSArray *)contentsOfDirectoryAtPath:(NSString *)path
+{
+	return [[NSFileManager defaultManager] directoryContentsAtPath:path];
+}
+
 
 
 

@@ -4,6 +4,7 @@
 #import "XADQuantumHandle.h"
 #import "XADMSLZXHandle.h"
 #import "XADCRCHandle.h"
+#import "XADPlatform.h"
 #import "NSDateXAD.h"
 #import "CSMemoryHandle.h"
 #import "CSFileHandle.h"
@@ -55,14 +56,14 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 		CSHandle *fh=[CSMemoryHandle memoryHandleForReadingData:data];
 		CABHeader firsthead=ReadCABHeader(fh);
 
-		if(!firsthead.prevvolume&&!firsthead.nextvolume) return nil;
+		if(!firsthead.prevvolume && !firsthead.nextvolume) return nil;
 
 		NSString *dirname=[name stringByDeletingLastPathComponent];
-		#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-		NSArray *dircontents=[[NSFileManager defaultManager] contentsOfDirectoryAtPath:dirname error:NULL];
-		#else
-		NSArray *dircontents=[[NSFileManager defaultManager] directoryContentsAtPath:dirname];
-		#endif
+		if(!dirname) dirname=@".";
+
+		NSArray *dircontents=[XADPlatform contentsOfDirectoryAtPath:dirname];
+		if(!dircontents) return [NSArray array];
+
 		NSMutableArray *volumes=[NSMutableArray arrayWithObject:name];
 
 		NSData *namedata=firsthead.prevvolume;

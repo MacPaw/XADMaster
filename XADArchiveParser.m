@@ -4,6 +4,7 @@
 #import "CSMemoryHandle.h"
 #import "CSStreamHandle.h"
 #import "XADCRCHandle.h"
+#import "XADPlatform.h"
 
 #import "XADZipParser.h"
 #import "XADZipSFXParsers.h"
@@ -114,6 +115,7 @@ NSString *XADSolidLengthKey=@"XADSolidLength";
 
 NSString *XADArchiveNameKey=@"XADArchiveName";
 NSString *XADVolumesKey=@"XADVolumes";
+NSString *XADVolumeScanningFailedKey=@"XADVolumeScanningFailed";
 NSString *XADDiskLabelKey=@"XADDiskLabel";
 
 
@@ -184,6 +186,7 @@ static int maxheader=0;
 		[XADGzipSFXParser class],
 		[XADCompactProParser class],
 		[XADARJParser class],
+		[XADZipMultiPartParser class],
 
 		// Over-eager detectors
 		[XADARCParser class],
@@ -283,24 +286,35 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	@try
 	{
 		NSArray *volumes=[parserclass volumesForHandle:handle firstBytes:header name:filename];
-		if(volumes&&[volumes count]>1)
+		[handle seekToFileOffset:0];
+
+		if(volumes)
 		{
-			NSMutableArray *handles=[NSMutableArray array];
-			NSEnumerator *enumerator=[volumes objectEnumerator];
-			NSString *volume;
+			if([volumes count]>1)
+			{
+				NSMutableArray *handles=[NSMutableArray array];
+				NSEnumerator *enumerator=[volumes objectEnumerator];
+				NSString *volume;
 
-			while((volume=[enumerator nextObject]))
-			[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
+				while((volume=[enumerator nextObject]))
+				[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
 
-			CSMultiHandle *multihandle=[CSMultiHandle multiHandleWithHandleArray:handles];
+				CSMultiHandle *multihandle=[CSMultiHandle multiHandleWithHandleArray:handles];
 
-			XADArchiveParser *parser=[[[parserclass alloc] initWithHandle:multihandle
-			name:filename] autorelease];
+				XADArchiveParser *parser=[[[parserclass alloc] initWithHandle:multihandle
+				name:filename] autorelease];
 
-			[props setObject:volumes forKey:XADVolumesKey];
-			[parser addPropertiesFromDictionary:props];
+				[props setObject:volumes forKey:XADVolumesKey];
+				[parser addPropertiesFromDictionary:props];
 
-			return parser;
+				return parser;
+			}
+			else if(volumes)
+			{
+				// An empty array means scanning failed. Set a flag to
+				// warn the caller, and fall through to single-file mode.
+				[props setObject:[NSNumber numberWithBool:YES] forKey:XADVolumeScanningFailedKey];
+			}
 		}
 	}
 	@catch(id e) { } // Fall through to a single file instead.
@@ -657,13 +671,10 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	NSString *dirpath=directory;
 	if(!dirpath) dirpath=@".";
 
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	NSEnumerator *enumerator=[[[NSFileManager defaultManager] contentsOfDirectoryAtPath:dirpath error:NULL] objectEnumerator];
-	#else
-	NSEnumerator *enumerator=[[[NSFileManager defaultManager] directoryContentsAtPath:dirpath] objectEnumerator];
-	#endif
-	
-	if(!enumerator) return nil;
+	NSArray *dircontents=[XADPlatform contentsOfDirectoryAtPath:dirpath];
+	if(!dircontents) return [NSArray array];
+
+	NSEnumerator *enumerator=[dircontents objectEnumerator];
 
 	NSString *direntry;
 	while((direntry=[enumerator nextObject]))

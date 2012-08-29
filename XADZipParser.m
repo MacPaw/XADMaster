@@ -26,7 +26,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 +(int)requiredHeaderSize { return 8; }
 
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
@@ -44,8 +44,10 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 {
 	NSArray *matches;
 
-	// Check for .z01 style files.
-	if((matches=[name substringsCapturedByPattern:@"^(.*)\\.(z[0-9]{2}|zip)$" options:REG_ICASE]))
+	// If the filename is of the type .z01, this is a multi-part archive
+	// for sure, so scan for more parts. The final .zip part of multi-part
+	// archives is handled by a subclass.
+	if((matches=[name substringsCapturedByPattern:@"^(.*)\\.(z[0-9]{2})$" options:REG_ICASE]))
 	{
 		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(zip|z[0-9]{2})$",
@@ -53,8 +55,9 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		firstFileExtension:@"z01"];
 	}
 
-	// In case the first part of a .zip.001 split file was detected, find the other parts.
-	// If a later part was detected, XADSplitFileParser will handle it instead.
+	// In case the first part of a .zip.001 split file was detected as Zip,
+	// scan for the other parts. If a later part was opened, XADSplitFileParser
+	// will handle it instead.
 	if((matches=[name substringsCapturedByPattern:@"^(.*)\\.[0-9]{3}$" options:REG_ICASE]))
 	{
 		return [self scanForVolumesWithFilename:name

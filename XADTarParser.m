@@ -446,7 +446,7 @@
 	// In case of LongName / LongLink, we need the data.
 	CSHandle *handle = [self handle];
 	long size = [[dict objectForKey:XADDataLengthKey] longValue];
-	off_t offset = [handle offsetInFile];;
+	off_t offset = [handle offsetInFile];
 	offset += size;
 	offset += (offset % 512 == 0 ? 0 : 512 - (offset % 512) );
 
@@ -454,9 +454,6 @@
 	if( typeFlag == 'L' || typeFlag == 'K' ) {
 		// Read in the header
 		NSData *longHeader = [handle readDataOfLength:size];
-		char longHeaderBytes[size];
-		memset( longHeaderBytes, '\0', size );
-		[longHeader getBytes:longHeaderBytes range:NSMakeRange(0,size - 1)];
 		[handle seekToFileOffset:offset];
 		
 		// Prepare a new dictionary with the next header.
@@ -467,10 +464,10 @@
 
 		// Set the proper key.
 		if( typeFlag == 'L' ) {
-			[dict setObject:[self XADPathWithCString:longHeaderBytes separators:XADUnixPathSeparator] forKey:XADFileNameKey];
+			[dict setObject:[self XADPathWithData:longHeader separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 		}
 		else {
-			[dict setObject:[self XADStringWithCString:longHeaderBytes] forKey:XADLinkDestinationKey];
+			[dict setObject:[self XADStringWithData:longHeader] forKey:XADLinkDestinationKey];
 		}
 	}
 

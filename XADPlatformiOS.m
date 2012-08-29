@@ -200,6 +200,11 @@ preservePermissions:(BOOL)preservepermissions
 	return newstring;
 }
 
++(NSArray *)contentsOfDirectoryAtPath:(NSString *)path
+{
+	return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
+}
+
 
 
 

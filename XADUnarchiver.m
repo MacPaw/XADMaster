@@ -210,7 +210,28 @@
 
 			case XADHiddenAppleDoubleForkStyle:
 			case XADVisibleAppleDoubleForkStyle:
+				error=[self _extractResourceForkEntryWithDictionary:dict asAppleDoubleFile:path];
+			break;
+
 			case XADHFVExplorerAppleDoubleForkStyle:
+				// We need to make sure there is an empty file for the data fork in all
+				// cases, so just try to recover the original filename and create an empty
+				// file there in case one doesn't exist, and this isn't a directory.
+				// Kludge in the same file attributes as the resource fork. If there is
+				// an actual data fork later, it will overwrite this file. There special-case
+				// code to avoid collision warnings.
+				if(![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL] && !isdir)
+				{
+					NSString *dirpart=[path stringByDeletingLastPathComponent];
+					NSString *namepart=[path lastPathComponent];
+					if([namepart hasPrefix:@"%"])
+					{
+						NSString *originalname=[namepart substringFromIndex:1];
+						NSString *datapath=[dirpart stringByAppendingPathComponent:originalname];
+						[[NSData data] writeToFile:datapath atomically:NO];
+						[self _updateFileAttributesAtPath:datapath forEntryWithDictionary:dict deferDirectories:!force];
+					}
+				}
 				error=[self _extractResourceForkEntryWithDictionary:dict asAppleDoubleFile:path];
 			break;
 

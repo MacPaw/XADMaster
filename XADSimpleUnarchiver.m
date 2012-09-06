@@ -794,9 +794,10 @@
 
 -(void)unarchiver:(XADUnarchiver *)unarch willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	// If we are writing OS X resource forks, keep a list of which resource
+	// If we are writing OS X or HFV resource forks, keep a list of which resource
 	// forks have been extracted, for the collision tests in checkPath.
-	if([unarch macResourceForkStyle]==XADMacOSXForkStyle)
+	int style=[unarch macResourceForkStyle];
+	if(style==XADMacOSXForkStyle || style==XADHFVExplorerAppleDoubleForkStyle)
 	{
 		NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
 		if(resnum && [resnum boolValue]) [resourceforks addObject:path];
@@ -868,7 +869,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 
 -(NSString *)_checkPath:(NSString *)path forEntryWithDictionary:(NSDictionary *)dict deferred:(BOOL)deferred
 {
-	// If set to always overwrite, just return the path without furhter checking.
+	// If set to always overwrite, just return the path without further checking.
 	if(overwrite) return path;
 
 	// Check for collision.
@@ -879,14 +880,14 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 		#ifdef __APPLE__
 		if(dict && [self macResourceForkStyle]==XADMacOSXForkStyle)
 		{
-			const char *cpath=[path fileSystemRepresentation];
-			size_t ressize=getxattr(cpath,XATTR_RESOURCEFORK_NAME,NULL,0,0,XATTR_NOFOLLOW);
-
 			NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
 			if(resnum && [resnum boolValue])
 			{
 				// If this entry is a resource fork, check if the resource fork
 				// size is 0. If so, do not consider this a collision.
+				const char *cpath=[path fileSystemRepresentation];
+				size_t ressize=getxattr(cpath,XATTR_RESOURCEFORK_NAME,NULL,0,0,XATTR_NOFOLLOW);
+
 				if(ressize==0) return path;
 			}
 			else
@@ -897,6 +898,20 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 			}
 		}
 		#endif
+
+		// HFV Explorer style forks always create dummy data forks, which can cause collisions.
+		// Just kludge this by ignoring collisions for data forks if a resource was written earlier.
+		if(dict && [self macResourceForkStyle]==XADHFVExplorerAppleDoubleForkStyle)
+		{
+			NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+			if(!resnum || ![resnum boolValue])
+			{
+				NSString *forkpath=[[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:
+				[@"%" stringByAppendingString:[path lastPathComponent]]];
+
+				if([resourceforks containsObject:forkpath]) return path;
+			}
+		}
 
 		// If set to always skip, just return nil.
 		if(skip) return nil;

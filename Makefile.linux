@@ -3,7 +3,7 @@
 OBJCC = gcc
 CC = gcc
 CXX = g++
-LD = gcc
+LD = $(CXX)
 AR = ar
 
 # Options for compilation
@@ -44,7 +44,6 @@ LIBS =	-Wl,--no-whole-archive \
 	-lbz2 \
 	-licuuc \
 	-lobjc \
-	-lstdc++ \
 	-lm
 
 ALL_LDFLAGS =	-Wl,--whole-archive \

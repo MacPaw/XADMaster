@@ -5069,7 +5069,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv6,
+					armv7,
+				);
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -5079,6 +5082,7 @@
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../Dependencies/iOS/Includes\"";
 				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = XADMaster.ios;
 				SDKROOT = iphoneos;
@@ -5089,13 +5093,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv6,
+					armv7,
+				);
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../Dependencies/iOS/Includes\"";
 				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = XADMaster.ios;
 				SDKROOT = iphoneos;

@@ -621,8 +621,8 @@ isCorrupted:(BOOL)iscorrupted
 				flagbits-=2;
 				switch((flagbyte>>flagbits)&3)
 				{
-					case 0: [str appendFormat:@"%C",[fh readUInt8]]; break;
-					case 1: [str appendFormat:@"%C",highbyte+[fh readUInt8]]; break;
+					case 0: [str appendFormat:@"%C",(unichar)[fh readUInt8]]; break;
+					case 1: [str appendFormat:@"%C",(unichar)(highbyte+[fh readUInt8])]; break;
 					case 2: [str appendFormat:@"%C",[fh readUInt16LE]]; break;
 					case 3:
 					{
@@ -631,10 +631,10 @@ isCorrupted:(BOOL)iscorrupted
 						{
 							int correction=[fh readUInt8];
 							for(int i=0;i<(len&0x7f)+2;i++)
-							[str appendFormat:@"%C",highbyte+(bytes[[str length]]+correction&0xff)];
+							[str appendFormat:@"%C",(unichar)(highbyte+(bytes[[str length]]+correction&0xff))];
 						}
 						else for(int i=0;i<(len&0x7f)+2;i++)
-						[str appendFormat:@"%C",bytes[[str length]]];
+						[str appendFormat:@"%C",(unichar)(bytes[[str length]])];
 					}
 					break;
 				}

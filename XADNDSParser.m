@@ -138,7 +138,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 			NSMutableString *string=[NSMutableString string];
 			for(int j=0;j<128;j++)
 			{
-				int ch=[fh readUInt16LE];
+				unichar ch=[fh readUInt16LE];
 				if(!ch) break;
 				[string appendFormat:@"%C",ch];
 			}
@@ -175,7 +175,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 	if(arm9_overlay_size)
 	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[basepath pathByAppendingXADStringComponent:[self XADStringWithString:
-		[NSString stringWithFormat:@"ARM9.ovt",arm9_addr]]],XADFileNameKey,
+		[NSString stringWithFormat:@"ARM9-%08x.ovt",arm9_addr]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm9_overlay_size],XADFileSizeKey,
 		[NSNumber numberWithUnsignedLong:arm9_overlay_size],XADCompressedSizeKey,
 		[NSNumber numberWithUnsignedLong:arm9_overlay_size],XADDataLengthKey,
@@ -185,7 +185,7 @@ static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes
 	if(arm7_overlay_size)
 	[self addEntryWithDictionary:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[basepath pathByAppendingXADStringComponent:[self XADStringWithString:
-		[NSString stringWithFormat:@"ARM7.ovt",arm7_addr]]],XADFileNameKey,
+		[NSString stringWithFormat:@"ARM7-%08x.ovt",arm7_addr]]],XADFileNameKey,
 		[NSNumber numberWithUnsignedLong:arm7_overlay_size],XADFileSizeKey,
 		[NSNumber numberWithUnsignedLong:arm7_overlay_size],XADCompressedSizeKey,
 		[NSNumber numberWithUnsignedLong:arm7_overlay_size],XADDataLengthKey,

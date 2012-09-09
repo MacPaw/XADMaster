@@ -905,7 +905,7 @@ static BOOL IsDelimiter(uint8_t c);
 	for(int i=0;i<length;i++) if(bytes[i]=='\n'||bytes[i]=='\r') { length=i; break; }
 	NSString *endstr=[[[NSString alloc] initWithBytes:bytes length:length encoding:NSISOLatin1StringEncoding] autorelease];
 
-	[NSException raise:PDFParserException format:@"%@: \"%@%C%@\"",error,startstr,0x25bc,endstr];
+	[NSException raise:PDFParserException format:@"%@: \"%@%C%@\"",error,startstr,(unichar)0x25bc,endstr];
 }
 
 @end

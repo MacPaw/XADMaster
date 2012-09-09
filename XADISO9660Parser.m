@@ -349,7 +349,7 @@ length:(uint32_t)length
 			NSMutableString *str=[NSMutableString stringWithCapacity:namelength/2];
 			for(int i=0;i+2<=namelength;i+=2)
 			{
-				int c=CSUInt16BE(&name[i]);
+				unichar c=CSUInt16BE(&name[i]);
 				[str appendFormat:@"%C",c];
 			}
 

@@ -455,6 +455,11 @@
 		// Read in the header
 		NSData *longHeader = [handle readDataOfLength:size];
 		[handle seekToFileOffset:offset];
+
+		// Check if there is a terminating null byte, and eliminate it.
+		int length=[longHeader length];
+		const uint8_t *bytes=[longHeader bytes];
+		if(length>0 && bytes[length-1]==0) longHeader=[longHeader subdataWithRange:NSMakeRange(0,length-1)];
 		
 		// Prepare a new dictionary with the next header.
 		NSData *header = [handle readDataOfLength:512];

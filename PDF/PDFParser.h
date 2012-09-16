@@ -17,6 +17,9 @@ extern NSString *PDFParserException;
 	NSDictionary *trailerdict;
 	PDFEncryptionHandler *encryption;
 
+	SEL passwordaction;
+	id passwordtarget;
+
 	int currchar;
 }
 
@@ -29,6 +32,7 @@ extern NSString *PDFParserException;
 -(BOOL)isEncrypted;
 -(BOOL)needsPassword;
 -(BOOL)setPassword:(NSString *)password;
+-(void)setPasswordRequestAction:(SEL)action target:(id)target;
 
 -(NSDictionary *)objectDictionary;
 -(NSDictionary *)trailerDictionary;

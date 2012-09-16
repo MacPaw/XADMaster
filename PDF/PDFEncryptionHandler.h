@@ -5,7 +5,7 @@
 extern NSString *PDFUnsupportedEncryptionException;
 
 @class PDFEncryptionAlgorithm;
-@class PDFParser,PDFObjectReference,PDFString;
+@class PDFObjectReference,PDFString;
 
 @interface PDFEncryptionHandler:NSObject
 {

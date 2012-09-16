@@ -42,6 +42,9 @@ static BOOL IsDelimiter(uint8_t c);
 
 		encryption=nil;
 
+		passwordaction=NULL;
+		passwordtarget=nil;
+
 		currchar=0;
 
 		@try
@@ -81,6 +84,12 @@ static BOOL IsDelimiter(uint8_t c);
 -(BOOL)setPassword:(NSString *)password
 {
 	return [encryption setPassword:password];
+}
+
+-(void)setPasswordRequestAction:(SEL)action target:(id)target
+{
+	passwordaction=action;
+	passwordtarget=target;
 }
 
 
@@ -398,6 +407,11 @@ static BOOL IsDelimiter(uint8_t c);
 
 	encryption=[[PDFEncryptionHandler alloc]
 	initWithEncryptDictionary:encryptdict permanentID:permanentid];
+
+	if([encryption needsPassword] && passwordaction)
+	{
+		[passwordtarget performSelector:passwordaction withObject:self];
+	}
 }
 
 

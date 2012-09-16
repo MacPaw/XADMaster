@@ -48,6 +48,7 @@ extern NSString *PDFParserException;
 -(void)proceedWithoutCommentHandling;
 -(void)skipWhitespace;
 -(void)proceedAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error;
+-(void)proceedWithoutCommentHandlingAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error;
 
 -(void)parse;
 

@@ -164,6 +164,12 @@ static BOOL IsDelimiter(uint8_t c);
 	[self proceed];
 }
 
+-(void)proceedWithoutCommentHandlingAssumingCharacter:(uint8_t)c errorMessage:(NSString *)error
+{
+	if(currchar!=c) [self _raiseParserException:error];
+	[self proceedWithoutCommentHandling];
+}
+
 
 
 
@@ -192,12 +198,6 @@ static BOOL IsDelimiter(uint8_t c);
 	}
 
 	[self resolveIndirectObjects];
-
-	if([trailerdict objectForKey:@"Encrypt"])
-	{
-		[encryption release];
-		encryption=[[PDFEncryptionHandler alloc] initWithParser:self];
-	}
 }
 
 -(NSDictionary *)parsePDFXref
@@ -233,6 +233,8 @@ static BOOL IsDelimiter(uint8_t c);
 
 			if(![trailer isKindOfClass:[NSDictionary class]])
 			[self _raiseParserException:@"Error parsing xref trailer"];
+
+			[self setupEncryptionIfNeededForTrailerDictionary:trailer];
 
 			return trailer;
 		}
@@ -284,7 +286,6 @@ static BOOL IsDelimiter(uint8_t c);
 -(NSDictionary *)parsePDFXrefStream
 {
 	PDFStream *stream=[self parsePDFObject];
-
 	if(![stream isKindOfClass:[PDFStream class]]) [self _raiseParserException:@"Error parsing xref stream"];
 
 	NSDictionary *dict=[stream dictionary];
@@ -313,8 +314,10 @@ static BOOL IsDelimiter(uint8_t c);
 		index=[NSArray arrayWithObjects:[NSNumber numberWithInt:0],size,nil];
 	}
 
-	CSHandle *handle=[stream handle];
+	CSHandle *handle=[stream handleExcludingLast:NO decrypted:NO];
 	if(!handle) [self _raiseParserException:@"Error decoding xref stream"];
+
+	NSMutableArray *objstreams=[NSMutableArray array];
 
 	for(int i=0;i<[index count];i+=2)
 	{
@@ -350,9 +353,9 @@ static BOOL IsDelimiter(uint8_t c);
 			{
 				if([[[obj dictionary] objectForKey:@"Type"] isEqual:@"ObjStm"])
 				{
-					off_t curroffs=[mainhandle offsetInFile];
-					[self parsePDFCompressedObjectStream:obj];
-					[mainhandle seekToFileOffset:curroffs];
+					// This is an object stream, but we can't parse it until encryption has
+					// been set up, so cache it for later.
+					[objstreams addObject:obj];
 				}
 			}
 
@@ -360,8 +363,44 @@ static BOOL IsDelimiter(uint8_t c);
 		}
 	}
 
+	[self setupEncryptionIfNeededForTrailerDictionary:dict];
+
+	// Parse any object streams that were encountered earlier, now that encryption
+	// should be properly set up.
+	NSEnumerator *enumerator=[objstreams objectEnumerator];
+	PDFStream *objstream;
+	while((objstream=[enumerator nextObject]))
+	{
+		off_t curroffs=[mainhandle offsetInFile];
+		[self parsePDFCompressedObjectStream:objstream];
+		[mainhandle seekToFileOffset:curroffs];
+	}
+
 	return dict;
 }
+
+
+-(void)setupEncryptionIfNeededForTrailerDictionary:(NSDictionary *)trailer
+{
+	if(encryption) return;
+
+	id encryptdict=[trailer objectForKey:@"Encrypt"];
+	if(!encryptdict) return;
+
+	if([encryptdict isKindOfClass:[PDFObjectReference class]])
+	{
+		encryptdict=[objdict objectForKey:encryptdict];
+	}
+
+	NSArray *ids=[trailer objectForKey:@"ID"];
+	if(!ids) return;
+	NSData *permanentid=[[ids objectAtIndex:0] rawData];
+
+	encryption=[[PDFEncryptionHandler alloc]
+	initWithEncryptDictionary:encryptdict permanentID:permanentid];
+}
+
+
 
 -(id)parsePDFObject
 {
@@ -392,7 +431,7 @@ static BOOL IsDelimiter(uint8_t c);
 			if(currchar=='\r')
 			{
 				[self proceedWithoutCommentHandling];
-				if(currchar=='\n') [self proceedWithoutCommentHandling];
+				[self proceedWithoutCommentHandlingAssumingCharacter:'\n' errorMessage:@"Error parsing stream object"];
 			}
 			else if(currchar=='\n')
 			{
@@ -489,6 +528,9 @@ static BOOL IsDelimiter(uint8_t c);
 
 		PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnums[i] generation:0];
 
+		// TODO: Strings in compressed object streams are apparently
+		// *not* encrypted. There needs to be some kind of flag for this,
+		// but this is not yet implemented.
 		[self startParsingFromHandle:handle atOffset:offsets[i]+startoffset];
 		id value=[self parsePDFTypeWithParent:ref];
 

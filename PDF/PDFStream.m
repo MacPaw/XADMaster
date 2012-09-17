@@ -417,20 +417,25 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 
 -(CSHandle *)handle
 {
-	return [self handleExcludingLast:NO];
+	return [self handleExcludingLast:NO decrypted:YES];
 }
 
 -(CSHandle *)JPEGHandle
 {
-	return [self handleExcludingLast:YES];
+	return [self handleExcludingLast:YES decrypted:YES];
 }
 
 -(CSHandle *)handleExcludingLast:(BOOL)excludelast
 {
+	return [self handleExcludingLast:excludelast decrypted:YES];
+}
+
+-(CSHandle *)handleExcludingLast:(BOOL)excludelast decrypted:(BOOL)decrypted
+{
 	CSHandle *handle;
 	PDFEncryptionHandler *encryption=[parser encryptionHandler];
 
-	if(encryption) handle=[encryption decryptStream:self];
+	if(encryption && decrypted) handle=[encryption decryptStream:self];
 	else handle=[self rawHandle];
 
 	NSArray *filter=[dict arrayForKey:@"Filter"];

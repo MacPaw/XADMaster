@@ -68,6 +68,7 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 -(CSHandle *)handle;
 -(CSHandle *)JPEGHandle;
 -(CSHandle *)handleExcludingLast:(BOOL)excludelast;
+-(CSHandle *)handleExcludingLast:(BOOL)excludelast decrypted:(BOOL)decrypted;
 -(CSHandle *)handleForFilterName:(NSString *)filtername decodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent;
 -(CSHandle *)predictorHandleForDecodeParms:(NSDictionary *)decodeparms parentHandle:(CSHandle *)parent;
 

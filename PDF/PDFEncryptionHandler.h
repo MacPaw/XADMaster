@@ -5,7 +5,7 @@
 extern NSString *PDFUnsupportedEncryptionException;
 
 @class PDFEncryptionAlgorithm;
-@class PDFParser,PDFObjectReference,PDFString;
+@class PDFObjectReference,PDFString;
 
 @interface PDFEncryptionHandler:NSObject
 {
@@ -20,7 +20,9 @@ extern NSString *PDFUnsupportedEncryptionException;
 	PDFEncryptionAlgorithm *streamalgorithm,*stringalgorithm;
 }
 
--(id)initWithParser:(PDFParser *)parser;
++(BOOL)isEncryptedForTrailerDictionary:(NSDictionary *)trailer;
+
+-(id)initWithEncryptDictionary:(NSDictionary *)encryptdict permanentID:(NSData *)permanentiddata;
 -(void)dealloc;
 
 -(BOOL)needsPassword;

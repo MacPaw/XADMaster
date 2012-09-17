@@ -16,22 +16,29 @@ static const char PDFPasswordPadding[32]=
 
 @implementation PDFEncryptionHandler
 
--(id)initWithParser:(PDFParser *)parser
++(BOOL)isEncryptedForTrailerDictionary:(NSDictionary *)trailer
+{
+	return [trailer objectForKey:@"Encrypt"]!=nil;
+}
+
+-(id)initWithEncryptDictionary:(NSDictionary *)encryptdict permanentID:(NSData *)permanentiddata;
 {
 	if(self=[super init])
 	{
 		algorithms=nil;
-		encrypt=[[[parser trailerDictionary] objectForKey:@"Encrypt"] retain];
-		permanentid=[[parser permanentID] retain];
+		encrypt=[encryptdict retain];
+		permanentid=[permanentiddata retain];
 		password=nil;
-		keys=[[NSMutableDictionary dictionary] retain];
+		keys=[NSMutableDictionary new];
 
 		version=[encrypt intValueForKey:@"V" default:0];
 		revision=[encrypt intValueForKey:@"R" default:0];
 
+		// TODO: Figure out resolving and encryption
 		NSString *filter=[encrypt objectForKey:@"Filter"];
-		if(![filter isEqual:@"Standard"]||(version!=1&&version!=2&&version!=4)
-		||(revision!=2&&revision!=3&&revision!=4))
+		if(![filter isEqual:@"Standard"] ||
+		(version!=1 && version!=2 && version!=4) ||
+		(revision!=2 && revision!=3 && revision!=4))
 		{
 			[self release];
 			[NSException raise:PDFUnsupportedEncryptionException format:@"PDF encryption filter \"%@\" version %d, revision %d is not supported.",filter,version,revision];
@@ -193,7 +200,7 @@ static const char PDFPasswordPadding[32]=
 
 -(NSData *)decryptString:(PDFString *)string
 {
-	return [stringalgorithm decryptedData:[string data] reference:[string reference]];
+	return [stringalgorithm decryptedData:[string rawData] reference:[string reference]];
 }
 
 -(CSHandle *)decryptStream:(PDFStream *)stream
@@ -205,7 +212,10 @@ static const char PDFPasswordPadding[32]=
 		PDFEncryptionAlgorithm *algorithm=[algorithms objectForKey:[decodeparms stringForKey:@"Name" default:@"Identity"]];
 		return [algorithm decryptedHandle:[stream rawHandle] reference:[stream reference]];
 	}
-	else return [streamalgorithm decryptedHandle:[stream rawHandle] reference:[stream reference]];
+	else
+	{
+		return [streamalgorithm decryptedHandle:[stream rawHandle] reference:[stream reference]];
+	}
 }
 
 @end

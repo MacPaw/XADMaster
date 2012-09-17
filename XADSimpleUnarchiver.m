@@ -385,9 +385,12 @@
 	enumerator=[entries objectEnumerator];
 	while((entry=[enumerator nextObject]))
 	{
-		// If we have not given up on calculating a total size, add the size
-		// of the current item.
-		if(totalsize>=0)
+		NSNumber *dirnum=[entry objectForKey:XADIsDirectoryKey];
+		BOOL isdir=dirnum && [dirnum boolValue];
+
+		// If we have not given up on calculating a total size, and this
+		// is not a directory, add the size of the current item.
+		if(totalsize>=0 && !isdir)
 		{
 			NSNumber *size=[entry objectForKey:XADFileSizeKey];
 
@@ -395,6 +398,7 @@
 			if(size) totalsize+=[size longLongValue];
 			else totalsize=-1;
 		}
+		
 
 		// Run test for single top-level items.
 		[self _testForSoloItems:entry];

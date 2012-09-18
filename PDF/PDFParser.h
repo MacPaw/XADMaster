@@ -59,6 +59,8 @@ extern NSString *PDFParserException;
 -(NSDictionary *)parsePDFXref;
 -(NSDictionary *)parsePDFXrefTable;
 -(NSDictionary *)parsePDFXrefStream;
+-(void)setupEncryptionIfNeededForTrailerDictionary:(NSDictionary *)trailer;
+
 -(id)parsePDFObject;
 -(uint64_t)parseSimpleInteger;
 -(uint64_t)parseIntegerOfSize:(int)size fromHandle:(CSHandle *)handle default:(uint64_t)def;

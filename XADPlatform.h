@@ -22,6 +22,8 @@ preservePermissions:(BOOL)preservepermissions;
 +(NSString *)uniqueDirectoryPathWithParentDirectory:(NSString *)parent;
 +(NSString *)sanitizedPathComponent:(NSString *)component;
 +(NSArray *)contentsOfDirectoryAtPath:(NSString *)path;
++(BOOL)moveItemAtPath:(NSString *)src toPath:(NSString *)dest;
++(BOOL)removeItemAtPath:(NSString *)path;
 
 // Time functions.
 +(double)currentTimeInSeconds;

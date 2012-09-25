@@ -184,6 +184,16 @@ preservePermissions:(BOOL)preservepermissions
 	return [[NSFileManager defaultManager] directoryContentsAtPath:path];
 }
 
++(BOOL)moveItemAtPath:(NSString *)src toPath:(NSString *)dest
+{
+	return [[NSFileManager defaultManager] movePath:src toPath:dest handler:nil];
+}
+
++(BOOL)removeItemAtPath:(NSString *)path
+{
+	return [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+}
+
 
 
 

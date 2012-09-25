@@ -353,6 +353,24 @@ preservePermissions:(BOOL)preservepermissions
 	#endif
 }
 
++(BOOL)moveItemAtPath:(NSString *)src toPath:(NSString *)dest
+{
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	return [[NSFileManager defaultManager] moveItemAtPath:src toPath:dest error:NULL];
+	#else
+	return [[NSFileManager defaultManager] movePath:src toPath:dest handler:nil];
+	#endif
+}
+
++(BOOL)removeItemAtPath:(NSString *)path
+{
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+	#else
+	return [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+	#endif
+}
+
 
 
 

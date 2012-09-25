@@ -31,7 +31,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 
 -(id)initWithHandles:(NSArray *)handlearray
 {
-	if((self=[super initWithName:[NSString stringWithFormat:@"%@, and %ld more combined",[[handlearray objectAtIndex:0] name],[handlearray count]-1]]))
+	if((self=[super initWithName:[NSString stringWithFormat:@"%@, and %ld more combined",[[handlearray objectAtIndex:0] name],(long)[handlearray count]-1]]))
 	{
 		handles=[handlearray copy];
 		currhandle=0;

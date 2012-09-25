@@ -522,7 +522,7 @@
 			// to something unique.
 			NSString *enclosingpath=destpath;
 			NSString *newenclosingpath=[XADPlatform uniqueDirectoryPathWithParentDirectory:destination];
-			[XADSimpleUnarchiver _moveItemAtPath:enclosingpath toPath:newenclosingpath];
+			[XADPlatform moveItemAtPath:enclosingpath toPath:newenclosingpath];
 
 			NSString *newitempath=[newenclosingpath stringByAppendingPathComponent:itemname];
 
@@ -535,7 +535,7 @@
 			if(!finalitempath)
 			{
 				// In case skipping was requested, delete everything and give up.
-				[XADSimpleUnarchiver _removeItemAtPath:newenclosingpath];
+				[XADPlatform removeItemAtPath:newenclosingpath];
 				numextracted=0;
 				return error;
 			}
@@ -544,7 +544,7 @@
 			if(![self _recursivelyMoveItemAtPath:newitempath toPath:finalitempath overwrite:YES])
 			error=XADFileExistsError; // TODO: Better error handling.
 
-			[XADSimpleUnarchiver _removeItemAtPath:newenclosingpath];
+			[XADPlatform removeItemAtPath:newenclosingpath];
 
 			// Remember where the item ended up.
 			finaldestination=[[finalitempath stringByDeletingLastPathComponent] retain];
@@ -563,7 +563,7 @@
 				if(!newenclosingpath)
 				{
 					// In case skipping was requested, delete everything and give up.
-					[XADSimpleUnarchiver _removeItemAtPath:enclosingpath];
+					[XADPlatform removeItemAtPath:enclosingpath];
 					numextracted=0;
 					return error;
 				}
@@ -977,8 +977,8 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 		else if(!issrcdir&&!isdestdir)
 		{
 			// If both are files, remove any existing file, then move.
-			[XADSimpleUnarchiver _removeItemAtPath:dest];
-			return [XADSimpleUnarchiver _moveItemAtPath:src toPath:dest];
+			[XADPlatform removeItemAtPath:dest];
+			return [XADPlatform moveItemAtPath:src toPath:dest];
 		}
 		else
 		{
@@ -988,7 +988,7 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 	}
 	else
 	{
-		return [XADSimpleUnarchiver _moveItemAtPath:src toPath:dest];
+		return [XADPlatform moveItemAtPath:src toPath:dest];
 	}
 }
 
@@ -1011,26 +1011,6 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 
 	return dest;
 }
-
-+(BOOL)_moveItemAtPath:(NSString *)src toPath:(NSString *)dest
-{
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	return [[NSFileManager defaultManager] moveItemAtPath:src toPath:dest error:NULL];
-	#else
-	return [[NSFileManager defaultManager] movePath:src toPath:dest handler:nil];
-	#endif
-}
-
-+(BOOL)_removeItemAtPath:(NSString *)path
-{
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-	return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
-	#else
-	return [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
-	#endif
-}
-
-
 
 @end
 

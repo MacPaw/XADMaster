@@ -127,7 +127,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 		return [self scanForVolumesWithFilename:name
 		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%ld}%@.rar$",
 			[[matches objectAtIndex:1] escapedPattern],
-			[(NSString *)[matches objectAtIndex:2] length],
+			(long)[(NSString *)[matches objectAtIndex:2] length],
 			[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
 		firstFileExtension:@"rar"];
 	}
@@ -842,7 +842,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return [self scanForVolumesWithFilename:name
 	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%ld}%@.(rar|exe)$",
 		[[matches objectAtIndex:1] escapedPattern],
-		[(NSString *)[matches objectAtIndex:2] length],
+		(long)[(NSString *)[matches objectAtIndex:2] length],
 		[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
 	firstFileExtension:@"exe"];
 

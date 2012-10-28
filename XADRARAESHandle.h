@@ -1,13 +1,14 @@
 #import "CSBlockStreamHandle.h"
-#import <openssl/aes.h>
+
+#import "Crypto/aes.h"
 
 @interface XADRARAESHandle:CSBlockStreamHandle
 {
 	CSHandle *parent;
 	off_t startoffs;
 
-	AES_KEY key;
-	uint8_t iv[16],xorblock[16],buffer[65536];
+	aes_decrypt_ctx aes;
+	uint8_t iv[16],block[16],buffer[65536];
 }
 
 +(NSData *)keyForPassword:(NSString *)password salt:(NSData *)salt brokenHash:(BOOL)brokenhash;

@@ -8,7 +8,7 @@
 	off_t startoffs;
 
 	aes_decrypt_ctx aes;
-	uint8_t iv[16],buffer[65536];
+	uint8_t iv[16],block[16],buffer[65536];
 }
 
 +(int)logRoundsForPropertyData:(NSData *)propertydata;

@@ -141,6 +141,7 @@
 {
 	[parent seekToFileOffset:startoffs];
 	[self setBlockPointer:buffer];
+	memcpy(block,iv,sizeof(iv));
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
@@ -148,7 +149,7 @@
 	int actual=[parent readAtMost:sizeof(buffer) toBuffer:buffer];
 	if(actual==0) return -1;
 
-	aes_cbc_decrypt(buffer,buffer,actual,iv,&aes);
+	aes_cbc_decrypt(buffer,buffer,actual,block,&aes);
 
 	return actual;
 }

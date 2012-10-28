@@ -1,7 +1,7 @@
 #import "XADRARAESHandle.h"
 #import "RARBug.h"
 
-#import <openssl/sha.h>
+#import "Crypto/sha2.h"
 
 @implementation XADRARAESHandle
 
@@ -63,16 +63,7 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
 {
-	if((self=[super initWithName:[handle name]]))
-	{
-		parent=[handle retain];
-		startoffs=[handle offsetInFile];
-
-		const uint8_t *keybuf=[keydata bytes];
-		memcpy(iv,&keybuf[0],16);
-		AES_set_decrypt_key(&keybuf[16],128,&key);
-	}
-	return self;
+	return [self initWithHandle:handle length:CSHandleMaxLength key:keydata];
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata
@@ -82,9 +73,9 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 		parent=[handle retain];
 		startoffs=[handle offsetInFile];
 
-		const uint8_t *keybuf=[keydata bytes];
-		memcpy(iv,&keybuf[0],16);
-		AES_set_decrypt_key(&keybuf[16],128,&key);
+		const uint8_t *keybytes=[keydata bytes];
+		memcpy(iv,&keybytes[0],16);
+		aes_decrypt_key128(&keybytes[16],&aes);
 	}
 	return self;
 }
@@ -98,25 +89,16 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 -(void)resetBlockStream
 {
 	[parent seekToFileOffset:startoffs];
-	memcpy(xorblock,iv,16);
 	[self setBlockPointer:buffer];
+	memcpy(block,iv,sizeof(iv));
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	uint8_t tmpblock[16];
-
 	int actual=[parent readAtMost:sizeof(buffer) toBuffer:buffer];
 	if(actual==0) return -1;
 
-	for(int i=0;i<sizeof(buffer);i+=16)
-	{
-		AES_decrypt(buffer+i,tmpblock,&key);
-
-		for(int i=0;i<16;i++) tmpblock[i]^=xorblock[i];
-		memcpy(xorblock,buffer+i,16);
-		memcpy(buffer+i,tmpblock,16);
-	}
+	aes_cbc_decrypt(buffer,buffer,actual,block,&aes);
 
 	return actual;
 }

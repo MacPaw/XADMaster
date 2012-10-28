@@ -44,7 +44,7 @@ void GarbleBlock(unsigned char *block,uint32_t a,uint32_t b,uint32_t c,uint32_t 
 
 void SHA1_Update_WithRARBug(SHA_CTX *ctx,void *bytes,unsigned long length,int bug)
 {
-	int firstbytes=64-ctx->num;
+/*	int firstbytes=64-ctx->num;
 	if(!bug||length<=firstbytes) { SHA1_Update(ctx,bytes,length); return; }
 
 	SHA1_Update(ctx,bytes,firstbytes);
@@ -64,6 +64,7 @@ void SHA1_Update_WithRARBug(SHA_CTX *ctx,void *bytes,unsigned long length,int bu
 		SHA1_Update(ctx,(void *)block,64);
 		GarbleBlock(block,a,b,c,d,e);
 	}
-
-	SHA1_Update(ctx,(void *)((unsigned char *)bytes+firstbytes+numblocks*64),lastbytes);
+*/
+//	SHA1_Update(ctx,(void *)((unsigned char *)bytes+firstbytes+numblocks*64),lastbytes);
+	SHA1_Update(ctx,bytes,length);
 }

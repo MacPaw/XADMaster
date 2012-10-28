@@ -1,6 +1,7 @@
 #import "XAD7ZipParser.h"
 #import "XADLZMAHandle.h"
 #import "XADLZMA2Handle.h"
+#import "XAD7ZipAESHandle.h"
 #import "XAD7ZipBranchHandles.h"
 #import "XAD7ZipBCJ2Handle.h"
 #import "XADDeflateHandle.h"
@@ -207,7 +208,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 			int folderindex=[[substream objectForKey:@"FolderIndex"] intValue];
 			NSDictionary *folder=[[mainstreams objectForKey:@"Folders"] objectAtIndex:folderindex];
 			off_t compsize=(double)[self compressedSizeForFolder:folder]*[sizeobj doubleValue]
-			/(double)[self unCompressedSizeForFolder:folder];
+			/(double)[self uncompressedSizeForFolder:folder];
 
 			[file setObject:sizeobj forKey:XADFileSizeKey];
 			[file setObject:sizeobj forKey:XADSolidLengthKey];
@@ -215,6 +216,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 			[file setObject:[substream objectForKey:@"StartOffset"] forKey:XADSolidOffsetKey];
 			[file setObject:[self XADStringWithString:[self compressorNameForFolder:folder]] forKey:XADCompressionNameKey];
 			[file setObject:[substream objectForKey:@"CRC"] forKey:@"7zCRC32"];
+			if([self isFolderEncrypted:folder]) [file setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
 
 			[file setObject:[substream objectForKey:@"FolderIndex"] forKey:XADSolidObjectKey];
 		}
@@ -785,6 +787,16 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 		//case 0x04080000: return @"Cab";
 		//case 0x04090100: return @"DeflateNSIS";
 		//case 0x04090200: return @"Bzip2NSIS";
+		case 0x06f10701:
+		{
+			// TODO: Cache keys.
+			int logrounds=[XAD7ZipAESHandle logRoundsForPropertyData:props];
+			NSData *salt=[XAD7ZipAESHandle saltForPropertyData:props];
+			NSData *iv=[XAD7ZipAESHandle IVForPropertyData:props];
+			if(logrounds<0||!salt||!iv) return nil;
+			NSData *key=[XAD7ZipAESHandle keyForPassword:[self password] salt:salt logRounds:logrounds];
+			return [[[XAD7ZipAESHandle alloc] initWithHandle:inhandle length:size key:key IV:iv] autorelease];
+		}
 		case 0x21000000: return [[[XADLZMA2Handle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
 		default: return nil;
 	}
@@ -857,7 +869,7 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 	return totalsize;
 }
 
--(off_t)unCompressedSizeForFolder:(NSDictionary *)folder
+-(off_t)uncompressedSizeForFolder:(NSDictionary *)folder
 {
 	int finalindex=[[folder objectForKey:@"FinalOutStreamIndex"] intValue];
 	NSDictionary *stream=[[folder objectForKey:@"OutStreams"] objectAtIndex:finalindex];
@@ -920,9 +932,29 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 		case 0x04080000: return @"Cab";
 		case 0x04090100: return @"DeflateNSIS";
 		case 0x04090200: return @"Bzip2NSIS";
+		case 0x06f10701: return @"7zAES";
 		case 0x21000000: return @"LZMA2";
 		default: return nil;
 	}
+}
+
+-(BOOL)isFolderEncrypted:(NSDictionary *)folder
+{
+	int finalindex=[[folder objectForKey:@"FinalOutStreamIndex"] intValue];
+	return [self isFolderEncrypted:folder index:finalindex];
+}
+
+-(BOOL)isFolderEncrypted:(NSDictionary *)folder index:(int)index
+{
+	NSDictionary *outstream=[[folder objectForKey:@"OutStreams"] objectAtIndex:index];
+	NSDictionary *coder=[outstream objectForKey:@"Coder"];
+	NSDictionary *instream=[[folder objectForKey:@"InStreams"] objectAtIndex:[[coder objectForKey:@"FirstInStreamIndex"] intValue]];
+
+	if([self IDForCoder:coder]==0x06f10701) return YES;
+
+	NSNumber *source=[instream objectForKey:@"SourceIndex"];
+	if(!source) return NO;
+	else return [self isFolderEncrypted:folder index:[source intValue]];
 }
 
 

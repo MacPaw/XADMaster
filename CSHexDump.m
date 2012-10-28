@@ -55,7 +55,7 @@ static NSString *HexDump(const uint8_t *bytes,size_t len,int cols,int indent)
 			{
 				int c=bytes[i*cols+j];
 				if(c<0x20||(c>=0x80&&c<0xa0)) c='.';
-				[str appendFormat:@"%C",c];
+				[str appendFormat:@"%C",(unichar)c];
 			}
 		}
 

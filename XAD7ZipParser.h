@@ -46,10 +46,12 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 
 -(int)IDForCoder:(NSDictionary *)coder;
 -(off_t)compressedSizeForFolder:(NSDictionary *)folder;
--(off_t)unCompressedSizeForFolder:(NSDictionary *)folder;
+-(off_t)uncompressedSizeForFolder:(NSDictionary *)folder;
 -(NSString *)compressorNameForFolder:(NSDictionary *)folder;
 -(NSString *)compressorNameForFolder:(NSDictionary *)folder index:(int)index;
 -(NSString *)compressorNameForCoder:(NSDictionary *)coder;
+-(BOOL)isFolderEncrypted:(NSDictionary *)folder;
+-(BOOL)isFolderEncrypted:(NSDictionary *)folder index:(int)index;
 
 -(NSString *)formatName;
 

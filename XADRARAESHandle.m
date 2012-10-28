@@ -98,7 +98,7 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 	int actual=[parent readAtMost:sizeof(buffer) toBuffer:buffer];
 	if(actual==0) return -1;
 
-	aes_cbc_decrypt(buffer,buffer,actual,block,&aes);
+	aes_cbc_decrypt(buffer,buffer,actual&~15,block,&aes);
 
 	return actual;
 }

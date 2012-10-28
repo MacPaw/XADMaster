@@ -1073,6 +1073,7 @@
 		1BA23E7C163CDA70000D8174 /* aes_modes.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA23E7A163CDA70000D8174 /* aes_modes.c */; };
 		1BA23E7D163CDA70000D8174 /* aes_modes.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA23E7A163CDA70000D8174 /* aes_modes.c */; };
 		1BA23E7E163CDA70000D8174 /* aes_modes.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA23E7A163CDA70000D8174 /* aes_modes.c */; };
+		1BA23F95163DD4E9000D8174 /* sha2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE97610163CC2A100BB34EA /* sha2.c */; };
 		1BA2650F0FC061E200279E95 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
 		1BA266DE0FC78BF600279E95 /* XADPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA266DC0FC78BF600279E95 /* XADPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BA266DF0FC78BF600279E95 /* XADPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA266DD0FC78BF600279E95 /* XADPath.m */; };
@@ -1241,7 +1242,6 @@
 		1BE9762F163CC2A100BB34EA /* brg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760F163CC2A100BB34EA /* brg_types.h */; };
 		1BE97630163CC2A100BB34EA /* brg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760F163CC2A100BB34EA /* brg_types.h */; };
 		1BE97631163CC2A100BB34EA /* brg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760F163CC2A100BB34EA /* brg_types.h */; };
-		1BE97632163CC2A100BB34EA /* sha2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE97610163CC2A100BB34EA /* sha2.c */; };
 		1BE97633163CC2A100BB34EA /* sha2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE97610163CC2A100BB34EA /* sha2.c */; };
 		1BE97634163CC2A100BB34EA /* sha2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE97610163CC2A100BB34EA /* sha2.c */; };
 		1BE97635163CC2A100BB34EA /* sha2.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE97610163CC2A100BB34EA /* sha2.c */; };
@@ -4942,8 +4942,8 @@
 				1BE97616163CC2A100BB34EA /* aescrypt.c in Sources */,
 				1BE9761A163CC2A100BB34EA /* aeskey.c in Sources */,
 				1BE97622163CC2A100BB34EA /* aestab.c in Sources */,
-				1BE97632163CC2A100BB34EA /* sha2.c in Sources */,
 				1BA23E7B163CDA70000D8174 /* aes_modes.c in Sources */,
+				1BA23F95163DD4E9000D8174 /* sha2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

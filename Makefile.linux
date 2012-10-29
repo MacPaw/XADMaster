@@ -39,7 +39,6 @@ ALL_CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS) $(CXXFLAGS)
 
 LIBS =	-Wl,--no-whole-archive \
 	-lgnustep-base \
-	-lcrypto \
 	-lz \
 	-lbz2 \
 	-licuuc \

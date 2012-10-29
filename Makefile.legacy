@@ -35,7 +35,6 @@ ALL_CXXFLAGS = $(CXX_OPTS) $(GCC_OPTS) $(CXXFLAGS)
 
 LIBS =	-framework Foundation \
 	-framework Carbon \
-	-lcrypto \
 	-lz \
 	-lbz2 \
 	-lobjc \

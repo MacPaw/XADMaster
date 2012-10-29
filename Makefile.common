@@ -19,6 +19,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			NumberParsing.m \
 			Progress.m \
 			StuffItXUtilities.m \
+			XAD7ZipAESHandle.m \
 			XAD7ZipBCJ2Handle.m \
 			XAD7ZipBranchHandles.m \
 			XAD7ZipParser.m \
@@ -54,7 +55,6 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADCrunchParser.m \
 			XADDeflateHandle.m \
 			XADDeltaHandle.m \
-			XADDigestHandle.m \
 			XADDiskDoublerADnHandle.m \
 			XADDiskDoublerDDnHandle.m \
 			XADDiskDoublerMethod2Handle.m \
@@ -80,6 +80,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADLZXParser.m \
 			XADMacArchiveParser.m \
 			XADMacBinaryParser.m \
+			XADMD5Handle.m \
 			XADMSLZXHandle.m \
 			XADMSZipHandle.m \
 			XADNDSParser.m \
@@ -114,6 +115,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADRLE90Handle.m \
 			XADRPMParser.m \
 			XADSARParser.m \
+			XADSHA1Handle.m \
 			XADSimpleUnarchiver.m \
 			XADSkipHandle.m \
 			XADSplitFileParser.m \
@@ -171,6 +173,14 @@ LIBRARY_C_FILES =	BWT.c \
 			RARAudioDecoder.c \
 			RARBug.c \
 			RARVirtualMachine.c \
+			Crypto/aes_modes.c \
+			Crypto/aescrypt.c \
+			Crypto/aeskey.c \
+			Crypto/aestab.c \
+			Crypto/des.c \
+			Crypto/hmac_sha1.c \
+			Crypto/md5.c \
+			Crypto/sha.c \
 			libxad/all.c \
 			libxad/clients.c \
 			libxad/unix/emulation.c \

@@ -1,6 +1,6 @@
 #import "XAD7ZipAESHandle.h"
 
-#import "Crypto/sha2.h"
+#import "Crypto/sha.h"
 
 @implementation XAD7ZipAESHandle
 

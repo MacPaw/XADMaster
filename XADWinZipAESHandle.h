@@ -1,7 +1,6 @@
 #import "CSStreamHandle.h"
-
-#import <openssl/aes.h>
-#import <openssl/hmac.h>
+#import "Crypto/aes.h"
+#import "Crypto/hmac_sha1.h"
 
 @interface XADWinZipAESHandle:CSStreamHandle
 {
@@ -10,10 +9,10 @@
 	int keybytes;
 	off_t startoffs;
 
-	AES_KEY key;
+	aes_encrypt_ctx aes;
 	uint8_t counter[16],aesbuffer[16];
-	HMAC_CTX hmac;
-	BOOL hmac_inited,hmac_done,hmac_correct;
+	HMAC_SHA1_CTX hmac;
+	BOOL hmac_done,hmac_correct;
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata keyLength:(int)keylength;

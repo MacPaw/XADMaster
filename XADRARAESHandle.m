@@ -1,7 +1,7 @@
 #import "XADRARAESHandle.h"
 #import "RARBug.h"
 
-#import "Crypto/sha2.h"
+#import "Crypto/sha.h"
 
 @implementation XADRARAESHandle
 

@@ -1,9 +1,8 @@
 #import "XADStuffIt5Parser.h"
 #import "XADException.h"
 #import "NSDateXAD.h"
-
 #import "XADRC4Handle.h"
-#include <openssl/evp.h>
+#import "Crypto/md5.h"
 
 static NSData *DeriveArchiveKey(NSString *password);
 static NSData *DeriveFileKey(NSData *archiveKey, NSData *entryKey);
@@ -439,11 +438,10 @@ static NSData *StuffItMD5(NSData *data)
 {
 	uint8_t buf[16];
 
-	EVP_MD_CTX ctx;
-	EVP_DigestInit(&ctx,EVP_md5());
-	EVP_DigestUpdate(&ctx,[data bytes],[data length]);
-	EVP_DigestFinal(&ctx,buf,NULL);
-	EVP_MD_CTX_cleanup(&ctx);
+	MD5_CTX ctx;
+	MD5_Init(&ctx);
+	MD5_Update(&ctx,[data bytes],[data length]);
+	MD5_Final(buf,&ctx);
 	
 	return [NSData dataWithBytes:buf length:SIT5_KEY_LENGTH];
 }

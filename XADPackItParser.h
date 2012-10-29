@@ -1,7 +1,7 @@
 #import "XADArchiveParser.h"
 #import "CSBlockStreamHandle.h"
 
-#import <openssl/des.h>
+#import "Crypto/des.h"
 
 @interface XADPackItParser:XADArchiveParser
 {
@@ -33,7 +33,7 @@
 
 @interface XADPackItDESHandle:CSBlockStreamHandle
 {
-	DES_cblock inblock,outblock;
+	uint8_t block[8];
 	DES_key_schedule schedule;
 }
 

@@ -308,13 +308,13 @@
 		const uint8_t *passbytes=[passdata bytes];
 		int passlen=[passdata length];
 
-		DES_cblock key;
+		uint8_t key[8];
 		memset(key,0,8);
 		memcpy(key,passbytes,passlen<8?passlen:8);
 
-		DES_set_key_unchecked(&key,&schedule);
+		DES_set_key(key,&schedule);
 
-		[self setBlockPointer:outblock];
+		[self setBlockPointer:block];
 	}
 	return self;
 }
@@ -322,15 +322,15 @@
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	memset(inblock,0,8);
+	memset(block,0,8);
 
 	for(int i=0;i<8;i++)
 	{
 		if(CSInputAtEOF(input)) { [self endBlockStream]; break; }
-		inblock[i]=CSInputNextByte(input);
+		block[i]=CSInputNextByte(input);
 	}
 
-	DES_ecb_encrypt(&inblock,&outblock,&schedule,0);
+	DES_encrypt(block,1,&schedule);
 
 	return 8;
 }

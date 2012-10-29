@@ -1090,6 +1090,14 @@
 		1BA241E9163E1104000D8174 /* md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241E3163E1104000D8174 /* md5.h */; };
 		1BA241EA163E1104000D8174 /* md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241E3163E1104000D8174 /* md5.h */; };
 		1BA241EB163E1104000D8174 /* md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241E3163E1104000D8174 /* md5.h */; };
+		1BA241F0163E1E6F000D8174 /* des.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA241EE163E1E6F000D8174 /* des.c */; };
+		1BA241F1163E1E6F000D8174 /* des.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA241EE163E1E6F000D8174 /* des.c */; };
+		1BA241F2163E1E6F000D8174 /* des.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA241EE163E1E6F000D8174 /* des.c */; };
+		1BA241F3163E1E6F000D8174 /* des.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA241EE163E1E6F000D8174 /* des.c */; };
+		1BA241F4163E1E6F000D8174 /* des.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241EF163E1E6F000D8174 /* des.h */; };
+		1BA241F5163E1E6F000D8174 /* des.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241EF163E1E6F000D8174 /* des.h */; };
+		1BA241F6163E1E6F000D8174 /* des.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241EF163E1E6F000D8174 /* des.h */; };
+		1BA241F7163E1E6F000D8174 /* des.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241EF163E1E6F000D8174 /* des.h */; };
 		1BA2650F0FC061E200279E95 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
 		1BA266DE0FC78BF600279E95 /* XADPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA266DC0FC78BF600279E95 /* XADPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BA266DF0FC78BF600279E95 /* XADPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA266DD0FC78BF600279E95 /* XADPath.m */; };
@@ -1918,6 +1926,8 @@
 		1BA23F97163DFBE4000D8174 /* hmac_sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac_sha1.h; sourceTree = "<group>"; };
 		1BA241E2163E1104000D8174 /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
 		1BA241E3163E1104000D8174 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
+		1BA241EE163E1E6F000D8174 /* des.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = des.c; sourceTree = "<group>"; };
+		1BA241EF163E1E6F000D8174 /* des.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = des.h; sourceTree = "<group>"; };
 		1BA2650C0FC061E200279E95 /* XADRAR20CryptHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR20CryptHandle.h; sourceTree = "<group>"; };
 		1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR20CryptHandle.m; sourceTree = "<group>"; };
 		1BA266DC0FC78BF600279E95 /* XADPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPath.h; sourceTree = "<group>"; };
@@ -3170,6 +3180,8 @@
 				1BE9760D163CC2A100BB34EA /* aestab.h */,
 				1BE9760E163CC2A100BB34EA /* brg_endian.h */,
 				1BE9760F163CC2A100BB34EA /* brg_types.h */,
+				1BA241EE163E1E6F000D8174 /* des.c */,
+				1BA241EF163E1E6F000D8174 /* des.h */,
 				1BA23F96163DFBE4000D8174 /* hmac_sha1.c */,
 				1BA23F97163DFBE4000D8174 /* hmac_sha1.h */,
 				1BA241E2163E1104000D8174 /* md5.c */,
@@ -3306,6 +3318,7 @@
 				1BE97637163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9D163DFBE4000D8174 /* hmac_sha1.h in Headers */,
 				1BA241E9163E1104000D8174 /* md5.h in Headers */,
+				1BA241F5163E1E6F000D8174 /* des.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3381,6 +3394,7 @@
 				1BE97639163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9F163DFBE4000D8174 /* hmac_sha1.h in Headers */,
 				1BA241EB163E1104000D8174 /* md5.h in Headers */,
+				1BA241F7163E1E6F000D8174 /* des.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3456,6 +3470,7 @@
 				1BE97638163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9E163DFBE4000D8174 /* hmac_sha1.h in Headers */,
 				1BA241EA163E1104000D8174 /* md5.h in Headers */,
+				1BA241F6163E1E6F000D8174 /* des.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3676,6 +3691,7 @@
 				1BE97636163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9C163DFBE4000D8174 /* hmac_sha1.h in Headers */,
 				1BA241E8163E1104000D8174 /* md5.h in Headers */,
+				1BA241F4163E1E6F000D8174 /* des.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4268,6 +4284,7 @@
 				1BA23E7C163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F99163DFBE4000D8174 /* hmac_sha1.c in Sources */,
 				1BA241E5163E1104000D8174 /* md5.c in Sources */,
+				1BA241F1163E1E6F000D8174 /* des.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4491,6 +4508,7 @@
 				1BA23E7E163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F9B163DFBE4000D8174 /* hmac_sha1.c in Sources */,
 				1BA241E7163E1104000D8174 /* md5.c in Sources */,
+				1BA241F3163E1E6F000D8174 /* des.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4715,6 +4733,7 @@
 				1BA23E7D163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F9A163DFBE4000D8174 /* hmac_sha1.c in Sources */,
 				1BA241E6163E1104000D8174 /* md5.c in Sources */,
+				1BA241F2163E1E6F000D8174 /* des.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4984,6 +5003,7 @@
 				1BA23F95163DD4E9000D8174 /* sha.c in Sources */,
 				1BA23F98163DFBE4000D8174 /* hmac_sha1.c in Sources */,
 				1BA241E4163E1104000D8174 /* md5.c in Sources */,
+				1BA241F0163E1E6F000D8174 /* des.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

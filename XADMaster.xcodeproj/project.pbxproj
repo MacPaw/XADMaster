@@ -1082,6 +1082,14 @@
 		1BA23F9D163DFBE4000D8174 /* hmac_sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA23F97163DFBE4000D8174 /* hmac_sha1.h */; };
 		1BA23F9E163DFBE4000D8174 /* hmac_sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA23F97163DFBE4000D8174 /* hmac_sha1.h */; };
 		1BA23F9F163DFBE4000D8174 /* hmac_sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA23F97163DFBE4000D8174 /* hmac_sha1.h */; };
+		1BA241E4163E1104000D8174 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA241E2163E1104000D8174 /* md5.c */; };
+		1BA241E5163E1104000D8174 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA241E2163E1104000D8174 /* md5.c */; };
+		1BA241E6163E1104000D8174 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA241E2163E1104000D8174 /* md5.c */; };
+		1BA241E7163E1104000D8174 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA241E2163E1104000D8174 /* md5.c */; };
+		1BA241E8163E1104000D8174 /* md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241E3163E1104000D8174 /* md5.h */; };
+		1BA241E9163E1104000D8174 /* md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241E3163E1104000D8174 /* md5.h */; };
+		1BA241EA163E1104000D8174 /* md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241E3163E1104000D8174 /* md5.h */; };
+		1BA241EB163E1104000D8174 /* md5.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA241E3163E1104000D8174 /* md5.h */; };
 		1BA2650F0FC061E200279E95 /* XADRAR20CryptHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */; };
 		1BA266DE0FC78BF600279E95 /* XADPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA266DC0FC78BF600279E95 /* XADPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BA266DF0FC78BF600279E95 /* XADPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA266DD0FC78BF600279E95 /* XADPath.m */; };
@@ -1908,6 +1916,8 @@
 		1BA23E7A163CDA70000D8174 /* aes_modes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes_modes.c; sourceTree = "<group>"; };
 		1BA23F96163DFBE4000D8174 /* hmac_sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac_sha1.c; sourceTree = "<group>"; };
 		1BA23F97163DFBE4000D8174 /* hmac_sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac_sha1.h; sourceTree = "<group>"; };
+		1BA241E2163E1104000D8174 /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
+		1BA241E3163E1104000D8174 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
 		1BA2650C0FC061E200279E95 /* XADRAR20CryptHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR20CryptHandle.h; sourceTree = "<group>"; };
 		1BA2650D0FC061E200279E95 /* XADRAR20CryptHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR20CryptHandle.m; sourceTree = "<group>"; };
 		1BA266DC0FC78BF600279E95 /* XADPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPath.h; sourceTree = "<group>"; };
@@ -3162,6 +3172,8 @@
 				1BE9760F163CC2A100BB34EA /* brg_types.h */,
 				1BA23F96163DFBE4000D8174 /* hmac_sha1.c */,
 				1BA23F97163DFBE4000D8174 /* hmac_sha1.h */,
+				1BA241E2163E1104000D8174 /* md5.c */,
+				1BA241E3163E1104000D8174 /* md5.h */,
 				1BE97610163CC2A100BB34EA /* sha.c */,
 				1BE97611163CC2A100BB34EA /* sha.h */,
 			);
@@ -3293,6 +3305,7 @@
 				1BE9762F163CC2A100BB34EA /* brg_types.h in Headers */,
 				1BE97637163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9D163DFBE4000D8174 /* hmac_sha1.h in Headers */,
+				1BA241E9163E1104000D8174 /* md5.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3367,6 +3380,7 @@
 				1BE97631163CC2A100BB34EA /* brg_types.h in Headers */,
 				1BE97639163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9F163DFBE4000D8174 /* hmac_sha1.h in Headers */,
+				1BA241EB163E1104000D8174 /* md5.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3441,6 +3455,7 @@
 				1BE97630163CC2A100BB34EA /* brg_types.h in Headers */,
 				1BE97638163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9E163DFBE4000D8174 /* hmac_sha1.h in Headers */,
+				1BA241EA163E1104000D8174 /* md5.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3660,6 +3675,7 @@
 				1BE9762E163CC2A100BB34EA /* brg_types.h in Headers */,
 				1BE97636163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9C163DFBE4000D8174 /* hmac_sha1.h in Headers */,
+				1BA241E8163E1104000D8174 /* md5.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4251,6 +4267,7 @@
 				1BE97633163CC2A100BB34EA /* sha.c in Sources */,
 				1BA23E7C163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F99163DFBE4000D8174 /* hmac_sha1.c in Sources */,
+				1BA241E5163E1104000D8174 /* md5.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4473,6 +4490,7 @@
 				1BE97635163CC2A100BB34EA /* sha.c in Sources */,
 				1BA23E7E163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F9B163DFBE4000D8174 /* hmac_sha1.c in Sources */,
+				1BA241E7163E1104000D8174 /* md5.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4696,6 +4714,7 @@
 				1BE97634163CC2A100BB34EA /* sha.c in Sources */,
 				1BA23E7D163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F9A163DFBE4000D8174 /* hmac_sha1.c in Sources */,
+				1BA241E6163E1104000D8174 /* md5.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4964,6 +4983,7 @@
 				1BA23E7B163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F95163DD4E9000D8174 /* sha.c in Sources */,
 				1BA23F98163DFBE4000D8174 /* hmac_sha1.c in Sources */,
+				1BA241E4163E1104000D8174 /* md5.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

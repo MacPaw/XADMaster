@@ -1,8 +1,8 @@
 #import <Foundation/Foundation.h>
-#import <openssl/md5.h>
-#import <openssl/aes.h>
 #import "../CSHandle.h"
 #import "../CSBlockStreamHandle.h"
+#import "../Crypto/md5.h"
+#import "../Crypto/aes.h"
 
 extern NSString *PDFMD5FinishedException;
 
@@ -41,7 +41,7 @@ extern NSString *PDFMD5FinishedException;
 
 	NSData *key,*iv;
 
-	AES_KEY aeskey;
+	aes_decrypt_ctx aes;
 	uint8_t ivbuffer[16],streambuffer[16];
 }
 

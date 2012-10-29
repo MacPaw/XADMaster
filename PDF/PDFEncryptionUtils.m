@@ -78,7 +78,7 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
 		[self setBlockPointer:streambuffer];
 
-		AES_set_decrypt_key([key bytes],[key length]*8,&aeskey);
+		aes_decrypt_key([key bytes],[key length]*8,&aes);
 	}
 	return self;
 }
@@ -101,7 +101,7 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 {
 	uint8_t inbuf[16];
 	[parent readBytes:16 toBuffer:inbuf];
-	AES_cbc_encrypt(inbuf,streambuffer,16,&aeskey,ivbuffer,AES_DECRYPT);
+	aes_cbc_decrypt(inbuf,streambuffer,16,ivbuffer,&aes);
 
 	if([parent atEndOfFile])
 	{

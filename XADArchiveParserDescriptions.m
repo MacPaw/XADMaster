@@ -469,14 +469,19 @@ NSString *XADIndentTextWithSpaces(NSString *text,int spaces)
 {
 	if([text rangeOfString:@"\n"].location==NSNotFound) return text;
 
-	char spacestring[spaces+2];
-	spacestring[0]='\n';
-	for(int i=0;i<spaces;i++) spacestring[i+1]=' ';
-	spacestring[spaces+1]=0;
+	NSMutableString *res=[NSMutableString string];
+	int length=[text length];
+	for(int i=0;i<length;i++)
+	{
+		unichar c=[text characterAtIndex:i];
+		[res appendFormat:@"%C",c];
+		if(c=='\n')
+		{
+			for(int j=0;j<spaces;j++) [res appendString:@" "];
+		}
+	}
 
-	NSString *indentstring=[NSString stringWithUTF8String:spacestring];
-
-	return [text stringByReplacingOccurrencesOfString:@"\n" withString:indentstring];
+	return res;
 }
 
 

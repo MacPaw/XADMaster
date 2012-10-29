@@ -294,7 +294,7 @@ int main(int argc,const char **argv)
 		}
 
 		NSArray *volumes=[[unarchiver outerArchiveParser] volumes];
-		if([volumes count]>1) [[NSString stringWithFormat:@" (%d volumes)",[volumes count]] print];
+		if([volumes count]>1) [[NSString stringWithFormat:@" (%d volumes)",(int)[volumes count]] print];
 
 		[@"\n" print];
 

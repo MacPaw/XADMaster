@@ -192,7 +192,10 @@ static BOOL IsDelimiter(uint8_t c);
 	NSString *startxref=[[end substringsCapturedByPattern:@"startxref[\n\r ]+([0-9]+)[\n\r ]+%%EOF"] objectAtIndex:1];
 	if(!startxref) [NSException raise:PDFInvalidFormatException format:@"Missing PDF trailer."];
 
-	[self startParsingFromHandle:mainhandle atOffset:[startxref longLongValue]];
+	NSScanner *scanner=[NSScanner scannerWithString:startxref];
+	long long offset=0;
+	[scanner scanLongLong:&offset];
+	[self startParsingFromHandle:mainhandle atOffset:offset];
 
 	// Read newest xrefs and trailer.
 	trailerdict=[[self parsePDFXref] retain];

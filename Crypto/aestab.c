@@ -184,7 +184,7 @@ extern "C"
 
 /* implemented in case of wrong call for fixed tables */
 
-AES_RETURN aes_init(void)
+int aes_init(void)
 {
     return EXIT_SUCCESS;
 }

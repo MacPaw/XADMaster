@@ -37,8 +37,8 @@ Issue Date: 20/12/2007
  The cipher interface is implemented as an array of bytes in which lower
  AES bit sequence indexes map to higher numeric significance within bytes.
 
-  uint_8t                 (an unsigned  8-bit type)
-  uint_32t                (an unsigned 32-bit type)
+  uint8_t                 (an unsigned  8-bit type)
+  uint32_t                (an unsigned 32-bit type)
   struct aes_encrypt_ctx  (structure for the cipher encryption context)
   struct aes_decrypt_ctx  (structure for the cipher decryption context)
   AES_RETURN                the function return type
@@ -184,7 +184,7 @@ Issue Date: 20/12/2007
     order (which later checks below ensure).
 */
 
-#if 1 && defined( VIA_ACE_POSSIBLE ) && !defined( USE_VIA_ACE_IF_PRESENT )
+#if 0 && defined( VIA_ACE_POSSIBLE ) && !defined( USE_VIA_ACE_IF_PRESENT )
 #  define USE_VIA_ACE_IF_PRESENT
 #endif
 
@@ -317,7 +317,7 @@ Issue Date: 20/12/2007
     rather than using a cast. This option allows this choice.
 */
 #if 0
-#  define to_byte(x)  ((uint_8t)(x))
+#  define to_byte(x)  ((uint8_t)(x))
 #else
 #  define to_byte(x)  ((x) & 0xff)
 #endif
@@ -522,7 +522,7 @@ Issue Date: 20/12/2007
 #elif defined( bswap_32 )
 #  define aes_sw32    bswap_32
 #else
-#  define brot(x,n)   (((uint_32t)(x) <<  n) | ((uint_32t)(x) >> (32 - n)))
+#  define brot(x,n)   (((uint32_t)(x) <<  n) | ((uint32_t)(x) >> (32 - n)))
 #  define aes_sw32(x) ((brot((x),8) & 0x00ff00ff) | (brot((x),24) & 0xff00ff00))
 #endif
 
@@ -538,32 +538,32 @@ Issue Date: 20/12/2007
 */
 
 #if ( ALGORITHM_BYTE_ORDER == IS_LITTLE_ENDIAN )
-#  define upr(x,n)      (((uint_32t)(x) << (8 * (n))) | ((uint_32t)(x) >> (32 - 8 * (n))))
-#  define ups(x,n)      ((uint_32t) (x) << (8 * (n)))
+#  define upr(x,n)      (((uint32_t)(x) << (8 * (n))) | ((uint32_t)(x) >> (32 - 8 * (n))))
+#  define ups(x,n)      ((uint32_t) (x) << (8 * (n)))
 #  define bval(x,n)     to_byte((x) >> (8 * (n)))
 #  define bytes2word(b0, b1, b2, b3)  \
-        (((uint_32t)(b3) << 24) | ((uint_32t)(b2) << 16) | ((uint_32t)(b1) << 8) | (b0))
+        (((uint32_t)(b3) << 24) | ((uint32_t)(b2) << 16) | ((uint32_t)(b1) << 8) | (b0))
 #endif
 
 #if ( ALGORITHM_BYTE_ORDER == IS_BIG_ENDIAN )
-#  define upr(x,n)      (((uint_32t)(x) >> (8 * (n))) | ((uint_32t)(x) << (32 - 8 * (n))))
-#  define ups(x,n)      ((uint_32t) (x) >> (8 * (n)))
+#  define upr(x,n)      (((uint32_t)(x) >> (8 * (n))) | ((uint32_t)(x) << (32 - 8 * (n))))
+#  define ups(x,n)      ((uint32_t) (x) >> (8 * (n)))
 #  define bval(x,n)     to_byte((x) >> (24 - 8 * (n)))
 #  define bytes2word(b0, b1, b2, b3)  \
-        (((uint_32t)(b0) << 24) | ((uint_32t)(b1) << 16) | ((uint_32t)(b2) << 8) | (b3))
+        (((uint32_t)(b0) << 24) | ((uint32_t)(b1) << 16) | ((uint32_t)(b2) << 8) | (b3))
 #endif
 
 #if defined( SAFE_IO )
-#  define word_in(x,c)    bytes2word(((const uint_8t*)(x)+4*c)[0], ((const uint_8t*)(x)+4*c)[1], \
-                                   ((const uint_8t*)(x)+4*c)[2], ((const uint_8t*)(x)+4*c)[3])
-#  define word_out(x,c,v) { ((uint_8t*)(x)+4*c)[0] = bval(v,0); ((uint_8t*)(x)+4*c)[1] = bval(v,1); \
-                          ((uint_8t*)(x)+4*c)[2] = bval(v,2); ((uint_8t*)(x)+4*c)[3] = bval(v,3); }
+#  define word_in(x,c)    bytes2word(((const uint8_t*)(x)+4*c)[0], ((const uint8_t*)(x)+4*c)[1], \
+                                   ((const uint8_t*)(x)+4*c)[2], ((const uint8_t*)(x)+4*c)[3])
+#  define word_out(x,c,v) { ((uint8_t*)(x)+4*c)[0] = bval(v,0); ((uint8_t*)(x)+4*c)[1] = bval(v,1); \
+                          ((uint8_t*)(x)+4*c)[2] = bval(v,2); ((uint8_t*)(x)+4*c)[3] = bval(v,3); }
 #elif ( ALGORITHM_BYTE_ORDER == PLATFORM_BYTE_ORDER )
-#  define word_in(x,c)    (*((uint_32t*)(x)+(c)))
-#  define word_out(x,c,v) (*((uint_32t*)(x)+(c)) = (v))
+#  define word_in(x,c)    (*((uint32_t*)(x)+(c)))
+#  define word_out(x,c,v) (*((uint32_t*)(x)+(c)) = (v))
 #else
-#  define word_in(x,c)    aes_sw32(*((uint_32t*)(x)+(c)))
-#  define word_out(x,c,v) (*((uint_32t*)(x)+(c)) = aes_sw32(v))
+#  define word_in(x,c)    aes_sw32(*((uint32_t*)(x)+(c)))
+#  define word_out(x,c,v) (*((uint32_t*)(x)+(c)) = aes_sw32(v))
 #endif
 
 /* the finite field modular polynomial and elements */
@@ -704,7 +704,7 @@ Issue Date: 20/12/2007
 #elif defined( FM1_SET )    /* not currently used */
 #  define fwd_mcol(x)       one_table(x,upr,t_use(f,m),vf1,rf1,0)
 #else
-#  define dec_fmvars        uint_32t g2
+#  define dec_fmvars        uint32_t g2
 #  define fwd_mcol(x)       (g2 = gf_mulx(x), g2 ^ upr((x) ^ g2, 3) ^ upr((x), 2) ^ upr((x), 1))
 #endif
 
@@ -713,7 +713,7 @@ Issue Date: 20/12/2007
 #elif defined( IM1_SET )
 #  define inv_mcol(x)       one_table(x,upr,t_use(i,m),vf1,rf1,0)
 #else
-#  define dec_imvars        uint_32t g2, g4, g9
+#  define dec_imvars        uint32_t g2, g4, g9
 #  define inv_mcol(x)       (g2 = gf_mulx(x), g4 = gf_mulx(g2), g9 = (x) ^ gf_mulx(g4), g4 ^= g9, \
                             (x) ^ g2 ^ g4 ^ upr(g2 ^ g9, 3) ^ upr(g4, 2) ^ upr(g9, 1))
 #endif

@@ -87,9 +87,9 @@ extern "C"
 #define fwd_lrnd(y,x,k,c)   (s(y,c) = (k)[c] ^ no_table(x,t_use(s,box),fwd_var,rf1,c))
 #endif
 
-AES_RETURN aes_encrypt(const unsigned char *in, unsigned char *out, const aes_encrypt_ctx cx[1])
-{   uint_32t         locals(b0, b1);
-    const uint_32t   *kp;
+int aes_encrypt(const unsigned char *in, unsigned char *out, const aes_encrypt_ctx cx[1])
+{   uint32_t         locals(b0, b1);
+    const uint32_t   *kp;
 #if defined( dec_fmvars )
     dec_fmvars; /* declare variables for fwd_mcol() if needed */
 #endif
@@ -128,7 +128,7 @@ AES_RETURN aes_encrypt(const unsigned char *in, unsigned char *out, const aes_en
 #else
 
 #if (ENC_UNROLL == PARTIAL)
-    {   uint_32t    rnd;
+    {   uint32_t    rnd;
         for(rnd = 0; rnd < (cx->inf.b[0] >> 5) - 1; ++rnd)
         {
             kp += N_COLS;
@@ -139,7 +139,7 @@ AES_RETURN aes_encrypt(const unsigned char *in, unsigned char *out, const aes_en
         kp += N_COLS;
         round(fwd_rnd,  b1, b0, kp);
 #else
-    {   uint_32t    rnd;
+    {   uint32_t    rnd;
         for(rnd = 0; rnd < (cx->inf.b[0] >> 4) - 1; ++rnd)
         {
             kp += N_COLS;
@@ -219,12 +219,12 @@ AES_RETURN aes_encrypt(const unsigned char *in, unsigned char *out, const aes_en
 #define rnd_key(n)  (kp - n * N_COLS)
 #endif
 
-AES_RETURN aes_decrypt(const unsigned char *in, unsigned char *out, const aes_decrypt_ctx cx[1])
-{   uint_32t        locals(b0, b1);
+int aes_decrypt(const unsigned char *in, unsigned char *out, const aes_decrypt_ctx cx[1])
+{   uint32_t        locals(b0, b1);
 #if defined( dec_imvars )
     dec_imvars; /* declare variables for inv_mcol() if needed */
 #endif
-    const uint_32t *kp;
+    const uint32_t *kp;
 
     if( cx->inf.b[0] != 10 * 16 && cx->inf.b[0] != 12 * 16 && cx->inf.b[0] != 14 * 16 )
         return EXIT_FAILURE;
@@ -259,7 +259,7 @@ AES_RETURN aes_decrypt(const unsigned char *in, unsigned char *out, const aes_de
 #else
 
 #if (DEC_UNROLL == PARTIAL)
-    {   uint_32t    rnd;
+    {   uint32_t    rnd;
         for(rnd = 0; rnd < (cx->inf.b[0] >> 5) - 1; ++rnd)
         {
             kp = rnd_key(1);
@@ -270,7 +270,7 @@ AES_RETURN aes_decrypt(const unsigned char *in, unsigned char *out, const aes_de
         kp = rnd_key(1);
         round(inv_rnd, b1, b0, kp);
 #else
-    {   uint_32t    rnd;
+    {   uint32_t    rnd;
         for(rnd = 0; rnd < (cx->inf.b[0] >> 4) - 1; ++rnd)
         {
             kp = rnd_key(1);

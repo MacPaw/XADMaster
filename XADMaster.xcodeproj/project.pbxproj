@@ -390,8 +390,6 @@
 		1B3A66D81017B7E000AE25A8 /* XADNSISParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */; };
 		1B3A689E101BA12C00AE25A8 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
 		1B3A68B2101BA1C300AE25A8 /* XADTest4.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A68A9101BA14A00AE25A8 /* XADTest4.m */; };
-		1B3BBC1A13EF643A00A960EF /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1813EF639900A960EF /* libcrypto.a */; };
-		1B3BBC1B13EF643A00A960EF /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1813EF639900A960EF /* libcrypto.a */; };
 		1B3BBC1D13EF81AB00A960EF /* libgdi32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1C13EF81AB00A960EF /* libgdi32.a */; };
 		1B3BBC1E13EF81AB00A960EF /* libgdi32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1C13EF81AB00A960EF /* libgdi32.a */; };
 		1B3C98A8134E570D009F9674 /* CSByteStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAFC0EC3859F006D2F06 /* CSByteStreamHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1273,10 +1271,6 @@
 		1BE9762B163CC2A100BB34EA /* brg_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760E163CC2A100BB34EA /* brg_endian.h */; };
 		1BE9762C163CC2A100BB34EA /* brg_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760E163CC2A100BB34EA /* brg_endian.h */; };
 		1BE9762D163CC2A100BB34EA /* brg_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760E163CC2A100BB34EA /* brg_endian.h */; };
-		1BE9762E163CC2A100BB34EA /* brg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760F163CC2A100BB34EA /* brg_types.h */; };
-		1BE9762F163CC2A100BB34EA /* brg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760F163CC2A100BB34EA /* brg_types.h */; };
-		1BE97630163CC2A100BB34EA /* brg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760F163CC2A100BB34EA /* brg_types.h */; };
-		1BE97631163CC2A100BB34EA /* brg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BE9760F163CC2A100BB34EA /* brg_types.h */; };
 		1BE97633163CC2A100BB34EA /* sha.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE97610163CC2A100BB34EA /* sha.c */; };
 		1BE97634163CC2A100BB34EA /* sha.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE97610163CC2A100BB34EA /* sha.c */; };
 		1BE97635163CC2A100BB34EA /* sha.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BE97610163CC2A100BB34EA /* sha.c */; };
@@ -1810,7 +1804,6 @@
 		1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSISParser.m; sourceTree = "<group>"; };
 		1B3A68A2101BA12C00AE25A8 /* XADTest4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest4; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B3A68A9101BA14A00AE25A8 /* XADTest4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest4.m; sourceTree = "<group>"; };
-		1B3BBC1813EF639900A960EF /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = Windows/lib/libcrypto.a; sourceTree = "<group>"; };
 		1B3BBC1C13EF81AB00A960EF /* libgdi32.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgdi32.a; path = "Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib/libgdi32.a"; sourceTree = DEVELOPER_DIR; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
@@ -2106,7 +2099,6 @@
 		1BE9760C163CC2A100BB34EA /* aestab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aestab.c; sourceTree = "<group>"; };
 		1BE9760D163CC2A100BB34EA /* aestab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aestab.h; sourceTree = "<group>"; };
 		1BE9760E163CC2A100BB34EA /* brg_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = brg_endian.h; sourceTree = "<group>"; };
-		1BE9760F163CC2A100BB34EA /* brg_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = brg_types.h; sourceTree = "<group>"; };
 		1BE97610163CC2A100BB34EA /* sha.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha.c; sourceTree = "<group>"; };
 		1BE97611163CC2A100BB34EA /* sha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha.h; sourceTree = "<group>"; };
 		1BF0EE2213FF2FA3007B8CF8 /* ArithmeticDecoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ArithmeticDecoder.c; sourceTree = "<group>"; };
@@ -2228,7 +2220,6 @@
 				1B91CDBE11D983A80081E40A /* libstdc++.a in Frameworks */,
 				1B91CDBF11D983AA0081E40A /* libwinmm.a in Frameworks */,
 				1B91CDC011D983AB0081E40A /* libz.a in Frameworks */,
-				1B3BBC1A13EF643A00A960EF /* libcrypto.a in Frameworks */,
 				1B3BBC1D13EF81AB00A960EF /* libgdi32.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2259,7 +2250,6 @@
 				1B91D2E711E694860081E40A /* libstdc++.a in Frameworks */,
 				1B91D2E811E694860081E40A /* libwinmm.a in Frameworks */,
 				1B91D2E911E694860081E40A /* libz.a in Frameworks */,
-				1B3BBC1B13EF643A00A960EF /* libcrypto.a in Frameworks */,
 				1B3BBC1E13EF81AB00A960EF /* libgdi32.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2649,7 +2639,6 @@
 			children = (
 				1B91CDBB11D983760081E40A /* libUniversalDetector.win.a */,
 				1B34A03C11BB1CD900396C26 /* libbz2.a */,
-				1B3BBC1813EF639900A960EF /* libcrypto.a */,
 				1B34A06611BB21A900396C26 /* libwinmm.a */,
 				1B3BBC1C13EF81AB00A960EF /* libgdi32.a */,
 				1B34A03E11BB1CD900396C26 /* libz.a */,
@@ -3194,7 +3183,6 @@
 				1BE9760C163CC2A100BB34EA /* aestab.c */,
 				1BE9760D163CC2A100BB34EA /* aestab.h */,
 				1BE9760E163CC2A100BB34EA /* brg_endian.h */,
-				1BE9760F163CC2A100BB34EA /* brg_types.h */,
 				1BA241EE163E1E6F000D8174 /* des.c */,
 				1BA241EF163E1E6F000D8174 /* des.h */,
 				1BA23F96163DFBE4000D8174 /* hmac_sha1.c */,
@@ -3329,7 +3317,6 @@
 				1BE9761F163CC2A100BB34EA /* aesopt.h in Headers */,
 				1BE97627163CC2A100BB34EA /* aestab.h in Headers */,
 				1BE9762B163CC2A100BB34EA /* brg_endian.h in Headers */,
-				1BE9762F163CC2A100BB34EA /* brg_types.h in Headers */,
 				1BE97637163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9D163DFBE4000D8174 /* hmac_sha1.h in Headers */,
 				1BA241E9163E1104000D8174 /* md5.h in Headers */,
@@ -3407,7 +3394,6 @@
 				1BE97621163CC2A100BB34EA /* aesopt.h in Headers */,
 				1BE97629163CC2A100BB34EA /* aestab.h in Headers */,
 				1BE9762D163CC2A100BB34EA /* brg_endian.h in Headers */,
-				1BE97631163CC2A100BB34EA /* brg_types.h in Headers */,
 				1BE97639163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9F163DFBE4000D8174 /* hmac_sha1.h in Headers */,
 				1BA241EB163E1104000D8174 /* md5.h in Headers */,
@@ -3485,7 +3471,6 @@
 				1BE97620163CC2A100BB34EA /* aesopt.h in Headers */,
 				1BE97628163CC2A100BB34EA /* aestab.h in Headers */,
 				1BE9762C163CC2A100BB34EA /* brg_endian.h in Headers */,
-				1BE97630163CC2A100BB34EA /* brg_types.h in Headers */,
 				1BE97638163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9E163DFBE4000D8174 /* hmac_sha1.h in Headers */,
 				1BA241EA163E1104000D8174 /* md5.h in Headers */,
@@ -3707,7 +3692,6 @@
 				1BE9761E163CC2A100BB34EA /* aesopt.h in Headers */,
 				1BE97626163CC2A100BB34EA /* aestab.h in Headers */,
 				1BE9762A163CC2A100BB34EA /* brg_endian.h in Headers */,
-				1BE9762E163CC2A100BB34EA /* brg_types.h in Headers */,
 				1BE97636163CC2A100BB34EA /* sha.h in Headers */,
 				1BA23F9C163DFBE4000D8174 /* hmac_sha1.h in Headers */,
 				1BA241E8163E1104000D8174 /* md5.h in Headers */,

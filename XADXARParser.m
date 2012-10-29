@@ -2,8 +2,9 @@
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
 #import "XADLZMAHandle.h"
-#import "XADDigestHandle.h"
 #import "XADXZHandle.h"
+#import "XADMD5Handle.h"
+#import "XADSHA1Handle.h"
 #import "XADRegex.h"
 #import "NSDateXAD.h"
 
@@ -502,9 +503,14 @@ length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum chec
 
 	if(checksum&&checksumstyle)
 	{
-		CSHandle *digesthandle=[XADDigestHandle digestHandleWithHandle:handle length:sizeval
-		digestName:checksumstyle correctDigest:checksum];
-		if(digesthandle) return digesthandle;
+		if([checksumstyle isEqual:@"MD5"])
+		{
+			return [[[XADMD5Handle alloc] initWithHandle:handle length:sizeval correctDigest:checksum] autorelease];
+		}
+		else if([checksumstyle isEqual:@"SHA1"])
+		{
+			return [[[XADSHA1Handle alloc] initWithHandle:handle length:sizeval correctDigest:checksum] autorelease];
+		}
 	}
 
 	return handle;

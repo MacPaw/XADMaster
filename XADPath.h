@@ -5,7 +5,7 @@
 #define XADEitherPathSeparator "/\\"
 #define XADNoPathSeparator ""
 
-@interface XADPath:NSObject <XADString>
+@interface XADPath:NSObject <XADString,NSCopying>
 {
 	XADPath *parent;
 

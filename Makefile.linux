@@ -98,6 +98,8 @@ clean:
 	rm -rf $(BUILD_DIR) $(EXECUTABLE_FILES) $(LIBRARY_FILES)
 	make -C ../UniversalDetector -f Makefile.linux clean
 
+.PHONY: ../UniversalDetector/libUniversalDetector.a clean
+
 # Suffix rules
 
 .SUFFIXES: .o .c .m .cpp

@@ -72,7 +72,7 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 
 
 
-@interface XADString:NSObject <XADString>
+@interface XADString:NSObject <XADString,NSCopying>
 {
 	NSData *data;
 	NSString *string;

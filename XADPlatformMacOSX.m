@@ -373,6 +373,17 @@ preservePermissions:(BOOL)preservepermissions
 
 
 
+//
+// Resource forks
+//
+
++(CSHandle *)handleForReadingResourceForkAtPath:(NSString *)path
+{
+	// TODO: Use xattrs APIs instead.
+	return [CSFileHandle fileHandleForReadingAtPath:[path stringByAppendingPathComponent:@"..namedfork/rsrc"]];
+}
+
+
 
 //
 // Time functions.

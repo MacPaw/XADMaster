@@ -45,9 +45,9 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 	return 1; // MacBinary I
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		previousname=nil;
 		dittodirectorystack=[NSMutableArray new];

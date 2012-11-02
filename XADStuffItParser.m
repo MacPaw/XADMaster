@@ -289,6 +289,9 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,int enc);
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
+	NSNumber *isdir=[dict objectForKey:XADIsDirectoryKey];
+	if(isdir && [isdir boolValue]) return [self zeroLengthHandleWithChecksum:checksum];
+
 	CSHandle *fh=[self handleAtDataOffsetForDictionary:dict];
 
 	int compressionmethod=[[dict objectForKey:@"StuffItCompressionMethod"] intValue];
@@ -344,16 +347,11 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,int enc);
 {
 	DES_key_schedule ks;
 
-/*	// Encrypted archives require the MKey resource
-	if(![fh hasForkOfType:CSResourceForkType])
-		[XADException raiseNotSupportedException];
-	CSHandle *rh=[fh forkHandleOfType:CSResourceForkType];
-	XADResourceFork *fork=[[XADResourceFork alloc] initWithHandle:rh];
-	NSData *mkey=[fork resourceDataForType:'MKey' withId:0];
+	// Encrypted archives require the MKey resource
+	XADResourceFork *fork=[self resourceFork];
+	NSData *mkey=[fork resourceDataForType:'MKey' identifier:0];
 	if(!mkey) [XADException raiseNotSupportedException];
-*/
 
-	NSData *mkey=nil;
 	if(!mkey||[mkey length]!=sizeof(DES_cblock)) [XADException raiseIllegalDataException];
 
 	NSData *entrykey=[dict objectForKey:@"StuffItEntryKey"];

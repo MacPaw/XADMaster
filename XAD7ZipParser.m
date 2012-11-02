@@ -100,9 +100,9 @@ static void FindAttribute(CSHandle *handle,int attribute)
 	return nil;
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		mainstreams=nil;
 	}

@@ -5,9 +5,6 @@
 {
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
--(void)dealloc;
-
 +(int)requiredHeaderSize;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 

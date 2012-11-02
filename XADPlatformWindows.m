@@ -255,6 +255,13 @@ preservePermissions:(BOOL)preservepermissions
 
 
 
+//
+// Resource forks
+//
+
++(CSHandle *)handleForReadingResourceForkAtPath:(NSString *)path { return nil; }
+
+
 
 //
 // Time functions.

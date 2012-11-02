@@ -873,6 +873,15 @@
 		1B78A34C1431339100E4AB87 /* Realloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78A34B1431339100E4AB87 /* Realloc.h */; };
 		1B78A34D1431339100E4AB87 /* Realloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78A34B1431339100E4AB87 /* Realloc.h */; };
 		1B78A34E1431339100E4AB87 /* Realloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78A34B1431339100E4AB87 /* Realloc.h */; };
+		1B7A06D01641F4470077A3AA /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A06CF1641F4470077A3AA /* libcrypto.dylib */; };
+		1B7A06D61642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
+		1B7A06D71642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
+		1B7A06D81642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
+		1B7A06D91642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
+		1B7A06DA1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
+		1B7A06DB1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
+		1B7A06DC1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
+		1B7A06DD1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
 		1B7F3CB313147CD6008238BF /* XADPaddedBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */; };
 		1B7F3CB413147CD6008238BF /* XADPaddedBlockHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7F3CB013147CD6008238BF /* XADPaddedBlockHandle.h */; };
 		1B7F3CB513147CD6008238BF /* XADPaddedBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */; };
@@ -1891,6 +1900,9 @@
 		1B7451A713081B89008D80FE /* XADISO9660Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADISO9660Parser.h; sourceTree = "<group>"; };
 		1B7451A813081B89008D80FE /* XADISO9660Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADISO9660Parser.m; sourceTree = "<group>"; };
 		1B78A34B1431339100E4AB87 /* Realloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = Realloc.h; sourceTree = "<group>"; };
+		1B7A06CF1641F4470077A3AA /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = ../../../../../usr/lib/libcrypto.dylib; sourceTree = "<group>"; };
+		1B7A06D41642131A0077A3AA /* XADResourceFork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADResourceFork.h; sourceTree = "<group>"; };
+		1B7A06D51642131A0077A3AA /* XADResourceFork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADResourceFork.m; sourceTree = "<group>"; };
 		1B7F3CB013147CD6008238BF /* XADPaddedBlockHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPaddedBlockHandle.h; sourceTree = "<group>"; };
 		1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPaddedBlockHandle.m; sourceTree = "<group>"; };
 		1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADUnarchiver.h; sourceTree = "<group>"; };
@@ -2274,6 +2286,7 @@
 				1BBCC54D0EE73B7F006C3AE2 /* libbz2.dylib in Frameworks */,
 				1B216A800F8E9D9E001207C9 /* Carbon.framework in Frameworks */,
 				1B34AA8511C30BC100396C26 /* UniversalDetector.framework in Frameworks */,
+				1B7A06D01641F4470077A3AA /* libcrypto.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2329,6 +2342,7 @@
 			isa = PBXGroup;
 			children = (
 				1B3FABA70EC52532006D2F06 /* libz.dylib */,
+				1B7A06CF1641F4470077A3AA /* libcrypto.dylib */,
 				1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */,
 				1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */,
 				1B216A7F0F8E9D9E001207C9 /* Carbon.framework */,
@@ -2363,6 +2377,8 @@
 				1B91D11211E11A0F0081E40A /* XADStringICU.m */,
 				1BA266DC0FC78BF600279E95 /* XADPath.h */,
 				1BA266DD0FC78BF600279E95 /* XADPath.m */,
+				1B7A06D41642131A0077A3AA /* XADResourceFork.h */,
+				1B7A06D51642131A0077A3AA /* XADResourceFork.m */,
 				1B578C320DDBC8BF005B0F68 /* XADException.h */,
 				1B578C330DDBC8BF005B0F68 /* XADException.m */,
 				1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */,
@@ -3315,6 +3331,7 @@
 				1BA241F5163E1E6F000D8174 /* des.h in Headers */,
 				1B6F13D1163E25160054C1AE /* XADMD5Handle.h in Headers */,
 				1B6F13DD163E25320054C1AE /* XADSHA1Handle.h in Headers */,
+				1B7A06D71642131A0077A3AA /* XADResourceFork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3392,6 +3409,7 @@
 				1BA241F7163E1E6F000D8174 /* des.h in Headers */,
 				1B6F13D3163E25160054C1AE /* XADMD5Handle.h in Headers */,
 				1B6F13DF163E25320054C1AE /* XADSHA1Handle.h in Headers */,
+				1B7A06D91642131A0077A3AA /* XADResourceFork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3469,6 +3487,7 @@
 				1BA241F6163E1E6F000D8174 /* des.h in Headers */,
 				1B6F13D2163E25160054C1AE /* XADMD5Handle.h in Headers */,
 				1B6F13DE163E25320054C1AE /* XADSHA1Handle.h in Headers */,
+				1B7A06D81642131A0077A3AA /* XADResourceFork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3690,6 +3709,7 @@
 				1BA241F4163E1E6F000D8174 /* des.h in Headers */,
 				1B6F13D0163E25160054C1AE /* XADMD5Handle.h in Headers */,
 				1B6F13DC163E25320054C1AE /* XADSHA1Handle.h in Headers */,
+				1B7A06D61642131A0077A3AA /* XADResourceFork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4284,6 +4304,7 @@
 				1BA241F1163E1E6F000D8174 /* des.c in Sources */,
 				1B6F13D5163E25160054C1AE /* XADMD5Handle.m in Sources */,
 				1B6F13E1163E25320054C1AE /* XADSHA1Handle.m in Sources */,
+				1B7A06DB1642131A0077A3AA /* XADResourceFork.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4509,6 +4530,7 @@
 				1BA241F3163E1E6F000D8174 /* des.c in Sources */,
 				1B6F13D7163E25160054C1AE /* XADMD5Handle.m in Sources */,
 				1B6F13E3163E25320054C1AE /* XADSHA1Handle.m in Sources */,
+				1B7A06DD1642131A0077A3AA /* XADResourceFork.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4735,6 +4757,7 @@
 				1BA241F2163E1E6F000D8174 /* des.c in Sources */,
 				1B6F13D6163E25160054C1AE /* XADMD5Handle.m in Sources */,
 				1B6F13E2163E25320054C1AE /* XADSHA1Handle.m in Sources */,
+				1B7A06DC1642131A0077A3AA /* XADResourceFork.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5006,6 +5029,7 @@
 				1BA241F0163E1E6F000D8174 /* des.c in Sources */,
 				1B6F13D4163E25160054C1AE /* XADMD5Handle.m in Sources */,
 				1B6F13E0163E25320054C1AE /* XADSHA1Handle.m in Sources */,
+				1B7A06DA1642131A0077A3AA /* XADResourceFork.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

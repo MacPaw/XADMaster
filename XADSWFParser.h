@@ -7,7 +7,7 @@
 	NSMutableArray *dataobjects;
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name;
+-(id)init;
 -(void)dealloc;
 
 +(int)requiredHeaderSize;

@@ -107,9 +107,9 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return NO;
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		solidhandle=nil;
 		detectedformat=UndetectedFormat;

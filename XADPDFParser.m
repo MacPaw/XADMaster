@@ -34,19 +34,6 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 	return YES;
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
-{
-	if((self=[super initWithHandle:handle name:name]))
-	{
-	}
-	return self;
-}
-
--(void)dealloc
-{
-	[super dealloc];
-}
-
 -(void)parse
 {
 	PDFParser *parser=[PDFParser parserWithHandle:[self handle]];

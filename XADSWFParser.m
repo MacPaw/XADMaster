@@ -25,11 +25,11 @@
 	return NO;
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
-		parser=[[XADSWFTagParser parserWithHandle:handle] retain];
+		parser=nil;
 		dataobjects=[NSMutableArray new];
 	}
 	return self;
@@ -44,6 +44,8 @@
 
 -(void)parse
 {
+	parser=[[XADSWFTagParser parserWithHandle:[self handle]] retain];
+
 	[parser parseHeader];
 
 	CSHandle *fh=[parser handle];

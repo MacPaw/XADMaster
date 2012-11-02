@@ -147,9 +147,9 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		keys=nil;
 	}

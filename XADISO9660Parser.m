@@ -86,9 +86,9 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		fh=nil;
 		isjoliet=NO;

@@ -71,9 +71,9 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 
 
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		prevdict=nil;
 		prevname=nil;

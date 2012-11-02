@@ -255,8 +255,9 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	Class parserclass=[self archiveParserClassForHandle:handle
 	firstBytes:header name:name propertiesToAdd:props];
 
-	XADArchiveParser *parser=[[[parserclass alloc] initWithHandle:handle
-	name:name] autorelease];
+	XADArchiveParser *parser=[[parserclass new] autorelease];
+	[parser setHandle:handle];
+	[parser setName:name];
 
 	[parser addPropertiesFromDictionary:props];
 
@@ -277,6 +278,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 	NSData *header=[handle readDataOfLengthAtMost:maxheader];
 	NSMutableDictionary *props=[NSMutableDictionary dictionary];
+
+// TODO: Read resource fork here already and supply it to identifier
 
 	Class parserclass=[self archiveParserClassForHandle:handle
 	firstBytes:header name:filename propertiesToAdd:props];
@@ -301,10 +304,14 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 				CSMultiHandle *multihandle=[CSMultiHandle multiHandleWithHandleArray:handles];
 
-				XADArchiveParser *parser=[[[parserclass alloc] initWithHandle:multihandle
-				name:filename] autorelease];
+				CSHandle *forkhandle=[XADPlatform handleForReadingResourceForkAtPath:[volumes objectAtIndex:0]];
+				XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle];
 
-				[props setObject:volumes forKey:XADVolumesKey];
+// TODO: Set name separately after all?
+				XADArchiveParser *parser=[[parserclass new] autorelease];
+				[parser setHandle:multihandle];
+				[parser setResourceFork:fork];
+				[parser setAllFilenames:volumes];
 				[parser addPropertiesFromDictionary:props];
 
 				return parser;
@@ -319,8 +326,14 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	}
 	@catch(id e) { } // Fall through to a single file instead.
 
-	XADArchiveParser *parser=[[[parserclass alloc] initWithHandle:handle
-	name:filename] autorelease];
+	CSHandle *forkhandle=[XADPlatform handleForReadingResourceForkAtPath:filename];
+	XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle];
+
+	XADArchiveParser *parser=[[parserclass new] autorelease];
+	[parser setHandle:handle];
+	[parser setResourceFork:fork];
+	[parser setFilename:filename];
+	[parser addPropertiesFromDictionary:props];
 
 	[props setObject:[NSArray arrayWithObject:filename] forKey:XADVolumesKey];
 	[parser addPropertiesFromDictionary:props];
@@ -364,13 +377,13 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
 	if((self=[super init]))
 	{
-		sourcehandle=[handle retain];
-
+		sourcehandle=nil;
 		skiphandle=nil;
+		resourcefork=nil;
 		delegate=nil;
 		password=nil;
 		passwordencodingname=nil;
@@ -378,9 +391,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 		stringsource=[XADStringSource new];
 
-		properties=[[NSMutableDictionary alloc] initWithObjectsAndKeys:
-			[name lastPathComponent],XADArchiveNameKey,
-		nil];
+		properties=[NSMutableDictionary new];
 
 		currsolidobj=nil;
 		currsolidhandle=nil;
@@ -390,13 +401,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		parsersolidobj=nil;
 		firstsoliddict=prevsoliddict=nil;
 
-		// If the handle is a CSStreamHandle, it can not seek, so treat
-		// this like a solid archive (for instance, .tar.gz). Also, it will
-		// usually be wrapped in a CSSubHandle so unwrap it first.
-		CSHandle *testhandle=handle;
-		if([handle isKindOfClass:[CSSubHandle class]]) testhandle=[(CSSubHandle *)handle parentHandle];
-
-		if([testhandle isKindOfClass:[CSStreamHandle class]]) forcesolid=YES;
+		forcesolid=NO;
 
 		shouldstop=NO;
 	}
@@ -420,13 +425,60 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 
 
--(NSDictionary *)properties { return properties; }
+
+-(CSHandle *)handle { return sourcehandle; }
+
+-(void)setHandle:(CSHandle *)newhandle
+{
+	[sourcehandle autorelease];
+	sourcehandle=[newhandle retain];
+
+	// If the handle is a CSStreamHandle, it can not seek, so treat
+	// this like a solid archive (for instance, .tar.gz). Also, it will
+	// usually be wrapped in a CSSubHandle so unwrap it first.
+	CSHandle *testhandle=newhandle;
+	if([testhandle isKindOfClass:[CSSubHandle class]]) testhandle=[(CSSubHandle *)testhandle parentHandle];
+
+	if([testhandle isKindOfClass:[CSStreamHandle class]]) forcesolid=YES;
+	else forcesolid=NO;
+}
+
+-(XADResourceFork *)resourceFork { return resourcefork; }
+
+-(void)setResourceFork:(XADResourceFork *)newfork
+{
+	[resourcefork autorelease];
+	resourcefork=[newfork retain];
+}
 
 -(NSString *)name { return [properties objectForKey:XADArchiveNameKey]; }
 
+-(void)setName:(NSString *)newname
+{
+	[properties setObject:[newname lastPathComponent] forKey:XADArchiveNameKey];
+}
+
 -(NSString *)filename { return [[properties objectForKey:XADVolumesKey] objectAtIndex:0]; }
 
+-(void)setFilename:(NSString *)filename
+{
+	[properties setObject:[NSArray arrayWithObject:filename] forKey:XADVolumesKey];
+	[self setName:filename];
+}
+
 -(NSArray *)allFilenames { return [properties objectForKey:XADVolumesKey]; }
+
+-(void)setAllFilenames:(NSArray *)newnames
+{
+	[properties setObject:newnames forKey:XADVolumesKey];
+	[self setName:[newnames objectAtIndex:0]];
+}
+
+-(id)delegate { return delegate; }
+
+-(void)setDelegate:(id)newdelegate { delegate=newdelegate; }
+
+-(NSDictionary *)properties { return properties; }
 
 -(NSString *)currentFilename
 {
@@ -445,13 +497,6 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	NSNumber *isencrypted=[properties objectForKey:XADIsEncryptedKey];
 	return isencrypted&&[isencrypted boolValue];
 }
-
-
-
-
--(id)delegate { return delegate; }
-
--(void)setDelegate:(id)newdelegate { delegate=newdelegate; }
 
 -(NSString *)password
 {
@@ -704,8 +749,6 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 
 
--(CSHandle *)handle { return sourcehandle; }
-
 -(CSHandle *)handleAtDataOffsetForDictionary:(NSDictionary *)dict
 {
 	NSNumber *skipoffs=[dict objectForKey:XADSkipOffsetKey];
@@ -758,6 +801,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	off_t size=[[dict objectForKey:XADSolidLengthKey] longLongValue];
 	return [currsolidhandle nonCopiedSubHandleFrom:start length:size];
 }
+
 
 
 

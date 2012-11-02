@@ -44,30 +44,14 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	return NO;
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		archive=NULL;
-
-		namedata=[[[self name] dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
-		[namedata increaseLengthBy:1];
-
-		if((archive=xadAllocObjectA(xmb,XADOBJ_ARCHIVEINFO,NULL)))
-		{
-			indata.fh=handle;
-			indata.name=[namedata bytes];
-			inhook.h_Entry=InFunc;
-			inhook.h_Data=(void *)&indata;
-
-			progresshook.h_Entry=ProgressFunc;
-			progresshook.h_Data=(void *)self;
-
-			return self;
-		}
-		[self release];
+		namedata=nil;
 	}
-	return nil;
+	return self;
 }
 
 -(void)dealloc
@@ -82,6 +66,22 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
 -(void)parse
 {
+	namedata=[[[self name] dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
+	[namedata increaseLengthBy:1];
+
+	if(!(archive=xadAllocObjectA(xmb,XADOBJ_ARCHIVEINFO,NULL)))
+	{
+		[XADException raiseOutOfMemoryException];
+	}
+
+	indata.fh=[self handle];
+	indata.name=[namedata bytes];
+	inhook.h_Entry=InFunc;
+	inhook.h_Data=(void *)&indata;
+
+	progresshook.h_Entry=ProgressFunc;
+	progresshook.h_Data=(void *)self;
+
 	addonbuild=YES;
 	numfilesadded=0;
 	numdisksadded=0;

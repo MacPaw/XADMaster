@@ -268,9 +268,9 @@ static void DumpElement(StuffItXElement *element)
 	&&bytes[5]=='I'&&bytes[6]=='t'&&(bytes[7]=='!'||bytes[7]=='?');
 }
 
--(id)initWithHandle:(CSHandle *)handle name:(NSString *)name
+-(id)init
 {
-	if((self=[super initWithHandle:handle name:name]))
+	if((self=[super init]))
 	{
 		repeatedentrydata=nil;
 		repeatedentries=nil;

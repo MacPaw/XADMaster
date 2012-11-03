@@ -1,5 +1,7 @@
 #import "XADSplitFileParser.h"
 #import "XADRegex.h"
+#import "XADPlatform.h"
+#import "CSFileHandle.h"
 
 @implementation XADSplitFileParser
 
@@ -8,6 +10,7 @@
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
 	if(!name) return NO;
+	if(![handle isKindOfClass:[CSFileHandle class]]) return NO;
 
 	// Check if filename is of the form .001
 	NSArray *matches=[name substringsCapturedByPattern:@"^(.*)\\.([0-9]{3})$" options:REG_ICASE];
@@ -21,7 +24,7 @@
 
 	// Check if this other file exists, too.
 	NSString *othername=[NSString stringWithFormat:@"%@.%@",[matches objectAtIndex:1],otherext];
-	return [[NSFileManager defaultManager] fileExistsAtPath:othername];
+	return [XADPlatform fileExistsAtPath:othername];
 }
 
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name

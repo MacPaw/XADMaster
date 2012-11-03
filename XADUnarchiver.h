@@ -65,6 +65,8 @@
 
 -(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
 wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
+-(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
+resourceForkDictionary:(NSDictionary *)forkdict wantChecksum:(BOOL)checksum error:(XADError *)errorptr;
 
 -(XADError)_extractFileEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;
 -(XADError)_extractDirectoryEntryWithDictionary:(NSDictionary *)dict as:(NSString *)destpath;

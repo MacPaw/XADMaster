@@ -309,7 +309,7 @@
 			NSDictionary *entry=[entries objectAtIndex:0];
 			NSNumber *archnum=[entry objectForKey:XADIsArchiveKey];
 			BOOL isarc=archnum&&[archnum boolValue];
-			if(isarc) return [self _setupSubArchiveForEntryWithDictionary:entry];
+			if(isarc) return [self _setupSubArchiveForEntryWithDataFork:entry resourceFork:nil];
 		}
 
 		// Check if we have two entries, which are data and resource forks
@@ -342,7 +342,7 @@
 
 				// TODO: Handle resource forks for archives that require them.
 				NSNumber *archnum=[datafork objectForKey:XADIsArchiveKey];
-				if(archnum&&[archnum boolValue]) return [self _setupSubArchiveForEntryWithDictionary:datafork];
+				if(archnum&&[archnum boolValue]) return [self _setupSubArchiveForEntryWithDataFork:datafork resourceFork:resourcefork];
 			}
 		}
 	}
@@ -350,12 +350,12 @@
 	return XADNoError;
 }
 
--(XADError)_setupSubArchiveForEntryWithDictionary:(NSDictionary *)dict
+-(XADError)_setupSubArchiveForEntryWithDataFork:(NSDictionary *)datadict resourceFork:(NSDictionary *)resourcedict
 {
 	// Create unarchiver.
 	XADError error;
-	subunarchiver=[[unarchiver unarchiverForEntryWithDictionary:dict
-	wantChecksum:YES error:&error] retain];
+	subunarchiver=[[unarchiver unarchiverForEntryWithDictionary:datadict
+	resourceForkDictionary:resourcedict wantChecksum:YES error:&error] retain];
 	if(!subunarchiver)
 	{
 		if(error) return error;

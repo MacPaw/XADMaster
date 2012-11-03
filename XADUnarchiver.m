@@ -355,12 +355,19 @@ static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *con
 
 
 
-
 -(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
 wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 {
+	return [self unarchiverForEntryWithDictionary:dict resourceForkDictionary:nil
+	wantChecksum:checksum error:errorptr];
+}
+
+-(XADUnarchiver *)unarchiverForEntryWithDictionary:(NSDictionary *)dict
+resourceForkDictionary:(NSDictionary *)forkdict wantChecksum:(BOOL)checksum error:(XADError *)errorptr
+{
 	XADArchiveParser *subparser=[XADArchiveParser
 	archiveParserForEntryWithDictionary:dict
+	resourceForkDictionary:forkdict
 	archiveParser:parser wantChecksum:checksum error:errorptr];
 	if(!subparser) return nil;
 

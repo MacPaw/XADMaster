@@ -213,7 +213,7 @@ static int maxheader=0;
 }
 
 +(Class)archiveParserClassForHandle:(CSHandle *)handle firstBytes:(NSData *)header
-name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
+resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
 	Class parserclass;
@@ -224,7 +224,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 		@try {
 			if([parserclass recognizeFileWithHandle:handle firstBytes:header
-			name:name propertiesToAdd:props])
+			resourceFork:fork name:name propertiesToAdd:props])
 			{
 				[handle seekToFileOffset:0];
 				return parserclass;
@@ -236,27 +236,54 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name
 {
-	NSData *header=[handle readDataOfLengthAtMost:maxheader];
-	return [self archiveParserForHandle:handle firstBytes:header name:name];
+	return [self archiveParserForHandle:handle resourceFork:nil name:name];
 }
 
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle name:(NSString *)name error:(XADError *)errorptr
 {
 	if(errorptr) *errorptr=XADNoError;
-	@try { return [self archiveParserForHandle:handle name:name]; }
+	@try { return [self archiveParserForHandle:handle resourceFork:nil name:name]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
+
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle resourceFork:(XADResourceFork *)fork name:(NSString *)name
+{
+	NSData *header=[handle readDataOfLengthAtMost:maxheader];
+	return [self archiveParserForHandle:handle firstBytes:header resourceFork:fork name:name];
+}
+
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle resourceFork:(XADResourceFork *)fork name:(NSString *)name error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self archiveParserForHandle:handle resourceFork:fork name:name]; }
 	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
 	return nil;
 }
 
 +(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name
 {
+	return [self archiveParserForHandle:handle firstBytes:header resourceFork:nil name:name];
+}
+
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self archiveParserForHandle:handle firstBytes:header resourceFork:nil name:name]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
+
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header resourceFork:(XADResourceFork *)fork name:(NSString *)name;
+{
 	NSMutableDictionary *props=[NSMutableDictionary dictionary];
 
-	Class parserclass=[self archiveParserClassForHandle:handle
-	firstBytes:header name:name propertiesToAdd:props];
+	Class parserclass=[self archiveParserClassForHandle:handle firstBytes:header
+	resourceFork:fork name:name propertiesToAdd:props];
 
 	XADArchiveParser *parser=[[parserclass new] autorelease];
 	[parser setHandle:handle];
+	[parser setResourceFork:fork];
 	[parser setName:name];
 
 	[parser addPropertiesFromDictionary:props];
@@ -264,10 +291,10 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return parser;
 }
 
-+(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name error:(XADError *)errorptr
++(XADArchiveParser *)archiveParserForHandle:(CSHandle *)handle firstBytes:(NSData *)header resourceFork:(XADResourceFork *)fork name:(NSString *)name error:(XADError *)errorptr
 {
 	if(errorptr) *errorptr=XADNoError;
-	@try { return [self archiveParserForHandle:handle firstBytes:header name:name]; }
+	@try { return [self archiveParserForHandle:handle firstBytes:header resourceFork:fork name:name]; }
 	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
 	return nil;
 }
@@ -275,14 +302,15 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 +(XADArchiveParser *)archiveParserForPath:(NSString *)filename
 {
 	CSHandle *handle=[CSFileHandle fileHandleForReadingAtPath:filename];
-
 	NSData *header=[handle readDataOfLengthAtMost:maxheader];
+
+	CSHandle *forkhandle=[XADPlatform handleForReadingResourceForkAtPath:filename];
+	XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle];
+
 	NSMutableDictionary *props=[NSMutableDictionary dictionary];
 
-// TODO: Read resource fork here already and supply it to identifier
-
 	Class parserclass=[self archiveParserClassForHandle:handle
-	firstBytes:header name:filename propertiesToAdd:props];
+	firstBytes:header resourceFork:fork name:filename propertiesToAdd:props];
 	if(!parserclass) return nil;
 
 	// Attempt to create a multi-volume parser, if we can find the volumes.
@@ -304,10 +332,6 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 				CSMultiHandle *multihandle=[CSMultiHandle multiHandleWithHandleArray:handles];
 
-				CSHandle *forkhandle=[XADPlatform handleForReadingResourceForkAtPath:[volumes objectAtIndex:0]];
-				XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle];
-
-// TODO: Set name separately after all?
 				XADArchiveParser *parser=[[parserclass new] autorelease];
 				[parser setHandle:multihandle];
 				[parser setResourceFork:fork];
@@ -325,9 +349,6 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		}
 	}
 	@catch(id e) { } // Fall through to a single file instead.
-
-	CSHandle *forkhandle=[XADPlatform handleForReadingResourceForkAtPath:filename];
-	XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle];
 
 	XADArchiveParser *parser=[[parserclass new] autorelease];
 	[parser setHandle:handle];
@@ -351,11 +372,39 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 +(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum
 {
+	return [self archiveParserForEntryWithDictionary:entry resourceForkDictionary:nil archiveParser:parser wantChecksum:checksum];
+}
+
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum error:(XADError *)errorptr
+{
+	if(errorptr) *errorptr=XADNoError;
+	@try { return [self archiveParserForEntryWithDictionary:entry resourceForkDictionary:nil archiveParser:parser wantChecksum:checksum]; }
+	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
+	return nil;
+}
+
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry resourceForkDictionary:(NSDictionary *)forkentry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum
+{
 	CSHandle *handle=[parser handleForEntryWithDictionary:entry wantChecksum:checksum];
 	if(!handle) [XADException raiseNotSupportedException];
 
+	XADResourceFork *fork=nil;
+	if(forkentry)
+	{
+		CSHandle *forkhandle=[parser handleForEntryWithDictionary:forkentry wantChecksum:checksum];
+		if(forkhandle)
+		{
+			fork=[XADResourceFork resourceForkWithHandle:forkhandle];
+			if(checksum && [forkhandle hasChecksum])
+			{
+				[forkhandle seekToEndOfFile];
+				if(![forkhandle isChecksumCorrect]) [XADException raiseChecksumException];
+			}
+		}
+	}
+
 	NSString *filename=[[entry objectForKey:XADFileNameKey] string];
-	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle name:filename];
+	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle resourceFork:fork name:filename];
 	if(!subparser) return nil;
 
 	if([parser hasPassword]) [subparser setPassword:[parser password]];
@@ -365,10 +414,10 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	return subparser;
 }
 
-+(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum error:(XADError *)errorptr
++(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry resourceForkDictionary:(NSDictionary *)forkentry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum error:(XADError *)errorptr
 {
 	if(errorptr) *errorptr=XADNoError;
-	@try { return [self archiveParserForEntryWithDictionary:entry archiveParser:parser wantChecksum:checksum]; }
+	@try { return [self archiveParserForEntryWithDictionary:entry resourceForkDictionary:forkentry archiveParser:parser wantChecksum:checksum]; }
 	@catch(id exception) { if(errorptr) *errorptr=[XADException parseException:exception]; }
 	return nil;
 }
@@ -1114,6 +1163,12 @@ name:(NSString *)name { return NO; }
 name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	return [self recognizeFileWithHandle:handle firstBytes:data name:name];
+}
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
+{
+	return [self recognizeFileWithHandle:handle firstBytes:data name:name propertiesToAdd:props];
 }
 
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data

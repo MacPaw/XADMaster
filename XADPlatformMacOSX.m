@@ -1,5 +1,5 @@
 #import "XADPlatform.h"
-#import "CSFileHandle.h"
+#import "CSMemoryHandle.h"
 #import "NSDateXAD.h"
 
 #import <fcntl.h>
@@ -379,8 +379,29 @@ preservePermissions:(BOOL)preservepermissions
 
 +(CSHandle *)handleForReadingResourceForkAtPath:(NSString *)path
 {
-	// TODO: Use xattrs APIs instead.
-	return [CSFileHandle fileHandleForReadingAtPath:[path stringByAppendingPathComponent:@"..namedfork/rsrc"]];
+	// TODO: Make an actual CSHandle subclass? Possible but sort of useless.
+	NSMutableData *data=[NSMutableData data];
+
+	const char *cpath=[path fileSystemRepresentation];
+	int fd=open(cpath,O_RDONLY);
+	if(fd==-1) return nil;
+
+	uint32_t pos=0;
+	for(;;)
+	{
+		uint8_t buffer[16384];
+
+		ssize_t actual=fgetxattr(fd,XATTR_RESOURCEFORK_NAME,buffer,sizeof(buffer),pos,0);
+		if(actual<0) return nil;
+		if(actual==0) break;
+
+		[data appendBytes:buffer length:actual];
+		pos+=actual;
+	}
+
+	close(fd);
+
+	return [CSMemoryHandle memoryHandleForReadingData:data];
 }
 
 

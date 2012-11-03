@@ -882,6 +882,7 @@
 		1B7A06DB1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
 		1B7A06DC1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
 		1B7A06DD1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
+		1B7A06DF1644B6240077A3AA /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A06CF1641F4470077A3AA /* libcrypto.dylib */; };
 		1B7F3CB313147CD6008238BF /* XADPaddedBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */; };
 		1B7F3CB413147CD6008238BF /* XADPaddedBlockHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7F3CB013147CD6008238BF /* XADPaddedBlockHandle.h */; };
 		1B7F3CB513147CD6008238BF /* XADPaddedBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */; };
@@ -2242,6 +2243,7 @@
 				1B91D18911E1677B0081E40A /* libXADMaster.a in Frameworks */,
 				1B91D18A11E1677B0081E40A /* libz.dylib in Frameworks */,
 				1B91D18B11E1677B0081E40A /* libstdc++.6.dylib in Frameworks */,
+				1B7A06DF1644B6240077A3AA /* libcrypto.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

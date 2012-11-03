@@ -118,7 +118,7 @@
 
 
 -(XADError)parse;
--(XADError)_setupSubArchiveForEntryWithDictionary:(NSDictionary *)dict;
+-(XADError)_setupSubArchiveForEntryWithDataFork:(NSDictionary *)datadict resourceFork:(NSDictionary *)resourcedict;
 
 -(XADError)unarchive;
 -(XADError)_unarchiveRegularArchive;

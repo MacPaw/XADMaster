@@ -454,7 +454,6 @@
 		1B467A1015CD9A73001AB1DD /* XADSWFTagParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB6913C288D700ED119E /* XADSWFTagParser.h */; };
 		1B467A1115CD9A73001AB1DD /* XADSWFParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB7713C2890600ED119E /* XADSWFParser.h */; };
 		1B467A1215CD9A73001AB1DD /* XADPNGWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB7F13C523A200ED119E /* XADPNGWriter.h */; };
-		1B467A1315CD9A73001AB1DD /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
 		1B467A1415CD9A73001AB1DD /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1B467A1515CD9A73001AB1DD /* ArithmeticDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF0EE2313FF2FA3007B8CF8 /* ArithmeticDecoder.h */; };
 		1B467A1615CD9A73001AB1DD /* Decompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF0EE2513FF2FA3007B8CF8 /* Decompressor.h */; };
@@ -874,10 +873,7 @@
 		1B78A34D1431339100E4AB87 /* Realloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78A34B1431339100E4AB87 /* Realloc.h */; };
 		1B78A34E1431339100E4AB87 /* Realloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B78A34B1431339100E4AB87 /* Realloc.h */; };
 		1B7A06D01641F4470077A3AA /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A06CF1641F4470077A3AA /* libcrypto.dylib */; };
-		1B7A06D61642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
-		1B7A06D71642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
-		1B7A06D81642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
-		1B7A06D91642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
+		1B7A06D61642131A0077A3AA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B7A06DA1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
 		1B7A06DB1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
 		1B7A06DC1642131A0077A3AA /* XADResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A06D51642131A0077A3AA /* XADResourceFork.m */; };
@@ -1242,8 +1238,6 @@
 		1BD38430125A351400FE08BD /* XADNowCompressHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BD3842A125A351400FE08BD /* XADNowCompressHandle.h */; };
 		1BD38431125A351400FE08BD /* XADNowCompressHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3842B125A351400FE08BD /* XADNowCompressHandle.m */; };
 		1BDDC7ED13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BDDC7EE13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
-		1BDDC7EF13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BDDC7EB13E0E78C00A8C079 /* XADSimpleUnarchiver.h */; };
 		1BDDC7F013E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */; };
 		1BDDC7F113E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */; };
 		1BDDC7F213E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BDDC7EC13E0E78C00A8C079 /* XADSimpleUnarchiver.m */; };
@@ -3289,7 +3283,6 @@
 				1B31CB7213C288D700ED119E /* XADSWFTagParser.h in Headers */,
 				1B31CB7A13C2890700ED119E /* XADSWFParser.h in Headers */,
 				1B31CB8213C523A300ED119E /* XADPNGWriter.h in Headers */,
-				1BDDC7EE13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */,
 				1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */,
 				1BF0EE3213FF2FA3007B8CF8 /* ArithmeticDecoder.h in Headers */,
 				1BF0EE3813FF2FA3007B8CF8 /* Decompressor.h in Headers */,
@@ -3333,7 +3326,6 @@
 				1BA241F5163E1E6F000D8174 /* des.h in Headers */,
 				1B6F13D1163E25160054C1AE /* XADMD5Handle.h in Headers */,
 				1B6F13DD163E25320054C1AE /* XADSHA1Handle.h in Headers */,
-				1B7A06D71642131A0077A3AA /* XADResourceFork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3367,7 +3359,6 @@
 				1B467A1015CD9A73001AB1DD /* XADSWFTagParser.h in Headers */,
 				1B467A1115CD9A73001AB1DD /* XADSWFParser.h in Headers */,
 				1B467A1215CD9A73001AB1DD /* XADPNGWriter.h in Headers */,
-				1B467A1315CD9A73001AB1DD /* XADSimpleUnarchiver.h in Headers */,
 				1B467A1415CD9A73001AB1DD /* XADPlatform.h in Headers */,
 				1B467A1515CD9A73001AB1DD /* ArithmeticDecoder.h in Headers */,
 				1B467A1615CD9A73001AB1DD /* Decompressor.h in Headers */,
@@ -3411,7 +3402,6 @@
 				1BA241F7163E1E6F000D8174 /* des.h in Headers */,
 				1B6F13D3163E25160054C1AE /* XADMD5Handle.h in Headers */,
 				1B6F13DF163E25320054C1AE /* XADSHA1Handle.h in Headers */,
-				1B7A06D91642131A0077A3AA /* XADResourceFork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3445,7 +3435,6 @@
 				1B31CB7313C288D700ED119E /* XADSWFTagParser.h in Headers */,
 				1B31CB7B13C2890700ED119E /* XADSWFParser.h in Headers */,
 				1B31CB8313C523A300ED119E /* XADPNGWriter.h in Headers */,
-				1BDDC7EF13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */,
 				1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */,
 				1BF0EE3313FF2FA3007B8CF8 /* ArithmeticDecoder.h in Headers */,
 				1BF0EE3913FF2FA3007B8CF8 /* Decompressor.h in Headers */,
@@ -3489,7 +3478,6 @@
 				1BA241F6163E1E6F000D8174 /* des.h in Headers */,
 				1B6F13D2163E25160054C1AE /* XADMD5Handle.h in Headers */,
 				1B6F13DE163E25320054C1AE /* XADSHA1Handle.h in Headers */,
-				1B7A06D81642131A0077A3AA /* XADResourceFork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

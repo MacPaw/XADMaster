@@ -6,10 +6,13 @@
 @interface XADCRCSuffixHandle:CSStreamHandle
 {
 	CSHandle *parent,*crcparent;
+
 	int crcsize;
 	BOOL bigend;
 	uint32_t crc,initcrc,compcrc;
 	const uint32_t *table;
+
+	BOOL didtest,wascorrect;
 }
 
 +(XADCRCSuffixHandle *)IEEECRC32SuffixHandleWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle

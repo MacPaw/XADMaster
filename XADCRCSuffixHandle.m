@@ -32,6 +32,7 @@ CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)cr
 		bigend=bigendian;
 		crc=initcrc=initialcrc;
 		table=crctable;
+		didtest=wascorrect=NO;
 	}
 	return self;
 }
@@ -59,6 +60,7 @@ CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)cr
 
 -(BOOL)isChecksumCorrect
 {
+	if(didtest) return wascorrect;
 	if([parent hasChecksum]&&![parent isChecksumCorrect]) return NO;
 	if(![parent atEndOfFile]) return NO; 
 
@@ -74,7 +76,10 @@ CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)cr
 		crcparent=nil;
 	}
 
-	return (crc^initcrc)==compcrc;
+	didtest=YES;
+	wascorrect=((crc^initcrc)==compcrc);
+
+	return wascorrect;
 }
 
 -(double)estimatedProgress { return [parent estimatedProgress]; }

@@ -7,30 +7,10 @@
 #import "XADStuffItArsenicHandle.h"
 #import "XADStuffIt13Handle.h"
 #import "XADStuffItOldHandles.h"
+#import "XADStuffItDESHandle.h"
 #import "XADRLE90Handle.h"
 #import "XADCompressHandle.h"
 #import "XADLZHDynamicHandle.h"
-
-#include <openssl/des.h>
-
-static void StuffItDESSetKey(const_DES_cblock key,DES_key_schedule *ks);
-static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,int enc);
-
-@interface XADStuffItCipherHandle:CSBlockStreamHandle
-{
-	DES_cblock block;
-	DES_LONG A, B, C, D;
-}
-
-+(int)keySize;
-+(int)blockSize;
-
--(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata;
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata;
-
--(int)produceBlockAtOffset:(off_t)pos;
-
-@end
 
 // TODO: implement final bits of libxad's Stuffit.c
 
@@ -205,12 +185,12 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,int enc);
 					if(resourcemethod&StuffItEncryptedFlag)
 					{
 						[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
-						if(resourcecomplen<[XADStuffItCipherHandle keySize]) [XADException raiseIllegalDataException];
-						[dict setObject:[NSNumber numberWithUnsignedInt:resourcecomplen-[XADStuffItCipherHandle keySize]] forKey:XADDataLengthKey];
+						if(resourcecomplen<16) [XADException raiseIllegalDataException];
+						[dict setObject:[NSNumber numberWithUnsignedInt:resourcecomplen-16] forKey:XADDataLengthKey];
 						// This sucks, as it causes resets in BinHex files.
 						// There seems to be no way around it, though.
-						[fh seekToFileOffset:start+resourcecomplen-[XADStuffItCipherHandle keySize]];
-						entrykey=[fh readDataOfLength:[XADStuffItCipherHandle keySize]];
+						[fh seekToFileOffset:start+resourcecomplen-16];
+						entrykey=[fh readDataOfLength:16];
 						[dict setObject:entrykey forKey:@"StuffItEntryKey"];
 						[dict setObject:[NSNumber numberWithInt:resourcepadding] forKey:@"StuffItBlockPadding"];
 					}
@@ -248,12 +228,12 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,int enc);
 					if(datamethod&StuffItEncryptedFlag)
 					{
 						[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
-						if(datacomplen<[XADStuffItCipherHandle keySize]) [XADException raiseIllegalDataException];
-						[dict setObject:[NSNumber numberWithUnsignedInt:datacomplen-[XADStuffItCipherHandle keySize]] forKey:XADDataLengthKey];
+						if(datacomplen<16) [XADException raiseIllegalDataException];
+						[dict setObject:[NSNumber numberWithUnsignedInt:datacomplen-16] forKey:XADDataLengthKey];
 						// This sucks, as it causes resets in BinHex files.
 						// There seems to be no way around it, though.
-						[fh seekToFileOffset:start+resourcecomplen+datacomplen-[XADStuffItCipherHandle keySize]];
-						entrykey=[fh readDataOfLength:[XADStuffItCipherHandle keySize]];
+						[fh seekToFileOffset:start+resourcecomplen+datacomplen-16];
+						entrykey=[fh readDataOfLength:16];
 						[dict setObject:entrykey forKey:@"StuffItEntryKey"];
 						[dict setObject:[NSNumber numberWithInt:datapadding] forKey:@"StuffItBlockPadding"];
 					}
@@ -292,40 +272,39 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,int enc);
 	NSNumber *isdir=[dict objectForKey:XADIsDirectoryKey];
 	if(isdir && [isdir boolValue]) return [self zeroLengthHandleWithChecksum:checksum];
 
-	CSHandle *fh=[self handleAtDataOffsetForDictionary:dict];
+	CSHandle *handle=[self handleAtDataOffsetForDictionary:dict];
 
 	int compressionmethod=[[dict objectForKey:@"StuffItCompressionMethod"] intValue];
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
 
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
-	if(enc&&[enc boolValue])
+	if(enc && [enc boolValue])
 	{
-		fh=[self decryptHandleForEntryWithDictionary:dict handle:fh];
+		handle=[self decryptHandleForEntryWithDictionary:dict handle:handle];
 	}
 	
-	CSHandle *handle;
 	switch(compressionmethod&0x0f)
 	{
-		case 0: handle=fh; break;
-		case 1: handle=[[[XADRLE90Handle alloc] initWithHandle:fh length:size] autorelease]; break;
-		case 2: handle=[[[XADCompressHandle alloc] initWithHandle:fh length:size flags:0x8e] autorelease]; break;
-		case 3: handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:fh length:size] autorelease]; break;
-		//case 5: handle=[[[XADStuffItLZAHHandle alloc] initWithHandle:fh inputLength:compsize outputLength:size] autorelease]; break;
-		case 5: handle=[[[XADLZHDynamicHandle alloc] initWithHandle:fh length:size] autorelease]; break;
+		case 0: break;
+		case 1: handle=[[[XADRLE90Handle alloc] initWithHandle:handle length:size] autorelease]; break;
+		case 2: handle=[[[XADCompressHandle alloc] initWithHandle:handle length:size flags:0x8e] autorelease]; break;
+		case 3: handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:size] autorelease]; break;
+		//case 5: handle=[[[XADStuffItLZAHHandle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease]; break;
+		case 5: handle=[[[XADLZHDynamicHandle alloc] initWithHandle:handle length:size] autorelease]; break;
 		// TODO: Figure out if the initialization of the window differs between LHArc and StuffIt
 		//case 6:  fixed huffman
 		case 8:
 		{
 			[self reportInterestingFileWithReason:@"Compression method 8 (MW)"];
-			handle=[[[XADStuffItMWHandle alloc] initWithHandle:fh length:size] autorelease]; break;
+			handle=[[[XADStuffItMWHandle alloc] initWithHandle:handle length:size] autorelease]; break;
 		}
-		case 13: handle=[[[XADStuffIt13Handle alloc] initWithHandle:fh length:size] autorelease]; break;
+		case 13: handle=[[[XADStuffIt13Handle alloc] initWithHandle:handle length:size] autorelease]; break;
 		case 14:
 		{
 			[self reportInterestingFileWithReason:@"Compression method 14"];
-			handle=[[[XADStuffIt14Handle alloc] initWithHandle:fh length:size] autorelease]; break;
+			handle=[[[XADStuffIt14Handle alloc] initWithHandle:handle length:size] autorelease]; break;
 		}
-		case 15: handle=[[[XADStuffItArsenicHandle alloc] initWithHandle:fh length:size] autorelease]; break;
+		case 15: handle=[[[XADStuffItArsenicHandle alloc] initWithHandle:handle length:size] autorelease]; break;
 
 		default:
 			[self reportInterestingFileWithReason:@"Unsupported compression method %d",compressionmethod&0x0f];
@@ -343,278 +322,29 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,int enc);
 	return handle;
 }
 
--(NSData *)keyForEntryWithDictionary:(NSDictionary *)dict
+-(CSHandle *)decryptHandleForEntryWithDictionary:(NSDictionary *)dict handle:(CSHandle *)fh
 {
-	DES_key_schedule ks;
-
-	// Encrypted archives require the MKey resource
-	XADResourceFork *fork=[self resourceFork];
-	NSData *mkey=[fork resourceDataForType:'MKey' identifier:0];
-	if(!mkey) [XADException raiseNotSupportedException];
-
-	if(!mkey||[mkey length]!=sizeof(DES_cblock)) [XADException raiseIllegalDataException];
+	NSData *passworddata=[self encodedPassword];
 
 	NSData *entrykey=[dict objectForKey:@"StuffItEntryKey"];
 	if(!entrykey) [XADException raiseIllegalDataException];
 
-	DES_cblock passblock={0,0,0,0,0,0,0,0};
-	int length=[[self encodedPassword] length];
-	if(length>sizeof(DES_cblock)) length=sizeof(DES_cblock);
-	memcpy(passblock, [[self encodedPassword] bytes], length);
+	XADResourceFork *fork=[self resourceFork];
+	NSData *mkey=[fork resourceDataForType:'MKey' identifier:0];
+	if(!mkey) [XADException raiseNotSupportedException];
 
-	// Calculate archive key and IV from password and mkey
-	DES_cblock archiveKey;
-	DES_cblock archiveIV;
+	NSData *key=[XADStuffItDESHandle keyForPasswordData:passworddata entryKey:entrykey MKey:mkey];
+	if(!key) [XADException raisePasswordException];
 
-	const_DES_cblock initialKey={0x01,0x23,0x45,0x67,0x89,0xAB,0xCD,0xEF};
-	StuffItDESSetKey(initialKey, &ks);
-	for(int i=0; i<sizeof(DES_cblock); i++)
-		archiveKey[i]=initialKey[i]^(passblock[i]&0x7F);
-	StuffItDESCrypt(archiveKey, &ks, TRUE);
-	
-	StuffItDESSetKey(archiveKey, &ks);
-	memcpy(archiveIV, [mkey bytes], sizeof(DES_cblock));
-	StuffItDESCrypt(archiveIV, &ks, FALSE);
+	NSNumber *padding=[dict objectForKey:@"StuffItBlockPadding"];
+	off_t inlength=[[dict objectForKey:XADDataLengthKey] longLongValue];
+	if(inlength%8) [XADException raiseIllegalDataException];
 
-	// Verify the password
-	DES_cblock verifyBlock={0,0,0,0,0,0,0,4};
-	StuffItDESSetKey(archiveKey, &ks);
-	memcpy(verifyBlock, archiveIV, 4);
-	StuffItDESCrypt(verifyBlock, &ks, TRUE);
-	if(memcmp(verifyBlock+4, archiveIV+4, 4)) return nil;
+	off_t outlength=inlength-[padding longLongValue];
 
-	// Calculate file key and IV from entrykey, archive key and IV
-	DES_cblock fileKey;
-	DES_cblock fileIV;
-	memcpy(fileKey, [entrykey bytes], sizeof(DES_cblock));
-	memcpy(fileIV, [entrykey bytes]+sizeof(DES_cblock), sizeof(DES_cblock));
-
-	StuffItDESSetKey(archiveKey, &ks);
-	StuffItDESCrypt(fileKey, &ks, FALSE);
-	for (int i=0; i<sizeof(DES_cblock); i++)
-		fileKey[i]^=archiveIV[i];
-	StuffItDESSetKey(fileKey, &ks);
-	StuffItDESCrypt(fileIV, &ks, FALSE);
-	
-	NSMutableData *key=[NSMutableData dataWithBytes:fileKey length:sizeof(DES_cblock)];
-	NSData *iv=[NSData dataWithBytes:fileIV length:sizeof(DES_cblock)];
-	[key appendData:iv];
-	return key;
-}
-
--(CSHandle *)decryptHandleForEntryWithDictionary:(NSDictionary *)dict handle:(CSHandle *)fh
-{
-	NSData *key=[self keyForEntryWithDictionary:dict];
-	if(key)
-	{
-		NSNumber *padding=[dict objectForKey:@"StuffItBlockPadding"];
-		off_t inlength=[[dict objectForKey:XADDataLengthKey] longLongValue];
-		if(inlength%[XADStuffItCipherHandle blockSize]) [XADException raiseIllegalDataException];
-		off_t outlength=inlength-[padding longLongValue];
-		return [[[XADStuffItCipherHandle alloc] initWithHandle:fh length:outlength key:key] autorelease];
-	}
-	else
-	{
-		[XADException raisePasswordException];
-		return nil;
-	}
+	return [[[XADStuffItDESHandle alloc] initWithHandle:fh length:outlength key:key] autorelease];
 }
 
 -(NSString *)formatName { return @"StuffIt"; }
 
 @end
-
-
-#define ROTATE(a,n) (((a)>>(n))+((a)<<(32-(n))))
-#define READ_32BE(p) ((((p)[0]&0xFF)<<24)|(((p)[1]&0xFF)<<16)|(((p)[2]&0xFF)<<8)|((p)[3]&0xFF))
-#define READ_64BE(p, l, r) { l=READ_32BE(p); r=READ_32BE((p)+4); }
-#define WRITE_32BE(p, n) (p)[0]=(n)>>24,(p)[1]=(n)>>16,(p)[2]=(n)>>8,(p)[3]=(n)
-#define WRITE_64BE(p, l, r) { WRITE_32BE(p, l); WRITE_32BE((p)+4, r); }
-
-@implementation XADStuffItCipherHandle
-
-+(int)keySize
-{
-	return sizeof(DES_cblock)*2;
-}
-
-+(int)blockSize
-{
-	return sizeof(DES_cblock);
-}
-
--(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
-{
-	return [self initWithHandle:handle length:CSHandleMaxLength key:keydata];
-}
-
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata
-{
-	if([keydata length]!=[XADStuffItCipherHandle keySize]) [XADException raiseUnknownException];
-	if((self=[super initWithHandle:handle length:length]))
-	{
-		const uint8_t *keybytes=[keydata bytes];
-		READ_64BE(keybytes, A, B);
-		READ_64BE(keybytes+sizeof(DES_cblock), C, D);
-		[self setBlockPointer:block];
-	}
-	return self;
-}
-
--(int)produceBlockAtOffset:(off_t)pos
-{
-	for(int i=0;i<sizeof(block);i++)
-	{
-		if(CSInputAtEOF(input)) [XADException raiseIllegalDataException];
-		block[i]=CSInputNextByte(input);
-	}
-	
-	DES_LONG left, right, l, r;
-	READ_64BE(block, left, right);
-	l=left ^A^C;
-	r=right^B^D;
-	WRITE_64BE(block, l, r);
-
-	//DES_LONG oldC=C;
-	C=D;
-	//if (enc) D=ROTATE(left^right^oldC, 1); else
-	D=ROTATE(left^right^A^B^D, 1);
-
-	return sizeof(block);
-}
-
-@end
-
-
-/*
- StuffItDES is a modified DES that ROLs the input, does the DES rounds
- without IP, then RORs result.  It also uses its own key schedule.
- It is only used for key management.
- */
-
-DES_LONG _reverseBits(DES_LONG in)
-{
-	DES_LONG out=0;
-	int i;
-	for(i=0; i<32; i++)
-	{
-		out<<=1;
-		out|=in&1;
-		in>>=1;
-	}
-	return out;
-}
-
-static void StuffItDESSetKey(const_DES_cblock key, DES_key_schedule* ks)
-{
-	int i;
-	DES_LONG subkey0, subkey1;
-	
-#define NIBBLE(i) ((key[((i)&0x0F)>>1]>>((((i)^1)&1)<<2))&0x0F)
-	for(i=0; i<16; i++)
-	{
-		subkey1 =((NIBBLE(i)>>2)|(NIBBLE(i+13)<<2));
-		subkey1|=((NIBBLE(i+11)>>2)|(NIBBLE(i+6)<<2))<<8;
-		subkey1|=((NIBBLE(i+3)>>2)|(NIBBLE(i+10)<<2))<<16;
-		subkey1|=((NIBBLE(i+8)>>2)|(NIBBLE(i+1)<<2))<<24;		
-		subkey0 =((NIBBLE(i+9)|(NIBBLE(i)<<4))&0x3F);
-		subkey0|=((NIBBLE(i+2)|(NIBBLE(i+11)<<4))&0x3F)<<8;
-		subkey0|=((NIBBLE(i+14)|(NIBBLE(i+3)<<4))&0x3F)<<16;
-		subkey0|=((NIBBLE(i+5)|(NIBBLE(i+8)<<4))&0x3F)<<24;
-		ks->ks[i].deslong[1]=subkey1;
-		ks->ks[i].deslong[0]=subkey0;
-	}
-#undef NIBBLE
-	
-	/* OpenSSL's DES implementation treats its input as little-endian
-	 (most don't), so in order to build the internal key schedule
-	 the way OpenSSL expects, we need to bit-reverse the key schedule
-	 and swap the even/odd subkeys.  Also, because of an internal rotation
-	 optimization, we need to rotate the second subkeys left 4.  None
-	 of this is necessary for a standard DES implementation.
-	 */
-	for(i=0; i<16; i++)
-	{
-		/* Swap subkey pair */
-		subkey0=ks->ks[i].deslong[1];
-		subkey1=ks->ks[i].deslong[0];
-		/* Reverse bits */
-		subkey0=_reverseBits(subkey0);
-		subkey1=_reverseBits(subkey1);
-		/* Rotate second subkey left 4 */
-		subkey1=ROTATE(subkey1,28);
-		/* Write back OpenSSL-tweaked subkeys */
-		ks->ks[i].deslong[0]=subkey0;
-		ks->ks[i].deslong[1]=subkey1;
-	}
-}
-
-#define PERMUTATION(a,b,t,n,m) \
-(t)=((((a)>>(n))^(b))&(m)); \
-(b)^=(t); \
-(a)^=((t)<<(n))
-
-void _initialPermutation(DES_LONG *ioLeft, DES_LONG *ioRight)
-{
-	DES_LONG temp;
-	DES_LONG left=*ioLeft;
-	DES_LONG right=*ioRight;
-	PERMUTATION(left, right, temp, 4, 0x0f0f0f0fL);
-	PERMUTATION(left, right, temp,16, 0x0000ffffL);
-	PERMUTATION(right, left, temp, 2, 0x33333333L);
-	PERMUTATION(right, left, temp, 8, 0x00ff00ffL);
-	PERMUTATION(left, right, temp, 1, 0x55555555L);
-	left=ROTATE(left, 31);
-	right=ROTATE(right, 31);
-	*ioLeft=left;
-	*ioRight=right;
-}
-
-void _finalPermutation(DES_LONG *ioLeft, DES_LONG *ioRight)
-{
-	DES_LONG temp;
-	DES_LONG left=*ioLeft;
-	DES_LONG right=*ioRight;
-	left=ROTATE(left, 1);
-	right=ROTATE(right, 1);
-	PERMUTATION(left, right, temp, 1, 0x55555555L);
-	PERMUTATION(right, left, temp, 8, 0x00ff00ffL);
-	PERMUTATION(right, left, temp, 2, 0x33333333L);
-	PERMUTATION(left, right, temp,16, 0x0000ffffL);
-	PERMUTATION(left, right, temp, 4, 0x0f0f0f0fL);
-	*ioLeft=left;
-	*ioRight=right;
-}
-
-
-static void StuffItDESCrypt(DES_cblock data, DES_key_schedule* ks, int enc)
-{
-	DES_LONG left, right;
-	DES_cblock input, output;
-	
-	READ_64BE(data, left, right);
-	
-	/* This DES variant ROLs the input and RORs the output */
-	left=ROTATE(left, 31);
-	right=ROTATE(right, 31);
-	
-	/* This DES variant skips the initial permutation (and subsequent inverse).
-	 Since we want to use a standard DES library (which includes them), we
-	 wrap the encryption with the inverse permutations.
-	 */
-	_finalPermutation(&left, &right);
-	
-	WRITE_64BE(input, left, right);
-	
-	DES_ecb_encrypt(&input, &output, ks, enc);
-	
-	READ_64BE(output, left, right);
-	
-	_initialPermutation(&left, &right);
-	
-	left=ROTATE(left, 1);
-	right=ROTATE(right, 1);
-	
-	WRITE_64BE(data, left, right);
-}
-

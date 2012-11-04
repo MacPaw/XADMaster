@@ -1,11 +1,9 @@
 #import "CSBlockStreamHandle.h"
 
-#include <openssl/des.h>
-
 @interface XADStuffItDESHandle:CSBlockStreamHandle
 {
-	DES_cblock block;
-	DES_LONG A,B,C,D;
+	uint8_t block[8];
+	uint32_t A,B,C,D;
 }
 
 +(NSData *)keyForPasswordData:(NSData *)passworddata entryKey:(NSData *)entrykey MKey:(NSData *)mkey;

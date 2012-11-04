@@ -1,33 +1,33 @@
 #import "XADStuffItDESHandle.h"
 #import "XADException.h"
 
-static void StuffItDESSetKey(const_DES_cblock key,DES_key_schedule *ks);
-static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,BOOL enc);
+typedef struct StuffItDESKeySchedule
+{
+	uint32_t subkeys[16][2];
+} StuffItDESKeySchedule;
 
-#define ROTATE(a,n) (((a)>>(n))+((a)<<(32-(n))))
-#define READ_32BE(p) ((((p)[0]&0xFF)<<24)|(((p)[1]&0xFF)<<16)|(((p)[2]&0xFF)<<8)|((p)[3]&0xFF))
-#define READ_64BE(p, l, r) { l=READ_32BE(p); r=READ_32BE((p)+4); }
-#define WRITE_32BE(p, n) (p)[0]=(n)>>24,(p)[1]=(n)>>16,(p)[2]=(n)>>8,(p)[3]=(n)
-#define WRITE_64BE(p, l, r) { WRITE_32BE(p, l); WRITE_32BE((p)+4, r); }
+static void StuffItDESSetKey(const uint8_t key[8],StuffItDESKeySchedule *ks);
+static void StuffItDESCrypt(uint8_t data[8],StuffItDESKeySchedule *ks,BOOL enc);
+
+static inline uint32_t RotateRight(uint32_t val,int n) { return (val>>n)+(val<<(32-n)); }
 
 @implementation XADStuffItDESHandle
 
 +(NSData *)keyForPasswordData:(NSData *)passworddata entryKey:(NSData *)entrykey MKey:(NSData *)mkey
 {
-	DES_key_schedule ks;
+	StuffItDESKeySchedule ks;
 
 	if(!mkey||[mkey length]!=8) [XADException raiseIllegalDataException];
 
-	DES_cblock passblock={0,0,0,0,0,0,0,0};
+	uint8_t passblock[8]={0,0,0,0,0,0,0,0};
 	int length=[passworddata length];
 	if(length>8) length=8;
 	memcpy(passblock,[passworddata bytes],length);
 
 	// Calculate archive key and IV from password and mkey
-	DES_cblock archivekey;
-	DES_cblock archiveiv;
+	uint8_t archivekey[8],archiveiv[8];
 
-	const_DES_cblock initialkey={0x01,0x23,0x45,0x67,0x89,0xab,0xcd,0xef};
+	const uint8_t initialkey[8]={0x01,0x23,0x45,0x67,0x89,0xab,0xcd,0xef};
 	for(int i=0;i<8;i++) archivekey[i]=initialkey[i]^(passblock[i]&0x7f);
 	StuffItDESSetKey(initialkey,&ks);
 	StuffItDESCrypt(archivekey,&ks,YES);
@@ -37,15 +37,14 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,BOOL enc);
 	StuffItDESCrypt(archiveiv,&ks,NO);
 
 	// Verify the password.
-	DES_cblock verifyblock={0,0,0,0,0,0,0,4};
+	uint8_t verifyblock[8]={0,0,0,0,0,0,0,4};
 	memcpy(verifyblock,archiveiv,4);
 	StuffItDESSetKey(archivekey,&ks);
 	StuffItDESCrypt(verifyblock,&ks,YES);
 	if(memcmp(verifyblock+4,archiveiv+4,4)!=0) return nil;
 
 	// Calculate file key and IV from entrykey, archive key and IV.
-	DES_cblock filekey;
-	DES_cblock fileiv;
+	uint8_t filekey[8],fileiv[8];
 	memcpy(filekey,[entrykey bytes],8);
 	memcpy(fileiv,[entrykey bytes]+8,8);
 
@@ -72,8 +71,11 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,BOOL enc);
 	if((self=[super initWithHandle:handle length:length]))
 	{
 		const uint8_t *keybytes=[keydata bytes];
-		READ_64BE(keybytes, A, B);
-		READ_64BE(keybytes+sizeof(DES_cblock), C, D);
+		A=CSUInt32BE(&keybytes[0]);
+		B=CSUInt32BE(&keybytes[4]);
+		C=CSUInt32BE(&keybytes[8]);
+		D=CSUInt32BE(&keybytes[12]);
+
 		[self setBlockPointer:block];
 	}
 	return self;
@@ -87,152 +89,262 @@ static void StuffItDESCrypt(DES_cblock data,DES_key_schedule *ks,BOOL enc);
 		block[i]=CSInputNextByte(input);
 	}
 	
-	DES_LONG left, right, l, r;
-	READ_64BE(block, left, right);
-	l=left ^A^C;
-	r=right^B^D;
-	WRITE_64BE(block, l, r);
+	uint32_t left=CSUInt32BE(&block[0]);
+	uint32_t right=CSUInt32BE(&block[4]);
+	uint32_t l=left^A^C;
+	uint32_t r=right^B^D;
+	CSSetUInt32BE(&block[0],l);
+	CSSetUInt32BE(&block[4],r);
 
-	//DES_LONG oldC=C;
 	C=D;
-	//if (enc) D=ROTATE(left^right^oldC, 1); else
-	D=ROTATE(left^right^A^B^D, 1);
+	D=RotateRight(left^right^A^B^D,1);
 
-	return sizeof(block);
+	return 8;
 }
 
 @end
 
 
-/*
- StuffItDES is a modified DES that ROLs the input, does the DES rounds
- without IP, then RORs result.  It also uses its own key schedule.
- It is only used for key management.
- */
 
-DES_LONG _reverseBits(DES_LONG in)
+// StuffItDES is a modified DES that ROLs the input, does the DES rounds
+// without IP, then RORs result.  It also uses its own key schedule.
+// It is only used for key management.
+
+static uint32_t ReverseBits(uint32_t val)
 {
-	DES_LONG out=0;
-	int i;
-	for(i=0; i<32; i++)
+	uint32_t res=0;
+	for(int i=0;i<32;i++)
 	{
-		out<<=1;
-		out|=in&1;
-		in>>=1;
+		res<<=1;
+		res|=val&1;
+		val>>=1;
 	}
-	return out;
+	return res;
 }
 
-static void StuffItDESSetKey(const_DES_cblock key, DES_key_schedule* ks)
+static inline uint32_t Nibble(const uint8_t key[8],int n)
 {
-	int i;
-	DES_LONG subkey0, subkey1;
-	
-#define NIBBLE(i) ((key[((i)&0x0F)>>1]>>((((i)^1)&1)<<2))&0x0F)
-	for(i=0; i<16; i++)
+	return (key[(n&0x0f)>>1]>>(((n^1)&1)<<2))&0x0f;
+}
+
+static void StuffItDESSetKey(const uint8_t key[8],StuffItDESKeySchedule *ks)
+{
+	for(int i=0;i<16;i++)
 	{
-		subkey1 =((NIBBLE(i)>>2)|(NIBBLE(i+13)<<2));
-		subkey1|=((NIBBLE(i+11)>>2)|(NIBBLE(i+6)<<2))<<8;
-		subkey1|=((NIBBLE(i+3)>>2)|(NIBBLE(i+10)<<2))<<16;
-		subkey1|=((NIBBLE(i+8)>>2)|(NIBBLE(i+1)<<2))<<24;		
-		subkey0 =((NIBBLE(i+9)|(NIBBLE(i)<<4))&0x3F);
-		subkey0|=((NIBBLE(i+2)|(NIBBLE(i+11)<<4))&0x3F)<<8;
-		subkey0|=((NIBBLE(i+14)|(NIBBLE(i+3)<<4))&0x3F)<<16;
-		subkey0|=((NIBBLE(i+5)|(NIBBLE(i+8)<<4))&0x3F)<<24;
-		ks->ks[i].deslong[1]=subkey1;
-		ks->ks[i].deslong[0]=subkey0;
-	}
-#undef NIBBLE
-	
-	/* OpenSSL's DES implementation treats its input as little-endian
-	 (most don't), so in order to build the internal key schedule
-	 the way OpenSSL expects, we need to bit-reverse the key schedule
-	 and swap the even/odd subkeys.  Also, because of an internal rotation
-	 optimization, we need to rotate the second subkeys left 4.  None
-	 of this is necessary for a standard DES implementation.
-	 */
-	for(i=0; i<16; i++)
-	{
-		/* Swap subkey pair */
-		subkey0=ks->ks[i].deslong[1];
-		subkey1=ks->ks[i].deslong[0];
-		/* Reverse bits */
-		subkey0=_reverseBits(subkey0);
-		subkey1=_reverseBits(subkey1);
-		/* Rotate second subkey left 4 */
-		subkey1=ROTATE(subkey1,28);
-		/* Write back OpenSSL-tweaked subkeys */
-		ks->ks[i].deslong[0]=subkey0;
-		ks->ks[i].deslong[1]=subkey1;
+		uint32_t subkey1=((Nibble(key,i)>>2)|(Nibble(key,i+13)<<2));
+		subkey1|=((Nibble(key,i+11)>>2)|(Nibble(key,i+6)<<2))<<8;
+		subkey1|=((Nibble(key,i+3)>>2)|(Nibble(key,i+10)<<2))<<16;
+		subkey1|=((Nibble(key,i+8)>>2)|(Nibble(key,i+1)<<2))<<24;		
+		uint32_t subkey0=((Nibble(key,i+9)|(Nibble(key,i)<<4))&0x3f);
+		subkey0|=((Nibble(key,i+2)|(Nibble(key,i+11)<<4))&0x3f)<<8;
+		subkey0|=((Nibble(key,i+14)|(Nibble(key,i+3)<<4))&0x3f)<<16;
+		subkey0|=((Nibble(key,i+5)|(Nibble(key,i+8)<<4))&0x3f)<<24;
+
+		// This is a little-endian DES implementation, so in order to get the
+		// key schedule right, we need to bit-reverse and swap the even/odd
+		// subkeys. This is not needed for a regular DES implementation.
+		subkey0=ReverseBits(subkey0);
+		subkey1=ReverseBits(subkey1);
+		ks->subkeys[i][0]=subkey1;
+		ks->subkeys[i][1]=subkey0;
 	}
 }
 
-#define PERMUTATION(a,b,t,n,m) \
-(t)=((((a)>>(n))^(b))&(m)); \
-(b)^=(t); \
-(a)^=((t)<<(n))
 
-void _initialPermutation(DES_LONG *ioLeft, DES_LONG *ioRight)
+
+static const uint32_t DES_SPtrans[8][64];
+
+static inline void Encrypt(uint32_t *left,uint32_t right,uint32_t *subkey)
 {
-	DES_LONG temp;
-	DES_LONG left=*ioLeft;
-	DES_LONG right=*ioRight;
-	PERMUTATION(left, right, temp, 4, 0x0f0f0f0fL);
-	PERMUTATION(left, right, temp,16, 0x0000ffffL);
-	PERMUTATION(right, left, temp, 2, 0x33333333L);
-	PERMUTATION(right, left, temp, 8, 0x00ff00ffL);
-	PERMUTATION(left, right, temp, 1, 0x55555555L);
-	left=ROTATE(left, 31);
-	right=ROTATE(right, 31);
-	*ioLeft=left;
-	*ioRight=right;
+	uint32_t u=right^subkey[0];
+	uint32_t t=RotateRight(right,4)^subkey[1];
+	*left^=
+	DES_SPtrans[0][(u>>2)&0x3f]^
+	DES_SPtrans[2][(u>>10)&0x3f]^
+	DES_SPtrans[4][(u>>18)&0x3f]^
+	DES_SPtrans[6][(u>>26)&0x3f]^
+	DES_SPtrans[1][(t>>2)&0x3f]^
+	DES_SPtrans[3][(t>>10)&0x3f]^
+	DES_SPtrans[5][(t>>18)&0x3f]^
+	DES_SPtrans[7][(t>>26)&0x3f];
 }
 
-void _finalPermutation(DES_LONG *ioLeft, DES_LONG *ioRight)
+static void StuffItDESCrypt(uint8_t data[8],StuffItDESKeySchedule *ks,BOOL enc)
 {
-	DES_LONG temp;
-	DES_LONG left=*ioLeft;
-	DES_LONG right=*ioRight;
-	left=ROTATE(left, 1);
-	right=ROTATE(right, 1);
-	PERMUTATION(left, right, temp, 1, 0x55555555L);
-	PERMUTATION(right, left, temp, 8, 0x00ff00ffL);
-	PERMUTATION(right, left, temp, 2, 0x33333333L);
-	PERMUTATION(left, right, temp,16, 0x0000ffffL);
-	PERMUTATION(left, right, temp, 4, 0x0f0f0f0fL);
-	*ioLeft=left;
-	*ioRight=right;
+	uint32_t left=ReverseBits(CSUInt32BE(&data[0]));
+	uint32_t right=ReverseBits(CSUInt32BE(&data[4]));
+
+	right=RotateRight(right,29);
+	left=RotateRight(left,29);
+
+	if(enc)
+	{
+		for(int i=0;i<16;i+=2)
+		{
+			Encrypt(&left,right,ks->subkeys[i]);
+			Encrypt(&right,left,ks->subkeys[i+1]);
+		}
+	}
+	else
+	{
+		for(int i=15;i>0;i-=2)
+		{
+			Encrypt(&left,right,ks->subkeys[i]);
+			Encrypt(&right,left,ks->subkeys[i-1]);
+		}
+	}
+
+	left=RotateRight(left,3);
+	right=RotateRight(right,3);
+
+	CSSetUInt32BE(&data[0],ReverseBits(right));
+	CSSetUInt32BE(&data[4],ReverseBits(left));
 }
 
-
-static void StuffItDESCrypt(DES_cblock data,DES_key_schedule* ks,BOOL enc)
+static const uint32_t DES_SPtrans[8][64]=
 {
-	DES_LONG left, right;
-	DES_cblock input, output;
-	
-	READ_64BE(data, left, right);
-	
-	/* This DES variant ROLs the input and RORs the output */
-	left=ROTATE(left, 31);
-	right=ROTATE(right, 31);
-	
-	/* This DES variant skips the initial permutation (and subsequent inverse).
-	 Since we want to use a standard DES library (which includes them), we
-	 wrap the encryption with the inverse permutations.
-	 */
-	_finalPermutation(&left, &right);
-	
-	WRITE_64BE(input, left, right);
-	
-	DES_ecb_encrypt(&input, &output, ks, enc);
-	
-	READ_64BE(output, left, right);
-	
-	_initialPermutation(&left, &right);
-	
-	left=ROTATE(left, 1);
-	right=ROTATE(right, 1);
-	
-	WRITE_64BE(data, left, right);
-}
-
+	{
+		0x02080800,0x00080000,0x02000002,0x02080802,
+		0x02000000,0x00080802,0x00080002,0x02000002,
+		0x00080802,0x02080800,0x02080000,0x00000802,
+		0x02000802,0x02000000,0x00000000,0x00080002,
+		0x00080000,0x00000002,0x02000800,0x00080800,
+		0x02080802,0x02080000,0x00000802,0x02000800,
+		0x00000002,0x00000800,0x00080800,0x02080002,
+		0x00000800,0x02000802,0x02080002,0x00000000,
+		0x00000000,0x02080802,0x02000800,0x00080002,
+		0x02080800,0x00080000,0x00000802,0x02000800,
+		0x02080002,0x00000800,0x00080800,0x02000002,
+		0x00080802,0x00000002,0x02000002,0x02080000,
+		0x02080802,0x00080800,0x02080000,0x02000802,
+		0x02000000,0x00000802,0x00080002,0x00000000,
+		0x00080000,0x02000000,0x02000802,0x02080800,
+		0x00000002,0x02080002,0x00000800,0x00080802,
+	},
+	{
+		0x40108010,0x00000000,0x00108000,0x40100000,
+		0x40000010,0x00008010,0x40008000,0x00108000,
+		0x00008000,0x40100010,0x00000010,0x40008000,
+		0x00100010,0x40108000,0x40100000,0x00000010,
+		0x00100000,0x40008010,0x40100010,0x00008000,
+		0x00108010,0x40000000,0x00000000,0x00100010,
+		0x40008010,0x00108010,0x40108000,0x40000010,
+		0x40000000,0x00100000,0x00008010,0x40108010,
+		0x00100010,0x40108000,0x40008000,0x00108010,
+		0x40108010,0x00100010,0x40000010,0x00000000,
+		0x40000000,0x00008010,0x00100000,0x40100010,
+		0x00008000,0x40000000,0x00108010,0x40008010,
+		0x40108000,0x00008000,0x00000000,0x40000010,
+		0x00000010,0x40108010,0x00108000,0x40100000,
+		0x40100010,0x00100000,0x00008010,0x40008000,
+		0x40008010,0x00000010,0x40100000,0x00108000,
+	},
+	{
+		0x04000001,0x04040100,0x00000100,0x04000101,
+		0x00040001,0x04000000,0x04000101,0x00040100,
+		0x04000100,0x00040000,0x04040000,0x00000001,
+		0x04040101,0x00000101,0x00000001,0x04040001,
+		0x00000000,0x00040001,0x04040100,0x00000100,
+		0x00000101,0x04040101,0x00040000,0x04000001,
+		0x04040001,0x04000100,0x00040101,0x04040000,
+		0x00040100,0x00000000,0x04000000,0x00040101,
+		0x04040100,0x00000100,0x00000001,0x00040000,
+		0x00000101,0x00040001,0x04040000,0x04000101,
+		0x00000000,0x04040100,0x00040100,0x04040001,
+		0x00040001,0x04000000,0x04040101,0x00000001,
+		0x00040101,0x04000001,0x04000000,0x04040101,
+		0x00040000,0x04000100,0x04000101,0x00040100,
+		0x04000100,0x00000000,0x04040001,0x00000101,
+		0x04000001,0x00040101,0x00000100,0x04040000,
+	},
+	{
+		0x00401008,0x10001000,0x00000008,0x10401008,
+		0x00000000,0x10400000,0x10001008,0x00400008,
+		0x10401000,0x10000008,0x10000000,0x00001008,
+		0x10000008,0x00401008,0x00400000,0x10000000,
+		0x10400008,0x00401000,0x00001000,0x00000008,
+		0x00401000,0x10001008,0x10400000,0x00001000,
+		0x00001008,0x00000000,0x00400008,0x10401000,
+		0x10001000,0x10400008,0x10401008,0x00400000,
+		0x10400008,0x00001008,0x00400000,0x10000008,
+		0x00401000,0x10001000,0x00000008,0x10400000,
+		0x10001008,0x00000000,0x00001000,0x00400008,
+		0x00000000,0x10400008,0x10401000,0x00001000,
+		0x10000000,0x10401008,0x00401008,0x00400000,
+		0x10401008,0x00000008,0x10001000,0x00401008,
+		0x00400008,0x00401000,0x10400000,0x10001008,
+		0x00001008,0x10000000,0x10000008,0x10401000,
+	},
+	{
+		0x08000000,0x00010000,0x00000400,0x08010420,
+		0x08010020,0x08000400,0x00010420,0x08010000,
+		0x00010000,0x00000020,0x08000020,0x00010400,
+		0x08000420,0x08010020,0x08010400,0x00000000,
+		0x00010400,0x08000000,0x00010020,0x00000420,
+		0x08000400,0x00010420,0x00000000,0x08000020,
+		0x00000020,0x08000420,0x08010420,0x00010020,
+		0x08010000,0x00000400,0x00000420,0x08010400,
+		0x08010400,0x08000420,0x00010020,0x08010000,
+		0x00010000,0x00000020,0x08000020,0x08000400,
+		0x08000000,0x00010400,0x08010420,0x00000000,
+		0x00010420,0x08000000,0x00000400,0x00010020,
+		0x08000420,0x00000400,0x00000000,0x08010420,
+		0x08010020,0x08010400,0x00000420,0x00010000,
+		0x00010400,0x08010020,0x08000400,0x00000420,
+		0x00000020,0x00010420,0x08010000,0x08000020,
+	},
+	{
+		0x80000040,0x00200040,0x00000000,0x80202000,
+		0x00200040,0x00002000,0x80002040,0x00200000,
+		0x00002040,0x80202040,0x00202000,0x80000000,
+		0x80002000,0x80000040,0x80200000,0x00202040,
+		0x00200000,0x80002040,0x80200040,0x00000000,
+		0x00002000,0x00000040,0x80202000,0x80200040,
+		0x80202040,0x80200000,0x80000000,0x00002040,
+		0x00000040,0x00202000,0x00202040,0x80002000,
+		0x00002040,0x80000000,0x80002000,0x00202040,
+		0x80202000,0x00200040,0x00000000,0x80002000,
+		0x80000000,0x00002000,0x80200040,0x00200000,
+		0x00200040,0x80202040,0x00202000,0x00000040,
+		0x80202040,0x00202000,0x00200000,0x80002040,
+		0x80000040,0x80200000,0x00202040,0x00000000,
+		0x00002000,0x80000040,0x80002040,0x80202000,
+		0x80200000,0x00002040,0x00000040,0x80200040,
+	},
+	{
+		0x00004000,0x00000200,0x01000200,0x01000004L,
+		0x01004204,0x00004004,0x00004200,0x00000000,
+		0x01000000,0x01000204,0x00000204,0x01004000,
+		0x00000004,0x01004200,0x01004000,0x00000204L,
+		0x01000204,0x00004000,0x00004004,0x01004204L,
+		0x00000000,0x01000200,0x01000004,0x00004200,
+		0x01004004,0x00004204,0x01004200,0x00000004L,
+		0x00004204,0x01004004,0x00000200,0x01000000,
+		0x00004204,0x01004000,0x01004004,0x00000204L,
+		0x00004000,0x00000200,0x01000000,0x01004004L,
+		0x01000204,0x00004204,0x00004200,0x00000000,
+		0x00000200,0x01000004,0x00000004,0x01000200,
+		0x00000000,0x01000204,0x01000200,0x00004200,
+		0x00000204,0x00004000,0x01004204,0x01000000,
+		0x01004200,0x00000004,0x00004004,0x01004204L,
+		0x01000004,0x01004200,0x01004000,0x00004004L,
+	},
+	{
+		0x20800080,0x20820000,0x00020080,0x00000000,
+		0x20020000,0x00800080,0x20800000,0x20820080,
+		0x00000080,0x20000000,0x00820000,0x00020080,
+		0x00820080,0x20020080,0x20000080,0x20800000,
+		0x00020000,0x00820080,0x00800080,0x20020000,
+		0x20820080,0x20000080,0x00000000,0x00820000,
+		0x20000000,0x00800000,0x20020080,0x20800080,
+		0x00800000,0x00020000,0x20820000,0x00000080,
+		0x00800000,0x00020000,0x20000080,0x20820080,
+		0x00020080,0x20000000,0x00000000,0x00820000,
+		0x20800080,0x20020080,0x20020000,0x00800080,
+		0x20820000,0x00000080,0x00800080,0x20020000,
+		0x20820080,0x00800000,0x20800000,0x20000080,
+		0x00820000,0x00020080,0x20020080,0x20800000,
+		0x00000080,0x20820000,0x00820080,0x00000000,
+		0x20000000,0x20800080,0x00020000,0x00820080,
+	}
+};

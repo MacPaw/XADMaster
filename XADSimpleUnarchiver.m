@@ -819,6 +819,20 @@
 	[delegate simpleUnarchiver:self didExtractEntryWithDictionary:dict to:path error:error];
 }
 
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory
+{
+	return YES;
+}
+
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldDeleteFileAndCreateDirectory:(NSString *)directory
+{
+	// If a resource fork entry for a directory was accidentally extracted
+	// as a file, which can sometimes happen with particularly broken Zip files,
+	// overwrite it.
+	if([resourceforks containsObject:directory]) return YES;
+	else return NO;
+}
+
 -(NSString *)unarchiver:(XADUnarchiver *)unarchiver destinationForLink:(XADString *)link from:(NSString *)path
 {
 	if(!delegate) return nil;

@@ -522,7 +522,10 @@ deferDirectories:(BOOL)defer
 	if([manager fileExistsAtPath:path isDirectory:&isdir])
 	{
 		if(isdir) return XADNoError;
-		else return XADMakeDirectoryError;
+
+		if(!delegate) return XADMakeDirectoryError;
+		if(![delegate unarchiver:self shouldDeleteFileAndCreateDirectory:path]) return XADMakeDirectoryError;
+		if(![XADPlatform removeItemAtPath:path]) return XADMakeDirectoryError;
 	}
 	else
 	{
@@ -533,15 +536,15 @@ deferDirectories:(BOOL)defer
 		{
 			if(![delegate unarchiver:self shouldCreateDirectory:path]) return XADMakeDirectoryError;
 		}
-
-		#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
-		if([manager createDirectoryAtPath:path
-		withIntermediateDirectories:NO attributes:nil error:NULL]) return XADNoError;
-		#else
-		if([manager createDirectoryAtPath:path attributes:nil]) return XADNoError;
-		#endif
-		else return XADMakeDirectoryError;
 	}
+
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	if([manager createDirectoryAtPath:path
+	withIntermediateDirectories:NO attributes:nil error:NULL]) return XADNoError;
+	#else
+	if([manager createDirectoryAtPath:path attributes:nil]) return XADNoError;
+	#endif
+	else return XADMakeDirectoryError;
 }
 
 
@@ -720,6 +723,7 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error {}
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory { return YES; }
+-(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldDeleteFileAndCreateDirectory:(NSString *)directory { return NO; }
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path { return NO; }
 -(void)unarchiver:(XADUnarchiver *)unarchiver willExtractArchiveEntryWithDictionary:(NSDictionary *)dict withUnarchiver:(XADUnarchiver *)subunarchiver to:(NSString *)path {}

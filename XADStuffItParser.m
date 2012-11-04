@@ -103,6 +103,10 @@
 	//int crc=[fh readUInt16BE];
 	[fh skipBytes:12];
 
+	XADResourceFork *fork=[self resourceFork];
+	NSData *comment=[fork resourceDataForType:'SitC' identifier:0];
+	if(comment) [self setObject:[self XADStringWithData:comment] forPropertyKey:XADCommentKey];
+
 	XADPath *currdir=[self XADPath];
 
 	while([fh offsetInFile]+SIT_FILEHDRSIZE<=totalsize+base && [self shouldKeepParsing])

@@ -448,7 +448,12 @@ static BOOL IsDelimiter(uint8_t c);
 			if(currchar=='\r')
 			{
 				[self proceedWithoutCommentHandling];
-				[self proceedWithoutCommentHandlingAssumingCharacter:'\n' errorMessage:@"Error parsing stream object"];
+
+				// According to the spec, an \r has to be followed by an \n
+				// following a stream token. However, nobody cares what the
+				// spec says.
+				//[self proceedWithoutCommentHandlingAssumingCharacter:'\n' errorMessage:@"Error parsing stream object"];
+				if(currchar=='\n') [self proceedWithoutCommentHandling];
 			}
 			else if(currchar=='\n')
 			{

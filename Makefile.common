@@ -112,6 +112,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADRARVirtualMachine.m \
 			XADRC4Handle.m \
 			XADRegex.m \
+			XADResourceFork.m \
 			XADRLE90Handle.m \
 			XADRPMParser.m \
 			XADSARParser.m \
@@ -126,6 +127,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADStuffIt13Handle.m \
 			XADStuffIt5Parser.m \
 			XADStuffItArsenicHandle.m \
+			XADStuffItDESHandle.m \
 			XADStuffItHuffmanHandle.m \
 			XADStuffItOldHandles.m \
 			XADStuffItParser.m \

@@ -252,7 +252,7 @@ static BOOL IsDelimiter(uint8_t c);
 		}
 		else if(currchar>='0' && currchar<='9')
 		{
-			int first=[self parseSimpleInteger];
+			/*int first=*/[self parseSimpleInteger];
 			int num=[self parseSimpleInteger];
 
 			[self skipWhitespace];
@@ -271,15 +271,18 @@ static BOOL IsDelimiter(uint8_t c);
 				if(entry[17]!='n') continue;
 
 				off_t objoffs=atoll(entry);
-				int objgen=atol(entry+11);
+				//int objgen=atol(entry+11);
 
 				if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
 				if(objoffs>totalsize) continue; // Kludge to handle some other broken files.
 
 				[self startParsingFromHandle:mainhandle atOffset:objoffs];
-				id obj=[self parsePDFObject];
 
-				PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:first+i generation:objgen];
+				PDFObjectReference *ref;
+				id obj=[self parsePDFObjectWithReferencePointer:&ref];
+
+				// Some PDF files are so broken than the object numbers don't actually match.
+				//PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:first+i generation:objgen];
 				if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
 
 				[pool release];
@@ -297,7 +300,7 @@ static BOOL IsDelimiter(uint8_t c);
 
 -(NSDictionary *)parsePDFXrefStream
 {
-	PDFStream *stream=[self parsePDFObject];
+	PDFStream *stream=[self parsePDFObjectWithReferencePointer:NULL];
 	if(![stream isKindOfClass:[PDFStream class]]) [self _raiseParserException:@"Error parsing xref stream"];
 
 	NSDictionary *dict=[stream dictionary];
@@ -346,7 +349,7 @@ static BOOL IsDelimiter(uint8_t c);
 		{
 			int type=[self parseIntegerOfSize:typesize fromHandle:handle default:1];
 			uint64_t value1=[self parseIntegerOfSize:value1size fromHandle:handle default:0];
-			uint64_t value2=[self parseIntegerOfSize:value2size fromHandle:handle default:0];
+			/*uint64_t value2=*/[self parseIntegerOfSize:value2size fromHandle:handle default:0];
 
 			if(type!=1) continue;
 			if(!value1) continue; // Kludge to handle broken Apple PDF files. TODO: Is this actually needed here?
@@ -355,10 +358,14 @@ static BOOL IsDelimiter(uint8_t c);
 
 			off_t curroffs=[mainhandle offsetInFile];
 			[self startParsingFromHandle:mainhandle atOffset:value1];
-			id obj=[self parsePDFObject];
+
+			PDFObjectReference *ref;
+			id obj=[self parsePDFObjectWithReferencePointer:&ref];
+
 			[mainhandle seekToFileOffset:curroffs];
 
-			PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:value2];
+			// Some PDF files are so broken than the object numbers don't actually match.
+			//PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:n generation:value2];
 			if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
 
 			if([obj isKindOfClass:[PDFStream class]])
@@ -419,11 +426,12 @@ static BOOL IsDelimiter(uint8_t c);
 
 
 
--(id)parsePDFObject
+-(id)parsePDFObjectWithReferencePointer:(PDFObjectReference **)refptr
 {
 	int objnum=[self parseSimpleInteger];
 	int objgen=[self parseSimpleInteger];
 	PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnum generation:objgen];
+	if(refptr) *refptr=ref;
 
 	[self skipWhitespace];
 

@@ -305,7 +305,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 	NSData *header=[handle readDataOfLengthAtMost:maxheader];
 
 	CSHandle *forkhandle=[XADPlatform handleForReadingResourceForkAtPath:filename];
-	XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle];
+	XADResourceFork *fork=[XADResourceFork resourceForkWithHandle:forkhandle error:NULL];
 
 	NSMutableDictionary *props=[NSMutableDictionary dictionary];
 

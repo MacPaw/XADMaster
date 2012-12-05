@@ -118,7 +118,7 @@
 	if(needsreset) { [self resetStream]; needsreset=NO; }
 
 	if(endofstream) return 0;
-	if(streampos+num>streamlength) num=streamlength-streampos;
+	if(streampos+num>streamlength) num=(int)(streamlength-streampos);
 	if(!num) return 0;
 
 	int offs=0;

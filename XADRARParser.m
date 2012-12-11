@@ -132,12 +132,12 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 		firstFileExtension:@"rar"];
 	}
 
-	// Old naming scheme. Just look for rar/r01/s01 files.
+	// Old naming scheme. Just look for rar/r01/s01/... files.
 	NSArray *matches;
-	if((matches=[name substringsCapturedByPattern:@"^(.*)\\.(rar|r[0-9]{2}|s[0-9]{2})$" options:REG_ICASE]))
+	if((matches=[name substringsCapturedByPattern:@"^(.*)\\.(rar|[r-z][0-9]{2})$" options:REG_ICASE]))
 	{
 		return [self scanForVolumesWithFilename:name
-		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(rar|r[0-9]{2}|s[0-9]{2})$",
+		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@\\.(rar|[r-z][0-9]{2})$",
 			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
 		firstFileExtension:@"rar"];
 	}

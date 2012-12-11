@@ -509,7 +509,6 @@ static void SHA1_Internal_Transform(SHA_CTX* context, const uint32_t* data) {
 	j = 0;
 	do {
 #if BYTE_ORDER == LITTLE_ENDIAN
-		T1 = data[j];
 		/* Copy data while converting to host byte order */
 		REVERSE32(*data++, W1[j]);
 		T1 = ROTL32(5, a) + Ch(b, c, d) + e + K1_0_TO_19 + W1[j];

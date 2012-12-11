@@ -159,12 +159,21 @@ static const NSString *DateFormat=@"Date";
 				offset:offset length:length size:size checksum:checksum
 				checksumStyle:checksumstyle];
 
-				NSData *data=[handle remainingFileContents];
+				NSData *data=nil;
+				@try { [handle remainingFileContents]; }
+				@catch(id e) { NSLog(@"Exception while extracting XAR extended attribute for file %@: %@",path,e); }
+
 				if(data)
-				if(![handle hasChecksum]||[handle isChecksumCorrect])
 				{
-					[eadict setObject:data forKey:name];
-					numeas++;
+					if(![handle hasChecksum] || [handle isChecksumCorrect])
+					{
+						[eadict setObject:data forKey:name];
+						numeas++;
+					}
+				}
+				else
+				{
+					NSLog(@"Checksum mismatch while extracting extended attribute from XAR file %@",path);
 				}
 			}
 		}

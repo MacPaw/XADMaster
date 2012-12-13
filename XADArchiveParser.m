@@ -385,9 +385,6 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 +(XADArchiveParser *)archiveParserForEntryWithDictionary:(NSDictionary *)entry resourceForkDictionary:(NSDictionary *)forkentry archiveParser:(XADArchiveParser *)parser wantChecksum:(BOOL)checksum
 {
-	CSHandle *handle=[parser handleForEntryWithDictionary:entry wantChecksum:checksum];
-	if(!handle) [XADException raiseNotSupportedException];
-
 	XADResourceFork *fork=nil;
 	if(forkentry)
 	{
@@ -402,6 +399,9 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 			}
 		}
 	}
+
+	CSHandle *handle=[parser handleForEntryWithDictionary:entry wantChecksum:checksum];
+	if(!handle) [XADException raiseNotSupportedException];
 
 	NSString *filename=[[entry objectForKey:XADFileNameKey] string];
 	XADArchiveParser *subparser=[XADArchiveParser archiveParserForHandle:handle resourceFork:fork name:filename];

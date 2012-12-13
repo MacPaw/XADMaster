@@ -256,7 +256,7 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	return [[self copyDataOfLength:length] autorelease];
 }
 
--(NSData *)readDataOfLengthAtMost:(int)length;
+-(NSData *)readDataOfLengthAtMost:(int)length
 {
 	return [[self copyDataOfLengthAtMost:length] autorelease];
 }

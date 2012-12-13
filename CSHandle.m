@@ -293,7 +293,6 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	while(skipped<num)
 	{
 		off_t numbytes=num-skipped>sizeof(buf)?sizeof(buf):num-skipped;
-		if(numbytes>INT_MAX) numbytes=INT_MAX;
 		int actual=[self readAtMost:(int)numbytes toBuffer:buf];
 		skipped+=actual;
 		if(actual==0) break;

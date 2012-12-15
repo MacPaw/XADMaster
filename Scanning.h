@@ -4,7 +4,7 @@ typedef int (*CSByteMatchingFunctionPointer)(const uint8_t *bytes,int available,
 
 @interface CSHandle (Scanning)
 
--(BOOL)scanForByteString:(uint8_t *)bytes length:(int)length;
+-(BOOL)scanForByteString:(const void *)bytes length:(int)length;
 -(int)scanUsingMatchingFunction:(CSByteMatchingFunctionPointer)function
 maximumLength:(int)maximumlength;
 -(int)scanUsingMatchingFunction:(CSByteMatchingFunctionPointer)function

@@ -2,7 +2,7 @@
 
 typedef struct ByteString
 {
-	uint8_t *bytes;
+	const uint8_t *bytes;
 	int length;
 } ByteString;
 
@@ -16,7 +16,7 @@ static int MatchByteString(const uint8_t *bytes,int available,off_t offset,void 
 
 @implementation CSHandle (Scanning)
 
--(BOOL)scanForByteString:(uint8_t *)bytes length:(int)length
+-(BOOL)scanForByteString:(const void *)bytes length:(int)length
 {
 	ByteString bs={ .bytes=bytes, .length=length };
 	return [self scanUsingMatchingFunction:MatchByteString maximumLength:length context:&bs];

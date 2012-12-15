@@ -146,6 +146,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADTarParser.m \
 			XADTarSparseHandle.m \
 			XADUnarchiver.m \
+			XADWARCParser.m \
 			XADWinZipAESHandle.m \
 			XADWinZipJPEGHandle.m \
 			XADWinZipWavPackHandle.m \

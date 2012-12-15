@@ -2932,8 +2932,8 @@
 				1B216A780F8E9064001207C9 /* CRC.h */,
 				1B216A770F8E9064001207C9 /* CRC.m */,
 				1B3E377D0F422D2F003EEF98 /* NumberParsing.h */,
-				1B78A34B1431339100E4AB87 /* Realloc.h */,
 				1B3E377E0F422D2F003EEF98 /* NumberParsing.m */,
+				1B78A34B1431339100E4AB87 /* Realloc.h */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";

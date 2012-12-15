@@ -973,8 +973,8 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		if(finderflags) [dict setObject:[NSNumber numberWithInt:finderflags] forKey:XADFinderFlagsKey];
 	}
 
-	// If this is an embedded archive that can't seek, force a solid flag.
-	if(forcesolid) [dict setObject:sourcehandle forKey:XADSolidObjectKey];
+	// If this is an embedded archive that can't seek, force a solid flag if one isn't already present.
+	if(forcesolid && ![dict objectForKey:XADSolidObjectKey]) [dict setObject:sourcehandle forKey:XADSolidObjectKey];
 
 	// Handle solidness - set FirstSolid, NextSolid and IsSolid depending on SolidObject.
 	id solidobj=[dict objectForKey:XADSolidObjectKey];

@@ -167,8 +167,6 @@
 			}
 		}
 
-		[dict setObject:record forKey:@"WARC"];
-
 		[self addEntryWithDictionary:dict];
 	}
 

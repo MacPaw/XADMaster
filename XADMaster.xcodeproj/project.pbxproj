@@ -5412,6 +5412,7 @@
 					UniversalDetector,
 				);
 				PRODUCT_NAME = XADMaster;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -5934,6 +5935,7 @@
 					UniversalDetector,
 				);
 				PRODUCT_NAME = XADMaster;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};

@@ -5586,6 +5586,7 @@
 					"\"$(SRCROOT)/Windows/lib\"",
 				);
 				LIBTOOL = "$(SRCROOT)/Windows/bin/libtoolstub.pl";
+				MACOSX_DEPLOYMENT_TARGET = "";
 				MACOSX_DEPLOYMENT_TARGET_i386 = "";
 				MACOSX_DEPLOYMENT_TARGET_ppc = "";
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";
@@ -5740,6 +5741,7 @@
 					"\"$(SRCROOT)/Windows/lib\"",
 				);
 				LIBTOOL = "$(SRCROOT)/Windows/bin/libtoolstub.pl";
+				MACOSX_DEPLOYMENT_TARGET = "";
 				MACOSX_DEPLOYMENT_TARGET_i386 = "";
 				MACOSX_DEPLOYMENT_TARGET_ppc = "";
 				MACOSX_DEPLOYMENT_TARGET_x86_64 = "";

@@ -57,10 +57,6 @@
 	NSData *jpegtables=nil;
 	NSMutableData *mainstream=nil;
 
-	NSString *compname;
-	if([parser isCompressed]) compname=@"Zlib";
-	else compname=@"None";
-
 	int tag;
 	while((tag=[parser nextTag]) && [self shouldKeepParsing])
 	switch(tag)
@@ -389,6 +385,7 @@
 
 	switch((flags>>2)&0x03)
 	{
+		default:
 		case 0: samplerate=5512; break; // 5.5125 kHz - what.
 		case 1: samplerate=11025; break;
 		case 2: samplerate=22050; break;

@@ -32,23 +32,31 @@ typedef int XADError;
 
 #define XADSubArchiveError 0x10000
 
+#ifndef CLANG_ANALYZER_NORETURN
+#if __has_feature(attribute_analyzer_noreturn)
+#define CLANG_ANALYZER_NORETURN __attribute__((analyzer_noreturn))
+#else
+#define CLANG_ANALYZER_NORETURN
+#endif
+#endif
+
 extern NSString *XADExceptionName;
 
 @interface XADException:NSObject
 {
 }
 
-+(void)raiseUnknownException;
-+(void)raiseInputException;
-+(void)raiseOutputException;
-+(void)raiseIllegalDataException;
-+(void)raiseNotSupportedException;
-+(void)raiseDecrunchException;
-+(void)raisePasswordException;
-+(void)raiseChecksumException;
-+(void)raiseDataFormatException;
-+(void)raiseOutOfMemoryException;
-+(void)raiseExceptionWithXADError:(XADError)errnum;
++(void)raiseUnknownException CLANG_ANALYZER_NORETURN;
++(void)raiseInputException CLANG_ANALYZER_NORETURN;
++(void)raiseOutputException CLANG_ANALYZER_NORETURN;
++(void)raiseIllegalDataException CLANG_ANALYZER_NORETURN;
++(void)raiseNotSupportedException CLANG_ANALYZER_NORETURN;
++(void)raiseDecrunchException CLANG_ANALYZER_NORETURN;
++(void)raisePasswordException CLANG_ANALYZER_NORETURN;
++(void)raiseChecksumException CLANG_ANALYZER_NORETURN;
++(void)raiseDataFormatException CLANG_ANALYZER_NORETURN;
++(void)raiseOutOfMemoryException CLANG_ANALYZER_NORETURN;
++(void)raiseExceptionWithXADError:(XADError)errnum CLANG_ANALYZER_NORETURN;
 
 +(XADError)parseException:(id)exception;
 +(NSString *)describeXADError:(XADError)errnum;

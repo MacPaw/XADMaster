@@ -933,7 +933,7 @@ isLastEntry:(BOOL)islastentry
 	BOOL wrapchecksum=NO;
 
 	NSNumber *enc=[dict objectForKey:XADIsEncryptedKey];
-	if(enc&&[enc boolValue])
+	if(enc && [enc boolValue])
 	{
 		off_t compsize=[[dict objectForKey:XADCompressedSizeKey] longLongValue];
 

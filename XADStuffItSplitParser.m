@@ -153,7 +153,7 @@
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			[self XADPathWithData:namedata separators:XADNoPathSeparator],XADFileNameKey,
 			[NSNumber numberWithLongLong:datalength],XADFileSizeKey,
-			[NSNumber numberWithLongLong:curroffset*datalength/(datalength+rsrclength)],XADCompressedSizeKey,
+			[NSNumber numberWithLongLong:datalength?curroffset*datalength/(datalength+rsrclength):0],XADCompressedSizeKey,
 			[NSNumber numberWithLongLong:rsrclength],XADSkipOffsetKey,
 			[NSNumber numberWithLongLong:datalength],XADSkipLengthKey,
 			[NSNumber numberWithUnsignedInt:type],XADFileTypeKey,

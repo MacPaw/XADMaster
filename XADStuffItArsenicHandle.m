@@ -202,7 +202,7 @@ static int NextArithmeticBitString(ArithmeticDecoder *decoder,ArithmeticModel *m
 	}
 
 	free(transform);
-	transform=malloc(sizeof(int)*numbytes);
+	transform=malloc(sizeof(uint32_t)*numbytes);
 	CalculateInverseBWT(transform,block,numbytes);
 }
 

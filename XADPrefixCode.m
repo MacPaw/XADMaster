@@ -143,7 +143,7 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 {
 	if((self=[super init]))
 	{
-		tree=malloc(sizeof(int)*2);
+		tree=malloc(sizeof(XADCodeTreeNode));
 		SetEmptyNode(self,0);
 		numentries=1;
 		minlength=INT_MAX;

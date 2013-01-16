@@ -23,7 +23,7 @@
 
 	NSData *namepart=data;
 	NSData *comment=nil;
-	int namelength=length;
+	int namelength;
 	for(int i=0;i<length;i++)
 	{
 		if(bytes[i]=='.')

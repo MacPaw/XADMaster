@@ -146,7 +146,7 @@
 				[self parseExtendedForDictionary:dict size:extsize-4];
 			}
 		}
-		else [XADException raiseIllegalDataException];
+		else { [XADException raiseIllegalDataException]; for(;;); }
 
 		if(level==0)
 		{

@@ -127,8 +127,6 @@ extern NSString *XADFinderFlags;
 resourceFork:(BOOL)resfork;
 -(BOOL)extractEntry:(int)n to:(NSString *)destination deferDirectories:(BOOL)defer
 dataFork:(BOOL)datafork resourceFork:(BOOL)resfork;
--(BOOL)extractEntry:(int)n to:(NSString *)destination deferDirectories:(BOOL)defer
-dataFork:(BOOL)datafork resourceFork:(BOOL)resfork;
 -(BOOL)extractArchiveEntry:(int)n to:(NSString *)destination;
 
 -(BOOL)_extractEntry:(int)n as:(NSString *)destfile deferDirectories:(BOOL)defer

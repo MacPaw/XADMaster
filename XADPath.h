@@ -106,9 +106,6 @@ separators:(const char *)pathseparators;
 -(void)_appendPathForPartToData:(NSMutableData *)data;
 -(XADStringSource *)_sourceForPart;
 
--(BOOL)isEqual:(id)other;
--(NSUInteger)hash;
-
 @end
 
 

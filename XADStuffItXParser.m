@@ -386,7 +386,7 @@ static void DumpElement(StuffItXElement *element)
 					case 6: preprocessname=@"TIFF"; break;
 					case 7: preprocessname=@"WAV"; break;
 					case 8: preprocessname=@"WRT"; break;
-					default: compname=[NSString stringWithFormat:@"Preprocess %qd",preprocessalgorithm]; break;
+					default: preprocessname=[NSString stringWithFormat:@"Preprocess %qd",preprocessalgorithm]; break;
 				}
 
 				XADString *compnamestr;

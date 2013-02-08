@@ -820,7 +820,7 @@ char *DescribeRAROpcode(RAROpcode *opcode)
 
 	if(numoperands==0) return string;
 
-	strcat(string,"        "+strlen(instruction));
+	strcat(string,&"        "[strlen(instruction)]);
 	strcat(string,DescribeRAROperand1(opcode));
 
 	if(numoperands==1) return string;

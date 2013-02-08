@@ -79,7 +79,7 @@
 				pad=(-filesize)&3;
 				if(more[3]=='2') haschecksum=YES;
 			}
-			else [XADException raiseIllegalDataException];
+			else { [XADException raiseIllegalDataException]; for(;;); }
 		}
 		else if(magic[0]==0x71&&magic[1]==0xc7) // big-endian binary
 		{
@@ -132,7 +132,7 @@
 
 			pad=filesize&1;
 		}
-		else [XADException raiseIllegalDataException];
+		else { [XADException raiseIllegalDataException]; for(;;); }
 
 		if([namedata length]==10&&memcmp([namedata bytes],"TRAILER!!!",10)==0) break;
 

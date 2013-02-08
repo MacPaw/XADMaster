@@ -63,7 +63,7 @@
 				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
 				encrypted=YES;
 			}
-			else if(magic=='PMa6')
+			else //if(magic=='PMa6')
 			{
 				src=[[[XADPackItDESHandle alloc] initWithHandle:handle
 				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
@@ -74,7 +74,7 @@
 			input=hh->input;
 			fh=hh;
 		}
-		else [XADException raiseIllegalDataException];
+		else { [XADException raiseIllegalDataException]; for(;;); }
 
 		int namelen=[fh readUInt8];
 		if(namelen>63) namelen=63;

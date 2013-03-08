@@ -396,7 +396,7 @@ preservePermissions:(BOOL)preservepermissions
 		uint8_t buffer[16384];
 
 		ssize_t actual=fgetxattr(fd,XATTR_RESOURCEFORK_NAME,buffer,sizeof(buffer),pos,0);
-		if(actual<0) return nil;
+		if(actual<0) { close(fd); return nil; }
 		if(actual==0) break;
 
 		[data appendBytes:buffer length:actual];

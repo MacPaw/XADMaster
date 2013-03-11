@@ -90,6 +90,7 @@
 +(int64_t)readNumberInRangeFromBuffer:(NSRange)range buffer:(NSData *)buffer
 {
 	NSString *readString = [[NSString alloc] initWithData:[buffer subdataWithRange:range] encoding:NSASCIIStringEncoding];
+	if(!readString) return 0;
 	NSScanner* scanner = [NSScanner scannerWithString:readString];
 	[readString release];
 	long long returnValue;

@@ -164,7 +164,7 @@ NSString *LongInfoLineForEntryWithDictionary(NSDictionary *dict,XADArchiveParser
 	if(compname)
 	{
 		compcode=CodeForCompressionName([compname string]);
-		if([compcode length]<4) compcode=[NSString stringWithFormat:@"%@%s",compcode,"    "+[compcode length]];
+		if([compcode length]<4) compcode=[NSString stringWithFormat:@"%@%s",compcode,&"    "[[compcode length]]];
 	}
 	else
 	{

@@ -162,6 +162,10 @@ preservePermissions:(BOOL)preservepermissions
 			mode_t mask=umask(022);
 			umask(mask); // This is stupid. Is there no sane way to just READ the umask?
 			mode&=~(mask|S_ISUID|S_ISGID);
+
+			// Just force read and write flags for all files, no matter what
+			// insane archives think.
+			mode|=S_IRUSR|S_IWUSR;
 		}
 	}
 

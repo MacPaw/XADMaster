@@ -5,6 +5,8 @@
 
 #define VERSION_STRING @"v1.5"
 
+BOOL quietmode;
+
 @interface Unarchiver:NSObject {}
 @end
 
@@ -128,6 +130,9 @@ int main(int argc,const char **argv)
 
 	#endif
 
+	[cmdline addSwitchOption:@"quiet" description:@"Run in quiet mode."];
+	[cmdline addAlias:@"q" forOption:@"quiet"];
+
 	[cmdline addHelpOption];
 
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
@@ -148,6 +153,7 @@ int main(int argc,const char **argv)
 	BOOL copytime=[cmdline boolValueForOption:@"copy-time"];
 	BOOL noquarantine=[cmdline boolValueForOption:@"no-quarantine"];
 	int forkstyle=forkvalues[[cmdline intValueForOption:@"forks"]];
+	quietmode=[cmdline boolValueForOption:@"quiet"];
 
 	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
 	{
@@ -346,6 +352,8 @@ suggestedPath:(NSString *)unique
 
 -(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver willExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
+	if(quietmode) return;
+	
 	[@"  " print];
 
 	NSString *name=MediumInfoLineForEntryWithDictionary(dict);
@@ -357,9 +365,19 @@ suggestedPath:(NSString *)unique
 
 -(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
 {
-	if(!error) [@"OK.\n" print];
+	if(!error)
+	{
+		if(!quietmode) [@"OK.\n" print];
+	}
 	else
 	{
+		if(quietmode)
+		{
+			[@"  " print];
+			NSString *name=MediumInfoLineForEntryWithDictionary(dict);
+			[name print];
+			[@"... " print];
+		}
 		[@"Failed! (" print];
 		[[XADException describeXADError:error] print];
 		[@")\n" print];

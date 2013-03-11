@@ -1807,6 +1807,8 @@
 		1B3581E415A7AC020002A4C9 /* PDFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFParser.m; sourceTree = "<group>"; };
 		1B3581E515A7AC020002A4C9 /* PDFStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFStream.h; sourceTree = "<group>"; };
 		1B3581E615A7AC020002A4C9 /* PDFStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFStream.m; sourceTree = "<group>"; };
+		1B375D1C16ED72CB00773BB8 /* unar.bash_completion */ = {isa = PBXFileReference; lastKnownFileType = text; name = unar.bash_completion; path = ../Extra/unar.bash_completion; sourceTree = "<group>"; };
+		1B375D1F16ED72D100773BB8 /* lsar.bash_completion */ = {isa = PBXFileReference; lastKnownFileType = text; name = lsar.bash_completion; path = ../Extra/lsar.bash_completion; sourceTree = "<group>"; };
 		1B3A64B41015030700AE25A8 /* XADLZHSFXParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHSFXParsers.h; sourceTree = "<group>"; };
 		1B3A64B51015030700AE25A8 /* XADLZHSFXParsers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADLZHSFXParsers.m; sourceTree = "<group>"; };
 		1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADLZHOldHandles.h; sourceTree = "<group>"; };
@@ -3186,7 +3188,9 @@
 			isa = PBXGroup;
 			children = (
 				1BDDC79513DE3D4200A8C079 /* lsar.1 */,
+				1B375D1F16ED72D100773BB8 /* lsar.bash_completion */,
 				1BDDC79613DE3D4200A8C079 /* unar.1 */,
+				1B375D1C16ED72CB00773BB8 /* unar.bash_completion */,
 			);
 			name = "Man Pages";
 			sourceTree = "<group>";

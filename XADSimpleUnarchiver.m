@@ -639,7 +639,13 @@
 	// if this one has the same first first path component as the earlier ones.
 	if(lookslikesolo || !toplevelname)
 	{
-		NSString *firstcomp=[[entry objectForKey:XADFileNameKey] firstCanonicalPathComponent];
+		NSString *safepath=[[entry objectForKey:XADFileNameKey] sanitizedPathString];
+		NSArray *components=[safepath pathComponents];
+
+		NSString *firstcomp;
+		if([components count]>0) firstcomp=[components objectAtIndex:0];
+		else firstcomp=@"";
+
 		if(!toplevelname)
 		{
 			toplevelname=[firstcomp retain];

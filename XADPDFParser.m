@@ -34,9 +34,24 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 	return YES;
 }
 
+-(id)init
+{
+	if(self=[super init])
+	{
+		parser=nil;
+	}
+	return self;
+}
+
+-(void)dealloc
+{
+	[parser release];
+	[super dealloc];
+}
+
 -(void)parse
 {
-	PDFParser *parser=[PDFParser parserWithHandle:[self handle]];
+	parser=[[PDFParser parserWithHandle:[self handle]] retain];
 	[parser setPasswordRequestAction:@selector(needsPassword:) target:self];
 
 	[parser parse];
@@ -323,9 +338,9 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 	}
 }
 
--(void)needsPassword:(PDFParser *)parser
+-(void)needsPassword:(PDFParser *)parserarg
 {
-	if(![parser setPassword:[self password]]) [XADException raisePasswordException];
+	if(![parserarg setPassword:[self password]]) [XADException raisePasswordException];
 }
 
 -(NSString *)compressionNameForStream:(PDFStream *)stream excludingLast:(BOOL)excludelast

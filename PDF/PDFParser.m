@@ -40,6 +40,7 @@ static BOOL IsDelimiter(uint8_t c);
 		objdict=[[NSMutableDictionary dictionary] retain];
 		unresolved=[[NSMutableArray array] retain];
 
+		trailerdict=nil;
 		encryption=nil;
 
 		passwordaction=NULL;
@@ -64,6 +65,7 @@ static BOOL IsDelimiter(uint8_t c);
 	[fh release];
 	[objdict release];
 	[unresolved release];
+	[trailerdict release];
 	[encryption release];
 	[super dealloc];
 }

@@ -3,10 +3,14 @@
 
 @interface XADPDFParser:XADArchiveParser
 {
+	PDFParser *parser;
 }
 
 +(int)requiredHeaderSize;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
+
+-(id)init;
+-(void)dealloc;
 
 -(void)parse;
 -(NSString *)compressionNameForStream:(PDFStream *)stream excludingLast:(BOOL)excludelast;

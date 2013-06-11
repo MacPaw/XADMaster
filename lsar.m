@@ -42,6 +42,8 @@ int main(int argc,const char **argv)
 	@"\n"
 	@"Available options:\n"];
 
+	[cmdline setProgramVersion:VERSION_STRING];
+
 	[cmdline addSwitchOption:@"long" description:
 	@"Print more information about each file in the archive."];
 	[cmdline addAlias:@"l" forOption:@"long"];
@@ -96,6 +98,8 @@ int main(int argc,const char **argv)
 
 	[cmdline addHelpOption];
 
+	[cmdline addVersionOption];
+	
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) return 1;
 
 

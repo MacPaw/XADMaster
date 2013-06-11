@@ -24,6 +24,8 @@ int main(int argc,const char **argv)
 	@"\n"
 	@"Available options:\n"];
 
+	[cmdline setProgramVersion:VERSION_STRING];
+
 	[cmdline addStringOption:@"output-directory" description:
 	@"The directory to write the contents of the archive to. "
 	@"Defaults to the current directory."];
@@ -132,6 +134,8 @@ int main(int argc,const char **argv)
 
 	[cmdline addSwitchOption:@"quiet" description:@"Run in quiet mode."];
 	[cmdline addAlias:@"q" forOption:@"quiet"];
+
+	[cmdline addVersionOption];
 
 	[cmdline addHelpOption];
 

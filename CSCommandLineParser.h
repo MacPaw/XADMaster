@@ -8,7 +8,7 @@
 
 	NSArray *remainingargumentarray;
 
-	NSString *programname,*usageheader,*usagefooter;
+	NSString *programname,*usageheader,*usagefooter,*programversion;
 }
 
 -(id)init;
@@ -17,6 +17,7 @@
 -(void)setProgramName:(NSString *)name;
 -(void)setUsageHeader:(NSString *)header;
 -(void)setUsageFooter:(NSString *)footer;
+-(void)setProgramVersion:(NSString *)version;
 
 -(void)addStringOption:(NSString *)option
 description:(NSString *)description;
@@ -57,6 +58,9 @@ description:(NSString *)description argumentDescription:(NSString *)argdescripti
 
 -(void)addHelpOption;
 -(void)addHelpOptionNamed:(NSString *)helpoption description:(NSString *)description;
+
+-(void)addVersionOption;
+-(void)addVersionOptionNamed:(NSString *)versionoption description:(NSString *)description;
 
 -(void)addAlias:(NSString *)alias forOption:(NSString *)option;
 

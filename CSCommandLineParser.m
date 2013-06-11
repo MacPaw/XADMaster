@@ -26,6 +26,7 @@ static NSString *IntegerOptionType=@"IntegerOptionType";
 static NSString *FloatingPointOptionType=@"FloatingPointOptionType";
 static NSString *SwitchOptionType=@"SwitchOptionType";
 static NSString *HelpOptionType=@"HelpOptionType";
+static NSString *VersionOptionType=@"VersionOptionType";
 static NSString *AliasOptionType=@"AliasOptionType";
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED<1050
@@ -50,6 +51,7 @@ static NSString *AliasOptionType=@"AliasOptionType";
 		programname=nil;
 		usageheader=nil;
 		usagefooter=nil;
+		programversion=nil;
 	}
 	return self;
 }
@@ -65,6 +67,7 @@ static NSString *AliasOptionType=@"AliasOptionType";
 	[programname release];
 	[usageheader release];
 	[usagefooter release];
+	[programversion release];
 
 	[super dealloc];
 }
@@ -88,6 +91,12 @@ static NSString *AliasOptionType=@"AliasOptionType";
 {
 	[usagefooter autorelease];
 	usagefooter=[footer retain];
+}
+
+-(void)setProgramVersion:(NSString *)version
+{
+	[programversion autorelease];
+	programversion=[version retain];
 }
 
 
@@ -313,6 +322,25 @@ description:(NSString *)description argumentDescription:(NSString *)argdescripti
 
 
 
+-(void)addVersionOption
+{
+	[self addVersionOptionNamed:@"version" description:@"Print version and exit."];
+	[self addAlias:@"v" forOption:@"version"];
+}
+
+-(void)addVersionOptionNamed:(NSString *)versionoption description:(NSString *)description
+{
+	[options setObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		[NSMutableArray arrayWithObject:versionoption],NamesKey,
+		VersionOptionType,OptionTypeKey,
+		description,DescriptionKey,
+	nil] forKey:versionoption];
+	[optionordering addObject:versionoption];
+}
+
+
+
+
 -(void)addAlias:(NSString *)alias forOption:(NSString *)option
 {
 	[self _assertOptionNameIsUnique:alias];
@@ -462,6 +490,14 @@ errors:(NSMutableArray *)errors
 			if(type==HelpOptionType)
 			{
 				[self printUsage];
+				exit(0);
+			}
+
+			// Handle version option
+			if(type==VersionOptionType)
+			{
+				[programversion print];
+				[@"\n" print];
 				exit(0);
 			}
 

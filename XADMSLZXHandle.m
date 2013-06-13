@@ -229,6 +229,7 @@
 
 		case 3: // uncompressed
 		{
+			CSInputSkipBits(input,1);
 			CSInputSkipTo16BitBoundary(input);
 			// Untangle the stored r0-r2 values (the byte swapping earlier messed them up)
 			r0=CSInputNextUInt16BE(input);

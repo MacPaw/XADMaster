@@ -154,7 +154,7 @@ int main(int argc,char **argv)
 
 +(void)testByte:(uint8_t)byte atOffset:(off_t)offset
 {
-	offset-=correctoffset;
+	//offset-=correctoffset;
 	if(offset<0) [NSException raise:NSInvalidArgumentException format:@"Offset before start of solid segment"];
 
 	if(correctbytes)

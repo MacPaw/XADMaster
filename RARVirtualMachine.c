@@ -165,7 +165,7 @@ bool ExecuteRARCode(RARVirtualMachine *self,RAROpcode *opcodes,int numopcodes)
 //static int count=0;
 //#define Debug() ({ printf("Execute: %04x\t%s\n",opcode-opcodes,DescribeRAROpcode(opcode)); })
 //#define Debug() ({ printf("%d %04x %08x ",count++,opcode-opcodes,flags); for(int i=0;i<8;i++) printf("%08x(%08x) ",self->registers[i],RARVirtualMachineRead32(self,self->registers[i])); printf("\n"); })
-//#define Debug() ({ printf("%d %04x %s\t%08x ",count++,opcode-opcodes,DescribeRAROpcode(opcode),flags); for(int i=0;i<8;i++) printf("%08x(%08x) ",self->registers[i],RARVirtualMachineRead32(self,self->registers[i])); printf("\n"); })
+//#define Debug() ({ printf("%d %04lx %s\t%08x ",count++,opcode-opcodes,DescribeRAROpcode(opcode),flags); for(int i=0;i<8;i++) printf("%08x(%08x) ",self->registers[i],RARVirtualMachineRead32(self,self->registers[i])); printf("\n"); })
 #define Debug() ({ })
 
 #define NextInstruction() ({ opcode++; Debug(); goto *opcode->instructionlabel; })
@@ -745,7 +745,7 @@ static const int InstructionFlags[40]=
 	[RARJaeInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag | RARReadsStatusFlag,
 	[RARPushInstruction]=RAR1OperandFlag,
 	[RARPopInstruction]=RAR1OperandFlag,
-	[RARCallInstruction]=RAR1OperandFlag,
+	[RARCallInstruction]=RAR1OperandFlag | RARIsRelativeJumpFlag,
 	[RARRetInstruction]=RAR0OperandsFlag | RARIsUnconditionalJumpFlag,
 	[RARNotInstruction]=RAR1OperandFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag,
 	[RARShlInstruction]=RAR2OperandsFlag | RARHasByteModeFlag | RARWritesFirstOperandFlag | RARWritesStatusFlag,

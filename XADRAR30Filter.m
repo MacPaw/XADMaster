@@ -60,8 +60,8 @@ startPosition:(off_t)startpos length:(int)length
 
 	if(![invocation executeOnVitualMachine:vm]) [XADException raiseIllegalDataException];
 
-	filteredblockaddress=[vm readWordAtAddress:RARProgramGlobalAddress+0x20]&RARProgramMemoryMask;
-	filteredblocklength=[vm readWordAtAddress:RARProgramGlobalAddress+0x1c]&RARProgramMemoryMask;
+	filteredblockaddress=[vm readWordAtAddress:RARProgramSystemGlobalAddress+0x20]&RARProgramMemoryMask;
+	filteredblocklength=[vm readWordAtAddress:RARProgramSystemGlobalAddress+0x1c]&RARProgramMemoryMask;
 
 	if(filteredblockaddress+filteredblocklength>=RARProgramMemorySize) filteredblockaddress=filteredblocklength=0;
 

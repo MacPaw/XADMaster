@@ -140,7 +140,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 		for(int i=0;i<length;i++) databytes[i]=CSInputNextBitString(input,8);
 
-		staticdata=data;
+		staticdata=[data retain];
 	}
 
 	// Read instructions.
@@ -357,27 +357,27 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isRelativeJump:(BOOL)isrel cu
 -(BOOL)executeOnVitualMachine:(XADRARVirtualMachine *)vm
 {
 	int globallength=[globaldata length];
-	if(globallength>RARProgramGlobalSize) globallength=RARProgramGlobalSize;
-	[vm writeMemoryAtAddress:RARProgramGlobalAddress length:globallength fromData:globaldata];
+	if(globallength>RARProgramSystemGlobalSize) globallength=RARProgramSystemGlobalSize;
+	[vm writeMemoryAtAddress:RARProgramSystemGlobalAddress length:globallength fromData:globaldata];
 
 	NSData *staticdata=[programcode staticData];
 	if(staticdata)
 	{
 		int staticlength=[staticdata length];
-		if(staticlength>RARProgramGlobalSize-globallength) staticlength=RARProgramGlobalSize-globallength;
-		[vm writeMemoryAtAddress:RARProgramGlobalAddress length:staticlength fromData:staticdata];
+		if(staticlength>RARProgramUserGlobalSize-globallength) staticlength=RARProgramUserGlobalSize-globallength;
+		[vm writeMemoryAtAddress:RARProgramUserGlobalAddress length:staticlength fromData:staticdata];
 	}
 
 	[vm setRegisters:initialregisters];
 
 	if(![vm executeProgramCode:programcode]) return NO;
 
-	uint32_t newgloballength=[vm readWordAtAddress:RARProgramGlobalAddress+0x30];
+	uint32_t newgloballength=[vm readWordAtAddress:RARProgramSystemGlobalAddress+0x30];
 	if(newgloballength>RARProgramUserGlobalSize) newgloballength=RARProgramUserGlobalSize;
 	if(newgloballength>0)
 	{
-		[vm readMemoryAtAddress:RARProgramGlobalAddress
-		length:newgloballength+RARProgramSystemGlobalSize
+		[vm readMemoryAtAddress:RARProgramSystemGlobalAddress
+		length:RARProgramSystemGlobalSize+newgloballength
 		toMutableData:[globaldata mutableBytes]];
 	}
 	else [globaldata setLength:0];

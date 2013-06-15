@@ -9,9 +9,10 @@
 #define RARProgramMemorySize 0x40000
 #define RARProgramMemoryMask (RARProgramMemorySize-1)
 #define RARProgramWorkSize 0x3c000
-#define RARProgramGlobalAddress RARProgramWorkSize
 #define RARProgramGlobalSize 0x2000
+#define RARProgramSystemGlobalAddress RARProgramWorkSize
 #define RARProgramSystemGlobalSize 64
+#define RARProgramUserGlobalAddress (RARProgramSystemGlobalAddress+RARProgramSystemGlobalSize)
 #define RARProgramUserGlobalSize (RARProgramGlobalSize-RARProgramSystemGlobalSize)
 
 typedef struct RARVirtualMachine

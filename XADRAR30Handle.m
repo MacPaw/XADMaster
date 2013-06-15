@@ -560,7 +560,7 @@
 	else blocklength=oldfilterlength[num];
 
 	uint32_t registers[8]={
-		[3]=RARProgramGlobalAddress,[4]=blocklength,
+		[3]=RARProgramSystemGlobalAddress,[4]=blocklength,
 		[5]=usagecount[num],[7]=RARProgramMemorySize
 	};
 

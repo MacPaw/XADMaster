@@ -129,7 +129,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 			[[matches objectAtIndex:1] escapedPattern],
 			(long)[(NSString *)[matches objectAtIndex:2] length],
 			[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
-		firstFileExtension:@"rar"];
+		];
 	}
 
 	// Old naming scheme. Just look for rar/r01/s01/... files.
@@ -838,13 +838,13 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	// New naming scheme. Find the last number in the name, and look for other files
 	// with the same number of digits in the same location.
 	NSArray *matches;
-	if((matches=[name substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.exe$" options:REG_ICASE]))
+	if((matches=[name substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.(exe|sfx)$" options:REG_ICASE]))
 	return [self scanForVolumesWithFilename:name
-	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%ld}%@.(rar|exe)$",
+	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%ld}%@.(rar|exe|sfx)$",
 		[[matches objectAtIndex:1] escapedPattern],
 		(long)[(NSString *)[matches objectAtIndex:2] length],
 		[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
-	firstFileExtension:@"exe"];
+	];
 
 	return nil;
 }

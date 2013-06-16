@@ -161,6 +161,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 // Internal functions
 
++(NSArray *)scanForVolumesWithFilename:(NSString *)filename regex:(XADRegex *)regex;
 +(NSArray *)scanForVolumesWithFilename:(NSString *)filename
 regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 

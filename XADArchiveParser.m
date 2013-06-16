@@ -756,6 +756,11 @@ static NSInteger XADVolumeSort(id entry1,id entry2,void *extptr)
 	else return [str1 compare:str2 options:NSCaseInsensitiveSearch];
 }
 
++(NSArray *)scanForVolumesWithFilename:(NSString *)filename regex:(XADRegex *)regex
+{
+	return [self scanForVolumesWithFilename:filename regex:regex firstFileExtension:nil];
+}
+
 +(NSArray *)scanForVolumesWithFilename:(NSString *)filename
 regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 {

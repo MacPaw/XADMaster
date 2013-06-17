@@ -1,4 +1,5 @@
 #import "XADXARParser.h"
+#import "XADGzipParser.h"
 #import "CSZlibHandle.h"
 #import "CSBzip2Handle.h"
 #import "XADLZMAHandle.h"
@@ -93,6 +94,31 @@ static const NSString *DateFormat=@"Date";
 	NSXMLParser *xml=[[[NSXMLParser alloc] initWithData:data] autorelease];
 	[xml setDelegate:self];
 	[xml parse];
+
+	// Check for XIP files, the worst file format ever. This is a cpio file
+	// inside a gz file inside a xar, plus a metadata file. The metadata file
+	// is currently ignored.
+	// The XARDisableXIP boolean property can be used to disable this check.
+	NSNumber *disablexip=[[self properties] objectForKey:@"XARDisableXIP"];
+	if(!disablexip || ![disablexip boolValue])
+	if([files count]==2)
+	{
+		NSMutableDictionary *first=[files objectAtIndex:0];
+		NSMutableDictionary *second=[files objectAtIndex:1];
+		NSString *firstname=[first objectForKey:@"Name"];
+		NSString *secondname=[second objectForKey:@"Name"];
+		NSString *secondstyle=[second objectForKey:@"XAREncodingStyle"];
+
+		if([firstname isEqual:@"Metadata"] &&
+		[secondname isEqual:@"Content"] &&
+		[secondstyle isEqual:@"application/octet-stream"])
+		{
+			[second setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];
+			[second setObject:[NSNumber numberWithBool:YES] forKey:@"XARIsXIP"];
+			[self finishFile:second parentPath:[self XADPath]];
+			return;
+		}
+	}
 
 	NSEnumerator *enumerator=[files objectEnumerator];
 	NSMutableDictionary *file;
@@ -190,6 +216,11 @@ static const NSString *DateFormat=@"Date";
 
 	if(![file objectForKey:XADFileSizeKey]) [file setObject:[NSNumber numberWithInt:0] forKey:XADFileSizeKey];
 
+	NSString *encodingstyle=[file objectForKey:@"XAREncodingStyle"];
+	NSNumber *isxip=[file objectForKey:@"XARIsXIP"];
+	XADString *compressionname=[self compressionNameForEncodingStyle:encodingstyle isXIP:isxip && [isxip boolValue]];
+	if(compressionname) [file setObject:compressionname forKey:XADCompressionNameKey];
+
 	[self addEntryWithDictionary:file];
 
 	if(resfork)
@@ -211,6 +242,9 @@ static const NSString *DateFormat=@"Date";
 		if(checksumstyle) [resfile setObject:checksumstyle forKey:@"XARChecksumStyle"];
 		if(encodingstyle) [resfile setObject:encodingstyle forKey:@"XAREncodingStyle"];
 
+		XADString *compressionname=[self compressionNameForEncodingStyle:encodingstyle isXIP:NO];
+		if(compressionname) [resfile setObject:compressionname forKey:XADCompressionNameKey];
+
 		[resfile setObject:[NSNumber numberWithBool:YES] forKey:XADIsResourceForkKey];
 
 		[self addEntryWithDictionary:resfile];
@@ -222,6 +256,22 @@ static const NSString *DateFormat=@"Date";
 		NSMutableDictionary *file;
 		while((file=[enumerator nextObject])) [self finishFile:file parentPath:path];
 	}
+}
+
+-(XADString *)compressionNameForEncodingStyle:(NSString *)encodingstyle isXIP:(BOOL)isxip
+{
+	NSString *compressionname=nil;
+
+	if(isxip) compressionname=@"Deflate";
+	else if(!encodingstyle || [encodingstyle length]==0) compressionname=@"None";
+	else if([encodingstyle isEqual:@"application/octet-stream"]) compressionname=@"None";
+	else if([encodingstyle isEqual:@"application/x-gzip"]) compressionname=@"Deflate";
+	else if([encodingstyle isEqual:@"application/x-bzip2"]) compressionname=@"Bzip2";
+	else if([encodingstyle isEqual:@"application/x-xz"]) compressionname=@"LZMA (XZ)";
+	else if([encodingstyle isEqual:@"application/x-lzma"]) compressionname=@"LZMA";
+
+	if(compressionname) return [self XADStringWithString:compressionname];
+	else return nil;
 }
 
 -(void)parser:(NSXMLParser *)parser didStartElement:(NSString *)name
@@ -464,9 +514,23 @@ destinationDictionary:(NSMutableDictionary *)dest
 		checksumstyle=[dict objectForKey:@"XARChecksumStyle"];
 	}
 
-	return [self handleForEncodingStyle:[dict objectForKey:@"XAREncodingStyle"]
-	offset:[dict objectForKey:XADDataOffsetKey] length:[dict objectForKey:XADDataLengthKey]
-	size:[dict objectForKey:XADFileSizeKey] checksum:checksumdata checksumStyle:checksumstyle];
+	NSNumber *offset=[dict objectForKey:XADDataOffsetKey];
+	NSNumber *length=[dict objectForKey:XADDataLengthKey];
+	NSNumber *size=[dict objectForKey:XADFileSizeKey];
+
+	NSNumber *isxip=[dict objectForKey:@"XARIsXIP"];
+	if(isxip && [isxip boolValue])
+	{
+		CSHandle *handle=[[self handle] nonCopiedSubHandleFrom:[offset longLongValue]+heapoffset
+		length:[length longLongValue]];
+
+		return [[[XADGzipHandle alloc] initWithHandle:handle] autorelease];
+	}
+	else
+	{
+		return [self handleForEncodingStyle:[dict objectForKey:@"XAREncodingStyle"]
+		offset:offset length:length size:size checksum:checksumdata checksumStyle:checksumstyle];
+	}
 }
 
 -(CSHandle *)handleForEncodingStyle:(NSString *)encodingstyle offset:(NSNumber *)offset

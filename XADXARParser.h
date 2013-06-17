@@ -22,6 +22,7 @@
 -(void)parse;
 
 -(void)finishFile:(NSMutableDictionary *)file parentPath:(XADPath *)parentpath;
+-(XADString *)compressionNameForEncodingStyle:(NSString *)encodingstyle isXIP:(BOOL)isxip;
 
 -(void)parser:(NSXMLParser *)parser didStartElement:(NSString *)name
 namespaceURI:(NSString *)namespace qualifiedName:(NSString *)qname

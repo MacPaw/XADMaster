@@ -165,7 +165,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	int centraldirstartdisk=[fh readUInt16LE];
 	/*off_t numentriesdisk=*/[fh readUInt16LE];
 	off_t numentries=[fh readUInt16LE];
-	/*off_t centralsize=*/[fh readUInt32LE];
+	off_t centralsize=[fh readUInt32LE];
 	off_t centraloffset=[fh readUInt32LE];
 	int commentlength=[fh readUInt16LE];
 
@@ -193,7 +193,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 			centraldirstartdisk=[fh readUInt32LE];
 			/*off_t numentriesdisk=*/[fh readUInt64LE];
 			numentries=[fh readUInt64LE];
-			/*off_t centralsize=*/[fh readUInt64LE];
+			centralsize=[fh readUInt64LE];
 			centraloffset=[fh readUInt64LE];
 		}
 	}
@@ -262,6 +262,15 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		if(commentlength) commentdata=[fh readDataOfLength:commentlength];
         
 		off_t next=[fh offsetInFile];
+
+		// Some idiotic compressors write files with more than 65535 files without
+		// using Zip64, so numentries overflows. Try to detect if there is enough space
+		// left in the central directory for another 65536 files, and if so, extend the
+		// parsing to include them. This may happen multiple times.
+		if(i==numentries-1 && zip64offs<0)
+		{
+			if(centraloffset+centralsize-next>65536*46) numentries+=65536;
+		}
 
 		// Read local header
 		[fh seekToFileOffset:[self offsetForVolume:startdisk offset:locheaderoffset]];

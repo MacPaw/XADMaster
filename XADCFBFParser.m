@@ -9,6 +9,7 @@
 	if((self=[super init]))
 	{
 		sectable=NULL;
+		minisectable=NULL;
 	}
 	return self;
 }
@@ -16,6 +17,7 @@
 -(void)dealloc
 {
 	free(sectable);
+	free(minisectable);
 	[super dealloc];
 }
 

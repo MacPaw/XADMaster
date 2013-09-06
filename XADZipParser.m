@@ -679,6 +679,16 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 				uint32_t crc=[fh readUInt32LE];
 				NSData *unicodedata=[fh readDataOfLength:size-5];
 
+				// Some archivers append garbage zero bytes to the end of the name.
+				// Remove them if necessary.
+				const uint8_t *bytes=[unicodedata bytes];
+				int length=size-5;
+				if(length && bytes[length-1]==0)
+				{
+					while(length && bytes[length-1]==0) length--;
+					unicodedata=[unicodedata subdataWithRange:NSMakeRange(0,length)];
+				}
+
 				if((XADCalculateCRC(0xffffffff,[namedata bytes],[namedata length],
 				XADCRCTable_edb88320)^0xffffffff)==crc)
 				{

@@ -205,7 +205,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		extractOpcode:extractopcode ignoreOverwrite:NO
 		directoryOpcode:extractopcode-2 directoryArgument:0 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
-		stringStartOffset:stringtable stringEndOffset:uncomplength unicode:NO];
+		stringStartOffset:stringtable stringEndOffset:uncomplength unicode:NO
+		newDateTimeOrder:NO];
 	}
 	else
 	{
@@ -234,7 +235,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		extractOpcode:extractopcode ignoreOverwrite:NO
 		directoryOpcode:extractopcode-2 directoryArgument:0 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
-		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO];
+		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO
+		newDateTimeOrder:NO];
 	}
 }
 
@@ -281,7 +283,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		extractOpcode:4 ignoreOverwrite:NO
 		directoryOpcode:3 directoryArgument:1 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
-		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO];
+		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO
+		newDateTimeOrder:NO];
 	}
 	else
 	{
@@ -292,7 +295,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		extractOpcode:extractopcode ignoreOverwrite:NO
 		directoryOpcode:extractopcode-2 directoryArgument:0 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
-		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO];
+		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO
+		newDateTimeOrder:NO];
 	}
 }
 
@@ -376,7 +380,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		extractOpcode:20 ignoreOverwrite:YES
 		directoryOpcode:11 directoryArgument:1 assignOpcode:25
 		startOffset:entryoffs endOffset:entryoffs+entrynum*4*7 stride:7
-		stringStartOffset:stringoffs stringEndOffset:nextoffs unicode:unicode];
+		stringStartOffset:stringoffs stringEndOffset:nextoffs unicode:unicode
+		newDateTimeOrder:YES];
 	}
 	else
 	{
@@ -404,7 +409,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 		extractOpcode:extractopcode ignoreOverwrite:NO
 		directoryOpcode:diropcode directoryArgument:1 assignOpcode:-1
 		startOffset:(stride+phase)*4 endOffset:stringtable stride:stride
-		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO];
+		stringStartOffset:stringtable stringEndOffset:headerlength unicode:NO
+		newDateTimeOrder:YES];
 	}
 }
 
@@ -420,6 +426,7 @@ extractOpcode:(int)extractopcode ignoreOverwrite:(BOOL)ignoreoverwrite
 directoryOpcode:(int)diropcode directoryArgument:(int)dirarg assignOpcode:(int)assignopcode
 startOffset:(int)startoffs endOffset:(int)endoffs stride:(int)stride
 stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BOOL)unicode
+newDateTimeOrder:(BOOL)neworder
 {
 	const uint8_t *bytes=[header bytes];
 	int length=[header length];
@@ -438,8 +445,18 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BO
 			uint32_t filename=args[1];
 			NSNumber *offs=[NSNumber numberWithUnsignedInt:args[2]];
 			NSNumber *block=[blocks objectForKey:offs];
-			uint32_t datetimehigh=args[3];
-			uint32_t datetimelow=args[4];
+			uint32_t datetimelow,datetimehigh;
+
+			if(neworder)
+			{
+				datetimelow=args[3];
+				datetimehigh=args[4];
+			}
+			else
+			{
+				datetimelow=args[4];
+				datetimehigh=args[3];
+			}
 
 			if(ignoreoverwrite || overwrite<4)
 			if(filename<stringendoffs-stringoffs)
@@ -452,9 +469,14 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BO
 					unicode:unicode header:header stringStartOffset:stringoffs
 					stringEndOffset:stringendoffs currentPath:dir]],XADFileNameKey,
 					[NSNumber numberWithUnsignedInt:len&0x7fffffff],XADCompressedSizeKey,
-					[NSDate XADDateWithWindowsFileTimeLow:datetimelow high:datetimehigh],XADLastModificationDateKey,
 					offs,@"NSISDataOffset",
 				nil];
+
+				if(datetimehigh!=0xffffffff && datetimelow!=0xffffffff)
+				{
+					[dict setObject:[NSDate XADDateWithWindowsFileTimeLow:datetimelow high:datetimehigh]
+					forKey:XADLastModificationDateKey];
+				}
 
 				if((len&0x80000000) || solidhandle)
 				{

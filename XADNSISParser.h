@@ -28,7 +28,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 extractOpcode:(int)extractopcode ignoreOverwrite:(BOOL)ignoreoverwrite
 directoryOpcode:(int)diropcode directoryArgument:(int)dirarg assignOpcode:(int)assignopcode
 startOffset:(int)startoffs endOffset:(int)endoffs stride:(int)stride
-stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BOOL)unicode;
+stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs unicode:(BOOL)unicode
+newDateTimeOrder:(BOOL)neworder;
 -(void)makeEntryArrayStrictlyIncreasing:(NSMutableArray *)array;
 
 -(NSDictionary *)findBlocksWithHandle:(CSHandle *)fh;

@@ -66,6 +66,16 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 		firstFileExtension:nil];
 	}
 
+	// In case the first part of a .1.zip multi-part file was detected as Zip,
+	// scan for the other parts.
+	if((matches=[name substringsCapturedByPattern:@"^(.*)\\.1\\.zip$" options:REG_ICASE]))
+	{
+		return [self scanForVolumesWithFilename:name
+		regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@(\\.[0-9]+|())\\.zip$",
+			[[matches objectAtIndex:1] escapedPattern]] options:REG_ICASE]
+		firstFileExtension:nil];
+	}
+
 	return nil;
 }
 

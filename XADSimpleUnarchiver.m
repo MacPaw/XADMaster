@@ -41,7 +41,7 @@
 
 		NSString *name=[archiveparser name];
 		if([name matchedByPattern:
-		@"\\.(part[0-9]+\\.rar|tar\\.gz|tar\\.bz2|tar\\.lzma|sit\\.hqx)$"
+		@"\\.(part[0-9]+\\.rar|tar\\.gz|tar\\.bz2|tar\\.lzma|tar\\.xz|tar\\.Z|sit\\.hqx)$"
 		options:REG_ICASE])
 		{
 			enclosingdir=[[[name stringByDeletingPathExtension]

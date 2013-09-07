@@ -14,6 +14,10 @@ int numerrors;
 
 int main(int argc,const char **argv)
 {
+	#ifdef GNUSTEP
+	setlocale(LC_ALL,""); // GNUstep requires this.
+	#endif
+
 	NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
 	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];

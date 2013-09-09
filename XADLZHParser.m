@@ -2,6 +2,7 @@
 #import "XADLZHStaticHandle.h"
 #import "XADLZHDynamicHandle.h"
 #import "XADLArcHandles.h"
+#import "XADPMArc1Handle.h"
 #import "XADLZHOldHandles.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
@@ -394,9 +395,12 @@
 	{
 		// no compression, do nothing
 	}
+	else if([method isEqual:@"-pm1-"])
+	{
+		handle=[[[XADPMArc1Handle alloc] initWithHandle:handle length:size] autorelease];
+	}
 	else if([method isEqual:@"-pm2-"])
 	{
-		[self reportInterestingFileWithReason:@"-pm2- compression"];
 		handle=[[[XADPMArc2Handle alloc] initWithHandle:handle length:size] autorelease];
 	}
 	else // not supported

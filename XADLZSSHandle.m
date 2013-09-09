@@ -60,8 +60,15 @@
 		int offset,length;
 		int val=nextliteral_ptr(self,@selector(nextLiteralOrOffset:andLength:atPosition:),&offset,&length,pos);
 
-		if(val>=0) return windowbuffer[pos&windowmask]=val;
-		else if(val==XADLZSSEnd) CSByteStreamEOF(self);
+		if(val>=0)
+		{
+			windowbuffer[pos&windowmask]=val;
+			return val;
+		}
+		else if(val==XADLZSSEnd)
+		{
+			CSByteStreamEOF(self);
+		}
 		else
 		{
 			matchlength=length;
@@ -70,8 +77,12 @@
 	}
 
 	matchlength--;
+
 	uint8_t byte=windowbuffer[matchoffset++&windowmask];
-	return windowbuffer[pos&windowmask]=byte;
+
+	windowbuffer[pos&windowmask]=byte;
+
+	return byte;
 }
 
 -(void)resetLZSSHandle {}

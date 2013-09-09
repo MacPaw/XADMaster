@@ -720,6 +720,11 @@
 		1B6F13E1163E25320054C1AE /* XADSHA1Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B6F13DB163E25320054C1AE /* XADSHA1Handle.m */; };
 		1B6F13E2163E25320054C1AE /* XADSHA1Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B6F13DB163E25320054C1AE /* XADSHA1Handle.m */; };
 		1B6F13E3163E25320054C1AE /* XADSHA1Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B6F13DB163E25320054C1AE /* XADSHA1Handle.m */; };
+		1B738C9F17DBC83400481D43 /* XADPMArc1Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B738C9D17DBC83400481D43 /* XADPMArc1Handle.h */; };
+		1B738CA017DBC83400481D43 /* XADPMArc1Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B738C9E17DBC83400481D43 /* XADPMArc1Handle.m */; };
+		1B738CA317DBE7E400481D43 /* XADPMArc1Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B738C9E17DBC83400481D43 /* XADPMArc1Handle.m */; };
+		1B738CA417DBE7E900481D43 /* XADPMArc1Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B738C9E17DBC83400481D43 /* XADPMArc1Handle.m */; };
+		1B738CA517DBE7EA00481D43 /* XADPMArc1Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B738C9E17DBC83400481D43 /* XADPMArc1Handle.m */; };
 		1B7450AB1300D76F008D80FE /* XADStuffItXX86Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7450A91300D76F008D80FE /* XADStuffItXX86Handle.h */; };
 		1B7450AC1300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7450AA1300D76F008D80FE /* XADStuffItXX86Handle.m */; };
 		1B7450AE1300D76F008D80FE /* XADStuffItXX86Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7450AA1300D76F008D80FE /* XADStuffItXX86Handle.m */; };
@@ -1903,6 +1908,8 @@
 		1B6F13CF163E25160054C1AE /* XADMD5Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADMD5Handle.m; sourceTree = "<group>"; };
 		1B6F13DA163E25320054C1AE /* XADSHA1Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADSHA1Handle.h; sourceTree = "<group>"; };
 		1B6F13DB163E25320054C1AE /* XADSHA1Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADSHA1Handle.m; sourceTree = "<group>"; };
+		1B738C9D17DBC83400481D43 /* XADPMArc1Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPMArc1Handle.h; sourceTree = "<group>"; };
+		1B738C9E17DBC83400481D43 /* XADPMArc1Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPMArc1Handle.m; sourceTree = "<group>"; };
 		1B7450A91300D76F008D80FE /* XADStuffItXX86Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXX86Handle.h; sourceTree = "<group>"; };
 		1B7450AA1300D76F008D80FE /* XADStuffItXX86Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXX86Handle.m; sourceTree = "<group>"; };
 		1B7451A713081B89008D80FE /* XADISO9660Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADISO9660Parser.h; sourceTree = "<group>"; };
@@ -2728,6 +2735,8 @@
 				1B3E35D40F3F96CF003EEF98 /* XADLZHDynamicHandle.m */,
 				1B3E35D70F3F9B17003EEF98 /* XADLArcHandles.h */,
 				1B3E35D80F3F9B17003EEF98 /* XADLArcHandles.m */,
+				1B738C9D17DBC83400481D43 /* XADPMArc1Handle.h */,
+				1B738C9E17DBC83400481D43 /* XADPMArc1Handle.m */,
 				1B3A64C610150DB600AE25A8 /* XADLZHOldHandles.h */,
 				1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */,
 			);
@@ -3724,6 +3733,7 @@
 				1B7A06D61642131A0077A3AA /* XADResourceFork.h in Headers */,
 				1BA155E21645BF0600BFF440 /* XADStuffItDESHandle.h in Headers */,
 				1B86817B167BCEB7007BEA5D /* XADWARCParser.h in Headers */,
+				1B738C9F17DBC83400481D43 /* XADPMArc1Handle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4321,6 +4331,7 @@
 				1B7A06DB1642131A0077A3AA /* XADResourceFork.m in Sources */,
 				1BA155E71645BF0600BFF440 /* XADStuffItDESHandle.m in Sources */,
 				1B86817F167C1005007BEA5D /* XADWARCParser.m in Sources */,
+				1B738CA317DBE7E400481D43 /* XADPMArc1Handle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4549,6 +4560,7 @@
 				1B7A06DD1642131A0077A3AA /* XADResourceFork.m in Sources */,
 				1BA155E91645BF0600BFF440 /* XADStuffItDESHandle.m in Sources */,
 				1B868181167C1006007BEA5D /* XADWARCParser.m in Sources */,
+				1B738CA517DBE7EA00481D43 /* XADPMArc1Handle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4778,6 +4790,7 @@
 				1B7A06DC1642131A0077A3AA /* XADResourceFork.m in Sources */,
 				1BA155E81645BF0600BFF440 /* XADStuffItDESHandle.m in Sources */,
 				1B868180167C1005007BEA5D /* XADWARCParser.m in Sources */,
+				1B738CA417DBE7E900481D43 /* XADPMArc1Handle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5052,6 +5065,7 @@
 				1B7A06DA1642131A0077A3AA /* XADResourceFork.m in Sources */,
 				1BA155E61645BF0600BFF440 /* XADStuffItDESHandle.m in Sources */,
 				1B86817C167BCEB7007BEA5D /* XADWARCParser.m in Sources */,
+				1B738CA017DBC83400481D43 /* XADPMArc1Handle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

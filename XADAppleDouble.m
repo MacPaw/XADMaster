@@ -150,6 +150,7 @@ extendedAttributes:(NSDictionary *)extattrs
 	};
 
 	// Calculate FinderInfo and extended attributes size field.
+	NSMutableDictionary *encodedkeys=[NSMutableDictionary dictionary];
 	int numattributes=0,attributeentrysize=0,attributedatasize=0;
 
 	// Sort keys and iterate over them.
@@ -162,12 +163,15 @@ extendedAttributes:(NSDictionary *)extattrs
 		if([key isEqual:@"com.apple.FinderInfo"]) continue;
 
  		NSData *data=[extattrs objectForKey:key];
-		int namelen=[key lengthOfBytesUsingEncoding:NSUTF8StringEncoding]+1;
+		NSData *keydata=[key dataUsingEncoding:NSUTF8StringEncoding];
+		int namelen=[keydata length]+1;
 		if(namelen>128) continue; // Skip entries with too long names.
 
 		numattributes++;
 		attributeentrysize+=(11+namelen+3)&~3; // Aligned to 4 bytes.
 		attributedatasize+=[data length];
+
+		[encodedkeys setObject:keydata forKey:key];
 	}
 
 	// Set FinderInfo size field and resource fork offset field.
@@ -233,12 +237,11 @@ extendedAttributes:(NSDictionary *)extattrs
 		NSString *key;
 		while((key=[enumerator nextObject]))
 		{
-			// Ignore FinderInfo.
-			if([key isEqual:@"com.apple.FinderInfo"]) continue;
-
 			NSData *data=[extattrs objectForKey:key];
-			int namelen=[key lengthOfBytesUsingEncoding:NSUTF8StringEncoding]+1;
-			if(namelen>128) continue; // Skip entries with too long names.
+			NSData *keydata=[encodedkeys objectForKey:key];
+			if(!keydata) continue;
+
+			int namelen=[keydata length]+1;
 
 			// Attribute entry header template.
 			uint8_t entryheader[11]=
@@ -273,12 +276,9 @@ extendedAttributes:(NSDictionary *)extattrs
 		enumerator=[keys objectEnumerator];
 		while((key=[enumerator nextObject]))
 		{
-			// Ignore FinderInfo.
-			if([key isEqual:@"com.apple.FinderInfo"]) continue;
-
 			NSData *data=[extattrs objectForKey:key];
-			int namelen=[key lengthOfBytesUsingEncoding:NSUTF8StringEncoding]+1;
-			if(namelen>128) continue; // Skip entries with too long names.
+			NSData *keydata=[encodedkeys objectForKey:key];
+			if(!keydata) continue;
 
 			[fh writeData:data];
 		}

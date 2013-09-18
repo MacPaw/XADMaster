@@ -285,8 +285,15 @@
 
 -(NSString *)createdItemOrActualDestination
 {
-	if(lookslikesolo && enclosingdir && removesolo) return soloitem;
-	else return finaldestination;
+	if(lookslikesolo && enclosingdir && removesolo)
+	{
+		if(soloitem) return soloitem;
+		else return @".";
+	}
+	else
+	{
+		return finaldestination;
+	}
 }
 
 
@@ -665,7 +672,8 @@
 		NSArray *keys=[renames allKeys];
 		if([keys count]==1)
 		{
-			id value=[[renames objectForKey:[keys objectAtIndex:0]] objectForKey:@"."];
+			NSString *key=[keys objectAtIndex:0];
+			id value=[[renames objectForKey:key] objectForKey:@"."];
 			if(value!=[NSNull null]) return value;
 		}
 	}

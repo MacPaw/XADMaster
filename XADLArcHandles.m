@@ -12,7 +12,7 @@
 	if(CSInputNextBit(input)) return CSInputNextBitString(input,8);
 	else
 	{
-		*offset=pos-CSInputNextBitString(input,11)-17;
+		*offset=(int)pos-CSInputNextBitString(input,11)-17;
 		*length=CSInputNextBitString(input,4)+2; // TODO: 3 or 2?
 
 		return XADLZSSMatch;
@@ -55,7 +55,7 @@
 	{
 		int byte2=CSInputNextByte(input);
 
-		*offset=pos-byte-((byte2&0xf0)<<4)-18;
+		*offset=(int)pos-byte-((byte2&0xf0)<<4)-18;
 		*length=(byte2&0x0f)+3;
 
 		return XADLZSSMatch;

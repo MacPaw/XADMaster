@@ -29,7 +29,7 @@
 
 -(int)produceBlockAtOffset:(off_t)pos
 {
-	int size=ReadSitxP2(parent);
+	int size=(int)ReadSitxP2(parent);
 	if(!size) return -1;
 
 	if(size>currsize)

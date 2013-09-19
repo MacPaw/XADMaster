@@ -113,7 +113,7 @@ FUNCHOOK(InHookDiskArc)
           UtilityBase = xadMasterBase->xmb_UtilityBase;
 #endif
           if((ti = FindTagItem(XAD_ENTRYNUMBER, ai->xaip_InDiskArc)))
-            i = ti->ti_Data;
+            i = (xadUINT32)ti->ti_Data;
 
           if(!(di = dap->ai->xai_DiskInfo))
             err = XADERR_ILLEGALDATA;

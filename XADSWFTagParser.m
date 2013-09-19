@@ -102,7 +102,7 @@ NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 
 -(int)tag { return currtag; }
 -(int)tagLength { return currlen; }
--(int)tagBytesLeft { return nexttag-[fh offsetInFile]; }
+-(int)tagBytesLeft { return (int)(nexttag-[fh offsetInFile]); }
 -(int)frame { return currframe; }
 -(double)time { return (double)currframe/((double)fps/256.0); }
 
@@ -153,7 +153,7 @@ NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 
 -(int)subTag { return subtag; }
 -(int)subTagLength { return sublen; }
--(int)subTagBytesLeft { return nextsubtag-[fh offsetInFile]; }
+-(int)subTagBytesLeft { return (int)(nextsubtag-[fh offsetInFile]); }
 -(int)subFrame { return subframe; }
 -(double)subTime { return (double)subframe/((double)fps/256.0); }
 

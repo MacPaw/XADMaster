@@ -14,7 +14,7 @@ static void InsertNode(PPMdSubAllocatorVariantH *self,void *p,int index);
 static void *RemoveNode(PPMdSubAllocatorVariantH *self,int index);
 static unsigned int I2B(PPMdSubAllocatorVariantH *self,int index);
 static void SplitBlock(PPMdSubAllocatorVariantH *self,void *pv,int oldindex,int newindex);
-static uint32_t GetUsedMemory(PPMdSubAllocatorVariantH *self);
+//static uint32_t GetUsedMemory(PPMdSubAllocatorVariantH *self);
 
 static void InitVariantH(PPMdSubAllocatorVariantH *self);
 static uint32_t AllocContextVariantH(PPMdSubAllocatorVariantH *self);

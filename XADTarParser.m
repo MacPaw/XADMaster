@@ -26,7 +26,7 @@
 	unsigned char starExtendedMagic[4];
 	[header getBytes:starExtendedMagic range:NSMakeRange(508,4)]; // "tar\0"
 	
-	unsigned int checksum = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(148,8) buffer:header];
+	unsigned int checksum = (unsigned int)[XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(148,8) buffer:header];
 	if( [XADTarParser isTarChecksumCorrect:header checksum:checksum] == YES )
 	{
 		tarFormat = TAR_FORMAT_V7_RECOGNIZED;
@@ -103,7 +103,7 @@
 +(int64_t)octalToDecimal:(int64_t)octal
 {
 	int64_t decimal = 0;
-	int temp = 0;
+	int64_t temp = 0;
 	int64_t power_of_ten = 10000000000000;
 	int64_t power_of_eight = 549755813888;
 	while( power_of_ten != 1 )
@@ -181,8 +181,8 @@
 			break;
 		}
 
-		[[dict objectForKey:@"TARSparseRegionOffsets"] addObject:[NSNumber numberWithInt:regionOffset]];
-		[[dict objectForKey:@"TARSparseRegionLengths"] addObject:[NSNumber numberWithInt:regionLength]];
+		[[dict objectForKey:@"TARSparseRegionOffsets"] addObject:[NSNumber numberWithLongLong:regionOffset]];
+		[[dict objectForKey:@"TARSparseRegionLengths"] addObject:[NSNumber numberWithLongLong:regionLength]];
 	}
 }
 
@@ -193,13 +193,13 @@
 	name[100] = '\000';
 	[dict setObject:[self XADPathWithCString:name separators:XADUnixPathSeparator] forKey:XADFileNameKey];
 	
-	unsigned int mode = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(100,8) buffer:header];
+	unsigned int mode = (unsigned int)[XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(100,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:mode] forKey:XADPosixPermissionsKey];
 
-	unsigned int uid = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(108,8) buffer:header];
+	unsigned int uid = (unsigned int)[XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(108,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:uid] forKey:XADPosixUserKey];
 
-	unsigned int gid = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(116,8) buffer:header];
+	unsigned int gid = (unsigned int)[XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(116,8) buffer:header];
 	[dict setObject:[NSNumber numberWithInt:gid] forKey:XADPosixGroupKey];
 
 	uint64_t size = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(124,12) buffer:header];
@@ -208,10 +208,10 @@
 	[dict setObject:[NSNumber numberWithLongLong:(size+(512-size%512))] forKey:XADCompressedSizeKey];
 	[dict setObject:[NSNumber numberWithLongLong:size] forKey:XADDataLengthKey];
 
-	unsigned long mtime = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(136,12) buffer:header];
+	unsigned long mtime = (unsigned int)[XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(136,12) buffer:header];
 	[dict setObject:[NSDate dateWithTimeIntervalSince1970:mtime] forKey:XADLastModificationDateKey];
 
-	unsigned int checksum = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(148,8) buffer:header];
+	unsigned int checksum = (unsigned int)[XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(148,8) buffer:header];
 	if( [XADTarParser isTarChecksumCorrect:header checksum:checksum] == NO )
 	{
 		[XADException raiseIllegalDataException];
@@ -269,7 +269,7 @@
 		}
 
 		// Grab the pair from the header.
-		int next_pair_size = [XADTarParser readNumberInRangeFromBuffer:NSMakeRange(start_pos,read_length) buffer:header] - read_length;
+		int next_pair_size = (int)[XADTarParser readNumberInRangeFromBuffer:NSMakeRange(start_pos,read_length) buffer:header] - read_length;
 		int next_pair_offset = position + next_pair_size;
 		char key_val_pair[next_pair_size];
 		memset( key_val_pair, '\0', next_pair_size );
@@ -310,10 +310,10 @@
 			[dict setObject:[self XADStringWithCString:value encodingName:XADUTF8StringEncodingName] forKey:XADPosixGroupNameKey];
 		}
 		else if( strcmp( key, "uid" ) == 0 ) {
-			[dict setObject:[NSNumber numberWithInt:[XADTarParser longFromCString:value]] forKey:XADPosixUserKey];
+			[dict setObject:[NSNumber numberWithInt:(int)[XADTarParser longFromCString:value]] forKey:XADPosixUserKey];
 		}
 		else if( strcmp( key, "gid" ) == 0 ) {
-			[dict setObject:[NSNumber numberWithInt:[XADTarParser longFromCString:value]] forKey:XADPosixGroupKey];
+			[dict setObject:[NSNumber numberWithInt:(int)[XADTarParser longFromCString:value]] forKey:XADPosixGroupKey];
 		}
 		
 		// File path and link path.
@@ -326,7 +326,7 @@
 
 		// File size.
 		else if( strcmp( key, "size" ) == 0 ) {
-			[dict setObject:[NSNumber numberWithInt:[XADTarParser longFromCString:value]] forKey:XADFileSizeKey];
+			[dict setObject:[NSNumber numberWithInt:(int)[XADTarParser longFromCString:value]] forKey:XADFileSizeKey];
 		}
 
 		// Comment.
@@ -352,9 +352,9 @@
 	groupName[32] = '\000';
 	[dict setObject:[self XADStringWithCString:groupName] forKey:XADPosixGroupNameKey];
 	
-	unsigned int devMajor = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(329,8) buffer:header];
+	unsigned int devMajor = (unsigned int)[XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(329,8) buffer:header];
 
-	unsigned int devMinor = [XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(337,8) buffer:header];
+	unsigned int devMinor = (unsigned int)[XADTarParser readOctalNumberInRangeFromBuffer:NSMakeRange(337,8) buffer:header];
 
 	char prefix[156];
 	[header getBytes:prefix range:NSMakeRange(345,155)];
@@ -511,7 +511,7 @@
 	CSHandle *handle = [self handle];
 	off_t size = [[dict objectForKey:XADDataLengthKey] longLongValue];
 	off_t offset = [handle offsetInFile];
-	[dict setObject:[NSNumber numberWithLong:offset] forKey:XADDataOffsetKey];
+	[dict setObject:[NSNumber numberWithLongLong:offset] forKey:XADDataOffsetKey];
 	[self addEntryWithDictionary:dict];
 	offset += size;
 	offset += (offset % 512 == 0 ? 0 : 512 - (offset % 512) );

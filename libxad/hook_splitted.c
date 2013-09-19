@@ -123,7 +123,7 @@ FUNCHOOK(InHookSplitted)
         if((j = sd->xsd_Offset+sd->xsd_InSize-param->xhp_DataPos) > i)
           j = i;
         /* read that size */
-        if((err = callsplitthook(sd, ai, XADHC_READ, 0, buf, j)))
+        if((err = callsplitthook(sd, ai, XADHC_READ, 0, buf, (xadUINT32)j)))
           return err;
         buf += j;               /* next part or end of buffer */
         param->xhp_DataPos += j;        /* add already read offset */
@@ -203,7 +203,7 @@ FUNCHOOK(InHookSplitted)
             if(!sf->xsf_Data) return XADERR_BADPARAMS;
             break;
           case XAD_INFILEHANDLE:
-            sd[i].xsd_InFileHandle = /*(BPTR)*/ sf->xsf_Data;
+            sd[i].xsd_InFileHandle = /*(BPTR)*/ (xadFileHandle)sf->xsf_Data;
             sd[i].xsd_Hook = &ai->xaip_MasterBase->xmb_InHookFH;
             if(!sf->xsf_Data) return XADERR_BADPARAMS;
             break;

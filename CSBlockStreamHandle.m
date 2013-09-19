@@ -70,7 +70,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	{
 		if(!_currblock) return 0;
 
-		int offs=streampos-_blockstartpos;
+		int offs=(int)(streampos-_blockstartpos);
 		int count=_blocklength-offs;
 		if(count>num) count=num;
 		memcpy(buffer,_currblock+offs,count);

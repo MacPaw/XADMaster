@@ -91,7 +91,7 @@ FUNCHOOK(InHookFH)
         {
          //printf("InHookFH: DirectRead(., ., %ld) from %ld\n", size, pos);
 
-         if(read(ai->xaip_InFileHandle, buf, size) != size)
+         if(read(ai->xaip_InFileHandle, buf, (size_t)size) != size)
             return XADERR_INPUT;
 
           buf += size;
@@ -111,7 +111,7 @@ FUNCHOOK(InHookFH)
 
           //printf("InHookFH: Read(., ., %ld) from %ld\n", siz, XADFH->xfh_BufStart);
 
-          if(read(ai->xaip_InFileHandle, XADFH->xfh_Buffer, siz) != siz)
+          if(read(ai->xaip_InFileHandle, XADFH->xfh_Buffer, (size_t)siz) != siz)
             return XADERR_INPUT;
 
           if((siz = XADFH->xfh_BufEnd-pos) > size)
@@ -297,7 +297,7 @@ FUNCHOOK(OutHookFH)
   {
   case XADHC_WRITE:
     if(write(ai->xaip_OutFileHandle, param->xhp_BufferPtr,
-    param->xhp_BufferSize) != param->xhp_BufferSize /*== -1*/)
+    (size_t)param->xhp_BufferSize) != param->xhp_BufferSize /*== -1*/)
       return XADERR_OUTPUT;
     param->xhp_DataPos += param->xhp_BufferSize;
     break;

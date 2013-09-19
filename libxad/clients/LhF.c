@@ -548,7 +548,7 @@ XADUNARCHIVE(LhF)
     {
       d->ai = ai;
       d->xadMasterBase = xadMasterBase;
-      d->sourcelen = fi->xfi_CrunchSize;
+      d->sourcelen = (xadUINT32)fi->xfi_CrunchSize;
       d->sourcebuf = (xadSTRPTR) d->inbuffer+LHFWINDOWSIZE;
       err = DecrunchLhF(d);
       xadFreeObjectA(XADM d, 0);

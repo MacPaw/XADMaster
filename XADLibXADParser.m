@@ -18,7 +18,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 {
 	if(!xmb) xmb=xadOpenLibrary(12);
 
-	return ((struct xadMasterBaseP *)xmb)->xmb_RecogSize;
+	return (int)((struct xadMasterBaseP *)xmb)->xmb_RecogSize;
 }
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
@@ -266,7 +266,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 		if(info->xfi_Flags&XADFIF_CRYPTED) pass=[self encodedCStringPassword];
 
 		if(info->xfi_Flags&XADFIF_NOUNCRUNCHSIZE) data=[NSMutableData data];
-		else data=[NSMutableData dataWithCapacity:info->xfi_Size];
+		else data=[NSMutableData dataWithCapacity:(long)info->xfi_Size];
 
 		struct Hook outhook;
 		outhook.h_Entry=OutFunc;
@@ -346,7 +346,7 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 			return XADERR_OK;
 
 		case XADHC_READ:
-			[fh readBytes:param->xhp_BufferSize toBuffer:param->xhp_BufferPtr];
+			[fh readBytes:(int)param->xhp_BufferSize toBuffer:param->xhp_BufferPtr];
 			param->xhp_DataPos=[fh offsetInFile];
 			return XADERR_OK;
 
@@ -403,7 +403,7 @@ static xadUINT32 OutFunc(struct Hook *hook,xadPTR object,struct xadHookParam *pa
 			return XADERR_OK;
 
 		case XADHC_WRITE:
-			[data appendBytes:param->xhp_BufferPtr length:param->xhp_BufferSize];
+			[data appendBytes:param->xhp_BufferPtr length:(long)param->xhp_BufferSize];
 			return XADERR_OK;
 
  		default:

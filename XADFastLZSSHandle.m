@@ -61,7 +61,7 @@
 		XADLZSSFlushToBuffer(self);
 	}
 
-	return bufferpos-streampos;
+	return (int)(bufferpos-streampos);
 }
 
 -(void)resetLZSSHandle {}
@@ -76,7 +76,7 @@ void XADLZSSFlushToBuffer(XADFastLZSSHandle *self)
 	off_t end=LZSSPosition(&self->lzss);
 	if(end>self->bufferend) end=self->bufferend;
 
-	int available=end-self->bufferpos;
+	int available=(int)(end-self->bufferpos);
 	if(available==0) return;
 	//if(available<0) [XADException raiseUnknownException]; // TODO: better error
 

@@ -84,8 +84,8 @@ static xadUINT8 xadIOGetFunc(struct xadInOut *io)
         xadUINT32 i;
         struct xadMasterBase *xadMasterBase = io->xio_xadMasterBase;
 
-        if((i = io->xio_InBufferSize) > io->xio_InSize)
-          i = io->xio_InSize;
+        if((i = (xadUINT32)io->xio_InBufferSize) > io->xio_InSize)
+          i = (xadUINT32)io->xio_InSize;
         if(!io->xio_ArchiveInfo)
         {
           io->xio_Flags |= XADIOF_ERROR;
@@ -99,7 +99,7 @@ static xadUINT8 xadIOGetFunc(struct xadInOut *io)
   "xadIOGetFunc NeedData BufferPos %ld InSize %ld Load %ld BufferSize %ld",
   io->xio_InBufferPos, io->xio_InSize, i, io->xio_InBufferSize);
 #endif
-          j = io->xio_ArchiveInfo->xai_InSize-io->xio_ArchiveInfo->xai_InPos;
+          j = (xadUINT32)(io->xio_ArchiveInfo->xai_InSize-io->xio_ArchiveInfo->xai_InPos);
           if(i > j)
             i = j;
           if(!i)
@@ -281,7 +281,7 @@ XADIOFUNCMODE xadERROR xadIOWriteBuf(struct xadInOut *io)
   {
 
     if(io->xio_OutFunc)
-      io->xio_OutFunc(io, io->xio_OutBufferPos);
+      io->xio_OutFunc(io, (xadUINT32)io->xio_OutBufferPos);
     if(!(io->xio_Flags & XADIOF_COMPLETEOUTFUNC))
     {
       if(!io->xio_ArchiveInfo)

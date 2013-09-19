@@ -151,7 +151,7 @@ startPosition:(off_t)startpos length:(int)length
 	{
 		if(memory[i]==0xe8)
 		{
-			int32_t currpos=pos+i+1;
+			int32_t currpos=(int)pos+i+1;
 			int32_t address=XADRARVirtualMachineRead32(vm,i+1);
 			if(address<0)
 			{
@@ -188,7 +188,7 @@ startPosition:(off_t)startpos length:(int)length
 	{
 		if(memory[i]==0xe8 || memory[i]==0xe9)
 		{
-			int32_t currpos=pos+i+1;
+			int32_t currpos=(int)pos+i+1;
 			int32_t address=XADRARVirtualMachineRead32(vm,i+1);
 			if(address<0)
 			{

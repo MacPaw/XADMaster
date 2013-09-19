@@ -15,7 +15,7 @@ static xadUINT8 xadIOGetFunc(struct xadInOut *io);
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)outlength
 {
-	if((self=[super initWithData:[NSMutableData dataWithCapacity:outlength]]))
+	if((self=[super initWithData:[NSMutableData dataWithCapacity:(long)outlength]]))
 	{
 		parent=[handle retain];
 		inlen=[handle fileSize];
@@ -194,13 +194,13 @@ static xadUINT8 xadIOGetFunc(struct xadInOut *io)
 		{
 			if(io->xio_InBufferPos >= io->xio_InBufferSize)
 			{
-				xadUINT32 i;
+				xadSize i;
 
 				if((i = io->xio_InBufferSize) > io->xio_InSize)
 				i = io->xio_InSize;
 
 				@try {
-					int actual=[io->inputhandle readAtMost:i toBuffer:io->xio_InBuffer];
+					int actual=[io->inputhandle readAtMost:(int)i toBuffer:io->xio_InBuffer];
 					if(!actual)
 					{
 						io->xio_Flags|=XADIOF_ERROR;
@@ -212,7 +212,7 @@ static xadUINT8 xadIOGetFunc(struct xadInOut *io)
 				};
 
 				if(io->xio_InFunc)
-				(*(io->xio_InFunc))(io, i);
+				(*(io->xio_InFunc))(io, (xadUINT32)i);
 
 				res = *io->xio_InBuffer;
 				io->xio_InBufferPos = 1;
@@ -314,17 +314,17 @@ xadERROR xadIOWriteBuf(struct xadInOut *io)
 	if(!io->xio_Error && io->xio_OutBufferPos)
 	{
 		if(io->xio_OutFunc)
-		io->xio_OutFunc(io, io->xio_OutBufferPos);
+		io->xio_OutFunc(io, (xadUINT32)io->xio_OutBufferPos);
 		if(!(io->xio_Flags & XADIOF_COMPLETEOUTFUNC))
 		{
-			[io->outputdata appendBytes:io->xio_OutBuffer length:io->xio_OutBufferPos];
+			[io->outputdata appendBytes:io->xio_OutBuffer length:(long)io->xio_OutBufferPos];
 			if(!(io->xio_Flags & XADIOF_NOCRC16))
 			{
 //				&io->xio_CRC16,
 			}
 			if(!(io->xio_Flags & XADIOF_NOCRC32))
 			{
-				io->xio_CRC32=XADCalculateCRC(io->xio_CRC32,io->xio_OutBuffer,io->xio_OutBufferPos,XADCRCTable_edb88320);
+				io->xio_CRC32=XADCalculateCRC(io->xio_CRC32,io->xio_OutBuffer,(int)io->xio_OutBufferPos,XADCRCTable_edb88320);
 //				&io->xio_CRC32,
 			}
 		}

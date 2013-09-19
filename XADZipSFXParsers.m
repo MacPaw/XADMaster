@@ -93,7 +93,7 @@
 	off_t end=[handle offsetInFile];
 
 	int numbytes=0x10011;
-	if(numbytes>end) numbytes=end;
+	if(numbytes>end) numbytes=(int)end;
 
 	uint8_t buf[numbytes];
 

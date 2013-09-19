@@ -54,9 +54,9 @@ FUNCxadDiskUnArc /* struct xadArchiveInfoP *ai, xadTAGPTR tags */
     {
       switch(ti->ti_Tag)
       {
-      case XAD_ENTRYNUMBER: entry = ti->ti_Data; ++numentry; break;
-      case XAD_HIGHCYLINDER: highcyl = ti->ti_Data; ++numhigh; break;
-      case XAD_LOWCYLINDER: lowcyl = ti->ti_Data; ++numlow; break;
+      case XAD_ENTRYNUMBER: entry = (xadUINT32)ti->ti_Data; ++numentry; break;
+      case XAD_HIGHCYLINDER: highcyl = (xadUINT32)ti->ti_Data; ++numhigh; break;
+      case XAD_LOWCYLINDER: lowcyl = (xadUINT32)ti->ti_Data; ++numlow; break;
       }
     }
 

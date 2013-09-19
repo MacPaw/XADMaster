@@ -144,7 +144,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	if(regexec(&preg,[currdata bytes],preg.re_nsub+1,matches,REG_STARTEND)==0)
 	{
 		matchrange.length-=matches[0].rm_eo-matchrange.location;
-		matchrange.location=matches[0].rm_eo;
+		matchrange.location=(long)matches[0].rm_eo;
 		return YES;
 	}
 	[self finishMatching];
@@ -156,7 +156,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	if(n>preg.re_nsub||n<0) [NSException raise:NSRangeException format:@"Index %d out of range for regex \"%@\"",n,self];
  	if(matches[n].rm_so==-1&&matches[n].rm_eo==-1) return nil;
 	return [[[NSString alloc] initWithBytes:[currdata bytes]+matches[n].rm_so
-	length:matches[n].rm_eo-matches[n].rm_so encoding:NSUTF8StringEncoding] autorelease];
+	length:(long)(matches[n].rm_eo-matches[n].rm_so) encoding:NSUTF8StringEncoding] autorelease];
 }
 
 -(NSArray *)allMatches
@@ -226,11 +226,11 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	const char *bytes=[currdata bytes];
 	while([self matchNext])
 	{
-		[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:matches[0].rm_so-prevstart
+		[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(matches[0].rm_so-prevstart)
 		encoding:NSUTF8StringEncoding] autorelease]];
 		prevstart=matches[0].rm_eo;
 	}
-	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:[currdata length]-prevstart
+	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)([currdata length]-prevstart)
 	encoding:NSUTF8StringEncoding] autorelease]];
 
 	[self finishMatching];

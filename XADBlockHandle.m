@@ -83,7 +83,7 @@ firstBlock:(uint32_t)first headerSize:(off_t)headersize
 	if(offs>numblocks*blocksize) [self _raiseEOF];
 	if(offs>length) [self _raiseEOF];
 
-	int block=(offs-1)/blocksize;
+	int block=(int)((offs-1)/blocksize);
 
 	[parent seekToFileOffset:blockoffsets[block]+offs-block*blocksize];
 	currpos=offs;
@@ -100,14 +100,14 @@ firstBlock:(uint32_t)first headerSize:(off_t)headersize
 	uint8_t *bytebuffer=(uint8_t *)buffer;
 	int total=0;
 
-	if(currpos+num>length) num=length-currpos;
+	if(currpos+num>length) num=(int)(length-currpos);
 
 	while(total<num)
 	{
 		int blockpos=currpos%blocksize;
 		if(blockpos==0)
 		{
-			int block=currpos/blocksize;
+			int block=(int)(currpos/blocksize);
 			if(block==numblocks) return total;
 			[parent seekToFileOffset:blockoffsets[block]];
 		}

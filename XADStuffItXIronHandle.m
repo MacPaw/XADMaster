@@ -59,12 +59,12 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 	maxfreq2=1<<CSInputNextSitxP2(input);
 	maxfreq3=1<<CSInputNextSitxP2(input);
 
-	byteshift1=CSInputNextSitxP2(input);
-	byteshift2=CSInputNextSitxP2(input);
-	byteshift3=CSInputNextSitxP2(input);
-	countshift1=CSInputNextSitxP2(input);
-	countshift2=CSInputNextSitxP2(input);
-	countshift3=CSInputNextSitxP2(input);
+	byteshift1=(int)CSInputNextSitxP2(input);
+	byteshift2=(int)CSInputNextSitxP2(input);
+	byteshift3=(int)CSInputNextSitxP2(input);
+	countshift1=(int)CSInputNextSitxP2(input);
+	countshift2=(int)CSInputNextSitxP2(input);
+	countshift3=(int)CSInputNextSitxP2(input);
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
@@ -73,7 +73,7 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 
 	if(CSInputNextBitLE(input)==1) return -1;
 
-	int blocksize=CSInputNextSitxP2(input);
+	int blocksize=(int)CSInputNextSitxP2(input);
 
 	if(blocksize>currsize)
 	{
@@ -86,7 +86,7 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 
 	if(CSInputNextBitLE(input)==0) // compressed
 	{
-		int firstindex=CSInputNextSitxP2(input);
+		int firstindex=(int)CSInputNextSitxP2(input);
 
 		CSInputSkipToByteBoundary(input);
 

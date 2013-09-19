@@ -581,7 +581,7 @@ static uint8_t ASCII85NextByte(CSInputBuffer *input)
 	else
 	{
 		if(finalbytes&&byte>=finalbytes) CSByteStreamEOF(self);
-		return val>>24-byte*8;
+		return val>>(24-byte*8);
 	}
 }
 
@@ -657,7 +657,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 {
 	if(bpc<=8)
 	{
-		int row=pos/(cols*comps);
+		int row=(int)(pos/(cols*comps));
 		int col=pos%(cols*comps);
 		int buflen=cols*comps+2*comps;
 		int bufoffs=((col-comps*row)%buflen+buflen)%buflen;

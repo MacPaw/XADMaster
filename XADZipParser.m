@@ -106,7 +106,7 @@ static inline int imin(int a,int b) { return a<b?a:b; }
 	off_t end=[fh offsetInFile];
 
 	int numbytes=0x10011;
-	if(numbytes>end) numbytes=end;
+	if(numbytes>end) numbytes=(int)end;
 
 	uint8_t buf[numbytes];
 

@@ -88,7 +88,7 @@ static void UpdateQuantumModel(QuantumModel *model,int index);
 	InitQuantumCoder(&coder,input);
 
 //	int dicpos=pos&dictionarymask;
-	int end=LZSSPosition(&lzss)+uncomplength;
+	int end=(int)LZSSPosition(&lzss)+uncomplength;
 
 	[self setBlockPointer:CurrentLZSSWindowPointer(&lzss)];
 

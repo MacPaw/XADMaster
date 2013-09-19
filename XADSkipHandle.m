@@ -190,7 +190,7 @@ static off_t ActualOffsetToSkip(XADSkipHandle *self,off_t pos)
 	int index=FindIndexOfRegionContainingActualOffset(self,pos);
 	if(pos>=ActualGapStart(self,index)) [parent seekToFileOffset:pos=ActualStart(self,++index)];
 
-	off_t total=0;
+	int total=0;
 	for(;;)
 	{
 		off_t gap=ActualGapStart(self,index);
@@ -201,7 +201,7 @@ static off_t ActualOffsetToSkip(XADSkipHandle *self,off_t pos)
 			return total;
 		}
 
-		int actual=[parent readAtMost:gap-pos toBuffer:buffer+total];
+		int actual=[parent readAtMost:(int)(gap-pos) toBuffer:buffer+total];
 		total+=actual;
 
 		if(actual!=gap-pos) return total;

@@ -412,7 +412,7 @@ static int read_byte_block_count(CSInputBuffer *input)
 		{
 			nextismatch=false;
 
-			int range_index=read_copy_type_range(self,pos);
+			int range_index=read_copy_type_range(self,(unsigned int)pos);
 
 			// The first two entries in the copy_ranges table are used as
 			// a shorthand to copy two bytes. Otherwise, decode the number

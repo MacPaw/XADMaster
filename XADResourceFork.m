@@ -52,7 +52,7 @@
 	// Load the map into memory so that traversing its data structures
 	// doesn't cause countless seeks in compressed or encrypted input streams
 	[handle seekToFileOffset:pos+mapoffset];
-	NSData *mapdata=[handle readDataOfLength:maplength];
+	NSData *mapdata=[handle readDataOfLength:(int)maplength];
 	CSHandle *maphandle=[CSMemoryHandle memoryHandleForReadingData:mapdata];
 
 	[resources release];
@@ -73,7 +73,7 @@
 	NSMutableDictionary *dict=[NSMutableDictionary dictionary];
 	while(![handle atEndOfFile])
 	{
-		NSNumber *key=[NSNumber numberWithUnsignedInteger:[handle offsetInFile]];
+		NSNumber *key=[NSNumber numberWithUnsignedLongLong:[handle offsetInFile]];
 		uint32_t length=[handle readUInt32BE];
 		NSData *data=[handle readDataOfLength:length];
 		[dict setObject:data forKey:key];
@@ -152,7 +152,7 @@
 		NSMutableDictionary *resource=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			key,@"ID",
 			[NSNumber numberWithInt:attrs],@"Attributes",
-			[NSNumber numberWithUnsignedInt:offset],@"DataOffset",
+			[NSNumber numberWithUnsignedLongLong:offset],@"DataOffset",
 		nil];
 
 		if(nameoffset!=-1) [resource setObject:[NSNumber numberWithInt:nameoffset] forKey:@"NameOffset"];

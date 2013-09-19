@@ -4,8 +4,6 @@
 #import "XADRC4Handle.h"
 #import "Crypto/md5.h"
 
-static NSData *DeriveArchiveKey(NSString *password);
-static NSData *DeriveFileKey(NSData *archiveKey, NSData *entryKey);
 static NSData *StuffItMD5(NSData *data);
 
 @implementation XADStuffIt5Parser
@@ -285,7 +283,7 @@ static NSData *StuffItMD5(NSData *data);
 
 		if(flags&SIT5FLAGS_DIRECTORY)
 		{
-			[dirs setObject:path forKey:[NSNumber numberWithInt:offs]];
+			[dirs setObject:path forKey:[NSNumber numberWithInt:(int)offs]];
 			NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				path,XADFileNameKey,
 				[NSDate XADDateWithTimeIntervalSince1904:modificationdate],XADLastModificationDateKey,

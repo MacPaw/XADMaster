@@ -27,7 +27,7 @@ typedef struct StuffItXElement
 static void ReadElement(CSHandle *fh,StuffItXElement *element);
 static void ScanElementData(CSHandle *fh,StuffItXElement *element);
 static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *element,BOOL wantchecksum);
-static void DumpElement(StuffItXElement *element);
+//static void DumpElement(StuffItXElement *element);
 
 static void ReadElement(CSHandle *fh,StuffItXElement *element)
 {
@@ -36,11 +36,11 @@ static void ReadElement(CSHandle *fh,StuffItXElement *element)
 	element->alglist3_extra=-1;
 
 	element->something=[fh readBitsLE:1];
-	element->type=ReadSitxP2(fh);
+	element->type=(int)ReadSitxP2(fh);
 
 	for(;;)
 	{
-		int type=ReadSitxP2(fh);
+		int type=(int)ReadSitxP2(fh);
 		if(type==0) break;
 		uint64_t value=ReadSitxP2(fh);
 		if(type<=10) element->attribs[type-1]=value;
@@ -49,7 +49,7 @@ static void ReadElement(CSHandle *fh,StuffItXElement *element)
 
 	for(;;)
 	{
-		int type=ReadSitxP2(fh);
+		int type=(int)ReadSitxP2(fh);
 		if(type==0) break;
 		uint64_t value=ReadSitxP2(fh);
 		if(type<=6) element->alglist[type-1]=value;
@@ -221,7 +221,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 
 
 
-static void DumpElement(StuffItXElement *element)
+/*static void DumpElement(StuffItXElement *element)
 {
 	NSString *name;
 	switch(element->type)
@@ -249,7 +249,7 @@ static void DumpElement(StuffItXElement *element)
 	for(int i=0;i<10;i++) if(element->attribs[i]>=0) NSLog(@"       attrib %d: %qu",i,element->attribs[i]);
 	for(int i=0;i<6;i++) if(element->alglist[i]>=0) NSLog(@"       alglist %d: %qu",i,element->alglist[i]);
 	if(element->alglist3_extra>=0) NSLog(@"       alglist 3 extra: %qu",element->alglist3_extra);
-}
+}*/
 
 
 
@@ -490,7 +490,7 @@ static void DumpElement(StuffItXElement *element)
 
 				NSDictionary *dict=[NSDictionary dictionaryWithObjectsAndKeys:
 					[NSMutableArray arrayWithObject:entrynum],@"Entries",
-					[NSNumber numberWithInt:type],@"Type",
+					[NSNumber numberWithLongLong:type],@"Type",
 					[NSNumber numberWithLongLong:length],@"Length",
 				nil];
 
@@ -509,10 +509,10 @@ static void DumpElement(StuffItXElement *element)
 				else /*if(index<count)*/
 				{
 					// Multiple files can also reference the same fork.
-					NSDictionary *curr=[forks objectAtIndex:index];
+					NSDictionary *curr=[forks objectAtIndex:(long)index];
 					if((id)curr==[NSNull null])
 					{
-						[forks replaceObjectAtIndex:index withObject:dict];
+						[forks replaceObjectAtIndex:(long)index withObject:dict];
 					}
 					else
 					{
@@ -614,7 +614,7 @@ static void DumpElement(StuffItXElement *element)
 	{
 		for(;;)
 		{
-			int key=ReadSitxP2(fh);
+			int key=(int)ReadSitxP2(fh);
 			if(!key) break;
 
 			switch(key)
@@ -673,7 +673,7 @@ static void DumpElement(StuffItXElement *element)
 
 				case 7:
 				{
-					int val=ReadSitxP2(fh);
+					int val=(int)ReadSitxP2(fh);
 					NSLog(@"7: %d",val);
 				}
 				break;
@@ -693,7 +693,7 @@ static void DumpElement(StuffItXElement *element)
 
 				case 10:
 				{
-					int num=ReadSitxP2(fh);
+					int num=(int)ReadSitxP2(fh);
 					for(int i=0;i<num;i++)
 					NSLog(@"10: %@",[self XADStringWithData:ReadSitxString(fh)]);
 				}

@@ -24,18 +24,18 @@ static int FindStringLength(const uint8_t *buffer,int size,int offset)
 	return len;
 }
 
-static uint64_t ParseInt(const uint8_t *buffer,int size,int type,int offset)
+/*static uint64_t ParseInt(const uint8_t *buffer,int size,int type,int offset)
 {
 	if(type<2||type>5) return 0;
 
-	if(offset+(1<<type-2)>size) return 0;
+	if(offset+(1<<(type-2))>size) return 0;
 
 	if(type==2) return buffer[offset];
 	else if(type==3) return CSUInt16BE(&buffer[offset]);
 	else if(type==4) return CSUInt32BE(&buffer[offset]);
 	else if(type==5) return CSUInt64BE(&buffer[offset]);
 	else return 0; // Can't happen
-}
+}*/
 
 -(void)parse
 {

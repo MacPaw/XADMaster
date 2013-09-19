@@ -87,7 +87,7 @@ static const NSString *DateFormat=@"Date";
 	state=GroundState;
 
 	CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:[fh nonCopiedSubHandleFrom:headsize length:tablecompsize]];
-	NSData *data=[zh readDataOfLength:tableuncompsize];
+	NSData *data=[zh readDataOfLength:(int)tableuncompsize];
 
 	//NSLog(@"%@",[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
 

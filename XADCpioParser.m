@@ -43,36 +43,36 @@
 			[fh readBytes:4 toBuffer:more];
 			if(more[0]=='0'&&more[1]=='7'&&more[2]=='0'&&more[3]=='7')
 			{
-				devmajor=[fh readOctalNumberWithDigits:3];
-				devminor=[fh readOctalNumberWithDigits:3];
-				ino=[fh readOctalNumberWithDigits:6];
-				mode=[fh readOctalNumberWithDigits:6];
-				uid=[fh readOctalNumberWithDigits:6];
-				gid=[fh readOctalNumberWithDigits:6];
-				nlink=[fh readOctalNumberWithDigits:6];
-				rdevmajor=[fh readOctalNumberWithDigits:3];
-				rdevminor=[fh readOctalNumberWithDigits:3];
+				devmajor=(int)[fh readOctalNumberWithDigits:3];
+				devminor=(int)[fh readOctalNumberWithDigits:3];
+				ino=(int)[fh readOctalNumberWithDigits:6];
+				mode=(int)[fh readOctalNumberWithDigits:6];
+				uid=(int)[fh readOctalNumberWithDigits:6];
+				gid=(int)[fh readOctalNumberWithDigits:6];
+				nlink=(int)[fh readOctalNumberWithDigits:6];
+				rdevmajor=(int)[fh readOctalNumberWithDigits:3];
+				rdevminor=(int)[fh readOctalNumberWithDigits:3];
 				mtime=[fh readOctalNumberWithDigits:11];
-				namesize=[fh readOctalNumberWithDigits:6];
+				namesize=(int)[fh readOctalNumberWithDigits:6];
 				filesize=[fh readOctalNumberWithDigits:11];
 				namedata=[fh readDataOfLength:namesize-1];
 				[fh skipBytes:1];
 			}
 			else if(more[0]=='0'&&more[1]=='7'&&more[2]=='0'&&(more[3]=='1'||more[3]=='2'))
 			{
-				ino=[fh readHexadecimalNumberWithDigits:8];
-				mode=[fh readHexadecimalNumberWithDigits:8];
-				uid=[fh readHexadecimalNumberWithDigits:8];
-				gid=[fh readHexadecimalNumberWithDigits:8];
-				nlink=[fh readHexadecimalNumberWithDigits:8];
+				ino=(int)[fh readHexadecimalNumberWithDigits:8];
+				mode=(int)[fh readHexadecimalNumberWithDigits:8];
+				uid=(int)[fh readHexadecimalNumberWithDigits:8];
+				gid=(int)[fh readHexadecimalNumberWithDigits:8];
+				nlink=(int)[fh readHexadecimalNumberWithDigits:8];
 				mtime=[fh readHexadecimalNumberWithDigits:8];
 				filesize=[fh readHexadecimalNumberWithDigits:8];
-				devmajor=[fh readHexadecimalNumberWithDigits:8];
-				devminor=[fh readHexadecimalNumberWithDigits:8];
-				rdevmajor=[fh readHexadecimalNumberWithDigits:8];
-				rdevminor=[fh readHexadecimalNumberWithDigits:8];
-				namesize=[fh readHexadecimalNumberWithDigits:8];
-				checksum=[fh readHexadecimalNumberWithDigits:8];
+				devmajor=(int)[fh readHexadecimalNumberWithDigits:8];
+				devminor=(int)[fh readHexadecimalNumberWithDigits:8];
+				rdevmajor=(int)[fh readHexadecimalNumberWithDigits:8];
+				rdevminor=(int)[fh readHexadecimalNumberWithDigits:8];
+				namesize=(int)[fh readHexadecimalNumberWithDigits:8];
+				checksum=(int)[fh readHexadecimalNumberWithDigits:8];
 				namedata=[fh readDataOfLength:namesize-1];
 				[fh skipBytes:1+((-namesize-2&3))];
 

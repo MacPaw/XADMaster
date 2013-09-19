@@ -479,7 +479,7 @@ resourceForkDictionary:(NSDictionary *)forkdict wantChecksum:(BOOL)checksum erro
 	@try
 	{
 		// TODO: Should this function handle exceptions itself?
-		[XADAppleDouble writeAppleDoubleHeaderToHandle:fh resourceForkSize:ressize
+		[XADAppleDouble writeAppleDoubleHeaderToHandle:fh resourceForkSize:(int)ressize
 		extendedAttributes:extattrs];
 	}
 	@catch(id e) { return [XADException parseException:e]; }

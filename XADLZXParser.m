@@ -72,7 +72,7 @@
 			[self XADPathWithData:namedata separators:XADUnixPathSeparator],XADFileNameKey,
 			[NSNumber numberWithUnsignedLong:filesize],XADFileSizeKey,
 			[NSNumber numberWithUnsignedLong:filesize],XADSolidLengthKey,
-			[NSNumber numberWithUnsignedLong:solidsize],XADSolidOffsetKey,
+			[NSNumber numberWithLongLong:solidsize],XADSolidOffsetKey,
 			//[NSNumber numberWithUnsignedLong:compsize],XADCompressedSizeKey,
 			dateobj,XADLastModificationDateKey,
 			[NSNumber numberWithInt:os],@"LZXOS",
@@ -124,7 +124,7 @@
 		{
 			NSMutableDictionary *solidobj=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithUnsignedInt:compsize],XADDataLengthKey,
-				[NSNumber numberWithUnsignedInt:dataoffs],XADDataOffsetKey,
+				[NSNumber numberWithLongLong:dataoffs],XADDataOffsetKey,
 				[NSNumber numberWithLongLong:solidsize],@"TotalSize",
 				[NSNumber numberWithInt:method],@"Method",
 			nil];

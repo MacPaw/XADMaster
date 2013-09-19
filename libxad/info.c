@@ -52,9 +52,9 @@ FUNCxadRecogFile /* xadSize size, const void *mem, xadTAGPTR tags */
   {
     switch(ti->ti_Tag)
     {
-    case XAD_NOEXTERN:    noext = ti->ti_Data; break;
-    case XAD_IGNOREFLAGS: ignoreflags = ti->ti_Data; break;
-    case XAD_ONLYFLAGS:   onlyflags = ti->ti_Data; break;
+    case XAD_NOEXTERN:    noext = (xadINT32)ti->ti_Data; break;
+    case XAD_IGNOREFLAGS: ignoreflags = (xadUINT32)ti->ti_Data; break;
+    case XAD_ONLYFLAGS:   onlyflags = (xadUINT32)ti->ti_Data; break;
     }
   }
 

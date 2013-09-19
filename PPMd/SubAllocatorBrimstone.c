@@ -14,7 +14,7 @@ static void InsertNode(PPMdSubAllocatorBrimstone *self,void *p,int index);
 static void *RemoveNode(PPMdSubAllocatorBrimstone *self,int index);
 static unsigned int I2B(PPMdSubAllocatorBrimstone *self,int index);
 static void SplitBlock(PPMdSubAllocatorBrimstone *self,void *pv,int oldindex,int newindex);
-static uint32_t GetUsedMemory(PPMdSubAllocatorBrimstone *self);
+//static uint32_t GetUsedMemory(PPMdSubAllocatorBrimstone *self);
 
 static void InitBrimstone(PPMdSubAllocatorBrimstone *self);
 static uint32_t AllocContextBrimstone(PPMdSubAllocatorBrimstone *self);

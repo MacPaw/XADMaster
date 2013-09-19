@@ -24,13 +24,6 @@
 
 #include "include/functions.h"
 
-#include "cs_atarist_to_unicode.c"
-#include "cs_c64_to_unicode.c"
-#include "cs_ibmcp437_to_unicode.c"
-#include "cs_macroman_to_unicode.c"
-#include "cs_unicode_to_iso8859-1.c"
-#include "cs_windowscp1252_to_unicod.c"
-
 struct MyString {
   /* NOTE: The strings here are NOT zero ended! */
   xadSTRPTR   string;
@@ -530,9 +523,9 @@ FUNCxadConvertName /* xadUINT32 charset, xadTAGPTR tags */
   {
     switch(ti->ti_Tag)
     {
-    case XAD_CHARACTERSET: cset = ti->ti_Data; break;
+    case XAD_CHARACTERSET: cset = (xadUINT32)ti->ti_Data; break;
     case XAD_ERRORCODE: errcode = (xadERROR *)(uintptr_t) ti->ti_Data; break;
-    case XAD_STRINGSIZE: if(!(strs = ti->ti_Data)) strs = 0xFFFFFFFF; break;
+    case XAD_STRINGSIZE: if(!(strs = (xadUINT32)ti->ti_Data)) strs = 0xFFFFFFFF; break;
     case XAD_XADSTRING:
       if(ti->ti_Data)
       {
@@ -588,13 +581,13 @@ FUNCxadConvertName /* xadUINT32 charset, xadTAGPTR tags */
     {
       switch(ti->ti_Tag)
       {
-      case XAD_STRINGSIZE: if(!(strs = ti->ti_Data)) strs = 0xFFFFFFFF; break;
+      case XAD_STRINGSIZE: if(!(strs = (xadUINT32)ti->ti_Data)) strs = 0xFFFFFFFF; break;
       case XAD_ADDPATHSEPERATOR:
         mystr->addpathsep = ti->ti_Data ? XADTRUE : XADFALSE; break;
       case XAD_PATHSEPERATOR:
         mystr->pathsep = ti->ti_Data ? (const xadUINT16 *)(uintptr_t) ti->ti_Data
         : psep+2; break;
-      case XAD_CHARACTERSET: cset = ti->ti_Data; break;
+      case XAD_CHARACTERSET: cset = (xadUINT32)ti->ti_Data; break;
       case XAD_XADSTRING:
         if(ti->ti_Data)
         {

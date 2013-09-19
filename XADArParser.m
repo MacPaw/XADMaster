@@ -54,9 +54,9 @@ static uint64_t ParseOctal(const uint8_t *ptr,int maxlen)
 		if(header[58]!=0x60||header[59]!=0x0a) [XADException raiseIllegalDataException];
 
 		uint64_t timestamp=ParseDecimal(&header[16],12);
-		int owner=ParseDecimal(&header[28],6);
-		int group=ParseDecimal(&header[34],6);
-		int mode=ParseOctal(&header[40],8);
+		int owner=(int)ParseDecimal(&header[28],6);
+		int group=(int)ParseDecimal(&header[34],6);
+		int mode=(int)ParseOctal(&header[40],8);
 		uint64_t size=ParseDecimal(&header[48],10);
 
 		XADPath *name;
@@ -64,7 +64,7 @@ static uint64_t ParseOctal(const uint8_t *ptr,int maxlen)
 		if(header[0]=='#'&&header[1]=='1'&&header[2]=='/')
 		{
 			// BSD long filename.
-			int namelen=ParseDecimal(&header[3],12);
+			int namelen=(int)ParseDecimal(&header[3],12);
 			uint8_t namebuf[namelen];
 			[fh readBytes:namelen toBuffer:namebuf];
 			size-=namelen;
@@ -82,13 +82,13 @@ static uint64_t ParseOctal(const uint8_t *ptr,int maxlen)
 		else if(header[0]=='/'&&header[1]=='/'&&header[2]==' ')
 		{
 			// GNU long filename list.
-			filenametable=[fh readDataOfLength:size];
+			filenametable=[fh readDataOfLength:(int)size];
 			continue;
 		}
 		else if(header[0]=='/'&&header[1]>='0'&&header[1]<='9')
 		{
 			// GNU long filename.
-			int nameoffs=ParseDecimal(&header[1],14);
+			int nameoffs=(int)ParseDecimal(&header[1],14);
 
 			const uint8_t *tablebytes=[filenametable bytes];
 			int tablelength=[filenametable length];
@@ -118,7 +118,7 @@ static uint64_t ParseOctal(const uint8_t *ptr,int maxlen)
 			[NSNumber numberWithUnsignedLongLong:size],XADFileSizeKey,
 			[NSNumber numberWithUnsignedLongLong:size],XADCompressedSizeKey,
 			[NSNumber numberWithUnsignedLongLong:size],XADDataLengthKey,
-			[NSNumber numberWithUnsignedLong:offs],XADDataOffsetKey,
+			[NSNumber numberWithUnsignedLongLong:offs],XADDataOffsetKey,
 			[NSDate dateWithTimeIntervalSince1970:timestamp],XADLastModificationDateKey,
 			[NSNumber numberWithInt:owner],XADPosixUserKey,
 			[NSNumber numberWithInt:group],XADPosixGroupKey,

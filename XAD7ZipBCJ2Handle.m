@@ -107,7 +107,7 @@ jumpHandle:(CSHandle *)jumphandle rangeHandle:(CSHandle *)rangehandle length:(of
 			if(b==0xe8) handle=calls;
 			else handle=jumps;
 
-			val=[handle readUInt32BE]-(pos+5);
+			val=[handle readUInt32BE]-((int)pos+5);
 			valbyte=0;
 		}
 	}

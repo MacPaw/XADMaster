@@ -107,7 +107,7 @@ static uint64_t ParseInteger(CSHandle *fh);
 			{
 				ids[i]=ParseInteger(parent);
 				uint64_t size=ParseInteger(parent);
-				properties[i]=[parent readDataOfLength:size];
+				properties[i]=[parent readDataOfLength:(int)size];
 			}
 
 			[parent seekToFileOffset:streamstart];
@@ -157,7 +157,7 @@ static uint64_t ParseInteger(CSHandle *fh);
 			switch(checksumflags)
 			{
 				case 1:
-					crc=XADCalculateCRC(crc,&bytebuf[bytesread],actual,XADCRCTable_edb88320);
+					crc=XADCalculateCRC((uint32_t)crc,&bytebuf[bytesread],actual,XADCRCTable_edb88320);
 				break;
 
 				case 4:

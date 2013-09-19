@@ -226,7 +226,7 @@
 	// Fill the buffer with data.
 	memset( buffer, 0, num );
 	long positionInBuffer = 0;
-	long stopAtSize = [self fileSize];
+	off_t stopAtSize = [self fileSize];
 	off_t positionInRegion = regions[ currentRegion ].offset - currentOffset;
 	off_t dataLeftInRegion = regions[ currentRegion ].size - positionInRegion;
 	while( positionInBuffer + dataLeftInRegion < num && currentOffset < stopAtSize )
@@ -234,7 +234,7 @@
 // 		fprintf( stderr, "Reading: %d really %d.\n", positionInBuffer, currentOffset );
 		if( regions[ currentOffset ].hasData )
 		{
-			[parent readAtMost:dataLeftInRegion toBuffer:buffer];
+			[parent readAtMost:(int)dataLeftInRegion toBuffer:buffer];
 		}
 		currentRegion = regions[ currentRegion ].nextRegion;
 		positionInRegion = 0;
@@ -251,7 +251,7 @@
 
 	// If we in a sparse region now, push the file offset up.
 	if( currentOffset < [self fileSize] ) {
-		long remaining = [self fileSize] - currentOffset;
+		off_t remaining = [self fileSize] - currentOffset;
 		if( positionInBuffer + remaining <= num )
 		{
 			positionInBuffer += remaining;

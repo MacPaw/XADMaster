@@ -105,7 +105,7 @@ FUNCxadConvertProtection /* xadTAGPTR tags */
   {
     switch(ti->ti_Tag)
     {
-    case XAD_PROTAMIGA: prot = ti->ti_Data; break;
+    case XAD_PROTAMIGA: prot = (xadUINT32)ti->ti_Data; break;
     case XAD_PROTUNIX: unxprot = ti->ti_Data; flags |= XADFIF_UNIXPROTECTION;
       /* kill old settings of supported bits */
       prot &= ~UNIXPROT;

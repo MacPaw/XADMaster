@@ -544,7 +544,7 @@ XADUNARCHIVE(FSAmiga)
 
       fe = (struct FileExtensionBlock *) buf;
       data = (xadUINT8 *) buf+blksize; /* 10 blocks */
-      blk = blkcnt = (blksize>>2)-56;
+      blk = blkcnt = (xadUINT32)(blksize>>2)-56;
 
       if(!ai->xai_PrivateClient) /* OFS filesystem */
         blksize -= 6*4;

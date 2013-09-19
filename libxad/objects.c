@@ -41,13 +41,13 @@ FUNCxadAllocVec /* xadSize size, xadUINT32 flags */
   struct xadObject *obj;
 
   size += sizeof(struct xadObject);
-  if((obj = (struct xadObject *) AllocMem(size, flags)))
+  if((obj = (struct xadObject *) AllocMem((size_t)size, flags)))
   {
 #ifndef AMIGA
     if(flags & XADMEMF_CLEAR)
       memset(obj, 0, size);
 #endif
-    obj->xo_Size = size;
+    obj->xo_Size = (xadUINT32)size;
     obj->xo_Type = XADOBJ_MEMBLOCK;
 #ifdef DEBUGRESOURCE
     obj->xo_Next = 0;
@@ -149,7 +149,7 @@ FUNCxadAllocObject /* xadUINT32 type, xadTAGPTR tags */
         {
           ((struct xadDiskInfo *) obj)->xdi_BlockInfo
           = (xadUINT8 *) ENDSTRUCT(xadDiskInfo) + psize;
-          ((struct xadDiskInfo *) obj)->xdi_BlockInfoSize = bsize;
+          ((struct xadDiskInfo *) obj)->xdi_BlockInfoSize = (xadUINT32)bsize;
         }
       }
     }

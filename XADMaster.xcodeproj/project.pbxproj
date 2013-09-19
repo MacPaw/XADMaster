@@ -1655,12 +1655,6 @@
 		1B06D52E0DDA623800D9C000 /* clients.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = clients.c; sourceTree = "<group>"; };
 		1B06D52F0DDA623800D9C000 /* copymem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = copymem.c; sourceTree = "<group>"; };
 		1B06D5300DDA623800D9C000 /* crc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crc.c; sourceTree = "<group>"; };
-		1B06D5310DDA623800D9C000 /* cs_atarist_to_unicode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cs_atarist_to_unicode.c; sourceTree = "<group>"; };
-		1B06D5320DDA623800D9C000 /* cs_c64_to_unicode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cs_c64_to_unicode.c; sourceTree = "<group>"; };
-		1B06D5330DDA623800D9C000 /* cs_ibmcp437_to_unicode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cs_ibmcp437_to_unicode.c; sourceTree = "<group>"; };
-		1B06D5340DDA623800D9C000 /* cs_macroman_to_unicode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cs_macroman_to_unicode.c; sourceTree = "<group>"; };
-		1B06D5350DDA623800D9C000 /* cs_unicode_to_iso8859-1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cs_unicode_to_iso8859-1.c"; sourceTree = "<group>"; };
-		1B06D5360DDA623800D9C000 /* cs_windowscp1252_to_unicod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cs_windowscp1252_to_unicod.c; sourceTree = "<group>"; };
 		1B06D5370DDA623800D9C000 /* dates.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dates.c; sourceTree = "<group>"; };
 		1B06D5380DDA623800D9C000 /* debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debug.c; sourceTree = "<group>"; };
 		1B06D5390DDA623800D9C000 /* diskfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = diskfile.c; sourceTree = "<group>"; };
@@ -2432,12 +2426,6 @@
 				1B06D5920DDA642900D9C000 /* config.h */,
 				1B06D52F0DDA623800D9C000 /* copymem.c */,
 				1B06D5300DDA623800D9C000 /* crc.c */,
-				1B06D5310DDA623800D9C000 /* cs_atarist_to_unicode.c */,
-				1B06D5320DDA623800D9C000 /* cs_c64_to_unicode.c */,
-				1B06D5330DDA623800D9C000 /* cs_ibmcp437_to_unicode.c */,
-				1B06D5340DDA623800D9C000 /* cs_macroman_to_unicode.c */,
-				1B06D5350DDA623800D9C000 /* cs_unicode_to_iso8859-1.c */,
-				1B06D5360DDA623800D9C000 /* cs_windowscp1252_to_unicod.c */,
 				1B06D5370DDA623800D9C000 /* dates.c */,
 				1B06D5380DDA623800D9C000 /* debug.c */,
 				1B06D5390DDA623800D9C000 /* diskfile.c */,
@@ -3994,7 +3982,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -5330,10 +5318,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					armv6,
-					armv7,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -5356,10 +5341,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					armv6,
-					armv7,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -5397,14 +5379,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				USE_HEADERMAP = NO;
@@ -5970,16 +5957,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;

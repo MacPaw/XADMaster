@@ -243,9 +243,9 @@ FUNCxadConvertDates /* xadTAGPTR tags */
   {
     switch(ti->ti_Tag)
     {
-    case XAD_DATEMAC: ++mac; timeval = ti->ti_Data; break;
-    case XAD_DATEUNIX: ++unx; timeval = ti->ti_Data; break;
-    case XAD_DATEAMIGA: ++am; timeval = ti->ti_Data; break;
+    case XAD_DATEMAC: ++mac; timeval = (xadUINT32)ti->ti_Data; break;
+    case XAD_DATEUNIX: ++unx; timeval = (xadUINT32)ti->ti_Data; break;
+    case XAD_DATEAMIGA: ++am; timeval = (xadUINT32)ti->ti_Data; break;
     case XAD_DATEDATESTAMP: ++dats; datsp = (struct MyDateStamp *)(uintptr_t)
       ti->ti_Data; break;
     case XAD_DATEXADDATE: ++xad; xadp = (struct xadDate *)(uintptr_t) ti->ti_Data;
@@ -279,8 +279,8 @@ FUNCxadConvertDates /* xadTAGPTR tags */
       }
 #endif /* AMIGA */
       break;
-    case XAD_DATEMSDOS: ++msdos; timeval = ti->ti_Data; break;
-    case XAD_DATECPM2: ++cpm2; timeval = ti->ti_Data; break;
+    case XAD_DATEMSDOS: ++msdos; timeval = (xadUINT32)ti->ti_Data; break;
+    case XAD_DATECPM2: ++cpm2; timeval = (xadUINT32)ti->ti_Data; break;
     case XAD_DATECPM: ++cpm; cpmdate = (xadUINT8 *)(uintptr_t) ti->ti_Data; break;
     case XAD_DATEISO9660: ++iso; isodate = (xadUINT8 *)(uintptr_t) ti->ti_Data; break;
     case XAD_MAKELOCALDATE: ++gmt; if(ti->ti_Data) gmttst = 1; break;

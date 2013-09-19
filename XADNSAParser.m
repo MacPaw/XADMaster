@@ -118,7 +118,7 @@ static NSMutableData *MakeBMPContainer(int width,int height,uint32_t length,int 
 	if(CSInputNextBit(input)) return CSInputNextBitString(input,8);
 	else
 	{
-		*offset=pos-CSInputNextBitString(input,8)-17;
+		*offset=(int)pos-CSInputNextBitString(input,8)-17;
 		*length=CSInputNextBitString(input,4)+2;
 
 		return XADLZSSMatch;
@@ -140,7 +140,7 @@ static NSMutableData *DecodeSPB(CSHandle *fh,uint32_t length)
 	uint8_t *bytes=[data mutableBytes];
 	uint8_t *pixels=&bytes[54];
 
-	CSInputBuffer *input=CSInputBufferAlloc(fh,[fh fileSize]);
+	CSInputBuffer *input=CSInputBufferAlloc(fh,(int)[fh fileSize]);
 
 	@try
 	{

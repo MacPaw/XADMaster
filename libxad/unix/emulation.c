@@ -86,6 +86,6 @@ xadUINT32 GetTagData(xadTag tagValue, xadUINT32 defVal, xadTAGPTR tagList)
   if((ti = FindTagItem(tagValue, tagList)) == NULL)
     return defVal;
 
-  return ti->ti_Data;
+  return (xadUINT32)ti->ti_Data;
 }
 

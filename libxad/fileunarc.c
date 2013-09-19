@@ -58,7 +58,7 @@ FUNCxadFileUnArc /* struct xadArchiveInfoP *ai, xadTAGPTR tags */
     {
       switch(ti->ti_Tag)
       {
-      case XAD_ENTRYNUMBER: entry = ti->ti_Data; ++numentry; break;
+      case XAD_ENTRYNUMBER: entry = (xadUINT32)ti->ti_Data; ++numentry; break;
       }
     }
 

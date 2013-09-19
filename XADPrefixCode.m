@@ -230,7 +230,7 @@ maximumLength:(int)maxcodelength shortestCodeIsZeros:(BOOL)zeros
 	if(length<minlength) minlength=length;
 
 	repeatpos=length-1-repeatpos;
-	if(repeatpos==0||(repeatpos>=0&&(((code>>repeatpos-1)&3)==0||((code>>repeatpos-1)&3)==3)))
+	if(repeatpos==0 || (repeatpos>=0 && (((code>>(repeatpos-1))&3)==0 || ((code>>(repeatpos-1))&3)==3)))
 	[NSException raise:NSInvalidArgumentException format:@"Invalid repeat position"];
 
 	int lastnode=0;

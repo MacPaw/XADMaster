@@ -51,16 +51,6 @@ static const xadUINT16 xadCRC_1021_crctable[256] = {
   0x4E55,0x5E74,0x2E93,0x3EB2,0x0ED1,0x1EF0
 };
 
-static xadUINT16 xadCRC_1021(const xadUINT8 * Mem, xadINT32 Size)
-{
-  xadUINT16 CRC = 0;
-
-  while(Size--)
-    CRC = xadCRC_1021_crctable[((CRC>>8) ^ *(Mem++)) & 0xFF] ^ (CRC<<8);
-
-  return CRC;
-}
-
 static xadUINT16 xadCRC_1021_2(const xadUINT8 * Mem, xadINT32 Size)
 {
   xadUINT16 CRC = 0;

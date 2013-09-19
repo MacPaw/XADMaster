@@ -97,7 +97,7 @@ void SWFWriteMatrix(SWFMatrix mtx,CSHandle *fh)
 	[fh flushWriteBits];
 }
 
-static inline int fixmult(int a,int b) { return (((int64_t)a)*((int64_t)b))/65536; }
+static inline int fixmult(int a,int b) { return (int)((((int64_t)a)*((int64_t)b))/65536); }
 
 SWFMatrix SWFMultiplyMatrices(SWFMatrix a,SWFMatrix b)
 {

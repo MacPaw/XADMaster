@@ -171,8 +171,8 @@
 						if(alphaoffs)
 						{
 							alphastart=startoffs+alphaoffs;
-							alphalength=imagestart+imagelength-alphastart;
-							imagelength=alphastart-imagestart;
+							alphalength=(int)(imagestart+imagelength-alphastart);
+							imagelength=(int)(alphastart-imagestart);
 						}
 
 						// Emit main image.

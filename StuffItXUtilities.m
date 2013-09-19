@@ -36,7 +36,7 @@ uint64_t ReadSitxUInt64(CSHandle *fh)
 
 NSData *ReadSitxString(CSHandle *fh)
 {
-	int len=ReadSitxP2(fh);
+	int len=(int)ReadSitxP2(fh);
 	NSData *data=[fh readDataOfLength:len];
 	[fh flushReadBits];
 	return data;

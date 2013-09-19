@@ -516,7 +516,7 @@ static xadINT32 AceExtractEntry(struct AceData *ad, struct xadFileInfo *fi)
   do
   {
     ad->crc32 = ~0;
-    ad->insize = fis->xfi_CrunchSize;
+    ad->insize = (xadUINT32)fis->xfi_CrunchSize;
 
     if(!(err = xadHookAccess(XADM XADAC_INPUTSEEK, fis->xfi_DataPos-ad->ai->xai_InPos, 0, ad->ai)))
     {
@@ -543,7 +543,7 @@ static xadINT32 AceExtractEntry(struct AceData *ad, struct xadFileInfo *fi)
          err = XADERR_NOMEMORY;
         else
         {
-          ad->dcpr_size = fis->xfi_Size;
+          ad->dcpr_size = (xadUINT32)fis->xfi_Size;
           ad->bits_rd = 0;
           ad->rpos = ad->inbufsize; /* enforce start read */
           ACEaddbits(ad,0);
@@ -634,7 +634,7 @@ XADGETINFO(Ace)
                 si->xsi_Position = lastpos;
                 ACEPI(fi)->CRC32 = EndGetI32(bptr+19);
                 fi->xfi_CrunchSize += EndGetI32(bptr+3);
-                lastpos = ai->xai_InPos + EndGetI32(bptr+3);
+                lastpos = (xadUINT32)ai->xai_InPos + EndGetI32(bptr+3);
               }
               else
                 err = XADERR_NOMEMORY;
@@ -683,7 +683,7 @@ XADGETINFO(Ace)
               else
                 fi->xfi_Next = fi2;
               fi = fi2;
-              lastpos = fi2->xfi_DataPos + fi->xfi_CrunchSize;
+              lastpos = (xadUINT32)(fi2->xfi_DataPos + fi->xfi_CrunchSize);
             }
             else
               err = XADERR_NOMEMORY;
@@ -734,7 +734,7 @@ XADUNARCHIVE(Ace)
     {
       if(!(err = xadHookAccess(XADM XADAC_READ, fi->xfi_CrunchSize, buf, ai)))
       {
-        if(!(err = AceDecrComment((xadUINT8 *)buf, (xadUINT8 *)(buf+fi->xfi_CrunchSize), fi->xfi_CrunchSize, xadMasterBase)))
+        if(!(err = AceDecrComment((xadUINT8 *)buf, (xadUINT8 *)(buf+fi->xfi_CrunchSize), (xadUINT32)fi->xfi_CrunchSize, xadMasterBase)))
           err = xadHookAccess(XADM XADAC_WRITE, fi->xfi_Size, buf+fi->xfi_CrunchSize, ai);
       }
       xadFreeObjectA(XADM buf, 0);
@@ -822,7 +822,7 @@ XADGETINFO(AceEXE)
   xadSTRPTR buf;
   xadUINT32 bufsize, fsize, spos = 0;
 
-  if((fsize = ai->xai_InSize) < 20)
+  if((fsize = (xadUINT32)ai->xai_InSize) < 20)
     return 0;
 
   if((bufsize = ACEBUFSIZE) > fsize)

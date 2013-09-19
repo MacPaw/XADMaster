@@ -155,7 +155,7 @@
 
 		// Check if we immediately hit a new filter or file edge, and try again.
 		if(actualend==start) return [self produceBlockAtOffset:pos];
-		else return actualend-start;
+		else return (int)(actualend-start);
 	}
 }
 

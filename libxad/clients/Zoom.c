@@ -937,7 +937,7 @@ XADGETINFO(LhPak)
 
       while(goon && !err)
       {
-        pos = ai->xai_InPos;
+        pos = (xadUINT32)ai->xai_InPos;
         if(!(err = xadHookAccess(XADM XADAC_READ, sizeof(struct LhPakHead), &ph, ai)))
         {
           if(!ph.Entry.SkipSize)
@@ -1092,7 +1092,7 @@ XADGETINFO(PCompPACK)
     return err;
   while(!err && ai->xai_InSize-ai->xai_InPos > 4)
   {
-    if((j = ai->xai_InSize-ai->xai_InPos) > 512)
+    if((j = (xadINT32)(ai->xai_InSize-ai->xai_InPos)) > 512)
       j = 512;
     if(!(err = xadHookAccess(XADM XADAC_READ, j, buffer, ai)))
     {
@@ -1102,7 +1102,7 @@ XADGETINFO(PCompPACK)
       {
         k = (buffer[i+1]<<24)+(buffer[i+2]<<16)+(buffer[i+3]<<8)+buffer[i+4];
 
-        j = ai->xai_InPos-j+i+5;
+        j = (xadINT32)ai->xai_InPos-j+i+5;
 
         if(!(err = xadHookAccess(XADM XADAC_INPUTSEEK, j-ai->xai_InPos+k, 0, ai)))
         {
@@ -1158,7 +1158,7 @@ XADUNARCHIVE(PCompPACK)
 {
   xadINT32 i, err;
 
-  i = ai->xai_CurFile->xfi_Size;
+  i = (xadINT32)ai->xai_CurFile->xfi_Size;
   if(i == ai->xai_CurFile->xfi_CrunchSize)
     err = xadHookAccess(XADM XADAC_COPY, i, 0, ai);
   else
@@ -1333,7 +1333,7 @@ XADGETINFO(LhSFX)
     {
       if(!(err = xadHookAccess(XADM XADAC_READ, sizeof(struct LhSFXData), &sf, ai)))
       {
-        j = ai->xai_InPos;
+        j = (xadINT32)ai->xai_InPos;
         if(!(err = xadHookAccess(XADM XADAC_INPUTSEEK, sf.CrSize, 0, ai)))
         {
           for(i = 0; i < 48 && sf.Name[i]; ++i)
@@ -1384,8 +1384,8 @@ XADUNARCHIVE(LhSFX)
   xadSTRPTR buf;
   xadINT32 err;
 
-  if(!(err = DoDecrunch(&buf, ai->xai_CurFile->xfi_CrunchSize,
-  ai->xai_CurFile->xfi_Size, 200, ai, xadMasterBase, 0)))
+  if(!(err = DoDecrunch(&buf, (xadUINT32)ai->xai_CurFile->xfi_CrunchSize,
+  (xadUINT32)ai->xai_CurFile->xfi_Size, 200, ai, xadMasterBase, 0)))
   {
     err = xadHookAccess(XADM XADAC_WRITE, ai->xai_CurFile->xfi_Size, buf, ai);
     xadFreeObjectA(XADM buf, 0);

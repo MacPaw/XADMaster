@@ -113,10 +113,10 @@
 		else
 		{
 			[fh skipBytes:datasize];
-			datacompsize=CSInputBufferOffset(input)-94;
+			datacompsize=(int)CSInputBufferOffset(input)-94;
 
 			[fh skipBytes:rsrcsize];
-			rsrccompsize=CSInputBufferOffset(input)-datacompsize-94;
+			rsrccompsize=(int)CSInputBufferOffset(input)-datacompsize-94;
 
 			int crc=[fh readUInt16BE];
 
@@ -204,7 +204,7 @@
 	if(uncomplennum)
 	{
 		off_t uncomplen=[uncomplennum longLongValue];
-		int crypto=[[obj objectForKey:@"Crypto"] longLongValue];
+		int crypto=[[obj objectForKey:@"Crypto"] intValue];
 
 		if(crypto==1)
 		{

@@ -506,7 +506,7 @@ XADUNARCHIVE(FSFAT)
   xadINT32 err = 0;
   xadUINT32 i, block, s;
 
-  i = ai->xai_CurFile->xfi_Size;
+  i = (xadUINT32)ai->xai_CurFile->xfi_Size;
   block = (xadUINT32)(uintptr_t) ai->xai_CurFile->xfi_PrivateInfo;
   while(i && !err)
   {

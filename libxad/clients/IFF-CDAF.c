@@ -438,47 +438,6 @@ static const xadUINT8 XPKArcString[] = "FORM\xFF\xFF\xFF\xFF" "CDAFNAME\0\0\0\x0
 
 /**************************************************************************************************/
 
-XADRECOGDATA(XPKArchive)
-{
-  xadUINT32 i;
-
-  for(i = 0; i < 30 && (XPKArcString[i] == 0xFF || XPKArcString[i] == data[i]); ++i)
-    ;
-
-  if(i == 30)
-    return 1;
-  else
-    return 0;
-}
-
-XADUNARCHIVE(XPKArchive)
-{
-  xadINT32 err;
-  struct xadFileInfo *fi;
-  struct xadInOut *io;
-
-  fi = ai->xai_CurFile;
-  if(fi->xfi_Size == fi->xfi_CrunchSize)
-    return xadHookAccess(XADM XADAC_COPY, fi->xfi_Size, 0, ai);
-  else if((io = xadIOAlloc(XADIOF_ALLOCINBUFFER|XADIOF_ALLOCOUTBUFFER
-  |XADIOF_NOCRC16|XADIOF_NOCRC32, ai, xadMasterBase)))
-  {
-    io->xio_InSize = fi->xfi_CrunchSize;
-    io->xio_OutSize = fi->xfi_Size;
-
-    if(!(err = xadIO_XPK(io, ai->xai_Password)))
-      err = xadIOWriteBuf(io);
-
-    xadFreeObjectA(XADM io, 0);
-  }
-  else
-    err = XADERR_NOMEMORY;
-
-  return err;
-}
-
-/**************************************************************************************************/
-
 static const xadUINT8 ShrinkString[] = "FORM\xFF\xFF\xFF\xFF" "CDAFNAME\0\0\0\x06shrink";
 
 XADRECOGDATA(Shrink)
@@ -575,7 +534,7 @@ XADGETINFO(SPack)
   xadINT32 err;
   struct xadFileInfo *fi;
 
-  i = ai->xai_InPos; /* save StartPosition for BackSeek. */
+  i = (xadUINT32)ai->xai_InPos; /* save StartPosition for BackSeek. */
 
   if(ai->xai_MultiVolume)
   {

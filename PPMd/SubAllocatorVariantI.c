@@ -20,7 +20,7 @@ static void InsertBlockAfter(PPMdMemoryBlockVariantI *self,void *pv,int NU,PPMdS
 
 static unsigned int I2B(PPMdSubAllocatorVariantI *self,int index);
 static void SplitBlock(PPMdSubAllocatorVariantI *self,void *pv,int oldindex,int newindex);
-static uint32_t GetUsedMemory(PPMdSubAllocatorVariantI *self);
+//static uint32_t GetUsedMemory(PPMdSubAllocatorVariantI *self);
 
 static void InitVariantI(PPMdSubAllocatorVariantI *self);
 static uint32_t AllocContextVariantI(PPMdSubAllocatorVariantI *self);

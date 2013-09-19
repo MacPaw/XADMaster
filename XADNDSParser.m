@@ -4,7 +4,6 @@
 #import "XADPNGWriter.h"
 
 static NSData *ConvertTiledIconToPNG(uint8_t *tiledata,uint16_t *palette);
-static void AppendPNGChunk(NSMutableData *data,uint32_t chunktype,uint8_t *bytes,int length);
 
 @implementation XADNDSParser
 

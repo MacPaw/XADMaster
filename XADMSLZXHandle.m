@@ -165,7 +165,7 @@
 		{
 			if(outbuffer[i]==0xe8)
 			{
-				int32_t currpos=pos+i;
+				int32_t currpos=(int)pos+i;
 				int32_t absoffs=CSInt32LE(&outbuffer[i+1]);
 				if(absoffs>=-currpos && absoffs<preprocesssize)
 				{

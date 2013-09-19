@@ -977,7 +977,7 @@ XADGETINFO(AMPK)
                   xadConvertDates(XADM XAD_DATECURRENTTIME, 1, XAD_GETDATEXADDATE,
                   &fi->xfi_Date, TAG_DONE);
                   fi->xfi_Protection = protection;
-                  skip = crunchedSize - fi->xfi_CrunchSize;
+                  skip = crunchedSize - (xadUINT32)fi->xfi_CrunchSize;
                   err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos+fi->xfi_CrunchSize, TAG_DONE);
                 }
                 else
@@ -1248,7 +1248,7 @@ XADUNARCHIVE(AmPlusUnpack)
     xadUINT32 bufsize, data, crc = 0;
     xadUINT32 * buf;
 
-    data = fi->xfi_Size;
+    data = (xadUINT32)fi->xfi_Size;
 
     if((bufsize = data+3) > 51200) /* +3 to get longword rounding */
       bufsize = 51200;
@@ -1794,8 +1794,8 @@ struct xadFileInfo *fi, xadUINT8 *data, struct xadMasterBase *xadMasterBase)
   xadSTRPTR buf;
   xadUINT32 bufsize, fsize, pos;
 
-  pos = ai->xai_InPos;
-  fsize = ai->xai_InSize-ai->xai_InPos;
+  pos = (xadUINT32)ai->xai_InPos;
+  fsize = (xadUINT32)(ai->xai_InSize-ai->xai_InPos);
   bufsize = 254*50;
   if(!(buf = xadAllocVec(XADM bufsize+254*2, XADMEMF_PUBLIC)))
     return XADERR_NOMEMORY;
@@ -1888,7 +1888,7 @@ XADGETINFO(ArcCBM)
   while(!err && ai->xai_InPos < ai->xai_InSize-11)
   {
     /* Read archive header */
-    if((insize = ai->xai_InSize-ai->xai_InPos) > sizeof(data))
+    if((insize = (xadUINT32)(ai->xai_InSize-ai->xai_InPos)) > sizeof(data))
       insize = sizeof(data);
     if(!(err = xadHookAccess(XADM XADAC_READ, insize, data, ai)))
     {
@@ -1959,9 +1959,9 @@ XADGETINFO(ArcCBM)
               }
               if(data[1] != 5) /* Mode 5? */
               {
-                blocksize = ((blocksize+253)/254)*254 + ai->xai_InPos - insize;
+                blocksize = ((blocksize+253)/254)*254 + (xadUINT32)ai->xai_InPos - insize;
                 if(blocksize > ai->xai_InSize)
-                  blocksize = ai->xai_InSize;
+                  blocksize = (xadUINT32)ai->xai_InSize;
                 err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, (xadSignSize)blocksize, TAG_DONE);
               }
               else
@@ -2319,7 +2319,7 @@ XADGETINFO(Crunch)
   xadINT32 err;
   int i, j;
 
-  if((i = ai->xai_InSize) > 256)
+  if((i = (int)ai->xai_InSize) > 256)
     i = 256;
 
   if(!(err = xadHookAccess(XADM XADAC_READ, i, data, ai)))

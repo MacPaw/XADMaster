@@ -47,7 +47,7 @@
 		if(streampos+total>=partend) [self startNextPart];
 
 		int numbytes=num-total;
-		if(streampos+total+numbytes>=partend) numbytes=partend-streampos-total;
+		if(streampos+total+numbytes>=partend) numbytes=(int)(partend-streampos-total);
 
 		[fh readBytes:numbytes toBuffer:&bytebuf[total]];
 

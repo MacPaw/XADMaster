@@ -22,7 +22,7 @@
 
 	if(b==0xe8||b==0xe9)
 	{
-		int dist=pos-lasthit;
+		int dist=(int)(pos-lasthit);
 		lasthit=pos;
 
 		if(dist>5)
@@ -61,7 +61,7 @@
 
 				for(;;)
 				{
-					reladdress=absaddress-pos-6;
+					reladdress=absaddress-(int32_t)pos-6;
 					if(bitfield==0) break;
 
 					static const int shifts[8]={24,16,8,8,0,0,0,0};

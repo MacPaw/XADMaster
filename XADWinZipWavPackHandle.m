@@ -130,7 +130,7 @@ static int32_t ReadBytes(void *context,void *data,int32_t numbytes)
 static uint32_t GetPos(void *context)
 {
 	CSInputBuffer *input=context;
-	return CSInputBufferOffset(input);
+	return (uint32_t)CSInputBufferOffset(input);
 }
 
 static int SetPosAbs(void *context,uint32_t pos)

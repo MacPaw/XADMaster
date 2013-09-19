@@ -1341,7 +1341,7 @@ XADGETINFO(DMS)
             return XADERR_NOMEMORY;
           if(!(err = xadHookAccess(XADM XADAC_READ, EndGetM16(t.UnpackedSize), fi->xfi_FileName, ai)))
           {
-            i = ai->xai_InPos;
+            i = (xadUINT32)ai->xai_InPos;
             j = 0;
             while(j < EndGetM32(h.UnpackedSize) && !err)
             {
@@ -1630,7 +1630,7 @@ XADGETINFO(SDSSFX)
     return err;
   while(!err)
   {
-    j = ai->xai_InPos;
+    j = (xadINT32)ai->xai_InPos;
     if(!(err = xadHookAccess(XADM XADAC_READ, sizeof(struct SDSSFXData), &sd, ai)))
     {
       if(!(i = strlen((char *)sd.Name)))
@@ -1692,9 +1692,9 @@ XADUNARCHIVE(SDSSFX)
 
         if(!(err = xadHookAccess(XADM XADAC_READ, fi->xfi_CrunchSize, buf, ai)))
         {
-          if(!(err = DMSUnpMEDIUM(&buf, fi->xfi_Size, d, xadMasterBase)))
+          if(!(err = DMSUnpMEDIUM(&buf, (xadUINT32)fi->xfi_Size, d, xadMasterBase)))
           {
-            if(CheckSumDMS(buf, fi->xfi_Size) == EndGetM16(sd.CheckSum))
+            if(CheckSumDMS(buf, (xadUINT32)fi->xfi_Size) == EndGetM16(sd.CheckSum))
               err = xadHookAccess(XADM XADAC_WRITE, fi->xfi_Size, buf, ai);
             else
               err = XADERR_CHECKSUM;

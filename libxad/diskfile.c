@@ -42,15 +42,15 @@ FUNCxadGetDiskInfo /* struct xadArchiveInfoP *ai, xadTAGPTR tags */
     {
     case XAD_STARTCLIENT: ai->xaip_ArchiveInfo.xai_Client
     = (struct xadClient *)(uintptr_t) ti->ti_Data; break;
-    case XAD_NOEXTERN: noext = ti->ti_Data; break;
+    case XAD_NOEXTERN: noext = (xadINT32)ti->ti_Data; break;
     case XAD_NOEMPTYERROR:
       if(ti->ti_Data)
         ai->xaip_ArchiveInfo.xai_Flags |= XADAIF_NOEMPTYERROR;
       else
         ai->xaip_ArchiveInfo.xai_Flags &= ~XADAIF_NOEMPTYERROR;
       break;
-    case XAD_IGNOREFLAGS: ignoreflags = ti->ti_Data; break;
-    case XAD_ONLYFLAGS:   onlyflags = ti->ti_Data; break;
+    case XAD_IGNOREFLAGS: ignoreflags = (xadUINT32)ti->ti_Data; break;
+    case XAD_ONLYFLAGS:   onlyflags = (xadUINT32)ti->ti_Data; break;
     }
   }
 
@@ -76,7 +76,7 @@ FUNCxadGetDiskInfo /* struct xadArchiveInfoP *ai, xadTAGPTR tags */
 #endif
         ii->xii_SectorSize = 512;
 //        ii->xii_FirstSector = 0;
-        ii->xii_NumSectors = ii->xii_TotalSectors = ai->xaip_InSize/512;
+        ii->xii_NumSectors = ii->xii_TotalSectors = (xadUINT32)(ai->xaip_InSize/512);
       }
       ai->xaip_ArchiveInfo.xai_ImageInfo = ii;
 

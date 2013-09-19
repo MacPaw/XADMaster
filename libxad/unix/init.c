@@ -170,7 +170,7 @@ static struct xadMasterBaseP *InitXADMasterBaseP( struct xadMasterBaseP *xmb )
 
   for (client = xmb->xmb_FirstClient; client; client = client->xc_Next)
     if (client->xc_RecogSize > minsize)
-      minsize = client->xc_RecogSize;
+      minsize = (unsigned long)client->xc_RecogSize;
 
   xmb->xmb_RecogSize = minsize;
   MakeCRC16(xmb->xmb_CRCTable1, XADCRC16_ID1);

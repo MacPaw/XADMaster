@@ -313,7 +313,7 @@ length:(uint32_t)length
 		// If the record length is 0, we need to skip to the next block.
 		if(recordlength==0)
 		{
-			int block=startpos/2048;
+			int block=(int)(startpos/2048);
 			[fh seekToFileOffset:(block+1)*2048];
 			continue;
 		}

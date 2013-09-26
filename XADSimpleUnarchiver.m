@@ -82,7 +82,7 @@
 
 		unpackdestination=nil;
 		finaldestination=nil;
-		soloitem=nil;
+		overridesoloitem=nil;
 
 		toplevelname=nil;
 		lookslikesolo=NO;
@@ -113,7 +113,7 @@
 
 	[unpackdestination release];
 	[finaldestination release];
-	[soloitem release];
+	[overridesoloitem release];
 
 	[toplevelname release];
 
@@ -274,12 +274,25 @@
 
 -(NSString *)actualDestination { return finaldestination; }
 
--(NSString *)soloItem { return soloitem; }
+-(NSString *)soloItem
+{
+	if(lookslikesolo)
+	{
+		NSArray *keys=[renames allKeys];
+		if([keys count]==1)
+		{
+			NSString *key=[keys objectAtIndex:0];
+			id value=[[renames objectForKey:key] objectForKey:@"."];
+			if(value!=[NSNull null]) return value;
+		}
+	}
+	return nil;
+}
 
 -(NSString *)createdItem
 {
 	if(!enclosingdir) return nil;
-	else if(lookslikesolo && removesolo) return soloitem;
+	else if(lookslikesolo && removesolo) return [self soloItem];
 	else return finaldestination;
 }
 
@@ -287,6 +300,7 @@
 {
 	if(lookslikesolo && enclosingdir && removesolo)
 	{
+		NSString *soloitem=[self soloItem];
 		if(soloitem) return soloitem;
 		else return @".";
 	}
@@ -453,9 +467,6 @@
 	// If we ended up extracting nothing, give up.
 	if(!numextracted) return XADNoError;
 
-	// If we unpacked a solo item, remember its path.
-	soloitem=[[self _findPathForSoloItem] retain];
-
 	return [self _finalizeExtraction];
 }
 
@@ -513,7 +524,7 @@
 	if(!numextracted) return error;
 
 	// If we extracted a single item, remember its path.
-	NSString *soloitempath=[self _findPathForSoloItem];
+	NSString *soloitem=[self soloItem];
 
 	// If we are removing the enclosing directory for solo items, check
 	// how many items were extracted, and handle collisions and moving files.
@@ -523,7 +534,7 @@
 		{
 			// Only one top-level item was unpacked. Move it to the parent
 			// directory and remove the enclosing directory.
-			NSString *itemname=[soloitempath lastPathComponent];
+			NSString *itemname=[soloitem lastPathComponent];
 
 			// To avoid trouble, first rename the enclosing directory
 			// to something unique.
@@ -555,7 +566,7 @@
 
 			// Remember where the item ended up.
 			finaldestination=[[finalitempath stringByDeletingLastPathComponent] retain];
-			soloitempath=finalitempath;
+			soloitem=finalitempath;
 
 		}
 		else
@@ -605,7 +616,7 @@
 	}
 
 	// Save the final path to the solo item, if any.
-	soloitem=[soloitempath retain];
+	overridesoloitem=[soloitem retain];
 
 	if(error) return error;
 
@@ -626,6 +637,7 @@
 			if(lookslikesolo && removesolo)
 			{
 				// We are dealing with a solo item removed from the enclosing directory.
+				NSString *soloitem=[self soloItem];
 				if(copydatetosolo) [XADPlatform copyDateFromPath:archivename toPath:soloitem];
 				else if(resetsolodate) [XADPlatform resetDateAtPath:soloitem];
 			}
@@ -663,21 +675,6 @@
 			if(![toplevelname isEqual:firstcomp]) lookslikesolo=NO;
 		}
 	}
-}
-
--(NSString *)_findPathForSoloItem
-{
-	if(lookslikesolo)
-	{
-		NSArray *keys=[renames allKeys];
-		if([keys count]==1)
-		{
-			NSString *key=[keys objectAtIndex:0];
-			id value=[[renames objectForKey:key] objectForKey:@"."];
-			if(value!=[NSNull null]) return value;
-		}
-	}
-	return nil;
 }
 
 

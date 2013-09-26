@@ -137,8 +137,11 @@
 				[fh skipBytes:4];
 			}
 
-			if(firstentry != (type==5)) [XADException raiseIllegalDataException];
-			firstentry=NO;
+			if(firstentry)
+			{
+				if(type!=5 && type!=0) [XADException raiseIllegalDataException];
+				firstentry=NO;
+			}
 
 			if(type==0) // empty entry
 			{
@@ -252,7 +255,7 @@
 -(void)seekToSector:(uint32_t)sector
 {
 	if(sector>=numsectors) [XADException raiseIllegalDataException];
-	[[self handle] seekToFileOffset:512+sector*secsize];
+	[[self handle] seekToFileOffset:(sector+1)*secsize];
 }
 
 -(uint32_t)nextSectorAfter:(uint32_t)sector

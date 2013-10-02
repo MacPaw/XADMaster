@@ -278,6 +278,8 @@
 {
 	if(lookslikesolo)
 	{
+		if(overridesoloitem) return overridesoloitem;
+
 		NSArray *keys=[renames allKeys];
 		if([keys count]==1)
 		{

@@ -39,6 +39,7 @@
 #import "XADPowerPackerParser.h"
 #import "XADPPMdParser.h"
 #import "XADRARParser.h"
+#import "XADRAR5Parser.h"
 #import "XADRPMParser.h"
 #import "XADSARParser.h"
 #import "XADSplitFileParser.h"
@@ -135,6 +136,7 @@ static int maxheader=0;
 		// Common formats
 		[XADZipParser class],
 		[XADRARParser class],
+		[XADRAR5Parser class],
 		[XAD7ZipParser class],
 		[XADGzipParser class],
 		[XADBzip2Parser class],
@@ -183,6 +185,7 @@ static int maxheader=0;
 		[XADZipItSEAParser class],
 		[XADZipSFXParser class],
 		[XADEmbeddedRARParser class],
+		[XADEmbeddedRAR5Parser class],
 		[XAD7ZipSFXParser class],
 		[XADNSISParser class],
 		[XADGzipSFXParser class],

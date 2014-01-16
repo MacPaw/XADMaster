@@ -68,7 +68,7 @@ static inline BOOL IsZeroBlock(RARBlock block) { return block.start==0; }
 
 static BOOL IsRARSignature(const uint8_t *ptr)
 {
-	return ptr[0]==0x52 && ptr[1]==0x61 && ptr[2]==0x72 && ptr[3]==0x21 &&
+	return ptr[0]=='R' && ptr[1]=='a' && ptr[2]=='r' && ptr[3]=='!' &&
 	ptr[4]==0x1a && ptr[5]==0x07 && ptr[6]==0x00;
 }
 

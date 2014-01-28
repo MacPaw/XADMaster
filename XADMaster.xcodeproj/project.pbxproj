@@ -1136,6 +1136,13 @@
 		1BA9EFD31875992C007D9245 /* XADRAR5Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9EFCE18746DCA007D9245 /* XADRAR5Parser.m */; };
 		1BA9EFD41875992D007D9245 /* XADRAR5Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9EFCE18746DCA007D9245 /* XADRAR5Parser.m */; };
 		1BA9EFD51875992E007D9245 /* XADRAR5Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9EFCE18746DCA007D9245 /* XADRAR5Parser.m */; };
+		1BA9F0231891DAF9007D9245 /* hmac_sha256.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA9F0221891DAF9007D9245 /* hmac_sha256.h */; };
+		1BA9F0251891DB01007D9245 /* hmac_sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9F0241891DB01007D9245 /* hmac_sha256.c */; };
+		1BA9F0261891DC0C007D9245 /* hmac_sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9F0241891DB01007D9245 /* hmac_sha256.c */; };
+		1BA9F0271891DC0D007D9245 /* hmac_sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9F0241891DB01007D9245 /* hmac_sha256.c */; };
+		1BA9F0281891DC0D007D9245 /* hmac_sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9F0241891DB01007D9245 /* hmac_sha256.c */; };
+		1BA9F02B1892A669007D9245 /* pbkdf2_hmac_sha256.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA9F0291892A669007D9245 /* pbkdf2_hmac_sha256.h */; };
+		1BA9F02C1892A669007D9245 /* pbkdf2_hmac_sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9F02A1892A669007D9245 /* pbkdf2_hmac_sha256.c */; };
 		1BBAB6780EC26AA6007FE6A2 /* XADArchiveParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BBAB6790EC26AA6007FE6A2 /* XADArchiveParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */; };
 		1BBAB6850EC274A3007FE6A2 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
@@ -1969,6 +1976,10 @@
 		1BA4DF0D101DFC73001AB3CA /* XADNSISBzip2Handle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSISBzip2Handle.m; sourceTree = "<group>"; };
 		1BA9EFCD18746DCA007D9245 /* XADRAR5Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR5Parser.h; sourceTree = "<group>"; };
 		1BA9EFCE18746DCA007D9245 /* XADRAR5Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR5Parser.m; sourceTree = "<group>"; };
+		1BA9F0221891DAF9007D9245 /* hmac_sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac_sha256.h; sourceTree = "<group>"; };
+		1BA9F0241891DB01007D9245 /* hmac_sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac_sha256.c; sourceTree = "<group>"; };
+		1BA9F0291892A669007D9245 /* pbkdf2_hmac_sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pbkdf2_hmac_sha256.h; sourceTree = "<group>"; };
+		1BA9F02A1892A669007D9245 /* pbkdf2_hmac_sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pbkdf2_hmac_sha256.c; sourceTree = "<group>"; };
 		1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADArchiveParser.h; sourceTree = "<group>"; };
 		1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADArchiveParser.m; sourceTree = "<group>"; };
 		1BBAB67A0EC2749B007FE6A2 /* XADTest2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest2.m; sourceTree = "<group>"; };
@@ -3216,8 +3227,12 @@
 				1BA241EF163E1E6F000D8174 /* des.h */,
 				1BA23F96163DFBE4000D8174 /* hmac_sha1.c */,
 				1BA23F97163DFBE4000D8174 /* hmac_sha1.h */,
+				1BA9F0241891DB01007D9245 /* hmac_sha256.c */,
+				1BA9F0221891DAF9007D9245 /* hmac_sha256.h */,
 				1BA241E2163E1104000D8174 /* md5.c */,
 				1BA241E3163E1104000D8174 /* md5.h */,
+				1BA9F02A1892A669007D9245 /* pbkdf2_hmac_sha256.c */,
+				1BA9F0291892A669007D9245 /* pbkdf2_hmac_sha256.h */,
 				1BE97610163CC2A100BB34EA /* sha.c */,
 				1BE97611163CC2A100BB34EA /* sha.h */,
 			);
@@ -3633,6 +3648,7 @@
 				1B75B916134E5BD000510EA5 /* XADRAR20CryptHandle.h in Headers */,
 				1B75B917134E5BD000510EA5 /* XADRAR20Handle.h in Headers */,
 				1B75B918134E5BD100510EA5 /* XADRAR30Filter.h in Headers */,
+				1BA9F0231891DAF9007D9245 /* hmac_sha256.h in Headers */,
 				1B75B919134E5BD300510EA5 /* XADRAR30Handle.h in Headers */,
 				1B75B91A134E5BD400510EA5 /* XADRARAESHandle.h in Headers */,
 				1B75B91B134E5BD400510EA5 /* XADRARParser.h in Headers */,
@@ -3682,6 +3698,7 @@
 				1B31CB6B13C288D700ED119E /* XADSWFGeometry.h in Headers */,
 				1B31CB7113C288D700ED119E /* XADSWFTagParser.h in Headers */,
 				1B31CB7913C2890700ED119E /* XADSWFParser.h in Headers */,
+				1BA9F02B1892A669007D9245 /* pbkdf2_hmac_sha256.h in Headers */,
 				1B31CB8113C523A300ED119E /* XADPNGWriter.h in Headers */,
 				1BDDC7ED13E0E78C00A8C079 /* XADSimpleUnarchiver.h in Headers */,
 				1BF3BA9013EE08A300BE7400 /* XADPlatform.h in Headers */,
@@ -4323,6 +4340,7 @@
 				1BE97633163CC2A100BB34EA /* sha.c in Sources */,
 				1BA23E7C163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F99163DFBE4000D8174 /* hmac_sha1.c in Sources */,
+				1BA9F0281891DC0D007D9245 /* hmac_sha256.c in Sources */,
 				1BA241E5163E1104000D8174 /* md5.c in Sources */,
 				1BA241F1163E1E6F000D8174 /* des.c in Sources */,
 				1B6F13D5163E25160054C1AE /* XADMD5Handle.m in Sources */,
@@ -4542,6 +4560,7 @@
 				1B467AF715CD9A73001AB1DD /* LZWHandle.m in Sources */,
 				1B467AF815CD9A73001AB1DD /* NSDictionaryNumberExtension.m in Sources */,
 				1B467AF915CD9A73001AB1DD /* PDFEncryptionHandler.m in Sources */,
+				1BA9F0261891DC0C007D9245 /* hmac_sha256.c in Sources */,
 				1B467AFA15CD9A73001AB1DD /* PDFEncryptionUtils.m in Sources */,
 				1B467AFB15CD9A73001AB1DD /* PDFParser.m in Sources */,
 				1B467AFC15CD9A73001AB1DD /* PDFStream.m in Sources */,
@@ -4784,6 +4803,7 @@
 				1BE97634163CC2A100BB34EA /* sha.c in Sources */,
 				1BA23E7D163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F9A163DFBE4000D8174 /* hmac_sha1.c in Sources */,
+				1BA9F0271891DC0D007D9245 /* hmac_sha256.c in Sources */,
 				1BA241E6163E1104000D8174 /* md5.c in Sources */,
 				1BA241F2163E1E6F000D8174 /* des.c in Sources */,
 				1B6F13D6163E25160054C1AE /* XADMD5Handle.m in Sources */,
@@ -5056,10 +5076,12 @@
 				1BA23DB0163A0B49000D8174 /* XAD7ZipAESHandle.m in Sources */,
 				1BE97616163CC2A100BB34EA /* aescrypt.c in Sources */,
 				1BE9761A163CC2A100BB34EA /* aeskey.c in Sources */,
+				1BA9F02C1892A669007D9245 /* pbkdf2_hmac_sha256.c in Sources */,
 				1BE97622163CC2A100BB34EA /* aestab.c in Sources */,
 				1BA23E7B163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F95163DD4E9000D8174 /* sha.c in Sources */,
 				1BA23F98163DFBE4000D8174 /* hmac_sha1.c in Sources */,
+				1BA9F0251891DB01007D9245 /* hmac_sha256.c in Sources */,
 				1BA241E4163E1104000D8174 /* md5.c in Sources */,
 				1BA241F0163E1E6F000D8174 /* des.c in Sources */,
 				1B6F13D4163E25160054C1AE /* XADMD5Handle.m in Sources */,

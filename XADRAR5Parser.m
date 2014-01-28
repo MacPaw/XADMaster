@@ -1,12 +1,14 @@
 #import "XADRAR5Parser.h"
+#import "XADRARAESHandle.h"
 #import "NSDateXAD.h"
+#import "Crypto/pbkdf2_hmac_sha256.h"
 
 typedef struct RAR5Block
 {
 	uint32_t crc;
 	uint64_t headersize,type,flags;
 	uint64_t extrasize,datasize;
-	off_t start;
+	off_t start,outerstart;
 	CSHandle *fh;
 } RAR5Block;
 
@@ -100,16 +102,16 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 {
 	if((self=[super init]))
 	{
-		headersalt=nil;
-//		keys=nil;
+		headerkey=nil;
+		cryptocache=[NSMutableDictionary new];
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[headersalt release];
-//	[keys release];
+	[headerkey release];
+	[cryptocache release];
 	[super dealloc];
 }
 
@@ -123,24 +125,15 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(void)parse
 {
-	CSHandle *handle=[self handle];
-
-	[handle skipBytes:8];
-
-	RAR5Block block=[self readBlockHeader];
-
-	if(block.type!=1)
-	{
-		[XADException raiseIllegalDataException];
-	}
-
-	[self skipBlock:block];
+	[[self handle] skipBytes:8];
 
 	for(;;)
 	{
 		RAR5Block block=[self readBlockHeader];
 
 		if(IsZeroBlock(block)) break;
+
+		CSHandle *handle=block.fh;
 
 		switch(block.type)
 		{
@@ -403,21 +396,17 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 				uint64_t flags=ReadRAR5VInt(handle);
 				int strength=[handle readUInt8];
-				headersalt=[handle readDataOfLength:16];
+				NSData *salt=[handle readDataOfLength:16];
 
-				NSLog(@"crypto %llx %d %@",flags,strength,headersalt);
-
+				NSData *passcheck=nil;
 				if(flags&0x0001)
 				{
-					NSData *passcheck=[handle readDataOfLength:8];
-					uint32_t extracrc=[handle readUInt32LE];
-					NSLog(@"pass check %@ %08x",passcheck,extracrc);
+					passcheck=[handle readDataOfLength:8];
+					//uint32_t extracrc=[handle readUInt32LE];
 				}
 
-				[XADException raiseNotSupportedException];
-
-				[self skipBlock:block];
-				block=[self readBlockHeader];
+				headerkey=[[self encryptionKeyForPassword:[self password]
+				salt:salt strength:strength passwordCheck:passcheck] retain];
 			}
 		}
 
@@ -431,6 +420,19 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	if([fh atEndOfFile]) return ZeroBlock;
 
 	RAR5Block block;
+
+	NSLog(@"start block at: %lld",[fh offsetInFile]);
+
+	block.outerstart=0;
+
+	if(headerkey)
+	{
+		NSData *iv=[fh readDataOfLength:16];
+		block.outerstart=[fh offsetInFile];
+		fh=[[[XADRARAESHandle alloc] initWithHandle:fh RAR5Key:headerkey IV:iv] autorelease];
+	}
+
+	block.fh=fh;
 
 	@try
 	{
@@ -463,7 +465,48 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(void)skipBlock:(RAR5Block)block
 {
-	[[self handle] seekToFileOffset:block.start+block.headersize+block.datasize];
+	if(block.outerstart)
+	{
+		[[self handle] seekToFileOffset:block.outerstart+((block.start+block.headersize+15)&~15)+block.datasize];
+	}
+	else
+	{
+		[[self handle] seekToFileOffset:block.start+block.headersize+block.datasize];
+	}
+}
+
+-(NSData *)encryptionKeyForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check
+{
+	NSArray *key=[NSArray arrayWithObjects:password,salt,[NSNumber numberWithInt:strength],nil];
+	NSDictionary *crypto=[cryptocache objectForKey:key];
+	if(!crypto)
+	{
+		NSData *passworddata=[passwordstring dataUsingEncoding:NSUTF8StringEncoding];
+
+		uint8_t DK1[32],DK2[32],DK3[32];
+		PBKDF2_3([passworddata bytes],[passworddata length],[salt bytes],[salt length],
+		DK1,DK2,DK3,32,1<<strength,16,16);
+
+		if(check && [check length]==8)
+		{
+			const uint8_t *checkbytes=[check bytes];
+			for(int i=0;i<8;i++)
+			{
+				if(checkbytes[i]!=(DK3[i]^DK3[i+8]^DK3[i+16]^DK3[i+24]))
+				[XADException raisePasswordException];
+			}
+		}
+
+		crypto=[NSDictionary dictionaryWithObjectsAndKeys:
+			[NSData dataWithBytes:DK1 length:32],@"Key",
+			[NSData dataWithBytes:DK2 length:32],@"HashKey",
+			//[NSData dataWithBytes:DK3 length:32],@"PasswordCheck",
+		nil];
+
+		[cryptocache setObject:crypto forKey:key];
+	}
+
+	return [crypto objectForKey:@"Key"];
 }
 
 -(NSString *)formatName

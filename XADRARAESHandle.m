@@ -80,6 +80,24 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 	return self;
 }
 
+-(id)initWithHandle:(CSHandle *)handle RAR5Key:(NSData *)keydata IV:(NSData *)ivdata
+{
+	return [self initWithHandle:handle length:CSHandleMaxLength RAR5Key:keydata IV:ivdata];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length RAR5Key:(NSData *)keydata IV:(NSData *)ivdata
+{
+	if((self=[super initWithName:[handle name] length:length]))
+	{
+		parent=[handle retain];
+		startoffs=[handle offsetInFile];
+
+		memcpy(iv,[ivdata bytes],16);
+		aes_decrypt_key256([keydata bytes],&aes);
+	}
+	return self;
+}
+
 -(void)dealloc
 {
 	[parent release];

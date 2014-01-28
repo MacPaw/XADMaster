@@ -15,6 +15,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata;
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata;
+-(id)initWithHandle:(CSHandle *)handle RAR5Key:(NSData *)keydata IV:(NSData *)ivdata;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length RAR5Key:(NSData *)keydata IV:(NSData *)ivdata;
 -(void)dealloc;
 
 -(void)resetBlockStream;

@@ -2,7 +2,8 @@
 
 @interface XADRAR5Parser:XADArchiveParser
 {
-	NSData *headersalt;
+	NSData *headerkey;
+	NSMutableDictionary *cryptocache;
 }
 
 +(int)requiredHeaderSize;

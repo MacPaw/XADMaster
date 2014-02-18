@@ -870,6 +870,12 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	else return nil;
 }
 
+-(CSHandle *)currentHandle
+{
+	if([sourcehandle respondsToSelector:@selector(currentHandle)]) return [(id)sourcehandle currentHandle];
+	else return sourcehandle;
+}
+
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset
 {
 	if([sourcehandle respondsToSelector:@selector(handles)])

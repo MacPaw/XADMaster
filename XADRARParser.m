@@ -370,8 +370,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 				[self skipBlock:block];
 
-				CSHandle *handle=[self handle];
-				if([handle respondsToSelector:@selector(currentHandle)]) handle=[(id)handle currentHandle];
+				CSHandle *handle=[self currentHandle];
 				if([handle offsetInFile]!=0) [handle seekToEndOfFile];
 			}
 			break;

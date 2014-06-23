@@ -1,4 +1,4 @@
-#ifndef XADMASTER_DMS_CANY
+#ifndef XADMASTER_DMS_C
 #define XADMASTER_DMS_C
 
 /*  $Id: DMS.c,v 1.11 2006/06/01 06:55:03 stoecker Exp $

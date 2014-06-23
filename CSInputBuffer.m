@@ -163,10 +163,6 @@ void _CSInputFillBuffer(CSInputBuffer *self)
 
 // Bitstream reading
 
-static inline int imin(int a,int b) { return a<b?a:b; }
-
-static inline int iswap16(uint16_t v) { return (v>>8)|(v<<8); }
-
 // TODO: clean up and/or make faster
 void _CSInputFillBits(CSInputBuffer *self)
 {

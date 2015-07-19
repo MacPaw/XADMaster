@@ -62,6 +62,8 @@
 
 -(void)printToFile:(FILE *)fh
 {
+	if(!fh) return;
+
 	int length=[self length];
 	unichar buffer[length];
 	[self getCharacters:buffer range:NSMakeRange(0,length)];
@@ -92,6 +94,8 @@
 
 -(void)printToFile:(FILE *)fh
 {
+	if(!fh) return;
+
 	int length=[self lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
 	char buffer[length+1];
 	[self getCString:buffer maxLength:length+1 encoding:NSUTF8StringEncoding];

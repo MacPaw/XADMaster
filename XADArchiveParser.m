@@ -654,8 +654,10 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 	// If the extended attributes already have a finderinfo,
 	// just keep it and return them as such.
-	if(originalattrs&&[originalattrs objectForKey:@"com.apple.FinderInfo"])
-	return originalattrs;
+	if(originalattrs && [originalattrs objectForKey:@"com.apple.FinderInfo"])
+	{
+		return originalattrs;
+	}
 
 	// If we have or can build a finderinfo struct, add it.
 	NSData *finderinfo=[self finderInfoForDictionary:dict];
@@ -677,7 +679,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 		}
 	}
 
-	return nil;
+	return originalattrs;
 }
 
 -(NSData *)finderInfoForDictionary:(NSDictionary *)dict

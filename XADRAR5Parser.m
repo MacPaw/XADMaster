@@ -107,6 +107,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	BOOL skipheader=YES;
 
 	NSMutableDictionary *currdict=nil;
+	NSMutableArray *currparts=[NSMutableArray array];
 
 	for(;;)
 	{
@@ -165,8 +166,12 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 				if(!(block.flags&0x0010))
 				{
 					// This is the last part of a file, so get rid of it.
+					[currdict setObject:currparts forKey:XADSolidObjectKey];
 					[self addEntryWithDictionary:currdict];
+
 					currdict=nil;
+
+
 				}
 
 				[self skipBlock:block];
@@ -225,6 +230,8 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	CSHandle *handle=block.fh;
 
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithLongLong:[self endOfBlockHeader:block]],@"RAR5DataOffset",
+		[NSNumber numberWithLongLong:block.datasize],@"RAR5DataLength",
 	nil];
 
 	uint64_t flags=ReadRAR5VInt(handle);
@@ -256,15 +263,26 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	if(!(flags&0x0001))
 	{
 		int compversion=compinfo&0x3f;
-		BOOL issolid=(compinfo&0x40)>>6;
+		//BOOL issolid=(compinfo&0x40)>>6;
 		int compmethod=(compinfo&0x380)>>7;
 		int compdictsize=(compinfo&0x3c00)>>10;
 		[dict setObject:[NSNumber numberWithUnsignedLongLong:compinfo] forKey:@"RAR5CompressionInformation"];
 		[dict setObject:[NSNumber numberWithInt:compversion] forKey:@"RAR5CompressionVersion"];
-		[dict setObject:[NSNumber numberWithBool:issolid] forKey:XADIsSolidKey];
+		//[dict setObject:[NSNumber numberWithBool:issolid] forKey:XADIsSolidKey];
 		[dict setObject:[NSNumber numberWithInt:compmethod] forKey:@"RAR5CompressionMethod"];
 		[dict setObject:[NSNumber numberWithInt:compdictsize] forKey:@"RAR5CompressionDictionarySize"];
-		// TODO: Compression algorithm name
+
+		NSString *methodname=nil;
+		switch(compmethod)
+		{
+			case 0: methodname=@"None"; break;
+			case 1: methodname=[NSString stringWithFormat:@"Fastest v5.0 (v%d)",compversion]; break;
+			case 2: methodname=[NSString stringWithFormat:@"Fast v5.0 (v%d)",compversion]; break;
+			case 3: methodname=[NSString stringWithFormat:@"Normal v5.0 (v%d)",compversion]; break;
+			case 4: methodname=[NSString stringWithFormat:@"Good v5.0 (v%d)",compversion]; break;
+			case 5: methodname=[NSString stringWithFormat:@"Best v5.0 (v%d)",compversion]; break;
+		}
+		if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 	}
 
 	uint64_t os=ReadRAR5VInt(handle);
@@ -511,13 +529,18 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(void)skipBlock:(RAR5Block)block
 {
+	[[self handle] seekToFileOffset:[self endOfBlockHeader:block]];
+}
+
+-(off_t)endOfBlockHeader:(RAR5Block)block
+{
 	if(block.outerstart)
 	{
-		[[self handle] seekToFileOffset:block.outerstart+((block.start+block.headersize+15)&~15)+block.datasize];
+		return block.outerstart+((block.start+block.headersize+15)&~15)+block.datasize;
 	}
 	else
 	{
-		[[self handle] seekToFileOffset:block.start+block.headersize+block.datasize];
+		return block.start+block.headersize+block.datasize;
 	}
 }
 

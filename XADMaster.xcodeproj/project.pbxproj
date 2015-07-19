@@ -689,6 +689,9 @@
 		1B4C03AB11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C03A911B34E1A00CDACC1 /* RARVirtualMachine.c */; };
 		1B4CFDB7119F571100CDACC1 /* XADRARVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFDAD119EDD0D00CDACC1 /* XADRARVirtualMachine.m */; };
 		1B4CFEBA11A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFEB611A3334200CDACC1 /* XADFastLZSSHandle.m */; };
+		1B4E75EC1A2080E2005668E5 /* pbkdf2_hmac_sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9F02A1892A669007D9245 /* pbkdf2_hmac_sha256.c */; };
+		1B4E75EF1A2080E3005668E5 /* pbkdf2_hmac_sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9F02A1892A669007D9245 /* pbkdf2_hmac_sha256.c */; };
+		1B4E75F01A2080E4005668E5 /* pbkdf2_hmac_sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA9F02A1892A669007D9245 /* pbkdf2_hmac_sha256.c */; };
 		1B4E97401426147D00640F59 /* XADRARInputHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4E973F1426147D00640F59 /* XADRARInputHandle.m */; };
 		1B4E97411426147D00640F59 /* XADRARInputHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4E973F1426147D00640F59 /* XADRARInputHandle.m */; };
 		1B4E97421426147D00640F59 /* XADRARInputHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4E973F1426147D00640F59 /* XADRARInputHandle.m */; };
@@ -4009,7 +4012,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0640;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -4295,6 +4298,7 @@
 				1B34442E13A9789B00C89872 /* bits.c in Sources */,
 				1B34443113A9789E00C89872 /* float.c in Sources */,
 				1B34443313A978A100C89872 /* metadata.c in Sources */,
+				1B4E75EF1A2080E3005668E5 /* pbkdf2_hmac_sha256.c in Sources */,
 				1B34443513A978A500C89872 /* unpack.c in Sources */,
 				1BA9EFD31875992C007D9245 /* XADRAR5Parser.m in Sources */,
 				1B34443D13A978B200C89872 /* words.c in Sources */,
@@ -4419,6 +4423,7 @@
 				1B467A6A15CD9A73001AB1DD /* XADStuffItOldHandles.m in Sources */,
 				1B467A6B15CD9A73001AB1DD /* XADStuffItParser.m in Sources */,
 				1B467A6C15CD9A73001AB1DD /* XADStuffItXBlendHandle.m in Sources */,
+				1B4E75EC1A2080E2005668E5 /* pbkdf2_hmac_sha256.c in Sources */,
 				1B467A6D15CD9A73001AB1DD /* XADStuffItXBlockHandle.m in Sources */,
 				1B467A6E15CD9A73001AB1DD /* XADStuffItXCyanideHandle.m in Sources */,
 				1B467A6F15CD9A73001AB1DD /* XADStuffItXDarkhorseHandle.m in Sources */,
@@ -4758,6 +4763,7 @@
 				1B34443013A9789B00C89872 /* bits.c in Sources */,
 				1B34443213A9789F00C89872 /* float.c in Sources */,
 				1B34443413A978A200C89872 /* metadata.c in Sources */,
+				1B4E75F01A2080E4005668E5 /* pbkdf2_hmac_sha256.c in Sources */,
 				1B34443613A978A600C89872 /* unpack.c in Sources */,
 				1BA9EFD41875992D007D9245 /* XADRAR5Parser.m in Sources */,
 				1B34443E13A978B300C89872 /* words.c in Sources */,
@@ -5354,7 +5360,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -5377,7 +5382,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -5419,8 +5423,11 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -5606,7 +5613,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -5649,7 +5655,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5699,7 +5704,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5760,7 +5764,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5803,7 +5806,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5872,7 +5874,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5996,8 +5997,11 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

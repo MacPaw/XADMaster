@@ -178,8 +178,10 @@ static NSData *ReadNullTerminatedString(CSHandle *fh);
 			case 7: osname=@"Atari ST"; break;
 			case 8: osname=@"NeXT"; break;
 			case 9: osname=@"VAX VMS"; break;
+			case 10: osname=@"Windows 95"; break;
+			case 11: osname=@"Win32"; break;
 		}
-		[dict setObject:[self XADStringWithString:osname] forKey:@"ARJOSName"];
+		if(osname) [dict setObject:[self XADStringWithString:osname] forKey:@"ARJOSName"];
 
 		NSString *methodname=nil;
 		switch(method)
@@ -190,7 +192,7 @@ static NSData *ReadNullTerminatedString(CSHandle *fh);
 			case 3: methodname=@"Fast"; break;
 			case 4: methodname=@"Fastest"; break;
 		}
-		[dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
+		if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 
 		if([comment length]) [dict setObject:[self XADStringWithData:comment] forKey:XADCommentKey];
 

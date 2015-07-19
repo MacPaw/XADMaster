@@ -189,6 +189,7 @@ encodingName:(NSString *)encoding
 -(NSString *)stringWithEncodingName:(NSString *)encoding
 {
 	if(string) return string;
+	if(!data) return nil;
 	return [XADString escapedStringForData:data encodingName:encoding];
 }
 
@@ -284,7 +285,9 @@ encodingName:(NSString *)encoding
 -(NSString *)description
 {
 	// TODO: more info?
-	return [self string];
+	NSString *actualstring=[self string];
+	if(!actualstring) return @"(nil)";
+	return actualstring;
 }
 
 -(id)copyWithZone:(NSZone *)zone

@@ -11,12 +11,12 @@
 	if([key matchedByPattern:@"CRC32$"])
 	{
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
-		return [NSString stringWithFormat:@"0x%08llx",[object longLongValue]];
+		return [NSString stringWithFormat:@"0x%08x",[object unsignedIntValue]];
 	}
 	else if([key matchedByPattern:@"CRC16$"])
 	{
 		if(![object isKindOfClass:[NSNumber class]]) return [object description];
-		return [NSString stringWithFormat:@"0x%04llx",[object longLongValue]];
+		return [NSString stringWithFormat:@"0x%04x",[object unsignedIntValue]];
 	}
 	else if([key matchedByPattern:@"Is[A-Z0-9]"])
 	{
@@ -360,7 +360,6 @@ NSString *XADHumanReadableObject(id object)
 	else if([object isKindOfClass:[NSValue class]]) return GNUSTEPKludge_HumanReadableValue(object);
 	#endif
 	else return [object description];
-
 }
 
 NSString *XADHumanReadableDate(NSDate *date)

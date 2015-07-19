@@ -28,7 +28,7 @@
 	NSString *name=[self name];
 	NSString *extension=[[name pathExtension] lowercaseString];
 	NSString *contentname;
-	if([extension isEqual:@"tbz"]||[extension isEqual:@"tbz2"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"tar"];
+	if([extension isEqual:@"tbz"]||[extension isEqual:@"tbz2"]||[extension isEqual:@"tb2"]) contentname=[[name stringByDeletingPathExtension] stringByAppendingPathExtension:@"tar"];
 	else contentname=[name stringByDeletingPathExtension];
 
 	// TODO: set no filename flag

@@ -28,17 +28,14 @@
 
 -(void)startPrintingArray;
 -(void)startPrintingArrayObject;
--(void)endPrintingArrayObject;
--(void)endPrintingArray;
 -(void)printArrayObject:(id)object;
+-(void)endPrintingArray;
 -(void)printArrayObjects:(NSArray *)array;
 
 -(void)startPrintingDictionary;
--(void)printDictionaryKey:(id)key;
--(void)startPrintingDictionaryObject;
--(void)endPrintingDictionaryObject;
+-(void)startPrintingDictionaryObjectForKey:(id)key;
+-(void)printDictionaryObject:(id)object forKey:(id)key;
 -(void)endPrintingDictionary;
--(void)printDictionaryObject:(id)object;
 -(void)printDictionaryKeysAndObjects:(NSDictionary *)dictionary;
 
 -(void)startNewLine;

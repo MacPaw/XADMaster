@@ -46,14 +46,13 @@
 	else if([object isKindOfClass:[NSArray class]]) [self printArray:object];
 	else if([object isKindOfClass:[NSDictionary class]]) [self printDictionary:object];
 	else [self printString:[object description]];
-
-	needseparator=YES;
 }
 
 -(void)printNull
 {
 	[self printSeparatorIfNeeded];
 	[@"null" print];
+	needseparator=YES;
 }
 
 -(void)printNumber:(NSNumber *)number
@@ -68,6 +67,7 @@
 	{
 		[[number description] print];
 	}
+	needseparator=YES;
 }
 
 -(void)printString:(NSString *)string
@@ -76,6 +76,7 @@
 	[@"\"" print];
 	[[self stringByEscapingString:string] print];
 	[@"\"" print];
+	needseparator=YES;
 }
 
 -(void)printData:(NSData *)data
@@ -84,6 +85,7 @@
 	[@"\"" print];
 	[[self stringByEncodingBytes:[data bytes] length:[data length]] print];
 	[@"\"" print];
+	needseparator=YES;
 }
 
 -(void)printValue:(NSValue *)value
@@ -97,6 +99,7 @@
 	[@"\"" print];
 	[[self stringByEncodingBytes:bytes length:length] print];
 	[@"\"" print];
+	needseparator=YES;
 }
 
 -(void)printArray:(NSArray *)array
@@ -128,25 +131,19 @@
 	[self startNewLine];
 }
 
--(void)endPrintingArrayObject
-{
-	needseparator=YES;
-}
-
--(void)endPrintingArray
-{
-	needseparator=NO;
-
-	indentlevel--;
-	[self startNewLine];
-	[@"]" print];
-}
-
 -(void)printArrayObject:(id)object
 {
 	[self startPrintingArrayObject];
 	[self printObject:object];
-	[self endPrintingArrayObject];
+}
+
+-(void)endPrintingArray
+{
+	needseparator=YES;
+
+	indentlevel--;
+	[self startNewLine];
+	[@"]" print];
 }
 
 -(void)printArrayObjects:(NSArray *)array
@@ -167,7 +164,7 @@
 	indentlevel++;
 }
 
--(void)printDictionaryKey:(id)key
+-(void)startPrintingDictionaryObjectForKey:(id)key
 {
 	[self printSeparatorIfNeeded];
 	[self startNewLine];
@@ -176,40 +173,26 @@
 	[@"\": " print];
 }
 
--(void)startPrintingDictionaryObject
+-(void)printDictionaryObject:(id)object forKey:(id)key
 {
-}
-
--(void)endPrintingDictionaryObject
-{
-	needseparator=YES;
+	[self startPrintingDictionaryObjectForKey:key];
+	[self printObject:object];
 }
 
 -(void)endPrintingDictionary
 {
-	needseparator=NO;
+	needseparator=YES;
 
 	indentlevel--;
 	[self startNewLine];
 	[@"}" print];
 }
 
--(void)printDictionaryObject:(id)object
-{
-	[self startPrintingDictionaryObject];
-	[self printObject:object];
-	[self endPrintingDictionaryObject];
-}
-
 -(void)printDictionaryKeysAndObjects:(NSDictionary *)dictionary
 {
 	NSEnumerator *enumerator=[dictionary keyEnumerator];
 	id key;
-	while((key=[enumerator nextObject]))
-	{
-		[self printDictionaryKey:key];
-		[self printDictionaryObject:[dictionary objectForKey:key]];
-	}
+	while((key=[enumerator nextObject])) [self printDictionaryObject:[dictionary objectForKey:key] forKey:key];
 }
 
 

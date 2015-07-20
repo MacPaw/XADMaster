@@ -1,5 +1,5 @@
 #import "XADLZHStaticHandle.h"
-
+#import "XADException.h"
 
 @implementation XADLZHStaticHandle
 
@@ -124,6 +124,7 @@
 					case 1: zeros=CSInputNextBitString(input,4)+3; break;
 					case 2: zeros=CSInputNextBitString(input,9)+20; break;
 				}
+				if(n+zeros>num) [XADException raiseIllegalDataException];
 				for(int i=0;i<zeros;i++) codelengths[n++]=0;
 			}
 			else codelengths[n++]=c-2;

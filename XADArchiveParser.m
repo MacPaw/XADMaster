@@ -747,7 +747,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 // Internal functions
 
-static NSInteger XADVolumeSort(id entry1,id entry2,void *extptr)
+static NSComparisonResult XADVolumeSort(id entry1,id entry2,void *extptr)
 {
 	NSString *str1=entry1;
 	NSString *str2=entry2;

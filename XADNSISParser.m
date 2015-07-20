@@ -416,7 +416,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 
 
-static NSInteger CompareEntryDataOffsets(id first,id second,void *context)
+static NSComparisonResult CompareEntryDataOffsets(id first,id second,void *context)
 {
 	return [[first objectForKey:@"NSISDataOffset"] compare:[second objectForKey:@"NSISDataOffset"]];
 }

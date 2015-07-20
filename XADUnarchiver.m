@@ -274,7 +274,7 @@
 
 
 
-static NSInteger SortDirectoriesByDepthAndResource(id entry1,id entry2,void *context)
+static NSComparisonResult SortDirectoriesByDepthAndResource(id entry1,id entry2,void *context)
 {
 	NSDictionary *dict1=[entry1 objectAtIndex:1];
 	NSDictionary *dict2=[entry2 objectAtIndex:1];

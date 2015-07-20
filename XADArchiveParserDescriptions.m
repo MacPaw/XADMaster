@@ -135,7 +135,7 @@
 	return key;
 }
 
-static NSInteger OrderKeys(id first,id second,void *context);
+static NSComparisonResult OrderKeys(id first,id second,void *context);
 
 -(NSArray *)descriptiveOrderingOfKeysInDictionary:(NSDictionary *)dict
 {
@@ -205,7 +205,7 @@ static NSInteger OrderKeys(id first,id second,void *context);
 	return [[dict allKeys] sortedArrayUsingFunction:OrderKeys context:ordering];
 }
 
-static NSInteger OrderKeys(id first,id second,void *context)
+static NSComparisonResult OrderKeys(id first,id second,void *context)
 {
 	NSDictionary *ordering=context;
 	NSNumber *firstorder=[ordering objectForKey:first];

@@ -259,7 +259,7 @@
 		int start_pos = position;
 		int read_length = 0;
 		char current_char = '\0';
-		while( current_char != ' ' && read_length < 16 && position < [header length] ) {
+		while( current_char != ' ' && current_char != 0 && read_length < 16 && position < [header length] ) {
 			[header getBytes:&current_char range:NSMakeRange(position,1)];
 			position++;
 			read_length++;

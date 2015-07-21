@@ -421,6 +421,11 @@ static NSComparisonResult CompareEntryDataOffsets(id first,id second,void *conte
 	return [[first objectForKey:@"NSISDataOffset"] compare:[second objectForKey:@"NSISDataOffset"]];
 }
 
+static NSComparisonResult CompareEntryFileNames(id first,id second,void *context)
+{
+	return -[[[first objectForKey:XADFileNameKey] string] compare:[[second objectForKey:XADFileNameKey] string]];
+}
+
 -(void)parseOpcodesWithHeader:(NSData *)header blocks:(NSDictionary *)blocks
 extractOpcode:(int)extractopcode ignoreOverwrite:(BOOL)ignoreoverwrite
 directoryOpcode:(int)diropcode directoryArgument:(int)dirarg assignOpcode:(int)assignopcode
@@ -431,7 +436,8 @@ newDateTimeOrder:(BOOL)neworder
 	const uint8_t *bytes=[header bytes];
 	int length=[header length];
 	XADPath *dir=[self XADPath];
-	NSMutableArray *array=[NSMutableArray array];
+	NSMutableArray *files=[NSMutableArray array];
+	NSMutableArray *dirs=[NSMutableArray array];
 
 	for(int i=startoffs;i<endoffs&&i+24<=length;i+=4*stride)
 	{
@@ -464,10 +470,12 @@ newDateTimeOrder:(BOOL)neworder
 			{
 				uint32_t len=[block unsignedIntValue];
 
+				XADPath *path=[dir pathByAppendingPath:[self expandAnyPathWithOffset:filename
+				unicode:unicode header:header stringStartOffset:stringoffs
+				stringEndOffset:stringendoffs currentPath:dir]];
+
 				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
-					[dir pathByAppendingPath:[self expandAnyPathWithOffset:filename
-					unicode:unicode header:header stringStartOffset:stringoffs
-					stringEndOffset:stringendoffs currentPath:dir]],XADFileNameKey,
+					path,XADFileNameKey,
 					[NSNumber numberWithUnsignedInt:len&0x7fffffff],XADCompressedSizeKey,
 					offs,@"NSISDataOffset",
 				nil];
@@ -488,18 +496,24 @@ newDateTimeOrder:(BOOL)neworder
 					[dict setObject:[NSNumber numberWithUnsignedInt:len&0x7fffffff] forKey:XADFileSizeKey];
 				}
 
-				[array addObject:dict];
+				[files addObject:dict];
 
 				continue;
 			}
 		}
 		if(opcode==diropcode)
 		{
-			if(args[1]==dirarg&&args[2]==0&&args[3]==0&&args[4]==0)
+			if(args[1]==dirarg && args[2]==0 && args[3]==0 && args[4]==0)
 			{
 				dir=[self expandAnyPathWithOffset:args[0] unicode:unicode header:header
 				stringStartOffset:stringoffs stringEndOffset:stringendoffs currentPath:dir];
 
+				NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
+					dir,XADFileNameKey,
+					[NSNumber numberWithBool:YES],XADIsDirectoryKey,
+					[NSNumber numberWithUnsignedInt:args[2]],@"NSISDataOffset",
+				nil];
+				[dirs addObject:dict];
 				continue;
 			}
 		}
@@ -514,31 +528,51 @@ newDateTimeOrder:(BOOL)neworder
 		}
 	}
 
-	if([array count]==0) return;
+	if([files count]==0 && [dirs count]==0) return;
 
-	[array sortUsingFunction:CompareEntryDataOffsets context:NULL];
-
-	// Filter out duplicate entries
-	NSMutableDictionary *last=[array objectAtIndex:0];
-	for(int i=1;i<[array count];i++)
+	[files sortUsingFunction:CompareEntryDataOffsets context:NULL];
+	[dirs sortUsingFunction:CompareEntryFileNames context:NULL];
+  
+	// Filter out duplicate directory entries
+	NSMutableDictionary *lastdir=[dirs objectAtIndex:0];
+	for(int i=1;i<[dirs count];i++)
 	{
-		NSMutableDictionary *dict=[array objectAtIndex:i];
+		NSMutableDictionary *dict=[dirs objectAtIndex:i];
+		XADPath *dir1=[dict objectForKey:XADFileNameKey];
+		XADPath *dir2=[lastdir objectForKey:XADFileNameKey];
 
-		if([[dict objectForKey:@"NSISDataOffset"] isEqual:[last objectForKey:@"NSISDataOffset"]]
-		&&[[dict objectForKey:XADFileNameKey] isEqual:[last objectForKey:XADFileNameKey]])
+		if([dir1 isEqual:dir2])
 		{
-			[array removeObjectAtIndex:i];
+			[dirs removeObjectAtIndex:i];
 			i--;
 		}
-		else last=dict;
+		else lastdir=dict;
+	}
+
+	// Filter out duplicate entries
+	NSMutableDictionary *lastfile=[files objectAtIndex:0];
+	for(int i=1;i<[files count];i++)
+	{
+		NSMutableDictionary *dict=[files objectAtIndex:i];
+
+		if([[dict objectForKey:@"NSISDataOffset"] isEqual:[lastfile objectForKey:@"NSISDataOffset"]]
+		&& [[dict objectForKey:XADFileNameKey] isEqual:[lastfile objectForKey:XADFileNameKey]])
+		{
+			[files removeObjectAtIndex:i];
+			i--;
+		}
+		else lastfile=dict;
 	}
 
 	// Re-arrange items to make extracting duplicate entries from solid archives
 	// a little bit less slow, and put in solidness markers.
-	[self makeEntryArrayStrictlyIncreasing:array];
+	[self makeEntryArrayStrictlyIncreasing:files];
 
-	NSEnumerator *enumerator=[array objectEnumerator];
+	NSEnumerator *enumerator=[dirs objectEnumerator];
 	NSMutableDictionary *dict;
+	while((dict=[enumerator nextObject])) [self addEntryWithDictionary:dict];
+  
+	enumerator=[files objectEnumerator];
 	while((dict=[enumerator nextObject])) [self addEntryWithDictionary:dict];
 }
 

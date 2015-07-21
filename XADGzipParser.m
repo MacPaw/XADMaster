@@ -75,11 +75,12 @@
 	// TODO: set no filename flag
 	NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 		[self XADPathWithUnseparatedString:contentname],XADFileNameKey,
-		[NSDate dateWithTimeIntervalSince1970:time],XADLastModificationDateKey,
 		[self XADStringWithString:@"Deflate"],XADCompressionNameKey,
 		[NSNumber numberWithUnsignedInt:extraflags],@"GzipExtraFlags",
 		[NSNumber numberWithUnsignedInt:os],@"GzipOS",
 	nil];
+
+	if(time) [dict setObject:[NSDate dateWithTimeIntervalSince1970:time] forKey:XADLastModificationDateKey];
 
 	if([contentname matchedByPattern:@"\\.(tar|cpio|pax)$" options:REG_ICASE])
 	[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsArchiveKey];

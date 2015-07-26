@@ -866,6 +866,10 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 {
 	if(!delegate) return;
 
+	// If we receive a bogus file size ratio, give up and show estimated progress instead,
+	// as we have probably been fed a broken Zip file with 32 bit overflow.
+	if(fileratio>1) totalsize=-1;
+
 	if(totalsize>=0)
 	{
 		// If the total size is known, report exact progress.

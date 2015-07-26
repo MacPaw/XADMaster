@@ -121,19 +121,51 @@ static void FindAttribute(CSHandle *handle,int attribute)
 
 	startoffset=[handle offsetInFile];
 
-	[handle skipBytes:12];
+	[handle skipBytes:8];
 
+	uint32_t somecrc=[handle readUInt32LE];
 	off_t nextheaderoffs=[handle readUInt64LE];
-	//off_t nextheadersize=[handle readUInt64LE];
+	off_t nextheadersize=[handle readUInt64LE];
+	uint32_t nextheadercrc=[handle readUInt32LE];
 
-	[handle seekToFileOffset:nextheaderoffs+32+startoffset];
+	if(somecrc==0 && nextheaderoffs==0 && nextheadersize==0 && nextheadercrc==0)
+	{
+		[handle seekToEndOfFile];
+		[handle skipBytes:-1];
+		uint8_t endbyte=[handle readUInt8];
+		if(endbyte!=0) [XADException raiseIllegalDataException];
+
+		[handle skipBytes:-2];
+		uint8_t lastbyte=[handle readUInt8];
+
+		for(int i=0;;i++)
+		{
+			if(i>=512) [XADException raiseIllegalDataException];
+			[handle skipBytes:-2];
+			uint8_t byte=[handle readUInt8];
+
+			if(byte==1 && lastbyte==4) break; // Header, MainStreamsInfo
+			if(byte==23 && lastbyte==6) break; // EncodedHeader, PackInfo
+
+			lastbyte=byte;
+		}
+
+		[handle skipBytes:-1];
+	}
+	else
+	{
+		[handle seekToFileOffset:startoffset+32+nextheaderoffs];
+	}
 
 	CSHandle *fh=handle;
 
 	for(;;)
 	{
 		int type=(int)ReadNumber(fh);
-		if(type==1) break; // Header
+		if(type==1) // Header
+		{
+			break;
+		}
 		else if(type==23) // EncodedHeader
 		{
 			NSDictionary *streams=[self parseStreamsForHandle:fh];
@@ -141,7 +173,10 @@ static void FindAttribute(CSHandle *handle,int attribute)
 			//int folderindex=[[dict objectForKey:@"FolderIndex"] intValue];
 			fh=[self handleForStreams:streams folderIndex:0];
 		}
-		else [XADException raiseIllegalDataException];
+		else
+		{
+			[XADException raiseIllegalDataException];
+		}
 	}
 
 	NSDictionary *additionalstreams=nil;

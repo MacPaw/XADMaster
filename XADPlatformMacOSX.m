@@ -253,18 +253,24 @@ preservePermissions:(BOOL)preservepermissions
 // Archive post-processing.
 //
 
+#ifdef IsLegacyVersion
+
 +(id)readCloneableMetadataFromPath:(NSString *)path
 {
 	if(!LSSetItemAttribute) return nil;
 
+	NSURL *url=[NSURL fileURLWithPath:path];
+	if(!url) return nil;
+
 	FSRef ref;
-	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
+	if(CFURLGetFSRef((CFURLRef)url,&ref))
 	{
 		CFDictionaryRef quarantinedict;
-		LSCopyItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,
-		(CFTypeRef*)&quarantinedict);
-
-		return [(id)quarantinedict autorelease];
+		if(LSCopyItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,
+		(CFTypeRef*)&quarantinedict)==noErr)
+		{
+			return [(id)quarantinedict autorelease];
+		}
 	}
 	return nil;
 }
@@ -273,10 +279,33 @@ preservePermissions:(BOOL)preservepermissions
 {
 	if(!LSSetItemAttribute) return;
 
+	NSURL *url=[NSURL fileURLWithPath:path];
+	if(!url) return nil;
+
 	FSRef ref;
-	if(CFURLGetFSRef((CFURLRef)[NSURL fileURLWithPath:path],&ref))
+	if(CFURLGetFSRef((CFURLRef)url,&ref))
 	LSSetItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,metadata);
 }
+
+#else
+
++(id)readCloneableMetadataFromPath:(NSString *)path
+{
+	NSDictionary *value;
+    if([[NSURL fileURLWithPath:path] getResourceValue:&value forKey:NSURLQuarantinePropertiesKey error:NULL])
+	{
+		NSLog(@"%@",value);
+		return value;
+	}
+	return nil;
+}
+
++(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path
+{
+	[[NSURL fileURLWithPath:path] setResourceValue:metadata forKey:NSURLQuarantinePropertiesKey error:NULL];
+}
+
+#endif
 
 +(BOOL)copyDateFromPath:(NSString *)src toPath:(NSString *)dest
 {

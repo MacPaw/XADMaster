@@ -4012,7 +4012,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0700;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -5463,6 +5463,7 @@
 					"-weak_framework",
 					UniversalDetector,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.dstoecker.xadmaster;
 				PRODUCT_NAME = XADMaster;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -5982,6 +5983,7 @@
 					"-weak_framework",
 					UniversalDetector,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.dstoecker.xadmaster;
 				PRODUCT_NAME = XADMaster;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -6000,6 +6002,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

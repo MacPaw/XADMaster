@@ -1634,7 +1634,7 @@ XADUNARCHIVE(LHWARP)
   {
     if(!(err = xadHookAccess(XADM XADAC_READ, sizeof(struct LhWarpEntry)-ofs, ((xadSTRPTR)&lhw)+ofs, ai)))
     {
-      if(lhw.crsize)
+      if(EndGetM32(lhw.crsize))
         err = xadHookAccess(XADM XADAC_INPUTSEEK, EndGetM32(lhw.crsize), 0, ai);
     }
   }

@@ -184,7 +184,9 @@ LIBRARY_C_FILES =	BWT.c \
 			Crypto/aestab.c \
 			Crypto/des.c \
 			Crypto/hmac_sha1.c \
+			Crypto/hmac_sha256.c \
 			Crypto/md5.c \
+			Crypto/pbkdf2_hmac_sha256.c \
 			Crypto/sha.c \
 			libxad/all.c \
 			libxad/clients.c \

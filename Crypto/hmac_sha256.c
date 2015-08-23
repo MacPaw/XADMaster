@@ -49,7 +49,7 @@
  * was designed and how this file is formatted.
  */
 
-#include "hmac_SHA256.h"
+#include "hmac_sha256.h"
 #include <string.h>
 
 #ifdef  __cplusplus

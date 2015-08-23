@@ -1,5 +1,14 @@
 #import "XADArchiveParser.h"
 
+typedef struct RAR5Block
+{
+	uint32_t crc;
+	uint64_t headersize,type,flags;
+	uint64_t extrasize,datasize;
+	off_t start,outerstart;
+	CSHandle *fh;
+} RAR5Block;
+
 @interface XADRAR5Parser:XADArchiveParser
 {
 	NSData *headerkey;
@@ -14,8 +23,11 @@
 
 -(void)parse;
 
-//-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
-//-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum;
+-(NSMutableDictionary *)readFileBlockHeader:(RAR5Block)block;
+-(RAR5Block)readBlockHeader;
+-(void)skipBlock:(RAR5Block)block;
+-(off_t)endOfBlockHeader:(RAR5Block)block;
+-(NSData *)encryptionKeyForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check;
 
 -(NSString *)formatName;
 
@@ -25,12 +37,7 @@
 {
 }
 
-/*+(int)requiredHeaderSize;
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
-name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
-
--(void)parse;
--(NSString *)formatName;*/
+-(NSString *)formatName;
 
 @end
 

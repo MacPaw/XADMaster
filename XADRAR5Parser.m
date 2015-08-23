@@ -3,15 +3,6 @@
 #import "NSDateXAD.h"
 #import "Crypto/pbkdf2_hmac_sha256.h"
 
-typedef struct RAR5Block
-{
-	uint32_t crc;
-	uint64_t headersize,type,flags;
-	uint64_t extrasize,datasize;
-	off_t start,outerstart;
-	CSHandle *fh;
-} RAR5Block;
-
 #define ZeroBlock ((RAR5Block){0})
 
 static BOOL IsRAR5Signature(const uint8_t *ptr)

@@ -294,7 +294,6 @@ preservePermissions:(BOOL)preservepermissions
 	NSDictionary *value;
     if([[NSURL fileURLWithPath:path] getResourceValue:&value forKey:NSURLQuarantinePropertiesKey error:NULL])
 	{
-		NSLog(@"%@",value);
 		return value;
 	}
 	return nil;

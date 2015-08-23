@@ -109,6 +109,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			XADRAR30Handle.m \
 			XADRAR30Filter.m \
 			XADRARInputHandle.m \
+			XADRAR5Parser.m \
 			XADRARParser.m \
 			XADRARVirtualMachine.m \
 			XADRC4Handle.m \

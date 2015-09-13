@@ -1,5 +1,7 @@
 #import "XADRAR5Parser.h"
+#import "XADRARInputHandle.h"
 #import "XADRARAESHandle.h"
+#import "XADCRCHandle.h"
 #import "NSDateXAD.h"
 #import "Crypto/pbkdf2_hmac_sha256.h"
 
@@ -95,19 +97,17 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(void)parse
 {
-	BOOL skipheader=YES;
-
 	NSMutableDictionary *currdict=nil;
 	NSMutableArray *currparts=[NSMutableArray array];
+	NSMutableArray *currfiles=[NSMutableArray array];
+	off_t totalsolidsize=0;
+
+	[[self handle] skipBytes:8];
+
+	// TODO: Catch exceptions and emit partial files?
 
 	for(;;)
 	{
-		if(skipheader)
-		{
-			[[self handle] skipBytes:8];
-			skipheader=NO;
-		}
-
 		RAR5Block block=[self readBlockHeader];
 
 		if(IsZeroBlock(block)) break;
@@ -117,7 +117,6 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 		switch(block.type)
 		{
 			case 1:
-				NSLog(@"Archive header");
 				[self skipBlock:block];
 			break;
 
@@ -125,10 +124,13 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 			{
 				NSMutableDictionary *dict=[self readFileBlockHeader:block];
 
+				BOOL first=!(block.flags&0x0008);
+				BOOL last=!(block.flags&0x0010);
+
 				XADPath *path1=[currdict objectForKey:XADFileNameKey];
 				XADPath *path2=[dict objectForKey:XADFileNameKey];
 
-				if(currdict && (block.flags&0x0008) && [path1 isEqual:path2])
+				if(currdict && !first && [path1 isEqual:path2])
 				{
 					// We have a correct continuation from a previously encountered file header.
 					[currdict addEntriesFromDictionary:dict];
@@ -140,29 +142,64 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 					{
 						// We had a previous entry, but it did not match. Mark it
 						// as corrupted and get rid of it.
+						[currdict setObject:currfiles forKey:XADSolidObjectKey];
 						[currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
-						[self addEntryWithDictionary:currdict];
-					}
 
-					if(block.flags&0x0008)
-					{
-						// This is not the first part of a new file. Mark as corrupted.
-						[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
+						NSNumber *length=[dict objectForKey:XADFileSizeKey];
+
+						[currdict setObject:[NSNumber numberWithLongLong:totalsolidsize] forKey:XADSolidOffsetKey];
+						[currdict setObject:length forKey:XADSolidLengthKey];
+						[currdict setObject:[NSNumber numberWithLongLong:[currfiles count]] forKey:@"RAR5SolidIndex"];
+
+						[self addEntryWithDictionary:currdict];
+
+						totalsolidsize+=[length longLongValue];
 					}
 
 					// Set this as the current file being collected.
 					currdict=dict;
+
+					if(!first)
+					{
+						// This is not the first part of a new file. Mark as corrupted.
+						[currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
+					}
 				}
 
-				if(!(block.flags&0x0010))
+				[currparts addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+					[NSNumber numberWithLongLong:[self endOfBlockHeader:block]],@"Offset",
+					[NSNumber numberWithLongLong:block.datasize],@"InputLength",
+					[currdict objectForKey:@"RAR5CRC32"],@"CRC32",
+				nil]];
+
+				if(last)
 				{
 					// This is the last part of a file, so get rid of it.
-					[currdict setObject:currparts forKey:XADSolidObjectKey];
+
+					// If this is not a solid file, forget the earlier file list and start over.
+					bool solid=[[currdict objectForKey:XADIsSolidKey] boolValue];
+					if(!solid)
+					{
+						currfiles=[NSMutableArray array];
+						totalsolidsize=0;
+					}
+
+					// Add the current file parts to the file list.
+					[currfiles addObject:currparts];
+					[currdict setObject:currfiles forKey:XADSolidObjectKey];
+
+					NSNumber *length=[dict objectForKey:XADFileSizeKey];
+
+					[currdict setObject:[NSNumber numberWithLongLong:totalsolidsize] forKey:XADSolidOffsetKey];
+					[currdict setObject:length forKey:XADSolidLengthKey];
+					[currdict setObject:[NSNumber numberWithLongLong:[currfiles count]] forKey:@"RAR5SolidIndex"];
+
 					[self addEntryWithDictionary:currdict];
 
+					totalsolidsize+=[length longLongValue];
+
+					currparts=[NSMutableArray array];
 					currdict=nil;
-
-
 				}
 
 				[self skipBlock:block];
@@ -197,7 +234,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 				if(flags&0x0001)
 				{
 					[[self currentHandle] seekToEndOfFile];
-					skipheader=YES;
+					[[self handle] skipBytes:8];
 				}
 				else
 				{
@@ -254,12 +291,12 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	if(!(flags&0x0001))
 	{
 		int compversion=compinfo&0x3f;
-		//BOOL issolid=(compinfo&0x40)>>6;
+		BOOL issolid=(compinfo&0x40)>>6;
 		int compmethod=(compinfo&0x380)>>7;
 		int compdictsize=(compinfo&0x3c00)>>10;
 		[dict setObject:[NSNumber numberWithUnsignedLongLong:compinfo] forKey:@"RAR5CompressionInformation"];
 		[dict setObject:[NSNumber numberWithInt:compversion] forKey:@"RAR5CompressionVersion"];
-		//[dict setObject:[NSNumber numberWithBool:issolid] forKey:XADIsSolidKey];
+		[dict setObject:[NSNumber numberWithBool:issolid] forKey:XADIsSolidKey];
 		[dict setObject:[NSNumber numberWithInt:compmethod] forKey:@"RAR5CompressionMethod"];
 		[dict setObject:[NSNumber numberWithInt:compdictsize] forKey:@"RAR5CompressionDictionarySize"];
 
@@ -303,6 +340,8 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 			{
 				case 0x01: // File encryption
 				{
+					[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsEncryptedKey];
+
 					uint64_t version=ReadRAR5VInt(handle);
 					if(version!=0) [XADException raiseNotSupportedException];
 
@@ -326,6 +365,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 						uint32_t extracrc=[handle readUInt32LE];
 						[dict setObject:[NSNumber numberWithUnsignedInt:extracrc] forKey:@"RAR5EncryptionExtraCRC"];
 					}
+
 				}
 				break;
 
@@ -520,18 +560,18 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(void)skipBlock:(RAR5Block)block
 {
-	[[self handle] seekToFileOffset:[self endOfBlockHeader:block]];
+	[[self handle] seekToFileOffset:[self endOfBlockHeader:block]+block.datasize];
 }
 
 -(off_t)endOfBlockHeader:(RAR5Block)block
 {
 	if(block.outerstart)
 	{
-		return block.outerstart+((block.start+block.headersize+15)&~15)+block.datasize;
+		return block.outerstart+((block.start+block.headersize+15)&~15);
 	}
 	else
 	{
-		return block.start+block.headersize+block.datasize;
+		return block.start+block.headersize;
 	}
 }
 
@@ -568,6 +608,78 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 	return [crypto objectForKey:@"Key"];
 }
+
+-(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
+{
+	// Give the caller some ahead notice if we will be using a password.
+	NSNumber *encryptnum=[dict objectForKey:XADIsEncryptedKey];
+	if(encryptnum && [encryptnum boolValue])
+	{
+		[self password];
+		if(![self hasPassword]) return nil;
+	}
+
+	CSHandle *handle;
+	if([[dict objectForKey:@"RAR5CompressionMethod"] intValue]==0)
+	{
+		NSArray *files=[dict objectForKey:XADSolidObjectKey];
+		int index=[[dict objectForKey:@"RARSolidIndex"] intValue];
+		NSArray *parts=[files objectAtIndex:index];
+		handle=[self inputHandleWithWithDictionary:dict parts:parts];
+
+		off_t length=[[dict objectForKey:XADSolidLengthKey] longLongValue];
+		if(length!=[handle fileSize]) handle=[handle nonCopiedSubHandleOfLength:length];
+	}
+	else
+	{
+		off_t length=[[dict objectForKey:XADSolidLengthKey] longLongValue];
+
+		// Avoid 0-length files because they make trouble in solid streams.
+		if(length==0) handle=[self zeroLengthHandleWithChecksum:YES];
+		else handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
+	}
+
+	if(checksum)
+	{
+		NSNumber *crc=[dict objectForKey:@"RAR5CRC32"];
+		if(crc) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
+		correctCRC:[crc unsignedIntValue] conditioned:YES];
+
+		// Add blake2sp
+	}
+
+	return handle;
+}
+
+-(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
+{
+	return nil;
+}
+
+-(CSHandle *)inputHandleWithWithDictionary:(NSDictionary *)dict parts:(NSArray *)parts
+{
+	CSHandle *handle=[[[XADRARInputHandle alloc] initWithHandle:[self handle] parts:parts] autorelease];
+
+	NSNumber *encryptnum=[dict objectForKey:XADIsEncryptedKey];
+	if(encryptnum && [encryptnum boolValue])
+	{
+		NSNumber *strength=[dict objectForKey:@"RAR5EncryptionStrength"];
+		NSData *salt=[dict objectForKey:@"RAR5EncryptionSalt"];
+		NSData *iv=[dict objectForKey:@"RAR5EncryptionIV"];
+		NSData *passcheck=[dict objectForKey:@"RAR5EncryptionCheckData"];
+
+		NSData *key=[self encryptionKeyForPassword:[self password]
+		salt:salt strength:strength.intValue passwordCheck:passcheck];
+
+		return [[[XADRARAESHandle alloc] initWithHandle:handle
+		length:[handle fileSize] RAR5Key:key IV:iv] autorelease];
+	}
+	else
+	{
+		return handle;
+	}
+}
+
 
 -(NSString *)formatName
 {

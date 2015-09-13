@@ -136,7 +136,7 @@ static int maxheader=0;
 		// Common formats
 		[XADZipParser class],
 		[XADRARParser class],
-		//[XADRAR5Parser class],
+		[XADRAR5Parser class],
 		[XAD7ZipParser class],
 		[XADGzipParser class],
 		[XADBzip2Parser class],

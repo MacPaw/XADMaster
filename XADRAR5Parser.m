@@ -3,9 +3,12 @@
 #import "XADRARAESHandle.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
+#import "Crypto/hmac_sha256.h"
 #import "Crypto/pbkdf2_hmac_sha256.h"
 
 #define ZeroBlock ((RAR5Block){0})
+
+static uint32_t EncryptRAR5CRC32(uint32_t crc,void *context);
 
 static BOOL IsRAR5Signature(const uint8_t *ptr)
 {
@@ -85,14 +88,6 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	[headerkey release];
 	[cryptocache release];
 	[super dealloc];
-}
-
--(void)setPassword:(NSString *)newpassword
-{
-	// Make sure to clear key cache if password changes.
-//	[keys release];
-//	keys=nil;
-	[super setPassword:newpassword];
 }
 
 -(void)parse
@@ -357,7 +352,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 					NSData *iv=[handle readDataOfLength:16];
 					[dict setObject:iv forKey:@"RAR5EncryptionIV"];
 
-					if(flags&0x0002)
+					if(flags&0x0001)
 					{
 						NSData *passcheck=[handle readDataOfLength:8];
 						[dict setObject:passcheck forKey:@"RAR5EncryptionCheckData"];
@@ -366,6 +361,10 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 						[dict setObject:[NSNumber numberWithUnsignedInt:extracrc] forKey:@"RAR5EncryptionExtraCRC"];
 					}
 
+					if(flags&0x0002)
+					{
+						[dict setObject:[NSNumber numberWithBool:YES] forKey:@"RAR5ChecksumsAreEncrypted"];
+					}
 				}
 				break;
 
@@ -577,6 +576,16 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(NSData *)encryptionKeyForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check
 {
+	return [[self keysForPassword:passwordstring salt:salt strength:strength passwordCheck:check] objectForKey:@"Key"];
+}
+
+-(NSData *)hashKeyForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check
+{
+	return [[self keysForPassword:passwordstring salt:salt strength:strength passwordCheck:check] objectForKey:@"HashKey"];
+}
+
+-(NSDictionary *)keysForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check
+{
 	NSArray *key=[NSArray arrayWithObjects:password,salt,[NSNumber numberWithInt:strength],nil];
 	NSDictionary *crypto=[cryptocache objectForKey:key];
 	if(!crypto)
@@ -606,7 +615,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 		[cryptocache setObject:crypto forKey:key];
 	}
 
-	return [crypto objectForKey:@"Key"];
+	return crypto;
 }
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
@@ -642,8 +651,26 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	if(checksum)
 	{
 		NSNumber *crc=[dict objectForKey:@"RAR5CRC32"];
-		if(crc) handle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
-		correctCRC:[crc unsignedIntValue] conditioned:YES];
+		if(crc)
+		{
+			XADCRCHandle *crchandle=[XADCRCHandle IEEECRC32HandleWithHandle:handle length:[handle fileSize]
+			correctCRC:[crc unsignedIntValue] conditioned:YES];
+
+			NSNumber *checksumsencrypted=[dict objectForKey:@"RAR5ChecksumsAreEncrypted"];
+			if(checksumsencrypted && [checksumsencrypted boolValue])
+			{
+				NSNumber *strength=[dict objectForKey:@"RAR5EncryptionStrength"];
+				NSData *salt=[dict objectForKey:@"RAR5EncryptionSalt"];
+				NSData *passcheck=[dict objectForKey:@"RAR5EncryptionCheckData"];
+
+				NSData *key=[self hashKeyForPassword:[self password]
+				salt:salt strength:strength.intValue passwordCheck:passcheck];
+
+				[crchandle setCRCTransformationFunction:EncryptRAR5CRC32 context:key];
+			}
+
+			handle=crchandle;
+		}
 
 		// Add blake2sp
 	}
@@ -697,3 +724,28 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 }
 
 @end
+
+static uint32_t EncryptRAR5CRC32(uint32_t crc,void *context)
+{
+	NSData *key=context;
+
+	uint8_t crcbytes[4];
+	CSSetUInt32LE(crcbytes,crc^0xffffffff);
+
+	uint8_t digest[HMAC_SHA256_DIGEST_LENGTH];
+
+	HMAC_SHA256_CTX hmac;
+	HMAC_SHA256_Init(&hmac);
+	HMAC_SHA256_UpdateKey(&hmac,[key bytes],[key length]);
+	HMAC_SHA256_EndKey(&hmac);
+
+	HMAC_SHA256_StartMessage(&hmac);
+	HMAC_SHA256_UpdateMessage(&hmac,crcbytes,4);
+	HMAC_SHA256_EndMessage(digest,&hmac);
+	HMAC_SHA256_Done(&hmac);
+
+	uint32_t newcrc=0;
+	for(int i=0;i<sizeof(digest);i++) newcrc^=digest[i]<<((i&3)*8);
+
+	return newcrc^0xffffffff;
+}

@@ -19,8 +19,6 @@ typedef struct RAR5Block
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
 
--(void)setPassword:(NSString *)newpassword;
-
 -(void)parse;
 
 -(NSMutableDictionary *)readFileBlockHeader:(RAR5Block)block;
@@ -28,6 +26,8 @@ typedef struct RAR5Block
 -(void)skipBlock:(RAR5Block)block;
 -(off_t)endOfBlockHeader:(RAR5Block)block;
 -(NSData *)encryptionKeyForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check;
+-(NSData *)hashKeyForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check;
+-(NSDictionary *)keysForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check;
 
 -(NSString *)formatName;
 

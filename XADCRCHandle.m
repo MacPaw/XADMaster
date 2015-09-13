@@ -47,6 +47,8 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 		crc=initcrc=initialcrc;
 		compcrc=correctcrc;
 		table=crctable;
+		transformationfunction=NULL;
+		transformationcontext=NULL;
 	}
 	return self;
 }
@@ -55,6 +57,12 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 {
 	[parent release];
 	[super dealloc];
+}
+
+-(void)setCRCTransformationFunction:(XADCRCTransformationFunction *)function context:(void *)context
+{
+	transformationfunction=function;
+	transformationcontext=context;
 }
 
 -(void)resetStream
@@ -75,7 +83,16 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 -(BOOL)isChecksumCorrect
 {
 	if([parent hasChecksum]&&![parent isChecksumCorrect]) return NO;
-	return crc==compcrc;
+
+	if(transformationfunction)
+	{
+		uint32_t actualcrc=transformationfunction(crc,transformationcontext);
+		return actualcrc==compcrc;
+	}
+	else
+	{
+		return crc==compcrc;
+	}
 }
 
 -(double)estimatedProgress { return [parent estimatedProgress]; }

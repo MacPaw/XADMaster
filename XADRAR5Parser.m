@@ -234,6 +234,8 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 				{
 					[[self currentHandle] seekToEndOfFile];
 					[[self handle] skipBytes:8];
+					[headerkey release];
+					headerkey=nil;
 				}
 				else
 				{

@@ -111,11 +111,11 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 		switch(block.type)
 		{
-			case 1:
+			case 1: // Main archive header.
 				[self skipBlock:block];
 			break;
 
-			case 2:
+			case 2: // File header.
 			{
 				NSMutableDictionary *dict=[self readFileBlockHeader:block];
 
@@ -186,7 +186,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 					NSNumber *length=[dict objectForKey:XADFileSizeKey];
 
 					[currdict setObject:[NSNumber numberWithLongLong:totalsolidsize] forKey:XADSolidOffsetKey];
-					[currdict setObject:length forKey:XADSolidLengthKey];
+					if(length) [currdict setObject:length forKey:XADSolidLengthKey];
 					[currdict setObject:[NSNumber numberWithLongLong:[currfiles count]] forKey:@"RAR5SolidIndex"];
 
 					[self addEntryWithDictionary:currdict];
@@ -201,7 +201,10 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 			}
 			break;
 
-			case 4:
+			//case 3: // Service header.
+			//break;
+
+			case 4: // Archive encryption header.
 			{
 				uint64_t version=ReadRAR5VInt(handle);
 				if(version!=0) [XADException raiseNotSupportedException];
@@ -222,8 +225,9 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 				[self skipBlock:block];
 			}
+			break;
 
-			case 5:
+			case 5: // End of archive header.
 			{
 				uint64_t flags=ReadRAR5VInt(handle);
 				if(flags&0x0001)

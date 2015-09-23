@@ -289,10 +289,14 @@ preservePermissions:(BOOL)preservepermissions
 
 #else
 
+// NSURLQuarantinePropertiesKey only exists on 10.10, so don't dereference it,
+// but use it as a string. This code will not work on older versions, but is
+// not really important at all so we'll let it slide.
+
 +(id)readCloneableMetadataFromPath:(NSString *)path
 {
 	NSDictionary *value;
-    if([[NSURL fileURLWithPath:path] getResourceValue:&value forKey:NSURLQuarantinePropertiesKey error:NULL])
+    if([[NSURL fileURLWithPath:path] getResourceValue:&value forKey:@"NSURLQuarantinePropertiesKey" error:NULL])
 	{
 		return value;
 	}
@@ -301,7 +305,7 @@ preservePermissions:(BOOL)preservepermissions
 
 +(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path
 {
-	[[NSURL fileURLWithPath:path] setResourceValue:metadata forKey:NSURLQuarantinePropertiesKey error:NULL];
+	[[NSURL fileURLWithPath:path] setResourceValue:metadata forKey:@"NSURLQuarantinePropertiesKey" error:NULL];
 }
 
 #endif

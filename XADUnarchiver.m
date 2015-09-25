@@ -538,7 +538,7 @@ deferDirectories:(BOOL)defer
 		}
 	}
 
-	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050
+	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050 || __IPHONE_OS_VERSION_MIN_REQUIRED>__IPHONE_2_0
 	if([manager createDirectoryAtPath:path
 	withIntermediateDirectories:NO attributes:nil error:NULL]) return XADNoError;
 	#else

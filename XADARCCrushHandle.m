@@ -120,7 +120,7 @@
 		else
 		{
 			// If the tree is full, find an less-used symbol, and replace it.
-			int minindex,minusage=INT_MAX;
+			int minindex=0,minusage=INT_MAX;
 			int index=usageindex;
 			do
 			{

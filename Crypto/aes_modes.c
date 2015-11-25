@@ -860,7 +860,7 @@ int aes_ctr_crypt(const unsigned char *ibuf, unsigned char *obuf,
     if(ctx->inf.b[1] == 0xff && ALIGN_OFFSET( ctx, 16 ))
         return EXIT_FAILURE;
 #else
-    uint8_t buf[BFR_LENGTH];
+    uint8_t buf[BFR_LENGTH]={0};
 #endif
 
     if(b_pos)

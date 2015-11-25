@@ -277,7 +277,7 @@
 
 		// Parse the pair into key/value.
 		read_length = 0;
-		start_pos = position;
+		//start_pos = position;
 		int max_len = strlen( key_val_pair );
 		while( key_val_pair[read_length] != '=' && read_length < max_len ) {
 			position++;

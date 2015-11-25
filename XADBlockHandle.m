@@ -32,6 +32,7 @@
 
 -(void)dealloc
 {
+	free(blockoffsets);
 	[parent release];
 	[super dealloc];
 }
@@ -49,7 +50,8 @@ firstBlock:(uint32_t)first headerSize:(off_t)headersize
 	}
 
 	free(blockoffsets);
-	blockoffsets=malloc(numblocks*sizeof(off_t));
+	if(numblocks==0) blockoffsets=NULL;
+	else blockoffsets=malloc(numblocks*sizeof(off_t));
 
 	block=first;
 	for(int i=0;i<numblocks;i++)

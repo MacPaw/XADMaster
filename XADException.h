@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 
+#import "ClangAnalyser.h"
+
 typedef int XADError;
 
 #define XADNoError               0x0000 /* no error */
@@ -31,18 +33,6 @@ typedef int XADError;
 #define XADLinkError             0x001a /* could not create link */
 
 #define XADSubArchiveError 0x10000
-
-#ifndef CLANG_ANALYZER_NORETURN
-	#ifdef __clang__
-		#if __has_feature(attribute_analyzer_noreturn)
-			#define CLANG_ANALYZER_NORETURN __attribute__((analyzer_noreturn))
-		#else
-			#define CLANG_ANALYZER_NORETURN
-		#endif
-	#else
-		#define CLANG_ANALYZER_NORETURN
-	#endif
-#endif
 
 extern NSString *XADExceptionName;
 

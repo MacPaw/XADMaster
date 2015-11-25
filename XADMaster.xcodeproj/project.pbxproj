@@ -683,6 +683,7 @@
 		1B467AFA15CD9A73001AB1DD /* PDFEncryptionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3581E215A7AC020002A4C9 /* PDFEncryptionUtils.m */; };
 		1B467AFB15CD9A73001AB1DD /* PDFParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3581E415A7AC020002A4C9 /* PDFParser.m */; };
 		1B467AFC15CD9A73001AB1DD /* PDFStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3581E615A7AC020002A4C9 /* PDFStream.m */; };
+		1B4B51E01C0620AB00C1074D /* ClangAnalyser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4B51DD1C061E3100C1074D /* ClangAnalyser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B4C000211AF109300CDACC1 /* LZSS.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFFFE11AF109300CDACC1 /* LZSS.c */; };
 		1B4C020B11B0AAFA00CDACC1 /* XADRAR30Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4CFB68119B7F1600CDACC1 /* XADRAR30Handle.m */; };
 		1B4C025B11B1DAC300CDACC1 /* XADRAR30Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */; };
@@ -1880,6 +1881,7 @@
 		1B3FAD7E0EC6826E006D2F06 /* NSDateXAD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDateXAD.h; sourceTree = "<group>"; };
 		1B3FAD7F0EC6826E006D2F06 /* NSDateXAD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDateXAD.m; sourceTree = "<group>"; };
 		1B467B0115CD9A73001AB1DD /* libXADMaster.ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libXADMaster.ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B4B51DD1C061E3100C1074D /* ClangAnalyser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClangAnalyser.h; sourceTree = "<group>"; };
 		1B4C025711B1DAC300CDACC1 /* XADRAR30Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADRAR30Filter.h; sourceTree = "<group>"; };
 		1B4C025811B1DAC300CDACC1 /* XADRAR30Filter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADRAR30Filter.m; sourceTree = "<group>"; };
 		1B4C03A811B34E1A00CDACC1 /* RARVirtualMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARVirtualMachine.h; sourceTree = "<group>"; };
@@ -2954,6 +2956,7 @@
 				1B3E377D0F422D2F003EEF98 /* NumberParsing.h */,
 				1B3E377E0F422D2F003EEF98 /* NumberParsing.m */,
 				1B78A34B1431339100E4AB87 /* Realloc.h */,
+				1B4B51DD1C061E3100C1074D /* ClangAnalyser.h */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -3630,6 +3633,7 @@
 				1B75B901134E5BBE00510EA5 /* XADMacArchiveParser.h in Headers */,
 				1B75B902134E5BBE00510EA5 /* XADMacBinaryParser.h in Headers */,
 				1B75B903134E5BBF00510EA5 /* xadmaster.h in Headers */,
+				1B4B51E01C0620AB00C1074D /* ClangAnalyser.h in Headers */,
 				1B75B904134E5BC000510EA5 /* XADMSLZXHandle.h in Headers */,
 				1B75B905134E5BC100510EA5 /* XADMSZipHandle.h in Headers */,
 				1B75B906134E5BC200510EA5 /* XADNDSParser.h in Headers */,

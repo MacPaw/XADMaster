@@ -464,10 +464,10 @@ destinationDictionary:(NSMutableDictionary *)dest
 			int c=[string characterAtIndex:i];
 			if(isxdigit(c))
 			{
-				int val;
+				int val=0;
 				if(c>='0'&&c<='9') val=c-'0';
-				if(c>='A'&&c<='F') val=c-'A'+10;
-				if(c>='a'&&c<='f') val=c-'a'+10;
+				else if(c>='A'&&c<='F') val=c-'A'+10;
+				else if(c>='a'&&c<='f') val=c-'a'+10;
 
 				if(n&1) { byte|=val; [data appendBytes:&byte length:1]; }
 				else byte=val<<4;

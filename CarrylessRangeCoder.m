@@ -1,4 +1,5 @@
 #import "CarrylessRangeCoder.h"
+#import "ClangAnalyser.h"
 
 void InitializeRangeCoder(CarrylessRangeCoder *self,CSInputBuffer *input,BOOL uselow,int bottom)
 {
@@ -33,6 +34,8 @@ void RemoveRangeCoderSubRange(CarrylessRangeCoder *self,uint32_t lowcount,uint32
 
 int NextSymbolFromRangeCoder(CarrylessRangeCoder *self,uint32_t *freqtable,int numfreq)
 {
+	analyser_assert(numfreq>0);
+
 	uint32_t totalfreq=0;
 	for(int i=0;i<numfreq;i++) totalfreq+=freqtable[i];
 

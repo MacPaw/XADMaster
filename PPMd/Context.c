@@ -221,7 +221,7 @@ void PPMdDecodeSymbol2(PPMdContext *self,PPMdCoreModel *model,SEE2Context *see)
 	if(count<total)
 	{
 		int i=0,highcount=ps[0]->Freq;
-		while(highcount<=count) highcount+=ps[++i]->Freq;
+		while(highcount<=count && i+1<n) highcount+=ps[++i]->Freq;
 
 		RemovePPMdRangeCoderSubRange(&model->coder,highcount-ps[i]->Freq,highcount);
 		UpdateSEE2(see);

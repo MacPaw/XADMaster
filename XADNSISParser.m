@@ -442,7 +442,7 @@ newDateTimeOrder:(BOOL)neworder
 	for(int i=startoffs;i<endoffs&&i+24<=length;i+=4*stride)
 	{
 		int opcode=CSUInt32LE(bytes+i);
-		uint32_t args[6];
+		uint32_t args[6]={0};
 		for(int j=1;j<stride;j++) args[j-1]=CSUInt32LE(bytes+i+j*4);
 
 		if(opcode==extractopcode)
@@ -1201,6 +1201,8 @@ stringStartOffset:(int)stringoffs stringEndOffset:(int)stringendoffs currentPath
 			}
 		}
 	}
+
+	[XADException raiseNotSupportedException];
 	return nil;
 }
 

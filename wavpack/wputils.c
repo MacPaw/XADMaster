@@ -474,7 +474,7 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
         return unpack_samples3 (wpc, buffer, samples);
 #endif
 
-    while (samples) {
+    while (samples && wps) {
         if (!wps->wphdr.block_samples || !(wps->wphdr.flags & INITIAL_BLOCK) ||
             wps->sample_index >= wps->wphdr.block_index + wps->wphdr.block_samples) {
 

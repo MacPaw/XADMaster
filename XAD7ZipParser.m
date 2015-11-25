@@ -179,7 +179,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 		}
 	}
 
-	NSDictionary *additionalstreams=nil;
+	//NSDictionary *additionalstreams=nil;
 	NSArray *files=nil;
 
 	for(;;)
@@ -199,7 +199,7 @@ static void FindAttribute(CSHandle *handle,int attribute)
 			break;
 
 			case 3: // AdditionalStreamsInfo
-				additionalstreams=[self parseStreamsForHandle:fh];
+				/*additionalstreams=*/[self parseStreamsForHandle:fh];
 			break;
 
 			case 4: // MainStreamsInfo

@@ -127,8 +127,6 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 		int components=[image numberOfImageComponents];
 
 		NSData *colourprofile=[image imageICCColourProfile];
-		int profilesize=0;
-		if(colourprofile) profilesize=([colourprofile length]+1)&~1;
 
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			//[self XADStringWithString:[parser isCompressed]?@"Zlib":@"None"],XADCompressionNameKey,

@@ -2,6 +2,7 @@
 
 #import "PDFStream.h"
 #import "PDFEncryptionHandler.h"
+#import "../ClangAnalyser.h"
 
 extern NSString *PDFWrongMagicException;
 extern NSString *PDFInvalidFormatException;
@@ -79,7 +80,7 @@ extern NSString *PDFParserException;
 
 -(void)resolveIndirectObjects;
 
--(void)_raiseParserException:(NSString *)error;
+-(void)_raiseParserException:(NSString *)error CLANG_ANALYZER_NORETURN;
 
 @end
 

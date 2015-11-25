@@ -114,7 +114,7 @@
 		int n=0;
 		while(n<num)
 		{
-			int c=CSInputNextSymbolUsingCode(input,metacode);
+			unsigned int c=CSInputNextSymbolUsingCode(input,metacode);
 			if(c<=2)
 			{
 				int zeros;

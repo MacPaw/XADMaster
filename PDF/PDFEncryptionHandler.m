@@ -103,6 +103,7 @@ static const char PDFPasswordPadding[32]=
 	if(version==1) key=[self documentKeyOfLength:5];
 	else if(version==2) key=[self documentKeyOfLength:[encrypt intValueForKey:@"Length" default:40]/8];
 	else if(version==4) key=[self documentKeyOfLength:16]; // This is total bullshit, but the specs don't say what to actually do for version 4.
+	else return NO;
 
 	NSData *udata=[[encrypt objectForKey:@"U"] rawData];
 

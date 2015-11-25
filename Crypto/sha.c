@@ -608,7 +608,7 @@ void SHA1_Update(SHA_CTX* context, const uint8_t *data, size_t len) {
 			MEMCPY_BCOPY(&context->s1.buffer[usedspace], data, len);
 			context->s1.bitcount += len << 3;
 			/* Clean up: */
-			usedspace = freespace = 0;
+			//usedspace = freespace = 0;
 			return;
 		}
 	}
@@ -625,7 +625,7 @@ void SHA1_Update(SHA_CTX* context, const uint8_t *data, size_t len) {
 		context->s1.bitcount += len << 3;
 	}
 	/* Clean up: */
-	usedspace = freespace = 0;
+	//usedspace = freespace = 0;
 }
 
 void SHA1_Final(uint8_t digest[], SHA_CTX* context) {
@@ -669,7 +669,7 @@ void SHA1_Final(uint8_t digest[], SHA_CTX* context) {
 			MEMSET_BZERO(context->s1.buffer, 56);
 		}
 		/* Clean up: */
-		usedspace = 0;
+		//usedspace = 0;
 	}
 	/* Set the bit count: */
 #if BYTE_ORDER == LITTLE_ENDIAN
@@ -948,7 +948,7 @@ void SHA256_Update(SHA_CTX* context, const uint8_t *data, size_t len) {
 			MEMCPY_BCOPY(&context->s256.buffer[usedspace], data, len);
 			context->s256.bitcount += len << 3;
 			/* Clean up: */
-			usedspace = freespace = 0;
+			//usedspace = freespace = 0;
 			return;
 		}
 	}
@@ -965,7 +965,7 @@ void SHA256_Update(SHA_CTX* context, const uint8_t *data, size_t len) {
 		context->s256.bitcount += len << 3;
 	}
 	/* Clean up: */
-	usedspace = freespace = 0;
+	//usedspace = freespace = 0;
 }
 
 static void SHA256_Internal_Last(SHA_CTX* context) {
@@ -994,7 +994,7 @@ static void SHA256_Internal_Last(SHA_CTX* context) {
 			MEMSET_BZERO(context->s256.buffer, 56);
 		}
 		/* Clean up: */
-		usedspace = 0;
+		//usedspace = 0;
 	} else {
 		/* Set-up for the last transform: */
 		MEMSET_BZERO(context->s256.buffer, 56);
@@ -1318,7 +1318,7 @@ static void SHA512_Internal_Transform(SHA_CTX* context, const uint64_t* data) {
 	context->s512.state[7] += h;
 
 	/* Clean up */
-	a = b = c = d = e = f = g = h = T1 = T2 = 0;
+	//a = b = c = d = e = f = g = h = T1 = T2 = 0;
 }
 
 #endif /* SHA2_UNROLL_TRANSFORM */
@@ -1351,7 +1351,7 @@ void SHA512_Update(SHA_CTX* context, const uint8_t *data, size_t len) {
 			MEMCPY_BCOPY(&context->s512.buffer[usedspace], data, len);
 			ADDINC128(context->s512.bitcount, len << 3);
 			/* Clean up: */
-			usedspace = freespace = 0;
+			//usedspace = freespace = 0;
 			return;
 		}
 	}
@@ -1368,7 +1368,7 @@ void SHA512_Update(SHA_CTX* context, const uint8_t *data, size_t len) {
 		ADDINC128(context->s512.bitcount, len << 3);
 	}
 	/* Clean up: */
-	usedspace = freespace = 0;
+	//usedspace = freespace = 0;
 }
 
 static void SHA512_Internal_Last(SHA_CTX* context) {
@@ -1398,7 +1398,7 @@ static void SHA512_Internal_Last(SHA_CTX* context) {
 			MEMSET_BZERO(context->s512.buffer, 112);
 		}
 		/* Clean up: */
-		usedspace = 0;
+		//usedspace = 0;
 	} else {
 		/* Prepare for final transform: */
 		MEMSET_BZERO(context->s512.buffer, 112);

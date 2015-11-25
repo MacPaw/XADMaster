@@ -73,7 +73,7 @@ uncompressedLength:(int *)uncompptr
 {
 	if(currentfolder>=numfolders) [XADException raiseDecrunchException];
 
-	uint32_t check=[parent readUInt32LE];
+	/*uint32_t check=*/[parent readUInt32LE];
 	int compbytes=[parent readUInt16LE];
 	int uncompbytes=[parent readUInt16LE];
 	[parent skipBytes:extbytes];
@@ -91,7 +91,7 @@ uncompressedLength:(int *)uncompptr
 		if(currentfolder>=numfolders) [XADException raiseIllegalDataException];
 
 		[parent seekToFileOffset:offsets[currentfolder]];
-		check=[parent readUInt32LE];
+		/*check=*/[parent readUInt32LE];
 		compbytes=[parent readUInt16LE];
 		uncompbytes=[parent readUInt16LE];
 		[parent skipBytes:extbytes];

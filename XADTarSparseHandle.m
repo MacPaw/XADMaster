@@ -237,7 +237,7 @@
 			[parent readAtMost:(int)dataLeftInRegion toBuffer:buffer];
 		}
 		currentRegion = regions[ currentRegion ].nextRegion;
-		positionInRegion = 0;
+		//positionInRegion = 0;
 		dataLeftInRegion = regions[ currentRegion ].size;
 		currentOffset += dataLeftInRegion;
 	}

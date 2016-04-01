@@ -56,13 +56,15 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 -(void)dealloc
 {
 	[parent release];
+	[transformationcontext release];
 	[super dealloc];
 }
 
--(void)setCRCTransformationFunction:(XADCRCTransformationFunction *)function context:(void *)context
+-(void)setCRCTransformationFunction:(XADCRCTransformationFunction *)function context:(id)context
 {
 	transformationfunction=function;
-	transformationcontext=context;
+	[transformationcontext release];
+	transformationcontext=[context retain];
 }
 
 -(void)resetStream

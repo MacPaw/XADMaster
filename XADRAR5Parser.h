@@ -13,6 +13,10 @@ typedef struct RAR5Block
 {
 	NSData *headerkey;
 	NSMutableDictionary *cryptocache;
+
+	NSMutableDictionary *currdict;
+	NSMutableArray *currparts,*currfiles;
+	off_t totalsolidsize;
 }
 
 +(int)requiredHeaderSize;

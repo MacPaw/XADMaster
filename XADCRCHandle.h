@@ -3,7 +3,7 @@
 #import "Progress.h"
 #import "CRC.h"
 
-typedef uint32_t XADCRCTransformationFunction(uint32_t crc,void *context);
+typedef uint32_t XADCRCTransformationFunction(uint32_t crc,id context);
 
 @interface XADCRCHandle:CSStreamHandle
 {
@@ -11,7 +11,7 @@ typedef uint32_t XADCRCTransformationFunction(uint32_t crc,void *context);
 	uint32_t crc,initcrc,compcrc;
 	const uint32_t *table;
 	XADCRCTransformationFunction *transformationfunction;
-	void *transformationcontext;
+	id transformationcontext;
 }
 
 +(XADCRCHandle *)IEEECRC32HandleWithHandle:(CSHandle *)handle
@@ -27,7 +27,7 @@ correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned;
 correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable;
 -(void)dealloc;
 
--(void)setCRCTransformationFunction:(XADCRCTransformationFunction *)function context:(void *)context;
+-(void)setCRCTransformationFunction:(XADCRCTransformationFunction *)function context:(id)context;
 
 -(void)resetStream;
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer;

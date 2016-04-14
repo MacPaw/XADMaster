@@ -1,5 +1,6 @@
 #import "XADRAR5Parser.h"
 #import "XADRARInputHandle.h"
+#import "XADRAR50Handle.h"
 #import "XADRARAESHandle.h"
 #import "XADCRCHandle.h"
 #import "NSDateXAD.h"
@@ -79,6 +80,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	{
 		headerkey=nil;
 		cryptocache=[NSMutableDictionary new];
+		solidstreams=[NSMutableArray new];
 	}
 	return self;
 }
@@ -87,15 +89,17 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 {
 	[headerkey release];
 	[cryptocache release];
+	[solidstreams release];
 	[super dealloc];
 }
 
 -(void)parse
 {
-	currdict=nil;
-	currparts=[NSMutableArray array];
-	currfiles=[NSMutableArray array];
+	currsolidstream=nil;
 	totalsolidsize=0;
+
+	NSMutableDictionary *currdict=nil;
+	NSMutableArray *currparts=[NSMutableArray array];
 
 	[[self handle] skipBytes:8];
 
@@ -139,18 +143,9 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 						{
 							// We had a previous entry, but it did not match. Mark it
 							// as corrupted and get rid of it.
-							[currdict setObject:currfiles forKey:XADSolidObjectKey];
-							[currdict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
-
-							NSNumber *length=[dict objectForKey:XADFileSizeKey];
-
-							[currdict setObject:[NSNumber numberWithLongLong:totalsolidsize] forKey:XADSolidOffsetKey];
-							[currdict setObject:length forKey:XADSolidLengthKey];
-							[currdict setObject:[NSNumber numberWithLongLong:[currfiles count]] forKey:@"RAR5SolidIndex"];
-
-							[self addEntryWithDictionary:currdict];
-
-							totalsolidsize+=[length longLongValue];
+							[self addEntryWithDictionary:currdict
+							inputParts:currparts isCorrupted:YES];
+							currparts=[NSMutableArray array];
 						}
 
 						// Set this as the current file being collected.
@@ -172,29 +167,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 					if(last)
 					{
 						// This is the last part of a file, so get rid of it.
-
-						// If this is not a solid file, forget the earlier file list and start over.
-						bool solid=[[currdict objectForKey:XADIsSolidKey] boolValue];
-						if(!solid)
-						{
-							currfiles=[NSMutableArray array];
-							totalsolidsize=0;
-						}
-
-						// Add the current file parts to the file list.
-						[currfiles addObject:currparts];
-						[currdict setObject:currfiles forKey:XADSolidObjectKey];
-
-						NSNumber *length=[dict objectForKey:XADFileSizeKey];
-
-						[currdict setObject:[NSNumber numberWithLongLong:totalsolidsize] forKey:XADSolidOffsetKey];
-						if(length) [currdict setObject:length forKey:XADSolidLengthKey];
-						[currdict setObject:[NSNumber numberWithLongLong:[currfiles count]] forKey:@"RAR5SolidIndex"];
-
-						[self addEntryWithDictionary:currdict];
-
-						totalsolidsize+=[length longLongValue];
-
+						[self addEntryWithDictionary:currdict inputParts:currparts isCorrupted:NO];
 						currparts=[NSMutableArray array];
 						currdict=nil;
 					}
@@ -259,6 +232,41 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 	end:
 	return;
+}
+
+-(void)addEntryWithDictionary:(NSMutableDictionary *)dict
+inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
+{
+	if(iscorrupted)
+	{
+		[dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCorruptedKey];
+	}
+
+	// If this is not a solid file, forget the earlier solid
+	// file list and start over.
+	bool solid=[[dict objectForKey:XADIsSolidKey] boolValue];
+	if(!solid)
+	{
+		currsolidstream=[NSMutableArray array];
+		[solidstreams addObject:currsolidstream];
+		totalsolidsize=0;
+	}
+
+	// Add the list of input parts to the current file.
+	[dict setObject:parts forKey:@"RAR5InputParts"];
+
+	// Add the current file to the solid file list.
+	[currsolidstream addObject:dict];
+
+	// Set up solid stream paramters for the current file.
+	[dict setObject:[NSNumber numberWithInteger:[solidstreams count]-1] forKey:XADSolidObjectKey];
+	NSNumber *length=[dict objectForKey:XADFileSizeKey];
+	[dict setObject:[NSNumber numberWithLongLong:totalsolidsize] forKey:XADSolidOffsetKey];
+	if(length) [dict setObject:length forKey:XADSolidLengthKey];
+
+	[self addEntryWithDictionary:dict];
+
+	totalsolidsize+=[length longLongValue];
 }
 
 -(NSMutableDictionary *)readFileBlockHeader:(RAR5Block)block
@@ -644,10 +652,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	CSHandle *handle;
 	if([[dict objectForKey:@"RAR5CompressionMethod"] intValue]==0)
 	{
-		NSArray *files=[dict objectForKey:XADSolidObjectKey];
-		int index=[[dict objectForKey:@"RARSolidIndex"] intValue];
-		NSArray *parts=[files objectAtIndex:index];
-		handle=[self inputHandleWithWithDictionary:dict parts:parts];
+		handle=[self inputHandleWithDictionary:dict];
 
 		off_t length=[[dict objectForKey:XADSolidLengthKey] longLongValue];
 		if(length!=[handle fileSize]) handle=[handle nonCopiedSubHandleOfLength:length];
@@ -685,7 +690,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 			handle=crchandle;
 		}
 
-		// Add blake2sp
+		// TODO: Add blake2sp
 	}
 
 	return handle;
@@ -693,11 +698,19 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
 {
-	return nil;
+	NSNumber *index=obj;
+	NSArray *stream=[solidstreams objectAtIndex:[index integerValue]];
+	return [[[XADRAR50Handle alloc] initWithRARParser:self files:stream] autorelease];
 }
 
--(CSHandle *)inputHandleWithWithDictionary:(NSDictionary *)dict parts:(NSArray *)parts
+-(CSInputBuffer *)inputBufferWithDictionary:(NSDictionary *)dict
 {
+	return CSInputBufferAlloc([self inputHandleWithDictionary:dict],16384);
+}
+
+-(CSHandle *)inputHandleWithDictionary:(NSDictionary *)dict
+{
+	NSArray *parts=[dict objectForKey:@"RAR5InputParts"];
 	CSHandle *handle=[[[XADRARInputHandle alloc] initWithHandle:[self handle] parts:parts] autorelease];
 
 	NSNumber *encryptnum=[dict objectForKey:XADIsEncryptedKey];

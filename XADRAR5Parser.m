@@ -252,15 +252,18 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
 		totalsolidsize=0;
 	}
 
+	// Find the length of the file in the output stream, ignoring symlinks.
+	NSNumber *length=[dict objectForKey:XADFileSizeKey];
+	if([dict objectForKey:XADLinkDestinationKey]) length=[NSNumber numberWithInt:0];
+
 	// Add the list of input parts to the current file.
 	[dict setObject:parts forKey:@"RAR5InputParts"];
 
 	// Add the current file to the solid file list.
-	[currsolidstream addObject:dict];
+	if([length longLongValue]!=0) [currsolidstream addObject:dict];
 
 	// Set up solid stream paramters for the current file.
 	[dict setObject:[NSNumber numberWithInteger:[solidstreams count]-1] forKey:XADSolidObjectKey];
-	NSNumber *length=[dict objectForKey:XADFileSizeKey];
 	[dict setObject:[NSNumber numberWithLongLong:totalsolidsize] forKey:XADSolidOffsetKey];
 	if(length) [dict setObject:length forKey:XADSolidLengthKey];
 
@@ -320,11 +323,11 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
 		switch(compmethod)
 		{
 			case 0: methodname=@"None"; break;
-			case 1: methodname=[NSString stringWithFormat:@"Fastest v5.0 (v%d)",compversion]; break;
-			case 2: methodname=[NSString stringWithFormat:@"Fast v5.0 (v%d)",compversion]; break;
-			case 3: methodname=[NSString stringWithFormat:@"Normal v5.0 (v%d)",compversion]; break;
-			case 4: methodname=[NSString stringWithFormat:@"Good v5.0 (v%d)",compversion]; break;
-			case 5: methodname=[NSString stringWithFormat:@"Best v5.0 (v%d)",compversion]; break;
+			case 1: methodname=[NSString stringWithFormat:@"Fastest v5.0 (%d)",compversion]; break;
+			case 2: methodname=[NSString stringWithFormat:@"Fast v5.0 (%d)",compversion]; break;
+			case 3: methodname=[NSString stringWithFormat:@"Normal v5.0 (%d)",compversion]; break;
+			case 4: methodname=[NSString stringWithFormat:@"Good v5.0 (%d)",compversion]; break;
+			case 5: methodname=[NSString stringWithFormat:@"Best v5.0 (%d)",compversion]; break;
 		}
 		if(methodname) [dict setObject:[self XADStringWithString:methodname] forKey:XADCompressionNameKey];
 	}

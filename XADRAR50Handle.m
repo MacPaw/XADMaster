@@ -44,7 +44,6 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 
 	RestartLZSS(&lzss);
 
-	lastoffset=0;
 	lastlength=0;
 	memset(oldoffset,0,sizeof(oldoffset));
 
@@ -156,8 +155,8 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 
 	for(;;)
 	{
-//		off_t offs_=CSInputBufferBitOffset(input);
-//		NSLog(@"%lld",offs_);
+		//off_t offs_=CSInputBufferBitOffset(input);
+		//NSLog(@"%lld",offs_);
 		while(CSInputBufferBitOffset(input)>=blockbitend)
 		{
 			if(islastblock)
@@ -184,18 +183,14 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 		else if(symbol==256)
 		{
 			[XADException raiseNotSupportedException];
-			continue;
-		}
-		else if(symbol==257)
-		{
-			if(filterstart<end) end=filterstart; // Make sure we stop when we reach a filter.
+			//if(filterstart<end) end=filterstart; // Make sure we stop when we reach a filter.
 			continue;
 		}
 		else if(symbol==257)
 		{
 			if(lastlength==0) continue;
 
-			offs=lastoffset;
+			offs=oldoffset[0];
 			len=lastlength;
 		}
 		else if(symbol<262)
@@ -246,7 +241,6 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 			oldoffset[0]=offs;
 		}
 
-		lastoffset=offs;
 		lastlength=len;
 
 		EmitLZSSMatch(&lzss,offs,len);

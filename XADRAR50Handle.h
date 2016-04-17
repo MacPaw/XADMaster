@@ -21,7 +21,7 @@
 
 	XADPrefixCode *maincode,*offsetcode,*lowoffsetcode,*lengthcode;
 
-	int lastoffset,lastlength;
+	int lastlength;
 	int oldoffset[4];
 	int lastlowoffset,numlowoffsetrepeats;
 

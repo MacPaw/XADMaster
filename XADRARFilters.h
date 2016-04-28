@@ -42,3 +42,50 @@ startPosition:(off_t)startpos length:(int)length;
 @interface XADRAR30E8E9Filter:XADRAR30Filter {}
 -(void)executeOnVirtualMachine:(XADRARVirtualMachine *)vm atPosition:(off_t)pos;
 @end
+
+
+
+
+@interface XADRAR50Filter:NSObject
+{
+	off_t start;
+	uint32_t length;
+}
+
+-(id)initWithStart:(off_t)start length:(uint32_t)length;
+
+-(off_t)start;
+-(uint32_t)length;
+
+-(void)runOnData:(NSMutableData *)data fileOffset:(off_t)pos;
+
+@end
+
+@interface XADRAR50DeltaFilter:XADRAR50Filter
+{
+	int numchannels;
+}
+
+-(id)initWithStart:(off_t)start length:(uint32_t)length numberOfChannels:(int)numchannels;
+
+-(void)runOnData:(NSMutableData *)data fileOffset:(off_t)pos;
+
+@end
+
+@interface XADRAR50E8E9Filter:XADRAR50Filter
+{
+	BOOL handlee9;
+}
+
+-(id)initWithStart:(off_t)start length:(uint32_t)length handleE9:(BOOL)handlee9;
+
+-(void)runOnData:(NSMutableData *)data fileOffset:(off_t)pos;
+
+@end
+
+@interface XADRAR50ARMFilter:XADRAR50Filter {}
+
+-(void)runOnData:(NSMutableData *)data fileOffset:(off_t)pos;
+
+@end
+

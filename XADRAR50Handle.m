@@ -1,7 +1,9 @@
 #import "XADRAR50Handle.h"
+#import "XADRARFilters.h"
 #import "XADException.h"
 
 static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
+static uint32_t ReadFilterInteger(CSInputBuffer *input);
 
 @implementation XADRAR50Handle
 
@@ -18,6 +20,9 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 		offsetcode=nil;
 		lowoffsetcode=nil;
 		lengthcode=nil;
+
+		filters=[NSMutableArray new];
+		filterdata=nil;
 	}
 	return self;
 }
@@ -30,13 +35,14 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 	[offsetcode release];
 	[lowoffsetcode release];
 	[lengthcode release];
+	[filters release];
+	[filterdata release];
 	[super dealloc];
 }
 
 -(void)resetBlockStream
 {
 	file=0;
-	lastend=0;
 	startnewfile=YES;
 
 	blockbitend=0;
@@ -47,9 +53,9 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 	lastlength=0;
 	memset(oldoffset,0,sizeof(oldoffset));
 
-	filterstart=CSHandleMaxLength;
-	lastfilternum=0;
-	currfilestartpos=0;
+	[filters removeAllObjects];
+	[filterdata release];
+	filterdata=nil;
 }
 
 
@@ -68,109 +74,70 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 		startnewfile=NO;
 	}
 
-	if(lastend==filterstart)
+	off_t nextfilterstart=CSHandleMaxLength;
+	if([filters count]) nextfilterstart=[(XADRAR50Filter *)[filters objectAtIndex:0] start];
+
+	if(pos==nextfilterstart)
 	{
-/*		XADRAR30Filter *firstfilter=[stack objectAtIndex:0];
-		off_t start=filterstart;
-		int length=[firstfilter length];
+		XADRAR50Filter *filter=[filters objectAtIndex:0];
+		off_t start=nextfilterstart;
+		uint32_t length=[filter length];
 		off_t end=start+length;
 
-		// Remove the filter start marker and unpack enough data to run the filter on.
-		filterstart=CSHandleMaxLength;
 		off_t actualend=[self expandToPosition:end];
 		if(actualend!=end) [XADException raiseIllegalDataException];
 
-		// Copy data to virtual machine memory and run the first filter.
-		uint8_t *memory=[vm memory];
+		[filterdata release];
+		filterdata=[[NSMutableData dataWithLength:length] retain];
+		uint8_t *memory=[filterdata mutableBytes];
+
 		CopyBytesFromLZSSWindow(&lzss,memory,start,length);
 
-		[firstfilter executeOnVirtualMachine:vm atPosition:pos-currfilestartpos];
+		[filter runOnData:filterdata fileOffset:pos];
 
-		uint32_t lastfilteraddress=[firstfilter filteredBlockAddress];
-		uint32_t lastfilterlength=[firstfilter filteredBlockLength];
+		[filters removeObjectAtIndex:0];
 
-		[stack removeObjectAtIndex:0];
+		[self setBlockPointer:memory];
 
-		// Run any furhter filters that match the exact same range of data,
-		// taking into account that the length may have changed.
-		for(;;)
-		{
-			if([stack count]==0) break;
-			XADRAR30Filter *filter=[stack objectAtIndex:0];
-
-			// Check if this filter applies.
-			if([filter startPosition]!=filterstart) break;
-			if([filter length]!=lastfilterlength) break;
-
-			// Move last filtered block into place and run.
-			memmove(&memory[0],&memory[lastfilteraddress],lastfilterlength);
-
-			[filter executeOnVirtualMachine:vm atPosition:pos];
-
-			lastfilteraddress=[filter filteredBlockAddress];
-			lastfilterlength=[filter filteredBlockLength];
-
-			[stack removeObjectAtIndex:0];
-		}
-
-		// If there are further filters on the stack, set up the filter start marker again
-		// and sanity-check filter ordering.
-		if([stack count])
-		{
-			XADRAR30Filter *filter=[stack objectAtIndex:0];
-			filterstart=[filter startPosition];
-
-			if(filterstart<end) [XADException raiseIllegalDataException];
-		}
-
-		[self setBlockPointer:&memory[lastfilteraddress]];
-
-		lastend=end;
-
-		return lastfilterlength;*/
-		return 0;
+		return length;
 	}
 	else
 	{
-		off_t start=lastend;
-		off_t end=start+0x40000;
-		off_t windowend=NextLZSSWindowEdgeAfterPosition(&lzss,start);
+		off_t end=pos+0x40000;
+		off_t windowend=NextLZSSWindowEdgeAfterPosition(&lzss,pos);
 		if(end>windowend) end=windowend;
+		if(end>nextfilterstart) end=nextfilterstart; // Make sure we stop when we reach a filter.
 
 		off_t actualend=[self expandToPosition:end];
 
 		[self setBlockPointer:LZSSWindowPointerForPosition(&lzss,pos)];
 
-		lastend=actualend;
-
 		// Check if we immediately hit a new filter or file edge, and try again.
-		if(actualend==start) return [self produceBlockAtOffset:pos];
-		else return (int)(actualend-start);
+		if(actualend==pos) return [self produceBlockAtOffset:pos];
+		else return (int)(actualend-pos);
 	}
 }
 
 -(off_t)expandToPosition:(off_t)end
 {
-	if(filterstart<end) end=filterstart; // Make sure we stop when we reach a filter.
-
 	for(;;)
 	{
-		//off_t offs_=CSInputBufferBitOffset(input);
-		//NSLog(@"%lld",offs_);
+		if(LZSSPosition(&lzss)>=end) return end;
+
 		while(CSInputBufferBitOffset(input)>=blockbitend)
 		{
 			if(islastblock)
 			{
 				startnewfile=YES;
-				return LZSSPosition(&lzss);
+				off_t pos=LZSSPosition(&lzss);
+				if(end<pos) return end;
+				else return pos;
 			}
 			else
 			{
 				[self readBlockHeader];
 			}
 		}
-
-		if(LZSSPosition(&lzss)>=end) return end;
 
 		int symbol=CSInputNextSymbolUsingCode(input,maincode);
 		int offs,len;
@@ -182,8 +149,44 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 		}
 		else if(symbol==256)
 		{
-			[XADException raiseNotSupportedException];
-			//if(filterstart<end) end=filterstart; // Make sure we stop when we reach a filter.
+			off_t start=ReadFilterInteger(input)+LZSSPosition(&lzss);
+			uint32_t length=ReadFilterInteger(input);
+			int type=CSInputNextBitString(input,3);
+
+NSLog(@"%lld %d %d",start,length,type);
+
+			XADRAR50Filter *filter=nil;
+
+			switch(type)
+			{
+				case 0:
+				{
+					int numchannels=CSInputNextBitString(input,5)+1;
+					filter=[[[XADRAR50DeltaFilter alloc] initWithStart:start length:length numberOfChannels:numchannels] autorelease];
+				}
+				break;
+
+				case 1:
+					filter=[[[XADRAR50E8E9Filter alloc] initWithStart:start length:length handleE9:NO] autorelease];
+				break;
+
+				case 2:
+					filter=[[[XADRAR50E8E9Filter alloc] initWithStart:start length:length handleE9:NO] autorelease];
+				break;
+
+				case 3:
+					filter=[[[XADRAR50ARMFilter alloc] initWithStart:start length:length] autorelease];
+				break;
+
+				default:
+					[XADException raiseNotSupportedException];
+				break;
+			}
+			
+			[filters addObject:filter];
+
+			if(end>start) end=start; // Make sure we stop when we reach a filter.
+
 			continue;
 		}
 		else if(symbol==257)
@@ -362,6 +365,9 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol);
 
 @end
 
+
+
+
 static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol)
 {
 	if(symbol<8)
@@ -376,3 +382,14 @@ static int ReadLengthWithSymbol(CSInputBuffer *input,int symbol)
 		return length;
 	}
 }
+
+static uint32_t ReadFilterInteger(CSInputBuffer *input)
+{
+	int count=CSInputNextBitString(input,2)+1;
+
+	uint32_t value=0;
+	for(int i=0;i<count;i++) value+=CSInputNextBitString(input,8)<<(i*8);
+
+	return value;
+}
+

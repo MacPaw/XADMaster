@@ -1,5 +1,5 @@
 #import "XADRAR30Handle.h"
-#import "XADRAR30Filter.h"
+#import "XADRARFilters.h"
 #import "XADException.h"
 
 @implementation XADRAR30Handle

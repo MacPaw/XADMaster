@@ -11,7 +11,6 @@
 
 	NSArray *files;
 	int file;
-	off_t lastend;
 	BOOL startnewfile;
 
 	off_t blockbitend;
@@ -25,10 +24,8 @@
 	int oldoffset[4];
 	int lastlowoffset,numlowoffsetrepeats;
 
-	off_t filterstart;
-	int lastfilternum;
-	int oldfilterlength[1024],usagecount[1024];
-	off_t currfilestartpos;
+	NSMutableArray *filters;
+	NSMutableData *filterdata;
 
 	int lengthtable[306+64+16+44];
 }

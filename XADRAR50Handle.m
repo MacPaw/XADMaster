@@ -44,6 +44,7 @@ static uint32_t ReadFilterInteger(CSInputBuffer *input);
 {
 	file=0;
 	startnewfile=YES;
+	currfilestartpos=0;
 
 	blockbitend=0;
 	islastblock=NO;
@@ -71,6 +72,7 @@ static uint32_t ReadFilterInteger(CSInputBuffer *input);
 
 		[self readBlockHeader];
 
+		currfilestartpos=pos;
 		startnewfile=NO;
 	}
 
@@ -93,7 +95,7 @@ static uint32_t ReadFilterInteger(CSInputBuffer *input);
 
 		CopyBytesFromLZSSWindow(&lzss,memory,start,length);
 
-		[filter runOnData:filterdata fileOffset:pos];
+		[filter runOnData:filterdata fileOffset:pos-currfilestartpos];
 
 		[filters removeObjectAtIndex:0];
 
@@ -153,8 +155,6 @@ static uint32_t ReadFilterInteger(CSInputBuffer *input);
 			uint32_t length=ReadFilterInteger(input);
 			int type=CSInputNextBitString(input,3);
 
-NSLog(@"%lld %d %d",start,length,type);
-
 			XADRAR50Filter *filter=nil;
 
 			switch(type)
@@ -171,7 +171,7 @@ NSLog(@"%lld %d %d",start,length,type);
 				break;
 
 				case 2:
-					filter=[[[XADRAR50E8E9Filter alloc] initWithStart:start length:length handleE9:NO] autorelease];
+					filter=[[[XADRAR50E8E9Filter alloc] initWithStart:start length:length handleE9:YES] autorelease];
 				break;
 
 				case 3:

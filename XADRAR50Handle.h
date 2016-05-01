@@ -12,6 +12,7 @@
 	NSArray *files;
 	int file;
 	BOOL startnewfile;
+	off_t currfilestartpos;
 
 	off_t blockbitend;
 	BOOL islastblock;

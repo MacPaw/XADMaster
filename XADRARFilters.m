@@ -3,7 +3,7 @@
 #import "RARAudioDecoder.h"
 
 static void RARDeltaFilter(uint8_t *src,uint8_t *dest,size_t length,int numchannels);
-static void RARE8E9Filter(uint8_t *memory,size_t length,int32_t filepos,bool handlee9);
+static void RARE8E9Filter(uint8_t *memory,size_t length,int32_t filepos,bool handlee9,bool wrapposition);
 
 @implementation XADRAR30Filter
 
@@ -142,7 +142,7 @@ startPosition:(off_t)startpos length:(int)length
 	filteredblockaddress=0;
 	filteredblocklength=length;
 
-	RARE8E9Filter(memory,length,(int32_t)pos,false);
+	RARE8E9Filter(memory,length,(int32_t)pos,false,false);
 }
 
 @end
@@ -161,7 +161,7 @@ startPosition:(off_t)startpos length:(int)length
 	filteredblockaddress=0;
 	filteredblocklength=length;
 
-	RARE8E9Filter(memory,length,(int32_t)pos,true);
+	RARE8E9Filter(memory,length,(int32_t)pos,true,false);
 }
 
 @end
@@ -241,7 +241,7 @@ startPosition:(off_t)startpos length:(int)length
 	uint8_t *memory=data.mutableBytes;
 	size_t memlength=data.length;
 
-	RARE8E9Filter(memory,memlength,(int32_t)pos,handlee9);
+	RARE8E9Filter(memory,memlength,(int32_t)pos,handlee9,true);
 }
 
 @end
@@ -275,7 +275,7 @@ static void RARDeltaFilter(uint8_t *src,uint8_t *dest,size_t length,int numchann
 	}
 }
 
-static void RARE8E9Filter(uint8_t *memory,size_t length,int32_t filepos,bool handlee9)
+static void RARE8E9Filter(uint8_t *memory,size_t length,int32_t filepos,bool handlee9,bool wrapposition)
 {
 	int32_t filesize=0x1000000;
 
@@ -284,7 +284,8 @@ static void RARE8E9Filter(uint8_t *memory,size_t length,int32_t filepos,bool han
 		if(memory[i]==0xe8 || (handlee9 && memory[i]==0xe9))
 		{
 			int32_t currpos=(int32_t)filepos+i+1;
-			int32_t address=CSUInt32LE(&memory[i+1]);
+			if(wrapposition) currpos%=filesize;
+ 			int32_t address=CSInt32LE(&memory[i+1]);
 			if(address<0)
 			{
 				if(address+currpos>=0) CSSetUInt32LE(&memory[i+1],address+filesize);

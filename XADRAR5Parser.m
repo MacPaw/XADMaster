@@ -267,6 +267,14 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
 	[dict setObject:[NSNumber numberWithLongLong:totalsolidsize] forKey:XADSolidOffsetKey];
 	if(length) [dict setObject:length forKey:XADSolidLengthKey];
 
+	// Calculate and set the total compressed size.
+	off_t compsize=0;
+	NSEnumerator *enumerator=[parts objectEnumerator];
+	NSDictionary *part;
+	while(part=[enumerator nextObject]) compsize+=[[part objectForKey:@"InputLength"] longLongValue];
+
+	[dict setObject:[NSNumber numberWithLongLong:compsize] forKey:XADCompressedSizeKey];
+
 	[self addEntryWithDictionary:dict];
 
 	totalsolidsize+=[length longLongValue];

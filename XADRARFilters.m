@@ -3,7 +3,8 @@
 #import "RARAudioDecoder.h"
 
 static void RARDeltaFilter(uint8_t *src,uint8_t *dest,size_t length,int numchannels);
-static void RARE8E9Filter(uint8_t *memory,size_t length,int32_t filepos,bool handlee9,bool wrapposition);
+static void RARE8E9Filter(uint8_t *memory,size_t length,off_t filepos,bool handlee9,bool wrapposition);
+static void RARARMFilter(uint8_t *memory,size_t length,off_t filepos);
 
 @implementation XADRAR30Filter
 
@@ -142,7 +143,7 @@ startPosition:(off_t)startpos length:(int)length
 	filteredblockaddress=0;
 	filteredblocklength=length;
 
-	RARE8E9Filter(memory,length,(int32_t)pos,false,false);
+	RARE8E9Filter(memory,length,pos,false,false);
 }
 
 @end
@@ -161,7 +162,7 @@ startPosition:(off_t)startpos length:(int)length
 	filteredblockaddress=0;
 	filteredblocklength=length;
 
-	RARE8E9Filter(memory,length,(int32_t)pos,true,false);
+	RARE8E9Filter(memory,length,pos,true,false);
 }
 
 @end
@@ -241,7 +242,7 @@ startPosition:(off_t)startpos length:(int)length
 	uint8_t *memory=data.mutableBytes;
 	size_t memlength=data.length;
 
-	RARE8E9Filter(memory,memlength,(int32_t)pos,handlee9,true);
+	RARE8E9Filter(memory,memlength,pos,handlee9,true);
 }
 
 @end
@@ -254,6 +255,11 @@ startPosition:(off_t)startpos length:(int)length
 -(void)runOnData:(NSMutableData *)data fileOffset:(off_t)pos
 {
 	[XADException raiseNotSupportedException];
+
+	uint8_t *memory=data.mutableBytes;
+	size_t memlength=data.length;
+
+	RARARMFilter(memory,memlength,pos);
 }
 
 @end
@@ -275,7 +281,7 @@ static void RARDeltaFilter(uint8_t *src,uint8_t *dest,size_t length,int numchann
 	}
 }
 
-static void RARE8E9Filter(uint8_t *memory,size_t length,int32_t filepos,bool handlee9,bool wrapposition)
+static void RARE8E9Filter(uint8_t *memory,size_t length,off_t filepos,bool handlee9,bool wrapposition)
 {
 	int32_t filesize=0x1000000;
 
@@ -296,6 +302,21 @@ static void RARE8E9Filter(uint8_t *memory,size_t length,int32_t filepos,bool han
 			}
 
 			i+=4;
+		}
+	}
+}
+
+static void RARARMFilter(uint8_t *memory,size_t length,off_t filepos)
+{
+	for(size_t i=0;i<=length-4;i+=4)
+	{
+		if(memory[i+3]==0xeb)
+		{
+			uint32_t offset=memory[i]+(memory[i+1]<<8)+(memory[i+2]<<16);
+			offset-=((uint32_t)filepos+i)/4;
+			memory[i]=offset;
+			memory[i+1]=offset>>8;
+			memory[i+2]=offset>>16;
 		}
 	}
 }

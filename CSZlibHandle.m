@@ -34,7 +34,7 @@ NSString *CSZlibException=@"CSZlibException";
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length header:(BOOL)header name:(NSString *)descname
 {
-	if((self=[super initWithName:descname length:length]))
+	if(self=[super initWithName:descname length:length])
 	{
 		parent=[handle retain];
 		startoffs=[parent offsetInFile];
@@ -51,7 +51,7 @@ NSString *CSZlibException=@"CSZlibException";
 
 -(id)initAsCopyOf:(CSZlibHandle *)other
 {
-	if((self=[super initAsCopyOf:other]))
+	if(self=[super initAsCopyOf:other])
 	{
 		parent=[other->parent copy];
 		startoffs=other->startoffs;
@@ -132,7 +132,7 @@ NSString *CSZlibException=@"CSZlibException";
 -(void)_raiseZlib
 {
 	[NSException raise:CSZlibException
-	format:@"Zlib error while attepting to read from \"%@\": %s.",name,zs.msg];
+	format:@"Zlib error while attepting to read from \"%@\": %s.",[self name],zs.msg];
 }
 
 @end

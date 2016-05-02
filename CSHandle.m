@@ -15,7 +15,7 @@ NSString *CSNotSupportedException=@"CSNotSupportedException";
 
 -(id)initWithName:(NSString *)descname
 {
-	if((self=[super init]))
+	if(self=[super init])
 	{
 		name=[descname retain];
 
@@ -29,7 +29,7 @@ NSString *CSNotSupportedException=@"CSNotSupportedException";
 
 -(id)initAsCopyOf:(CSHandle *)other
 {
-	if((self=[super init]))
+	if(self=[super init])
 	{
 		name=[[[other name] stringByAppendingString:@" (copy)"] retain];
 
@@ -438,25 +438,29 @@ CSWriteValueImpl(uint32_t,writeID,CSSetUInt32BE)
 -(void)_raiseMemory
 {
 	[NSException raise:CSOutOfMemoryException
-	format:@"Out of memory while attempting to read from file \"%@\" (%@).",name,[self class]];
+	format:@"Out of memory while attempting to read from file \"%@\" (%@).",
+	[self name],[self class]];
 }
 
 -(void)_raiseEOF
 {
 	[NSException raise:CSEndOfFileException
-	format:@"Attempted to read past the end of file \"%@\" (%@).",name,[self class]];
+	format:@"Attempted to read past the end of file \"%@\" (%@).",
+	[self name],[self class]];
 }
 
 -(void)_raiseNotImplemented:(SEL)selector
 {
 	[NSException raise:CSNotImplementedException
-	format:@"Attempted to use unimplemented method +[%@ %@] when reading from file \"%@\".",[self class],NSStringFromSelector(selector),name];
+	format:@"Attempted to use unimplemented method +[%@ %@] when reading from file \"%@\".",
+	[self class],NSStringFromSelector(selector),[self name]];
 }
 
 -(void)_raiseNotSupported:(SEL)selector
 {
 	[NSException raise:CSNotSupportedException
-	format:@"Attempted to use unsupported method +[%@ %@] when reading from file \"%@\".",[self class],NSStringFromSelector(selector),name];
+	format:@"Attempted to use unsupported method +[%@ %@] when reading from file \"%@\".",
+	[self class],NSStringFromSelector(selector),[self name]];
 }
 
 
@@ -465,7 +469,7 @@ CSWriteValueImpl(uint32_t,writeID,CSSetUInt32BE)
 -(NSString *)description
 {
 	return [NSString stringWithFormat:@"%@ for \"%@\", position %qu",
-	[self class],name,[self offsetInFile]];
+	[self class],[self name],[self offsetInFile]];
 }
 
 

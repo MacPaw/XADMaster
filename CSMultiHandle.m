@@ -31,7 +31,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 
 -(id)initWithHandles:(NSArray *)handlearray
 {
-	if((self=[super initWithName:[NSString stringWithFormat:@"%@, and %ld more combined",[[handlearray objectAtIndex:0] name],(long)[handlearray count]-1]]))
+	if(self=[super initWithName:@""])
 	{
 		handles=[handlearray copy];
 		currhandle=0;
@@ -41,7 +41,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 
 -(id)initAsCopyOf:(CSMultiHandle *)other
 {
-	if((self=[super initAsCopyOf:other]))
+	if(self=[super initAsCopyOf:other])
 	{
 		NSMutableArray *handlearray=[NSMutableArray arrayWithCapacity:[other->handles count]];
 		NSEnumerator *enumerator=[other->handles objectEnumerator];
@@ -142,6 +142,11 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 {
 	[NSException raise:CSSizeOfSegmentUnknownException
 	format:@"Size of CSMultiHandle segment %ld (%@) unknown.",i,[handles objectAtIndex:i]];
+}
+
+-(NSString *)name
+{
+	return [NSString stringWithFormat:@"%@, and %ld more combined",[[self currentHandle] name],(long)[handles count]-1];
 }
 
 @end

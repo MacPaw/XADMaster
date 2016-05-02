@@ -46,7 +46,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc name:(NSString *)descname
 {
-	if((self=[super initWithName:descname]))
+	if(self=[super initWithName:descname])
 	{
 		fh=file;
  		close=closeondealloc;
@@ -58,7 +58,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 
 -(id)initAsCopyOf:(CSFileHandle *)other
 {
-	if((self=[super initAsCopyOf:other]))
+	if(self=[super initAsCopyOf:other])
 	{
 		fh=other->fh;
  		close=NO;
@@ -169,7 +169,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 {
 	if(feof(fh)) [self _raiseEOF];
 	else [[[[NSException alloc] initWithName:CSFileErrorException
-	reason:[NSString stringWithFormat:@"Error while attempting to read file \"%@\": %s.",name,strerror(errno)]
+	reason:[NSString stringWithFormat:@"Error while attempting to read file \"%@\": %s.",[self name],strerror(errno)]
 	userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errno] forKey:@"ErrNo"]] autorelease] raise];
 }
 

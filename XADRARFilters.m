@@ -254,8 +254,6 @@ startPosition:(off_t)startpos length:(int)length
 
 -(void)runOnData:(NSMutableData *)data fileOffset:(off_t)pos
 {
-	[XADException raiseNotSupportedException];
-
 	uint8_t *memory=data.mutableBytes;
 	size_t memlength=data.length;
 

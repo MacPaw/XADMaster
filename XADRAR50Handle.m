@@ -14,7 +14,13 @@ static uint32_t ReadFilterInteger(CSInputBuffer *input);
 		parser=parent;
 		files=[filearray retain];
 
-		InitializeLZSS(&lzss,0x400000);
+		NSDictionary *dict=[files objectAtIndex:0];
+
+		CSInputBuffer *buf=[parser inputBufferWithDictionary:dict];
+		[self setInputBuffer:buf];
+
+		uint64_t dictsize=[[dict objectForKey:@"RAR5DictionarySize"] unsignedLongLongValue];
+		InitializeLZSS(&lzss,dictsize);
 
 		maincode=nil;
 		offsetcode=nil;
@@ -65,8 +71,12 @@ static uint32_t ReadFilterInteger(CSInputBuffer *input);
 	if(startnewfile)
 	{
 		NSDictionary *dict=[files objectAtIndex:file];
+
 		CSInputBuffer *buf=[parser inputBufferWithDictionary:dict];
 		[self setInputBuffer:buf];
+
+		uint64_t dictsize=[[dict objectForKey:@"RAR5DictionarySize"] unsignedLongLongValue];
+		if(dictsize>LZSSWindowSize(&lzss)) [XADException raiseNotSupportedException];
 
 		file++;
 

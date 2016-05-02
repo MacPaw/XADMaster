@@ -320,12 +320,14 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
 		int compversion=compinfo&0x3f;
 		BOOL issolid=(compinfo&0x40)>>6;
 		int compmethod=(compinfo&0x380)>>7;
-		int compdictsize=(compinfo&0x3c00)>>10;
+		int dictshift=(compinfo&0x3c00)>>10;
+		uint64_t dictsize=0x20000ll<<dictshift;
+
 		[dict setObject:[NSNumber numberWithUnsignedLongLong:compinfo] forKey:@"RAR5CompressionInformation"];
 		[dict setObject:[NSNumber numberWithInt:compversion] forKey:@"RAR5CompressionVersion"];
 		[dict setObject:[NSNumber numberWithBool:issolid] forKey:XADIsSolidKey];
 		[dict setObject:[NSNumber numberWithInt:compmethod] forKey:@"RAR5CompressionMethod"];
-		[dict setObject:[NSNumber numberWithInt:compdictsize] forKey:@"RAR5CompressionDictionarySize"];
+		[dict setObject:[NSNumber numberWithUnsignedLongLong:dictsize] forKey:@"RAR5DictionarySize"];
 
 		NSString *methodname=nil;
 		switch(compmethod)

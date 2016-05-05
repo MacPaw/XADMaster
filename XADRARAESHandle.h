@@ -2,13 +2,13 @@
 
 #import "Crypto/aes.h"
 
-@interface XADRARAESHandle:CSBlockStreamHandle
+@interface XADRARAESHandle:CSStreamHandle
 {
 	CSHandle *parent;
 	off_t startoffs;
 
 	aes_decrypt_ctx aes;
-	uint8_t iv[16],block[16],buffer[65536];
+	uint8_t iv[16],block[16],blockbuffer[16];
 }
 
 +(NSData *)keyForPassword:(NSString *)password salt:(NSData *)salt brokenHash:(BOOL)brokenhash;
@@ -19,7 +19,7 @@
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length RAR5Key:(NSData *)keydata IV:(NSData *)ivdata;
 -(void)dealloc;
 
--(void)resetBlockStream;
--(int)produceBlockAtOffset:(off_t)pos;
+-(void)resetStream;
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer;
 
 @end

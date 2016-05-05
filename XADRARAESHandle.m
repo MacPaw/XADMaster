@@ -104,21 +104,61 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 	[super dealloc];
 }
 
--(void)resetBlockStream
+-(void)resetStream;
 {
 	[parent seekToFileOffset:startoffs];
-	[self setBlockPointer:buffer];
 	memcpy(block,iv,sizeof(iv));
 }
 
--(int)produceBlockAtOffset:(off_t)pos
+-(int)streamAtMost:(int)num toBuffer:(void *)buffer
 {
-	int actual=[parent readAtMost:sizeof(buffer) toBuffer:buffer];
-	if(actual==0) return -1;
+	int bufferpos=streampos&15;
+	int bufferlength=(-streampos)&15;
+	int total=0;
 
-	aes_cbc_decrypt(buffer,buffer,actual&~15,block,&aes);
+	if(num<=bufferlength)
+	{
+		memcpy(&buffer[total],&blockbuffer[bufferpos],num);
+		return num;
+	}
 
-	return actual;
+	memcpy(&buffer[total],&blockbuffer[bufferpos],bufferlength);
+	total+=bufferlength;
+
+	int remaining=num-total;
+	int remainingblocklength=remaining&~15;
+
+	if(remainingblocklength)
+	{
+		int actual=[parent readAtMost:remainingblocklength toBuffer:&buffer[total]];
+		int actualblocklength=actual&~15;
+		aes_cbc_decrypt(&buffer[total],&buffer[total],actualblocklength,block,&aes);
+		total+=actualblocklength;
+
+		if(actualblocklength!=remainingblocklength)
+		{
+			[self endStream];
+			return total;
+		}
+	}
+
+	int endlength=num-total;
+	if(endlength)
+	{
+		int actual=[parent readAtMost:16 toBuffer:blockbuffer];
+		if(actual!=16)
+		{
+			[self endStream];
+			return total;
+		}
+
+		aes_cbc_decrypt(blockbuffer,blockbuffer,16,block,&aes);
+
+		memcpy(&buffer[total],&blockbuffer[0],endlength);
+		total+=endlength;
+	}
+
+	return total;
 }
 
 @end

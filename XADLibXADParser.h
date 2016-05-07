@@ -23,7 +23,8 @@
 }
 
 +(int)requiredHeaderSize;
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 
 -(id)init;
 -(void)dealloc;

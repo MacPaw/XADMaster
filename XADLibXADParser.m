@@ -21,7 +21,8 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	return (int)((struct xadMasterBaseP *)xmb)->xmb_RecogSize;
 }
 
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
+name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
 	if(!xmb) xmb=xadOpenLibrary(12);
 
@@ -37,11 +38,17 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	inhook.h_Entry=InFunc;
 	inhook.h_Data=(void *)&indata;
 
-	if(xadRecogFile(xmb,[data length],[data bytes],
+	struct xadClient *client=xadRecogFile(xmb,[data length],[data bytes],
 		XAD_INHOOK,&inhook,
-	TAG_DONE)) return YES;
+	TAG_DONE);
 
-	return NO;
+	if(!client) return NO;
+
+	NSString *format=[[[NSString alloc] initWithBytes:client->xc_ArchiverName
+	length:strlen(client->xc_ArchiverName) encoding:NSISOLatin1StringEncoding] autorelease];
+	[props setObject:format forKey:@"LibXADFormatName"];
+
+	return YES;
 }
 
 -(id)init
@@ -300,11 +307,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
 -(NSString *)formatName
 {
-	if(!archive->xaip_ArchiveInfo.xai_Client) return @"libxad";
-
-	NSString *format=[[[NSString alloc] initWithBytes:archive->xaip_ArchiveInfo.xai_Client->xc_ArchiverName
-	length:strlen(archive->xaip_ArchiveInfo.xai_Client->xc_ArchiverName) encoding:NSISOLatin1StringEncoding] autorelease];
-	return format;
+	return [properties objectForKey:@"LibXADFormatName"];
 }
 
 

@@ -6,8 +6,6 @@
 #import "LZWHandle.h"
 
 #import "../CSZlibHandle.h"
-#import "../CSMemoryHandle.h"
-#import "../CSMultiHandle.h"
 
 
 

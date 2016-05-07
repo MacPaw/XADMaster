@@ -1,5 +1,4 @@
 #import "XADStuffItSplitParser.h"
-#import "CSMultiHandle.h"
 #import "CSFileHandle.h"
 #import "NSDateXAD.h"
 #import "XADPlatform.h"

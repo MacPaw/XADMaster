@@ -10,7 +10,6 @@
 #import "XADCRCHandle.h"
 #import "CSFileHandle.h"
 #import "CSMemoryHandle.h"
-#import "CSMultiHandle.h"
 #import "XADException.h"
 #import "NSDateXAD.h"
 #import "Scanning.h"

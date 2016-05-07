@@ -8,7 +8,6 @@
 #import "NSDateXAD.h"
 #import "CSMemoryHandle.h"
 #import "CSFileHandle.h"
-#import "CSMultiHandle.h"
 #import "Scanning.h"
 
 #include <dirent.h>

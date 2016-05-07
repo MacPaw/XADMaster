@@ -305,22 +305,22 @@ static xadINT32 DeShrink(struct xadInOut *io, xadUINT8 bits)
 /**************************************************************************************************/
 
 struct CDAFfile {
-  xadUINT32 ID;         /* FILE */
-  xadUINT32 ChunkSize;
+  xadUINT8 ID[4];         /* FILE */
+  xadUINT8 ChunkSize[4];
   xadUINT8 Checksum;
   xadUINT8 Method;
   xadUINT8 Version;
   xadUINT8 Generation;      /* Generation of the file: 0=new .. 255=deleted */
-  xadUINT16 SystemID;
-  xadUINT32 Filesize;
+  xadUINT8 SystemID[2];
+  xadUINT8 Filesize[4];
   xadUINT8 Year; /* Since 1900 */
   xadUINT8 Month;
   xadUINT8 Day;
   xadUINT8 Hour;
   xadUINT8 Mins;
   xadUINT8 Secs;
-  xadUINT16 CRC;                /* empty for XPK */
-  xadUINT32 Protection;
+  xadUINT8 CRC[2];                /* empty for XPK */
+  xadUINT8 Protection[4];
 };
 
 #define CDAFSYSID_AMIGA         0x414D
@@ -344,7 +344,7 @@ XADGETINFO(IFF_CDAF)
   xadINT32 err, i;
   struct CDAFfile cf;
   xadUINT8 buffer[256];
-  xadUINT32 a[2];
+  xadUINT8 a[2][4];
   xadSTRPTR name;
   struct xadFileInfo *fi;
 
@@ -352,13 +352,13 @@ XADGETINFO(IFF_CDAF)
     return err;
   if((err = xadHookAccess(XADM XADAC_READ, 4, a, ai)))
     return err;
-  if((err = xadHookAccess(XADM XADAC_INPUTSEEK, a[0], 0, ai)))
+  if((err = xadHookAccess(XADM XADAC_INPUTSEEK, EndGetM32(a[0]), 0, ai)))
     return err;
   while(!err && ai->xai_InPos < ai->xai_InSize)
   {
     if(!(err = xadHookAccess(XADM XADAC_READ, sizeof(struct CDAFfile), &cf, ai)))
     {
-      i = ((cf.ChunkSize - (sizeof(struct CDAFfile) - 8))+1)&(~1);
+      i = ((EndGetM32(cf.ChunkSize) - (sizeof(struct CDAFfile) - 8))+1)&(~1);
       if(i <= 256)
         name = (xadSTRPTR) buffer;
       else if(!(name = xadAllocVec(XADM i, XADMEMF_ANY)))
@@ -372,17 +372,17 @@ XADGETINFO(IFF_CDAF)
           {
             if((fi = (struct xadFileInfo *) xadAllocObject(XADM XADOBJ_FILEINFO,
             XAD_OBJPRIVINFOSIZE, sizeof(struct CDAFinfo), XAD_OBJNAMESIZE, i+1,
-            a[0] == 0x4E4F5445 ? XAD_OBJCOMMENTSIZE : TAG_IGNORE, a[1]+1, TAG_DONE)))
+            EndGetM32(a[0]) == 0x4E4F5445 ? XAD_OBJCOMMENTSIZE : TAG_IGNORE, EndGetM32(a[1])+1, TAG_DONE)))
             {
               xadCopyMem(XADM name, fi->xfi_FileName, i);
-              if(a[0] == 0x4E4F5445)
+              if(EndGetM32(a[0]) == 0x4E4F5445)
               {
-                if(!(err = xadHookAccess(XADM XADAC_READ, (a[1]+1)&(~1), fi->xfi_Comment, ai)))
+                if(!(err = xadHookAccess(XADM XADAC_READ, (EndGetM32(a[1])+1)&(~1), fi->xfi_Comment, ai)))
                   err = xadHookAccess(XADM XADAC_READ, 8, a, ai);
               }
               if(!err)
               {
-                if(a[0] != 0x424F4459)
+                if(EndGetM32(a[0]) != 0x424F4459)
                   err = XADERR_ILLEGALDATA;
                 else
                 {
@@ -390,10 +390,10 @@ XADGETINFO(IFF_CDAF)
                   fi->xfi_DataPos = ai->xai_InPos; /* file position */
                   CDAFPI(fi)->Method = cf.Method;
                   CDAFPI(fi)->Offset = 4;
-                  CDAFPI(fi)->CRC = cf.CRC;
-                  fi->xfi_Size = cf.Filesize;
-                  fi->xfi_Protection = cf.Protection;
-                  fi->xfi_CrunchSize = a[1];
+                  CDAFPI(fi)->CRC = EndGetM16(cf.CRC);
+                  fi->xfi_Size = EndGetM32(cf.Filesize);
+                  fi->xfi_Protection = EndGetM32(cf.Protection);
+                  fi->xfi_CrunchSize = EndGetM32(a[1]);
                   if(cf.Generation == 255)
                     fi->xfi_Flags = XADFIF_DELETED;
                   else
@@ -413,7 +413,7 @@ XADGETINFO(IFF_CDAF)
               if(err)
                 xadFreeObjectA(XADM fi, 0);
               else
-                err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos+((a[1]+1)&(~1)), TAG_DONE);
+                err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos+((EndGetM32(a[1])+1)&(~1)), TAG_DONE);
             }
             else
               err = XADERR_NOMEMORY;

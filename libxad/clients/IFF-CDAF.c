@@ -434,8 +434,6 @@ XADGETINFO(IFF_CDAF)
   return ai->xai_FileInfo ? 0 : err;
 }
 
-static const xadUINT8 XPKArcString[] = "FORM\xFF\xFF\xFF\xFF" "CDAFNAME\0\0\0\x0AXPKArchive";
-
 /**************************************************************************************************/
 
 static const xadUINT8 ShrinkString[] = "FORM\xFF\xFF\xFF\xFF" "CDAFNAME\0\0\0\x06shrink";
@@ -509,11 +507,11 @@ XADRECOGDATA(SPack)
 }
 
 struct SPackData {
-  xadUINT16 ID;
-  xadUINT16 Num;
-  xadUINT32 UnCrSize;
-  xadUINT32 CrSize;
-  xadUINT16 CRC;
+  xadUINT8 ID[2];
+  xadUINT8 Num[2];
+  xadUINT8 UnCrSize[4];
+  xadUINT8 CrSize[4];
+  xadUINT8 CRC[2];
 };
 
 /* data format of INDX entry
@@ -530,7 +528,8 @@ struct SPackData {
 
 XADGETINFO(SPack)
 {
-  xadUINT32 i, b[3];
+  xadUINT32 i;
+  xadUINT8 b[3][4];
   xadINT32 err;
   struct xadFileInfo *fi;
 
@@ -559,13 +558,10 @@ XADGETINFO(SPack)
   {
     if(!(err = xadHookAccess(XADM XADAC_READ, 12, b, ai)))
     {
-      if(b[0] == 0x494E4458)
-        err = xadHookTagAccess(XADM XADAC_INPUTSEEK, -12-b[1], 0, ai, XAD_USESKIPINFO, XADTRUE, TAG_DONE);
-      else if(b[1] == 0x494E4458)
-      {
-        b[1] = b[2];
-        err = xadHookTagAccess(XADM XADAC_INPUTSEEK, -8-b[1], 0,  ai, XAD_USESKIPINFO, XADTRUE, TAG_DONE);
-      }
+      if(EndGetM32(b[0]) == 0x494E4458)
+        err = xadHookTagAccess(XADM XADAC_INPUTSEEK, -12-EndGetM32(b[1]), 0, ai, XAD_USESKIPINFO, XADTRUE, TAG_DONE);
+      else if(EndGetM32(b[1]) == 0x494E4458)
+        err = xadHookTagAccess(XADM XADAC_INPUTSEEK, -8-EndGetM32(b[2]), 0,  ai, XAD_USESKIPINFO, XADTRUE, TAG_DONE);
       else
         err = XADERR_ILLEGALDATA;
 
@@ -614,8 +610,8 @@ XADGETINFO(SPack)
                       xadUINT16 i;
 
                       i = EndGetM16(dat+6);
-                      if(sp.ID == 0x4649 && EndGetM16(dat+2) == 0x4649 &&
-                      (sp.Num&0x7FFF) == EndGetM16(dat+4) && sp.UnCrSize == EndGetM32(dat+8+i))
+                      if(EndGetM16(sp.ID) == 0x4649 && EndGetM16(dat+2) == 0x4649 &&
+                      (EndGetM16(sp.Num)&0x7FFF) == EndGetM16(dat+4) && EndGetM32(sp.UnCrSize) == EndGetM32(dat+8+i))
                       {
                         dat += 8;
 
@@ -628,23 +624,23 @@ XADGETINFO(SPack)
                           xadConvertDates(XADM XAD_DATEDATESTAMP, buf2, XAD_GETDATEXADDATE,
                           &fi->xfi_Date, TAG_DONE);
 
-                          fi->xfi_Size = sp.UnCrSize;
+                          fi->xfi_Size = EndGetM32(sp.UnCrSize);
                           fi->xfi_Flags = XADFIF_SEEKDATAPOS|XADFIF_EXTRACTONBUILD;
 
-                          if(sp.Num & 0x8000)
+                          if(EndGetM16(sp.Num) & 0x8000)
                           {
                             CDAFPI(fi)->Method = 0;
                             fi->xfi_DataPos = ai->xai_InPos - 6;
-                            fi->xfi_CrunchSize = sp.UnCrSize;
+                            fi->xfi_CrunchSize = EndGetM32(sp.UnCrSize);
                             err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos+sp.UnCrSize-6,
                             XAD_USESKIPINFO, 1, TAG_DONE);
                           }
                           else
                           {
                             CDAFPI(fi)->Method = 7;
-                            CDAFPI(fi)->CRC = sp.CRC;
+                            CDAFPI(fi)->CRC = EndGetM16(sp.CRC);
                             fi->xfi_DataPos = ai->xai_InPos;
-                            fi->xfi_CrunchSize = sp.CrSize;
+                            fi->xfi_CrunchSize = EndGetM32(sp.CrSize);
                             err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos+sp.CrSize,
                             XAD_USESKIPINFO, 1, TAG_DONE);
                           }

@@ -1,6 +1,6 @@
 #import "XADArchiveParser.h"
 #import "CSFileHandle.h"
-#import "CSMultiHandle.h"
+#import "CSMultiFileHandle.h"
 #import "CSMemoryHandle.h"
 #import "CSStreamHandle.h"
 #import "XADCRCHandle.h"
@@ -328,14 +328,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 		{
 			if([volumes count]>1)
 			{
-				NSMutableArray *handles=[NSMutableArray array];
-				NSEnumerator *enumerator=[volumes objectEnumerator];
-				NSString *volume;
-
-				while((volume=[enumerator nextObject]))
-				[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
-
-				CSHandle *multihandle=[CSMultiHandle handleWithHandleArray:handles];
+				CSHandle *multihandle=[CSMultiFileHandle handleWithPathArray:volumes];
 
 				XADArchiveParser *parser=[[parserclass new] autorelease];
 				[parser setHandle:multihandle];
@@ -536,9 +529,9 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 -(NSString *)currentFilename
 {
-	if([sourcehandle isKindOfClass:[XADMultiHandle class]])
+	if([sourcehandle isKindOfClass:[CSSegmentedHandle class]])
 	{
-		return [[(XADMultiHandle *)sourcehandle currentHandle] name];
+		return [[(CSSegmentedHandle *)sourcehandle currentHandle] name];
 	}
 	else
 	{
@@ -866,29 +859,29 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 
 
--(NSArray *)volumes
+-(BOOL)hasVolumes
 {
-	if([sourcehandle respondsToSelector:@selector(handles)]) return [(id)sourcehandle handles];
-	else return nil;
+	return [sourcehandle isKindOfClass:[XADSegmentedHandle class]];
+}
+
+-(NSArray *)volumeSizes
+{
+	if([sourcehandle isKindOfClass:[XADSegmentedHandle class]])
+	{
+		return [(XADSegmentedHandle *)sourcehandle segmentSizes];
+	}
+	else
+	{
+		return [NSArray arrayWithObject:[NSNumber numberWithLongLong:[sourcehandle fileSize]]];
+	}
 }
 
 -(CSHandle *)currentHandle
 {
-	if([sourcehandle respondsToSelector:@selector(currentHandle)]) return [(id)sourcehandle currentHandle];
+	if([sourcehandle isKindOfClass:[CSSegmentedHandle class]]) return [(CSSegmentedHandle *)sourcehandle currentHandle];
 	else return sourcehandle;
 }
 
--(off_t)offsetForVolume:(int)disk offset:(off_t)offset
-{
-	if([sourcehandle respondsToSelector:@selector(handles)])
-	{
-		NSArray *handles=[(id)sourcehandle handles];
-		int count=[handles count];
-		for(int i=0;i<count&&i<disk;i++) offset+=[(CSHandle *)[handles objectAtIndex:i] fileSize];
-	}
-
-	return offset;
-}
 
 
 

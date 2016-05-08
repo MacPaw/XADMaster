@@ -1,5 +1,5 @@
 #import "XADLibXADParser.h"
-#import "CSMultiHandle.h"
+#import "CSSegmentedHandle.h"
 
 
 
@@ -323,10 +323,10 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 	{
 		case XADHC_INIT:
 		{
-			if([fh respondsToSelector:@selector(handles)])
+			if([fh isKindOfClass:[CSSegmentedHandle class]])
 			{
-				NSArray *handles=[(id)fh handles];
-				int count=[handles count];
+				NSArray *sizes=[(CSSegmentedHandle *)fh segmentSizes];
+				NSInteger count=[sizes count];
 
 				archive->xai_MultiVolume=calloc(sizeof(xadSize),count+1);
 
@@ -334,7 +334,7 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 				for(int i=0;i<count;i++)
 				{
 					archive->xai_MultiVolume[i]=total;
-					total+=[[handles objectAtIndex:i] fileSize];
+					total+=[[sizes objectAtIndex:i] longLongValue];
 				}
 			}
 

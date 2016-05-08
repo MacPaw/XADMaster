@@ -172,9 +172,9 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 -(CSHandle *)zeroLengthHandleWithChecksum:(BOOL)checksum;
 -(CSHandle *)subHandleFromSolidStreamForEntryWithDictionary:(NSDictionary *)dict;
 
--(NSArray *)volumes;
+-(BOOL)hasVolumes;
+-(NSArray *)volumeSizes;
 -(CSHandle *)currentHandle;
--(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
 
 -(void)setObject:(id)object forPropertyKey:(NSString *)key;
 -(void)addPropertiesFromDictionary:(NSDictionary *)dict;

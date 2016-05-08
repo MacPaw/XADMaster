@@ -236,13 +236,16 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 
 		[fh seekToFileOffset:position];
 
-		if([fh respondsToSelector:@selector(currentHandle)])
+		if([self hasVolumes])
 		{
-			[[(id)fh currentHandle] seekToEndOfFile];
+			[[self currentHandle] seekToEndOfFile];
 			if([fh atEndOfFile]) break;
 			baseoffs=[fh offsetInFile];
 		}
-		else break;
+		else
+		{
+			break;
+		}
 	}
 }
 

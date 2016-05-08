@@ -11,6 +11,7 @@ extern NSString *CSSizeOfSegmentUnknownException;
 	NSInteger currindex;
 	CSHandle *currhandle;
 	off_t *segmentends;
+	NSArray *segmentsizes;
 }
 
 // Initializers
@@ -20,6 +21,7 @@ extern NSString *CSSizeOfSegmentUnknownException;
 
 // Public methods
 -(CSHandle *)currentHandle;
+-(NSArray *)segmentSizes;
 
 // Implemented by this class
 -(off_t)fileSize;

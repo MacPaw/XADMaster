@@ -81,19 +81,17 @@
 {
 	CSHandle *fh=[self handle];
 
-	NSArray *handles=[self volumes];
-	if(!handles) handles=[NSArray arrayWithObject:fh];
+	NSArray *volumesizes=[self volumeSizes];
 
 	XADSkipHandle *sh=[self skipHandle];
 	off_t curroffset=0;
 
-	NSEnumerator *enumerator=[handles objectEnumerator];
-	CSHandle *handle;
-	while((handle=[enumerator nextObject]))
+	NSEnumerator *enumerator=[volumesizes objectEnumerator];
+	NSNumber *volumesize;
+	while((volumesize=[enumerator nextObject]))
 	{
 		[sh addSkipFrom:curroffset length:100];
-		off_t volumesize=[handle fileSize];
-		curroffset+=volumesize;
+		curroffset+=[volumesize longLongValue];
 	}
 
 	[fh skipBytes:4];

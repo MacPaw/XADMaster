@@ -66,14 +66,14 @@ static void CalculateSillyTable(int *table,int param)
 {
 	XADSkipHandle *fh=[self skipHandle];
 
-	NSArray *volumes=[self volumes];
-	if(volumes)
+	NSArray *volumesizes=[self volumeSizes];
+	if([volumesizes count]>1)
 	{
-		int count=[volumes count];
+		NSInteger count=[volumesizes count];
 		off_t offs=0;
-		for(int i=0;i<count-1;i++)
+		for(NSInteger i=0;i<count-1;i++)
 		{
-			offs+=[(CSHandle *)[volumes objectAtIndex:i] fileSize];
+			offs+=[[volumesizes objectAtIndex:i] longLongValue];
 			[fh addSkipFrom:offs-16 to:offs+8];
 		}
 	}

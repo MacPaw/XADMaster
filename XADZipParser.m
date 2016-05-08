@@ -325,6 +325,17 @@
 	}
 }
 
+-(off_t)offsetForVolume:(int)disk offset:(off_t)offset
+{
+	NSArray *sizes=[self volumeSizes];
+	NSInteger count=[sizes count];
+
+	for(NSInteger i=0;i<count && i<disk;i++) offset+=[[sizes objectAtIndex:i] longLongValue];
+
+	return offset;
+}
+
+
 
 
 -(void)parseWithoutCentralDirectory

@@ -13,6 +13,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 		currindex=NSNotFound;
 		currhandle=nil;
 		segmentends=NULL;
+		segmentsizes=nil;
 	}
 	return self;
 }
@@ -28,6 +29,8 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 		size_t size=count*sizeof(segmentends[0]);
 		segmentends=malloc(size);
 		memcpy(segmentends,other->segmentends,size);
+
+		segmentsizes=[other->segmentsizes retain];
 	}
 	return self;
 }
@@ -36,6 +39,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 {
 	[currhandle release];
 	free(segmentends);
+	[segmentsizes release];
 	[super dealloc];
 }
 
@@ -43,6 +47,23 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 {
 	[self _open];
 	return currhandle;
+}
+
+-(NSArray *)segmentSizes
+{
+	[self _open];
+	if(!segmentsizes)
+	{
+		NSMutableArray *array=[NSMutableArray array];
+		NSInteger last=0;
+		for(NSInteger i=0;i<count;i++)
+		{
+			[array addObject:[NSNumber numberWithLongLong:segmentends[i]-last]];
+			last=segmentends[i];
+		}
+		segmentsizes=[[NSArray arrayWithArray:array] retain];
+	}
+	return segmentsizes;
 }
 
 -(off_t)fileSize
@@ -109,7 +130,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 
 -(NSString *)name
 {
-	return [NSString stringWithFormat:@"%@, and %ld more combined",[[self currentHandle] name],(long)[self numberOfSegments]-1];
+	return [NSString stringWithFormat:@"%@, and %ld more combined",[[self currentHandle] name],(long)count-1];
 }
 
 

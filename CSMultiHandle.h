@@ -1,17 +1,14 @@
-#import "CSHandle.h"
+#import "CSSegmentedHandle.h"
 
 #define CSMultiHandle XADMultiHandle
 
-extern NSString *CSSizeOfSegmentUnknownException;
-
-@interface CSMultiHandle:CSHandle
+@interface CSMultiHandle:CSSegmentedHandle
 {
 	NSArray *handles;
-	long currhandle;
 }
 
-+(CSMultiHandle *)multiHandleWithHandleArray:(NSArray *)handlearray;
-+(CSMultiHandle *)multiHandleWithHandles:(CSHandle *)firsthandle,...;
++(CSHandle *)handleWithHandleArray:(NSArray *)handlearray;
++(CSHandle *)handleWithHandles:(CSHandle *)firsthandle,...;
 
 // Initializers
 -(id)initWithHandles:(NSArray *)handlearray;
@@ -20,18 +17,10 @@ extern NSString *CSSizeOfSegmentUnknownException;
 
 // Public methods
 -(NSArray *)handles;
--(CSHandle *)currentHandle;
 
 // Implemented by this class
--(off_t)fileSize;
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
-
--(void)seekToFileOffset:(off_t)offs;
--(void)seekToEndOfFile;
--(int)readAtMost:(int)num toBuffer:(void *)buffer;
-
-// Internal methods
--(void)_raiseSizeUnknownForSegment:(long)i;
+-(NSInteger)numberOfSegments;
+-(off_t)segmentSizeAtIndex:(NSInteger)index;
+-(CSHandle *)handleAtIndex:(NSInteger)index;
 
 @end

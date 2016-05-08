@@ -526,7 +526,7 @@ offset:(off_t)offset length:(off_t)length
 
 	if(handle&&datahandle)
 	{
-		return [CSMultiHandle multiHandleWithHandles:datahandle,handle,nil];
+		return [CSMultiHandle handleWithHandles:datahandle,handle,nil];
 	}
 	else if(datahandle)
 	{

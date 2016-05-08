@@ -11,7 +11,9 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			CSHexDump.m \
 			CSInputBuffer.m \
 			CSMemoryHandle.m \
+			CSMultiFileHandle.m \
 			CSMultiHandle.m \
+			CSSegmentedHandle.m \
 			CSStreamHandle.m \
 			CSSubHandle.m \
 			CSZlibHandle.m \

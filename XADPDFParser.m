@@ -385,7 +385,7 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 			NSData *newheader=CreateNewJPEGHeaderWithColourProfile(fileheader,profile,&skiplength);
 			if(newheader)
 			{
-				return [CSMultiHandle multiHandleWithHandles:
+				return [CSMultiHandle handleWithHandles:
 				[CSMemoryHandle memoryHandleForReadingData:newheader],
 				[handle nonCopiedSubHandleToEndOfFileFrom:skiplength],
 				nil];
@@ -421,7 +421,7 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 			numberOfChannels:components palette:palette] autorelease];
 		}
 
-		return [CSMultiHandle multiHandleWithHandles:
+		return [CSMultiHandle handleWithHandles:
 		[CSMemoryHandle memoryHandleForReadingData:header],handle,nil];
 	}
 	else

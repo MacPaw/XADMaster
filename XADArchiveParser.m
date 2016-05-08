@@ -335,7 +335,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 				while((volume=[enumerator nextObject]))
 				[handles addObject:[CSFileHandle fileHandleForReadingAtPath:volume]];
 
-				CSMultiHandle *multihandle=[CSMultiHandle multiHandleWithHandleArray:handles];
+				CSHandle *multihandle=[CSMultiHandle handleWithHandleArray:handles];
 
 				XADArchiveParser *parser=[[parserclass new] autorelease];
 				[parser setHandle:multihandle];

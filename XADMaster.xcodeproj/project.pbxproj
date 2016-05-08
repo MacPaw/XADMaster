@@ -905,6 +905,18 @@
 		1B880C280F09A23B0061CCBE /* XADStuffItXBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880C260F09A23B0061CCBE /* XADStuffItXBlockHandle.m */; };
 		1B880D040F0AAB700061CCBE /* XADPPMdParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */; };
 		1B880D080F0AAB970061CCBE /* XADPPMdHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */; };
+		1B89832A1CDE00B100D52A2A /* CSMultiFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8983291CDE00B100D52A2A /* CSMultiFileHandle.m */; };
+		1B89832B1CDE00B100D52A2A /* CSMultiFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8983291CDE00B100D52A2A /* CSMultiFileHandle.m */; };
+		1B89832C1CDE00B100D52A2A /* CSMultiFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8983291CDE00B100D52A2A /* CSMultiFileHandle.m */; };
+		1B89832D1CDE00B100D52A2A /* CSMultiFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8983291CDE00B100D52A2A /* CSMultiFileHandle.m */; };
+		1B8983331CDE020500D52A2A /* CSSegmentedHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8983311CDE020500D52A2A /* CSSegmentedHandle.h */; };
+		1B8983341CDE020500D52A2A /* CSSegmentedHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8983311CDE020500D52A2A /* CSSegmentedHandle.h */; };
+		1B8983351CDE020500D52A2A /* CSSegmentedHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8983311CDE020500D52A2A /* CSSegmentedHandle.h */; };
+		1B8983361CDE020500D52A2A /* CSSegmentedHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B8983311CDE020500D52A2A /* CSSegmentedHandle.h */; };
+		1B8983371CDE020500D52A2A /* CSSegmentedHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8983321CDE020500D52A2A /* CSSegmentedHandle.m */; };
+		1B8983381CDE020500D52A2A /* CSSegmentedHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8983321CDE020500D52A2A /* CSSegmentedHandle.m */; };
+		1B8983391CDE020500D52A2A /* CSSegmentedHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8983321CDE020500D52A2A /* CSSegmentedHandle.m */; };
+		1B89833A1CDE020500D52A2A /* CSSegmentedHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8983321CDE020500D52A2A /* CSSegmentedHandle.m */; };
 		1B8A89D61012078C00C8534E /* XADNDSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B8A89D41012078C00C8534E /* XADNDSParser.m */; };
 		1B91CCC011D97E7C0081E40A /* CSCommandLineParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B34AC0D11CED29A00396C26 /* CSCommandLineParser.h */; };
 		1B91CCC311D97E7C0081E40A /* XADException.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C330DDBC8BF005B0F68 /* XADException.m */; };
@@ -1947,6 +1959,10 @@
 		1B880D020F0AAB6F0061CCBE /* XADPPMdParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPPMdParser.m; sourceTree = "<group>"; };
 		1B880D050F0AAB970061CCBE /* XADPPMdHandles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPPMdHandles.h; sourceTree = "<group>"; };
 		1B880D060F0AAB970061CCBE /* XADPPMdHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPPMdHandles.m; sourceTree = "<group>"; };
+		1B8983291CDE00B100D52A2A /* CSMultiFileHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSMultiFileHandle.m; sourceTree = "<group>"; };
+		1B8983301CDE00DC00D52A2A /* CSMultiFileHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSMultiFileHandle.h; sourceTree = "<group>"; };
+		1B8983311CDE020500D52A2A /* CSSegmentedHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSegmentedHandle.h; sourceTree = "<group>"; };
+		1B8983321CDE020500D52A2A /* CSSegmentedHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSSegmentedHandle.m; sourceTree = "<group>"; };
 		1B8A89D31012078C00C8534E /* XADNDSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNDSParser.h; sourceTree = "<group>"; };
 		1B8A89D41012078C00C8534E /* XADNDSParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNDSParser.m; sourceTree = "<group>"; };
 		1B91CD5E11D97E7C0081E40A /* libXADMaster.win.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libXADMaster.win.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2557,12 +2573,16 @@
 				1B3FAAEF0EC3859F006D2F06 /* CSHandle.m */,
 				1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */,
 				1B3FAAF10EC3859F006D2F06 /* CSSubHandle.m */,
-				1B3FAAF20EC3859F006D2F06 /* CSMultiHandle.h */,
-				1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */,
 				1B3FAAF40EC3859F006D2F06 /* CSFileHandle.h */,
 				1B3FAAF50EC3859F006D2F06 /* CSFileHandle.m */,
 				1B3FAAF60EC3859F006D2F06 /* CSMemoryHandle.h */,
 				1B3FAAF70EC3859F006D2F06 /* CSMemoryHandle.m */,
+				1B8983311CDE020500D52A2A /* CSSegmentedHandle.h */,
+				1B8983321CDE020500D52A2A /* CSSegmentedHandle.m */,
+				1B3FAAF20EC3859F006D2F06 /* CSMultiHandle.h */,
+				1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */,
+				1B8983301CDE00DC00D52A2A /* CSMultiFileHandle.h */,
+				1B8983291CDE00B100D52A2A /* CSMultiFileHandle.m */,
 				1B3FAAF80EC3859F006D2F06 /* CSStreamHandle.h */,
 				1B3FAAF90EC3859F006D2F06 /* CSStreamHandle.m */,
 				1B3FAAFC0EC3859F006D2F06 /* CSByteStreamHandle.h */,
@@ -3359,6 +3379,7 @@
 				1B06CD14145CFF2A003907F9 /* XADCrunchParser.h in Headers */,
 				1B06CD1D145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F83146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
+				1B8983341CDE020500D52A2A /* CSSegmentedHandle.h in Headers */,
 				1BBEFA5C14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
 				1B3581A815A4CFE90002A4C9 /* XADAppleSingleParser.h in Headers */,
 				1B3581D115A7ABE20002A4C9 /* XADPDFParser.h in Headers */,
@@ -3436,6 +3457,7 @@
 				1B467A2715CD9A73001AB1DD /* XADCrunchParser.h in Headers */,
 				1B467A2815CD9A73001AB1DD /* XADCrunchHandles.h in Headers */,
 				1B467A2915CD9A73001AB1DD /* XADAppleDouble.h in Headers */,
+				1B8983361CDE020500D52A2A /* CSSegmentedHandle.h in Headers */,
 				1B467A2A15CD9A73001AB1DD /* XADStuffItSplitParser.h in Headers */,
 				1B467A2B15CD9A73001AB1DD /* XADAppleSingleParser.h in Headers */,
 				1B467A2C15CD9A73001AB1DD /* XADPDFParser.h in Headers */,
@@ -3513,6 +3535,7 @@
 				1B06CD15145CFF2A003907F9 /* XADCrunchParser.h in Headers */,
 				1B06CD1E145CFF36003907F9 /* XADCrunchHandles.h in Headers */,
 				1B5F3F84146A0962007BC5A6 /* XADAppleDouble.h in Headers */,
+				1B8983351CDE020500D52A2A /* CSSegmentedHandle.h in Headers */,
 				1BBEFA5D14EF375400790E4B /* XADStuffItSplitParser.h in Headers */,
 				1B3581A915A4CFE90002A4C9 /* XADAppleSingleParser.h in Headers */,
 				1B3581D215A7ABE20002A4C9 /* XADPDFParser.h in Headers */,
@@ -3569,6 +3592,7 @@
 				1B75B89F134E5B3400510EA5 /* CarrylessRangeCoder.h in Headers */,
 				1B75B8A1134E5B3900510EA5 /* config.h in Headers */,
 				1B75B8A2134E5B3B00510EA5 /* CRC.h in Headers */,
+				1B8983331CDE020500D52A2A /* CSSegmentedHandle.h in Headers */,
 				1B75B8A3134E5B4800510EA5 /* emulation.h in Headers */,
 				1B75B8A4134E5B4900510EA5 /* functions.h in Headers */,
 				1B75B8A5134E5B4A00510EA5 /* Lzma2Dec.h in Headers */,
@@ -4335,6 +4359,8 @@
 				1BF0EEDB14031861007B8CF8 /* SubAllocatorVariantI.c in Sources */,
 				1BF0EEEB14031861007B8CF8 /* VariantG.c in Sources */,
 				1BF0EEF414031861007B8CF8 /* VariantH.c in Sources */,
+				1B89832B1CDE00B100D52A2A /* CSMultiFileHandle.m in Sources */,
+				1B8983381CDE020500D52A2A /* CSSegmentedHandle.m in Sources */,
 				1BF0EEFD14031861007B8CF8 /* VariantI.c in Sources */,
 				1B4E97411426147D00640F59 /* XADRARInputHandle.m in Sources */,
 				1B06CD17145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
@@ -4393,6 +4419,7 @@
 				1B467A3F15CD9A73001AB1DD /* XADZipCryptHandle.m in Sources */,
 				1B467A4015CD9A73001AB1DD /* XADZipImplodeHandle.m in Sources */,
 				1B467A4115CD9A73001AB1DD /* XADZipParser.m in Sources */,
+				1B89832D1CDE00B100D52A2A /* CSMultiFileHandle.m in Sources */,
 				1B467A4215CD9A73001AB1DD /* XADZipSFXParsers.m in Sources */,
 				1B467A4315CD9A73001AB1DD /* XADZipShrinkHandle.m in Sources */,
 				1B467A4415CD9A73001AB1DD /* XADRAR13CryptHandle.m in Sources */,
@@ -4480,6 +4507,7 @@
 				1B467A9515CD9A73001AB1DD /* XADQuantumHandle.m in Sources */,
 				1B467A9615CD9A73001AB1DD /* XADSARParser.m in Sources */,
 				1B467A9715CD9A73001AB1DD /* XADSplitFileParser.m in Sources */,
+				1B89833A1CDE020500D52A2A /* CSSegmentedHandle.m in Sources */,
 				1B467A9815CD9A73001AB1DD /* init.c in Sources */,
 				1B467A9915CD9A73001AB1DD /* all.c in Sources */,
 				1B467A9A15CD9A73001AB1DD /* XADLibXADIOHandle.m in Sources */,
@@ -4802,6 +4830,8 @@
 				1BF0EEDC14031861007B8CF8 /* SubAllocatorVariantI.c in Sources */,
 				1BF0EEEC14031861007B8CF8 /* VariantG.c in Sources */,
 				1BF0EEF514031861007B8CF8 /* VariantH.c in Sources */,
+				1B89832C1CDE00B100D52A2A /* CSMultiFileHandle.m in Sources */,
+				1B8983391CDE020500D52A2A /* CSSegmentedHandle.m in Sources */,
 				1BF0EEFE14031861007B8CF8 /* VariantI.c in Sources */,
 				1B4E97421426147D00640F59 /* XADRARInputHandle.m in Sources */,
 				1B06CD18145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
@@ -5081,6 +5111,8 @@
 				1BF0EEEA14031861007B8CF8 /* VariantG.c in Sources */,
 				1BF0EEF314031861007B8CF8 /* VariantH.c in Sources */,
 				1BF0EEFC14031861007B8CF8 /* VariantI.c in Sources */,
+				1B89832A1CDE00B100D52A2A /* CSMultiFileHandle.m in Sources */,
+				1B8983371CDE020500D52A2A /* CSSegmentedHandle.m in Sources */,
 				1B4E97401426147D00640F59 /* XADRARInputHandle.m in Sources */,
 				1B06CD16145CFF2A003907F9 /* XADCrunchParser.m in Sources */,
 				1B06CD1F145CFF36003907F9 /* XADCrunchHandles.m in Sources */,

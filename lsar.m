@@ -283,7 +283,7 @@ int main(int argc,const char **argv)
 			[[[unarchiver outerArchiveParser] formatName] print];
 		}
 
-		NSArray *volumes=[[unarchiver outerArchiveParser] volumes];
+		NSArray *volumes=[[unarchiver outerArchiveParser] volumeSizes];
 		if([volumes count]>1) [[NSString stringWithFormat:@" (%d volumes)",(int)[volumes count]] print];
 
 		[@"\n" print];

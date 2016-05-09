@@ -115,9 +115,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata IV:(NSData *)ivdata
 {
-	if((self=[super initWithName:[handle name] length:length]))
+	if(self=[super initWithParentHandle:handle length:length])
 	{
-		parent=[handle retain];
 		startoffs=[handle offsetInFile];
 
 		int ivlength=[ivdata length];
@@ -130,11 +129,6 @@
 	}
 
 	return self;
-}
-
--(void)dealloc
-{
-	[super dealloc];
 }
 
 -(void)resetBlockStream

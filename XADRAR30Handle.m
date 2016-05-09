@@ -4,11 +4,11 @@
 
 @implementation XADRAR30Handle
 
--(id)initWithRARParser:(XADRARParser *)parent files:(NSArray *)filearray
+-(id)initWithRARParser:(XADRARParser *)parentparser files:(NSArray *)filearray
 {
-	if((self=[super initWithName:[parent filename]]))
+	if((self=[super initWithParentHandle:[parentparser handle]]))
 	{
-		parser=parent;
+		parser=parentparser;
 		files=[filearray retain];
 
 		InitializeLZSS(&lzss,0x400000);

@@ -10,10 +10,11 @@ extern NSString *CSFileErrorException;
 @interface CSFileHandle:CSHandle
 {
 	FILE *fh;
+	NSString *path;
 	BOOL close;
 
 	NSLock *multilock;
-	CSFileHandle *parent;
+	CSFileHandle *fhowner;
 	off_t pos;
 }
 
@@ -22,7 +23,7 @@ extern NSString *CSFileErrorException;
 +(CSFileHandle *)fileHandleForPath:(NSString *)path modes:(NSString *)modes;
 
 // Initializers
--(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc name:(NSString *)descname;
+-(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc path:(NSString *)filepath;
 -(id)initAsCopyOf:(CSFileHandle *)other;
 -(void)dealloc;
 -(void)close;
@@ -40,6 +41,8 @@ extern NSString *CSFileErrorException;
 -(void)pushBackByte:(int)byte;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
 -(void)writeBytes:(int)num fromBuffer:(const void *)buffer;
+
+-(NSString *)name;
 
 // Internal methods
 -(void)_raiseError;

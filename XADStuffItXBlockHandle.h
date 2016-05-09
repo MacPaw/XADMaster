@@ -2,7 +2,6 @@
 
 @interface XADStuffItXBlockHandle:CSBlockStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 	uint8_t *buffer;
 	size_t currsize;

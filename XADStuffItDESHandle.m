@@ -68,7 +68,7 @@ static inline uint32_t RotateRight(uint32_t val,int n) { return (val>>n)+(val<<(
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata
 {
 	if([keydata length]!=16) [XADException raiseUnknownException];
-	if((self=[super initWithHandle:handle length:length]))
+	if((self=[super initWithInputBufferForHandle:handle length:length]))
 	{
 		const uint8_t *keybytes=[keydata bytes];
 		A=CSUInt32BE(&keybytes[0]);

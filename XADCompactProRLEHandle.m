@@ -2,6 +2,11 @@
 
 @implementation XADCompactProRLEHandle:CSByteStreamHandle
 
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
+{
+	return [super initWithInputBufferForHandle:handle length:length];
+}
+
 -(void)resetByteStream
 {
 	saved=0;

@@ -36,7 +36,6 @@ extern NSString *PDFMD5FinishedException;
 
 @interface PDFAESHandle:CSBlockStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 
 	NSData *key,*iv;

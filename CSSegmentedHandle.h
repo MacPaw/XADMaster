@@ -15,7 +15,7 @@ extern NSString *CSSizeOfSegmentUnknownException;
 }
 
 // Initializers
--(id)initWithName:(NSString *)descname;
+-(id)init;
 -(id)initAsCopyOf:(CSSegmentedHandle *)other;
 -(void)dealloc;
 
@@ -31,6 +31,9 @@ extern NSString *CSSizeOfSegmentUnknownException;
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;
 -(int)readAtMost:(int)num toBuffer:(void *)buffer;
+
+-(NSString *)name;
+-(NSString *)description;
 
 // Implemented by subclasses
 -(NSInteger)numberOfSegments;

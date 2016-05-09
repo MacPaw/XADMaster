@@ -62,9 +62,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata
 {
-	if((self=[super initWithName:[handle name] length:length]))
+	if((self=[super initWithParentHandle:handle length:length]))
 	{
-		parent=[handle retain];
 		startoffs=[handle offsetInFile];
 
 		const uint8_t *keybytes=[keydata bytes];
@@ -81,9 +80,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length RAR5Key:(NSData *)keydata IV:(NSData *)ivdata
 {
-	if((self=[super initWithName:[handle name] length:length]))
+	if(self=[super initWithParentHandle:handle length:length])
 	{
-		parent=[handle retain];
 		startoffs=[handle offsetInFile];
 
 		memcpy(iv,[ivdata bytes],16);
@@ -92,13 +90,7 @@
 	return self;
 }
 
--(void)dealloc
-{
-	[parent release];
-	[super dealloc];
-}
-
--(void)resetStream;
+-(void)resetStream
 {
 	[parent seekToFileOffset:startoffs];
 	memcpy(block,iv,sizeof(iv));

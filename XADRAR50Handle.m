@@ -7,11 +7,11 @@ static uint32_t ReadFilterInteger(CSInputBuffer *input);
 
 @implementation XADRAR50Handle
 
--(id)initWithRARParser:(XADRAR5Parser *)parent files:(NSArray *)filearray
+-(id)initWithRARParser:(XADRAR5Parser *)parentparser files:(NSArray *)filearray
 {
-	if((self=[super initWithName:[parent filename]]))
+	if(self=[super initWithParentHandle:[parentparser handle]])
 	{
-		parser=parent;
+		parser=parentparser;
 		files=[filearray retain];
 
 		NSDictionary *dict=[files objectAtIndex:0];

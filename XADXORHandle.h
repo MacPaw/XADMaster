@@ -2,7 +2,6 @@
 
 @interface XADXORHandle:CSHandle
 {
-	CSHandle *parent;
 	NSData *password;
 	const uint8_t *passwordbytes;
 	int passwordlength;

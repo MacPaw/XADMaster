@@ -11,8 +11,8 @@
 }
 
 // Intializers
--(id)initWithName:(NSString *)descname length:(off_t)length;
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length bufferSize:(int)buffersize;
+//-(id)initWithName:(NSString *)descname length:(off_t)length;
+-(id)initWithInputBufferForHandle:(CSHandle *)handle length:(off_t)length bufferSize:(int)buffersize;
 -(id)initAsCopyOf:(CSBlockStreamHandle *)other;
 
 // Implemented by this class

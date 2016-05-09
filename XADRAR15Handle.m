@@ -10,11 +10,11 @@ static void ResetTable(int *table,int *reverse);
 
 @implementation XADRAR15Handle
 
--(id)initWithRARParser:(XADRARParser *)parent files:(NSArray *)filearray
+-(id)initWithRARParser:(XADRARParser *)parentparser files:(NSArray *)filearray
 {
-	if((self=[super initWithName:[parent filename] windowSize:0x10000]))
+	if((self=[super initWithParentHandle:[parentparser handle] windowSize:0x10000]))
 	{
-		parser=parent;
+		parser=parentparser;
 		files=[filearray retain];
 
 		lengthcode1=[[XADPrefixCode alloc] initWithLengths:(int[256]){

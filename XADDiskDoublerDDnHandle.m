@@ -5,7 +5,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	if((self=[super initWithHandle:handle length:length windowSize:65536]))
+	if((self=[super initWithInputBufferForHandle:handle length:length windowSize:65536]))
 	{
 		lengthcode=nil;
 	}

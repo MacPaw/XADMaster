@@ -2,7 +2,6 @@
 
 @interface XAD7ZipBranchHandle:CSBlockStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 	uint8_t inbuffer[4096];
 	int leftoverstart,leftoverlength;
@@ -13,7 +12,6 @@
 -(id)initWithHandle:(CSHandle *)handle propertyData:(NSData *)propertydata;
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length propertyData:(NSData *)propertydata;
--(void)dealloc;
 
 -(void)resetBlockStream;
 -(int)produceBlockAtOffset:(off_t)pos;

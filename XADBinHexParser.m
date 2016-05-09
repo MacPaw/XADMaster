@@ -145,6 +145,11 @@
 
 @implementation XADBinHexHandle
 
+-(id)initWithHandle:(CSHandle *)handle
+{
+	return [super initWithInputBufferForHandle:handle];
+}
+
 -(void)resetByteStream
 {
 	bytes=0;

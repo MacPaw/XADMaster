@@ -28,7 +28,7 @@
 
 -(id)initWithData:(NSData *)data
 {
-	if(self=[super initWithName:[NSString stringWithFormat:@"%@ at %p",[data class],data]])
+	if(self=[super init])
 	{
 		memorypos=0;
 		backingdata=[data retain];
@@ -135,5 +135,10 @@
 -(NSData *)copyDataOfLength:(int)length { return [[self readDataOfLength:length] retain]; }
 
 -(NSData *)copyDataOfLengthAtMost:(int)length { return [[self readDataOfLengthAtMost:length] retain]; }
+
+-(NSString *)name
+{
+	return [NSString stringWithFormat:@"%@ at %p",[backingdata class],backingdata];
+}
 
 @end

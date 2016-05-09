@@ -12,6 +12,11 @@ extern uint8_t StuffItXEnglishDictionary[];
 
 @implementation XADStuffItXEnglishHandle
 
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
+{
+	return [super initWithInputBufferForHandle:handle length:length];
+}
+
 +(const uint8_t **)dictionaryPointers
 {
 	static const uint8_t **pointers=NULL;

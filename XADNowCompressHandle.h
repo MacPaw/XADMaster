@@ -2,8 +2,6 @@
 
 @interface XADNowCompressHandle:CSBlockStreamHandle
 {
-	CSHandle *parent;
-
 	NSMutableArray *files;
 	int nextfile;
 

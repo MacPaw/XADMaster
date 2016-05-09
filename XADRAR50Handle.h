@@ -31,7 +31,7 @@
 	int lengthtable[306+64+16+44];
 }
 
--(id)initWithRARParser:(XADRAR5Parser *)parent files:(NSArray *)filearray;
+-(id)initWithRARParser:(XADRAR5Parser *)parentparser files:(NSArray *)filearray;
 -(void)dealloc;
 
 -(void)resetBlockStream;

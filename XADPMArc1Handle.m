@@ -383,7 +383,7 @@ static int read_byte_block_count(CSInputBuffer *input)
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [super initWithHandle:handle length:length windowSize:16384];
+	return [super initWithInputBufferForHandle:handle length:length windowSize:16384];
 }
 
 -(void)resetLZSSHandle

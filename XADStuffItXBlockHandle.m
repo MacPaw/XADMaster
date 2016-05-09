@@ -5,9 +5,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle
 {
-	if((self=[super initWithName:[handle name]]))
+	if((self=[super initWithParentHandle:handle]))
 	{
-		parent=[handle retain];
 		startoffs=[parent offsetInFile];
 		buffer=NULL;
 		currsize=0;
@@ -18,7 +17,6 @@
 -(void)dealloc
 {
 	free(buffer);
-	[parent release];
 	[super dealloc];
 }
 

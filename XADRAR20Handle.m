@@ -3,11 +3,11 @@
 
 @implementation XADRAR20Handle
 
--(id)initWithRARParser:(XADRARParser *)parent files:(NSArray *)filearray
+-(id)initWithRARParser:(XADRARParser *)parentparser files:(NSArray *)filearray
 {
-	if((self=[super initWithName:[parent filename] windowSize:0x100000]))
+	if((self=[super initWithParentHandle:[parentparser handle] windowSize:0x100000]))
 	{
-		parser=parent;
+		parser=parentparser;
 		files=[filearray retain];
 
 		maincode=nil;

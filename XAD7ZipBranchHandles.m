@@ -29,9 +29,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length propertyData:(NSData *)propertydata
 {
-	if((self=[super initWithName:[handle name] length:length]))
+	if((self=[super initWithParentHandle:handle length:length]))
 	{
-		parent=[handle retain];
 		startoffs=[handle offsetInFile];
 
 		if(propertydata&&[propertydata length]>=4) baseoffset=CSUInt32LE([propertydata bytes]);
@@ -40,12 +39,6 @@
 		[self setBlockPointer:inbuffer];
 	}
 	return self;
-}
-
--(void)dealloc
-{
-	[parent release];
-	[super dealloc];
 }
 
 -(void)resetBlockStream

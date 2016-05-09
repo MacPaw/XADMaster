@@ -11,6 +11,11 @@ static int NextBitWithWeight(CarrylessRangeCoder *coder,uint32_t *weight)
 
 @implementation XADStuffItXDarkhorseHandle
 
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length windowSize:(int)windowsize
+{
+	return [super initWithInputBufferForHandle:handle length:length windowSize:windowsize];
+}
+
 -(void)resetLZSSHandle
 {
 	next=-1;

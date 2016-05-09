@@ -5,22 +5,14 @@
 -(id)initWithHandle:(CSHandle *)handle startOffset:(off_t)start
 logicalBlockSize:(int)logical physicalBlockSize:(int)physical;
 {
-	if((self=[super initWithName:[handle name]]))
+	if((self=[super initWithParentHandle:handle]))
 	{
-		parent=[handle retain];
 		startoffset=start;
 		logicalsize=logical;
 		physicalsize=physical;
 	}
 	return self;
 }
-
--(void)dealloc
-{
-	[parent release];
-	[super dealloc];
-}
-
 
 static inline off_t PhysicalToLogical(XADPaddedBlockHandle *self,off_t physical)
 {

@@ -4,7 +4,6 @@
 
 @interface XAD7ZipAESHandle:CSBlockStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 
 	aes_decrypt_ctx aes;
@@ -17,7 +16,6 @@
 +(NSData *)keyForPassword:(NSString *)password salt:(NSData *)salt logRounds:(int)logrounds;
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata IV:(NSData *)ivdata;
--(void)dealloc;
 
 -(void)resetBlockStream;
 -(int)produceBlockAtOffset:(off_t)pos;

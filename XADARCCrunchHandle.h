@@ -24,6 +24,6 @@ typedef struct XADARCCrunchEntry
 
 -(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
--(void)updateTableWithParent:(int)parent byteValue:(int)byte;
+-(void)updateTableWithParent:(int)parentcode byteValue:(int)byte;
 
 @end

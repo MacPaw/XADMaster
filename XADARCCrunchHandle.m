@@ -10,7 +10,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length useFastHash:(BOOL)usefast
 {
-	if((self=[super initWithHandle:handle length:length]))
+	if((self=[super initWithInputBufferForHandle:handle length:length]))
 	{
 		fast=usefast;
 	}
@@ -74,14 +74,14 @@
 	return stack[--sp];
 }
 
--(void)updateTableWithParent:(int)parent byteValue:(int)byte
+-(void)updateTableWithParent:(int)parentcode byteValue:(int)byte
 {
 	// Find hash table position.
 	int index;
-	if(fast) index=(((parent+byte)&0xffff)*15073)&0xfff;
+	if(fast) index=(((parentcode+byte)&0xffff)*15073)&0xfff;
 	else
 	{
-		index=((parent+byte)|0x0800)&0xffff;
+		index=((parentcode+byte)|0x0800)&0xffff;
 		index=(index*index>>6)&0xfff;
 	}
 
@@ -102,7 +102,7 @@
 
 	table[index].used=YES;
 	table[index].next=0;
-	table[index].parent=parent;
+	table[index].parent=parentcode;
 	table[index].byte=byte;
 }
 

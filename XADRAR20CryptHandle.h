@@ -2,7 +2,6 @@
 
 @interface XADRAR20CryptHandle:CSBlockStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 	NSData *password;
 

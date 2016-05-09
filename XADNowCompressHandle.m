@@ -16,10 +16,8 @@ static void WordAlign(uint8_t *start,uint8_t **curr);
 
 -(id)initWithHandle:(CSHandle *)handle files:(NSMutableArray *)filesarray
 {
-	if((self=[super initWithName:[handle name]]))
+	if(self=[super initWithParentHandle:handle])
 	{
-		parent=[handle retain];
-
 		files=[filesarray retain];
 
 		blocks=NULL;
@@ -31,7 +29,6 @@ static void WordAlign(uint8_t *start,uint8_t **curr);
 -(void)dealloc
 {
 	free(blocks);
-	[parent release];
 	[super dealloc];
 }
 

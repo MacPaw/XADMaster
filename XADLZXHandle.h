@@ -27,6 +27,8 @@
 	uint8_t otherbyte;
 }
 
+-(id)initWithHandle:(CSHandle *)handle;
+
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 
 @end

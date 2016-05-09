@@ -13,11 +13,25 @@ NSString *CSNotSupportedException=@"CSNotSupportedException";
 
 @implementation CSHandle
 
--(id)initWithName:(NSString *)descname
+-(id)init
 {
 	if(self=[super init])
 	{
-		name=[descname retain];
+		parent=nil;
+
+		bitoffs=-1;
+
+		writebyte=0;
+		writebitsleft=8;
+	}
+	return self;
+}
+
+-(id)initWithParentHandle:(CSHandle *)parenthandle
+{
+	if(self=[super init])
+	{
+		parent=[parenthandle retain];
 
 		bitoffs=-1;
 
@@ -31,7 +45,7 @@ NSString *CSNotSupportedException=@"CSNotSupportedException";
 {
 	if(self=[super init])
 	{
-		name=[[[other name] stringByAppendingString:@" (copy)"] retain];
+		parent=[other->parent retain];
 
 		bitoffs=other->bitoffs;
 		readbyte=other->readbyte;
@@ -44,11 +58,12 @@ NSString *CSNotSupportedException=@"CSNotSupportedException";
 
 -(void)dealloc
 {
-	[name release];
+	[parent release];
 	[super dealloc];
 }
 
 -(void)close {}
+
 
 
 
@@ -464,12 +479,39 @@ CSWriteValueImpl(uint32_t,writeID,CSSetUInt32BE)
 }
 
 
--(NSString *)name { return name; }
+-(NSString *)name
+{
+	return [parent name];
+}
+
+-(CSHandle *)parentHandle
+{
+	return parent;
+}
+
+-(void)setParentHandle:(CSHandle *)newparent
+{
+	[parent autorelease];
+	parent=[newparent retain];
+}
 
 -(NSString *)description
 {
-	return [NSString stringWithFormat:@"%@ for \"%@\", position %qu",
-	[self class],[self name],[self offsetInFile]];
+	if(parent)
+	{
+		return [NSString stringWithFormat:@"%@ @ %qu for %@",
+		[self class],[self offsetInFile],[parent description]];
+	}
+	else if([self name])
+	{
+		return [NSString stringWithFormat:@"%@ @ %qu for \"%@\"",
+		[self class],[self offsetInFile],[self name]];
+	}
+	else
+	{
+		return [NSString stringWithFormat:@"%@ @ %qu",
+		[self class],[self offsetInFile]];
+	}
 }
 
 

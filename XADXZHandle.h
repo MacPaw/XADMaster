@@ -2,7 +2,7 @@
 
 @interface XADXZHandle:CSStreamHandle
 {
-	CSHandle *parent,*currhandle;
+	CSHandle *currhandle;
 	off_t startoffs;
 	int state;
 	BOOL checksumscorrect;

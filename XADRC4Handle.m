@@ -6,9 +6,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
 {
-	if((self=[super initWithName:[handle name] length:[handle fileSize]]))
+	if(self=[super initWithParentHandle:handle length:[handle fileSize]])
 	{
-		parent=[handle retain];
 		startoffs=[parent offsetInFile];
 		key=[keydata retain];
 		rc4=nil;
@@ -18,7 +17,6 @@
 
 -(void)dealloc
 {
-	[parent release];
 	[key release];
 	[rc4 release];
 	[super dealloc];

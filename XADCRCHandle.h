@@ -7,7 +7,6 @@ typedef uint32_t XADCRCTransformationFunction(uint32_t crc,id context);
 
 @interface XADCRCHandle:CSStreamHandle
 {
-	CSHandle *parent;
 	uint32_t crc,initcrc,compcrc;
 	const uint32_t *table;
 	XADCRCTransformationFunction *transformationfunction;

@@ -4,7 +4,7 @@
 
 @implementation XADRARInputHandle
 
--(id)initWithHandle:(CSHandle *)parent parts:(NSArray *)partarray
+-(id)initWithHandle:(CSHandle *)handle parts:(NSArray *)partarray
 {
 	off_t totallength=0;
 	NSEnumerator *enumerator=[partarray objectEnumerator];
@@ -14,9 +14,8 @@
 		totallength+=[[dict objectForKey:@"InputLength"] longLongValue];
 	}
 
-	if((self=[super initWithHandle:parent length:totallength]))
+	if((self=[super initWithParentHandle:handle length:totallength]))
 	{
-		handle=[parent retain];
 		parts=[partarray retain];
 	}
 	return self;
@@ -24,7 +23,6 @@
 
 -(void)dealloc
 {
-	[handle release];
 	[parts release];
 	[super dealloc];
 }
@@ -48,7 +46,7 @@
 		int numbytes=num-total;
 		if(streampos+total+numbytes>=partend) numbytes=(int)(partend-streampos-total);
 
-		[handle readBytes:numbytes toBuffer:&bytebuf[total]];
+		[parent readBytes:numbytes toBuffer:&bytebuf[total]];
 
 		crc=XADCalculateCRC(crc,&bytebuf[total],numbytes,XADCRCTable_edb88320);
 
@@ -76,7 +74,7 @@
 	off_t offset=[[dict objectForKey:@"Offset"] longLongValue];
 	off_t length=[[dict objectForKey:@"InputLength"] longLongValue];
 
-	[handle seekToFileOffset:offset];
+	[parent seekToFileOffset:offset];
 	partend+=length;
 
 	crc=0xffffffff;

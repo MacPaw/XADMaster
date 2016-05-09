@@ -8,7 +8,7 @@ static inline uint16_t rol8(uint16_t val,int n) { return (val<<n)|(val>>(8-n)); 
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length password:(NSData *)passdata
 {
-	if((self=[super initWithHandle:handle length:length]))
+	if((self=[super initWithInputBufferForHandle:handle length:length]))
 	{
 		password=[passdata retain];
 	}

@@ -5,9 +5,9 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 
 @implementation CSSegmentedHandle
 
--(id)initWithName:(NSString *)descname
+-(id)init
 {
-	if(self=[super initWithName:name])
+	if(self=[super init])
 	{
 		count=0;
 		currindex=NSNotFound;
@@ -130,7 +130,13 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 
 -(NSString *)name
 {
-	return [NSString stringWithFormat:@"%@, and %ld more combined",[[self currentHandle] name],(long)count-1];
+	return [[self currentHandle] name];
+}
+
+-(NSString *)description
+{
+	return [NSString stringWithFormat:@"%@ @ %qu segment %ld of %ld: %@",
+	[self class],[self offsetInFile],(long)currindex+1,(long)count,[currhandle description]];
 }
 
 

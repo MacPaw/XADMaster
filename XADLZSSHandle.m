@@ -2,7 +2,7 @@
 
 @implementation XADLZSSHandle
 
--(id)initWithName:(NSString *)descname windowSize:(int)windowsize
+/*-(id)initWithName:(NSString *)descname windowSize:(int)windowsize
 {
 	return [self initWithName:descname length:CSHandleMaxLength windowSize:windowsize];
 }
@@ -18,16 +18,16 @@
 		windowmask=windowsize-1; // Assumes windows are always power-of-two sized!
 	}
 	return self;
+}*/
+
+-(id)initWithInputBufferForHandle:(CSHandle *)handle windowSize:(int)windowsize
+{
+	return [self initWithInputBufferForHandle:handle length:CSHandleMaxLength windowSize:windowsize];
 }
 
--(id)initWithHandle:(CSHandle *)handle windowSize:(int)windowsize
+-(id)initWithInputBufferForHandle:(CSHandle *)handle length:(off_t)length windowSize:(int)windowsize
 {
-	return [self initWithHandle:handle length:CSHandleMaxLength windowSize:windowsize];
-}
-
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length windowSize:(int)windowsize
-{
-	if((self=[super initWithHandle:handle length:length]))
+	if((self=[super initWithInputBufferForHandle:handle length:length]))
 	{
 		nextliteral_ptr=(int (*)(id,SEL,int *,int *,off_t))
 		[self methodForSelector:@selector(nextLiteralOrOffset:andLength:atPosition:)];

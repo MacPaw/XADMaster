@@ -4,9 +4,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle from:(off_t)from length:(off_t)length
 {
-	if(self=[super initWithName:[NSString stringWithFormat:@"%@ (Subrange from %qd, length %qd)",[handle name],from,length]])
+	if((self=[super initWithParentHandle:handle]))
 	{
-		parent=[handle retain];
 		start=from;
 		end=from+length;
 
@@ -23,7 +22,6 @@
 {
 	if(self=[super initAsCopyOf:other])
 	{
-		parent=[other->parent copy];
 		start=other->start;
 		end=other->end;
 	}
@@ -32,11 +30,8 @@
 
 -(void)dealloc
 {
-	[parent release];
 	[super dealloc];
 }
-
--(CSHandle *)parentHandle { return parent; }
 
 -(off_t)startOffsetInParent { return start; }
 
@@ -85,6 +80,12 @@
 	if(curr+num>end) num=(int)(end-curr);
 	if(num<=0) return 0;
 	else return [parent readAtMost:num toBuffer:buffer];
+}
+
+-(NSString *)description
+{
+	return [NSString stringWithFormat:@"%@ @ %qu from %qu length %qu for %@",
+	[self class],[self offsetInFile],start,end-start,[parent description]];
 }
 
 @end

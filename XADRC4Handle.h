@@ -5,7 +5,6 @@
 
 @interface XADRC4Handle:CSStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 	NSData *key;
 	XADRC4Engine *rc4;

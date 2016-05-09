@@ -129,7 +129,6 @@ void xadIODropBitsHigh(struct xadInOut *io, xadUINT8 bits);
 
 @interface XADLibXADIOHandle:CSMemoryHandle
 {
-	CSHandle *parent;
 	BOOL unpacked;
 
 	off_t inlen,outlen;
@@ -139,7 +138,6 @@ void xadIODropBitsHigh(struct xadInOut *io, xadUINT8 bits);
 
 -(id)initWithHandle:(CSHandle *)handle;
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)outlength;
--(void)dealloc;
 
 -(off_t)fileSize;
 -(off_t)offsetInFile;

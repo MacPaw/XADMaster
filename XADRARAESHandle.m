@@ -52,12 +52,6 @@
 
 	for(int i=0;i<16;i++) keybuf[i+16]=digest[i^3];
 
-/*NSLog(@"%@",salt);
-NSLog(@"%02x%02x%02x%02x %02x%02x%02x%02x %02x%02x%02x%02x %02x%02x%02x%02x",
-keybuf[0],keybuf[1],keybuf[2],keybuf[3],keybuf[4],keybuf[5],keybuf[6],keybuf[7],
-keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybuf[15]
-);*/
-
 	return [NSData dataWithBytes:keybuf length:sizeof(keybuf)];
 }
 
@@ -112,17 +106,18 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer
 {
+	uint8_t *bytebuffer=buffer;
 	int bufferpos=streampos&15;
 	int bufferlength=(-streampos)&15;
 	int total=0;
 
 	if(num<=bufferlength)
 	{
-		memcpy(&buffer[total],&blockbuffer[bufferpos],num);
+		memcpy(&bytebuffer[total],&blockbuffer[bufferpos],num);
 		return num;
 	}
 
-	memcpy(&buffer[total],&blockbuffer[bufferpos],bufferlength);
+	memcpy(&bytebuffer[total],&blockbuffer[bufferpos],bufferlength);
 	total+=bufferlength;
 
 	int remaining=num-total;
@@ -130,9 +125,9 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 
 	if(remainingblocklength)
 	{
-		int actual=[parent readAtMost:remainingblocklength toBuffer:&buffer[total]];
+		int actual=[parent readAtMost:remainingblocklength toBuffer:&bytebuffer[total]];
 		int actualblocklength=actual&~15;
-		aes_cbc_decrypt(&buffer[total],&buffer[total],actualblocklength,block,&aes);
+		aes_cbc_decrypt(&bytebuffer[total],&bytebuffer[total],actualblocklength,block,&aes);
 		total+=actualblocklength;
 
 		if(actualblocklength!=remainingblocklength)
@@ -154,7 +149,7 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 
 		aes_cbc_decrypt(blockbuffer,blockbuffer,16,block,&aes);
 
-		memcpy(&buffer[total],&blockbuffer[0],endlength);
+		memcpy(&bytebuffer[total],&blockbuffer[0],endlength);
 		total+=endlength;
 	}
 

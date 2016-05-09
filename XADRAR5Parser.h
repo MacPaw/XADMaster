@@ -35,6 +35,7 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted;
 -(NSDictionary *)keysForPassword:(NSString *)passwordstring salt:(NSData *)salt strength:(int)strength passwordCheck:(NSData *)check;
 
 -(CSInputBuffer *)inputBufferWithDictionary:(NSDictionary *)dict;
+-(CSHandle *)inputHandleWithDictionary:(NSDictionary *)dict;
 
 -(NSString *)formatName;
 

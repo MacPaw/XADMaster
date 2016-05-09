@@ -74,7 +74,7 @@ int main(int argc,char **argv)
 		}
 		fflush(stdout);
 
-		fprintf(stderr,"\nRead %lld bytes from %s.\n",size,cstr1);
+		fprintf(stderr,"\nRead %ld bytes from %s.\n",(long)size,cstr1);
 	}
 	else if(argc==3)
 	{
@@ -129,12 +129,12 @@ int main(int argc,char **argv)
 
 		if(correcthandle && ![correcthandle atEndOfFile])
 		{
-			fprintf(stderr,"%s ended before %s, after %lld bytes.\n",cstr1,cstr2,size);
+			fprintf(stderr,"%s ended before %s, after %ld bytes.\n",cstr1,cstr2,(long)size);
 			exit(1);
 		}
 
-		fprintf(stderr,"Read %lld bytes from %s and %s, which are identical.\n",
-		size,cstr1,cstr2);
+		fprintf(stderr,"Read %ld bytes from %s and %s, which are identical.\n",
+		(long)size,cstr1,cstr2);
 	}
 	else
 	{
@@ -161,7 +161,7 @@ int main(int argc,char **argv)
 	{
 		if(offset>=correctlength)
 		{
-			fprintf(stderr,"%s ended before %s, after %lld bytes.\n",cstr2,cstr1,offset);
+			fprintf(stderr,"%s ended before %s, after %ld bytes.\n",cstr2,cstr1,(long)offset);
 			exit(1);
 		}
 
@@ -169,7 +169,7 @@ int main(int argc,char **argv)
 		if(byte!=correctbyte)
 		{
 			fprintf(stderr,"Mismatch between %s and %s, starting at byte "
-			"%lld (%02x vs. %02x).\n",cstr1,cstr2,offset,byte,correctbyte);
+			"%ld (%02x vs. %02x).\n",cstr1,cstr2,(long)offset,byte,correctbyte);
 			exit(1);
 		}
 	}
@@ -178,7 +178,7 @@ int main(int argc,char **argv)
 		[correcthandle seekToFileOffset:offset];
 		if([correcthandle atEndOfFile])
 		{
-			fprintf(stderr,"%s ended before %s, after %lld bytes.\n",cstr2,cstr1,offset);
+			fprintf(stderr,"%s ended before %s, after %ld bytes.\n",cstr2,cstr1,(long)offset);
 			exit(1);
 		}
 
@@ -186,7 +186,7 @@ int main(int argc,char **argv)
 		if(byte!=correctbyte)
 		{
 			fprintf(stderr,"Mismatch between %s and %s, starting at byte "
-			"%lld (%02x vs. %02x).\n",cstr1,cstr2,offset,byte,correctbyte);
+			"%ld (%02x vs. %02x).\n",cstr1,cstr2,(long)offset,byte,correctbyte);
 			exit(1);
 		}
 	}

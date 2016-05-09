@@ -37,6 +37,7 @@
 -(void)resetBlockStream;
 -(int)produceBlockAtOffset:(off_t)pos;
 -(off_t)expandToPosition:(off_t)end;
+-(void)readBlockHeader;
 -(void)allocAndParseCodes;
 
 @end

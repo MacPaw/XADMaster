@@ -102,7 +102,7 @@ static NSMutableData *MakeBMPContainer(int width,int height,uint32_t length,int 
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [super initWithHandle:handle length:length windowSize:256];
+	return [super initWithInputBufferForHandle:handle length:length windowSize:256];
 }
 
 -(void)resetLZSSHandle

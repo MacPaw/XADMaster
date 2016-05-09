@@ -6,19 +6,18 @@ NSString *CSBzip2Exception=@"CSBzip2Exception";
 
 +(CSBzip2Handle *)bzip2HandleWithHandle:(CSHandle *)handle
 {
-	return [[[self alloc] initWithHandle:handle length:CSHandleMaxLength name:[handle name]] autorelease];
+	return [[[self alloc] initWithHandle:handle length:CSHandleMaxLength] autorelease];
 }
 
 +(CSBzip2Handle *)bzip2HandleWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [[[self alloc] initWithHandle:handle length:length name:[handle name]] autorelease];
+	return [[[self alloc] initWithHandle:handle length:length] autorelease];
 }
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length name:(NSString *)descname
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	if(self=[super initWithName:descname])
+	if((self=[super initWithParentHandle:handle length:length]))
 	{
-		parent=[handle retain];
 		startoffs=[parent offsetInFile];
 		inited=NO;
 		checksumcorrect=YES;
@@ -29,7 +28,6 @@ NSString *CSBzip2Exception=@"CSBzip2Exception";
 -(void)dealloc
 {
 	if(inited) BZ2_bzDecompressEnd(&bzs);
-	[parent release];
 
 	[super dealloc];
 }

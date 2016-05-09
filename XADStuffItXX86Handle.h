@@ -9,6 +9,8 @@
 	uint8_t buffer[4];
 }
 
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
+
 -(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 

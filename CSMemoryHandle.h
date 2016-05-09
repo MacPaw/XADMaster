@@ -40,4 +40,6 @@
 -(NSData *)copyDataOfLength:(int)length;
 -(NSData *)copyDataOfLengthAtMost:(int)length;
 
+-(NSString *)name;
+
 @end

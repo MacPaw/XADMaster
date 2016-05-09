@@ -628,10 +628,10 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 
 @implementation XAD8BitPaletteExpansionHandle
 
--(id)initWithHandle:(CSHandle *)parent length:(off_t)length
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 numberOfChannels:(int)numberofchannels palette:(NSData *)palettedata
 {
-	if((self=[super initWithHandle:parent length:length]))
+	if((self=[super initWithInputBufferForHandle:handle length:length]))
 	{
 		palette=[palettedata retain];
 		numchannels=numberofchannels;

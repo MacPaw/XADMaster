@@ -4,7 +4,6 @@
 
 @interface XADRARAESHandle:CSStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 
 	aes_decrypt_ctx aes;
@@ -17,7 +16,6 @@
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length key:(NSData *)keydata;
 -(id)initWithHandle:(CSHandle *)handle RAR5Key:(NSData *)keydata IV:(NSData *)ivdata;
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length RAR5Key:(NSData *)keydata IV:(NSData *)ivdata;
--(void)dealloc;
 
 -(void)resetStream;
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer;

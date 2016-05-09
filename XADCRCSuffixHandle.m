@@ -24,9 +24,8 @@ bigEndianCRC:(BOOL)bigendian conditioned:(BOOL)conditioned
 -(id)initWithHandle:(CSHandle *)handle CRCHandle:(CSHandle *)crchandle initialCRC:(uint32_t)initialcrc
 CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)crctable
 {
-	if((self=[super initWithName:[handle name]]))
+	if(self=[super initWithParentHandle:handle])
 	{
-		parent=[handle retain];
 		crcparent=[crchandle retain];
 		crcsize=crcbytes;
 		bigend=bigendian;
@@ -39,7 +38,7 @@ CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)cr
 
 -(void)dealloc
 {
-	[parent release];
+	[crcparent release];
 	[super dealloc];
 }
 

@@ -9,6 +9,8 @@
 	int wordoffs,wordlen;
 }
 
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
+
 -(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 

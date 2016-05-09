@@ -82,6 +82,8 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 	BOOL finalbytes;
 }
 
+-(id)initWithHandle:(CSHandle *)handle;
+
 -(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 

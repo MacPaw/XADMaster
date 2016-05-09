@@ -4,7 +4,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [super initWithHandle:handle length:length windowSize:0x8000];
+	return [super initWithInputBufferForHandle:handle length:length windowSize:0x8000];
 }
 
 -(void)resetLZSSHandle

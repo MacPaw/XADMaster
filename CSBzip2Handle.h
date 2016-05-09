@@ -8,7 +8,6 @@ extern NSString *CSBzip2Exception;
 
 @interface CSBzip2Handle:CSStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 	bz_stream bzs;
 	BOOL inited,checksumcorrect;
@@ -20,7 +19,7 @@ extern NSString *CSBzip2Exception;
 +(CSBzip2Handle *)bzip2HandleWithHandle:(CSHandle *)handle length:(off_t)length;
 
 // Initializers.
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length name:(NSString *)descname;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
 -(void)dealloc;
 
 // Implemented by this class.

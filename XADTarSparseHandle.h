@@ -11,7 +11,6 @@ typedef struct XADTarSparseRegion
 
 @interface XADTarSparseHandle:CSHandle
 {
-	CSHandle *parent;
 	XADTarSparseRegion *regions;
 	int numRegions;
 	int currentRegion;

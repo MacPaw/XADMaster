@@ -28,7 +28,7 @@
 
 -(id)initWithHandles:(NSArray *)handlearray
 {
-	if(self=[super initWithName:@""])
+	if(self=[super init])
 	{
 		handles=[handlearray copy];
 	}

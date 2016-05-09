@@ -14,9 +14,8 @@ static ISzAlloc allocator={Alloc,Free};
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length propertyData:(NSData *)propertydata
 {
-	if((self=[super initWithName:[handle name] length:length]))
+	if(self=[super initWithParentHandle:handle length:length])
 	{
-		parent=[handle retain];
 		startoffs=[parent offsetInFile];
 		seekback=NO;
 
@@ -36,7 +35,6 @@ static ISzAlloc allocator={Alloc,Free};
 {
 	Lzma2Dec_Free(&lzma,&allocator);
 
-	[parent release];
 	[super dealloc];
 
 }

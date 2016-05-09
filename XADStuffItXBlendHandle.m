@@ -7,9 +7,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	if((self=[super initWithName:[handle name] length:length]))
+	if((self=[super initWithParentHandle:handle length:length]))
 	{
-		parent=[handle retain];
 		currhandle=nil;
 		currinput=NULL;
 	}
@@ -18,7 +17,6 @@
 
 -(void)dealloc
 {
-	[parent release];
 	[currhandle release];
 	[super dealloc];
 }

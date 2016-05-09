@@ -23,6 +23,8 @@
 	int rle_byte,rle_num;
 }
 
+-(id)initWithHandle:(CSHandle *)handle;
+
 -(void)resetByteStream;
 -(uint8_t)produceByteAtOffset:(off_t)pos;
 

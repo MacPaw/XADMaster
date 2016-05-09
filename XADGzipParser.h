@@ -29,7 +29,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 
 @interface XADGzipHandle:CSStreamHandle
 {
-	CSHandle *parent,*currhandle;
+	CSHandle *currhandle;
 	off_t startoffs;
 	int state;
 	BOOL checksumscorrect;

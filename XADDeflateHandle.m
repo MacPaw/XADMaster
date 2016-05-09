@@ -10,7 +10,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length variant:(int)deflatevariant
 {
-	if((self=[super initWithHandle:handle length:length
+	if((self=[super initWithInputBufferForHandle:handle length:length
 	windowSize:deflatevariant==XADDeflate64DeflateVariant?65536:32768]))
 	{
 		variant=deflatevariant;

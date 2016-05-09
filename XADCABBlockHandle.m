@@ -5,7 +5,7 @@
 
 -(id)initWithBlockReader:(XADCABBlockReader *)blockreader
 {
-	if((self=[super initWithName:[[blockreader handle] name] length:[blockreader uncompressedLength]]))
+	if((self=[super initWithParentHandle:[blockreader handle] length:[blockreader uncompressedLength]]))
 	{
 		blocks=[blockreader retain];
 	}

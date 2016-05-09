@@ -68,9 +68,8 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
 -(id)initWithHandle:(CSHandle *)handle key:(NSData *)keydata
 {
-	if(self=[super initWithName:[handle name]])
+	if(self=[super initWithParentHandle:handle])
 	{
-		parent=[handle retain];
 		key=[keydata retain];
 
 		iv=[parent copyDataOfLength:16];
@@ -85,7 +84,6 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
 -(void)dealloc
 {
-	[parent release];
 	[key release];
 	[iv release];
 	[super dealloc];

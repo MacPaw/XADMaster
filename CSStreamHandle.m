@@ -2,7 +2,7 @@
 
 @implementation CSStreamHandle
 
--(id)initWithName:(NSString *)descname
+/*-(id)initWithName:(NSString *)descname
 {
 	return [self initWithName:descname length:CSHandleMaxLength];
 }
@@ -20,26 +20,46 @@
 		input=NULL;
 	}
 	return self;
+}*/
+
+-(id)initWithParentHandle:(CSHandle *)handle
+{
+	return [self initWithParentHandle:handle length:CSHandleMaxLength];
 }
 
--(id)initWithHandle:(CSHandle *)handle
+-(id)initWithParentHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [self initWithHandle:handle length:CSHandleMaxLength bufferSize:4096];
+	if(self=[super initWithParentHandle:handle])
+	{
+		streampos=0;
+		streamlength=length;
+		endofstream=NO;
+		needsreset=YES;
+		nextstreambyte=-1;
+
+		input=NULL;
+	}
+	return self;
 }
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length
+-(id)initWithInputBufferForHandle:(CSHandle *)handle
 {
-	return [self initWithHandle:handle length:length bufferSize:4096];
+	return [self initWithInputBufferForHandle:handle length:CSHandleMaxLength bufferSize:4096];
 }
 
--(id)initWithHandle:(CSHandle *)handle bufferSize:(int)buffersize
+-(id)initWithInputBufferForHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [self initWithHandle:handle length:CSHandleMaxLength bufferSize:buffersize];
+	return [self initWithInputBufferForHandle:handle length:length bufferSize:4096];
 }
 
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length bufferSize:(int)buffersize;
+-(id)initWithInputBufferForHandle:(CSHandle *)handle bufferSize:(int)buffersize
 {
-	if(self=[super initWithName:[handle name]])
+	return [self initWithInputBufferForHandle:handle length:CSHandleMaxLength bufferSize:buffersize];
+}
+
+-(id)initWithInputBufferForHandle:(CSHandle *)handle length:(off_t)length bufferSize:(int)buffersize;
+{
+	if(self=[super initWithParentHandle:handle])
 	{
 		streampos=0;
 		streamlength=length;

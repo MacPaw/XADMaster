@@ -16,7 +16,6 @@
 
 @interface XADLZMA2Handle:CSStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 
 	CLzma2Dec lzma;

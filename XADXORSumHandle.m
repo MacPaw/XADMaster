@@ -4,18 +4,11 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length correctChecksum:(uint8_t)correct
 {
-	if((self=[super initWithName:[handle name] length:length]))
+	if((self=[super initWithParentHandle:handle length:length]))
 	{
-		parent=[handle retain];
 		correctchecksum=correct;
 	}
 	return self;
-}
-
--(void)dealloc
-{
-	[parent release];
-	[super dealloc];
 }
 
 -(void)resetStream

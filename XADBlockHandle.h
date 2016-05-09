@@ -1,9 +1,7 @@
 #import "CSHandle.h"
 
-
 @interface XADBlockHandle:CSHandle
 {
-	CSHandle *parent;
 	off_t currpos,length;
 
 	int numblocks,blocksize;

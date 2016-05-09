@@ -4,9 +4,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length correctDigest:(NSData *)correctdigest;
 {
-	if((self=[super initWithName:[handle name] length:length]))
+	if((self=[super initWithParentHandle:handle length:length]))
 	{
-		parent=[handle retain];
 		digest=[correctdigest retain];
 	}
 	return self;
@@ -14,7 +13,6 @@
 
 -(void)dealloc
 {
-	[parent release];
 	[digest release];
 	[super dealloc];
 }

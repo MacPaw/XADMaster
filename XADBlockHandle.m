@@ -4,9 +4,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle blockSize:(int)size
 {
-	if((self=[super initWithName:[handle name]]))
+	if((self=[super initWithParentHandle:handle]))
 	{
-		parent=[handle retain];
 		currpos=0;
 		length=CSHandleMaxLength;
 		numblocks=0;
@@ -18,9 +17,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)maxlength blockSize:(int)size
 {
-	if((self=[super initWithName:[handle name]]))
+	if((self=[super initWithParentHandle:handle]))
 	{
-		parent=[handle retain];
 		currpos=0;
 		length=maxlength;
 		numblocks=0;
@@ -33,7 +31,6 @@
 -(void)dealloc
 {
 	free(blockoffsets);
-	[parent release];
 	[super dealloc];
 }
 

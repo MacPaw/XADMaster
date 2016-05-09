@@ -2,7 +2,6 @@
 
 @interface XADStuffItXBlendHandle:CSStreamHandle
 {
-	CSHandle *parent;
 	CSHandle *currhandle;
 	CSInputBuffer *currinput;
 }

@@ -4,7 +4,6 @@
 
 @interface XADWinZipAESHandle:CSStreamHandle
 {
-	CSHandle *parent;
 	NSData *password;
 	int keybytes;
 	off_t startoffs;

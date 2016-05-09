@@ -6,7 +6,6 @@
 
 @interface XADMD5Handle:CSStreamHandle
 {
-	CSHandle *parent;
 	NSData *digest;
 
 	MD5_CTX context;

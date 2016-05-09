@@ -31,7 +31,7 @@
 
 -(id)initWithPaths:(NSArray *)patharray
 {
-	if(self=[super initWithName:@""])
+	if(self=[super init])
 	{
 		paths=[patharray copy];
 	}

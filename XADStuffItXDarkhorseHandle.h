@@ -16,6 +16,8 @@
 	int distancetable[4];
 }
 
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length windowSize:(int)windowsize;
+
 -(void)resetLZSSHandle;
 -(int)nextLiteralOrOffset:(int *)offset andLength:(int *)length atPosition:(off_t)pos;
 

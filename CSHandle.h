@@ -27,17 +27,17 @@ extern NSString *CSNotSupportedException;
 
 @interface CSHandle:NSObject <NSCopying>
 {
-	NSString *name;
+	CSHandle *parent;
 	off_t bitoffs;
 	uint8_t readbyte,readbitsleft;
 	uint8_t writebyte,writebitsleft;
 }
 
--(id)initWithName:(NSString *)descname;
+-(id)init;
+-(id)initWithParentHandle:(CSHandle *)parenthandle;
 -(id)initAsCopyOf:(CSHandle *)other;
 -(void)dealloc;
 -(void)close;
-
 
 // Methods implemented by subclasses
 
@@ -142,6 +142,8 @@ extern NSString *CSNotSupportedException;
 -(void)_raiseNotSupported:(SEL)selector;
 
 -(NSString *)name;
+-(CSHandle *)parentHandle;
+-(void)setParentHandle:(CSHandle *)newparent;
 -(NSString *)description;
 
 -(id)copyWithZone:(NSZone *)zone;

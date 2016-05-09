@@ -14,7 +14,6 @@ extern NSString *CSZlibException;
 
 @interface CSZlibHandle:CSStreamHandle
 {
-	CSHandle *parent;
 	off_t startoffs;
 	z_stream zs;
 	BOOL inited,seekback,endstreamateof;
@@ -28,7 +27,7 @@ extern NSString *CSZlibException;
 +(CSZlibHandle *)deflateHandleWithHandle:(CSHandle *)handle length:(off_t)length;
 
 // Intializers
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length header:(BOOL)header name:(NSString *)descname;
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length header:(BOOL)header ;
 -(id)initAsCopyOf:(CSZlibHandle *)other;
 -(void)dealloc;
 

@@ -5,7 +5,7 @@
 
 @interface XADCRCSuffixHandle:CSStreamHandle
 {
-	CSHandle *parent,*crcparent;
+	CSHandle *crcparent;
 
 	int crcsize;
 	BOOL bigend;

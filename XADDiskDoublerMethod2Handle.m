@@ -5,7 +5,7 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length numberOfTrees:(int)num
 {
-	if((self=[super initWithHandle:handle length:length]))
+	if((self=[super initWithInputBufferForHandle:handle length:length]))
 	{
 		numtrees=num;
 	}
@@ -58,13 +58,13 @@
 	int node=byte+0x100;
 	for(;;)
 	{
-		int parent=parents[node];
-		if(parent==1) break;
+		int parentnode=parents[node];
+		if(parentnode==1) break;
 
-		int grandparent=parents[parent];
+		int grandparent=parents[parentnode];
 
 		int uncle=leftchildren[grandparent];
-		if(uncle==parent)
+		if(uncle==parentnode)
 		{
 			uncle=rightchildren[grandparent];
 			rightchildren[grandparent]=node;
@@ -74,11 +74,11 @@
 			leftchildren[grandparent]=node;
 		}
 
-		if(leftchildren[parent]!=node) rightchildren[parent]=uncle;
-		else leftchildren[parent]=uncle;
+		if(leftchildren[parentnode]!=node) rightchildren[parentnode]=uncle;
+		else leftchildren[parentnode]=uncle;
 
 		parents[node]=grandparent;
-		parents[uncle]=parent;
+		parents[uncle]=parentnode;
 
 		node=grandparent;
 		if(node==1) break;

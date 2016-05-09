@@ -53,9 +53,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle checksumHandle:(CSHandle *)checksumhandle
 {
-	if((self=[super initWithName:[handle name]]))
+	if((self=[super initWithParentHandle:handle]))
 	{
-		parent=[handle retain];
 		checksum=[checksumhandle retain];
 	}
 	return self;
@@ -63,7 +62,6 @@
 
 -(void)dealloc
 {
-	[parent release];
 	[checksum release];
 	[super dealloc];
 }

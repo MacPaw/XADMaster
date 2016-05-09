@@ -3,6 +3,16 @@
 
 @implementation XADRLE90Handle
 
+-(id)initWithHandle:(CSHandle *)handle
+{
+	return [self initWithHandle:handle length:CSHandleMaxLength];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
+{
+	return [super initWithInputBufferForHandle:handle length:length];
+}
+
 -(void)resetByteStream
 {
 	repeatedbyte=count=0;

@@ -52,9 +52,9 @@ static int ReadLengthWithCodeTable(CSInputBuffer *input,XADPrefixCode *prefixcod
 
 
 
--(id)initWithHandle:(CSHandle *)handle columns:(int)cols white:(int)whitevalue
+-(id)initWithInputBufferForHandle:(CSHandle *)handle columns:(int)cols white:(int)whitevalue
 {
-	if(self=[super initWithHandle:handle])
+	if(self=[super initWithInputBufferForHandle:handle])
 	{
 		columns=cols;
 		white=whitevalue;
@@ -114,14 +114,13 @@ static int ReadLengthWithCodeTable(CSInputBuffer *input,XADPrefixCode *prefixcod
 
 
 @implementation CCITTFaxT41DHandle
-static int line=0;
+
 -(id)initWithHandle:(CSHandle *)handle columns:(int)cols white:(int)whitevalue
 {
-	if(self=[super initWithHandle:handle columns:cols white:whitevalue])
+	if(self=[super initWithInputBufferForHandle:handle columns:cols white:whitevalue])
 	{
 		whitecode=[[XADPrefixCode alloc] initWithStaticTable:T41DWhiteCodeTable];
 		blackcode=[[XADPrefixCode alloc] initWithStaticTable:T41DBlackCodeTable];
-line=0;
 	}
 	return self;
 }
@@ -187,7 +186,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int column,int
 
 -(id)initWithHandle:(CSHandle *)handle columns:(int)cols white:(int)whitevalue
 {
-	if(self=[super initWithHandle:handle columns:cols white:whitevalue])
+	if(self=[super initWithInputBufferForHandle:handle columns:cols white:whitevalue])
 	{
 		maincode=[[XADPrefixCode alloc] initWithStaticTable:T62DCodeTable];
 		whitecode=[[XADPrefixCode alloc] initWithStaticTable:T41DWhiteCodeTable];

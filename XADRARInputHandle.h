@@ -2,7 +2,6 @@
 
 @interface XADRARInputHandle:CSStreamHandle
 {
-	CSHandle *handle;
 	NSArray *parts;
 
 	int part;
@@ -11,7 +10,7 @@
 	uint32_t crc,correctcrc;
 }
 
--(id)initWithHandle:(CSHandle *)parent parts:(NSArray *)partarray;
+-(id)initWithHandle:(CSHandle *)handle parts:(NSArray *)partarray;
 -(void)dealloc;
 
 -(void)resetStream;

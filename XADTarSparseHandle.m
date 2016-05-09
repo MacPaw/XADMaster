@@ -6,9 +6,8 @@
 // Make a new sparse handle by wrapping around another CSHandle
 -(id)initWithHandle:(CSHandle *)handle size:(off_t)size
 {
-	if( (self = [super initWithName:[handle name]]) )
+	if( self = [super initWithParentHandle:handle] )
 	{
-		parent = [handle retain];
 		regions = malloc( sizeof( XADTarSparseRegion ) );
 		regions[ 0 ].nextRegion = -1;
 		regions[ 0 ].size = [parent fileSize];
@@ -30,7 +29,6 @@
 {
 	if( (self = [super initAsCopyOf:other]) )
 	{
-		parent = [other->parent copy];
 		numRegions = other->numRegions;
 		regions = malloc( sizeof( XADTarSparseRegion ) * numRegions );
 		memcpy( regions, other->regions, sizeof( XADTarSparseRegion ) * numRegions );
@@ -45,7 +43,6 @@
 -(void)dealloc
 {
 	free( regions );
-	[parent release];
 	[super dealloc];
 }
 

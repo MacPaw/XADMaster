@@ -6,7 +6,6 @@
 
 @interface XADSHA1Handle:CSStreamHandle
 {
-	CSHandle *parent;
 	NSData *digest;
 
 	SHA_CTX context;

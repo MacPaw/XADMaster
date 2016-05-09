@@ -4,9 +4,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle password:(NSData *)passdata
 {
-	if((self=[super initWithName:[handle name]]))
+	if((self=[super initWithParentHandle:handle]))
 	{
-		parent=[handle retain];
 		password=[passdata retain];
 		passwordbytes=[password bytes];
 		passwordlength=[password length];
@@ -22,7 +21,6 @@
 
 -(void)dealloc
 {
-	[parent release];
 	[password release];
 	[super dealloc];
 }

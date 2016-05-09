@@ -14,12 +14,14 @@
 }
 
 // Initializers
--(id)initWithName:(NSString *)descname;
--(id)initWithName:(NSString *)descname length:(off_t)length;
--(id)initWithHandle:(CSHandle *)handle;
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length;
--(id)initWithHandle:(CSHandle *)handle bufferSize:(int)buffersize;
--(id)initWithHandle:(CSHandle *)handle length:(off_t)length bufferSize:(int)buffersize;
+//-(id)initWithName:(NSString *)descname;
+//-(id)initWithName:(NSString *)descname length:(off_t)length;
+-(id)initWithParentHandle:(CSHandle *)handle;
+-(id)initWithParentHandle:(CSHandle *)handle length:(off_t)length;
+-(id)initWithInputBufferForHandle:(CSHandle *)handle;
+-(id)initWithInputBufferForHandle:(CSHandle *)handle length:(off_t)length;
+-(id)initWithInputBufferForHandle:(CSHandle *)handle bufferSize:(int)buffersize;
+-(id)initWithInputBufferForHandle:(CSHandle *)handle length:(off_t)length bufferSize:(int)buffersize;
 -(id)initAsCopyOf:(CSStreamHandle *)other;
 -(void)dealloc;
 

@@ -8,6 +8,11 @@ static void CopyBytesWithRepeat(uint8_t *dest,uint8_t *src,int length)
 
 @implementation XADDiskDoublerADnHandle
 
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length
+{
+	return [super initWithInputBufferForHandle:handle length:length];
+}
+
 -(int)produceBlockAtOffset:(off_t)pos
 {
 	uint8_t headxor=0;

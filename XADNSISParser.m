@@ -81,7 +81,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
 
-	for(int offs=0;offs<length+4+16;offs+=512)
+	for(int offs=0;offs+4+16<=length;offs+=512)
 	{
 		if(IsOlderSignature(bytes+offs)) 
 		{

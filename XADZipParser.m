@@ -254,10 +254,14 @@
 
 			if(extid==1)
 			{
-				if(uncompsize==0xffffffff) uncompsize=[fh readUInt64LE];
-				if(compsize==0xffffffff) compsize=[fh readUInt64LE];
-				if(locheaderoffset==0xffffffff) locheaderoffset=[fh readUInt64LE];
-				if(startdisk==0xffff) startdisk=[fh readUInt32LE];
+                off_t z64_uncompsize=[fh readUInt64LE];
+                off_t z64_compsize=[fh readUInt64LE];
+                off_t z64_locheaderoffset=[fh readUInt64LE];
+                int z64_startdisk=[fh readUInt32LE];
+                if(uncompsize==0xffffffff) uncompsize=z64_uncompsize;
+                if(compsize==0xffffffff) compsize=z64_compsize;
+                if(locheaderoffset==0xffffffff) locheaderoffset=z64_locheaderoffset;
+                if(startdisk==0xffff) startdisk=z64_startdisk;
 				break;
 			}
 

@@ -21,6 +21,9 @@ extern NSString *CSFileErrorException;
 +(CSFileHandle *)fileHandleForReadingAtPath:(NSString *)path;
 +(CSFileHandle *)fileHandleForWritingAtPath:(NSString *)path;
 +(CSFileHandle *)fileHandleForPath:(NSString *)path modes:(NSString *)modes;
++(CSFileHandle *)fileHandleForStandardInput;
++(CSFileHandle *)fileHandleForStandardOutput;
++(CSFileHandle *)fileHandleForStandardError;
 
 // Initializers
 -(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc path:(NSString *)filepath;

@@ -2,6 +2,7 @@
 #import "NSStringPrinting.h"
 #import "CSCommandLineParser.h"
 #import "CommandLineCommon.h"
+#import "CSFileHandle.h"
 
 #define VERSION_STRING @"v1.10"
 
@@ -9,7 +10,7 @@
 @end
 
 int numerrors;
-BOOL isinteractive;
+BOOL isinteractive,tostdout;
 FILE *outstream,*errstream;
 
 int main(int argc,const char **argv)
@@ -32,7 +33,8 @@ int main(int argc,const char **argv)
 
 	[cmdline addStringOption:@"output-directory" description:
 	@"The directory to write the contents of the archive to. "
-	@"Defaults to the current directory."];
+	@"Defaults to the current directory. If set to a single dash (-), "
+	@"no files will be created, and all data will be output to stdout."];
 	[cmdline addAlias:@"o" forOption:@"output-directory"];
 
 	[cmdline addSwitchOption:@"force-overwrite" description:
@@ -145,8 +147,6 @@ int main(int argc,const char **argv)
 
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
 
-
-
 	NSString *destination=[cmdline stringValueForOption:@"output-directory"];
 	BOOL forceoverwrite=[cmdline boolValueForOption:@"force-overwrite"];
 	BOOL forcerename=[cmdline boolValueForOption:@"force-rename"];
@@ -162,6 +162,17 @@ int main(int argc,const char **argv)
 	BOOL noquarantine=[cmdline boolValueForOption:@"no-quarantine"];
 	int forkstyle=forkvalues[[cmdline intValueForOption:@"forks"]];
 	BOOL quietmode=[cmdline boolValueForOption:@"quiet"];
+
+	if(destination && [destination isEqual:@"-"])
+	{
+		destination=@"/____________________";
+		tostdout=YES;
+		quietmode=YES;
+	}
+	else
+	{
+		tostdout=NO;
+	}
 
 	if(quietmode)
 	{
@@ -330,6 +341,11 @@ int main(int argc,const char **argv)
 	}
 }
 
+-(CSHandle *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver outputHandleForEntryWithDictionary:(NSDictionary *)dict
+{
+	if(tostdout) return [CSFileHandle fileHandleForStandardOutput];
+	else return nil;
+}
 
 //-(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(id <XADString>)string;
 

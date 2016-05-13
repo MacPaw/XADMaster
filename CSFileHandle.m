@@ -42,6 +42,28 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 	return nil;
 }
 
++(CSFileHandle *)fileHandleForStandardInput
+{
+	static CSFileHandle *handle=nil;
+	if(!handle) handle=[[CSFileHandle alloc] initWithFilePointer:stdin closeOnDealloc:NO path:@"/dev/stdin"];
+	return handle;
+}
+
++(CSFileHandle *)fileHandleForStandardOutput
+{
+	static CSFileHandle *handle=nil;
+	if(!handle) handle=[[CSFileHandle alloc] initWithFilePointer:stdout closeOnDealloc:NO path:@"/dev/stdout"];
+	return handle;
+}
+
++(CSFileHandle *)fileHandleForStandardError
+{
+	static CSFileHandle *handle=nil;
+	if(!handle) handle=[[CSFileHandle alloc] initWithFilePointer:stderr closeOnDealloc:NO path:@"/dev/stderr"];
+	return handle;
+}
+
+
 
 
 -(id)initWithFilePointer:(FILE *)file closeOnDealloc:(BOOL)closeondealloc path:(NSString *)filepath

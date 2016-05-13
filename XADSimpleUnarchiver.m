@@ -802,8 +802,21 @@
 
 	*pathptr=path;
 
-	// If we have a delegate, ask it if we should extract.
-	if(delegate) return [delegate simpleUnarchiver:self shouldExtractEntryWithDictionary:dict to:path];
+	if(delegate)
+	{
+		// If we have a delegate, ask it if we should extract.
+		if(![delegate simpleUnarchiver:self shouldExtractEntryWithDictionary:dict to:path]) return NO;
+
+		// Check if the user wants to extract the entry to his own filehandle.
+		// In such case, call into the lower-level API to run the extraction
+		// and return without doing further work.
+		CSHandle *handle=[delegate simpleUnarchiver:self outputHandleForEntryWithDictionary:dict];
+		if(handle)
+		{
+			[unarchiver runExtractorWithDictionary:dict outputHandle:handle];
+			return NO;
+		}
+	}
 
 	// Otherwise, just extract.
 	return YES;
@@ -1050,6 +1063,8 @@ fileFraction:(double)fileratio estimatedTotalFraction:(double)totalratio
 @implementation NSObject (XADSimpleUnarchiverDelegate)
 
 -(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver {}
+
+-(CSHandle *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver outputHandleForEntryWithDictionary:(NSDictionary *)dict { return nil; }
 
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver encodingNameForXADString:(id <XADString>)string; { return [string encodingName]; }
 

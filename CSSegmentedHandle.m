@@ -195,7 +195,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 -(void)_raiseSizeUnknownForSegment:(NSInteger)i
 {
 	[NSException raise:CSSizeOfSegmentUnknownException
-	format:@"Size of CSSegmentedHandle segment %ld (%@) unknown.",i,[self handleAtIndex:i]];
+	format:@"Size of CSSegmentedHandle segment %ld (%@) unknown.",(long)i,[self handleAtIndex:i]];
 }
 
 @end

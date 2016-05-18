@@ -91,7 +91,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 	[self _open];
 	for(NSInteger i=0;i<count;i++)
 	{
-		if(offs<segmentends[i])
+		if(offs<segmentends[i] || (i==count-1 && offs==segmentends[i]))
 		{
 			[self _setCurrentIndex:i];
 
@@ -102,6 +102,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 			return;
 		}
 	}
+
 	[self _raiseEOF];
 }
 

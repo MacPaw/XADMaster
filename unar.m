@@ -4,7 +4,7 @@
 #import "CommandLineCommon.h"
 #import "CSFileHandle.h"
 
-#define VERSION_STRING @"v1.10"
+#define VERSION_STRING @"v1.10.1"
 
 @interface Unarchiver:NSObject {}
 @end

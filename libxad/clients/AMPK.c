@@ -1648,7 +1648,7 @@ XADUNARCHIVE(LHWARP)
         lhw.oldmode = ofs;
         j = EndGetM32(lhw.crsize);
         l = EndGetM32(lhw.datasize);
-        if(l > 22*(512+16))
+        if(l > 22*(512+16) || l < 0)
           err = XADERR_ILLEGALDATA;
         else if(l) /* ignore empty store blocks */
         {

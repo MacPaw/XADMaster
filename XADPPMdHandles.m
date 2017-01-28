@@ -1,4 +1,5 @@
 #import "XADPPMdHandles.h"
+#import "XADException.h"
 
 
 
@@ -101,7 +102,11 @@
 	[super dealloc];
 }
 
--(void)resetByteStream { StartPPMdModelVariantI(&model,(PPMdReadFunction *)CSInputNextByte,input,alloc,max,method); }
+-(void)resetByteStream
+{
+	if(max<2) [XADException raiseNotSupportedException];
+	StartPPMdModelVariantI(&model,(PPMdReadFunction *)CSInputNextByte,input,alloc,max,method);
+}
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {

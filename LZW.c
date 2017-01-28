@@ -4,7 +4,9 @@
 LZW *AllocLZW(int maxsymbols,int reservedsymbols)
 {
 	LZW *self=(LZW *)malloc(sizeof(LZW)+sizeof(LZWTreeNode)*maxsymbols);
-	if(!self) return 0;
+	if(!self) return NULL;
+
+	if(maxsymbols<256+self->reservedsymbols) return NULL;
 
 	self->maxsymbols=maxsymbols;
 	self->reservedsymbols=reservedsymbols;

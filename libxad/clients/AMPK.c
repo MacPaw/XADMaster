@@ -614,7 +614,7 @@ static xadINT32 ARCunsqueeze(struct xadInOut *io)
       {
         /* follow bit stream in tree to a leaf */
         i = 0;
-        while(i >= 0 && !io->xio_Error)
+        while(i >= 0 && 2 * i + 1 < numnodes && !io->xio_Error)
           i = node[2*i + xadIOGetBitsLow(io, 1)];
 
         i = -(i + 1); /* decode fake node index to original data value */

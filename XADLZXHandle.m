@@ -152,6 +152,7 @@
 				length=(lengths[i]+17-newval)%17;
 			}
 
+			if(i+n>count) [XADException raiseDecrunchException];
 			for(int j=0;j<n;j++) lengths[i+j]=length;
 			i+=n;
 		}

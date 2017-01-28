@@ -373,17 +373,17 @@ static void MakeTableLE(XADPrefixCode *code,int node,XADCodeTableEntry *table,in
 	int currtablesize=1<<(maxdepth-depth);
 	int currstride=1<<depth;
 
-	if(IsLeafNode(code,node))
+	if(IsInvalidNode(code,node))
+	{
+		for(int i=0;i<currtablesize;i++) table[i*currstride].length=-1;
+	}
+	else if(IsLeafNode(code,node))
 	{
 		for(int i=0;i<currtablesize;i++)
 		{
 			table[i*currstride].length=depth;
 			table[i*currstride].value=LeafValue(code,node);
 		}
-	}
-	else if(IsInvalidNode(code,node))
-	{
-		for(int i=0;i<currtablesize;i++) table[i*currstride].length=-1;
 	}
 	else
 	{

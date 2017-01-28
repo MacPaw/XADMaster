@@ -268,6 +268,7 @@ static xadUINT8 CRUNCHdecode(struct CrunchData *cd, xadUINT16 code)
   stackp = cd->stack;
   while(ep > cd->table + 255) /* i.e. code not atomic */
   {
+    if(stackp - cd->stack >= sizeof(cd->stack)) return 0; // TODO: Should throw error
     *(stackp++) = ep->suffix;
     ep = cd->table + (ep->predecessor&0xFFF);
   }

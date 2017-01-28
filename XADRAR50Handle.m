@@ -20,7 +20,7 @@ static uint32_t ReadFilterInteger(CSInputBuffer *input);
 		[self setInputBuffer:buf];
 
 		uint64_t dictsize=[[dict objectForKey:@"RAR5DictionarySize"] unsignedLongLongValue];
-		InitializeLZSS(&lzss,dictsize);
+		if(!InitializeLZSS(&lzss,dictsize)) [XADException raiseOutOfMemoryException];
 
 		maincode=nil;
 		offsetcode=nil;

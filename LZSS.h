@@ -3,17 +3,18 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct LZSS
 {
 	uint8_t *window;
-	int mask;
+	size_t mask;
 	int64_t position;
 } LZSS;
 
 
 
-bool InitializeLZSS(LZSS *self,int windowsize);
+bool InitializeLZSS(LZSS *self,size_t windowsize);
 void CleanupLZSS(LZSS *self);
 void RestartLZSS(LZSS *self);
 
@@ -21,17 +22,17 @@ void RestartLZSS(LZSS *self);
 
 static inline int64_t LZSSPosition(LZSS *self) { return self->position; }
 
-static inline int LZSSWindowMask(LZSS *self) { return self->mask; }
+static inline size_t LZSSWindowMask(LZSS *self) { return self->mask; }
 
-static inline int LZSSWindowSize(LZSS *self)  { return self->mask+1; }
+static inline size_t LZSSWindowSize(LZSS *self)  { return self->mask+1; }
 
 static inline uint8_t *LZSSWindowPointer(LZSS *self)  { return self->window; }
 
-static inline int LZSSWindowOffsetForPosition(LZSS *self,int64_t pos) { return pos&self->mask; }
+static inline size_t LZSSWindowOffsetForPosition(LZSS *self,int64_t pos) { return pos&self->mask; }
 
 static inline uint8_t *LZSSWindowPointerForPosition(LZSS *self,int64_t pos)  { return &self->window[LZSSWindowOffsetForPosition(self,pos)]; }
 
-static inline int CurrentLZSSWindowOffset(LZSS *self) { return LZSSWindowOffsetForPosition(self,self->position); }
+static inline size_t CurrentLZSSWindowOffset(LZSS *self) { return LZSSWindowOffsetForPosition(self,self->position); }
 
 static inline uint8_t *CurrentLZSSWindowPointer(LZSS *self) { return LZSSWindowPointerForPosition(self,self->position); }
 

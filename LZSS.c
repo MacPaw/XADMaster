@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-bool InitializeLZSS(LZSS *self,int windowsize)
+bool InitializeLZSS(LZSS *self,size_t windowsize)
 {
 	self->window=malloc(windowsize);
 	if(!self->window) return false;
@@ -28,7 +28,7 @@ void RestartLZSS(LZSS *self)
 
 void CopyBytesFromLZSSWindow(LZSS *self,uint8_t *buffer,int64_t startpos,int length)
 {
-	int windowoffs=LZSSWindowOffsetForPosition(self,startpos);
+	size_t windowoffs=LZSSWindowOffsetForPosition(self,startpos);
 
 	if(windowoffs+length<=LZSSWindowSize(self)) // Request fits inside window
 	{
@@ -36,7 +36,7 @@ void CopyBytesFromLZSSWindow(LZSS *self,uint8_t *buffer,int64_t startpos,int len
 	}
 	else // Request wraps around window
 	{
-		int firstpart=LZSSWindowSize(self)-windowoffs;
+		size_t firstpart=LZSSWindowSize(self)-windowoffs;
 		memcpy(&buffer[0],&self->window[windowoffs],firstpart);
 		memcpy(&buffer[firstpart],&self->window[0],length-firstpart);
 	}

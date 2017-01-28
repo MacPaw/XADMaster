@@ -30,13 +30,17 @@ static void BuildCodeFromTree(XADPrefixCode *code,int *tree,int node,int numnode
 	{
 		[code makeLeafWithValue:-(node+1)];
 	}
-	else
+	else if(2*node+1<numnodes)
 	{
 		[code startZeroBranch];
 		BuildCodeFromTree(code,tree,tree[2*node],numnodes);
 		[code startOneBranch];
 		BuildCodeFromTree(code,tree,tree[2*node+1],numnodes);
 		[code finishBranches];
+	}
+	else
+	{
+		[XADException raiseDecrunchException];
 	}
 }
 

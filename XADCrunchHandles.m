@@ -321,6 +321,12 @@ xadINT32 CRUNCHuncrunch(struct xadInOut *io, xadUINT32 mode)
         if(pred == 0) /* end-of-file code */
           break; /* all lzw codes read */
 
+        if(ep->predecessor >= CRUNCH_TABLE_SIZE)
+        {
+          cd->io->xio_Error = XADERR_DECRUNCH;
+          break;
+        }
+
         ep = cd->table + (cd->table[pred].predecessor == CRUNCH_EMPTY ? cd->lastpr : pred);
 
         /* walk back the lzw table starting with this code */

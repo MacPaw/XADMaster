@@ -140,8 +140,6 @@ NSString *FigureOutPassword(NSString *filename)
 	return nil;
 }
 
-#if 0
-
 int main(int argc,char **argv)
 {
 	for(int i=1;i<argc;i++)
@@ -151,47 +149,6 @@ int main(int argc,char **argv)
 		printf("Testing %s...\n",argv[i]);
 
 		NSString *filename=[NSString stringWithUTF8String:argv[i]];
-		XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
-
-		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:2] autorelease]];
-
-		NSString *pass=FigureOutPassword(filename);
-		if(pass) [parser setPassword:pass];
-
-		@try {
-			[parser parse];
-		} @catch(id e) {
-			printf("*** Exception: %s\n",[[e description] UTF8String]);
-		}
-
-		[pool release];
-	}
-	return 0;
-}
-
-#else
-
-int main(int argc,char **argv)
-{
-	NSURL *baseurl=[NSURL fileURLWithPath:@"/Users/dag/Code/The Unarchiver/Crap/afl"];
-	NSDirectoryEnumerator *enumerator=[[NSFileManager defaultManager] enumeratorAtURL:baseurl
-	includingPropertiesForKeys:@[]
-	options:NSDirectoryEnumerationSkipsHiddenFiles
-	errorHandler:nil];
-
-	NSURL *url;
-	while(url=[enumerator nextObject])
-	{
-		NSNumber *isfile;
-		[url getResourceValue:&isfile forKey:NSURLIsRegularFileKey error:NULL];
-		if(!isfile.boolValue) continue;
-
-		NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-
-		NSString *filename=url.path;
-
-		printf("Testing %s...\n",filename.UTF8String);
-
 		XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
 
 		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:2] autorelease]];

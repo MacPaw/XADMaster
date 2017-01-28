@@ -934,23 +934,28 @@ XADGETINFO(AMPK)
           }
           break;
         case AMPKENTRYTYPE_NEWDIR:
-          if(!(err = xadHookAccess(XADM XADAC_READ, et.NameSize, dirname+dirnamesize, ai)))
+          if(dirnamesize + et.NameSize + 1 <= sizeof(dirname))
           {
-            dirnamesize += et.NameSize;
-            if((fi = (struct xadFileInfo *) xadAllocObject(XADM XADOBJ_FILEINFO,
-            XAD_OBJNAMESIZE, dirnamesize+1, TAG_DONE)))
+            if(!(err = xadHookAccess(XADM XADAC_READ, et.NameSize, dirname+dirnamesize, ai)))
             {
-              fi->xfi_Flags = XADFIF_DIRECTORY|XADFIF_NODATE;
-              xadConvertDates(XADM XAD_DATECURRENTTIME, 1, XAD_GETDATEXADDATE,
-              &fi->xfi_Date, TAG_DONE);
-              for(i = 0; i < dirnamesize; ++i)
-                fi->xfi_FileName[i] = dirname[i];
-              err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos, TAG_DONE);
+              dirnamesize += et.NameSize;
+              if((fi = (struct xadFileInfo *) xadAllocObject(XADM XADOBJ_FILEINFO,
+              XAD_OBJNAMESIZE, dirnamesize+1, TAG_DONE)))
+              {
+                fi->xfi_Flags = XADFIF_DIRECTORY|XADFIF_NODATE;
+                xadConvertDates(XADM XAD_DATECURRENTTIME, 1, XAD_GETDATEXADDATE,
+                &fi->xfi_Date, TAG_DONE);
+                for(i = 0; i < dirnamesize; ++i)
+                  fi->xfi_FileName[i] = dirname[i];
+                err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos, TAG_DONE);
+              }
+              else
+                err = XADERR_NOMEMORY;
+              dirname[dirnamesize++] = '/';
             }
-            else
-              err = XADERR_NOMEMORY;
-            dirname[dirnamesize++] = '/';
           }
+		  else
+            err = XADERR_SHORTBUFFER;
           break;
         case AMPKENTRYTYPE_FILE:
           if(!(err = xadHookAccess(XADM XADAC_READ, et.NameSize, dirname+dirnamesize, ai)))

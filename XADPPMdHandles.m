@@ -27,13 +27,17 @@
 	[super dealloc];
 }
 
--(void)resetByteStream { StartPPMdModelVariantG(&model,(PPMdReadFunction *)CSInputNextByte,input,&alloc->core,max,NO); }
+-(void)resetByteStream
+{
+	StartPPMdModelVariantG(&model,(PPMdReadFunction *)CSInputNextByte,input,&alloc->core,max,NO);
+}
 
 -(uint8_t)produceByteAtOffset:(off_t)pos
 {
 	int byte=NextPPMdVariantGByte(&model);
-	if(byte<0) CSByteStreamEOF(self);
-	return byte;
+	if(byte==-1) CSByteStreamEOF(self);
+	else if(byte==-2) { [XADException raiseDecrunchException]; return 0; }
+	else return byte;
 }
 
 @end

@@ -2,6 +2,7 @@
 #define __PPMD_VARIANT_G_H__
 
 #include "Context.h"
+#include <setjmp.h>
 
 // PPMd Variant G. Used (slightly modified) by StuffIt X.
 
@@ -15,6 +16,8 @@ typedef struct PPMdModelVariantG
 	SEE2Context SEE2Cont[43][8],DummySEE2Cont;
 	uint8_t NS2BSIndx[256],NS2Indx[256];
 	uint16_t BinSumm[128][16]; // binary SEE-contexts
+
+	jmp_buf errorjmp;
 } PPMdModelVariantG;
 
 void StartPPMdModelVariantG(PPMdModelVariantG *self,

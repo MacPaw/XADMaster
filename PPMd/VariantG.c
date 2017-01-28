@@ -103,6 +103,7 @@ static void RestartModel(PPMdModelVariantG *self)
 int NextPPMdVariantGByte(PPMdModelVariantG *self)
 {
 	if(!self->MinContext) return -1;
+	if(setjmp(self->errorjmp)) return -2;
 
 	if(NumberOfStates(self->MinContext)!=1) DecodeSymbol1VariantG(self->MinContext,self);
 	else DecodeBinSymbolVariantG(self->MinContext,self);
@@ -272,6 +273,7 @@ static void UpdateModel(PPMdModelVariantG *self)
 	}
 
 	self->MedContext=self->MinContext;
+	if(!Successor) longjmp(self->errorjmp,1);
 	self->MaxContext=Successor;
 	return;
 
@@ -308,6 +310,7 @@ static bool MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *s
 	do
 	{
 		context=PPMdContextSuffix(context,&self->core);
+		if(!context) longjmp(self->errorjmp,1);
 		if(NumberOfStates(context)!=1)
 		{
 			state=PPMdContextStates(context,&self->core);

@@ -227,8 +227,10 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 			XADCABBlockReader *blocks=[[file objectForKey:XADSolidObjectKey] objectForKey:@"BlockReader"];
 			off_t streamcompsize=[blocks compressedLength];
 			off_t streamuncompsize=[blocks uncompressedLength];
+			off_t compsize=0;
+			if(streamuncompsize!=0) compsize=filesize*streamcompsize/streamuncompsize;
 
-			[file setObject:[NSNumber numberWithLongLong:filesize*streamcompsize/streamuncompsize] forKey:XADCompressedSizeKey];
+			[file setObject:[NSNumber numberWithLongLong:compsize] forKey:XADCompressedSizeKey];
 
 			[self addEntryWithDictionary:file];
 			[files removeObjectAtIndex:0];

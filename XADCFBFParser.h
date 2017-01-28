@@ -8,6 +8,7 @@
 
 	int numsectors,numminisectors;
 	uint32_t *sectable,*minisectable;
+	bool *secvisitedtable;
 }
 
 +(int)requiredHeaderSize;

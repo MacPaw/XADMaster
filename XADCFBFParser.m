@@ -36,7 +36,6 @@
 {
 	CSHandle *fh=[self handle];
 
-
 	// Read header
 
 	[fh skipBytes:30];
@@ -63,6 +62,7 @@
 
 	numsectors=numtablesecs*idspersec;
 	sectable=malloc(numsectors*sizeof(uint32_t));
+	secvisitedtable=calloc(numsectors*sizeof(bool),1);
 
 	for(int i=0;i<numtablesecs;i++)
 	{
@@ -109,6 +109,8 @@
 	uint32_t dirsec=firstdirsec;
 	while(dirsec!=0xfffffffe)
 	{
+		if(secvisitedtable[dirsec]) [XADException raiseIllegalDataException];
+		secvisitedtable[dirsec]=true;
 		[self seekToSector:dirsec];
 		for(int i=0;i<secsize;i+=128)
 		{

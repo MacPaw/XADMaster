@@ -46,6 +46,7 @@ void SetRAROpcodeOperand2(RAROpcode *opcode,unsigned int addressingmode,uint32_t
 
 bool IsProgramTerminated(RAROpcode *opcodes,int numopcodes)
 {
+	if(numopcodes==0) return false;
 	return RARInstructionIsUnconditionalJump(opcodes[numopcodes-1].instruction);
 }
 

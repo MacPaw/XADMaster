@@ -56,7 +56,9 @@ void _CSInputFillBuffer(CSInputBuffer *self);
 
 static inline void _CSInputBufferRaiseEOF(CSInputBuffer *self)
 {
-	[self->parent _raiseEOF];
+	if(self->parent) [self->parent _raiseEOF];
+	else [NSException raise:CSEndOfFileException
+	format:@"Attempted to read past the end of memory buffer."];
 }
 
 static inline int _CSInputBytesLeftInBuffer(CSInputBuffer *self)

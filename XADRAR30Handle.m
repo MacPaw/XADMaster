@@ -576,7 +576,7 @@
 	if(isnew)
 	{
 		int length=CSInputNextRARVMNumber(filterinput);
-		if(length==0||length>0x10000) [XADException raiseIllegalDataException];
+		if(length<=0||length>0x10000) [XADException raiseIllegalDataException];
 
 		uint8_t bytecode[length];
 		for(int i=0;i<length;i++) bytecode[i]=CSInputNextBitString(filterinput,8);

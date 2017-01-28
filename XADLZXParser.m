@@ -133,10 +133,10 @@
 			NSMutableDictionary *dict;
 			while((dict=[enumerator nextObject]))
 			{
+				off_t compsize=0;
+				if(solidsize!=0) compsize=([[dict objectForKey:XADFileSizeKey] longLongValue]*(off_t)compsize)/solidsize;
 				[dict setObject:solidobj forKey:XADSolidObjectKey];
-				[dict setObject:[NSNumber numberWithLongLong:
-				([[dict objectForKey:XADFileSizeKey] longLongValue]*(off_t)compsize)/solidsize]
-				forKey:XADCompressedSizeKey];
+				[dict setObject:[NSNumber numberWithLongLong:compsize] forKey:XADCompressedSizeKey];
 				[self addEntryWithDictionary:dict];
 			}
 

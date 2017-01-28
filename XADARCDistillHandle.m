@@ -68,8 +68,7 @@ static void BuildCodeFromTree(XADPrefixCode *code,int *tree,int node,int numnode
 	int numnodes=CSInputNextUInt16LE(input);
 	int codelength=CSInputNextByte(input);
 
-	analyser_assert(numnodes>=2);
-
+	if(numnodes<2) [XADException raiseDecrunchException];
 	if(numnodes>0x274) [XADException raiseDecrunchException];
 
 	int nodes[numnodes];

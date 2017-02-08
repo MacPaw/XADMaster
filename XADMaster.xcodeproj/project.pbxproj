@@ -1418,6 +1418,11 @@
 		1BF3BA9013EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
+		C99DC7321E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
+		C99DC7331E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
+		C99DC7341E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
+		C99DC7351E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
+		C99DC7361E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -2202,6 +2207,8 @@
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		8DC2EF5B0486A6940098B216 /* XADMaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XADMaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C99DC72F1E4B31E500F54201 /* XADTestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADTestUtilities.h; sourceTree = "<group>"; };
+		C99DC7301E4B31E500F54201 /* XADTestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTestUtilities.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2790,6 +2797,8 @@
 				1B3423A0131D8B8C00CCDF77 /* XADTest5.m */,
 				1B31CB9713C6427800ED119E /* XADTest6.m */,
 				1B3A650110154DCE00AE25A8 /* CSHexDump.m */,
+				C99DC72F1E4B31E500F54201 /* XADTestUtilities.h */,
+				C99DC7301E4B31E500F54201 /* XADTestUtilities.m */,
 			);
 			name = XADTest;
 			sourceTree = "<group>";
@@ -4156,6 +4165,7 @@
 			files = (
 				1B31CB9813C6428E00ED119E /* XADTest6.m in Sources */,
 				1B31CB9D13C6470E00ED119E /* NSStringPrinting.m in Sources */,
+				C99DC7361E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4165,6 +4175,7 @@
 			files = (
 				1B3423A6131D8BA400CCDF77 /* XADTest5.m in Sources */,
 				1B31CB9E13C6471100ED119E /* NSStringPrinting.m in Sources */,
+				C99DC7351E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4401,6 +4412,7 @@
 			files = (
 				1B3A68B2101BA1C300AE25A8 /* XADTest4.m in Sources */,
 				1B31CB9F13C6471100ED119E /* NSStringPrinting.m in Sources */,
+				C99DC7341E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4907,6 +4919,7 @@
 			files = (
 				1BC893890ED6F51D006B47FE /* XADTest2.m in Sources */,
 				1B31CBA113C6471300ED119E /* NSStringPrinting.m in Sources */,
+				C99DC7321E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 				1BF0EF7014047F50007B8CF8 /* CSHexDump.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4917,6 +4930,7 @@
 			files = (
 				1B3423A5131D8B9D00CCDF77 /* XADTest3.m in Sources */,
 				1B31CBA013C6471200ED119E /* NSStringPrinting.m in Sources */,
+				C99DC7331E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

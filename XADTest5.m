@@ -1,4 +1,5 @@
 #import "XADArchiveParser.h"
+#import "XADTestUtilities.h"
 #import "CSFileHandle.h"
 #import "XADRegex.h"
 
@@ -33,20 +34,6 @@ const uint8_t *correctbytes;
 off_t correctlength;
 
 
-
-NSString *FigureOutPassword(NSString *filename)
-{
-	const char *envpass=getenv("XADTestPassword");
-	if(envpass) return [NSString stringWithUTF8String:envpass];
-
-	NSArray *matches=[filename substringsCapturedByPattern:@"_pass_(.+)\\.[pP][aA][rR][tT][0-9]+\\.[rR][aA][rR]$"];
-	if(matches) return [matches objectAtIndex:1];
-
-	matches=[filename substringsCapturedByPattern:@"_pass_(.+)\\.[^.]+$"];
-	if(matches) return [matches objectAtIndex:1];
-
-	return nil;
-}
 
 int main(int argc,char **argv)
 {

@@ -59,12 +59,12 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 	maxfreq2=1<<CSInputNextSitxP2(input);
 	maxfreq3=1<<CSInputNextSitxP2(input);
 
-	byteshift1=(int)CSInputNextSitxP2(input);
-	byteshift2=(int)CSInputNextSitxP2(input);
-	byteshift3=(int)CSInputNextSitxP2(input);
-	countshift1=(int)CSInputNextSitxP2(input);
-	countshift2=(int)CSInputNextSitxP2(input);
-	countshift3=(int)CSInputNextSitxP2(input);
+	byteshift1=(unsigned int)CSInputNextSitxP2(input);
+	byteshift2=(unsigned int)CSInputNextSitxP2(input);
+	byteshift3=(unsigned int)CSInputNextSitxP2(input);
+	countshift1=(unsigned int)CSInputNextSitxP2(input);
+	countshift2=(unsigned int)CSInputNextSitxP2(input);
+	countshift3=(unsigned int)CSInputNextSitxP2(input);
 }
 
 -(int)produceBlockAtOffset:(off_t)pos
@@ -73,12 +73,13 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 
 	if(CSInputNextBitLE(input)==1) return -1;
 
-	int blocksize=(int)CSInputNextSitxP2(input);
+	unsigned int blocksize=(unsigned int)CSInputNextSitxP2(input);
 
 	if(blocksize>currsize)
 	{
 		free(block);
 		block=malloc(blocksize*6);
+		if(!block) [XADException raiseOutOfMemoryException];
 		sorted=block+blocksize;
 		table=(uint32_t *)(block+2*blocksize);
 		currsize=blocksize;
@@ -86,7 +87,8 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 
 	if(CSInputNextBitLE(input)==0) // compressed
 	{
-		int firstindex=(int)CSInputNextSitxP2(input);
+		unsigned int firstindex=(int)CSInputNextSitxP2(input);
+		if(firstindex>=blocksize) [XADException raiseDecrunchException];
 
 		CSInputSkipToByteBoundary(input);
 

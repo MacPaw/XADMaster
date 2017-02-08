@@ -8,9 +8,9 @@
 
 	int st4transform,fancymtf;
 
-	int maxfreq1,maxfreq2,maxfreq3;
-	int byteshift1,byteshift2,byteshift3;
-	int countshift1,countshift2,countshift3;
+	unsigned int maxfreq1,maxfreq2,maxfreq3;
+	unsigned int byteshift1,byteshift2,byteshift3;
+	unsigned int countshift1,countshift2,countshift3;
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length;

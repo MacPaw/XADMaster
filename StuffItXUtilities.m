@@ -1,9 +1,11 @@
 #import "StuffItXUtilities.h"
+#import "XADException.h"
 
 uint64_t ReadSitxP2(CSHandle *fh)
 {
 	int n=1;
-	while([fh readBitsLE:1]==1) n++;
+	while([fh readBitsLE:1]==1 && n<64) n++;
+	if(n>=64) [XADException raiseDecrunchException];
 
 	uint64_t value=0;
 	uint64_t bit=1;

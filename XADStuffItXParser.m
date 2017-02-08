@@ -16,7 +16,7 @@
 
 typedef struct StuffItXElement
 {
-	int something,type;
+	unsigned int something,type;
 	int64_t attribs[10];
 	int64_t alglist[6];
 	int64_t alglist3_extra;
@@ -36,11 +36,11 @@ static void ReadElement(CSHandle *fh,StuffItXElement *element)
 	element->alglist3_extra=-1;
 
 	element->something=[fh readBitsLE:1];
-	element->type=(int)ReadSitxP2(fh);
+	element->type=(unsigned int)ReadSitxP2(fh);
 
 	for(;;)
 	{
-		int type=(int)ReadSitxP2(fh);
+		unsigned int type=(unsigned int)ReadSitxP2(fh);
 		if(type==0) break;
 		uint64_t value=ReadSitxP2(fh);
 		if(type<=10) element->attribs[type-1]=value;
@@ -49,7 +49,7 @@ static void ReadElement(CSHandle *fh,StuffItXElement *element)
 
 	for(;;)
 	{
-		int type=(int)ReadSitxP2(fh);
+		unsigned int type=(unsigned int)ReadSitxP2(fh);
 		if(type==0) break;
 		uint64_t value=ReadSitxP2(fh);
 		if(type<=6) element->alglist[type-1]=value;
@@ -614,7 +614,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 	{
 		for(;;)
 		{
-			int key=(int)ReadSitxP2(fh);
+			unsigned int key=(unsigned int)ReadSitxP2(fh);
 			if(!key) break;
 
 			switch(key)
@@ -673,7 +673,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 
 				case 7:
 				{
-					int val=(int)ReadSitxP2(fh);
+					unsigned int val=(unsigned int)ReadSitxP2(fh);
 					NSLog(@"7: %d",val);
 				}
 				break;
@@ -693,7 +693,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 
 				case 10:
 				{
-					int num=(int)ReadSitxP2(fh);
+					unsigned int num=(unsigned int)ReadSitxP2(fh);
 					for(int i=0;i<num;i++)
 					NSLog(@"10: %@",[self XADStringWithData:ReadSitxString(fh)]);
 				}

@@ -120,7 +120,9 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 
 		case 0: // Brimstone/PPMd
 		{
-			int allocsize=1<<[handle readUInt8];
+			int exponent=[handle readUInt8];
+			if(exponent>31) [XADException raiseDecrunchException];
+			int allocsize=1<<exponent;
 			int order=[handle readUInt8];
 			handle=[[[XADStuffItXBrimstoneHandle alloc] initWithHandle:handle
 			length:uncompressedlength maxOrder:order subAllocSize:allocsize] autorelease];

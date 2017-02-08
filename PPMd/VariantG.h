@@ -20,7 +20,7 @@ typedef struct PPMdModelVariantG
 	jmp_buf errorjmp;
 } PPMdModelVariantG;
 
-void StartPPMdModelVariantG(PPMdModelVariantG *self,
+bool StartPPMdModelVariantG(PPMdModelVariantG *self,
 PPMdReadFunction *readfunc,void *inputcontext,
 PPMdSubAllocator *alloc,int maxorder,bool brimstone);
 int NextPPMdVariantGByte(PPMdModelVariantG *self);

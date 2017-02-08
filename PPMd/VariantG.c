@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-static void RestartModel(PPMdModelVariantG *self);
+static bool RestartModel(PPMdModelVariantG *self);
 
 static void UpdateModel(PPMdModelVariantG *self);
 static bool MakeRoot(PPMdModelVariantG *self,unsigned int SkipCount,PPMdState *state);
@@ -13,7 +13,7 @@ static void DecodeSymbol2VariantG(PPMdContext *self,PPMdModelVariantG *model);
 
 static int NumberOfStates(PPMdContext *self) { return self->Flags?0:self->LastStateIndex+1; }
 
-void StartPPMdModelVariantG(PPMdModelVariantG *self,
+bool StartPPMdModelVariantG(PPMdModelVariantG *self,
 PPMdReadFunction *readfunc,void *inputcontext,
 PPMdSubAllocator *alloc,int maxorder,bool brimstone)
 {
@@ -39,10 +39,10 @@ PPMdSubAllocator *alloc,int maxorder,bool brimstone)
 
 	self->DummySEE2Cont.Shift=PERIOD_BITS;
 
-	RestartModel(self);
+	return RestartModel(self);
 }
 
-static void RestartModel(PPMdModelVariantG *self)
+static bool RestartModel(PPMdModelVariantG *self)
 {
 	InitSubAllocator(self->core.alloc);
 
@@ -52,10 +52,12 @@ static void RestartModel(PPMdModelVariantG *self)
 	self->core.OrderFall=1;
 
 	self->MaxContext=NewPPMdContext(&self->core);
+	if(!self->MaxContext) return false;
 	self->MaxContext->LastStateIndex=255;
 	if(self->Brimstone) self->MaxContext->SummFreq=385;
 	else self->MaxContext->SummFreq=257;
 	self->MaxContext->States=AllocUnits(self->core.alloc,256/2);
+	if(!self->MaxContext->States) return false;
 
 	PPMdState *maxstates=PPMdContextStates(self->MaxContext,&self->core);
 	for(int i=0;i<256;i++)
@@ -71,6 +73,7 @@ static void RestartModel(PPMdModelVariantG *self)
 	{
 		//PPMdState firststate={0,1};
 		self->MaxContext=NewPPMdContextAsChildOf(&self->core,self->MaxContext,state,/*&firststate*/NULL);
+		if(!self->MaxContext) return false;
 		if(i==self->MaxOrder) break;
 		state=PPMdContextOneState(self->MaxContext);
 		state->Symbol=0;
@@ -96,6 +99,8 @@ static void RestartModel(PPMdModelVariantG *self)
 	for(int i=0;i<43;i++)
 	for(int k=0;k<8;k++)
 	self->SEE2Cont[i][k]=MakeSEE2(4*i+10,3);
+
+	return true;
 }
 
 

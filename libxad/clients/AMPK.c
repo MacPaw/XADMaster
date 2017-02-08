@@ -958,40 +958,45 @@ XADGETINFO(AMPK)
             err = XADERR_SHORTBUFFER;
           break;
         case AMPKENTRYTYPE_FILE:
-          if(!(err = xadHookAccess(XADM XADAC_READ, et.NameSize, dirname+dirnamesize, ai)))
+          if(dirnamesize + et.NameSize <= sizeof(dirname))
           {
-            if(!(err = xadHookAccess(XADM XADAC_READ, AMPKFile_TRUESIZE, &fl, ai)))
+            if(!(err = xadHookAccess(XADM XADAC_READ, et.NameSize, dirname+dirnamesize, ai)))
             {
-              xadUINT32 size = EndGetM32(fl.Size);
-              xadUINT32 crunchedSize = EndGetM32(fl.CrunchedSize);
-              xadUINT32 protection = EndGetM32(fl.Protection);
-              if((fi = (struct xadFileInfo *) xadAllocObject(XADM XADOBJ_FILEINFO,
-              XAD_OBJNAMESIZE, dirnamesize+et.NameSize+1,  fl.CommentSize ? XAD_OBJCOMMENTSIZE :
-              TAG_DONE, fl.CommentSize+1, TAG_DONE)))
+              if(!(err = xadHookAccess(XADM XADAC_READ, AMPKFile_TRUESIZE, &fl, ai)))
               {
-                if(!fl.CommentSize || !(err = xadHookAccess(XADM XADAC_READ, fl.CommentSize, fi->xfi_Comment, ai)))
+                xadUINT32 size = EndGetM32(fl.Size);
+                xadUINT32 crunchedSize = EndGetM32(fl.CrunchedSize);
+                xadUINT32 protection = EndGetM32(fl.Protection);
+                if((fi = (struct xadFileInfo *) xadAllocObject(XADM XADOBJ_FILEINFO,
+                XAD_OBJNAMESIZE, dirnamesize+et.NameSize+1,  fl.CommentSize ? XAD_OBJCOMMENTSIZE :
+                TAG_DONE, fl.CommentSize+1, TAG_DONE)))
                 {
-                  fi->xfi_DataPos = ai->xai_InPos;
-                  fi->xfi_PrivateInfo = (xadPTR)(uintptr_t) fl.CrunchType;
-                  fi->xfi_EntryInfo = ampktype[fl.CrunchType];
-                  for(i = 0; i < dirnamesize + et.NameSize; ++i)
-                    fi->xfi_FileName[i] = dirname[i];
-                  fi->xfi_CrunchSize = fl.CrunchType ? crunchedSize : size;
-                  fi->xfi_Size = size;
-                  fi->xfi_Flags = XADFIF_NODATE|XADFIF_SEEKDATAPOS|XADFIF_EXTRACTONBUILD;
-                  xadConvertDates(XADM XAD_DATECURRENTTIME, 1, XAD_GETDATEXADDATE,
-                  &fi->xfi_Date, TAG_DONE);
-                  fi->xfi_Protection = protection;
-                  skip = crunchedSize - (xadUINT32)fi->xfi_CrunchSize;
-                  err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos+fi->xfi_CrunchSize, TAG_DONE);
+                  if(!fl.CommentSize || !(err = xadHookAccess(XADM XADAC_READ, fl.CommentSize, fi->xfi_Comment, ai)))
+                  {
+                    fi->xfi_DataPos = ai->xai_InPos;
+                    fi->xfi_PrivateInfo = (xadPTR)(uintptr_t) fl.CrunchType;
+                    fi->xfi_EntryInfo = ampktype[fl.CrunchType];
+                    for(i = 0; i < dirnamesize + et.NameSize; ++i)
+                      fi->xfi_FileName[i] = dirname[i];
+                    fi->xfi_CrunchSize = fl.CrunchType ? crunchedSize : size;
+                    fi->xfi_Size = size;
+                    fi->xfi_Flags = XADFIF_NODATE|XADFIF_SEEKDATAPOS|XADFIF_EXTRACTONBUILD;
+                    xadConvertDates(XADM XAD_DATECURRENTTIME, 1, XAD_GETDATEXADDATE,
+                    &fi->xfi_Date, TAG_DONE);
+                    fi->xfi_Protection = protection;
+                    skip = crunchedSize - (xadUINT32)fi->xfi_CrunchSize;
+                    err = xadAddFileEntry(XADM fi, ai, XAD_SETINPOS, ai->xai_InPos+fi->xfi_CrunchSize, TAG_DONE);
+                  }
+                  else
+                    xadFreeObjectA(XADM fi, 0);
                 }
                 else
-                  xadFreeObjectA(XADM fi, 0);
+                  err = XADERR_NOMEMORY;
               }
-              else
-                err = XADERR_NOMEMORY;
             }
           }
+		  else
+            err = XADERR_SHORTBUFFER;
           break;
         } /* switch */
       }

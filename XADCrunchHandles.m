@@ -295,7 +295,7 @@ xadINT32 CRUNCHuncrunch(struct xadInOut *io, xadUINT32 mode)
     if(mode)
     {
       xadUINT8 *stackp, *stacke; /* byte string stack pointer */
-      struct CrunchEntry *ep;
+      struct CrunchEntry *ep = NULL;
 
       stackp = cd->stack;
       stacke = cd->stack+CRUNCH_TABLE_SIZE-2;
@@ -321,13 +321,23 @@ xadINT32 CRUNCHuncrunch(struct xadInOut *io, xadUINT32 mode)
         if(pred == 0) /* end-of-file code */
           break; /* all lzw codes read */
 
-        if(ep->predecessor >= CRUNCH_TABLE_SIZE)
+        if(pred >= CRUNCH_TABLE_SIZE)
         {
           cd->io->xio_Error = XADERR_DECRUNCH;
           break;
         }
 
-        ep = cd->table + (cd->table[pred].predecessor == CRUNCH_EMPTY ? cd->lastpr : pred);
+		if(cd->table[pred].predecessor == CRUNCH_EMPTY)
+		{
+			pred = cd->lastpr;
+			if(pred >= CRUNCH_TABLE_SIZE)
+			{
+				cd->io->xio_Error = XADERR_DECRUNCH;
+				break;
+			}
+		}
+
+        ep = cd->table + pred;
 
         /* walk back the lzw table starting with this code */
         while(ep->predecessor < CRUNCH_TABLE_SIZE)

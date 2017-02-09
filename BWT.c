@@ -38,7 +38,7 @@ void UnsortBWT(uint8_t *dest,uint8_t *src,int blocklen,int firstindex,uint32_t *
 	}
 }
 
-void UnsortST4(uint8_t *dest,uint8_t *src,int blocklen,int firstindex,uint32_t *transform)
+bool UnsortST4(uint8_t *dest,uint8_t *src,int blocklen,int firstindex,uint32_t *transform)
 {
 	int counts[256];
 	for(int i=0;i<256;i++) counts[i]=0;
@@ -115,20 +115,26 @@ void UnsortST4(uint8_t *dest,uint8_t *src,int blocklen,int firstindex,uint32_t *
 	{
 		if(tval&0x800000)
 		{
-			index=transform[tval&0x7fffff]&0x7fffff;
-			transform[tval&0x7fffff]++;
+			int newindex=tval&0x7fffff;
+			if(newindex>=blocklen) { free(array2); return false; } // TODO: Is it a bug that this can happen, or not?
+			index=transform[newindex]&0x7fffff;
+			transform[newindex]++;
 		}
 		else
 		{
+			if(index>=blocklen) { free(array2); return false; }
 			transform[index]++;
 			index=tval&0x7fffff;
 		}
 
+		if(index>=blocklen) { free(array2); return false; }
 		tval=transform[index];
 		dest[i]=tval>>24;
 	}
 
 	free(array2);
+
+	return true;
 }
 
 /*void UnsortBWTStuffItX(uint8_t *dest,int blocklen,int firstindex,uint8_t *src,uint32_t *transform)

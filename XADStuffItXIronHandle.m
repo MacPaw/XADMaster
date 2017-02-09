@@ -96,7 +96,7 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 
 		if(st4transform)
 		{
-			UnsortST4(block,sorted,blocksize,firstindex,table);
+			if(!UnsortST4(block,sorted,blocksize,firstindex,table)) [XADException raiseDecrunchException];
 		}
 		else
 		{

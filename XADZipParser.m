@@ -128,13 +128,13 @@
 	off_t centraloffs=end-numbytes+pos;
 
 	// Find zip64 end of central directory locator
-	while(pos>=0)
+	if(pos>=20 && buf[pos-20]=='P' && buf[pos-19]=='K' && buf[pos-18]==6 && buf[pos-17]==7)
 	{
-		if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==6&&buf[pos+3]==7) break;
-		pos--;
+		// Found a zip64 end of central directory locator.
+		off_t zip64offs=end-numbytes+pos-20;
+		[self parseWithCentralDirectoryAtOffset:centraloffs zip64Offset:zip64offs];
 	}
-
-	if(pos<0)
+	else
 	{
 		// Could not find a zip64 end of central directory locator.
 		if(end>0x100000000)
@@ -149,12 +149,6 @@
 			// If the file is small enough, everything is fine, and we continue.
 			[self parseWithCentralDirectoryAtOffset:centraloffs zip64Offset:-1];
 		}
-	}
-	else
-	{
-		// Found a zip64 end of central directory locator.
-		off_t zip64offs=end-numbytes+pos;
-		[self parseWithCentralDirectoryAtOffset:centraloffs zip64Offset:zip64offs];
 	}
 }
 

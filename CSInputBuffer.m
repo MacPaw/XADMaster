@@ -181,7 +181,8 @@ void _CSInputFillBits(CSInputBuffer *self)
 //		shift-=8;
 //	}
 
-	if(startoffset+numbytes>_CSInputBytesLeftInBuffer(self)) _CSInputBufferRaiseEOF(self);
+// Commented out as it causes false positives for RAR archives. E.g. "CWCHEAT_0_2_2_REVD.RAR" from test data
+	//if(startoffset+numbytes>_CSInputBytesLeftInBuffer(self)) _CSInputBufferRaiseEOF(self);
 
 	switch(numbytes)
 	{

@@ -1,4 +1,4 @@
-# XADMaster is a Objective-C library for archive and file unarchiving and extraction.
+# Objective-C library for archive and file unarchiving and extraction
 
 * Supports multiple archive formats such as Zip, Tar, Gzip, Bzip2, 7-Zip, Rar, LhA, StuffIt, several old Amiga file and disk archives, CAB, LZX. Read [the wiki page](http://code.google.com/p/theunarchiver/wiki/SupportedFormats) for a more thorough listing of formats.
 * Supports split archives for certain formats, like RAR.
@@ -8,17 +8,17 @@
 * Originally developed by [Dag Ågren](https://github.com/DagAgren)
 
 
-# Project Structure
+# Building
 
-XADMaster relies on directories structure. For starting development you'll need to clone the main project with Universal Detector library
+XADMaster relies on directories structure. To start development you'll need to clone the main project with Universal Detector library:
 ```
 git clone https://github.com/MacPaw/XADMaster.git
 git clone https://github.com/MacPaw/universal-detector.git UniversalDetector
 ```
-The result directory structure should look like this
+The resulting directory structure should look like:
 
 ```
-<develompent-directory>
+<development-directory>
   /XADMaster
   /UniversalDetector
 ```

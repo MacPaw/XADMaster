@@ -23,3 +23,6 @@ The result directory structure should look like this
   /UniversalDetector
 ```
 
+# License
+
+This software is distributed under the [LGPL 2.1](https://www.gnu.org/licenses/lgpl-2.1.html) license. Please read LICENSE for information on the software availability and distribution.

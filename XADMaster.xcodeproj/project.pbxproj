@@ -1418,6 +1418,8 @@
 		1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		7398C7AE2059248700D7B977 /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B06D3770DDA5C2600D9C000 /* UniversalDetector.framework */; };
+		73DA3468206B6BF1006ADB42 /* XADPlatformOSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */; };
+		73DA346A206B6BF1006ADB42 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
 		C99DC7321E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
 		C99DC7331E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
 		C99DC7341E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
@@ -1655,6 +1657,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = UniversalDetector;
+		};
+		73DA346B206B6BF1006ADB42 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = XADMaster;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2206,6 +2215,9 @@
 		32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMaster_Prefix.pch; sourceTree = "<group>"; };
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		73DA3465206B6BF1006ADB42 /* XADMasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XADMasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADPlatformOSXTests.m; sourceTree = "<group>"; };
+		73DA3469206B6BF1006ADB42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* XADMaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XADMaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C99DC72F1E4B31E500F54201 /* XADTestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADTestUtilities.h; sourceTree = "<group>"; };
 		C99DC7301E4B31E500F54201 /* XADTestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTestUtilities.m; sourceTree = "<group>"; };
@@ -2341,6 +2353,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		73DA3462206B6BF1006ADB42 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				73DA346A206B6BF1006ADB42 /* XADMaster.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2373,6 +2393,7 @@
 				1B91D2EE11E694860081E40A /* lsar.exe */,
 				1B31CB9213C6423600ED119E /* XADTest6 */,
 				1B467B0115CD9A73001AB1DD /* libXADMaster.ios.a */,
+				73DA3465206B6BF1006ADB42 /* XADMasterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2395,6 +2416,7 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				1BDDC79413DE3D2800A8C079 /* Man Pages */,
+				73DA3466206B6BF1006ADB42 /* XADMasterTests */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */,
 				7398C7AD2059248700D7B977 /* Frameworks */,
@@ -3341,6 +3363,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		73DA3466206B6BF1006ADB42 /* XADMasterTests */ = {
+			isa = PBXGroup;
+			children = (
+				73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */,
+				73DA3469206B6BF1006ADB42 /* Info.plist */,
+			);
+			path = XADMasterTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -4039,6 +4070,24 @@
 			productReference = 1BC8931A0ED6F283006B47FE /* XADTest3 */;
 			productType = "com.apple.product-type.tool";
 		};
+		73DA3464206B6BF1006ADB42 /* XADMasterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 73DA3471206B6BF1006ADB42 /* Build configuration list for PBXNativeTarget "XADMasterTests" */;
+			buildPhases = (
+				73DA3461206B6BF1006ADB42 /* Sources */,
+				73DA3462206B6BF1006ADB42 /* Frameworks */,
+				73DA3463206B6BF1006ADB42 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				73DA346C206B6BF1006ADB42 /* PBXTargetDependency */,
+			);
+			name = XADMasterTests;
+			productName = XADMasterTests;
+			productReference = 73DA3465206B6BF1006ADB42 /* XADMasterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8DC2EF4F0486A6940098B216 /* XADMaster */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "XADMaster" */;
@@ -4066,6 +4115,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0800;
+				TargetAttributes = {
+					73DA3464206B6BF1006ADB42 = {
+						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = S8EX82NJP6;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "XADMaster" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -4103,6 +4159,7 @@
 				1B91CD9611D981E20081E40A /* unar.exe */,
 				1B91D2D611E694860081E40A /* lsar.exe */,
 				1B433E2611E945D300DA1EFB /* Everything */,
+				73DA3464206B6BF1006ADB42 /* XADMasterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -4146,6 +4203,13 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		73DA3463206B6BF1006ADB42 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF520486A6940098B216 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4942,6 +5006,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		73DA3461206B6BF1006ADB42 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				73DA3468206B6BF1006ADB42 /* XADPlatformOSXTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF540486A6940098B216 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5291,6 +5363,11 @@
 			isa = PBXTargetDependency;
 			name = UniversalDetector;
 			targetProxy = 3D664E3E10376F6A00A679EF /* PBXContainerItemProxy */;
+		};
+		73DA346C206B6BF1006ADB42 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* XADMaster */;
+			targetProxy = 73DA346B206B6BF1006ADB42 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -6094,6 +6171,93 @@
 			};
 			name = Debug;
 		};
+		73DA346D206B6BF1006ADB42 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S8EX82NJP6;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = XADMasterTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.macpaw.XADMasterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		73DA346E206B6BF1006ADB42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S8EX82NJP6;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = XADMasterTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.macpaw.XADMasterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -6237,6 +6401,15 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1B68D25C13282D2500A8121A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		73DA3471206B6BF1006ADB42 /* Build configuration list for PBXNativeTarget "XADMasterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				73DA346D206B6BF1006ADB42 /* Debug */,
+				73DA346E206B6BF1006ADB42 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

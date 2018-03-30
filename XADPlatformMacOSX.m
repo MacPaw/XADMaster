@@ -41,8 +41,44 @@ struct ResourceOutputArguments
 @end
 
 
+#pragma mark - Helpers
 
+@interface NSQuarantineInformationContainer : NSObject
+{
+@public
+	void *data;
+	size_t size;
+}
+@end
 
+@implementation NSQuarantineInformationContainer
+
+#pragma mark - Dealloc
+
+- (void)dealloc
+{
+	free(data);
+	data = NULL;
+	[super dealloc];
+}
+
+- (BOOL)isEqual:(id)other
+{
+	if (other == self) return YES;
+	if (self == other) return YES;
+
+	if (![other isKindOfClass:[NSQuarantineInformationContainer class]]) return NO;
+
+	NSQuarantineInformationContainer *container = (NSQuarantineInformationContainer *) other;
+	if (size != container->size) return NO;
+	if (size == 0 && data == NULL && container->data == NULL) return YES;
+	if (memcmp(data, container->data, size) != 0) return NO;
+	return YES;
+}
+
+@end
+
+#pragma mark - Implementation
 @implementation XADPlatform
 
 //
@@ -315,18 +351,75 @@ preservePermissions:(BOOL)preservepermissions
 
 +(id)readCloneableMetadataFromPath:(NSString *)path
 {
-	NSDictionary *value;
-    if([[NSURL fileURLWithPath:path] getResourceValue:&value forKey:@"NSURLQuarantinePropertiesKey" error:NULL])
-	{
-		return value;
-	}
-	return nil;
+	if (!path) return nil;
+	id value = [self quarantineInformationForFileAtPath:path];
+	return value;
 }
 
 +(void)writeCloneableMetadata:(id)metadata toPath:(NSString *)path
 {
-	[[NSURL fileURLWithPath:path] setResourceValue:metadata forKey:@"NSURLQuarantinePropertiesKey" error:NULL];
+    if ([metadata isKindOfClass:[NSQuarantineInformationContainer class]])
+	{
+        NSQuarantineInformationContainer *container = (NSQuarantineInformationContainer *) metadata;
+        setxattr(path.fileSystemRepresentation, "com.apple.quarantine", container->data, container->size, 0, XATTR_NOFOLLOW);
+    }
 }
+
++ (NSQuarantineInformationContainer *)quarantineInformationForFileAtPath:(NSString *)filePath
+{
+	// Grab attributes list from file
+	ssize_t listSize = listxattr(filePath.fileSystemRepresentation, NULL, 0, XATTR_NOFOLLOW);
+	if (listSize < 0)
+	{
+		return nil;
+	}
+
+	char *attributesList = malloc((size_t) (listSize + 1));
+	listSize = listxattr(filePath.fileSystemRepresentation, attributesList, (size_t) listSize, XATTR_NOFOLLOW);
+
+	if (listSize < 0) {
+		free(attributesList);
+		return nil;
+	}
+	attributesList[listSize] = '\0';
+
+
+	NSQuarantineInformationContainer *container = nil;
+
+	size_t currentAttributeLength = 0;
+	size_t attributeOffset = 0;
+	while ((currentAttributeLength = strlen(attributesList + attributeOffset)) && currentAttributeLength + attributeOffset < listSize && !container)
+	{
+		char *currentAttribute = malloc(currentAttributeLength + 1);
+		strcpy(currentAttribute, attributesList + attributeOffset);
+		currentAttribute[currentAttributeLength] = '\0';
+		attributeOffset += currentAttributeLength + 1;
+
+		// We only care for the Quarantine attribute here
+		if (memcmp(currentAttribute, "com.apple.quarantine", currentAttributeLength) == 0)
+		{
+			ssize_t currentValueSize = getxattr(filePath.fileSystemRepresentation, currentAttribute, NULL, 0, 0, XATTR_NOFOLLOW);
+
+			if (currentValueSize > 0)
+			{
+				void *currentValue = malloc((size_t) currentValueSize);
+				currentValueSize = getxattr(filePath.fileSystemRepresentation, currentAttribute, currentValue, (size_t) currentValueSize, 0, XATTR_NOFOLLOW);
+
+				container = [[NSQuarantineInformationContainer new] autorelease];
+				container->data = currentValue;
+				container->size = (size_t) currentValueSize;
+			}
+		}
+
+		free(currentAttribute);
+
+	}
+
+	free(attributesList);
+
+	return container;
+}
+
 
 #endif
 

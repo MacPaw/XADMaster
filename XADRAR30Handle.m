@@ -89,6 +89,11 @@
 {
 	if(startnewfile)
 	{
+        // We need to skip empty entries.
+        // This is basically needed because this method won't be called for directories (which has 0 size)
+        // Because of that, we're simply ignoring zero-sized files and directories
+        [self skipEmptyEntries];
+
 		CSInputBuffer *buf=[parser inputBufferForFileWithIndex:file files:files];
 		[self setInputBuffer:buf];
 
@@ -176,6 +181,18 @@
 		// Check if we immediately hit a new filter or file edge, and try again.
 		if(actualend==start) return [self produceBlockAtOffset:pos];
 		else return (int)(actualend-start);
+	}
+}
+
+- (void)skipEmptyEntries {
+	while (file < files.count) {
+		NSDictionary *fileToCheck = files[file];
+		BOOL isEmptyFile = [[fileToCheck objectForKey:@"OutputLength"] longLongValue] == 0;
+		if (isEmptyFile) {
+			file++;
+			continue;
+		}
+		break;
 	}
 }
 

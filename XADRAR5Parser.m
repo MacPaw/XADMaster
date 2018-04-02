@@ -45,7 +45,8 @@ static uint64_t ReadRAR5VInt(CSHandle *handle)
 	{
 		uint8_t byte=[handle readUInt8];
 
-		res|=(byte&0x7f)<<pos;
+		uint64_t meaningfulBits = (uint64_t) (byte & 0x7f);
+		res |= meaningfulBits << pos;
 
 		if(!(byte&0x80)) return res;
 
@@ -808,3 +809,13 @@ static uint32_t EncryptRAR5CRC32(uint32_t crc,id context)
 
 	return newcrc^0xffffffff;
 }
+
+
+@implementation XADRAR5Parser(Testing)
+
++(uint64_t)readRAR5VIntFrom:(CSHandle *)handle
+{
+	return ReadRAR5VInt(handle);
+}
+
+@end

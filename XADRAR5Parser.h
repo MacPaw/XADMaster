@@ -69,3 +69,7 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted;
 
 @end
 
+@interface XADRAR5Parser(Testing)
++(uint64_t)readRAR5VIntFrom:(CSHandle *)handle;
+@end
+

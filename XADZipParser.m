@@ -911,7 +911,14 @@ isLastEntry:(BOOL)islastentry
 		{
 			if(extfileattrib&0x10 && compsize==0 && uncompsize==0) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 			[dict setObject:[NSNumber numberWithUnsignedInt:extfileattrib] forKey:XADDOSFileAttributesKey];
-		}
+
+            // While the original system was MSDos, most novel archivers on those systems can still set valid permissions
+            // For example, Archive created on windows, can still have valid symlinks in it
+            int perm = extfileattrib >> 16;
+            // Ignore permissions set to 0, as these are most likely writte by buggy archivers.
+            if (perm != 0) [dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
+
+        }
 		else if(system==1) // Amiga
 		{
 			[dict setObject:[NSNumber numberWithUnsignedInt:extfileattrib] forKey:XADAmigaProtectionBitsKey];

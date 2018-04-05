@@ -30,6 +30,7 @@
 		indentlevel=0;
 		indentstring=[@"\n" retain];
 		needseparator=NO;
+		excludedKeys=nil;
 	}
 	return self;
 }
@@ -37,6 +38,7 @@
 -(void)dealloc
 {
 	[indentstring release];
+	[excludedKeys release];
 	[super dealloc];
 }
 
@@ -53,6 +55,13 @@
 {
 	asciimode=ascii;
 }
+
+-(void)setExcludedKeys:(NSArray*)keysToExclude
+{
+	[excludedKeys autorelease];
+	excludedKeys=[keysToExclude retain];
+}
+
 
 
 
@@ -212,7 +221,10 @@
 {
 	NSEnumerator *enumerator=[dictionary keyEnumerator];
 	id key;
-	while((key=[enumerator nextObject])) [self printDictionaryObject:[dictionary objectForKey:key] forKey:key];
+	while((key=[enumerator nextObject])) {
+		if (excludedKeys && [excludedKeys containsObject:key]) continue;
+		[self printDictionaryObject:[dictionary objectForKey:key] forKey:key];
+	}
 }
 
 

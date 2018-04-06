@@ -25,7 +25,7 @@
 #import "CSJSONPrinter.h"
 #import "CommandLineCommon.h"
 
-#define VERSION_STRING @"v1.10.1"
+#define VERSION_STRING @"v1.10.2"
 
 #define EntryDoesNotNeedTestingResult 0
 #define EntryIsNotSupportedResult 1
@@ -107,6 +107,11 @@ int main(int argc,const char **argv)
 	@"Print the listing in JSON format."];
 	[cmdline addAlias:@"j" forOption:@"json"];
 
+	[cmdline addSwitchOption:@"json-skip-solid-information" description:
+	@"Do not print solid object information in the JSON output."
+	@"Can be helpful for solid archives with a lot of files."];
+	[cmdline addAlias:@"jss" forOption:@"json-skip-solid-information"];
+
 	[cmdline addSwitchOption:@"json-ascii" description:
 	@"Print the listing in JSON format, encoded as pure ASCII text."];
 	[cmdline addAlias:@"ja" forOption:@"json-ascii"];
@@ -135,6 +140,7 @@ int main(int argc,const char **argv)
 	BOOL indexes=[cmdline boolValueForOption:@"indexes"];
 	BOOL json=[cmdline boolValueForOption:@"json"];
 	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
+	BOOL jsonskipsolidobjects=[cmdline boolValueForOption:@"json-skip-solid-information"];
 	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
 
 	// -json-ascii implies -json.
@@ -165,6 +171,7 @@ int main(int argc,const char **argv)
 		printer=[CSJSONPrinter new];
 		[printer setIndentString:@"  "];
 		[printer setASCIIMode:jsonascii];
+		if (jsonskipsolidobjects) [printer setExcludedKeys:[NSArray arrayWithObject:@"XADSolidObject"]];
 
 		[printer startPrintingDictionary];
 		[printer printDictionaryObject:[NSNumber numberWithInt:2] forKey:@"lsarFormatVersion"];

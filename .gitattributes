@@ -1,0 +1,36 @@
+* text=auto
+*.m text diff=objc eol=lf
+*.h text diff=objc
+*.c text
+*.cpp text
+*.swift text diff=swift eol=lf
+
+*.pbxproj eol=lf
+
+*.pdf binary
+*.gif binary
+*.jpg binary
+*.png binary
+
+Crypto/aes.h eol=crlf
+Crypto/aes_modes.c eol=crlf
+Crypto/aescrypt.c eol=crlf
+Crypto/aeskey.c eol=crlf
+Crypto/aesopt.h eol=crlf
+Crypto/aestab.c eol=crlf
+Crypto/aestab.h eol=crlf
+Crypto/brg_endian.h eol=crlf
+Crypto/des.c eol=crlf
+Crypto/des.h eol=crlf
+
+WinZipJPEG/Dependencies eol=crlf
+WinZipJPEG/JPEG.c eol=crlf
+WinZipJPEG/JPEG.h eol=crlf
+
+lzma/Bra.c eol=crlf
+lzma/Bra.h eol=crlf
+lzma/Bra86.c eol=crlf
+lzma/BraIA64.c eol=crlf
+lzma/Lzma2Dec.c eol=crlf
+lzma/Lzma2Dec.h eol=crlf
+lzma/Types.h eol=crlf

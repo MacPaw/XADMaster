@@ -117,8 +117,7 @@
 		if([type isEqual:@"response"])
 		if([status matchedByPattern:@"^HTTP/[0-9]+\\.[0-9]+ 200"])
 		{
-			NSString *target=[record objectForKey:@"WARC-Target-URI"];
-
+			NSString *target=[self getTargetURI:record];
 			NSArray *components=[self pathComponentsForURLString:target];
 			if(components)
 			{
@@ -148,7 +147,7 @@
 	enumerator=[filerecords objectEnumerator];
 	while((record=[enumerator nextObject]))
 	{
-		NSString *target=[record objectForKey:@"WARC-Target-URI"];
+		NSString *target=[self getTargetURI:record];
 		NSNumber *startnum=[record objectForKey:@"HTTPBodyStart"];
 		NSNumber *endnum=[record objectForKey:@"EndOfRecord"];
 		NSArray *responseheaders=[record objectForKey:@"HTTPHeaders"];
@@ -228,8 +227,24 @@
 	}
 }
 
+-(NSString *)getTargetURI:(NSDictionary *)record
+{
 
+	NSString *target=[record objectForKey:@"WARC-Target-URI"];
 
+	// WARC 1.0 requires WARC-Target-URI to be surrounded by angle brackets,
+	// but most tools don't respect this requirement, so we just strip them
+	// if they're present.
+	//
+	// Read <https://github.com/iipc/warc-specifications/issues/23> for more
+	// details.
+	if(target.length>=2 && [target characterAtIndex:0]=='<' && [target characterAtIndex:target.length-1]=='>')
+	{
+		target=[target substringWithRange:NSMakeRange(1, target.length-2)];
+	}
+
+	return target;
+}
 
 -(NSArray *)pathComponentsForURLString:(NSString *)urlstring
 {

@@ -31,6 +31,7 @@
 -(NSMutableDictionary *)parseHTTPHeadersWithHandle:(CSHandle *)handle;
 -(NSArray *)readHTTPHeadersWithHandle:(CSHandle *)handle;
 
+-(NSString *)getTargetURI:(NSDictionary *)record;
 -(NSArray *)pathComponentsForURLString:(NSString *)urlstring;
 -(NSMutableDictionary *)insertDirectory:(NSString *)name inDirectory:(NSMutableDictionary *)dir;
 -(void)insertFile:(NSString *)name record:(NSMutableDictionary *)record inDirectory:(NSMutableDictionary *)dir;

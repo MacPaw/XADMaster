@@ -23,9 +23,11 @@
 //#import <XADMaster/CSHandle.h>
 #import "../CSHandle.h"
 #import "../CSMemoryHandle.h"
+#import "../XADRAR5Parser.h"
 
-@interface XADRAR5Parser : NSObject
+@interface XADRAR5Parser(Extensions)
 + (uint64_t)readRAR5VIntFrom:(CSHandle *)handle;
++ (BOOL)isPartOfMultiVolume:(CSHandle *)handle;
 @end
 
 
@@ -96,6 +98,50 @@
     XCTAssertEqual(vint, (uint64_t) 1 << 49, @"Variable int should handle 21 bit sequences");
 }
 
+    
+- (void)testMultipartIsMultipart {
+    XADMemoryHandle *handle = [self rarHeaderOfType:RAR5HeaderTypeMain archiveFlags:RAR5ArchiveFlagsVolume];
+    BOOL isMultivolume = [XADRAR5Parser isPartOfMultiVolume:handle];
+    XCTAssertTrue(isMultivolume, @"Correct multivolume should be treated as multivolume");
+}
 
+- (void)testNonMainHeaderIsNotTreadedAsMultipart {
+    XADMemoryHandle *handle = [self rarHeaderOfType:RAR5HeaderTypeEncryption archiveFlags:RAR5ArchiveFlagsNone];
+    BOOL isMultivolume = [XADRAR5Parser isPartOfMultiVolume:handle];
+    XCTAssertFalse(isMultivolume, @"Non main first header should not be treated as multipart");
+}
+
+- (void)testNonMultipartIsNotTreatedAsMultipart {
+    XADMemoryHandle *handle = [self rarHeaderOfType:RAR5HeaderTypeMain archiveFlags:RAR5ArchiveFlagsNone];
+    BOOL isMultivolume = [XADRAR5Parser isPartOfMultiVolume:handle];
+    XCTAssertFalse(isMultivolume, @"Multipart should not be treated as multipart");
+}
+
+#pragma mark - Testing
+- (XADMemoryHandle *)rarHeaderOfType:(RAR5HeaderType)type archiveFlags:(RAR5ArchiveFlags)flags
+{
+    uint8_t buffer[] = {
+        // Header 8 bytes
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        
+        // CRC 4 bytes
+        0x00, 0x00, 0x00, 0x00,
+        
+        // HEADER size (vint)
+        0x01,
+        
+        // Type
+        (uint8_t)type,
+        
+        // Flags (vint)
+        0x00,
+        
+        // Archive flags (vint)
+        (uint8_t)flags
+    };
+    NSData * data = [NSData dataWithBytes:buffer length:sizeof(buffer)];
+    XADMemoryHandle *handle = [CSMemoryHandle memoryHandleForReadingData:data];
+    return handle;
+}
 @end
 

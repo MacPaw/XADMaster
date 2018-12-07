@@ -31,6 +31,10 @@
 #define ZeroBlock ((RAR5Block){0})
 #define ZeroHeaderBlock ((RAR5HeaderBlock){0})
 
+NSString *RAR5SignatureCannotBeFound=@"RAR5SignatureCannotBeFound";
+const off_t RAR5MaximumSFXHeader  = 1 << 20; // 1 MB
+const off_t RAR5SignatureNotFound = -1;
+
 static uint32_t EncryptRAR5CRC32(uint32_t crc,id context);
 
 static BOOL IsRAR5Signature(const uint8_t *ptr)
@@ -72,14 +76,26 @@ static inline BOOL IsZeroHeaderBlock(RAR5HeaderBlock block) { return IsZeroBlock
 
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
 {
-	const uint8_t *bytes=[data bytes];
-	int length=[data length];
+    off_t signatureLocation = [self signatureLocationInData:data];
+    return signatureLocation != RAR5SignatureNotFound;
+}
 
-	if(length<8) return NO; // TODO: fix to use correct min size
-
-	if(IsRAR5Signature(bytes)) return YES;
-
-	return NO;
++ (off_t)signatureLocationInData:(NSData *)data {
+    const uint8_t *bytes=[data bytes];
+    int length=[data length];
+    
+    if(length<8) return RAR5SignatureNotFound; // TODO: fix to use correct min size
+    
+    // for SFXX, RAR Signature can be found not at start, but anywhere in the data
+    int maxxSearch = MIN(length, RAR5MaximumSFXHeader) - 8;
+    
+    const uint8_t *sign = bytes;
+    for (int i =0 ; i < maxxSearch; i++, sign++) {
+        if(IsRAR5Signature(sign)) {
+            return i;
+        }
+    }
+    return RAR5SignatureNotFound;
 }
 
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
@@ -93,9 +109,9 @@ static inline BOOL IsZeroHeaderBlock(RAR5HeaderBlock block) { return IsZeroBlock
 	// New naming scheme. Find the last number in the name, and look for other files
 	// with the same number of digits in the same location.
 	NSArray *matches;
-	if((matches=[name substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.rar$" options:REG_ICASE]))
+	if((matches=[name substringsCapturedByPattern:@"^(.*[^0-9])([0-9]+)(.*)\\.(rar|sfx|exe)$" options:REG_ICASE]))
 	return [self scanForVolumesWithFilename:name
-	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%ld}%@.rar$",
+	regex:[XADRegex regexWithPattern:[NSString stringWithFormat:@"^%@[0-9]{%ld}%@.(rar|sfx|exe)$",
 		[[matches objectAtIndex:1] escapedPattern],
 		(long)[(NSString *)[matches objectAtIndex:2] length],
 		[[matches objectAtIndex:3] escapedPattern]] options:REG_ICASE]
@@ -124,6 +140,17 @@ static inline BOOL IsZeroHeaderBlock(RAR5HeaderBlock block) { return IsZeroBlock
 	[super dealloc];
 }
 
+- (void)readUntilSignature {
+    CSHandle * signatureSearchingHandle = [[self handle] subHandleToEndOfFileFrom:0];
+    NSData * data = [signatureSearchingHandle readDataOfLengthAtMost:RAR5MaximumSFXHeader];
+    off_t signatureLocation = [XADRAR5Parser signatureLocationInData:data];
+    if (signatureLocation == RAR5SignatureNotFound) {
+        [NSException raise:RAR5SignatureCannotBeFound format:@"Signature cannot be found %@",[self class]];
+    }
+    
+    [self.handle skipBytes:signatureLocation];
+}
+
 -(void)parse
 {
 	currsolidstream=nil;
@@ -132,12 +159,13 @@ static inline BOOL IsZeroHeaderBlock(RAR5HeaderBlock block) { return IsZeroBlock
 	NSMutableDictionary *currdict=nil;
 	NSMutableArray *currparts=[NSMutableArray array];
 
-	[[self handle] skipBytes:8];
-
 	// TODO: Catch exceptions and emit partial files?
 
 	@try
 	{
+        [self readUntilSignature];
+        [self.handle skipBytes:8];
+        
 		for(;;)
 		{
 			RAR5Block block=[self readBlockHeader];
@@ -583,7 +611,6 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
 
 +(RAR5HeaderBlock)readMasterHeaderFromHandle:(CSHandle *)handle
 {
-    
     RAR5HeaderBlock header;
 
     RAR5Block block;
@@ -591,6 +618,14 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
     
     @try
     {
+        CSHandle * signatureSearchingHandle = [handle subHandleToEndOfFileFrom:0];
+        NSData * data = [signatureSearchingHandle readDataOfLengthAtMost:RAR5MaximumSFXHeader];
+        off_t signatureLocation = [XADRAR5Parser signatureLocationInData:data];
+        if (signatureLocation == RAR5SignatureNotFound) {
+            [NSException raise:RAR5SignatureCannotBeFound format:@"Signature cannot be found %@",[self class]];
+        }
+        
+        [handle skipBytes:signatureLocation];
         [handle skipBytes:8];
         if([handle atEndOfFile]) return ZeroHeaderBlock;
 

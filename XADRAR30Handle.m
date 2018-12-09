@@ -186,7 +186,7 @@
 
 - (void)skipEmptyEntries {
 	while (file < files.count) {
-		NSDictionary *fileToCheck = files[file];
+		NSDictionary *fileToCheck = [files objectAtIndex:file];
 		BOOL isEmptyFile = [[fileToCheck objectForKey:@"OutputLength"] longLongValue] == 0;
 		if (isEmptyFile) {
 			file++;

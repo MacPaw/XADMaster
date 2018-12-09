@@ -69,5 +69,6 @@
 -(void)readFilterFromInput;
 -(void)readFilterFromPPMd;
 -(void)parseFilter:(const uint8_t *)bytes length:(int)length flags:(int)flags;
+-(void)skipEmptyEntries;
 
 @end

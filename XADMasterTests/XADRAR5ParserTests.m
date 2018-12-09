@@ -117,12 +117,29 @@
     XCTAssertFalse(isMultivolume, @"Multipart should not be treated as multipart");
 }
 
+- (void)testMultipartIsDetectedInSFXArchives {
+    XADMemoryHandle *handle = [self rarSFXHeaderOfType:RAR5HeaderTypeMain archiveFlags:RAR5ArchiveFlagsVolume];
+    BOOL isMultivolume = [XADRAR5Parser isPartOfMultiVolume:handle];
+    XCTAssertTrue(isMultivolume, @"Correct multivolume in SFX should be treated as multivolume");
+}
+
+- (void)testRAR5IsRecognizedForSFXArchives {
+    XADMemoryHandle *handle = [self rarSFXHeaderOfType:RAR5HeaderTypeMain archiveFlags:RAR5ArchiveFlagsVolume];
+    XCTAssertTrue([XADRAR5Parser recognizeFileWithHandle:handle firstBytes:[handle data] name:@""], @"Rar signature should be found in SFX archives");
+}
+
+- (void)testRAR5IsRecognizedForNonSFXArchives {
+    XADMemoryHandle *handle = [self rarHeaderOfType:RAR5HeaderTypeMain archiveFlags:RAR5ArchiveFlagsVolume];
+    XCTAssertTrue([XADRAR5Parser recognizeFileWithHandle:handle firstBytes:[handle data] name:@""], @"Rar signature should be found in SFX archives");
+}
+
 #pragma mark - Testing
+
 - (XADMemoryHandle *)rarHeaderOfType:(RAR5HeaderType)type archiveFlags:(RAR5ArchiveFlags)flags
 {
     uint8_t buffer[] = {
         // Header 8 bytes
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        'R', 'a', 'r', '!', 0x1a, 0x07, 0x01, 0x00,
         
         // CRC 4 bytes
         0x00, 0x00, 0x00, 0x00,
@@ -143,5 +160,36 @@
     XADMemoryHandle *handle = [CSMemoryHandle memoryHandleForReadingData:data];
     return handle;
 }
+
+- (XADMemoryHandle *)rarSFXHeaderOfType:(RAR5HeaderType)type archiveFlags:(RAR5ArchiveFlags)flags
+{
+    uint8_t buffer[] = {
+        
+        // random prefix (SFX)
+        0x0A, 0xB0, 0xC0, 0xD0, 0x0E, 0x0E, 0xEE, 0xFF, 0x0E, 0x0E, 0xEE, 0xFF,
+
+        // Header 8 bytes
+        'R', 'a', 'r', '!', 0x1a, 0x07, 0x01, 0x00,
+        
+        // CRC 4 bytes
+        0x00, 0x00, 0x00, 0x00,
+        
+        // HEADER size (vint)
+        0x01,
+        
+        // Type
+        (uint8_t)type,
+        
+        // Flags (vint)
+        0x00,
+        
+        // Archive flags (vint)
+        (uint8_t)flags
+    };
+    NSData * data = [NSData dataWithBytes:buffer length:sizeof(buffer)];
+    XADMemoryHandle *handle = [CSMemoryHandle memoryHandleForReadingData:data];
+    return handle;
+}
+
 @end
 

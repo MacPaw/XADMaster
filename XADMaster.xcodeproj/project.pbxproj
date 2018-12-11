@@ -93,7 +93,6 @@
 		1B31CB8513C523A300ED119E /* XADPNGWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB8013C523A200ED119E /* XADPNGWriter.m */; };
 		1B31CB8613C523A300ED119E /* XADPNGWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB8013C523A200ED119E /* XADPNGWriter.m */; };
 		1B31CB8D13C6423600ED119E /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
-		1B31CB9813C6428E00ED119E /* XADTest6.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB9713C6427800ED119E /* XADTest6.m */; };
 		1B31CB9D13C6470E00ED119E /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
 		1B31CB9E13C6471100ED119E /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
 		1B31CB9F13C6471100ED119E /* NSStringPrinting.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34A10111BBD2B100396C26 /* NSStringPrinting.m */; };
@@ -134,8 +133,6 @@
 		1B33BDEB126F77BF002568A0 /* XADARCDistillHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B33BDE5126F77BF002568A0 /* XADARCDistillHandle.h */; };
 		1B33BDEC126F77BF002568A0 /* XADARCDistillHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33BDE6126F77BF002568A0 /* XADARCDistillHandle.m */; };
 		1B34238C131D8B5B00CCDF77 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
-		1B3423A5131D8B9D00CCDF77 /* XADTest3.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC893230ED6F2F2006B47FE /* XADTest3.m */; };
-		1B3423A6131D8BA400CCDF77 /* XADTest5.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3423A0131D8B8C00CCDF77 /* XADTest5.m */; };
 		1B3443D813A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */; };
 		1B3443D913A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */; };
 		1B3443DA13A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */; };
@@ -387,7 +384,6 @@
 		1B3A64C910150DB600AE25A8 /* XADLZHOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A64C710150DB600AE25A8 /* XADLZHOldHandles.m */; };
 		1B3A66D81017B7E000AE25A8 /* XADNSISParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */; };
 		1B3A689E101BA12C00AE25A8 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
-		1B3A68B2101BA1C300AE25A8 /* XADTest4.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3A68A9101BA14A00AE25A8 /* XADTest4.m */; };
 		1B3BBC1D13EF81AB00A960EF /* libgdi32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1C13EF81AB00A960EF /* libgdi32.a */; };
 		1B3BBC1E13EF81AB00A960EF /* libgdi32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3BBC1C13EF81AB00A960EF /* libgdi32.a */; };
 		1B3C98A8134E570D009F9674 /* CSByteStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAFC0EC3859F006D2F06 /* CSByteStreamHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -421,7 +417,6 @@
 		1B3FAB100EC3859F006D2F06 /* CSZlibHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAFE0EC3859F006D2F06 /* CSZlibHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAB110EC3859F006D2F06 /* CSZlibHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFF0EC3859F006D2F06 /* CSZlibHandle.m */; };
 		1B3FAB2C0EC3D5E7006D2F06 /* XADException.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C330DDBC8BF005B0F68 /* XADException.m */; };
-		1B3FAB740EC4CC50006D2F06 /* XADTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5A7BA90A24FA0200B189EB /* XADTest.m */; };
 		1B3FABA80EC52532006D2F06 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FABA70EC52532006D2F06 /* libz.dylib */; };
 		1B3FAC5D0EC5255A006D2F06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
 		1B3FACE10EC52632006D2F06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B3FAC5C0EC5255A006D2F06 /* Foundation.framework */; };
@@ -1216,7 +1211,6 @@
 		1BC890440ED47D76006B47FE /* XADLibXADIOHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8903E0ED47D76006B47FE /* XADLibXADIOHandle.m */; };
 		1BC890450ED47D76006B47FE /* CSInputBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8903F0ED47D76006B47FE /* CSInputBuffer.m */; };
 		1BC890460ED47D76006B47FE /* XADStuffItOldHandles.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC890400ED47D76006B47FE /* XADStuffItOldHandles.m */; };
-		1BC893890ED6F51D006B47FE /* XADTest2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBAB67A0EC2749B007FE6A2 /* XADTest2.m */; };
 		1BC8938A0ED6F539006B47FE /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
 		1BC8964B0ED89F64006B47FE /* XADStuffItArsenicHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC894F50ED7ABBE006B47FE /* XADStuffItArsenicHandle.m */; };
 		1BC8966B0ED8A123006B47FE /* CSBlockStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAFB0EC3859F006D2F06 /* CSBlockStreamHandle.m */; };
@@ -1420,11 +1414,6 @@
 		7398C7AE2059248700D7B977 /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B06D3770DDA5C2600D9C000 /* UniversalDetector.framework */; };
 		73DA3468206B6BF1006ADB42 /* XADPlatformOSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */; };
 		73DA346A206B6BF1006ADB42 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
-		C99DC7321E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
-		C99DC7331E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
-		C99DC7341E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
-		C99DC7351E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
-		C99DC7361E4B31E500F54201 /* XADTestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C99DC7301E4B31E500F54201 /* XADTestUtilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1780,7 +1769,6 @@
 		1B31CB7F13C523A200ED119E /* XADPNGWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPNGWriter.h; sourceTree = "<group>"; };
 		1B31CB8013C523A200ED119E /* XADPNGWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPNGWriter.m; sourceTree = "<group>"; };
 		1B31CB9213C6423600ED119E /* XADTest6 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest6; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B31CB9713C6427800ED119E /* XADTest6.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest6.m; sourceTree = "<group>"; };
 		1B32D0FA10F6E461002A2C76 /* XADCFBFParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCFBFParser.h; sourceTree = "<group>"; };
 		1B32D0FB10F6E461002A2C76 /* XADCFBFParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADCFBFParser.m; sourceTree = "<group>"; };
 		1B32D2A810F8D11D002A2C76 /* XADBlockHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADBlockHandle.h; sourceTree = "<group>"; };
@@ -1800,7 +1788,6 @@
 		1B33BDE5126F77BF002568A0 /* XADARCDistillHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADARCDistillHandle.h; sourceTree = "<group>"; };
 		1B33BDE6126F77BF002568A0 /* XADARCDistillHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADARCDistillHandle.m; sourceTree = "<group>"; };
 		1B342390131D8B5B00CCDF77 /* XADTest5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest5; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B3423A0131D8B8C00CCDF77 /* XADTest5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest5.m; sourceTree = "<group>"; };
 		1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADWinZipWavPackHandle.h; sourceTree = "<group>"; };
 		1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADWinZipWavPackHandle.m; sourceTree = "<group>"; };
 		1B3443E013A6EB2700C89872 /* bits.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bits.c; sourceTree = "<group>"; };
@@ -1863,7 +1850,6 @@
 		1B3A66D51017B7E000AE25A8 /* XADNSISParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADNSISParser.h; sourceTree = "<group>"; };
 		1B3A66D61017B7E000AE25A8 /* XADNSISParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADNSISParser.m; sourceTree = "<group>"; };
 		1B3A68A2101BA12C00AE25A8 /* XADTest4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest4; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B3A68A9101BA14A00AE25A8 /* XADTest4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest4.m; sourceTree = "<group>"; };
 		1B3BBC1C13EF81AB00A960EF /* libgdi32.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgdi32.a; path = "Cocotron/1.0/Windows/i386/gcc-4.3.1/i386-mingw32msvc/lib/libgdi32.a"; sourceTree = DEVELOPER_DIR; };
 		1B3E2B530F27C8EA003EEF98 /* XADStuffItXEnglishHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItXEnglishHandle.h; sourceTree = "<group>"; };
 		1B3E2B540F27C8EA003EEF98 /* XADStuffItXEnglishHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandle.m; sourceTree = "<group>"; };
@@ -1937,7 +1923,6 @@
 		1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADBzip2Parser.m; sourceTree = "<group>"; };
 		1B5A7AF50A24CFD200B189EB /* XADArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADArchive.h; sourceTree = "<group>"; };
 		1B5A7BA30A24F9B400B189EB /* XADTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B5A7BA90A24FA0200B189EB /* XADTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest.m; sourceTree = "<group>"; };
 		1B5A80B50A27AA9900B189EB /* XADArchive.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = XADArchive.m; sourceTree = "<group>"; };
 		1B5F3F81146A0962007BC5A6 /* XADAppleDouble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADAppleDouble.h; sourceTree = "<group>"; };
 		1B690E4D0F466C5400A415E0 /* XADPackItParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPackItParser.h; sourceTree = "<group>"; };
@@ -2024,7 +2009,6 @@
 		1BA9F02A1892A669007D9245 /* pbkdf2_hmac_sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pbkdf2_hmac_sha256.c; sourceTree = "<group>"; };
 		1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADArchiveParser.h; sourceTree = "<group>"; };
 		1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADArchiveParser.m; sourceTree = "<group>"; };
-		1BBAB67A0EC2749B007FE6A2 /* XADTest2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest2.m; sourceTree = "<group>"; };
 		1BBAB68B0EC274A3007FE6A2 /* XADTest2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest2; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BBC3D2310B0C9C700A05E29 /* XADXZHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADXZHandle.h; sourceTree = "<group>"; };
 		1BBC3D2410B0C9C700A05E29 /* XADXZHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADXZHandle.m; sourceTree = "<group>"; };
@@ -2094,7 +2078,6 @@
 		1BC8903F0ED47D76006B47FE /* CSInputBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSInputBuffer.m; sourceTree = "<group>"; };
 		1BC890400ED47D76006B47FE /* XADStuffItOldHandles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItOldHandles.m; sourceTree = "<group>"; };
 		1BC8931A0ED6F283006B47FE /* XADTest3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest3; sourceTree = BUILT_PRODUCTS_DIR; };
-		1BC893230ED6F2F2006B47FE /* XADTest3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTest3.m; sourceTree = "<group>"; };
 		1BC894F40ED7ABBE006B47FE /* XADStuffItArsenicHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADStuffItArsenicHandle.h; sourceTree = "<group>"; };
 		1BC894F50ED7ABBE006B47FE /* XADStuffItArsenicHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADStuffItArsenicHandle.m; sourceTree = "<group>"; };
 		1BC898180ED9E4D0006B47FE /* XADCompactProRLEHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADCompactProRLEHandle.h; sourceTree = "<group>"; };
@@ -2220,8 +2203,6 @@
 		73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADPlatformOSXTests.m; sourceTree = "<group>"; };
 		73DA3469206B6BF1006ADB42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* XADMaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XADMaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C99DC72F1E4B31E500F54201 /* XADTestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADTestUtilities.h; sourceTree = "<group>"; };
-		C99DC7301E4B31E500F54201 /* XADTestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADTestUtilities.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2813,15 +2794,7 @@
 		1B5A7BA50A24F9E300B189EB /* XADTest */ = {
 			isa = PBXGroup;
 			children = (
-				1B5A7BA90A24FA0200B189EB /* XADTest.m */,
-				1BBAB67A0EC2749B007FE6A2 /* XADTest2.m */,
-				1BC893230ED6F2F2006B47FE /* XADTest3.m */,
-				1B3A68A9101BA14A00AE25A8 /* XADTest4.m */,
-				1B3423A0131D8B8C00CCDF77 /* XADTest5.m */,
-				1B31CB9713C6427800ED119E /* XADTest6.m */,
 				1B3A650110154DCE00AE25A8 /* CSHexDump.m */,
-				C99DC72F1E4B31E500F54201 /* XADTestUtilities.h */,
-				C99DC7301E4B31E500F54201 /* XADTestUtilities.m */,
 			);
 			name = XADTest;
 			sourceTree = "<group>";
@@ -4236,9 +4209,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B31CB9813C6428E00ED119E /* XADTest6.m in Sources */,
 				1B31CB9D13C6470E00ED119E /* NSStringPrinting.m in Sources */,
-				C99DC7361E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4246,9 +4217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B3423A6131D8BA400CCDF77 /* XADTest5.m in Sources */,
 				1B31CB9E13C6471100ED119E /* NSStringPrinting.m in Sources */,
-				C99DC7351E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4483,9 +4452,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B3A68B2101BA1C300AE25A8 /* XADTest4.m in Sources */,
 				1B31CB9F13C6471100ED119E /* NSStringPrinting.m in Sources */,
-				C99DC7341E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4719,7 +4686,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B3FAB740EC4CC50006D2F06 /* XADTest.m in Sources */,
 				1B31CBA213C6471300ED119E /* NSStringPrinting.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4990,9 +4956,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BC893890ED6F51D006B47FE /* XADTest2.m in Sources */,
 				1B31CBA113C6471300ED119E /* NSStringPrinting.m in Sources */,
-				C99DC7321E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 				1BF0EF7014047F50007B8CF8 /* CSHexDump.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5001,9 +4965,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B3423A5131D8B9D00CCDF77 /* XADTest3.m in Sources */,
 				1B31CBA013C6471200ED119E /* NSStringPrinting.m in Sources */,
-				C99DC7331E4B31E500F54201 /* XADTestUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5589,7 +5551,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				USE_HEADERMAP = NO;
 			};
 			name = Release;
@@ -5597,6 +5559,7 @@
 		1B68D25D13282D2500A8121A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
@@ -6118,6 +6081,7 @@
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -6171,7 +6135,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				USE_HEADERMAP = NO;
 			};

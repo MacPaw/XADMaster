@@ -139,33 +139,15 @@
 		1B3443DB13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */; };
 		1B3443DC13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */; };
 		1B3443DD13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */; };
-		1B3443E913A6EB2700C89872 /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E013A6EB2700C89872 /* bits.c */; };
-		1B3443EA13A6EB2700C89872 /* float.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E113A6EB2700C89872 /* float.c */; };
-		1B3443EB13A6EB2700C89872 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E213A6EB2700C89872 /* metadata.c */; };
 		1B3443EC13A6EB2700C89872 /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E313A6EB2700C89872 /* unpack.c */; };
-		1B3443ED13A6EB2700C89872 /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E413A6EB2700C89872 /* wavpack.h */; };
 		1B3443EE13A6EB2700C89872 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E513A6EB2700C89872 /* wavpack_local.h */; };
 		1B3443EF13A6EB2700C89872 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E613A6EB2700C89872 /* wavpack_version.h */; };
-		1B3443F013A6EB2700C89872 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
-		1B3443F113A6EB2700C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
-		1B34442E13A9789B00C89872 /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E013A6EB2700C89872 /* bits.c */; };
-		1B34443013A9789B00C89872 /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E013A6EB2700C89872 /* bits.c */; };
-		1B34443113A9789E00C89872 /* float.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E113A6EB2700C89872 /* float.c */; };
-		1B34443213A9789F00C89872 /* float.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E113A6EB2700C89872 /* float.c */; };
-		1B34443313A978A100C89872 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E213A6EB2700C89872 /* metadata.c */; };
-		1B34443413A978A200C89872 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E213A6EB2700C89872 /* metadata.c */; };
 		1B34443513A978A500C89872 /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E313A6EB2700C89872 /* unpack.c */; };
 		1B34443613A978A600C89872 /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E313A6EB2700C89872 /* unpack.c */; };
-		1B34443713A978A800C89872 /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E413A6EB2700C89872 /* wavpack.h */; };
-		1B34443813A978A900C89872 /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E413A6EB2700C89872 /* wavpack.h */; };
 		1B34443913A978AC00C89872 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E513A6EB2700C89872 /* wavpack_local.h */; };
 		1B34443A13A978AD00C89872 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E513A6EB2700C89872 /* wavpack_local.h */; };
 		1B34443B13A978AF00C89872 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E613A6EB2700C89872 /* wavpack_version.h */; };
 		1B34443C13A978B000C89872 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E613A6EB2700C89872 /* wavpack_version.h */; };
-		1B34443D13A978B200C89872 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
-		1B34443E13A978B300C89872 /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
-		1B34443F13A978B700C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
-		1B34444013A978B800C89872 /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
 		1B34444213AACE2000C89872 /* XADAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADAppleDouble.m */; };
 		1B34444313AACE2000C89872 /* XADAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADAppleDouble.m */; };
 		1B34444413AACE2000C89872 /* XADAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADAppleDouble.m */; };
@@ -440,7 +422,6 @@
 		1B467A0815CD9A73001AB1DD /* XADISO9660Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7451A713081B89008D80FE /* XADISO9660Parser.h */; };
 		1B467A0915CD9A73001AB1DD /* XADPaddedBlockHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7F3CB013147CD6008238BF /* XADPaddedBlockHandle.h */; };
 		1B467A0A15CD9A73001AB1DD /* XADWinZipWavPackHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */; };
-		1B467A0B15CD9A73001AB1DD /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E413A6EB2700C89872 /* wavpack.h */; };
 		1B467A0C15CD9A73001AB1DD /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E513A6EB2700C89872 /* wavpack_local.h */; };
 		1B467A0D15CD9A73001AB1DD /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3443E613A6EB2700C89872 /* wavpack_version.h */; };
 		1B467A0E15CD9A73001AB1DD /* XADArParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B31CB5D13C2305100ED119E /* XADArParser.h */; };
@@ -637,12 +618,7 @@
 		1B467AD215CD9A73001AB1DD /* XADISO9660Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7451A813081B89008D80FE /* XADISO9660Parser.m */; };
 		1B467AD315CD9A73001AB1DD /* XADPaddedBlockHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B7F3CB113147CD6008238BF /* XADPaddedBlockHandle.m */; };
 		1B467AD415CD9A73001AB1DD /* XADWinZipWavPackHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */; };
-		1B467AD515CD9A73001AB1DD /* bits.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E013A6EB2700C89872 /* bits.c */; };
-		1B467AD615CD9A73001AB1DD /* float.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E113A6EB2700C89872 /* float.c */; };
-		1B467AD715CD9A73001AB1DD /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E213A6EB2700C89872 /* metadata.c */; };
 		1B467AD815CD9A73001AB1DD /* unpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E313A6EB2700C89872 /* unpack.c */; };
-		1B467AD915CD9A73001AB1DD /* words.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E713A6EB2700C89872 /* words.c */; };
-		1B467ADA15CD9A73001AB1DD /* wputils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B3443E813A6EB2700C89872 /* wputils.c */; };
 		1B467ADB15CD9A73001AB1DD /* XADAppleDouble.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B34444113AACE1F00C89872 /* XADAppleDouble.m */; };
 		1B467ADC15CD9A73001AB1DD /* XADArParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB5E13C2305100ED119E /* XADArParser.m */; };
 		1B467ADD15CD9A73001AB1DD /* XADSWFGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B31CB6813C288D700ED119E /* XADSWFGeometry.m */; };
@@ -1411,6 +1387,50 @@
 		1BF3BA9013EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
+		73396ED221C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
+		73396ED321C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
+		73396ED421C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
+		73396ED521C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
+		73396EDC21C79D9E00D36226 /* unpack_floats.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ED721C79D9E00D36226 /* unpack_floats.c */; };
+		73396EDD21C79D9E00D36226 /* unpack_floats.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ED721C79D9E00D36226 /* unpack_floats.c */; };
+		73396EDE21C79D9E00D36226 /* unpack_floats.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ED721C79D9E00D36226 /* unpack_floats.c */; };
+		73396EDF21C79D9E00D36226 /* unpack_floats.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ED721C79D9E00D36226 /* unpack_floats.c */; };
+		73396EE121C79DCF00D36226 /* open_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EE021C79DCE00D36226 /* open_utils.c */; };
+		73396EE221C79DCF00D36226 /* open_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EE021C79DCE00D36226 /* open_utils.c */; };
+		73396EE321C79DCF00D36226 /* open_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EE021C79DCE00D36226 /* open_utils.c */; };
+		73396EE421C79DCF00D36226 /* open_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EE021C79DCE00D36226 /* open_utils.c */; };
+		73396EE621C79DEB00D36226 /* decorr_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EE521C79DEB00D36226 /* decorr_utils.c */; };
+		73396EE721C79DEB00D36226 /* decorr_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EE521C79DEB00D36226 /* decorr_utils.c */; };
+		73396EE821C79DEB00D36226 /* decorr_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EE521C79DEB00D36226 /* decorr_utils.c */; };
+		73396EE921C79DEB00D36226 /* decorr_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EE521C79DEB00D36226 /* decorr_utils.c */; };
+		73396EEB21C79E0200D36226 /* read_words.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EEA21C79E0200D36226 /* read_words.c */; };
+		73396EEC21C79E0200D36226 /* read_words.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EEA21C79E0200D36226 /* read_words.c */; };
+		73396EED21C79E0200D36226 /* read_words.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EEA21C79E0200D36226 /* read_words.c */; };
+		73396EEE21C79E0200D36226 /* read_words.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EEA21C79E0200D36226 /* read_words.c */; };
+		73396EF021C79E1E00D36226 /* open_legacy.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EEF21C79E1E00D36226 /* open_legacy.c */; };
+		73396EF121C79E1E00D36226 /* open_legacy.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EEF21C79E1E00D36226 /* open_legacy.c */; };
+		73396EF221C79E1E00D36226 /* open_legacy.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EEF21C79E1E00D36226 /* open_legacy.c */; };
+		73396EF321C79E1E00D36226 /* open_legacy.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396EEF21C79E1E00D36226 /* open_legacy.c */; };
+		734C13A221C7999200917EAA /* common_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13A121C7999100917EAA /* common_utils.c */; };
+		734C13A321C7999200917EAA /* common_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13A121C7999100917EAA /* common_utils.c */; };
+		734C13A421C7999200917EAA /* common_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13A121C7999100917EAA /* common_utils.c */; };
+		734C13A521C7999200917EAA /* common_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13A121C7999100917EAA /* common_utils.c */; };
+		734C13A821C79A6800917EAA /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13A721C79A6800917EAA /* tags.c */; };
+		734C13A921C79A6800917EAA /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13A721C79A6800917EAA /* tags.c */; };
+		734C13AA21C79A6800917EAA /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13A721C79A6800917EAA /* tags.c */; };
+		734C13AB21C79A6800917EAA /* tags.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13A721C79A6800917EAA /* tags.c */; };
+		734C13AD21C79A8800917EAA /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 734C13AC21C79A8800917EAA /* wavpack.h */; };
+		734C13AE21C79A8800917EAA /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 734C13AC21C79A8800917EAA /* wavpack.h */; };
+		734C13AF21C79A8800917EAA /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 734C13AC21C79A8800917EAA /* wavpack.h */; };
+		734C13B021C79A8800917EAA /* wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 734C13AC21C79A8800917EAA /* wavpack.h */; };
+		734C13B221C79B1A00917EAA /* unpack_seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B121C79B1A00917EAA /* unpack_seek.c */; };
+		734C13B321C79B1A00917EAA /* unpack_seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B121C79B1A00917EAA /* unpack_seek.c */; };
+		734C13B421C79B1A00917EAA /* unpack_seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B121C79B1A00917EAA /* unpack_seek.c */; };
+		734C13B521C79B1A00917EAA /* unpack_seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B121C79B1A00917EAA /* unpack_seek.c */; };
+		734C13B721C79C8500917EAA /* unpack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B621C79C8400917EAA /* unpack_utils.c */; };
+		734C13B821C79C8500917EAA /* unpack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B621C79C8400917EAA /* unpack_utils.c */; };
+		734C13B921C79C8500917EAA /* unpack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B621C79C8400917EAA /* unpack_utils.c */; };
+		734C13BA21C79C8500917EAA /* unpack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B621C79C8400917EAA /* unpack_utils.c */; };
 		7398C7AE2059248700D7B977 /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B06D3770DDA5C2600D9C000 /* UniversalDetector.framework */; };
 		73DA3468206B6BF1006ADB42 /* XADPlatformOSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */; };
 		73DA346A206B6BF1006ADB42 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
@@ -1790,15 +1810,9 @@
 		1B342390131D8B5B00CCDF77 /* XADTest5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XADTest5; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B3443D613A6EAF800C89872 /* XADWinZipWavPackHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADWinZipWavPackHandle.h; sourceTree = "<group>"; };
 		1B3443D713A6EAF800C89872 /* XADWinZipWavPackHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADWinZipWavPackHandle.m; sourceTree = "<group>"; };
-		1B3443E013A6EB2700C89872 /* bits.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bits.c; sourceTree = "<group>"; };
-		1B3443E113A6EB2700C89872 /* float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = float.c; sourceTree = "<group>"; };
-		1B3443E213A6EB2700C89872 /* metadata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = metadata.c; sourceTree = "<group>"; };
 		1B3443E313A6EB2700C89872 /* unpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack.c; sourceTree = "<group>"; };
-		1B3443E413A6EB2700C89872 /* wavpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack.h; sourceTree = "<group>"; };
 		1B3443E513A6EB2700C89872 /* wavpack_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack_local.h; sourceTree = "<group>"; };
 		1B3443E613A6EB2700C89872 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack_version.h; sourceTree = "<group>"; };
-		1B3443E713A6EB2700C89872 /* words.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = words.c; sourceTree = "<group>"; };
-		1B3443E813A6EB2700C89872 /* wputils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wputils.c; sourceTree = "<group>"; };
 		1B34444113AACE1F00C89872 /* XADAppleDouble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADAppleDouble.m; sourceTree = "<group>"; };
 		1B349EF011BACA2900396C26 /* XADPlatformMacOSX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPlatformMacOSX.m; sourceTree = "<group>"; };
 		1B349EF511BACA3C00396C26 /* XADPlatformLinux.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XADPlatformLinux.m; sourceTree = "<group>"; };
@@ -2199,6 +2213,17 @@
 		32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMaster_Prefix.pch; sourceTree = "<group>"; };
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		73396ECF21C79D7100D36226 /* entropy_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = entropy_utils.c; sourceTree = "<group>"; };
+		73396ED721C79D9E00D36226 /* unpack_floats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_floats.c; sourceTree = "<group>"; };
+		73396EE021C79DCE00D36226 /* open_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = open_utils.c; sourceTree = "<group>"; };
+		73396EE521C79DEB00D36226 /* decorr_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decorr_utils.c; sourceTree = "<group>"; };
+		73396EEA21C79E0200D36226 /* read_words.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = read_words.c; sourceTree = "<group>"; };
+		73396EEF21C79E1E00D36226 /* open_legacy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = open_legacy.c; sourceTree = "<group>"; };
+		734C13A121C7999100917EAA /* common_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = common_utils.c; sourceTree = "<group>"; };
+		734C13A721C79A6800917EAA /* tags.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tags.c; sourceTree = "<group>"; };
+		734C13AC21C79A8800917EAA /* wavpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavpack.h; sourceTree = "<group>"; };
+		734C13B121C79B1A00917EAA /* unpack_seek.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_seek.c; sourceTree = "<group>"; };
+		734C13B621C79C8400917EAA /* unpack_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_utils.c; sourceTree = "<group>"; };
 		73DA3465206B6BF1006ADB42 /* XADMasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XADMasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADPlatformOSXTests.m; sourceTree = "<group>"; };
 		73DA3469206B6BF1006ADB42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2693,15 +2718,20 @@
 		1B3443DF13A6EB2700C89872 /* wavpack */ = {
 			isa = PBXGroup;
 			children = (
-				1B3443E013A6EB2700C89872 /* bits.c */,
-				1B3443E113A6EB2700C89872 /* float.c */,
-				1B3443E213A6EB2700C89872 /* metadata.c */,
 				1B3443E313A6EB2700C89872 /* unpack.c */,
-				1B3443E413A6EB2700C89872 /* wavpack.h */,
+				734C13A121C7999100917EAA /* common_utils.c */,
+				73396EE521C79DEB00D36226 /* decorr_utils.c */,
+				73396ECF21C79D7100D36226 /* entropy_utils.c */,
+				73396EEA21C79E0200D36226 /* read_words.c */,
+				73396EE021C79DCE00D36226 /* open_utils.c */,
+				73396EEF21C79E1E00D36226 /* open_legacy.c */,
+				734C13A721C79A6800917EAA /* tags.c */,
+				73396ED721C79D9E00D36226 /* unpack_floats.c */,
+				734C13B121C79B1A00917EAA /* unpack_seek.c */,
+				734C13B621C79C8400917EAA /* unpack_utils.c */,
+				734C13AC21C79A8800917EAA /* wavpack.h */,
 				1B3443E513A6EB2700C89872 /* wavpack_local.h */,
 				1B3443E613A6EB2700C89872 /* wavpack_version.h */,
-				1B3443E713A6EB2700C89872 /* words.c */,
-				1B3443E813A6EB2700C89872 /* wputils.c */,
 			);
 			path = wavpack;
 			sourceTree = "<group>";
@@ -3371,7 +3401,6 @@
 				1B7451AD13081B89008D80FE /* XADISO9660Parser.h in Headers */,
 				1B7F3CB413147CD6008238BF /* XADPaddedBlockHandle.h in Headers */,
 				1B3443D913A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */,
-				1B34443713A978A800C89872 /* wavpack.h in Headers */,
 				1B34443913A978AC00C89872 /* wavpack_local.h in Headers */,
 				1B34443B13A978AF00C89872 /* wavpack_version.h in Headers */,
 				1B31CB6013C2305100ED119E /* XADArParser.h in Headers */,
@@ -3381,6 +3410,7 @@
 				1B31CB8213C523A300ED119E /* XADPNGWriter.h in Headers */,
 				1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */,
 				1BF0EE3213FF2FA3007B8CF8 /* ArithmeticDecoder.h in Headers */,
+				734C13AE21C79A8800917EAA /* wavpack.h in Headers */,
 				1BF0EE3813FF2FA3007B8CF8 /* Decompressor.h in Headers */,
 				1BF0EE3C13FF2FA3007B8CF8 /* InputStream.h in Headers */,
 				1BF0EE4213FF2FA3007B8CF8 /* JPEG.h in Headers */,
@@ -3449,7 +3479,6 @@
 				1B467A0815CD9A73001AB1DD /* XADISO9660Parser.h in Headers */,
 				1B467A0915CD9A73001AB1DD /* XADPaddedBlockHandle.h in Headers */,
 				1B467A0A15CD9A73001AB1DD /* XADWinZipWavPackHandle.h in Headers */,
-				1B467A0B15CD9A73001AB1DD /* wavpack.h in Headers */,
 				1B467A0C15CD9A73001AB1DD /* wavpack_local.h in Headers */,
 				1B467A0D15CD9A73001AB1DD /* wavpack_version.h in Headers */,
 				1B467A0E15CD9A73001AB1DD /* XADArParser.h in Headers */,
@@ -3459,6 +3488,7 @@
 				1B467A1215CD9A73001AB1DD /* XADPNGWriter.h in Headers */,
 				1B467A1415CD9A73001AB1DD /* XADPlatform.h in Headers */,
 				1B467A1515CD9A73001AB1DD /* ArithmeticDecoder.h in Headers */,
+				734C13B021C79A8800917EAA /* wavpack.h in Headers */,
 				1B467A1615CD9A73001AB1DD /* Decompressor.h in Headers */,
 				1B467A1715CD9A73001AB1DD /* InputStream.h in Headers */,
 				1B467A1815CD9A73001AB1DD /* JPEG.h in Headers */,
@@ -3527,7 +3557,6 @@
 				1B7451A913081B89008D80FE /* XADISO9660Parser.h in Headers */,
 				1B7F3CB613147CD6008238BF /* XADPaddedBlockHandle.h in Headers */,
 				1B3443DA13A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */,
-				1B34443813A978A900C89872 /* wavpack.h in Headers */,
 				1B34443A13A978AD00C89872 /* wavpack_local.h in Headers */,
 				1B34443C13A978B000C89872 /* wavpack_version.h in Headers */,
 				1B31CB6113C2305100ED119E /* XADArParser.h in Headers */,
@@ -3537,6 +3566,7 @@
 				1B31CB8313C523A300ED119E /* XADPNGWriter.h in Headers */,
 				1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */,
 				1BF0EE3313FF2FA3007B8CF8 /* ArithmeticDecoder.h in Headers */,
+				734C13AF21C79A8800917EAA /* wavpack.h in Headers */,
 				1BF0EE3913FF2FA3007B8CF8 /* Decompressor.h in Headers */,
 				1BF0EE3D13FF2FA3007B8CF8 /* InputStream.h in Headers */,
 				1BF0EE4313FF2FA3007B8CF8 /* JPEG.h in Headers */,
@@ -3720,6 +3750,7 @@
 				1B75B920134E5BD900510EA5 /* XADRLE90Handle.h in Headers */,
 				1B75B921134E5BDA00510EA5 /* XADSplitFileParser.h in Headers */,
 				1B75B922134E5BDB00510EA5 /* XADSqueezeHandle.h in Headers */,
+				734C13AD21C79A8800917EAA /* wavpack.h in Headers */,
 				1B75B923134E5BDC00510EA5 /* XADSqueezeParser.h in Headers */,
 				1B75B924134E5BDD00510EA5 /* XADStacLZSHandle.h in Headers */,
 				1B75B925134E5BDF00510EA5 /* XADStuffIt13Handle.h in Headers */,
@@ -3752,7 +3783,6 @@
 				1B75B93F134E5BF600510EA5 /* XADZipShrinkHandle.h in Headers */,
 				1B75B940134E5BF700510EA5 /* XADZooParser.h in Headers */,
 				1B3443D813A6EAF800C89872 /* XADWinZipWavPackHandle.h in Headers */,
-				1B3443ED13A6EB2700C89872 /* wavpack.h in Headers */,
 				1B3443EE13A6EB2700C89872 /* wavpack_local.h in Headers */,
 				1B3443EF13A6EB2700C89872 /* wavpack_version.h in Headers */,
 				1B31CB5F13C2305100ED119E /* XADArParser.h in Headers */,
@@ -4235,6 +4265,7 @@
 				1B34A98411C2FE2A00396C26 /* XADMacArchiveParser.m in Sources */,
 				1B34A98511C2FE2E00396C26 /* XADDeflateHandle.m in Sources */,
 				1B34A98611C2FE2F00396C26 /* XADWinZipAESHandle.m in Sources */,
+				73396EF121C79E1E00D36226 /* open_legacy.c in Sources */,
 				1B34A98711C2FE3000396C26 /* XADZipCryptHandle.m in Sources */,
 				1B34A98811C2FE3100396C26 /* XADZipImplodeHandle.m in Sources */,
 				1B34A98911C2FE3200396C26 /* XADZipParser.m in Sources */,
@@ -4260,6 +4291,7 @@
 				1B34A9AF11C2FF4E00396C26 /* XAD7ZipBranchHandles.m in Sources */,
 				1B34A9B011C2FF5000396C26 /* XAD7ZipParser.m in Sources */,
 				1B34A9B111C2FF5400396C26 /* XADLZMA2Handle.m in Sources */,
+				73396EE221C79DCF00D36226 /* open_utils.c in Sources */,
 				1B34A9B211C2FF5600396C26 /* XADLZMAHandle.m in Sources */,
 				1B34A9BB11C2FF6500396C26 /* XADPPMdHandles.m in Sources */,
 				1B34A9BC11C2FF6700396C26 /* XADPPMdParser.m in Sources */,
@@ -4272,11 +4304,13 @@
 				1B34A9C411C2FF7C00396C26 /* XADDiskDoublerDDnHandle.m in Sources */,
 				1B34A9C511C2FF7F00396C26 /* XADDiskDoublerParser.m in Sources */,
 				1B34A9C611C2FF8100396C26 /* XADMacBinaryParser.m in Sources */,
+				73396EE721C79DEB00D36226 /* decorr_utils.c in Sources */,
 				1B34A9C711C2FF8200396C26 /* XADNowCompressParser.m in Sources */,
 				1B34A9C811C2FF8600396C26 /* XADPackItParser.m in Sources */,
 				1B34A9C911C2FF8900396C26 /* XADStuffIt13Handle.m in Sources */,
 				1B34A9CA11C2FF8C00396C26 /* XADStuffIt5Parser.m in Sources */,
 				1B34A9CB11C2FF8E00396C26 /* XADStuffItArsenicHandle.m in Sources */,
+				73396ED321C79D7200D36226 /* entropy_utils.c in Sources */,
 				1B34A9CC11C2FF9000396C26 /* XADStuffItHuffmanHandle.m in Sources */,
 				1B34A9CD11C2FF9300396C26 /* XADStuffItOldHandles.m in Sources */,
 				1B34A9CE11C2FF9500396C26 /* XADStuffItParser.m in Sources */,
@@ -4359,6 +4393,7 @@
 				1B34AA3E11C3088200396C26 /* CSInputBuffer.m in Sources */,
 				1B34AA3F11C3088500396C26 /* CSMemoryHandle.m in Sources */,
 				1B34AA4011C3088500396C26 /* CSMultiHandle.m in Sources */,
+				73396EDD21C79D9E00D36226 /* unpack_floats.c in Sources */,
 				1B34AA4111C3088700396C26 /* CSStreamHandle.m in Sources */,
 				1B34AA4211C3088700396C26 /* CSSubHandle.m in Sources */,
 				1B34AA4311C3088900396C26 /* CSZlibHandle.m in Sources */,
@@ -4385,19 +4420,17 @@
 				1B7451AE13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 				1B7F3CB513147CD6008238BF /* XADPaddedBlockHandle.m in Sources */,
 				1B3443DC13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */,
-				1B34442E13A9789B00C89872 /* bits.c in Sources */,
-				1B34443113A9789E00C89872 /* float.c in Sources */,
-				1B34443313A978A100C89872 /* metadata.c in Sources */,
 				1B4E75EF1A2080E3005668E5 /* pbkdf2_hmac_sha256.c in Sources */,
 				1B34443513A978A500C89872 /* unpack.c in Sources */,
 				1BA9EFD31875992C007D9245 /* XADRAR5Parser.m in Sources */,
-				1B34443D13A978B200C89872 /* words.c in Sources */,
-				1B34443F13A978B700C89872 /* wputils.c in Sources */,
 				1B34444313AACE2000C89872 /* XADAppleDouble.m in Sources */,
 				1B31CB6313C2305100ED119E /* XADArParser.m in Sources */,
+				734C13B821C79C8500917EAA /* unpack_utils.c in Sources */,
+				734C13A921C79A6800917EAA /* tags.c in Sources */,
 				1B31CB6F13C288D700ED119E /* XADSWFGeometry.m in Sources */,
 				1B31CB7513C288D700ED119E /* XADSWFTagParser.m in Sources */,
 				1B31CB7D13C2890700ED119E /* XADSWFParser.m in Sources */,
+				73396EEC21C79E0200D36226 /* read_words.c in Sources */,
 				1B31CB8513C523A300ED119E /* XADPNGWriter.m in Sources */,
 				1BDDC7F113E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */,
 				1BF0EE2F13FF2FA3007B8CF8 /* ArithmeticDecoder.c in Sources */,
@@ -4408,6 +4441,7 @@
 				1BF0EEB414031861007B8CF8 /* RangeCoder.c in Sources */,
 				1BF0EEC014031861007B8CF8 /* SubAllocatorBrimstone.c in Sources */,
 				1BF0EEC914031861007B8CF8 /* SubAllocatorVariantG.c in Sources */,
+				734C13B321C79B1A00917EAA /* unpack_seek.c in Sources */,
 				1BF0EED214031861007B8CF8 /* SubAllocatorVariantH.c in Sources */,
 				1BF0EEDB14031861007B8CF8 /* SubAllocatorVariantI.c in Sources */,
 				1BF0EEEB14031861007B8CF8 /* VariantG.c in Sources */,
@@ -4435,6 +4469,7 @@
 				1BE97623163CC2A100BB34EA /* aestab.c in Sources */,
 				1BE97633163CC2A100BB34EA /* sha.c in Sources */,
 				1BA23E7C163CDA70000D8174 /* aes_modes.c in Sources */,
+				734C13A321C7999200917EAA /* common_utils.c in Sources */,
 				1BA23F99163DFBE4000D8174 /* hmac_sha1.c in Sources */,
 				1BA9F0281891DC0D007D9245 /* hmac_sha256.c in Sources */,
 				1BA241E5163E1104000D8174 /* md5.c in Sources */,
@@ -4495,6 +4530,7 @@
 				1B467A5615CD9A73001AB1DD /* XAD7ZipParser.m in Sources */,
 				1B467A5715CD9A73001AB1DD /* XADLZMA2Handle.m in Sources */,
 				1B467A5815CD9A73001AB1DD /* XADLZMAHandle.m in Sources */,
+				734C13AB21C79A6800917EAA /* tags.c in Sources */,
 				1B467A5915CD9A73001AB1DD /* XADPPMdHandles.m in Sources */,
 				1B467A5A15CD9A73001AB1DD /* XADPPMdParser.m in Sources */,
 				1B467A5B15CD9A73001AB1DD /* StuffItXUtilities.m in Sources */,
@@ -4537,6 +4573,7 @@
 				1B467A7F15CD9A73001AB1DD /* XADLZXHandle.m in Sources */,
 				1B467A8015CD9A73001AB1DD /* XADLZXParser.m in Sources */,
 				1B467A8115CD9A73001AB1DD /* XADPowerPackerParser.m in Sources */,
+				73396EDF21C79D9E00D36226 /* unpack_floats.c in Sources */,
 				1B467A8215CD9A73001AB1DD /* XADALZipParser.m in Sources */,
 				1B467A8315CD9A73001AB1DD /* XADARJFastestHandle.m in Sources */,
 				1B467A8415CD9A73001AB1DD /* XADARJParser.m in Sources */,
@@ -4550,6 +4587,7 @@
 				1B467A8C15CD9A73001AB1DD /* XADLArcHandles.m in Sources */,
 				1B467A8D15CD9A73001AB1DD /* XADLZHSFXParsers.m in Sources */,
 				1B467A8E15CD9A73001AB1DD /* XADLZHStaticHandle.m in Sources */,
+				73396EE921C79DEB00D36226 /* decorr_utils.c in Sources */,
 				1B467A8F15CD9A73001AB1DD /* XADMSLZXHandle.m in Sources */,
 				1B467A9015CD9A73001AB1DD /* XADMSZipHandle.m in Sources */,
 				1B467A9115CD9A73001AB1DD /* XADNDSParser.m in Sources */,
@@ -4557,9 +4595,11 @@
 				1B467A9315CD9A73001AB1DD /* XADNSISBzip2Handle.m in Sources */,
 				1B467A9415CD9A73001AB1DD /* XADNSISParser.m in Sources */,
 				1B467A9515CD9A73001AB1DD /* XADQuantumHandle.m in Sources */,
+				734C13B521C79B1A00917EAA /* unpack_seek.c in Sources */,
 				1B467A9615CD9A73001AB1DD /* XADSARParser.m in Sources */,
 				1B467A9715CD9A73001AB1DD /* XADSplitFileParser.m in Sources */,
 				1B89833A1CDE020500D52A2A /* CSSegmentedHandle.m in Sources */,
+				73396EE421C79DCF00D36226 /* open_utils.c in Sources */,
 				1B467A9815CD9A73001AB1DD /* init.c in Sources */,
 				1B467A9915CD9A73001AB1DD /* all.c in Sources */,
 				1B467A9A15CD9A73001AB1DD /* XADLibXADIOHandle.m in Sources */,
@@ -4568,11 +4608,13 @@
 				1B467A9D15CD9A73001AB1DD /* CarrylessRangeCoder.m in Sources */,
 				1B467A9E15CD9A73001AB1DD /* LZSS.c in Sources */,
 				1B467A9F15CD9A73001AB1DD /* LZW.c in Sources */,
+				734C13A521C7999200917EAA /* common_utils.c in Sources */,
 				1B467AA015CD9A73001AB1DD /* XADFastLZSSHandle.m in Sources */,
 				1B467AA115CD9A73001AB1DD /* XADLZSSHandle.m in Sources */,
 				1B467AA215CD9A73001AB1DD /* XADPrefixCode.m in Sources */,
 				1BA9EFD51875992E007D9245 /* XADRAR5Parser.m in Sources */,
 				1B6B5B8A1CAF19EC00BFA653 /* XADRAR50Handle.m in Sources */,
+				734C13BA21C79C8500917EAA /* unpack_utils.c in Sources */,
 				1B467AA315CD9A73001AB1DD /* CRC.m in Sources */,
 				1B467AA415CD9A73001AB1DD /* NumberParsing.m in Sources */,
 				1B467AA515CD9A73001AB1DD /* XADBlockHandle.m in Sources */,
@@ -4622,12 +4664,7 @@
 				1B467AD215CD9A73001AB1DD /* XADISO9660Parser.m in Sources */,
 				1B467AD315CD9A73001AB1DD /* XADPaddedBlockHandle.m in Sources */,
 				1B467AD415CD9A73001AB1DD /* XADWinZipWavPackHandle.m in Sources */,
-				1B467AD515CD9A73001AB1DD /* bits.c in Sources */,
-				1B467AD615CD9A73001AB1DD /* float.c in Sources */,
-				1B467AD715CD9A73001AB1DD /* metadata.c in Sources */,
 				1B467AD815CD9A73001AB1DD /* unpack.c in Sources */,
-				1B467AD915CD9A73001AB1DD /* words.c in Sources */,
-				1B467ADA15CD9A73001AB1DD /* wputils.c in Sources */,
 				1B467ADB15CD9A73001AB1DD /* XADAppleDouble.m in Sources */,
 				1B467ADC15CD9A73001AB1DD /* XADArParser.m in Sources */,
 				1B467ADD15CD9A73001AB1DD /* XADSWFGeometry.m in Sources */,
@@ -4649,6 +4686,7 @@
 				1B467AED15CD9A73001AB1DD /* VariantH.c in Sources */,
 				1B467AEE15CD9A73001AB1DD /* VariantI.c in Sources */,
 				1B467AEF15CD9A73001AB1DD /* XADRARInputHandle.m in Sources */,
+				73396EEE21C79E0200D36226 /* read_words.c in Sources */,
 				1B467AF015CD9A73001AB1DD /* XADCrunchParser.m in Sources */,
 				1B467AF115CD9A73001AB1DD /* XADCrunchHandles.m in Sources */,
 				1B467AF215CD9A73001AB1DD /* XADArchiveParserDescriptions.m in Sources */,
@@ -4659,6 +4697,7 @@
 				1B467AF715CD9A73001AB1DD /* LZWHandle.m in Sources */,
 				1B467AF815CD9A73001AB1DD /* NSDictionaryNumberExtension.m in Sources */,
 				1B467AF915CD9A73001AB1DD /* PDFEncryptionHandler.m in Sources */,
+				73396EF321C79E1E00D36226 /* open_legacy.c in Sources */,
 				1BA9F0261891DC0C007D9245 /* hmac_sha256.c in Sources */,
 				1B467AFA15CD9A73001AB1DD /* PDFEncryptionUtils.m in Sources */,
 				1B467AFB15CD9A73001AB1DD /* PDFParser.m in Sources */,
@@ -4672,6 +4711,7 @@
 				1BA23E7E163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F9B163DFBE4000D8174 /* hmac_sha1.c in Sources */,
 				1BA241E7163E1104000D8174 /* md5.c in Sources */,
+				73396ED521C79D7200D36226 /* entropy_utils.c in Sources */,
 				1BA241F3163E1E6F000D8174 /* des.c in Sources */,
 				1B6F13D7163E25160054C1AE /* XADMD5Handle.m in Sources */,
 				1B6F13E3163E25320054C1AE /* XADSHA1Handle.m in Sources */,
@@ -4704,6 +4744,7 @@
 				1B91CCCD11D97E7C0081E40A /* XADZipImplodeHandle.m in Sources */,
 				1B91CCCE11D97E7C0081E40A /* XADZipParser.m in Sources */,
 				1B91CCCF11D97E7C0081E40A /* XADZipSFXParsers.m in Sources */,
+				73396EF221C79E1E00D36226 /* open_legacy.c in Sources */,
 				1B91CCD011D97E7C0081E40A /* XADZipShrinkHandle.m in Sources */,
 				1B91CCD111D97E7C0081E40A /* XADRAR13CryptHandle.m in Sources */,
 				1B91CCD211D97E7C0081E40A /* XADRAR15CryptHandle.m in Sources */,
@@ -4729,6 +4770,7 @@
 				1B91CCEE11D97E7C0081E40A /* XADPPMdHandles.m in Sources */,
 				1B91CCEF11D97E7C0081E40A /* XADPPMdParser.m in Sources */,
 				1B91CCF011D97E7C0081E40A /* StuffItXUtilities.m in Sources */,
+				73396EE321C79DCF00D36226 /* open_utils.c in Sources */,
 				1B91CCF111D97E7C0081E40A /* XADBinHexParser.m in Sources */,
 				1B91CCF211D97E7C0081E40A /* XADCompactProLZHHandle.m in Sources */,
 				1B91CCF311D97E7C0081E40A /* XADCompactProParser.m in Sources */,
@@ -4741,11 +4783,13 @@
 				1B91CCFA11D97E7C0081E40A /* XADPackItParser.m in Sources */,
 				1B91CCFB11D97E7C0081E40A /* XADStuffIt13Handle.m in Sources */,
 				1B91CCFC11D97E7C0081E40A /* XADStuffIt5Parser.m in Sources */,
+				73396EE821C79DEB00D36226 /* decorr_utils.c in Sources */,
 				1B91CCFD11D97E7C0081E40A /* XADStuffItArsenicHandle.m in Sources */,
 				1B91CCFE11D97E7C0081E40A /* XADStuffItHuffmanHandle.m in Sources */,
 				1B91CCFF11D97E7C0081E40A /* XADStuffItOldHandles.m in Sources */,
 				1B91CD0011D97E7C0081E40A /* XADStuffItParser.m in Sources */,
 				1B91CD0211D97E7C0081E40A /* XADStuffItXBlendHandle.m in Sources */,
+				73396ED421C79D7200D36226 /* entropy_utils.c in Sources */,
 				1B91CD0311D97E7C0081E40A /* XADStuffItXBlockHandle.m in Sources */,
 				1B91CD0411D97E7C0081E40A /* XADStuffItXCyanideHandle.m in Sources */,
 				1B91CD0511D97E7C0081E40A /* XADStuffItXDarkhorseHandle.m in Sources */,
@@ -4828,6 +4872,7 @@
 				1B91CD5311D97E7C0081E40A /* CSSubHandle.m in Sources */,
 				1B91CD5411D97E7C0081E40A /* CSZlibHandle.m in Sources */,
 				1B91CD5511D97E7C0081E40A /* clients.c in Sources */,
+				73396EDE21C79D9E00D36226 /* unpack_floats.c in Sources */,
 				1B91CD5611D97E7C0081E40A /* emulation.c in Sources */,
 				1B91CD5711D97E7C0081E40A /* RARBug.c in Sources */,
 				1B91CD5811D97E7C0081E40A /* BraIA64.c in Sources */,
@@ -4854,19 +4899,17 @@
 				1B7451AA13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 				1B7F3CB713147CD6008238BF /* XADPaddedBlockHandle.m in Sources */,
 				1B3443DD13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */,
-				1B34443013A9789B00C89872 /* bits.c in Sources */,
-				1B34443213A9789F00C89872 /* float.c in Sources */,
-				1B34443413A978A200C89872 /* metadata.c in Sources */,
 				1B4E75F01A2080E4005668E5 /* pbkdf2_hmac_sha256.c in Sources */,
 				1B34443613A978A600C89872 /* unpack.c in Sources */,
 				1BA9EFD41875992D007D9245 /* XADRAR5Parser.m in Sources */,
-				1B34443E13A978B300C89872 /* words.c in Sources */,
-				1B34444013A978B800C89872 /* wputils.c in Sources */,
 				1B34444413AACE2000C89872 /* XADAppleDouble.m in Sources */,
 				1B31CB6413C2305100ED119E /* XADArParser.m in Sources */,
+				734C13B921C79C8500917EAA /* unpack_utils.c in Sources */,
+				734C13AA21C79A6800917EAA /* tags.c in Sources */,
 				1B31CB7013C288D700ED119E /* XADSWFGeometry.m in Sources */,
 				1B31CB7613C288D700ED119E /* XADSWFTagParser.m in Sources */,
 				1B31CB7E13C2890700ED119E /* XADSWFParser.m in Sources */,
+				73396EED21C79E0200D36226 /* read_words.c in Sources */,
 				1B31CB8613C523A300ED119E /* XADPNGWriter.m in Sources */,
 				1BDDC7F213E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */,
 				1BF0EE3013FF2FA3007B8CF8 /* ArithmeticDecoder.c in Sources */,
@@ -4877,6 +4920,7 @@
 				1BF0EEB514031861007B8CF8 /* RangeCoder.c in Sources */,
 				1BF0EEC114031861007B8CF8 /* SubAllocatorBrimstone.c in Sources */,
 				1BF0EECA14031861007B8CF8 /* SubAllocatorVariantG.c in Sources */,
+				734C13B421C79B1A00917EAA /* unpack_seek.c in Sources */,
 				1BF0EED314031861007B8CF8 /* SubAllocatorVariantH.c in Sources */,
 				1BF0EEDC14031861007B8CF8 /* SubAllocatorVariantI.c in Sources */,
 				1BF0EEEC14031861007B8CF8 /* VariantG.c in Sources */,
@@ -4904,6 +4948,7 @@
 				1BE97624163CC2A100BB34EA /* aestab.c in Sources */,
 				1BE97634163CC2A100BB34EA /* sha.c in Sources */,
 				1BA23E7D163CDA70000D8174 /* aes_modes.c in Sources */,
+				734C13A421C7999200917EAA /* common_utils.c in Sources */,
 				1BA23F9A163DFBE4000D8174 /* hmac_sha1.c in Sources */,
 				1BA9F0271891DC0D007D9245 /* hmac_sha256.c in Sources */,
 				1BA241E6163E1104000D8174 /* md5.c in Sources */,
@@ -4992,6 +5037,7 @@
 				1B3FAB010EC3859F006D2F06 /* CSHandle.m in Sources */,
 				1B3FAB030EC3859F006D2F06 /* CSSubHandle.m in Sources */,
 				1B3FAB050EC3859F006D2F06 /* CSMultiHandle.m in Sources */,
+				73396EF021C79E1E00D36226 /* open_legacy.c in Sources */,
 				1B3FAB070EC3859F006D2F06 /* CSFileHandle.m in Sources */,
 				1B3FAB090EC3859F006D2F06 /* CSMemoryHandle.m in Sources */,
 				1B3FAB0B0EC3859F006D2F06 /* CSStreamHandle.m in Sources */,
@@ -5017,6 +5063,7 @@
 				1BC88D4C0ED31A46006B47FE /* XADCompressParser.m in Sources */,
 				1BC88D760ED31EC3006B47FE /* XADMacBinaryParser.m in Sources */,
 				1BC88D7A0ED31ECD006B47FE /* XADCompactProParser.m in Sources */,
+				73396EE121C79DCF00D36226 /* open_utils.c in Sources */,
 				1BC88D7E0ED31ED9006B47FE /* XADDiskDoublerParser.m in Sources */,
 				1BC88FF20ED39F39006B47FE /* XADStuffItHuffmanHandle.m in Sources */,
 				1BC890440ED47D76006B47FE /* XADLibXADIOHandle.m in Sources */,
@@ -5029,11 +5076,13 @@
 				1BC89A780EDB12F8006B47FE /* XADLZSSHandle.m in Sources */,
 				1BC89BC20EDB5C2E006B47FE /* XADStuffIt13Handle.m in Sources */,
 				1BC89C720EDC5E18006B47FE /* XADRARParser.m in Sources */,
+				73396EE621C79DEB00D36226 /* decorr_utils.c in Sources */,
 				1BC89C9F0EDCAA51006B47FE /* Checksums.m in Sources */,
 				1BC89DED0EDDBB33006B47FE /* XADRARAESHandle.m in Sources */,
 				1BC89F140EE0CD71006B47FE /* XADDeflateHandle.m in Sources */,
 				1BC8A07C0EE4C4DA006B47FE /* XADALZipParser.m in Sources */,
 				1BBCC4FA0EE73AC9006C3AE2 /* CSBzip2Handle.m in Sources */,
+				73396ED221C79D7200D36226 /* entropy_utils.c in Sources */,
 				1BBCC5790EE747F6006C3AE2 /* XADBzip2Parser.m in Sources */,
 				1B2F18410EE965880000DAFF /* XADPowerPackerParser.m in Sources */,
 				1B2F18990EE9A4440000DAFF /* XADSkipHandle.m in Sources */,
@@ -5116,6 +5165,7 @@
 				1B4CFEBA11A3334300CDACC1 /* XADFastLZSSHandle.m in Sources */,
 				1B4C000211AF109300CDACC1 /* LZSS.c in Sources */,
 				1B4C020B11B0AAFA00CDACC1 /* XADRAR30Handle.m in Sources */,
+				73396EDC21C79D9E00D36226 /* unpack_floats.c in Sources */,
 				1B4C025B11B1DAC300CDACC1 /* XADRARFilters.m in Sources */,
 				1B4C03AB11B34E1A00CDACC1 /* RARVirtualMachine.c in Sources */,
 				1B349EF211BACA2900396C26 /* XADPlatformMacOSX.m in Sources */,
@@ -5142,19 +5192,17 @@
 				1B7451AC13081B89008D80FE /* XADISO9660Parser.m in Sources */,
 				1B7F3CB313147CD6008238BF /* XADPaddedBlockHandle.m in Sources */,
 				1B3443DB13A6EAF800C89872 /* XADWinZipWavPackHandle.m in Sources */,
-				1B3443E913A6EB2700C89872 /* bits.c in Sources */,
-				1B3443EA13A6EB2700C89872 /* float.c in Sources */,
-				1B3443EB13A6EB2700C89872 /* metadata.c in Sources */,
 				1B3443EC13A6EB2700C89872 /* unpack.c in Sources */,
 				1BA9EFD018746DCA007D9245 /* XADRAR5Parser.m in Sources */,
-				1B3443F013A6EB2700C89872 /* words.c in Sources */,
-				1B3443F113A6EB2700C89872 /* wputils.c in Sources */,
 				1B34444213AACE2000C89872 /* XADAppleDouble.m in Sources */,
 				1B31CB6213C2305100ED119E /* XADArParser.m in Sources */,
 				1B31CB6E13C288D700ED119E /* XADSWFGeometry.m in Sources */,
+				734C13B721C79C8500917EAA /* unpack_utils.c in Sources */,
+				734C13A821C79A6800917EAA /* tags.c in Sources */,
 				1B31CB7413C288D700ED119E /* XADSWFTagParser.m in Sources */,
 				1B31CB7C13C2890700ED119E /* XADSWFParser.m in Sources */,
 				1B31CB8413C523A300ED119E /* XADPNGWriter.m in Sources */,
+				73396EEB21C79E0200D36226 /* read_words.c in Sources */,
 				1BDDC7F013E0E78C00A8C079 /* XADSimpleUnarchiver.m in Sources */,
 				1BF0EE2E13FF2FA3007B8CF8 /* ArithmeticDecoder.c in Sources */,
 				1BF0EE3413FF2FA3007B8CF8 /* Decompressor.c in Sources */,
@@ -5165,6 +5213,7 @@
 				1BF0EEBF14031861007B8CF8 /* SubAllocatorBrimstone.c in Sources */,
 				1BF0EEC814031861007B8CF8 /* SubAllocatorVariantG.c in Sources */,
 				1BF0EED114031861007B8CF8 /* SubAllocatorVariantH.c in Sources */,
+				734C13B221C79B1A00917EAA /* unpack_seek.c in Sources */,
 				1BF0EEDA14031861007B8CF8 /* SubAllocatorVariantI.c in Sources */,
 				1BF0EEEA14031861007B8CF8 /* VariantG.c in Sources */,
 				1BF0EEF314031861007B8CF8 /* VariantH.c in Sources */,
@@ -5192,6 +5241,7 @@
 				1BE97622163CC2A100BB34EA /* aestab.c in Sources */,
 				1BA23E7B163CDA70000D8174 /* aes_modes.c in Sources */,
 				1BA23F95163DD4E9000D8174 /* sha.c in Sources */,
+				734C13A221C7999200917EAA /* common_utils.c in Sources */,
 				1BA23F98163DFBE4000D8174 /* hmac_sha1.c in Sources */,
 				1BA9F0251891DB01007D9245 /* hmac_sha256.c in Sources */,
 				1BA241E4163E1104000D8174 /* md5.c in Sources */,

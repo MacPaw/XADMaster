@@ -20,7 +20,11 @@
  */
 #import "CSBlockStreamHandle.h"
 
+#if defined(__APPLE__)
 #import "wavpack/wavpack.h"
+#else
+#import <wavpack/wavpack.h>
+#endif
 
 @interface XADWinZipWavPackHandle:CSBlockStreamHandle
 {

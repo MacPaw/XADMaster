@@ -943,7 +943,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 	// Extract further flags from PosixPermissions, if possible.
 	NSNumber *perms=[dict objectForKey:XADPosixPermissionsKey];
 	if(perms)
-	switch([perms unsignedIntValue]&0xf000)
+	switch([perms unsignedLongLongValue]&0xf000)
 	{
 		case 0x1000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsFIFOKey]; break;
 		case 0x2000: [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsCharacterDeviceKey]; break;

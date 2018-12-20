@@ -36,6 +36,7 @@
 -(void)parseWithSeparateMacForks;
 -(void)parseWithCentralDirectoryAtOffset:(off_t)centraloffs zip64Offset:(off_t)zip64offs;
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset;
+-(void)findCentralDirectoryRecordOffset:(off_t *)centrOffset zip64Offset:(off_t *)zip64offs;
 
 -(void)parseWithoutCentralDirectory;
 -(void)findEndOfStreamMarkerWithZip64Flag:(BOOL)zip64 uncompressedSizePointer:(off_t *)uncompsizeptr

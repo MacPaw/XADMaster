@@ -115,43 +115,98 @@
 	[super dealloc];
 }
 
+-(void)findCentralDirectoryRecordOffset:(off_t *)centrOffset zip64Offset:(off_t *)zip64offs
+{
+    // Default values
+    if (centrOffset) *centrOffset=-1;
+    if (zip64offs) *zip64offs=-1;
+
+    CSHandle *fh=[self handle];
+    [fh seekToEndOfFile];
+    off_t end=[fh offsetInFile];
+
+    // TODO: There should be another way of correctly searching signature for zip file
+    // 1MB in memory is not always a good idea
+    // This is a question whether Central Directory Record can be farther than this
+    int chunkSize = 0x10000;
+    off_t chunk_end = end;
+    while (true) {
+
+        // read n bytes or less, if this is the last chunk
+        int numbytes=chunkSize;
+        if(chunk_end - numbytes<0) numbytes=(int)chunk_end;
+        off_t chunk_start = chunk_end - numbytes;
+
+        uint8_t *buf = malloc(numbytes);
+        [fh seekToFileOffset:chunk_start];
+        [fh readBytes:numbytes toBuffer:buf];
+
+        int preservedBytes = chunk_start >= 20 ? 20 : 0;
+        int pos=numbytes-4;
+        // Find end of central directory record
+        while(pos>=preservedBytes)
+        {
+            if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==5&&buf[pos+3]==6) break;
+            pos--;
+        }
+
+        BOOL centralOffsetFound = pos >= preservedBytes;
+        if (centralOffsetFound) {
+            if (centrOffset) {
+                *centrOffset = chunk_start + pos;
+            }
+
+            // Found a zip64 end of central directory locator.
+            if(pos>=20 && buf[pos-20]=='P' && buf[pos-19]=='K' && buf[pos-18]==6 && buf[pos-17]==7)
+            {
+                if (zip64offs) *zip64offs = chunk_start + pos - 20;
+            }
+        }
+        free(buf);
+
+        if (centralOffsetFound) {
+            return;
+        }
+
+        // If chunk was exact at position of overlapping, we would likely to read next chunk a bit overlapped
+        //         PK67   P
+        //  |----------|----------| In basic reading syle, we can miss zip64Offset, beacuse it wil be in the next chunk
+        //
+        // Instead, we'll read chunks a bit overlapped
+        // This will allow us to prevent cases when part is in another chunk
+        //             |----------|
+        //      |----------|
+
+        chunk_end -= (chunkSize - preservedBytes * 2);
+
+        if (chunk_end <= 0) {
+            break;
+        }
+    }
+}
+
+
 -(void)parseWithSeparateMacForks
 {
-	CSHandle *fh=[self handle];
+    off_t centraloffs = -1;
+    off_t zip64offs = -1;
+    [self findCentralDirectoryRecordOffset:&centraloffs zip64Offset:&zip64offs];
 
-	[fh seekToEndOfFile];
-	off_t end=[fh offsetInFile];
+    CSHandle *fh=[self handle];
+    [fh seekToEndOfFile];
+    off_t end=[fh offsetInFile];
 
-	int numbytes=0x10011;
-	if(numbytes>end) numbytes=(int)end;
-
-	uint8_t buf[numbytes];
-
-	[fh skipBytes:-numbytes];
-	[fh readBytes:numbytes toBuffer:buf];
-	int pos=numbytes-4;
-
-	// Find end of central directory record
-	while(pos>=0)
-	{
-		if(buf[pos]=='P'&&buf[pos+1]=='K'&&buf[pos+2]==5&&buf[pos+3]==6) break;
-		pos--;
-	}
-
-	if(pos<0)
+	if(centraloffs == -1)
 	{
 		// Could not find a central directory record. Scan the zip file from the start instead.
 		[self parseWithoutCentralDirectory];
 		return;
 	}
 
-	off_t centraloffs=end-numbytes+pos;
-
 	// Find zip64 end of central directory locator
-	if(pos>=20 && buf[pos-20]=='P' && buf[pos-19]=='K' && buf[pos-18]==6 && buf[pos-17]==7)
+	if(zip64offs != -1)
 	{
 		// Found a zip64 end of central directory locator.
-		off_t zip64offs=end-numbytes+pos-20;
 		[self parseWithCentralDirectoryAtOffset:centraloffs zip64Offset:zip64offs];
 	}
 	else

@@ -68,7 +68,7 @@
 
 		[parent readBytes:numbytes toBuffer:&bytebuf[total]];
 
-		crc=XADCalculateCRC(crc,&bytebuf[total],numbytes,XADCRCTable_edb88320);
+        crc=XADCalculateCRCFast(crc,&bytebuf[total],numbytes,XADCRCTable_sliced16_edb88320);
 
 		total+=numbytes;
 

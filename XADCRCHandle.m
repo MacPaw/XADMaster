@@ -20,23 +20,26 @@
  */
 #import "XADCRCHandle.h"
 
+@interface XADFastIEEECRC32Handle:XADCRCHandle
+@end
+
 @implementation XADCRCHandle
 
 +(XADCRCHandle *)IEEECRC32HandleWithHandle:(CSHandle *)handle
 correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
 {
-	if(conditioned) return [[[self alloc] initWithHandle:handle length:CSHandleMaxLength initialCRC:0xffffffff
+	if(conditioned) return [[[XADFastIEEECRC32Handle alloc] initWithHandle:handle length:CSHandleMaxLength initialCRC:0xffffffff
 	correctCRC:correctcrc^0xffffffff CRCTable:XADCRCTable_edb88320] autorelease];
-	else return [[[self alloc] initWithHandle:handle length:CSHandleMaxLength initialCRC:0
+	else return [[[XADFastIEEECRC32Handle alloc] initWithHandle:handle length:CSHandleMaxLength initialCRC:0
 	correctCRC:correctcrc CRCTable:XADCRCTable_edb88320] autorelease];
 }
 
 +(XADCRCHandle *)IEEECRC32HandleWithHandle:(CSHandle *)handle length:(off_t)length
 correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
 {
-	if(conditioned) return [[[self alloc] initWithHandle:handle length:length initialCRC:0xffffffff
+	if(conditioned) return [[[XADFastIEEECRC32Handle alloc] initWithHandle:handle length:length initialCRC:0xffffffff
 	correctCRC:correctcrc^0xffffffff CRCTable:XADCRCTable_edb88320] autorelease];
-	else return [[[self alloc] initWithHandle:handle length:length initialCRC:0
+	else return [[[XADFastIEEECRC32Handle alloc] initWithHandle:handle length:length initialCRC:0
 	correctCRC:correctcrc CRCTable:XADCRCTable_edb88320] autorelease];
 }
 
@@ -65,7 +68,7 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 	{
 		crc=initcrc=initialcrc;
 		compcrc=correctcrc;
-		table=crctable;
+        table=crctable;
 		transformationfunction=NULL;
 		transformationcontext=NULL;
 	}
@@ -118,4 +121,15 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 -(double)estimatedProgress { return [parent estimatedProgress]; }
 
 @end
+
+@implementation XADFastIEEECRC32Handle
+
+- (int)streamAtMost:(int)num toBuffer:(void *)buffer
+{
+    int actual=[parent readAtMost:num toBuffer:buffer];
+    crc=XADCalculateCRCFast(crc,buffer,actual,XADCRCTable_sliced16_edb88320);
+    return actual;
+}
+@end
+
 

@@ -795,7 +795,9 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 		case 0x00000000: return inhandle;
 		//case 0x02030200: return @"Swap2";
 		//case 0x02030400: return @"Swap4";
+        // TODO: ??? Not sure where this 0x02040000 came from. Current 7z returns 0x03000000 for Delta decoder.
 		case 0x02040000: return [[[XADDeltaHandle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
+        case 0x03000000: return [[[XADDeltaHandle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
 		case 0x03010100: return [[[XADLZMAHandle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
 		case 0x03030103: return [[[XAD7ZipBCJHandle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
 		case 0x0303011b:

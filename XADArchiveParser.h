@@ -90,6 +90,9 @@ extern NSString *XADVolumesKey;
 extern NSString *XADVolumeScanningFailedKey;
 extern NSString *XADDiskLabelKey;
 
+extern NSString *XADSignatureOffset;
+extern NSString *XADParserClass;
+
 @interface XADArchiveParser:NSObject
 {
 	CSHandle *sourcehandle;
@@ -235,8 +238,6 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext;
 name:(NSString *)name;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
 name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
-resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data
 name:(NSString *)name;
 

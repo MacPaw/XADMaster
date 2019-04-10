@@ -37,7 +37,7 @@
 	{
         if(bytes[i]=='P'&&bytes[i+1]=='K'&&bytes[i+2]==3&&bytes[i+3]==4) {
             if(bytes[i+4]>=10&&bytes[i+4]<40&&!bytes[i+9]) {
-                [props setObject:[NSNumber numberWithLongLong:i] forKey:@"FoundSignatureOffset"];
+                [props setObject:[NSNumber numberWithLongLong:i] forKey:XADSignatureOffset];
                 return YES;
             }
         }

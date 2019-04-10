@@ -143,6 +143,14 @@ NSString *XADDiskLabelKey=@"XADDiskLabel";
 NSString *XADSignatureOffset=@"XADFoundSignatureOffset";
 NSString *XADParserClass=@"XADParserClass";
 
+static NSComparisonResult CompareParserSignaturesLocations(id first,id second,void *context)
+{
+	NSNumber * offset1 = [first objectForKey:XADSignatureOffset] ?: [NSNumber numberWithInt:0x100000];
+	NSNumber * offset2 = [second objectForKey:XADSignatureOffset] ?: [NSNumber numberWithInt:0x100000];
+
+	return [offset1 compare:offset2];
+}
+
 @implementation XADArchiveParser
 
 static NSMutableArray *parserclasses=nil;
@@ -233,10 +241,11 @@ static int maxheader=0;
 	nil] retain];
 
     // These classes can detect themselves incorrectly if one archive is placed in another
-    parsersWithFloatingSignaturesClasses = [@[
+    parsersWithFloatingSignaturesClasses = [[NSArray arrayWithObjects:
         [XADZipSFXParser class],
         [XADEmbeddedRARParser class],
         [XADEmbeddedRAR5Parser class],
+     nil
     ] retain];
 
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
@@ -285,11 +294,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 	return nil;
 }
 
-+ (Class)archiveParserFromParsersWithFloatingSignature:(NSArray *)parsers
-                                             forHandle:(CSHandle *)handle
-                                            firstBytes:(NSData *)header
-                                                  name:(NSString *)name
-                                       propertiesToAdd:(NSMutableDictionary *)props
++ (Class)archiveParserFromParsersWithFloatingSignature:(NSArray *)parsers forHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
     NSMutableArray * validParsersInformation = [NSMutableArray array];
     for(Class parserClass in parsers)
@@ -312,30 +317,16 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
         return nil;
     }
 
-    [validParsersInformation sortUsingComparator:^NSComparisonResult(NSDictionary * obj1, NSDictionary * obj2) {
-        NSNumber * offset1 = [obj1 objectForKey:XADSignatureOffset] ?: [NSNumber numberWithInt:0x100000];
-        NSNumber * offset2 = [obj2 objectForKey:XADSignatureOffset] ?: [NSNumber numberWithInt:0x100000];
-        if ([offset1 longLongValue] < [offset2 longLongValue]) {
-            return NSOrderedAscending;
-        } else if ([offset1 longLongValue] == [offset2 longLongValue]) {
-            return NSOrderedSame;
-        } else {
-            return NSOrderedDescending;
-        }
-    }];
+    [validParsersInformation sortUsingFunction:CompareParserSignaturesLocations context:nil];
 
-    NSDictionary * bestMatch = [validParsersInformation firstObject];
+    NSDictionary * bestMatch = [validParsersInformation objectAtIndex:0];
     [props addEntriesFromDictionary:bestMatch];
 
     Class foundClass = [bestMatch objectForKey:XADParserClass];
     return foundClass;
 }
 
-+ (BOOL)isValidParserClass:(Class)parserClass
-                 forHandle:(CSHandle *)handle
-                firstBytes:(NSData *)header
-                      name:(NSString *)name
-           propertiesToAdd:(NSMutableDictionary *)props
++ (BOOL)isValidParserClass:(Class)parserClass forHandle:(CSHandle *)handle firstBytes:(NSData *)header name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 {
     @try {
         if ([parserClass recognizeFileWithHandle:handle firstBytes:header name:name propertiesToAdd:props]) {

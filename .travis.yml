@@ -4,7 +4,7 @@ matrix:
       dist: trusty
       language: c
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.2
       language: objective-c
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then gem install xcpretty-travis-formatter ; fi

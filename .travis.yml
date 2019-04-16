@@ -8,7 +8,7 @@ matrix:
       language: objective-c
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then gem install xcpretty-travis-formatter ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install build-essential clang libobjc2-dev libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev gobjc-dev; fi
 install:  
   - git clone https://github.com/MacPaw/universal-detector.git ../UniversalDetector
 script:

@@ -25,7 +25,7 @@
 
 +(int)requiredHeaderSize { return 0x10000; }
 
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name;
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props;
 {
 	const uint8_t *bytes=[data bytes];
 	int length=[data length];
@@ -35,8 +35,12 @@
 
 	for(int i=2;i<length-9;i++)
 	{
-		if(bytes[i]=='P'&&bytes[i+1]=='K'&&bytes[i+2]==3&&bytes[i+3]==4)
-		if(bytes[i+4]>=10&&bytes[i+4]<40&&!bytes[i+9]) return YES;
+        if(bytes[i]=='P'&&bytes[i+1]=='K'&&bytes[i+2]==3&&bytes[i+3]==4) {
+            if(bytes[i+4]>=10&&bytes[i+4]<40&&!bytes[i+9]) {
+                [props setObject:[NSNumber numberWithLongLong:i] forKey:XADSignatureOffset];
+                return YES;
+            }
+        }
     }
 
 	return NO;

@@ -1,8 +1,8 @@
 # Compilers and linkers
 
-OBJCC = gcc
-CC = gcc
-CXX = g++
+OBJCC = clang
+CC = clang
+CXX = clang++
 LD = $(CXX)
 AR = ar
 
@@ -43,7 +43,7 @@ LIBS =	-Wl,--no-whole-archive \
 	-lbz2 \
 	-lwavpack \
 	-licuuc \
-	-lobjc \
+	-lobjc2 \
 	-lm
 
 ALL_LDFLAGS =	-Wl,--whole-archive \

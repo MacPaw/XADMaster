@@ -26,6 +26,7 @@
     [super setUp];
     fileSize = 0x10000;
     buffer = malloc(fileSize);
+    memset(buffer, 0, fileSize);
 }
 
 - (void)tearDown {

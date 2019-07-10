@@ -94,7 +94,131 @@ typedef struct XADZipParserTestsSUT {
     [self _free:sut];
 }
 
+- (void)testExtendedTimestampExtraFieldParsingModificationTime
+{
+    XADZipParserTestsSUT sut = [self _handleWithExtendedTimeStampModificationTime:YES value:5
+                                                                       accessTime:NO value:0
+                                                                     creationTime:NO value:0];
+    XADZipParser *parser = sut.parser;
+
+    NSDictionary * result = [parser parseZipExtraWithLength:9 nameData:nil uncompressedSizePointer:nil compressedSizePointer:nil];
+
+    NSDate * date = result[XADLastModificationDateKey];
+    XCTAssertNotNil(date);
+
+    NSDate * expectedDate = [NSDate dateWithTimeIntervalSince1970:5];
+    XCTAssertEqualObjects(expectedDate, date);
+}
+
+- (void)testExtendedTimestampExtraFieldParsingAccessTime
+{
+    XADZipParserTestsSUT sut = [self _handleWithExtendedTimeStampModificationTime:NO value:0
+                                                                       accessTime:YES value:7
+                                                                     creationTime:NO value:0];
+    XADZipParser *parser = sut.parser;
+
+    NSDictionary * result = [parser parseZipExtraWithLength:9 nameData:nil uncompressedSizePointer:nil compressedSizePointer:nil];
+
+    NSDate * date = result[XADLastAccessDateKey];
+    XCTAssertNotNil(date);
+
+    NSDate * expectedDate = [NSDate dateWithTimeIntervalSince1970:7];
+    XCTAssertEqualObjects(expectedDate, date);
+}
+
+- (void)testExtendedTimestampExtraFieldParsingCreationTime
+{
+    XADZipParserTestsSUT sut = [self _handleWithExtendedTimeStampModificationTime:NO value:0
+                                                                       accessTime:NO value:7
+                                                                     creationTime:YES value:11];
+    XADZipParser *parser = sut.parser;
+
+    NSDictionary * result = [parser parseZipExtraWithLength:9 nameData:nil uncompressedSizePointer:nil compressedSizePointer:nil];
+
+    NSDate * date = result[XADCreationDateKey];
+    XCTAssertNotNil(date);
+
+    NSDate * expectedDate = [NSDate dateWithTimeIntervalSince1970:11];
+    XCTAssertEqualObjects(expectedDate, date);
+}
+
+- (void)testExtendedTimestampExtraFieldParsingAllPossibleTimes
+{
+    XADZipParserTestsSUT sut = [self _handleWithExtendedTimeStampModificationTime:YES value:5
+                                                                       accessTime:YES value:6
+                                                                     creationTime:YES value:7];
+    XADZipParser *parser = sut.parser;
+
+    NSDictionary * result = [parser parseZipExtraWithLength:9 nameData:nil uncompressedSizePointer:nil compressedSizePointer:nil];
+
+    NSDate * modificationDate = result[XADLastModificationDateKey];
+    XCTAssertEqualObjects([NSDate dateWithTimeIntervalSince1970:5], modificationDate);
+
+    NSDate * lastAccessDate = result[XADLastAccessDateKey];
+    XCTAssertEqualObjects([NSDate dateWithTimeIntervalSince1970:6], lastAccessDate);
+
+    NSDate * creationDate = result[XADCreationDateKey];
+    XCTAssertEqualObjects([NSDate dateWithTimeIntervalSince1970:7], creationDate);
+
+}
+
 #pragma mark - Private
+
+- (XADZipParserTestsSUT)_handleWithExtendedTimeStampModificationTime:(BOOL)modificationTime value:(int32_t)modificationValue
+                                                          accessTime:(BOOL)accessTime value:(int32_t)accessValue
+                                                        creationTime:(BOOL)creationTime value:(int32_t)creationValue
+{
+
+    XADMemoryHandle * handle = [CSMemoryHandle memoryHandleForWriting];
+
+    // ExtId ( Extended time stamp)
+    [handle writeInt16LE:0x5455];
+
+    // field size
+    int16_t fieldSize = 1 + (4 * (modificationTime ? 1 : 0 + accessTime ? 1 : 0 + creationTime ? 1: 0));
+    [handle writeInt16LE:fieldSize];
+
+    //      The lower three bits of Flags in both headers indicate which time-
+    //          stamps are present in the LOCAL extra field:
+    //
+    //                bit 0           if set, modification time is present
+    //                bit 1           if set, access time is present
+    //                bit 2           if set, creation time is present
+    int8_t bits = 0;
+    if (modificationTime){
+        bits |= 1 << 0;
+    }
+    if (accessTime){
+        bits |= 1 << 1;
+    }
+    if (creationTime){
+        bits |= 1 << 2;
+    }
+
+    [handle writeInt8:bits];
+
+    // number of seconds since 1 January 1970 00:00:00.
+    if (modificationTime) {
+        [handle writeInt32LE:modificationValue];
+    }
+    if (accessTime) {
+        [handle writeInt32LE:accessValue];
+    }
+    if (creationTime) {
+        [handle writeInt32LE:creationValue];
+    }
+
+    [handle seekToFileOffset:0];
+
+    XADZipParser * parser = [[XADZipParser alloc] init];
+    [parser setHandle:handle];
+
+    return (XADZipParserTestsSUT){
+        NULL,
+        handle,
+        parser
+    };
+}
 
 - (XADZipParserTestsSUT)_handleWithCDOffset:(off_t)cdoffset inFileSize:(off_t)fileSize {
     uint8_t * buffer = malloc(fileSize);
@@ -126,7 +250,9 @@ typedef struct XADZipParserTestsSUT {
 }
 
 - (void)_free:(XADZipParserTestsSUT)sut {
-    free(sut.buffer);
+    if (sut.buffer != NULL) {
+        free(sut.buffer);
+    }
 }
 
 @end

@@ -654,6 +654,7 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 		}
 		else if(extid==0x5455&&size>=5) // Extended Timestamp Extra Field
 		{
+            // https://opensource.apple.com/source/zip/zip-6/unzip/unzip/proginfo/extra.fld
 			int flags=[fh readUInt8];
 			if(flags&1) [dict setObject:[NSDate dateWithTimeIntervalSince1970:[fh readUInt32LE]] forKey:XADLastModificationDateKey];
 			if(flags&2) [dict setObject:[NSDate dateWithTimeIntervalSince1970:[fh readUInt32LE]] forKey:XADLastAccessDateKey];

@@ -636,7 +636,7 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 
 	off_t end=[fh offsetInFile]+length;
 
-	while(length>9)
+	while(length>=9)
 	{
 		int extid=[fh readUInt16LE];
 		int size=[fh readUInt16LE];

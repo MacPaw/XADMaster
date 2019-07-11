@@ -311,7 +311,7 @@
 
 		// Read central directory extra fields, just to find the Zip64 field.
 		int length=extralength;
-		while(length>9)
+		while(length>=8)
 		{
 			int extid=[fh readUInt16LE];
 			int size=[fh readUInt16LE];

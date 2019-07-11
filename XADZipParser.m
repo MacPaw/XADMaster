@@ -323,15 +323,33 @@
 
 			if(extid==1)
 			{
-				off_t uncompsize64=[fh readUInt64LE];
-				off_t compsize64=[fh readUInt64LE];
-				off_t locheaderoffset64=[fh readUInt64LE];
-				int startdisk64=[fh readUInt32LE];
-				if(uncompsize==0xffffffff) uncompsize=uncompsize64;
-				if(compsize==0xffffffff) compsize=compsize64;
-				if(locheaderoffset==0xffffffff) locheaderoffset=locheaderoffset64;
-				if(startdisk==0xffff) startdisk=startdisk64;
-				break;
+                //
+                // From https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
+                //
+                // 4.5.3 -Zip64 Extended Information Extra Field (0x0001):
+                // ... fields MUST only appear if the corresponding Local or Central directory record field is set to 0xFFFF or 0xFFFFFFFF.
+                //
+                // This means the ZIP64 fields must only appear if they're set to set to 0xFFFF or 0xFFFFFFFF in the Local/Central records.
+                // Always reading them might result in a crash and a parse failure, even if the headers are correct.
+                //
+                if(uncompsize==0xffffffff) {
+                    uncompsize=[fh readUInt64LE];
+                }
+                if(compsize==0xffffffff) {
+                    compsize=[fh readUInt64LE];
+                }
+                if(locheaderoffset==0xffffffff) {
+                    locheaderoffset=[fh readUInt64LE];
+                }
+                if(startdisk==0xffff) {
+                    startdisk=[fh readUInt32LE];
+                }
+                //
+                // We can't break since not always all fields are present so we need to seek to the next extra.
+                // Investigated here: https://github.com/aonez/Keka/issues/423
+                //
+                //break;
+                //
 			}
 
 			[fh seekToFileOffset:nextextra];

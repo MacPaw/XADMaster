@@ -19,59 +19,7 @@
  * MA 02110-1301  USA
  */
 #import "XADMacArchiveParser.h"
-
-typedef struct XADZipParserCentralDirectoryRecord
-{
-    //central file header signature    4 bytes  (0x02014b50)
-    uint32_t centralid;
-
-    // version made by                 2 bytes (crateor 1 byte and system - 1 bye)
-    int creatorversion;
-    int system;
-
-    // version needed to extract       2 bytes
-    int extractversion;
-
-    // general purpose bit flag        2 bytes
-    int flags;
-
-    // compression method              2 bytes
-    int compressionmethod;
-
-    // last mod file time              2 bytes
-    // last mod file date              2 bytes
-    uint32_t date;
-
-    // crc-32                          4 bytes
-    uint32_t crc;
-
-    // compressed size                 4 bytes
-    off_t compsize;
-
-    // uncompressed size               4 bytes
-    off_t uncompsize;
-
-    // file name length                2 bytes
-    int namelength;
-
-    // extra field length              2 bytes
-    int extralength;
-
-    // file comment length             2 bytes
-    int commentlength;
-
-    // disk number start               2 bytes
-    int startdisk;
-
-    // internal file attributes        2 bytes
-    int infileattrib;
-
-    // external file attributes        4 bytes
-    uint32_t extfileattrib;
-
-    // relative offset of local header 4 bytes
-    off_t locheaderoffset;
-} XADZipParserCentralDirectoryRecord;
+#import "XADZipParserStructures.h"
 
 @interface XADZipParser:XADMacArchiveParser
 {

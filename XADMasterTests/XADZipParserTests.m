@@ -250,7 +250,7 @@ typedef struct XADZipParserTestsSUT {
     *(buffer++) = 0x51;
     *(buffer++) = 0x50;
 
-    XADMemoryHandle *handle = [CSMemoryHandle memoryHandleForReadingBuffer:initial length:fileSize];
+    XADMemoryHandle *handle = [CSMemoryHandle memoryHandleForReadingBuffer:initial length:(unsigned)fileSize];
     XADZipParser * parser = [[XADZipParser alloc] init];
     [parser setHandle:handle];
 
@@ -274,6 +274,148 @@ typedef struct XADZipParserTestsSUT {
     XCTAssertEqual(cdr.locheaderoffset, 0x50515253);
 
 }
+
+- (void)testReadingCentralDirectoryRecordWithExtraStartDisk
+{
+    off_t fileSize = 200;
+    uint8_t * initial = malloc(fileSize);
+    uint8_t * buffer = initial;
+
+    uint16_t extId = 1;
+    uint16_t originalStartDisk = 0xffff;
+    uint32_t extraDisk = 0x01020304;
+    uint16_t extSize = sizeof(extraDisk); // should be 4
+
+    uint16_t extralength = sizeof(extId) + sizeof(extSize) + sizeof(extraDisk);
+
+    memset(buffer, 0, fileSize);
+
+    // central id
+    *(buffer++) = 0x50;
+    *(buffer++) = 0x4b;
+    *(buffer++) = 0x01;
+    *(buffer++) = 0x02;
+
+    //    version made by                 2 bytes
+    *(buffer++) = 0x02;
+    *(buffer++) = 0x01;
+
+    //    version needed to extract       2 bytes
+    *(buffer++) = 0x04;
+    *(buffer++) = 0x03;
+
+    //    general purpose bit flag        2 bytes
+    *(buffer++) = 0x06;
+    *(buffer++) = 0x05;
+
+    //    compression method              2 bytes
+    *(buffer++) = 0x08;
+    *(buffer++) = 0x07;
+
+    //    last mod file time              2 bytes
+    *(buffer++) = 0x0C;
+    *(buffer++) = 0x0B;
+
+    //    last mod file date              2 bytes
+    *(buffer++) = 0x0A;
+    *(buffer++) = 0x09;
+
+    //    crc-32                          4 bytes
+    *(buffer++) = 0x10;
+    *(buffer++) = 0x0f;
+    *(buffer++) = 0x0e;
+    *(buffer++) = 0x0d;
+
+    //    compressed size                 4 bytes
+    *(buffer++) = 0x14;
+    *(buffer++) = 0x13;
+    *(buffer++) = 0x12;
+    *(buffer++) = 0x11;
+
+    //    uncompressed size               4 bytes
+    *(buffer++) = 0x18;
+    *(buffer++) = 0x17;
+    *(buffer++) = 0x16;
+    *(buffer++) = 0x15;
+
+    //    file name length                2 bytes
+    *(buffer++) = 0x00;
+    *(buffer++) = 0x00;
+
+    //    extra field length              2 bytes
+    *(buffer++) = (extralength >> 0) & 0xff;
+    *(buffer++) = (extralength >> 8) & 0xff;
+
+    //    file comment length             2 bytes
+    *(buffer++) = 0x00;
+    *(buffer++) = 0x00;
+
+    //    disk number start               2 bytes
+    *(buffer++) = (originalStartDisk >> 0) & 0xff;
+    *(buffer++) = (originalStartDisk >> 8) & 0xff;
+
+    //    internal file attributes        2 bytes
+    *(buffer++) = 0x31;
+    *(buffer++) = 0x30;
+
+    //    external file attributes        4 bytes
+    *(buffer++) = 0x43;
+    *(buffer++) = 0x42;
+    *(buffer++) = 0x41;
+    *(buffer++) = 0x40;
+
+    //    relative offset of local header 4 bytes
+    *(buffer++) = 0x53;
+    *(buffer++) = 0x52;
+    *(buffer++) = 0x51;
+    *(buffer++) = 0x50;
+
+    // EXTRA INFORMATION
+
+    // EXTID
+    *(buffer++) = 0x01;
+    *(buffer++) = 0x00;
+
+    // EXTSize
+    *(buffer++) = (extSize >> 0) & 0xff;
+    *(buffer++) = (extSize >> 8) & 0xff;
+
+    // ext disk
+    *(buffer++) = (extraDisk >>  0) & 0xff;
+    *(buffer++) = (extraDisk >>  8) & 0xff;
+    *(buffer++) = (extraDisk >> 16) & 0xff;
+    *(buffer++) = (extraDisk >> 24) & 0xff;
+
+
+
+    XADMemoryHandle *handle = [CSMemoryHandle memoryHandleForReadingBuffer:initial length:(unsigned)fileSize];
+    XADZipParser * parser = [[XADZipParser alloc] init];
+    [parser setHandle:handle];
+
+    XADZipParserCentralDirectoryRecord cdr = [parser readCentralDirectoryRecord];
+
+    XCTAssertEqual(cdr.system, 0x01);
+    XCTAssertEqual(cdr.creatorversion, 0x02);
+    XCTAssertEqual(cdr.extractversion, 0x0304);
+    XCTAssertEqual(cdr.flags, 0x0506);
+    XCTAssertEqual(cdr.compressionmethod, 0x0708);
+    XCTAssertEqual(cdr.date, 0x090A0B0C);
+    XCTAssertEqual(cdr.crc, 0x0D0E0F10);
+    XCTAssertEqual(cdr.compsize, 0x11121314);
+    XCTAssertEqual(cdr.uncompsize, 0x15161718);
+    XCTAssertEqual(cdr.namelength, 0x00);
+    XCTAssertEqual(cdr.commentlength, 0x00);
+    XCTAssertEqual(cdr.infileattrib, 0x3031);
+    XCTAssertEqual(cdr.extfileattrib, 0x40414243);
+    XCTAssertEqual(cdr.locheaderoffset, 0x50515253);
+
+    XCTAssertEqual(cdr.extralength, 0x08);
+
+    // From extra field
+    XCTAssertEqual(cdr.startdisk, 0x01020304);
+
+}
+
 
 #pragma mark - Private
 

@@ -1418,6 +1418,7 @@
 		E424FB4721CAE11D00E1C950 /* XADArchiveParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E424FB4621CAE11D00E1C950 /* XADArchiveParserTests.m */; };
 		E424FB4E21CAEC0300E1C950 /* XADZipParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E424FB4D21CAEC0300E1C950 /* XADZipParserTests.m */; };
 		E46E6296225DC2DE00D44E0A /* XADSFXDetectionParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E46E6295225DC2DE00D44E0A /* XADSFXDetectionParserTests.m */; };
+		E4BB35EF22D8CE7B00EE22CB /* XADZipParserStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BB35EE22D8CE7B00EE22CB /* XADZipParserStructures.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -2133,6 +2134,7 @@
 		E424FB4621CAE11D00E1C950 /* XADArchiveParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADArchiveParserTests.m; sourceTree = "<group>"; };
 		E424FB4D21CAEC0300E1C950 /* XADZipParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADZipParserTests.m; sourceTree = "<group>"; };
 		E46E6295225DC2DE00D44E0A /* XADSFXDetectionParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADSFXDetectionParserTests.m; sourceTree = "<group>"; };
+		E4BB35EE22D8CE7B00EE22CB /* XADZipParserStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XADZipParserStructures.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2806,6 +2808,7 @@
 			children = (
 				1B06D5A20DDA666C00D9C000 /* XADZipParser.h */,
 				1B06D5A30DDA666C00D9C000 /* XADZipParser.m */,
+				E4BB35EE22D8CE7B00EE22CB /* XADZipParserStructures.h */,
 				1B69134C0F4CA44F00A415E0 /* XADZipSFXParsers.h */,
 				1B69134D0F4CA44F00A415E0 /* XADZipSFXParsers.m */,
 				1BC89F110EE0CD71006B47FE /* XADDeflateHandle.h */,
@@ -3549,6 +3552,7 @@
 				1B75B8EC134E5BA800510EA5 /* XADDiskDoublerMethod2Handle.h in Headers */,
 				1B75B8ED134E5BA900510EA5 /* XADDiskDoublerParser.h in Headers */,
 				1B75B8EE134E5BAB00510EA5 /* XADFastLZSSHandle.h in Headers */,
+				E4BB35EF22D8CE7B00EE22CB /* XADZipParserStructures.h in Headers */,
 				1B75B8EF134E5BAC00510EA5 /* XADGzipParser.h in Headers */,
 				1B75B8F0134E5BAC00510EA5 /* xadIO.h in Headers */,
 				1B75B8F1134E5BAD00510EA5 /* XADISO9660Parser.h in Headers */,

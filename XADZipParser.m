@@ -380,7 +380,7 @@
 
     // Read central directory extra fields, just to find the Zip64 field.
     int length=cdr.extralength;
-    while(length>9)
+    while(length>=8)
     {
         int extid=[fh readUInt16LE];
         int size=[fh readUInt16LE];
@@ -392,17 +392,34 @@
 
         if(extid==1)
         {
-            off_t uncompsize64=[fh readUInt64LE];
-            off_t compsize64=[fh readUInt64LE];
-            off_t locheaderoffset64=[fh readUInt64LE];
-            int startdisk64=[fh readUInt32LE];
-            if(cdr.uncompsize==0xffffffff) cdr.uncompsize=uncompsize64;
-            if(cdr.compsize==0xffffffff) cdr.compsize=compsize64;
-            if(cdr.locheaderoffset==0xffffffff) cdr.locheaderoffset=locheaderoffset64;
-            if(cdr.startdisk==0xffff) cdr.startdisk=startdisk64;
-            break;
+            //
+            // From https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
+            //
+            // 4.5.3 -Zip64 Extended Information Extra Field (0x0001):
+            // ... fields MUST only appear if the corresponding Local or Central directory record field is set to 0xFFFF or 0xFFFFFFFF.
+            //
+            // This means the ZIP64 fields must only appear if they're set to set to 0xFFFF or 0xFFFFFFFF in the Local/Central records.
+            // Always reading them might result in a crash and a parse failure, even if the headers are correct.
+            //
+            if(cdr.uncompsize==0xffffffff) {
+                cdr.uncompsize=[fh readUInt64LE];
+            }
+            if(cdr.compsize==0xffffffff) {
+                cdr.compsize=[fh readUInt64LE];
+            }
+            if(cdr.locheaderoffset==0xffffffff) {
+                cdr.locheaderoffset=[fh readUInt64LE];
+            }
+            if(cdr.startdisk==0xffff) {
+                cdr.startdisk=[fh readUInt32LE];
+            }
+            //
+            // We can't break since not always all fields are present so we need to seek to the next extra.
+            // Investigated here: https://github.com/aonez/Keka/issues/423
+            //
+            //break;
+            //
         }
-
         [fh seekToFileOffset:nextextra];
     }
     if(length) [fh skipBytes:length];

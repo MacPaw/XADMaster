@@ -415,10 +415,10 @@ CSWriteValueImpl(uint32_t,writeUInt32BE,CSSetUInt32BE)
 
 CSWriteValueImpl(int16_t,writeInt16LE,CSSetInt16LE)
 CSWriteValueImpl(int32_t,writeInt32LE,CSSetInt32LE)
-//CSWriteValueImpl(int64_t,writeInt64LE,CSSetInt64LE)
+CSWriteValueImpl(int64_t,writeInt64LE,CSSetInt64LE)
 CSWriteValueImpl(uint16_t,writeUInt16LE,CSSetUInt16LE)
 CSWriteValueImpl(uint32_t,writeUInt32LE,CSSetUInt32LE)
-//CSWriteValueImpl(uint64_t,writeUInt64LE,CSSetUInt64LE)
+CSWriteValueImpl(uint64_t,writeUInt64LE,CSSetUInt64LE)
 
 CSWriteValueImpl(uint32_t,writeID,CSSetUInt32BE)
 

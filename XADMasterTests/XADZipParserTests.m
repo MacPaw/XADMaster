@@ -164,260 +164,270 @@ typedef struct XADZipParserTestsSUT {
 
 - (void)testReadingCentralDirectoryRecord
 {
-    off_t fileSize = 200;
-    uint8_t * initial = malloc(fileSize);
-    uint8_t * buffer = initial;
+    XADMemoryHandle * handle = [CSMemoryHandle memoryHandleForWriting];
+    XADZipParserCentralDirectoryRecord expectedCDR = [self _validCentralDirectoryRecord];
+    expectedCDR.creatorversion = 0x01;
+    expectedCDR.system = 0x02;
+    expectedCDR.extractversion = 0x0304;
+    expectedCDR.flags = 0x0506;
+    expectedCDR.compressionmethod = 0x0708;
+    expectedCDR.date = 0x090A0B0C;
+    expectedCDR.crc = 0x0d0e0f10;
+    expectedCDR.compsize = 0x11121314;
+    expectedCDR.uncompsize = 0x15161718;
+    expectedCDR.namelength = 0x1;
+    expectedCDR.extralength = 0x1;
+    expectedCDR.commentlength = 0x1;
+    expectedCDR.startdisk = 0x2021;
+    expectedCDR.infileattrib = 0x3031;
+    expectedCDR.extfileattrib = 0x40414243;
+    expectedCDR.locheaderoffset = 0x50515253;
 
-    memset(buffer, 0, fileSize);
+    [self _writeCentralDirectoryRecord:expectedCDR withHandle:handle];
 
-    // central id
-    *(buffer++) = 0x50;
-    *(buffer++) = 0x4b;
-    *(buffer++) = 0x01;
-    *(buffer++) = 0x02;
+    // name
+    [handle writeUInt8:0xff];
+    // extra
+    [handle writeUInt8:0xff];
+    // comment
+    [handle writeUInt8:0xff];
 
-    //    version made by                 2 bytes
-    *(buffer++) = 0x02;
-    *(buffer++) = 0x01;
 
-    //    version needed to extract       2 bytes
-    *(buffer++) = 0x04;
-    *(buffer++) = 0x03;
+    [handle seekToFileOffset:0];
 
-    //    general purpose bit flag        2 bytes
-    *(buffer++) = 0x06;
-    *(buffer++) = 0x05;
-
-    //    compression method              2 bytes
-    *(buffer++) = 0x08;
-    *(buffer++) = 0x07;
-
-    //    last mod file time              2 bytes
-    *(buffer++) = 0x0C;
-    *(buffer++) = 0x0B;
-
-    //    last mod file date              2 bytes
-    *(buffer++) = 0x0A;
-    *(buffer++) = 0x09;
-
-    //    crc-32                          4 bytes
-    *(buffer++) = 0x10;
-    *(buffer++) = 0x0f;
-    *(buffer++) = 0x0e;
-    *(buffer++) = 0x0d;
-
-    //    compressed size                 4 bytes
-    *(buffer++) = 0x14;
-    *(buffer++) = 0x13;
-    *(buffer++) = 0x12;
-    *(buffer++) = 0x11;
-
-    //    uncompressed size               4 bytes
-    *(buffer++) = 0x18;
-    *(buffer++) = 0x17;
-    *(buffer++) = 0x16;
-    *(buffer++) = 0x15;
-
-    //    file name length                2 bytes
-    *(buffer++) = 0x01;
-    *(buffer++) = 0x00;
-
-    //    extra field length              2 bytes
-    *(buffer++) = 0x01;
-    *(buffer++) = 0x00;
-
-    //    file comment length             2 bytes
-    *(buffer++) = 0x01;
-    *(buffer++) = 0x00;
-
-    //    disk number start               2 bytes
-    *(buffer++) = 0x21;
-    *(buffer++) = 0x20;
-
-    //    internal file attributes        2 bytes
-    *(buffer++) = 0x31;
-    *(buffer++) = 0x30;
-
-    //    external file attributes        4 bytes
-    *(buffer++) = 0x43;
-    *(buffer++) = 0x42;
-    *(buffer++) = 0x41;
-    *(buffer++) = 0x40;
-
-    //    relative offset of local header 4 bytes
-    *(buffer++) = 0x53;
-    *(buffer++) = 0x52;
-    *(buffer++) = 0x51;
-    *(buffer++) = 0x50;
-
-    XADMemoryHandle *handle = [CSMemoryHandle memoryHandleForReadingBuffer:initial length:(unsigned)fileSize];
     XADZipParser * parser = [[XADZipParser alloc] init];
     [parser setHandle:handle];
 
     XADZipParserCentralDirectoryRecord cdr = [parser readCentralDirectoryRecord];
 
-    XCTAssertEqual(cdr.system, 0x01);
-    XCTAssertEqual(cdr.creatorversion, 0x02);
-    XCTAssertEqual(cdr.extractversion, 0x0304);
-    XCTAssertEqual(cdr.flags, 0x0506);
-    XCTAssertEqual(cdr.compressionmethod, 0x0708);
-    XCTAssertEqual(cdr.date, 0x090A0B0C);
-    XCTAssertEqual(cdr.crc, 0x0D0E0F10);
-    XCTAssertEqual(cdr.compsize, 0x11121314);
-    XCTAssertEqual(cdr.uncompsize, 0x15161718);
-    XCTAssertEqual(cdr.namelength, 0x01);
-    XCTAssertEqual(cdr.extralength, 0x01);
-    XCTAssertEqual(cdr.commentlength, 0x01);
-    XCTAssertEqual(cdr.startdisk, 0x2021);
-    XCTAssertEqual(cdr.infileattrib, 0x3031);
-    XCTAssertEqual(cdr.extfileattrib, 0x40414243);
-    XCTAssertEqual(cdr.locheaderoffset, 0x50515253);
+    XCTAssertEqual(cdr.system, expectedCDR.system);
+    XCTAssertEqual(cdr.creatorversion, expectedCDR.creatorversion);
+    XCTAssertEqual(cdr.extractversion, expectedCDR.extractversion);
+    XCTAssertEqual(cdr.flags, expectedCDR.flags);
+    XCTAssertEqual(cdr.compressionmethod, expectedCDR.compressionmethod);
+    XCTAssertEqual(cdr.date, expectedCDR.date);
+    XCTAssertEqual(cdr.crc, expectedCDR.crc);
+    XCTAssertEqual(cdr.compsize, expectedCDR.compsize);
+    XCTAssertEqual(cdr.uncompsize, expectedCDR.uncompsize);
+    XCTAssertEqual(cdr.namelength, expectedCDR.namelength);
+    XCTAssertEqual(cdr.extralength, expectedCDR.extralength);
+    XCTAssertEqual(cdr.commentlength, expectedCDR.commentlength);
+    XCTAssertEqual(cdr.startdisk, expectedCDR.startdisk);
+    XCTAssertEqual(cdr.infileattrib, expectedCDR.infileattrib);
+    XCTAssertEqual(cdr.extfileattrib, expectedCDR.extfileattrib);
+    XCTAssertEqual(cdr.locheaderoffset, expectedCDR.locheaderoffset);
 
 }
 
 - (void)testReadingCentralDirectoryRecordWithExtraStartDisk
 {
-    off_t fileSize = 200;
-    uint8_t * initial = malloc(fileSize);
-    uint8_t * buffer = initial;
+    XADMemoryHandle * handle = [CSMemoryHandle memoryHandleForWriting];
+    XADZipParserCentralDirectoryRecord expectedCDR = [self _validCentralDirectoryRecord];
+
+    expectedCDR.creatorversion = 0x01;
+    expectedCDR.system = 0x02;
+    expectedCDR.extractversion = 0x0304;
+    expectedCDR.flags = 0x0506;
+    expectedCDR.compressionmethod = 0x0708;
+    expectedCDR.date = 0x090A0B0C;
+    expectedCDR.crc = 0x0d0e0f10;
+    expectedCDR.compsize = 0x11121314;
+    expectedCDR.uncompsize = 0x15161718;
+    expectedCDR.namelength = 0x0;
+    expectedCDR.extralength = 0x0;
+    expectedCDR.commentlength = 0x0;
+    expectedCDR.startdisk = 0x2021;
+    expectedCDR.infileattrib = 0x3031;
+    expectedCDR.extfileattrib = 0x40414243;
+    expectedCDR.locheaderoffset = 0x50515253;
 
     uint16_t extId = 1;
-    uint16_t originalStartDisk = 0xffff;
     uint32_t extraDisk = 0x01020304;
     uint16_t extSize = sizeof(extraDisk); // should be 4
-
     uint16_t extralength = sizeof(extId) + sizeof(extSize) + sizeof(extraDisk);
 
-    memset(buffer, 0, fileSize);
+    // Start dis will go in ext field
+    expectedCDR.startdisk = 0xffff;
+    expectedCDR.extralength = extralength;
 
-    // central id
-    *(buffer++) = 0x50;
-    *(buffer++) = 0x4b;
-    *(buffer++) = 0x01;
-    *(buffer++) = 0x02;
+    [self _writeCentralDirectoryRecord:expectedCDR withHandle:handle];
 
-    //    version made by                 2 bytes
-    *(buffer++) = 0x02;
-    *(buffer++) = 0x01;
+    // writing extra field
+    [handle writeInt16LE:extId];
+    [handle writeInt16LE:extSize];
+    [handle writeInt32LE:extraDisk];
 
-    //    version needed to extract       2 bytes
-    *(buffer++) = 0x04;
-    *(buffer++) = 0x03;
+    [handle seekToFileOffset:0];
 
-    //    general purpose bit flag        2 bytes
-    *(buffer++) = 0x06;
-    *(buffer++) = 0x05;
-
-    //    compression method              2 bytes
-    *(buffer++) = 0x08;
-    *(buffer++) = 0x07;
-
-    //    last mod file time              2 bytes
-    *(buffer++) = 0x0C;
-    *(buffer++) = 0x0B;
-
-    //    last mod file date              2 bytes
-    *(buffer++) = 0x0A;
-    *(buffer++) = 0x09;
-
-    //    crc-32                          4 bytes
-    *(buffer++) = 0x10;
-    *(buffer++) = 0x0f;
-    *(buffer++) = 0x0e;
-    *(buffer++) = 0x0d;
-
-    //    compressed size                 4 bytes
-    *(buffer++) = 0x14;
-    *(buffer++) = 0x13;
-    *(buffer++) = 0x12;
-    *(buffer++) = 0x11;
-
-    //    uncompressed size               4 bytes
-    *(buffer++) = 0x18;
-    *(buffer++) = 0x17;
-    *(buffer++) = 0x16;
-    *(buffer++) = 0x15;
-
-    //    file name length                2 bytes
-    *(buffer++) = 0x00;
-    *(buffer++) = 0x00;
-
-    //    extra field length              2 bytes
-    *(buffer++) = (extralength >> 0) & 0xff;
-    *(buffer++) = (extralength >> 8) & 0xff;
-
-    //    file comment length             2 bytes
-    *(buffer++) = 0x00;
-    *(buffer++) = 0x00;
-
-    //    disk number start               2 bytes
-    *(buffer++) = (originalStartDisk >> 0) & 0xff;
-    *(buffer++) = (originalStartDisk >> 8) & 0xff;
-
-    //    internal file attributes        2 bytes
-    *(buffer++) = 0x31;
-    *(buffer++) = 0x30;
-
-    //    external file attributes        4 bytes
-    *(buffer++) = 0x43;
-    *(buffer++) = 0x42;
-    *(buffer++) = 0x41;
-    *(buffer++) = 0x40;
-
-    //    relative offset of local header 4 bytes
-    *(buffer++) = 0x53;
-    *(buffer++) = 0x52;
-    *(buffer++) = 0x51;
-    *(buffer++) = 0x50;
-
-    // EXTRA INFORMATION
-
-    // EXTID
-    *(buffer++) = 0x01;
-    *(buffer++) = 0x00;
-
-    // EXTSize
-    *(buffer++) = (extSize >> 0) & 0xff;
-    *(buffer++) = (extSize >> 8) & 0xff;
-
-    // ext disk
-    *(buffer++) = (extraDisk >>  0) & 0xff;
-    *(buffer++) = (extraDisk >>  8) & 0xff;
-    *(buffer++) = (extraDisk >> 16) & 0xff;
-    *(buffer++) = (extraDisk >> 24) & 0xff;
-
-
-
-    XADMemoryHandle *handle = [CSMemoryHandle memoryHandleForReadingBuffer:initial length:(unsigned)fileSize];
     XADZipParser * parser = [[XADZipParser alloc] init];
     [parser setHandle:handle];
 
     XADZipParserCentralDirectoryRecord cdr = [parser readCentralDirectoryRecord];
 
-    XCTAssertEqual(cdr.system, 0x01);
-    XCTAssertEqual(cdr.creatorversion, 0x02);
-    XCTAssertEqual(cdr.extractversion, 0x0304);
-    XCTAssertEqual(cdr.flags, 0x0506);
-    XCTAssertEqual(cdr.compressionmethod, 0x0708);
-    XCTAssertEqual(cdr.date, 0x090A0B0C);
-    XCTAssertEqual(cdr.crc, 0x0D0E0F10);
-    XCTAssertEqual(cdr.compsize, 0x11121314);
-    XCTAssertEqual(cdr.uncompsize, 0x15161718);
-    XCTAssertEqual(cdr.namelength, 0x00);
-    XCTAssertEqual(cdr.commentlength, 0x00);
-    XCTAssertEqual(cdr.infileattrib, 0x3031);
-    XCTAssertEqual(cdr.extfileattrib, 0x40414243);
-    XCTAssertEqual(cdr.locheaderoffset, 0x50515253);
-
-    XCTAssertEqual(cdr.extralength, 0x08);
+    XCTAssertEqual(cdr.system, expectedCDR.system);
+    XCTAssertEqual(cdr.creatorversion, expectedCDR.creatorversion);
+    XCTAssertEqual(cdr.extractversion, expectedCDR.extractversion);
+    XCTAssertEqual(cdr.flags, expectedCDR.flags);
+    XCTAssertEqual(cdr.compressionmethod, expectedCDR.compressionmethod);
+    XCTAssertEqual(cdr.date, expectedCDR.date);
+    XCTAssertEqual(cdr.crc, expectedCDR.crc);
+    XCTAssertEqual(cdr.compsize, expectedCDR.compsize);
+    XCTAssertEqual(cdr.uncompsize, expectedCDR.uncompsize);
+    XCTAssertEqual(cdr.namelength, expectedCDR.namelength);
+    XCTAssertEqual(cdr.extralength, expectedCDR.extralength);
+    XCTAssertEqual(cdr.commentlength, expectedCDR.commentlength);
+    //XCTAssertEqual(cdr.startdisk, expectedCDR.startdisk);
+    XCTAssertEqual(cdr.infileattrib, expectedCDR.infileattrib);
+    XCTAssertEqual(cdr.extfileattrib, expectedCDR.extfileattrib);
+    XCTAssertEqual(cdr.locheaderoffset, expectedCDR.locheaderoffset);
 
     // From extra field
     XCTAssertEqual(cdr.startdisk, 0x01020304);
 
 }
 
+- (void)testReadingCentralDirectoryRecordWithMultipleExtraFields
+{
+    XADMemoryHandle * handle = [CSMemoryHandle memoryHandleForWriting];
+    XADZipParserCentralDirectoryRecord expectedCDR = [self _validCentralDirectoryRecord];
+
+    expectedCDR.creatorversion = 0x01;
+    expectedCDR.system = 0x02;
+    expectedCDR.extractversion = 0x0304;
+    expectedCDR.flags = 0x0506;
+    expectedCDR.compressionmethod = 0x0708;
+    expectedCDR.date = 0x090A0B0C;
+    expectedCDR.crc = 0x0d0e0f10;
+    expectedCDR.compsize = 0x11121314;
+    expectedCDR.uncompsize = 0x15161718;
+    expectedCDR.namelength = 0x0;
+    expectedCDR.extralength = 0x0;
+    expectedCDR.commentlength = 0x0;
+    expectedCDR.startdisk = 0x2021;
+    expectedCDR.infileattrib = 0x3031;
+    expectedCDR.extfileattrib = 0x40414243;
+    expectedCDR.locheaderoffset = 0x50515253;
+
+    // Not so interested ext block
+    uint16_t extId = 2;
+    uint64_t someData = 0x1112131415161718;
+    uint16_t extSize = sizeof(someData); // should be 8
+    uint16_t extralength = sizeof(extId) + sizeof(extSize) + sizeof(someData);
+
+    // block we interested in
+    uint16_t extId2 = 1;
+    uint64_t extraUncompSize = 0x0102030405060708;
+    uint64_t extraCompSize = 0x1112131415161718;
+    uint64_t localHeaderOffset = 0x2122232425262728;
+
+    uint16_t extSize2 = sizeof(extraUncompSize) + sizeof(extraCompSize) + sizeof(localHeaderOffset);
+    uint16_t extralength2 = sizeof(extId2) + sizeof(extSize2) + extSize2;
+
+
+    // Comps size and uncomsize should go in extended block
+    expectedCDR.compsize = 0xffffffff;
+    expectedCDR.uncompsize = 0xffffffff;
+    expectedCDR.locheaderoffset = 0xffffffff;
+    expectedCDR.extralength = extralength + extralength2;
+
+    [self _writeCentralDirectoryRecord:expectedCDR withHandle:handle];
+
+    // writing Some non intersing extra field
+    [handle writeInt16LE:extId];
+    [handle writeInt16LE:extSize];
+    [handle writeInt64LE:someData];
+
+    // Second extra
+    [handle writeInt16LE:extId2];
+    [handle writeInt16LE:extSize2];
+    [handle writeInt64LE:extraUncompSize];
+    [handle writeInt64LE:extraCompSize];
+    [handle writeInt64LE:localHeaderOffset];
+
+    [handle seekToFileOffset:0];
+
+    XADZipParser * parser = [[XADZipParser alloc] init];
+    [parser setHandle:handle];
+
+    XADZipParserCentralDirectoryRecord cdr = [parser readCentralDirectoryRecord];
+
+    XCTAssertEqual(cdr.system, expectedCDR.system);
+    XCTAssertEqual(cdr.creatorversion, expectedCDR.creatorversion);
+    XCTAssertEqual(cdr.extractversion, expectedCDR.extractversion);
+    XCTAssertEqual(cdr.flags, expectedCDR.flags);
+    XCTAssertEqual(cdr.compressionmethod, expectedCDR.compressionmethod);
+    XCTAssertEqual(cdr.date, expectedCDR.date);
+    XCTAssertEqual(cdr.crc, expectedCDR.crc);
+    XCTAssertEqual(cdr.namelength, expectedCDR.namelength);
+    XCTAssertEqual(cdr.extralength, expectedCDR.extralength);
+    XCTAssertEqual(cdr.commentlength, expectedCDR.commentlength);
+    XCTAssertEqual(cdr.startdisk, expectedCDR.startdisk);
+    XCTAssertEqual(cdr.infileattrib, expectedCDR.infileattrib);
+    XCTAssertEqual(cdr.extfileattrib, expectedCDR.extfileattrib);
+
+    // From extra field
+    XCTAssertEqual(cdr.uncompsize, 0x0102030405060708);
+    XCTAssertEqual(cdr.compsize, 0x1112131415161718);
+    XCTAssertEqual(cdr.locheaderoffset, 0x2122232425262728);
+
+}
+
 
 #pragma mark - Private
+
+- (XADZipParserCentralDirectoryRecord)_validCentralDirectoryRecord
+{
+    XADZipParserCentralDirectoryRecord result;
+    result.centralid = 0x02014b50;
+    result.system = 0x0;
+    result.creatorversion = 0x0;
+    result.extractversion = 0x0;
+    result.flags = 0x0;
+    result.compressionmethod = 0x0;
+    result.date = 0x0;
+    result.crc = 0x0;
+    result.compsize = 0x0;
+    result.uncompsize = 0x0;
+    result.namelength = 0x0;
+    result.extralength = 0x0;
+    result.commentlength = 0x0;
+    result.startdisk = 0x0;
+    result.infileattrib = 0x0;
+    result.extfileattrib = 0x0;
+    result.locheaderoffset = 0x0;
+    return result;
+}
+
+- (void)_writeCentralDirectoryRecord:(XADZipParserCentralDirectoryRecord)centralDirectoryRecord
+                          withHandle:(XADMemoryHandle *)handle
+{
+
+    XADZipParserCentralDirectoryRecord cdr = centralDirectoryRecord;
+    [handle writeInt32LE:cdr.centralid];
+
+    [handle writeUInt8:cdr.creatorversion];
+    [handle writeUInt8:cdr.system];
+
+    [handle writeUInt16LE:cdr.extractversion];
+    [handle writeUInt16LE:cdr.flags];
+    [handle writeUInt16LE:cdr.compressionmethod];
+
+    [handle writeUInt32LE:cdr.date];
+    [handle writeUInt32LE:cdr.crc];
+
+    [handle writeUInt32LE:(uint32_t)cdr.compsize];
+    [handle writeUInt32LE:(uint32_t)cdr.uncompsize];
+
+    [handle writeUInt16LE:cdr.namelength];
+    [handle writeUInt16LE:cdr.extralength];
+    [handle writeUInt16LE:cdr.commentlength];
+
+    [handle writeUInt16LE:cdr.startdisk];
+    [handle writeUInt16LE:cdr.infileattrib];
+
+    [handle writeUInt32LE:cdr.extfileattrib];
+    [handle writeUInt32LE:(uint32_t)cdr.locheaderoffset];
+}
 
 - (XADZipParserTestsSUT)_handleWithExtendedTimeStampModificationTime:(BOOL)modificationTime value:(int32_t)modificationValue
                                                           accessTime:(BOOL)accessTime value:(int32_t)accessValue

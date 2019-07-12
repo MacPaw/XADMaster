@@ -286,58 +286,9 @@
 
 		NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
-		// Read central directory record.
-		uint32_t centralid=[fh readID];
-		if(centralid!=0x504b0102) [XADException raiseIllegalDataException]; // could try recovering here
+        XADZipParserCentralDirectoryRecord cdr = [self readCentralDirectoryRecord];
 
-		/*int creatorversion=*/[fh readUInt8];
-		int system=[fh readUInt8];
-		int extractversion=[fh readUInt16LE];
-		int flags=[fh readUInt16LE];
-		int compressionmethod=[fh readUInt16LE];
-		uint32_t date=[fh readUInt32LE];
-		uint32_t crc=[fh readUInt32LE];
-		off_t compsize=[fh readUInt32LE];
-		off_t uncompsize=[fh readUInt32LE];
-		int namelength=[fh readUInt16LE];
-		int extralength=[fh readUInt16LE];
-		int commentlength=[fh readUInt16LE];
-		int startdisk=[fh readUInt16LE];
-		/*int infileattrib=*/[fh readUInt16LE];
-		uint32_t extfileattrib=[fh readUInt32LE];
-		off_t locheaderoffset=[fh readUInt32LE];
-
-		[fh skipBytes:namelength];
-
-		// Read central directory extra fields, just to find the Zip64 field.
-		int length=extralength;
-		while(length>9)
-		{
-			int extid=[fh readUInt16LE];
-			int size=[fh readUInt16LE];
-			length-=4;
-
-			if(size>length) break;
-			length-=size;
-			off_t nextextra=[fh offsetInFile]+size;
-
-			if(extid==1)
-			{
-				off_t uncompsize64=[fh readUInt64LE];
-				off_t compsize64=[fh readUInt64LE];
-				off_t locheaderoffset64=[fh readUInt64LE];
-				int startdisk64=[fh readUInt32LE];
-				if(uncompsize==0xffffffff) uncompsize=uncompsize64;
-				if(compsize==0xffffffff) compsize=compsize64;
-				if(locheaderoffset==0xffffffff) locheaderoffset=locheaderoffset64;
-				if(startdisk==0xffff) startdisk=startdisk64;
-				break;
-			}
-
-			[fh seekToFileOffset:nextextra];
-		}
-		if(length) [fh skipBytes:length];
-
+        // Parse comment data
 		NSData *commentdata=nil;
 		if(commentlength) commentdata=[fh readDataOfLength:commentlength];
         
@@ -353,7 +304,7 @@
 		}
 
 		// Read local header
-		[fh seekToFileOffset:[self offsetForVolume:startdisk offset:locheaderoffset]];
+		[fh seekToFileOffset:[self offsetForVolume:cdr.startdisk offset:cdr.locheaderoffset]];
 
 		uint32_t localid=[fh readID];
 		if(localid==0x504b0304||localid==0x504b0506) // kludge for strange archives
@@ -378,15 +329,16 @@
 			NSDictionary *extradict=nil;
 			@try {
 				if(localextralength) extradict=[self parseZipExtraWithLength:localextralength nameData:namedata
-				uncompressedSizePointer:&uncompsize compressedSizePointer:&compsize];
+				uncompressedSizePointer:&cdr.uncompsize compressedSizePointer:&cdr.compsize];
 			} @catch(id e) {
 				[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 				NSLog(@"Error parsing Zip extra fields: %@",e);
 			}
 
-			[self addZipEntryWithSystem:system extractVersion:extractversion flags:flags
-			compressionMethod:compressionmethod date:date crc:crc localDate:localdate
-			compressedSize:compsize uncompressedSize:uncompsize extendedFileAttributes:extfileattrib
+            // TODO: Consider using CDR struct
+			[self addZipEntryWithSystem:cdr.system extractVersion:cdr.extractversion flags:cdr.flags
+			compressionMethod:cdr.compressionmethod date:cdr.date crc:cdr.crc localDate:localdate
+			compressedSize:cdr.compsize uncompressedSize:cdr.uncompsize extendedFileAttributes:cdr.extfileattrib
 			extraDictionary:extradict dataOffset:dataoffset nameData:namedata commentData:commentdata
 			isLastEntry:i==numentries-1];
 		}
@@ -398,6 +350,65 @@
 	}
 }
 
+-(XADZipParserCentralDirectoryRecord)readCentralDirectoryRecord
+{
+    CSHandle *fh=[self handle];
+
+    XADZipParserCentralDirectoryRecord cdr;
+    // Read central directory record.
+    cdr.centralid=[fh readID];
+    if(cdr.centralid!=0x504b0102) [XADException raiseIllegalDataException]; // could try recovering here
+
+    cdr.creatorversion=[fh readUInt8];
+    cdr.system=[fh readUInt8];
+    cdr.extractversion=[fh readUInt16LE];
+    cdr.flags=[fh readUInt16LE];
+    cdr.compressionmethod=[fh readUInt16LE];
+    cdr.date=[fh readUInt32LE];
+    cdr.crc=[fh readUInt32LE];
+    cdr.compsize=[fh readUInt32LE];
+    cdr.uncompsize=[fh readUInt32LE];
+    cdr.namelength=[fh readUInt16LE];
+    cdr.extralength=[fh readUInt16LE];
+    cdr.commentlength=[fh readUInt16LE];
+    cdr.startdisk=[fh readUInt16LE];
+    cdr.infileattrib=[fh readUInt16LE];
+    cdr.extfileattrib=[fh readUInt32LE];
+    cdr.locheaderoffset=[fh readUInt32LE];
+
+    [fh skipBytes:cdr.namelength];
+
+    // Read central directory extra fields, just to find the Zip64 field.
+    int length=cdr.extralength;
+    while(length>9)
+    {
+        int extid=[fh readUInt16LE];
+        int size=[fh readUInt16LE];
+        length-=4;
+
+        if(size>length) break;
+        length-=size;
+        off_t nextextra=[fh offsetInFile]+size;
+
+        if(extid==1)
+        {
+            off_t uncompsize64=[fh readUInt64LE];
+            off_t compsize64=[fh readUInt64LE];
+            off_t locheaderoffset64=[fh readUInt64LE];
+            int startdisk64=[fh readUInt32LE];
+            if(cdr.uncompsize==0xffffffff) cdr.uncompsize=uncompsize64;
+            if(cdr.compsize==0xffffffff) cdr.compsize=compsize64;
+            if(cdr.locheaderoffset==0xffffffff) cdr.locheaderoffset=locheaderoffset64;
+            if(cdr.startdisk==0xffff) cdr.startdisk=startdisk64;
+            break;
+        }
+
+        [fh seekToFileOffset:nextextra];
+    }
+    if(length) [fh skipBytes:length];
+    return cdr;
+}
+
 -(off_t)offsetForVolume:(int)disk offset:(off_t)offset
 {
 	NSArray *sizes=[self volumeSizes];
@@ -407,9 +418,6 @@
 
 	return offset;
 }
-
-
-
 
 -(void)parseWithoutCentralDirectory
 {

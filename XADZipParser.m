@@ -997,7 +997,11 @@ isLastEntry:(BOOL)islastentry
             // For example, Archive created on windows, can still have valid symlinks in it
             int perm = extfileattrib >> 16;
             // Ignore permissions set to 0, as these are most likely writte by buggy archivers.
-            if (perm != 0) [dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
+
+            // Ignore file permissions, because these can lead to the incorrect handling of the files on MacOS
+            if (perm >= S_IFIFO) {
+            	[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
+            }
 
         }
 		else if(system==1) // Amiga

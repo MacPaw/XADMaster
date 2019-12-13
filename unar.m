@@ -372,15 +372,10 @@ int main(int argc,const char **argv)
 -(NSString *)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver replacementPathForEntryWithDictionary:(NSDictionary *)dict
 originalPath:(NSString *)path suggestedPath:(NSString *)unique
 {
-	// Skip files and report as error if not interactive.
+	// Return suggested path if not interactive.
  	if(!isinteractive)
 	{
-		[@"  " printToFile:errstream];
-		NSString *name=MediumInfoLineForEntryWithDictionary(dict);
-		[name printToFile:errstream];
-		[@"... Skipping existing file.\n" printToFile:errstream];
-		numerrors++;
-		return nil;
+		return unique;
 	}
 
 	[@"\"" printToFile:outstream];

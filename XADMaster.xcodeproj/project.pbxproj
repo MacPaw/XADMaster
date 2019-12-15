@@ -2280,6 +2280,7 @@
 			);
 			name = XADMaster;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
@@ -2586,6 +2587,7 @@
 			);
 			path = wavpack;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		1B34A03A11BB1CC300396C26 /* Windows Libraries */ = {
 			isa = PBXGroup;
@@ -3119,8 +3121,10 @@
 				1BCD5DA70EED8C9C00D86C43 /* LzmaDec.h */,
 				1BCD5DA80EED8C9C00D86C43 /* Types.h */,
 			);
+			indentWidth = 2;
 			path = lzma;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		1BDDC79413DE3D2800A8C079 /* Man Pages */ = {
 			isa = PBXGroup;
@@ -3231,6 +3235,7 @@
 			);
 			path = XADMasterTests;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 /* End PBXGroup section */
 

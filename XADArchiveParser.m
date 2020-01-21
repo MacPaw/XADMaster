@@ -945,6 +945,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		[currsolidobj release];
 		currsolidobj=[solidobj retain];
 		[currsolidhandle release];
+        currsolidhandle = nil;
 		currsolidhandle=[[self handleForSolidStreamWithObject:solidobj wantChecksum:YES] retain];
 	}
 

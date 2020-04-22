@@ -393,10 +393,10 @@ static void EmitLongMatch(XADRAR15Handle *self,off_t *posptr)
 	if(offset>=self->maximumoffset) length++;
 	if(offset<=256) length+=8;
 
+	unsigned int oldMaximumOffset = self->maximumoffset;
 	if(self->runningaveragebelowmaximum>0xb0 || (self->runningaverageliteral>=0x2a00
 	&& self->runningaveragelength<0x40)) self->maximumoffset=0x7f00;
 	else self->maximumoffset=0x2001;
-
 
 
 	self->runningaveragelength+=rawlength;
@@ -405,7 +405,7 @@ static void EmitLongMatch(XADRAR15Handle *self,off_t *posptr)
 	self->runningaverageoffset+=offsetindex;
 	self->runningaverageoffset-=self->runningaverageoffset>>8;
 
-    if(rawlength==0 && offset<=self->maximumoffset)
+	if (rawlength == 0 && offset <= oldMaximumOffset)
     {
 		self->runningaveragebelowmaximum++;
 		self->runningaveragebelowmaximum-=self->runningaveragebelowmaximum>>8;

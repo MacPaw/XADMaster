@@ -304,7 +304,8 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
 	// If this is not a solid file, forget the earlier solid
 	// file list and start over.
 	bool solid=[[dict objectForKey:XADIsSolidKey] boolValue];
-	if(!solid)
+	bool isDirectory=[[dict objectForKey:XADIsDirectoryKey] boolValue];
+	if(!solid && !isDirectory)
 	{
 		currsolidstream=[NSMutableArray array];
 		[solidstreams addObject:currsolidstream];

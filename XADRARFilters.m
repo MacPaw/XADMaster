@@ -332,6 +332,11 @@ static void RARE8E9Filter(uint8_t *memory,size_t length,off_t filepos,bool handl
 
 static void RARARMFilter(uint8_t *memory,size_t length,off_t filepos)
 {
+    if (length < 4)
+    {
+        // This probably, worth throwing an exception, but it's hard to tell if this should be skipped or error should be thrown
+        return;
+    }
 	for(size_t i=0;i<=length-4;i+=4)
 	{
 		if(memory[i+3]==0xeb)

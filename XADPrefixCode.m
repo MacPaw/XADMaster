@@ -68,6 +68,7 @@ static inline int NewNode(XADPrefixCode *self)
 
 int CSInputNextSymbolUsingCode(CSInputBuffer *buf,XADPrefixCode *code)
 {
+    if (!code) [NSException raise:XADInvalidPrefixCodeException format:@"Invalid prefix code"];
 	if(!code->table1) [code _makeTable];
 
 	int bits=CSInputPeekBitString(buf,code->tablesize);

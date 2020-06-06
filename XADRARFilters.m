@@ -301,8 +301,14 @@ static void RARDeltaFilter(uint8_t *src,uint8_t *dest,size_t length,int numchann
 
 static void RARE8E9Filter(uint8_t *memory,size_t length,off_t filepos,bool handlee9,bool wrapposition)
 {
-	int32_t filesize=0x1000000;
+    if (length < 5)
+    {
+        // This probably, worth throwing an exception, but it's hard to tell if this should be skipped or error should be thrown
+        return;
+    }
 
+	int32_t filesize=0x1000000;
+    
 	for(size_t i=0;i<=length-5;i++)
 	{
 		if(memory[i]==0xe8 || (handlee9 && memory[i]==0xe9))

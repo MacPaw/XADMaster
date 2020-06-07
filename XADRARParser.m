@@ -652,11 +652,19 @@ isCorrupted:(BOOL)iscorrupted
 						if(len&0x80)
 						{
 							int correction=[fh readUInt8];
-							for(int i=0;i<(len&0x7f)+2;i++)
-							[str appendFormat:@"%C",(unichar)(highbyte+(bytes[[str length]]+correction&0xff))];
+                            for(int i=0;i<(len&0x7f)+2;i++) {
+                                if ([str length] < length) {
+                                    [str appendFormat:@"%C",(unichar)(highbyte+(bytes[[str length]]+correction&0xff))];
+                                }
+                            }
 						}
-						else for(int i=0;i<(len&0x7f)+2;i++)
-						[str appendFormat:@"%C",(unichar)(bytes[[str length]])];
+                        else {
+                            for(int i=0;i<(len&0x7f)+2;i++) {
+                                if ([str length] < length) {
+                                    [str appendFormat:@"%C",(unichar)(bytes[[str length]])];
+                                }
+                            }
+                        }
 					}
 					break;
 				}

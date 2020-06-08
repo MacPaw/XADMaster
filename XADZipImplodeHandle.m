@@ -68,7 +68,8 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 		int val=CSInputNextByte(input);
 		int num=(val>>4)+1;
 		int length=(val&0x0f)+1;
-		while(num--) codelengths[currcode++]=length;
+        if (num > size - currcode) [XADException raiseDecrunchException];
+        while(num--) codelengths[currcode++]=length;
 	}
 	if(currcode!=size) [XADException raiseDecrunchException];
 

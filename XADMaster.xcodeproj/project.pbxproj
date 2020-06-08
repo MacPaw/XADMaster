@@ -1367,6 +1367,7 @@
 		1BF3BA9013EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
+		7318A41D248C67E400D327B9 /* XADRARParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7318A41C248C67E400D327B9 /* XADRARParserTests.m */; };
 		73396ED221C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
 		73396ED321C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
 		73396ED421C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
@@ -1426,6 +1427,8 @@
 			isa = PBXBuildRule;
 			compilerSpec = org.cocotron.1.0.windows.i386.gcc.default;
 			fileType = sourcecode.c;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -1434,6 +1437,8 @@
 			isa = PBXBuildRule;
 			compilerSpec = org.cocotron.1.0.windows.i386.gcc.default;
 			fileType = sourcecode.c;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -1442,6 +1447,8 @@
 			isa = PBXBuildRule;
 			compilerSpec = org.cocotron.1.0.windows.i386.gcc.default;
 			fileType = sourcecode.c;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -2115,6 +2122,7 @@
 		32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMaster_Prefix.pch; sourceTree = "<group>"; };
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		7318A41C248C67E400D327B9 /* XADRARParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADRARParserTests.m; sourceTree = "<group>"; };
 		73396ECF21C79D7100D36226 /* entropy_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = entropy_utils.c; sourceTree = "<group>"; };
 		73396ED721C79D9E00D36226 /* unpack_floats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_floats.c; sourceTree = "<group>"; };
 		73396EE021C79DCE00D36226 /* open_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = open_utils.c; sourceTree = "<group>"; };
@@ -3211,6 +3219,14 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		7318A419248C67BD00D327B9 /* RAR */ = {
+			isa = PBXGroup;
+			children = (
+				7318A41C248C67E400D327B9 /* XADRARParserTests.m */,
+			);
+			path = RAR;
+			sourceTree = "<group>";
+		};
 		7398C7AD2059248700D7B977 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -3221,6 +3237,7 @@
 		73DA3466206B6BF1006ADB42 /* XADMasterTests */ = {
 			isa = PBXGroup;
 			children = (
+				7318A419248C67BD00D327B9 /* RAR */,
 				73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */,
 				73DA3469206B6BF1006ADB42 /* Info.plist */,
 				1737CCA9B444F0AF0C3A4456 /* XADRAR5ParserTests.m */,
@@ -4720,6 +4737,7 @@
 			files = (
 				7378D98B21CCD04000A4B11F /* CRCCalculationTests.m in Sources */,
 				73DA3468206B6BF1006ADB42 /* XADPlatformOSXTests.m in Sources */,
+				7318A41D248C67E400D327B9 /* XADRARParserTests.m in Sources */,
 				1737C872BD5877C5DFDA3D99 /* XADRAR5ParserTests.m in Sources */,
 				E424FB4E21CAEC0300E1C950 /* XADZipParserTests.m in Sources */,
 				E46E6296225DC2DE00D44E0A /* XADSFXDetectionParserTests.m in Sources */,

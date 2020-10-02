@@ -42,7 +42,7 @@ jobs:
           repository: MacPaw/universal-detector
           path: UniversalDetector
 
-      # Preinsatll libs
+      # Preinstall libs
       - name: Install libs
         run: sudo apt-get install build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev
 

@@ -38,13 +38,13 @@ jobs:
         fetch-depth: 2
         
     - uses: actions/checkout@v2
-        with:
+      with:
           repository: MacPaw/universal-detector
           path: UniversalDetector
 
-      # Preinstall libs
-      - name: Install libs
-        run: sudo apt-get install build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev
+    # Preinstall libs
+    - name: Install libs
+      run: sudo apt-get install build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL

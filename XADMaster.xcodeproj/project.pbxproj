@@ -1368,6 +1368,7 @@
 		1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		73032E6C2626D3DD000C2751 /* XADWARCParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73032E6B2626D3DD000C2751 /* XADWARCParserTests.m */; };
+		73032E6E2626DB7C000C2751 /* WARCFixtures in Resources */ = {isa = PBXBuildFile; fileRef = 73032E6D2626DB7C000C2751 /* WARCFixtures */; };
 		7318A41D248C67E400D327B9 /* XADRARParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7318A41C248C67E400D327B9 /* XADRARParserTests.m */; };
 		73396ED221C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
 		73396ED321C79D7200D36226 /* entropy_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 73396ECF21C79D7100D36226 /* entropy_utils.c */; };
@@ -2124,6 +2125,7 @@
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		73032E6B2626D3DD000C2751 /* XADWARCParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADWARCParserTests.m; sourceTree = "<group>"; };
+		73032E6D2626DB7C000C2751 /* WARCFixtures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WARCFixtures; sourceTree = "<group>"; };
 		7318A41C248C67E400D327B9 /* XADRARParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADRARParserTests.m; sourceTree = "<group>"; };
 		73396ECF21C79D7100D36226 /* entropy_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = entropy_utils.c; sourceTree = "<group>"; };
 		73396ED721C79D9E00D36226 /* unpack_floats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_floats.c; sourceTree = "<group>"; };
@@ -3224,6 +3226,7 @@
 		73032E652626D2E0000C2751 /* WARC */ = {
 			isa = PBXGroup;
 			children = (
+				73032E6D2626DB7C000C2751 /* WARCFixtures */,
 				73032E6B2626D3DD000C2751 /* XADWARCParserTests.m */,
 			);
 			path = WARC;
@@ -3988,6 +3991,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73032E6E2626DB7C000C2751 /* WARCFixtures in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

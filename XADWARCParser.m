@@ -31,7 +31,12 @@
 	int length=[data length];
 
 	if(length<10) return NO;
-	return memcmp(bytes,"WARC/1.0\r\n",10)==0;
+    
+    if (memcmp(bytes,"WARC/1.0\r\n",10)==0)
+    {
+        return YES;
+    }
+	return memcmp(bytes,"WARC/1.1\r\n",10)==0;
 }
 
 -(void)parse

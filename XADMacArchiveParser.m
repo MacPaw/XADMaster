@@ -54,6 +54,17 @@ NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 		if(CSUInt32BE(bytes+102)=='mBIN') return 3; // MacBinary III
 		else return 2; // MacBinary II
 	}
+    
+    // We aren't sure about the previous one checksum, but we have files that will fail
+    // unless we calculated this in this way (CRC16-USB)
+    uint32_t calculatedCRC = XADCalculateCRC(65535,bytes,124,XADCRCTable_a001) ^ 65535;
+    uint16_t storedCRC = CSUInt16BE(bytes+124);
+    if (calculatedCRC == storedCRC)
+    {
+        // Check for a valid signature.
+        if(CSUInt32BE(bytes+102)=='mBIN') return 3; // MacBinary III
+        else return 2; // MacBinary II
+    }
 
 	// Some final heuristics before accepting a version I file.
 	for(int i=99;i<=125;i++) if(bytes[i]!=0) return 0;

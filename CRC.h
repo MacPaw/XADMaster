@@ -35,5 +35,6 @@ int XADUnReverseCRC16(int val);
 extern const uint32_t XADCRCTable_a001[256];
 extern const uint32_t XADCRCTable_sliced16_edb88320[16][256];
 extern const uint32_t XADCRCReverseTable_1021[256];
+extern const uint32_t XADCRCTable_usb[256];
 extern const uint32_t XADCRCTable_edb88320[256];
 extern const uint64_t XADCRCTable_c96c5795d7870f42[256];

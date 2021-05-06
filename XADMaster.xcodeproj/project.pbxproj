@@ -1367,6 +1367,7 @@
 		1BF3BA9013EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
+		2276D303264379ED0042D30D /* XADArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5A80B50A27AA9900B189EB /* XADArchive.m */; };
 		73032E6C2626D3DD000C2751 /* XADWARCParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73032E6B2626D3DD000C2751 /* XADWARCParserTests.m */; };
 		73032E6E2626DB7C000C2751 /* WARCFixtures in Resources */ = {isa = PBXBuildFile; fileRef = 73032E6D2626DB7C000C2751 /* WARCFixtures */; };
 		7318A41D248C67E400D327B9 /* XADRARParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7318A41C248C67E400D327B9 /* XADRARParserTests.m */; };
@@ -2272,7 +2273,6 @@
 			children = (
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				1B06D5B80DDA66AA00D9C000 /* Archive Parsers */,
-				1B5F13C514119F2D0078DF5C /* Deprecated */,
 				1BC89A7D0EDB1BA6006B47FE /* Compression Utilities */,
 				1BC886D80ECE18EF006B47FE /* Utilities */,
 				1BE97607163CC2A100BB34EA /* Crypto */,
@@ -2318,6 +2318,8 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				1B5A7AF50A24CFD200B189EB /* XADArchive.h */,
+				1B5A80B50A27AA9900B189EB /* XADArchive.m */,
 				1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */,
 				1BBAB6770EC26AA6007FE6A2 /* XADArchiveParser.m */,
 				1BBEF8AE14D8A31700790E4B /* XADArchiveParserDescriptions.h */,
@@ -2690,15 +2692,6 @@
 				1B3A650110154DCE00AE25A8 /* CSHexDump.m */,
 			);
 			name = XADTest;
-			sourceTree = "<group>";
-		};
-		1B5F13C514119F2D0078DF5C /* Deprecated */ = {
-			isa = PBXGroup;
-			children = (
-				1B5A7AF50A24CFD200B189EB /* XADArchive.h */,
-				1B5A80B50A27AA9900B189EB /* XADArchive.m */,
-			);
-			name = Deprecated;
 			sourceTree = "<group>";
 		};
 		1B690E840F47944400A415E0 /* Wrappers */ = {
@@ -4280,6 +4273,7 @@
 				1B467A4F15CD9A73001AB1DD /* XADRARVirtualMachine.m in Sources */,
 				1B467A5015CD9A73001AB1DD /* Bra.c in Sources */,
 				1B467A5115CD9A73001AB1DD /* Bra86.c in Sources */,
+				2276D303264379ED0042D30D /* XADArchive.m in Sources */,
 				1B467A5215CD9A73001AB1DD /* Lzma2Dec.c in Sources */,
 				1B467A5315CD9A73001AB1DD /* LzmaDec.c in Sources */,
 				1B467A5415CD9A73001AB1DD /* XAD7ZipBCJ2Handle.m in Sources */,

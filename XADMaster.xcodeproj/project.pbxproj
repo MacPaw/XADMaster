@@ -46,7 +46,6 @@
 		1B216A750F8E8ADE001207C9 /* Progress.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B216A730F8E8ADE001207C9 /* Progress.h */; };
 		1B216A760F8E8ADE001207C9 /* Progress.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A740F8E8ADE001207C9 /* Progress.m */; };
 		1B216A790F8E9064001207C9 /* CRC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B216A770F8E9064001207C9 /* CRC.m */; };
-		1B216A800F8E9D9E001207C9 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B216A7F0F8E9D9E001207C9 /* Carbon.framework */; };
 		1B216BBE0F8E9DED001207C9 /* XADArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5A80B50A27AA9900B189EB /* XADArchive.m */; };
 		1B23DAA01177C99900620319 /* Scanning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DA9E1177C99900620319 /* Scanning.m */; };
 		1B23DB8F117BA91D00620319 /* XADNowCompressParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B23DB8D117BA91D00620319 /* XADNowCompressParser.m */; };
@@ -1367,6 +1366,28 @@
 		1BF3BA9013EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
+		223F69A92643C49800B9ABCA /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223F69A82643C49800B9ABCA /* Carbon.framework */; };
+		223F69AC2643C52100B9ABCA /* Checksums.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89C9E0EDCAA51006B47FE /* Checksums.h */; };
+		223F69AD2643C52E00B9ABCA /* ClangAnalyser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4B51DD1C061E3100C1074D /* ClangAnalyser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		223F69AE2643C53400B9ABCA /* CSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		223F69AF2643C53B00B9ABCA /* CSInputBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8903D0ED47D76006B47FE /* CSInputBuffer.h */; };
+		223F69B02643C54400B9ABCA /* CSStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF80EC3859F006D2F06 /* CSStreamHandle.h */; };
+		223F69B12643C54B00B9ABCA /* CSSubHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */; };
+		223F69B22643C55100B9ABCA /* XADArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B5A7AF50A24CFD200B189EB /* XADArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		223F69B32643C55700B9ABCA /* XADArchiveParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */; };
+		223F69B42643C55D00B9ABCA /* XADException.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B578C320DDBC8BF005B0F68 /* XADException.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		223F69B52643C56300B9ABCA /* XADPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA266DC0FC78BF600279E95 /* XADPath.h */; };
+		223F69B62643C56900B9ABCA /* XADRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2110700A4452C2005ED2AF /* XADRegex.h */; };
+		223F69B72643C56F00B9ABCA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
+		223F69B82643C57600B9ABCA /* XADSkipHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F17E40EE8AF7B0000DAFF /* XADSkipHandle.h */; };
+		223F69B92643C57C00B9ABCA /* XADString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5B90DDA67E000D9C000 /* XADString.h */; };
+		223F69BA2643C58200B9ABCA /* XADUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */; };
+		223F69BB2643C5A000B9ABCA /* libXADMaster.ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B467B0115CD9A73001AB1DD /* libXADMaster.ios.a */; };
+		223F69BD2643C64800B9ABCA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223F69BC2643C64800B9ABCA /* Foundation.framework */; };
+		223F69BF2643C64D00B9ABCA /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 223F69BE2643C64D00B9ABCA /* libc++.tbd */; };
+		223F69C12643C65400B9ABCA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 223F69C02643C65400B9ABCA /* libbz2.tbd */; };
+		223F69C32643C65A00B9ABCA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 223F69C22643C65A00B9ABCA /* libz.tbd */; };
+		223F69C62643C69100B9ABCA /* libUniversalDetector.ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B467B2A15CD9B4D001AB1DD /* libUniversalDetector.ios.a */; };
 		2276D303264379ED0042D30D /* XADArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B5A80B50A27AA9900B189EB /* XADArchive.m */; };
 		73032E6C2626D3DD000C2751 /* XADWARCParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73032E6B2626D3DD000C2751 /* XADWARCParserTests.m */; };
 		73032E6E2626DB7C000C2751 /* WARCFixtures in Resources */ = {isa = PBXBuildFile; fileRef = 73032E6D2626DB7C000C2751 /* WARCFixtures */; };
@@ -1577,6 +1598,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1B91CBB711D821A70081E40A;
 			remoteInfo = "libUniversalDetector (Windows)";
+		};
+		223F69AA2643C4F500B9ABCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B4679F715CD9A73001AB1DD;
+			remoteInfo = libXADMaster.ios.a;
+		};
+		223F69C42643C68900B9ABCA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B467B0415CD9B1F001AB1DD;
+			remoteInfo = libUniversalDetector.ios.a;
 		};
 		3D664E3E10376F6A00A679EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2122,6 +2157,12 @@
 		1BF0EE9C14031860007B8CF8 /* VariantI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VariantI.c; sourceTree = "<group>"; };
 		1BF0EE9D14031860007B8CF8 /* VariantI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariantI.h; sourceTree = "<group>"; };
 		1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADPlatform.h; sourceTree = "<group>"; };
+		223F699E2643C3E400B9ABCA /* XADMaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XADMaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		223F69A82643C49800B9ABCA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		223F69BC2643C64800B9ABCA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.5.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		223F69BE2643C64D00B9ABCA /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.5.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		223F69C02643C65400B9ABCA /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.5.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
+		223F69C22643C65A00B9ABCA /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.5.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		32DBCF5E0370ADEE00C91783 /* XADMaster_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XADMaster_Prefix.pch; sourceTree = "<group>"; };
 		56FBC8DC0A57531D00BE98CF /* UniversalDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UniversalDetector.xcodeproj; path = ../UniversalDetector/UniversalDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		56FBC92B0A57541300BE98CF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
@@ -2229,6 +2270,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		223F699B2643C3E400B9ABCA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				223F69C62643C69100B9ABCA /* libUniversalDetector.ios.a in Frameworks */,
+				223F69C32643C65A00B9ABCA /* libz.tbd in Frameworks */,
+				223F69C12643C65400B9ABCA /* libbz2.tbd in Frameworks */,
+				223F69BF2643C64D00B9ABCA /* libc++.tbd in Frameworks */,
+				223F69BD2643C64800B9ABCA /* Foundation.framework in Frameworks */,
+				223F69BB2643C5A000B9ABCA /* libXADMaster.ios.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		73DA3462206B6BF1006ADB42 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2244,7 +2298,7 @@
 				1B3FABA80EC52532006D2F06 /* libz.dylib in Frameworks */,
 				1B3FAC5D0EC5255A006D2F06 /* Foundation.framework in Frameworks */,
 				1BBCC54D0EE73B7F006C3AE2 /* libbz2.dylib in Frameworks */,
-				1B216A800F8E9D9E001207C9 /* Carbon.framework in Frameworks */,
+				223F69A92643C49800B9ABCA /* Carbon.framework in Frameworks */,
 				7398C7AE2059248700D7B977 /* UniversalDetector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2264,6 +2318,7 @@
 				1B91D2EE11E694860081E40A /* lsar.exe */,
 				1B467B0115CD9A73001AB1DD /* libXADMaster.ios.a */,
 				73DA3465206B6BF1006ADB42 /* XADMasterTests.xctest */,
+				223F699E2643C3E400B9ABCA /* XADMaster.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3236,6 +3291,11 @@
 		7398C7AD2059248700D7B977 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				223F69C22643C65A00B9ABCA /* libz.tbd */,
+				223F69C02643C65400B9ABCA /* libbz2.tbd */,
+				223F69BE2643C64D00B9ABCA /* libc++.tbd */,
+				223F69BC2643C64800B9ABCA /* Foundation.framework */,
+				223F69A82643C49800B9ABCA /* Carbon.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -3490,6 +3550,28 @@
 				1B6F13D2163E25160054C1AE /* XADMD5Handle.h in Headers */,
 				1B6F13DE163E25320054C1AE /* XADSHA1Handle.h in Headers */,
 				1BA155E41645BF0600BFF440 /* XADStuffItDESHandle.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		223F69992643C3E400B9ABCA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				223F69B22643C55100B9ABCA /* XADArchive.h in Headers */,
+				223F69AE2643C53400B9ABCA /* CSHandle.h in Headers */,
+				223F69B42643C55D00B9ABCA /* XADException.h in Headers */,
+				223F69AD2643C52E00B9ABCA /* ClangAnalyser.h in Headers */,
+				223F69BA2643C58200B9ABCA /* XADUnarchiver.h in Headers */,
+				223F69AC2643C52100B9ABCA /* Checksums.h in Headers */,
+				223F69B92643C57C00B9ABCA /* XADString.h in Headers */,
+				223F69B82643C57600B9ABCA /* XADSkipHandle.h in Headers */,
+				223F69B72643C56F00B9ABCA /* XADResourceFork.h in Headers */,
+				223F69B62643C56900B9ABCA /* XADRegex.h in Headers */,
+				223F69B52643C56300B9ABCA /* XADPath.h in Headers */,
+				223F69B32643C55700B9ABCA /* XADArchiveParser.h in Headers */,
+				223F69B12643C54B00B9ABCA /* CSSubHandle.h in Headers */,
+				223F69B02643C54400B9ABCA /* CSStreamHandle.h in Headers */,
+				223F69AF2643C53B00B9ABCA /* CSInputBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3853,6 +3935,26 @@
 			productReference = 1B91D2EE11E694860081E40A /* lsar.exe */;
 			productType = "com.apple.product-type.tool";
 		};
+		223F699D2643C3E400B9ABCA /* XADMaster-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 223F69A72643C3E400B9ABCA /* Build configuration list for PBXNativeTarget "XADMaster-iOS" */;
+			buildPhases = (
+				223F69992643C3E400B9ABCA /* Headers */,
+				223F699A2643C3E400B9ABCA /* Sources */,
+				223F699B2643C3E400B9ABCA /* Frameworks */,
+				223F699C2643C3E400B9ABCA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				223F69C52643C68900B9ABCA /* PBXTargetDependency */,
+				223F69AB2643C4F500B9ABCA /* PBXTargetDependency */,
+			);
+			name = "XADMaster-iOS";
+			productName = "XADMaster-iOS";
+			productReference = 223F699E2643C3E400B9ABCA /* XADMaster.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		73DA3464206B6BF1006ADB42 /* XADMasterTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 73DA3471206B6BF1006ADB42 /* Build configuration list for PBXNativeTarget "XADMasterTests" */;
@@ -3899,6 +4001,11 @@
 			attributes = {
 				LastUpgradeCheck = 0800;
 				TargetAttributes = {
+					223F699D2643C3E400B9ABCA = {
+						CreatedOnToolsVersion = 12.5;
+						DevelopmentTeam = 6LF3GMKZAB;
+						ProvisioningStyle = Automatic;
+					};
 					73DA3464206B6BF1006ADB42 = {
 						CreatedOnToolsVersion = 9.2;
 						DevelopmentTeam = S8EX82NJP6;
@@ -3928,6 +4035,7 @@
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* XADMaster */,
+				223F699D2643C3E400B9ABCA /* XADMaster-iOS */,
 				1B34A97411C2FD0500396C26 /* libXADMaster.a */,
 				1B91CCBE11D97E7C0081E40A /* libXADMaster.win.a */,
 				1B4679F715CD9A73001AB1DD /* libXADMaster.ios.a */,
@@ -3980,6 +4088,13 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		223F699C2643C3E400B9ABCA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		73DA3463206B6BF1006ADB42 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4740,6 +4855,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		223F699A2643C3E400B9ABCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		73DA3461206B6BF1006ADB42 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5050,6 +5172,16 @@
 			name = "libUniversalDetector (Windows)";
 			targetProxy = 1B91D2DA11E694860081E40A /* PBXContainerItemProxy */;
 		};
+		223F69AB2643C4F500B9ABCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1B4679F715CD9A73001AB1DD /* libXADMaster.ios.a */;
+			targetProxy = 223F69AA2643C4F500B9ABCA /* PBXContainerItemProxy */;
+		};
+		223F69C52643C68900B9ABCA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libUniversalDetector.ios.a;
+			targetProxy = 223F69C42643C68900B9ABCA /* PBXContainerItemProxy */;
+		};
 		3D664E3F10376F6A00A679EF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = UniversalDetector;
@@ -5126,9 +5258,10 @@
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../Dependencies/iOS/Includes\"";
 				INSTALL_PATH = /usr/local/lib;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = XADMaster.ios;
 				SDKROOT = iphoneos;
@@ -5145,9 +5278,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = XADMaster_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../Dependencies/iOS/Includes\"";
 				INSTALL_PATH = /usr/local/lib;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = XADMaster.ios;
 				SDKROOT = iphoneos;
@@ -5640,6 +5774,124 @@
 			};
 			name = Debug;
 		};
+		223F69A32643C3E400B9ABCA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = "3.10 (libxad 13.0, modified)";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-all_load";
+				PRODUCT_BUNDLE_IDENTIFIER = de.dstoecker.xadmaster.XADMaster;
+				PRODUCT_NAME = XADMaster;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		223F69A42643C3E400B9ABCA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = "3.10 (libxad 13.0, modified)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 6LF3GMKZAB;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-all_load";
+				PRODUCT_BUNDLE_IDENTIFIER = de.dstoecker.xadmaster.XADMaster;
+				PRODUCT_NAME = XADMaster;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		73DA346D206B6BF1006ADB42 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5816,6 +6068,15 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1B68D25C13282D2500A8121A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		223F69A72643C3E400B9ABCA /* Build configuration list for PBXNativeTarget "XADMaster-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				223F69A32643C3E400B9ABCA /* Debug */,
+				223F69A42643C3E400B9ABCA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

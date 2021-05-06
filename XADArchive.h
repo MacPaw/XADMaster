@@ -20,9 +20,11 @@
  */
 #import <Foundation/Foundation.h>
 
-#import "XADArchiveParser.h"
-#import "XADUnarchiver.h"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
 #import "XADException.h"
+#import "CSHandle.h"
+#pragma clang diagnostic pop
 
 typedef int XADAction;
 //typedef off_t xadSize; // deprecated
@@ -37,8 +39,8 @@ extern NSString *XADResourceDataKey;
 extern NSString *XADResourceForkData;
 extern NSString *XADFinderFlags;
 
-
 @class UniversalDetector;
+@class XADArchiveParser, XADUnarchiver;
 
 @interface XADArchive:NSObject
 {

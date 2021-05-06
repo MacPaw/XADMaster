@@ -21,8 +21,9 @@
 #define XAD_NO_DEPRECATED
 
 #import "XADArchive.h"
+#import "XADArchiveParser.h"
+#import "XADUnarchiver.h"
 #import "CSMemoryHandle.h"
-#import "CSHandle.h"
 #import "Progress.h"
 #import "NSDateXAD.h"
 

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "223F699D2643C3E400B9ABCA"
-               BuildableName = "XADMaster_iOS.framework"
+               BuildableName = "XADMaster.framework"
                BlueprintName = "XADMaster-iOS"
                ReferencedContainer = "container:XADMaster.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "223F699D2643C3E400B9ABCA"
-            BuildableName = "XADMaster_iOS.framework"
+            BuildableName = "XADMaster.framework"
             BlueprintName = "XADMaster-iOS"
             ReferencedContainer = "container:XADMaster.xcodeproj">
          </BuildableReference>

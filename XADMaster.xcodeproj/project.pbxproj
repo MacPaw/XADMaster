@@ -1367,21 +1367,21 @@
 		1BF3BA9113EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		1BF3BA9213EE08A300BE7400 /* XADPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BF3BA8F13EE08A300BE7400 /* XADPlatform.h */; };
 		223F69A92643C49800B9ABCA /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223F69A82643C49800B9ABCA /* Carbon.framework */; };
-		223F69AC2643C52100B9ABCA /* Checksums.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89C9E0EDCAA51006B47FE /* Checksums.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		223F69AC2643C52100B9ABCA /* Checksums.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC89C9E0EDCAA51006B47FE /* Checksums.h */; };
 		223F69AD2643C52E00B9ABCA /* ClangAnalyser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B4B51DD1C061E3100C1074D /* ClangAnalyser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		223F69AE2643C53400B9ABCA /* CSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAEE0EC3859F006D2F06 /* CSHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69AF2643C53B00B9ABCA /* CSInputBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8903D0ED47D76006B47FE /* CSInputBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69B02643C54400B9ABCA /* CSStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF80EC3859F006D2F06 /* CSStreamHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69B12643C54B00B9ABCA /* CSSubHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		223F69AF2643C53B00B9ABCA /* CSInputBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BC8903D0ED47D76006B47FE /* CSInputBuffer.h */; };
+		223F69B02643C54400B9ABCA /* CSStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF80EC3859F006D2F06 /* CSStreamHandle.h */; };
+		223F69B12643C54B00B9ABCA /* CSSubHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF00EC3859F006D2F06 /* CSSubHandle.h */; };
 		223F69B22643C55100B9ABCA /* XADArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B5A7AF50A24CFD200B189EB /* XADArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69B32643C55700B9ABCA /* XADArchiveParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		223F69B32643C55700B9ABCA /* XADArchiveParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBAB6760EC26AA6007FE6A2 /* XADArchiveParser.h */; };
 		223F69B42643C55D00B9ABCA /* XADException.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B578C320DDBC8BF005B0F68 /* XADException.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69B52643C56300B9ABCA /* XADPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA266DC0FC78BF600279E95 /* XADPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69B62643C56900B9ABCA /* XADRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2110700A4452C2005ED2AF /* XADRegex.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69B72643C56F00B9ABCA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69B82643C57600B9ABCA /* XADSkipHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F17E40EE8AF7B0000DAFF /* XADSkipHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69B92643C57C00B9ABCA /* XADString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5B90DDA67E000D9C000 /* XADString.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		223F69BA2643C58200B9ABCA /* XADUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		223F69B52643C56300B9ABCA /* XADPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BA266DC0FC78BF600279E95 /* XADPath.h */; };
+		223F69B62643C56900B9ABCA /* XADRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2110700A4452C2005ED2AF /* XADRegex.h */; };
+		223F69B72643C56F00B9ABCA /* XADResourceFork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A06D41642131A0077A3AA /* XADResourceFork.h */; };
+		223F69B82643C57600B9ABCA /* XADSkipHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2F17E40EE8AF7B0000DAFF /* XADSkipHandle.h */; };
+		223F69B92643C57C00B9ABCA /* XADString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B06D5B90DDA67E000D9C000 /* XADString.h */; };
+		223F69BA2643C58200B9ABCA /* XADUnarchiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B81DD440FFEB87A005C5B23 /* XADUnarchiver.h */; };
 		223F69BB2643C5A000B9ABCA /* libXADMaster.ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B467B0115CD9A73001AB1DD /* libXADMaster.ios.a */; };
 		223F69BD2643C64800B9ABCA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 223F69BC2643C64800B9ABCA /* Foundation.framework */; };
 		223F69BF2643C64D00B9ABCA /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 223F69BE2643C64D00B9ABCA /* libc++.tbd */; };
@@ -3557,21 +3557,21 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				223F69AC2643C52100B9ABCA /* Checksums.h in Headers */,
+				223F69B22643C55100B9ABCA /* XADArchive.h in Headers */,
+				223F69AE2643C53400B9ABCA /* CSHandle.h in Headers */,
+				223F69B42643C55D00B9ABCA /* XADException.h in Headers */,
+				223F69AD2643C52E00B9ABCA /* ClangAnalyser.h in Headers */,
 				223F69BA2643C58200B9ABCA /* XADUnarchiver.h in Headers */,
+				223F69AC2643C52100B9ABCA /* Checksums.h in Headers */,
 				223F69B92643C57C00B9ABCA /* XADString.h in Headers */,
 				223F69B82643C57600B9ABCA /* XADSkipHandle.h in Headers */,
 				223F69B72643C56F00B9ABCA /* XADResourceFork.h in Headers */,
 				223F69B62643C56900B9ABCA /* XADRegex.h in Headers */,
 				223F69B52643C56300B9ABCA /* XADPath.h in Headers */,
-				223F69B42643C55D00B9ABCA /* XADException.h in Headers */,
 				223F69B32643C55700B9ABCA /* XADArchiveParser.h in Headers */,
-				223F69B22643C55100B9ABCA /* XADArchive.h in Headers */,
 				223F69B12643C54B00B9ABCA /* CSSubHandle.h in Headers */,
 				223F69B02643C54400B9ABCA /* CSStreamHandle.h in Headers */,
 				223F69AF2643C53B00B9ABCA /* CSInputBuffer.h in Headers */,
-				223F69AE2643C53400B9ABCA /* CSHandle.h in Headers */,
-				223F69AD2643C52E00B9ABCA /* ClangAnalyser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

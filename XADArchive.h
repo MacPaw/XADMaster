@@ -35,9 +35,11 @@ typedef int XADAction;
 #define XADOverwriteAction 3
 #define XADRenameAction 4
 
-extern NSString *XADResourceDataKey;
-extern NSString *XADResourceForkData;
-extern NSString *XADFinderFlags;
+extern NSString * _Nonnull XADResourceDataKey;
+extern NSString * _Nonnull XADResourceForkData;
+extern NSString * _Nonnull XADFinderFlags;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class UniversalDetector;
 @class XADArchiveParser, XADUnarchiver;
@@ -63,63 +65,63 @@ extern NSString *XADFinderFlags;
 	XADArchive *parentarchive;
 }
 
-+(XADArchive *)archiveForFile:(NSString *)filename;
-+(XADArchive *)recursiveArchiveForFile:(NSString *)filename;
++(nullable XADArchive *)archiveForFile:(NSString *)filename;
++(nullable XADArchive *)recursiveArchiveForFile:(NSString *)filename;
 
 
 
 -(id)init;
--(id)initWithFile:(NSString *)file;
--(id)initWithFile:(NSString *)file error:(XADError *)error;
--(id)initWithFile:(NSString *)file delegate:(id)del error:(XADError *)error;
--(id)initWithData:(NSData *)data;
--(id)initWithData:(NSData *)data error:(XADError *)error;
--(id)initWithData:(NSData *)data delegate:(id)del error:(XADError *)error;
--(id)initWithArchive:(XADArchive *)archive entry:(int)n;
--(id)initWithArchive:(XADArchive *)archive entry:(int)n error:(XADError *)error;
--(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n delegate:(id)del error:(XADError *)error;
--(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
+-(nullable id)initWithFile:(NSString *)file;
+-(nullable id)initWithFile:(NSString *)file error:(XADError *)error;
+-(nullable id)initWithFile:(NSString *)file delegate:(id)del error:(XADError *)error;
+-(nullable id)initWithData:(NSData *)data;
+-(nullable id)initWithData:(NSData *)data error:(XADError *)error;
+-(nullable id)initWithData:(NSData *)data delegate:(id)del error:(XADError *)error;
+-(nullable id)initWithArchive:(XADArchive *)archive entry:(int)n;
+-(nullable id)initWithArchive:(XADArchive *)archive entry:(int)n error:(XADError *)error;
+-(nullable id)initWithArchive:(XADArchive *)otherarchive entry:(int)n delegate:(id)del error:(XADError *)error;
+-(nullable id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
      immediateExtractionTo:(NSString *)destination error:(XADError *)error;
--(id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
+-(nullable id)initWithArchive:(XADArchive *)otherarchive entry:(int)n
      immediateExtractionTo:(NSString *)destination subArchives:(BOOL)sub error:(XADError *)error;
 -(void)dealloc;
 
 -(BOOL)_parseWithErrorPointer:(XADError *)error;
 
--(NSString *)filename;
--(NSArray *)allFilenames;
--(NSString *)formatName;
+-(nullable NSString *)filename;
+-(nullable NSArray *)allFilenames;
+-(nullable NSString *)formatName;
 -(BOOL)isEncrypted;
 -(BOOL)isSolid;
 -(BOOL)isCorrupted;
 -(int)numberOfEntries;
 -(BOOL)immediateExtractionFailed;
--(NSString *)commonTopDirectory;
--(NSString *)comment;
+-(nullable NSString *)commonTopDirectory;
+-(nullable NSString *)comment;
 
--(void)setDelegate:(id)delegate;
--(id)delegate;
+-(void)setDelegate:(id _Nullable )delegate;
+-(nullable id)delegate;
 
--(NSString *)password;
--(void)setPassword:(NSString *)newpassword;
+-(nullable NSString *)password;
+-(void)setPassword:(NSString * _Nullable)newpassword;
 
 -(NSStringEncoding)nameEncoding;
 -(void)setNameEncoding:(NSStringEncoding)encoding;
 
 -(XADError)lastError;
 -(void)clearLastError;
--(NSString *)describeLastError;
--(NSString *)describeError:(XADError)error;
+-(nullable NSString *)describeLastError;
+-(nullable NSString *)describeError:(XADError)error;
 
 -(NSString *)description;
 
 
 
--(NSDictionary *)dataForkParserDictionaryForEntry:(int)n;
--(NSDictionary *)resourceForkParserDictionaryForEntry:(int)n;
--(NSDictionary *)combinedParserDictionaryForEntry:(int)n;
+-(nullable NSDictionary *)dataForkParserDictionaryForEntry:(int)n;
+-(nullable NSDictionary *)resourceForkParserDictionaryForEntry:(int)n;
+-(nullable NSDictionary *)combinedParserDictionaryForEntry:(int)n;
 
--(NSString *)nameOfEntry:(int)n;
+-(nullable NSString *)nameOfEntry:(int)n;
 -(BOOL)entryHasSize:(int)n;
 -(off_t)uncompressedSizeOfEntry:(int)n;
 -(off_t)compressedSizeOfEntry:(int)n;
@@ -129,14 +131,14 @@ extern NSString *XADFinderFlags;
 -(BOOL)entryIsEncrypted:(int)n;
 -(BOOL)entryIsArchive:(int)n;
 -(BOOL)entryHasResourceFork:(int)n;
--(NSString *)commentForEntry:(int)n;
--(NSDictionary *)attributesOfEntry:(int)n;
--(NSDictionary *)attributesOfEntry:(int)n withResourceFork:(BOOL)resfork;
--(CSHandle *)handleForEntry:(int)n;
--(CSHandle *)handleForEntry:(int)n error:(XADError *)error;
--(CSHandle *)resourceHandleForEntry:(int)n;
--(CSHandle *)resourceHandleForEntry:(int)n error:(XADError *)error;
--(NSData *)contentsOfEntry:(int)n;
+-(nullable NSString *)commentForEntry:(int)n;
+-(nullable NSDictionary *)attributesOfEntry:(int)n;
+-(nullable NSDictionary *)attributesOfEntry:(int)n withResourceFork:(BOOL)resfork;
+-(nullable CSHandle *)handleForEntry:(int)n;
+-(nullable CSHandle *)handleForEntry:(int)n error:(XADError *)error;
+-(nullable CSHandle *)resourceHandleForEntry:(int)n;
+-(nullable CSHandle *)resourceHandleForEntry:(int)n error:(XADError *)error;
+-(nullable NSData *)contentsOfEntry:(int)n;
 //-(NSData *)resourceContentsOfEntry:(int)n;
 
 -(BOOL)extractTo:(NSString *)destination;
@@ -177,8 +179,8 @@ dataFork:(BOOL)datafork resourceFork:(BOOL)resfork;
 
 -(BOOL)archiveExtractionShouldStop:(XADArchive *)archive;
 -(BOOL)archive:(XADArchive *)archive shouldCreateDirectory:(NSString *)directory;
--(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithFile:(NSString *)file newFilename:(NSString **)newname;
--(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithDirectory:(NSString *)file newFilename:(NSString **)newname;
+-(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithFile:(NSString *)file newFilename:(NSString * _Nonnull * _Nonnull)newname;
+-(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithDirectory:(NSString *)file newFilename:(NSString * _Nonnull * _Nonnull)newname;
 -(XADAction)archive:(XADArchive *)archive creatingDirectoryDidFailForEntry:(int)n;
 
 -(void)archiveNeedsPassword:(XADArchive *)archive;
@@ -246,3 +248,5 @@ typedef off_t xadSize;
 #define XADRename XADRenameAction
 
 #endif
+
+NS_ASSUME_NONNULL_END

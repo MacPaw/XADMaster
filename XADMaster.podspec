@@ -7,7 +7,6 @@ Pod::Spec.new do |s|
   s.authors  = 'Dag Ågren', 'MacPaw Inc.', 'Tim Oliver'
   s.source   = { :http => 'https://github.com/iComics/XADMaster/releases/download/1.10.7/XADMaster.zip' }
   s.platform = :ios
-  s.preserve_paths = '*'
   s.ios.deployment_target  = '9.0'
   s.ios.vendored_frameworks = 'XADMaster.xcframework'
 end

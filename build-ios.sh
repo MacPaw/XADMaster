@@ -37,6 +37,7 @@ UD_REPO="https://www.github.com/icomics/universal-detector.git"
 FRAMEWORK_NAME="XADMaster"
 BUILD_PATH="build/Build/Products"
 DEVICE_PATH="Release-iphoneos"
+CATALYST_PATH="Release-maccatalyst"
 SIMULATOR_PATH="Release-iphonesimulator"
 
 # Add a module map to a target directory
@@ -62,7 +63,7 @@ make_framework() {
     fi
 
     # Delete the folder if present
-    rm -r build
+    rm -rf build
     mkdir -p build
 
     # Build the simulator slice (But only Intel since we need XCFramework to support Apple Silicon)
@@ -71,6 +72,13 @@ make_framework() {
 
     # Add the module map for Swift compatibility
     add_module_map "${BUILD_PATH}/${SIMULATOR_PATH}/${FRAMEWORK_NAME}.framework"
+
+    # Build the Mac Catalyst slice
+    xcodebuild -project XADMaster.xcodeproj -scheme XADMaster-iOS -destination 'platform=macOS,arch=x86_64,variant=Mac Catalyst' \
+                -configuration Release BUILD_LIBRARY_FOR_DISTRIBUTION=YES -derivedDataPath build build
+
+    # Add the module map for Swift compatibility
+    add_module_map "${BUILD_PATH}/${CATALYST_PATH}/${FRAMEWORK_NAME}.framework"
 
     # Build all of the iOS slices of the framework
     xcodebuild -project XADMaster.xcodeproj -scheme XADMaster-iOS -sdk iphoneos -destination "generic/platform=iOS" \
@@ -82,6 +90,7 @@ make_framework() {
     #Convert the library into an xcframework
     xcodebuild -create-xcframework \
             -framework ${BUILD_PATH}/${DEVICE_PATH}/${FRAMEWORK_NAME}.framework \
+            -framework ${BUILD_PATH}/${CATALYST_PATH}/${FRAMEWORK_NAME}.framework \
             -framework ${BUILD_PATH}/${SIMULATOR_PATH}/${FRAMEWORK_NAME}.framework \
             -output build/${FRAMEWORK_NAME}.xcframework
 

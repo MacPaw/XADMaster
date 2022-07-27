@@ -1134,7 +1134,7 @@
 		1BBCC4FA0EE73AC9006C3AE2 /* CSBzip2Handle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BC8A0F00EE61C42006B47FE /* CSBzip2Handle.m */; };
 		1BBCC54D0EE73B7F006C3AE2 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BBCC54C0EE73B7F006C3AE2 /* libbz2.dylib */; };
 		1BBCC5790EE747F6006C3AE2 /* XADBzip2Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B578C5B0DDCFFE0005B0F68 /* XADBzip2Parser.m */; };
-		1BBEF8B014D8A31800790E4B /* XADArchiveParserDescriptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBEF8AE14D8A31700790E4B /* XADArchiveParserDescriptions.h */; };
+		1BBEF8B014D8A31800790E4B /* XADArchiveParserDescriptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BBEF8AE14D8A31700790E4B /* XADArchiveParserDescriptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BBEF8B114D8A31800790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
 		1BBEF8F414E0964E00790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };
 		1BBEF8F614E0964F00790E4B /* XADArchiveParserDescriptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBEF8AF14D8A31700790E4B /* XADArchiveParserDescriptions.m */; };

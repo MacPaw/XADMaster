@@ -10,45 +10,41 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-      
+
     strategy:
       fail-fast: false
       matrix:
+        # Override automatic language detection by changing the below list
+        # Supported options are ['csharp', 'cpp', 'go', 'java', 'javascript', 'python']
         language: ['cpp']
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        path: XADMaster
-        # We must fetch at least the immediate parents so that if this is
-        # a pull request then we can checkout the head.
-        fetch-depth: 2
-        
-    - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: XADMaster
+          # We must fetch at least the immediate parents so that if this is
+          # a pull request then we can checkout the head.
+          fetch-depth: 2
+
+      - name: Checkout universaldetector repository
+        uses: actions/checkout@v3
         with:
           repository: MacPaw/universal-detector
           path: UniversalDetector
 
-      # Preinsatll libs
       - name: Install libs
         run: sudo apt-get install build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
+      # Runs a single command using the runners shell
+      - name: Build project
+        run: cd XADMaster && make -f Makefile.linux && cd ../
 
-    # Runs a single command using the runners shell
-    - name: Build project
-      run: cd XADMaster && make -f Makefile.linux
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

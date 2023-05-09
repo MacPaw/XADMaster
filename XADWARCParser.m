@@ -31,7 +31,12 @@
 	int length=[data length];
 
 	if(length<10) return NO;
-	return memcmp(bytes,"WARC/1.0\r\n",10)==0;
+    
+    if (memcmp(bytes,"WARC/1.0\r\n",10)==0)
+    {
+        return YES;
+    }
+	return memcmp(bytes,"WARC/1.1\r\n",10)==0;
 }
 
 -(void)parse
@@ -50,11 +55,11 @@
 		NSAutoreleasePool *pool=[NSAutoreleasePool new];
 
 		NSString *marker=[fh readLineWithEncoding:NSUTF8StringEncoding];
-		if(![marker isEqual:@"WARC/1.0"])
+		if(![marker isEqual:@"WARC/1.0"] && ![marker isEqual:@"WARC/1.1"])
 		{
 			// The Content-Length record was wrong, so attempt to find the next
 			// record and correct the previously recorded record.
-			BOOL found=[fh scanForByteString:(const uint8_t *)"\r\n\r\nWARC/1.0\r\n" length:14];
+            BOOL found = [fh scanForByteString:(const uint8_t *)"\r\n\r\nWARC/1.0\r\n" length:14] || [fh scanForByteString:(const uint8_t *)"\r\n\r\nWARC/1.1\r\n" length:14];
 
 			off_t realendofrecord=[fh offsetInFile];
 			[lastrecord setObject:[NSNumber numberWithLongLong:realendofrecord] forKey:@"EndOfRecord"];

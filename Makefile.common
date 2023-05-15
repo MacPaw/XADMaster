@@ -17,6 +17,7 @@ LIBRARY_OBJC_FILES =	CarrylessRangeCoder.m \
 			CSStreamHandle.m \
 			CSSubHandle.m \
 			CSZlibHandle.m \
+			libSimpleUnar.m \
 			NSDateXAD.m \
 			NumberParsing.m \
 			Progress.m \
@@ -213,12 +214,14 @@ LIBRARY_C_FILES =	BWT.c \
 			WinZipJPEG/Decompressor.c \
 			WinZipJPEG/JPEG.c
 
-LIBRARY_CXX_FILES =		
+LIBRARY_CXX_FILES =
 
 UNAR_OBJC_FILES =	unar.m
 
 LSAR_OBJC_FILES =	lsar.m \
 			CSJSONPrinter.m
+
+MYTEST_OBJC_FILES = mytest.c
 
 CMDLINE_OBJC_FILES =	CSCommandLineParser.m \
 			CommandLineCommon.m \
@@ -235,6 +238,8 @@ LIBRARY_OBJS =		$(LIBRARY_OBJC_FILES:%.m=$(BUILD_DIR)/%.o) \
 UNAR_OBJS =		$(UNAR_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
 
 LSAR_OBJS =		$(LSAR_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
+
+MYTEST_OBJS = $(MYTEST_OBJC_FILES:%.c=$(BUILD_DIR)/%.o)
 
 CMDLINE_OBJS=		$(CMDLINE_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
 

@@ -8,6 +8,24 @@
 
 FILE *outstream,*errstream;
 
+NSAutoreleasePool *shared_pool = NULL;
+
+void __attribute__ ((constructor)) my_init(void);
+void __attribute__ ((destructor)) my_fini(void);
+
+void my_init(void) {
+	printf("shared object entering now PRE\n");
+	printf("POSSSSSST\n");
+}
+
+void my_fini(void) {
+	printf("shared object leaving now\n");
+	if( shared_pool ) {
+		[shared_pool release];
+	}
+	printf("SHOWED\n");
+}
+
 #define DEF_SETTER(VARIABLE) \
 void \
 ArchiveSet ## VARIABLE (Archive * a, const char * __ ## VARIABLE ##__ ) { \
@@ -50,8 +68,15 @@ typedef struct Entry {
 	char * renaming;
 } Entry;
 
+void _check_pool() {
+	if( !shared_pool ) {
+		shared_pool = [NSAutoreleasePool new];
+	}
+}
+
 
 Archive * ArchiveNew(const char * path, const char * password, const char * encoding) {
+	_check_pool();
 	XADError openerror;
 	NSString *filename=[NSString stringWithUTF8String:path];
 
@@ -109,7 +134,7 @@ DEF_SETTER_BOOLEAN(PerIndexRenamedFiles)
 // TODO: solve forcedirectory [unarchiver setEnclosingDirectoryName:nil];
 
 Entry ** ArchiveList(Archive * archive) {
-
+	_check_pool();
 
 	NSString *path=[NSString stringWithUTF8String:archive->path];
 	NULLLister *lister = [[[NULLLister alloc] init] autorelease];
@@ -166,6 +191,7 @@ Entry ** ArchiveList(Archive * archive) {
 
 		ret[i] = entry;
 	}
+
 
 	return ret;
 }

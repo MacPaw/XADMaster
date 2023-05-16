@@ -22,15 +22,7 @@
 int main(int argc, char * argv[]) {
 
   printf("HERER\n");
-  /* TODO: UNAR CONTEXT CREATE/DESTROY POOL WITHIN THE LIB */
-  // XADMasterEnter();
-  /*
 
-  NSAutoreleasePool *myPool = [[NSAutoreleasePool alloc] init];
-  // Your code that uses autorelease...
-  [myPool drain];
-
-  */
   // TODO: GET RID OF 2 PARAMS?
   Archive * a = ArchiveNew("/tmp/neco.zip", NULL, NULL);
 
@@ -38,17 +30,17 @@ int main(int argc, char * argv[]) {
   printf("I HAVE A NEW ONE %p\n", a);
   Entry ** es = ArchiveList(a);
   Entry ** oes = es;
+  int i = 0;
 
   while(*es) {
+    char * frename = NULL;
+    asprintf(&frename, "binary%d.bin", i++);
     printf("ES: %s\n", (*es)->filename);
+    (*es)->renaming = frename;
     es++;
   }
 
-  // TODO: switch
-
   ArchiveExtract(a, oes);
-
-  // XADMasterLeave();
 
   return 0;
 

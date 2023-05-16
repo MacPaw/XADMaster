@@ -14,15 +14,15 @@ typedef struct Archive {
 typedef struct Entry {
 	char * path;
 	char *filename;
-	bool dirP;
-	bool linkP;
-	bool resourceP;
-	bool corruptedP;
-	unsigned size;
-	bool encryptedP;
+	int dirP;
+	int linkP;
+	int resourceP;
+	int corruptedP;
+	int encryptedP;
 	unsigned long eid;
 	const char * encoding;
 	char * renaming;
+	unsigned size;
 } Entry;
 
 extern Archive * ArchiveNew(const char * path, const char * password, const char * encoding);

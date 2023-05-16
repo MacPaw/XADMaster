@@ -44,6 +44,10 @@ void ArchiveSet##VARIABLE (Archive *a, bool __## VARIABLE ##__) { \
 }
 @end
 
+@interface NULLUnarchiver:NSObject {
+	@public NSMutableArray *entries;
+}
+@end
 
 typedef struct Archive {
 	const char * path;
@@ -57,15 +61,15 @@ typedef struct Archive {
 typedef struct Entry {
 	char * path;
 	char *filename;
-	bool dirP;
-	bool linkP;
-	bool resourceP;
-	bool corruptedP;
-	size_t size;
-	bool encryptedP;
+	int dirP;
+	int linkP;
+	int resourceP;
+	int corruptedP;
+	int encryptedP;
 	unsigned long eid;
 	const char * encoding;
 	char * renaming;
+	unsigned size;
 } Entry;
 
 void _check_pool() {
@@ -197,7 +201,13 @@ Entry ** ArchiveList(Archive * archive) {
 }
 
 unsigned ArchiveExtract(Archive * a, Entry ** entries) {
+	_check_pool();
+
 	unsigned numentries = 0;
+
+	NULLUnarchiver *unarchiverDelegate = [[[NULLUnarchiver alloc] init] autorelease];
+	[a->unarchiver setDelegate:unarchiverDelegate];
+
 
 	while(entries) {
 		Entry * e = *entries;
@@ -329,3 +339,16 @@ static int TestEntry(XADSimpleUnarchiver *unarchiver, NSDictionary *dict)
 
 @end
 
+@implementation NULLUnarchiver
+
+
+-(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver
+{
+	// Just print an error to stderr to indicate a password is needed, ignored however.
+	[@"NULLLister: This archive requires a password to unpack. Set password to provide one.\n" print];
+}
+
+
+
+
+@end

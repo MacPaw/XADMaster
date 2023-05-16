@@ -78,7 +78,6 @@ void _check_pool() {
 	}
 }
 
-
 Archive * ArchiveNew(const char * path, const char * password, const char * encoding) {
 	_check_pool();
 	XADError openerror;
@@ -100,7 +99,7 @@ Archive * ArchiveNew(const char * path, const char * password, const char * enco
 		return NULL;
 	}
 
-	Archive * ret = (Archive*)calloc(sizeof(Archive), 1);
+	Archive * ret = (Archive*)calloc(1, sizeof(Archive));
 	ret->path = path;
 	ret->password = password;
 	ret->encoding = encoding;
@@ -145,7 +144,6 @@ Entry ** ArchiveList(Archive * archive) {
 	[archive->unarchiver setDelegate:lister];
 	XADError parseerror=[archive->unarchiver parse];
 
-
 	if(parseerror)
 	{
 		[@"Archive parsing failed! (" print];
@@ -154,9 +152,7 @@ Entry ** ArchiveList(Archive * archive) {
 		return NULL;
 	}
 
-
 	XADError unarchiveerror=[archive->unarchiver unarchive];
-
 
 	if(unarchiveerror)
 	{
@@ -166,14 +162,13 @@ Entry ** ArchiveList(Archive * archive) {
 		return NULL;
 	}
 
-
 	int numentries = [lister->entries count];
-	Entry ** ret = (Entry**)calloc(sizeof(Entry*), numentries+1);
+	Entry ** ret = (Entry**)calloc(numentries+1, sizeof(Entry*));
 
 	printf("PARSING...\n");
 
 	for(int i=0; i < numentries; i++) {
-		Entry * entry = calloc(sizeof(Entry), 1);
+		Entry * entry = calloc(1, sizeof(Entry));
 		NSDictionary * dict = [lister->entries objectAtIndex:i];
 		NSString *filename = [[dict objectForKey:XADFileNameKey] string];
 		NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
@@ -200,7 +195,7 @@ Entry ** ArchiveList(Archive * archive) {
 	return ret;
 }
 
-unsigned ArchiveExtract(Archive * a, Entry ** entries) {
+unsigned ArchiveExtract(Archive * a, Entry ** ens) {
 	_check_pool();
 
 	unsigned numentries = 0;
@@ -208,18 +203,22 @@ unsigned ArchiveExtract(Archive * a, Entry ** entries) {
 	NULLUnarchiver *unarchiverDelegate = [[[NULLUnarchiver alloc] init] autorelease];
 	[a->unarchiver setDelegate:unarchiverDelegate];
 
+	while(*ens) {
+		Entry * e = *ens;
 
-	while(entries) {
-		Entry * e = *entries;
 		if (e->renaming) {
+			[a->unarchiver setPerIndexRenamedFiles:YES];
+			printf("Renaming id %u. %s to %s\n", e->eid, e->filename, e->renaming);
 			[a->unarchiver addIndexFilter:e->eid];
-			[a->unarchiver addIndexRenaming:(NSString *)e->renaming];
+			NSString *nsrename = [NSString stringWithUTF8String:e->renaming];
+			[a->unarchiver addIndexRenaming:nsrename];
 		}
 		else {
+			printf("Not Renaming...\n");
 			[a->unarchiver addIndexFilter:e->eid];
 		}
 
-		entries++;
+		ens++;
 		numentries++;
 	}
 

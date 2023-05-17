@@ -24,7 +24,11 @@ int main(int argc, char * argv[]) {
   printf("HERER\n");
 
   // TODO: GET RID OF 2 PARAMS?
-  Archive * a = ArchiveNew("/tmp/neco.zip", NULL, NULL);
+  Archive * a = ArchiveNew("/tmp/pass.zip");
+
+  ArchiveSetDestination(a, "/tmp/neco/"); /* works just for not renamed! */
+  //ArchiveSetPassword(a, "abcd"); /* works */
+  ArchiveSetAlwaysOverwritesFiles(a, true);
 
   // TODO: CHECK Setters like password, destination etc.
   printf("I HAVE A NEW ONE %p\n", a);
@@ -40,7 +44,9 @@ int main(int argc, char * argv[]) {
     es++;
   }
 
-  ArchiveExtract(a, oes);
+  ArchiveExtract(a, oes); /* TODO: errors/warnings */
+
+  ArchiveDestroy(a);
 
   return 0;
 

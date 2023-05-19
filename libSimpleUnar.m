@@ -13,18 +13,18 @@ NSAutoreleasePool *shared_pool = NULL;
 void __attribute__ ((constructor)) my_init(void);
 void __attribute__ ((destructor)) my_fini(void);
 
-// void my_init(void) {
-// 	printf("shared object entering now PRE\n");
-// 	printf("POSSSSSST\n");
-// }
+void my_init(void) {
+	printf("shared object entering now PRE\n");
+	printf("POSSSSSST\n");
+}
 
-// void my_fini(void) {
-// 	printf("shared object leaving now\n");
-// 	if( shared_pool ) {
-// 		//[shared_pool release];
-// 		printf("SHOWED\n");
-// 	}
-// }
+void my_fini(void) {
+	printf("shared object leaving now\n");
+	if( shared_pool ) {
+		//[shared_pool release];
+		printf("SHOWED\n");
+	}
+}
 
 #define DEF_SETTER(VARIABLE) \
 void \
@@ -51,21 +51,45 @@ void ArchiveSet ## VARIABLE (Archive *a, int __## VARIABLE ##__) { \
 }
 @end
 
+//
+
 typedef enum ArchiveError {
 	NO_ERROR = 0,
-	OPEN = 1,
-	FORMAT = 2,
-	PASSWORD = 3,
+	UNKNOWN,
+	INPUT,
+	OUTPUT,
+	PARAMETERS,
+	OUT_OF_MEMORY,
+	ILLEGAL_DATA,
+	NOT_SUPPORTED,
+	RESOURCE,
+	DECRUNCH,
+	FILETYPE,
+	OPEN_FILE,
+	SKIP,
+	BREAK,
+	FILE_EXISTS,
+	PASSWORD,
+	DIRECTORY_CREAT,
+	CHECKSUM,
+	VERIFY,
+	GEOMETRY,
+	FORMAT,
+	EMPTY,
+	FILESYSTEM,
+	DIRECTORY,
+	SHORT_BUFFER,
+	ENCODING,
+	LINK,
 
-	ENTRY_ENCODING,
-	ENTRY_BROKEN_RECORD,
-	ENTRY_NO_PASSWORD,
 	ENTRY_WRONG_PASSWORD,
-	ENTRY_UNPACKING_ERROR,
 	ENTRY_NOT_SUPPORTED,
+	ENTRY_UNPACKING_ERROR,
 	ENTRY_WRONG_SIZE,
 	ENTRY_HAS_NO_CHECKSUM,
 	ENTRY_CHECKSUM_INCORRECT,
+
+	SUBARCHIVE = 0x10000,
 
 	OTHER = 255
 } ArchiveError;
@@ -87,8 +111,10 @@ EntryError * EntryErrorNew(EntryError e) {
 }
 
 void EntryErrorDestroy(EntryError * e) {
-	free(e->error_str);
-	free(e);
+	if(e) {
+		free(e->error_str);
+		free(e);
+	}
 }
 
 typedef struct Entry {
@@ -102,14 +128,23 @@ typedef struct Entry {
 	unsigned long eid;
 	const char * encoding;
 	char * renaming;
-	char * error_string;
+
+	EntryError * error;
 
 	unsigned size;
 } Entry;
 
+void EntryDestroy(Entry * e) {
+	free(e->path);
+	free(e->filename);
+	free(e->renaming);
+	EntryErrorDestroy(e->error);
+
+	free(e);
+}
+
 typedef struct Archive {
 	char * path;
-
 	char * error_str;
 	ArchiveError error_num;
 
@@ -134,14 +169,14 @@ Archive * ArchiveNew(const char * path) {
 	{
 		if(openerror)
 		{
-			ret->error_num = OPEN;
-			ret->error_str = [[XADException describeXADError:openerror] UTF8String];
+			ret->error_num = openerror;
+			ret->error_str = strdup([[XADException describeXADError:openerror] UTF8String]);
 
 			return ret;
 		}
 
 		ret->error_num = FORMAT;
-		ret->error_str = [@"Couldn't recognize the archive format.\n" UTF8String];
+		ret->error_str = strdup([@"Couldn't recognize the archive format.\n" UTF8String]);
 
 		return ret;
 	}
@@ -161,9 +196,9 @@ void ArchiveDestroy(Archive * a) {
 }
 
 // Generating output like this
-// void ArchiveSetDestination(const char * dest) {
+// void ArchiveSetDestination(Archive * a, const char * dest) {
 // 	NSString *destination=[NSString stringWithUTF8String:dest];
-// 	[unarchiver setDestination:destination];
+// 	[a->unarchiver setDestination:destination];
 // }
 
 // Continue with macro definitions
@@ -181,22 +216,21 @@ DEF_SETTER_BOOLEAN(CopiesArchiveModificationTimeToEnclosingDirectory)
 DEF_SETTER_BOOLEAN(MacResourceForkStyle)
 DEF_SETTER_BOOLEAN(PerIndexRenamedFiles)
 
-// TODO: solve forcedirectory [unarchiver setRemovesEnclosingDirectoryForSoloItems:NO];
-// TODO: solve forcedirectory [unarchiver setEnclosingDirectoryName:nil];
-
 Entry ** ArchiveList(Archive * archive) {
 	_check_pool();
 
 	NSString *path=[NSString stringWithUTF8String:archive->path];
 	NULLLister *lister = [[[NULLLister alloc] init] autorelease];
 	[archive->unarchiver setDelegate:lister];
+
 	XADError parseerror=[archive->unarchiver parse];
 
 	if(parseerror)
 	{
-		[@"Archive parsing failed! (" print];
-		[[XADException describeXADError:parseerror] print];
-		[@".)\n" print];
+		archive->error_num = parseerror;
+		free(archive->error_str);
+		archive->error_str = strdup([[XADException describeXADError:parseerror] UTF8String]);
+
 		return NULL;
 	}
 
@@ -204,16 +238,15 @@ Entry ** ArchiveList(Archive * archive) {
 
 	if(unarchiveerror)
 	{
-		[@"Listing failed! (" print];
-		[[XADException describeXADError:unarchiveerror] print];
-		[@".)\n" print];
+		archive->error_num = unarchiveerror;
+		free(archive->error_str);
+		archive->error_str = strdup([[XADException describeXADError:unarchiveerror] UTF8String]);
+
 		return NULL;
 	}
 
 	int numentries = [lister->entries count];
 	Entry ** ret = (Entry**)calloc(numentries+1, sizeof(Entry*));
-
-	printf("PARSING...\n");
 
 	for(int i=0; i < numentries; i++) {
 		Entry * entry = calloc(1, sizeof(Entry));
@@ -227,7 +260,7 @@ Entry ** ArchiveList(Archive * archive) {
 		NSNumber *indexnum=[dict objectForKey:XADIndexKey];
 		NSNumber *encryptednum=[dict objectForKey:XADIsEncryptedKey];
 
-		entry->filename = [filename UTF8String];
+		entry->filename = strdup([filename UTF8String]);
 		entry->eid = [indexnum intValue];
 		entry->dirP = [dirnum intValue] != 0;
 		entry->linkP = [linknum intValue] != 0;
@@ -242,12 +275,37 @@ Entry ** ArchiveList(Archive * archive) {
 	return ret;
 }
 
+EntryError ** getNativeErrors (NULLUnarchiver * unarchiver)
+{
+	int numentries = [unarchiver->xadErrors count];
+	EntryError ** ret = (EntryError**)calloc(numentries+1, sizeof(EntryError*));
+
+	for(int i=0; i < numentries; i++) {
+		NSNumber * err = [unarchiver->xadErrors objectAtIndex:i];
+		NSString * desc = [unarchiver->xadDescriptions objectAtIndex:i];
+		NSDictionary * dict = [unarchiver->dicts objectAtIndex:i];
+
+		EntryError * entry = calloc(1, sizeof(EntryError));
+
+		entry->error_num = [err intValue];
+		entry->error_str = strdup([desc UTF8String]);
+
+		NSNumber *indexnum=[dict objectForKey:XADIndexKey];
+		entry->eid = [indexnum intValue];
+
+		ret[i] = entry;
+	}
+
+	return ret;
+}
+
 unsigned ArchiveExtract(Archive * a, Entry ** ens) {
 	_check_pool();
 
-	unsigned numentries = 0;
+	Entry ** oens = ens;
 
-	NULLUnarchiver *unarchiverDelegate = [[[NULLUnarchiver alloc] init] autorelease];
+	unsigned numentries = 0;
+	NULLUnarchiver *unarchiverDelegate = [[[NULLUnarchiver alloc] init] autorelease]; // memory leak is related to NULLUnarchiver
 	[a->unarchiver setDelegate:unarchiverDelegate];
 
 	while(*ens) {
@@ -255,13 +313,13 @@ unsigned ArchiveExtract(Archive * a, Entry ** ens) {
 
 		if (e->renaming) {
 			[a->unarchiver setPerIndexRenamedFiles:YES];
-			printf("Renaming id %u. %s to %s\n", e->eid, e->filename, e->renaming);
+			//printf("Renaming id %u. %s to %s\n", e->eid, e->filename, e->renaming);
 			[a->unarchiver addIndexFilter:e->eid];
 			NSString *nsrename = [NSString stringWithUTF8String:e->renaming];
 			[a->unarchiver addIndexRenaming:nsrename];
 		}
 		else {
-			printf("Not Renaming...\n");
+			//printf("Not Renaming...\n");
 			[a->unarchiver addIndexFilter:e->eid];
 		}
 
@@ -273,9 +331,38 @@ unsigned ArchiveExtract(Archive * a, Entry ** ens) {
 
 	if(unarchiveerror)
 	{
-		[@"ERROR: " print];
-		[[XADException describeXADError:unarchiveerror] print];
+		a->error_num = unarchiveerror;
+		a->error_str = [[XADException describeXADError:unarchiveerror] UTF8String];
+		return 0;
 	}
+
+	// Update errors in entries
+	EntryError ** ers = getNativeErrors(unarchiverDelegate);
+	EntryError ** oers = ers;
+
+	while( *ers ) {
+		Entry ** entries = oens;
+
+		while(*entries) {
+			if((*entries)->eid == (*ers)->eid) {
+				if((*entries)->error) {
+					EntryErrorDestroy((*entries)->error);
+				}
+
+				(*entries)->error = *ers;
+				break;
+			}
+			entries++;
+		}
+
+		if(!*entries) {
+			// Not found - destroy the EntryError - this should not happen! Assert?
+			EntryErrorDestroy(*ers);
+		}
+		ers++;
+	}
+
+	free(oers);
 
 	return numentries;
 }
@@ -353,11 +440,8 @@ static ArchiveError TestEntry(XADSimpleUnarchiver *unarchiver, NSDictionary *dic
 	return self;
 }
 
-
 -(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver
 {
-	// Just print an error to stderr to indicate a password is needed, ignored however.
-	// [@"NULLLister: This archive requires a password to unpack. Set password to provide one.\n" printToFile:stderr];
 }
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
@@ -383,13 +467,6 @@ static ArchiveError TestEntry(XADSimpleUnarchiver *unarchiver, NSDictionary *dic
 }
 
 
--(void)simpleUnarchiverNeedsPassword:(XADSimpleUnarchiver *)unarchiver
-{
-	// Just print an error to stderr to indicate a password is needed, ignored however.
-	/*int i;
-	scanf("No password %d\n", &i);*/
-}
-
 -(void)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error
 {
 	if(error)
@@ -399,6 +476,5 @@ static ArchiveError TestEntry(XADSimpleUnarchiver *unarchiver, NSDictionary *dic
 		[dicts addObject:dict];
 	}
 }
-
 
 @end

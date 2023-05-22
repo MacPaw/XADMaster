@@ -197,7 +197,7 @@
 	}
 
 	XADError error;
-	
+
 	error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
 	if(error) goto end;
 
@@ -630,7 +630,11 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 			if(actual)
 			{
 				XADError error=outputfunc(target,selector,argument,buf,actual);
-				if(error) return error;
+
+				if(error) {
+					free(buf); // Get rid of mem
+					return error;
+				}
 			}
 			else break;
 
@@ -654,17 +658,26 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 		// Check if the file has already been marked as corrupt, and
 		// give up without testing checksum if so.
 		NSNumber *iscorrupt=[dict objectForKey:XADIsCorruptedKey];
-		if(iscorrupt&&[iscorrupt boolValue]) return XADDecrunchError;
+		if(iscorrupt&&[iscorrupt boolValue]) {
+			free(buf);
+			return XADDecrunchError;
+		}
 
 		// If the file has a checksum, check it. Otherwise, if it has a
 		// size, check that the size ended up correct.
 		if([srchandle hasChecksum])
 		{
-			if(![srchandle isChecksumCorrect]) return XADChecksumError;
+			if(![srchandle isChecksumCorrect]) {
+				free(buf);
+				return XADChecksumError;
+			}
 		}
 		else
 		{
-			if(sizenum&&done!=size) return XADDecrunchError; // kind of hacky
+			if(sizenum&&done!=size) {
+				free(buf);
+				return XADDecrunchError; // kind of hacky
+			}
 		}
 
 		// Send a final progress report.
@@ -673,6 +686,7 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 	}
 	@catch(id e)
 	{
+		free(buf);
 		return [XADException parseException:e];
 	}
 

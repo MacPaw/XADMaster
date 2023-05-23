@@ -124,6 +124,7 @@
 
 	[regexes release];
 	[indices release];
+	[idxrenaming release];
 
 	[entries release];
 	[reasonsforinterest release];

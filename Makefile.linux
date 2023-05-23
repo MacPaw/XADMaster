@@ -85,7 +85,7 @@ unar: $(UNAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniver
 lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
-mytest: $(MYTEST_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
+example: $(MYTEST_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 clean:

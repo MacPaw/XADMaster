@@ -43,15 +43,6 @@ typedef enum ArchiveError {
 	OTHER = 255
 } ArchiveError;
 
-typedef struct Archive {
-	char * path;
-
-	char * error_str;
-	ArchiveError error_num;
-
-	//XADSimpleUnarchiver *unarchiver; hide for public purposes
-} Archive;
-
 typedef struct EntryError {
 	ArchiveError error_num;
 	char * error_str;
@@ -75,11 +66,19 @@ typedef struct Entry {
 	unsigned size;
 } Entry;
 
-void EntryDestroy(Entry * e);
+#ifndef __LIBXAD_PRIVATE_PART
+typedef struct Archive {
+	char * path;
 
+	char * error_str;
+	ArchiveError error_num;
+
+	//XADSimpleUnarchiver *unarchiver; hide for public purposes
+} Archive;
+
+void EntryDestroy(Entry * e);
 Archive * ArchiveNew(const char * path);
 void ArchiveDestroy(Archive * a);
-
 Entry ** ArchiveList(Archive * archive);
 unsigned ArchiveExtract(Archive * a, Entry ** entries);
 
@@ -102,5 +101,6 @@ DEF_SETTER_BOOLEAN_PROTO(PropagatesRelevantMetadata)
 DEF_SETTER_BOOLEAN_PROTO(CopiesArchiveModificationTimeToEnclosingDirectory)
 DEF_SETTER_BOOLEAN_PROTO(MacResourceForkStyle)
 DEF_SETTER_BOOLEAN_PROTO(PerIndexRenamedFiles)
+#endif
 
 #endif

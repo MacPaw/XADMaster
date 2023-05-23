@@ -1,4 +1,28 @@
+/*
+ * libSimpleUnar.m
+ *
+ * Copyright (c) 2023, SpongeData s.r.o. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+
 #include <stdio.h>
+
+#define __LIBXAD_PRIVATE_PART 1
+#include "libXADMaster.h"
 
 #import "XADSimpleUnarchiver.h"
 #import "NSStringPrinting.h"
@@ -23,13 +47,13 @@ void my_fini(void) {
 
 #define DEF_SETTER(VARIABLE) \
 void \
-ArchiveSet ## VARIABLE (Archive * a, const char * __ ## VARIABLE ##__ ) { \
+ArchiveSet ## VARIABLE (ArchivePrivate* a, const char * __ ## VARIABLE ##__ ) { \
 	NSString *__ ## VARIABLE ## __ns = [NSString stringWithUTF8String: __## VARIABLE ##__ ]; \
 	[a->unarchiver set##VARIABLE: __## VARIABLE ##__ns]; \
 } \
 
 #define DEF_SETTER_BOOLEAN(VARIABLE) \
-void ArchiveSet ## VARIABLE (Archive *a, int __## VARIABLE ##__) { \
+void ArchiveSet ## VARIABLE (ArchivePrivate*a, int __## VARIABLE ##__) { \
 	BOOL __## VARIABLE ##__ns = (BOOL) __## VARIABLE ##__ ; \
 	[a->unarchiver set##VARIABLE: __## VARIABLE ##__ns]; \
 } \
@@ -46,54 +70,6 @@ void ArchiveSet ## VARIABLE (Archive *a, int __## VARIABLE ##__) { \
 }
 @end
 
-//
-
-typedef enum ArchiveError {
-	NO_ERROR = 0,
-	UNKNOWN,
-	INPUT,
-	OUTPUT,
-	PARAMETERS,
-	OUT_OF_MEMORY,
-	ILLEGAL_DATA,
-	NOT_SUPPORTED,
-	RESOURCE,
-	DECRUNCH,
-	FILETYPE,
-	OPEN_FILE,
-	SKIP,
-	BREAK,
-	FILE_EXISTS,
-	PASSWORD,
-	DIRECTORY_CREAT,
-	CHECKSUM,
-	VERIFY,
-	GEOMETRY,
-	FORMAT,
-	EMPTY,
-	FILESYSTEM,
-	DIRECTORY,
-	SHORT_BUFFER,
-	ENCODING,
-	LINK,
-
-	ENTRY_WRONG_PASSWORD,
-	ENTRY_NOT_SUPPORTED,
-	ENTRY_UNPACKING_ERROR,
-	ENTRY_WRONG_SIZE,
-	ENTRY_HAS_NO_CHECKSUM,
-	ENTRY_CHECKSUM_INCORRECT,
-
-	SUBARCHIVE = 0x10000,
-
-	OTHER = 255
-} ArchiveError;
-
-typedef struct EntryError {
-	ArchiveError error_num;
-	char * error_str;
-	int eid;
-} EntryError;
 
 EntryError * EntryErrorNew(EntryError e) {
 	EntryError * ret = malloc(sizeof(EntryError));
@@ -112,22 +88,13 @@ void EntryErrorDestroy(EntryError * e) {
 	}
 }
 
-typedef struct Entry {
+typedef struct ArchivePrivate {
 	char * path;
-	char *filename;
-	int dirP;
-	int linkP;
-	int resourceP;
-	int corruptedP;
-	int encryptedP;
-	unsigned long eid;
-	const char * encoding;
-	char * renaming;
+	char * error_str;
+	ArchiveError error_num;
 
-	EntryError * error;
-
-	unsigned size;
-} Entry;
+	XADSimpleUnarchiver *unarchiver;
+} ArchivePrivate;
 
 void EntryDestroy(Entry * e) {
 	free(e->path);
@@ -138,25 +105,17 @@ void EntryDestroy(Entry * e) {
 	free(e);
 }
 
-typedef struct Archive {
-	char * path;
-	char * error_str;
-	ArchiveError error_num;
-
-	XADSimpleUnarchiver *unarchiver;
-} Archive;
-
 void _check_pool() {
 	if( !shared_pool ) {
 		shared_pool = [NSAutoreleasePool new];
 	}
 }
 
-Archive * ArchiveNew(const char * path) {
+ArchivePrivate* ArchiveNew(const char * path) {
 	_check_pool();
 	XADError openerror;
 	NSString *filename=[NSString stringWithUTF8String:path];
-	Archive * ret = (Archive*)calloc(1, sizeof(Archive));
+	ArchivePrivate* ret = (ArchivePrivate*)calloc(1, sizeof(ArchivePrivate));
 	ret->path = strdup(path);
 
 	XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
@@ -180,7 +139,7 @@ Archive * ArchiveNew(const char * path) {
 	return ret;
 }
 
-void ArchiveDestroy(Archive * a) {
+void ArchiveDestroy(ArchivePrivate* a) {
 	free(a->error_str);
 	free(a->path);
 
@@ -191,7 +150,7 @@ void ArchiveDestroy(Archive * a) {
 }
 
 // Generating output like this
-// void ArchiveSetDestination(Archive * a, const char * dest) {
+// void ArchiveSetDestination(ArchivePrivate* a, const char * dest) {
 // 	NSString *destination=[NSString stringWithUTF8String:dest];
 // 	[a->unarchiver setDestination:destination];
 // }
@@ -211,7 +170,7 @@ DEF_SETTER_BOOLEAN(CopiesArchiveModificationTimeToEnclosingDirectory)
 DEF_SETTER_BOOLEAN(MacResourceForkStyle)
 DEF_SETTER_BOOLEAN(PerIndexRenamedFiles)
 
-Entry ** ArchiveList(Archive * archive) {
+Entry ** ArchiveList(ArchivePrivate* archive) {
 	_check_pool();
 
 	NSString *path=[NSString stringWithUTF8String:archive->path];
@@ -294,7 +253,7 @@ EntryError ** getNativeErrors (NULLUnarchiver * unarchiver)
 	return ret;
 }
 
-unsigned ArchiveExtract(Archive * a, Entry ** ens) {
+unsigned ArchiveExtract(ArchivePrivate* a, Entry ** ens) {
 	_check_pool();
 
 	Entry ** oens = ens;

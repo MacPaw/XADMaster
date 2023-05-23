@@ -52,6 +52,13 @@ ArchiveSet ## VARIABLE (ArchivePrivate* a, const char * __ ## VARIABLE ##__ ) { 
 	[a->unarchiver set##VARIABLE: __## VARIABLE ##__ns]; \
 } \
 
+#define DEF_SETTER_PARSER(VARIABLE) \
+void \
+ArchiveSet ## VARIABLE (ArchivePrivate* a, const char * __ ## VARIABLE ##__ ) { \
+	NSString *__ ## VARIABLE ## __ns = [NSString stringWithUTF8String: __## VARIABLE ##__ ]; \
+	[[a->unarchiver archiveParser] set##VARIABLE: __## VARIABLE ##__ns]; \
+} \
+
 #define DEF_SETTER_BOOLEAN(VARIABLE) \
 void ArchiveSet ## VARIABLE (ArchivePrivate*a, int __## VARIABLE ##__) { \
 	BOOL __## VARIABLE ##__ns = (BOOL) __## VARIABLE ##__ ; \
@@ -97,7 +104,6 @@ typedef struct ArchivePrivate {
 } ArchivePrivate;
 
 void EntryDestroy(Entry * e) {
-	free(e->path);
 	free(e->filename);
 	free(e->renaming);
 	EntryErrorDestroy(e->error);
@@ -158,8 +164,9 @@ void ArchiveDestroy(ArchivePrivate* a) {
 // Continue with macro definitions
 DEF_SETTER(Destination)
 DEF_SETTER(Password)
-DEF_SETTER(EncodingName)
-DEF_SETTER(PasswordEncodingName)
+
+DEF_SETTER_PARSER(EncodingName)
+DEF_SETTER_PARSER(PasswordEncodingName)
 
 DEF_SETTER_BOOLEAN(AlwaysOverwritesFiles)
 DEF_SETTER_BOOLEAN(AlwaysRenamesFiles)
@@ -286,7 +293,7 @@ unsigned ArchiveExtract(ArchivePrivate* a, Entry ** ens) {
 	if(unarchiveerror)
 	{
 		a->error_num = unarchiveerror;
-		a->error_str = [[XADException describeXADError:unarchiveerror] UTF8String];
+		a->error_str = strdup([[XADException describeXADError:unarchiveerror] UTF8String]);
 		return 0;
 	}
 

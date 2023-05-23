@@ -22,6 +22,8 @@
 #ifndef CHEADER_H
 #define CHEADER_H
 
+#include <string.h>
+
 typedef enum ArchiveError {
 	NO_ERROR = 0,
 	UNKNOWN,
@@ -101,6 +103,14 @@ typedef struct Entry {
 	unsigned size;
 } Entry;
 
+/** Sets renaming for the entry from constant string and allocates copy.
+ * \param self An Entry pointer.
+ * \param renaming A constant string.
+*/
+inline void EntrySetRenaming(Entry * self, const char * renaming) {
+	self->renaming = strdup(renaming);
+}
+
 #ifndef __LIBXAD_PRIVATE_PART
 
 /** Structure representing an archive - archive files like .zips, .rar, .tar and other supported archives. */
@@ -114,7 +124,7 @@ typedef struct Archive {
 } Archive;
 
 /** Destroy an Entry. All pointer-type fields get freed. */
-void EntryDestroy(Entry * e);
+extern void EntryDestroy(Entry * e);
 
 /** Allocates new archive and perform general checks (file-existence, basic consistency check, ...).
  * \param path Path to the archive.

@@ -48,7 +48,9 @@ This XADMaster fork provides also programmatic API for C in form of a shared obj
 ## Linking
 Following code is showing how to compile your custom C code with the library.
 
-`gcc main.c -lXADMaster -o example.bin`
+```bash
+gcc `pkg-config --cflags libXADMaster` example.c  `pkg-config --libs libXADMaster` -L../UniversalDetector -lUniversalDetector
+```
 
 *Notice:* - you may use other C compilers - like clang.
 

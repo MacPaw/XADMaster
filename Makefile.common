@@ -221,7 +221,7 @@ UNAR_OBJC_FILES =	unar.m
 LSAR_OBJC_FILES =	lsar.m \
 			CSJSONPrinter.m
 
-MYTEST_OBJC_FILES = mytest.c
+EXAMPLE_OBJC_FILES =	example.c
 
 CMDLINE_OBJC_FILES =	CSCommandLineParser.m \
 			CommandLineCommon.m \
@@ -239,7 +239,7 @@ UNAR_OBJS =		$(UNAR_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
 
 LSAR_OBJS =		$(LSAR_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
 
-MYTEST_OBJS = $(MYTEST_OBJC_FILES:%.c=$(BUILD_DIR)/%.o)
+EXAMPLE_OBJS = $(EXAMPLE_OBJC_FILES:%.c=$(BUILD_DIR)/%.o)
 
 CMDLINE_OBJS=		$(CMDLINE_OBJC_FILES:%.m=$(BUILD_DIR)/%.o)
 

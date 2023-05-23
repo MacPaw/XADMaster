@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+Name: libXADMaster
+Description: libXADMaster library provides a glue API for using power of XADMaster tool originally written as standalone unarchiver tools.
+Version: 1.10.7
+Cflags: -I${includedir}
+Libs: -L${libdir} -lXADMaster -lgnustep-base -lz -lbz2 -lwavpack -licuuc -lobjc -lm

@@ -21,16 +21,11 @@
 #include "cheader.h"
 
 int main(int argc, char * argv[]) {
-  // TODO: GET RID OF 2 PARAMS?
-
-  // Memory leak detected for password-containing records! 270kB in this case for each instance!
   Archive * a = ArchiveNew("/tmp/pass.zip");
 
   ArchiveSetDestination(a, "/tmp/neco/"); /* works just for not renamed! */
   ArchiveSetAlwaysOverwritesFiles(a, true);
 
-  // TODO: CHECK Setters like password, destination etc.
-  printf("I HAVE A NEW ONE %p\n", a);
   Entry ** es = ArchiveList(a);
   Entry ** oes = es;
 
@@ -38,20 +33,21 @@ int main(int argc, char * argv[]) {
 
   while(*es) {
     char * frename = NULL;
-    asprintf(&frename, "binary%d.bin", i++);
+    asprintf(&frename, "binary%d.bin", i++); // TODO: get rid of asprintf
     printf("ES: %s\n", (*es)->filename);
     (*es)->renaming = frename;
     es++;
   }
 
-  ArchiveExtract(a, oes); /* TODO: errors/warnings - memory leakage here */
-
-  printf("%d %s\n", a->error_num, a->error_str );
+  ArchiveExtract(a, oes);
+  if(a->error_num != NO_ERROR) {
+    printf("ERROR: %d ERROR MSG: %s\n", a->error_num, a->error_str );
+  }
 
   es = oes;
   while(*es) {
     if((*es)->error) {
-      printf("(%s) %d %s\n", (*es)->filename, (*es)->error->error_num, (*es)->error->error_str);
+      printf("WARNING: (%s) %d WARNING MSG: %s\n", (*es)->filename, (*es)->error->error_num, (*es)->error->error_str);
     }
 
     EntryDestroy(*es);
@@ -59,8 +55,6 @@ int main(int argc, char * argv[]) {
   }
 
   ArchiveDestroy(a);
-
   free(oes);
   return 0;
 }
-

@@ -14,16 +14,11 @@ void __attribute__ ((constructor)) my_init(void);
 void __attribute__ ((destructor)) my_fini(void);
 
 void my_init(void) {
-	printf("shared object entering now PRE\n");
-	printf("POSSSSSST\n");
+	// entry point
 }
 
 void my_fini(void) {
-	printf("shared object leaving now\n");
-	if( shared_pool ) {
-		//[shared_pool release];
-		printf("SHOWED\n");
-	}
+	// exit point
 }
 
 #define DEF_SETTER(VARIABLE) \

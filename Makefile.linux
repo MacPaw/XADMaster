@@ -72,13 +72,14 @@ libXADMaster.a: $(LIBRARY_OBJS)
 	rm -f $@
 	$(AR) rcs $@ $^
 
-libXADMaster.so: $(LIBRARY_OBJS) libXADMaster.a
+
+../UniversalDetector/libUniversalDetector.a:
+	make -C ../UniversalDetector -f Makefile.linux #GCC_OPTS+=-fPIC
+
+libXADMaster.so:  $(LIBRARY_OBJS) ../UniversalDetector/libUniversalDetector.a
 	rm -f $@
 	# $(CC) -shared -o $@ -Wl,--no-whole-archive ../UniversalDetector/libUniversalDetector.a $^
 	$(LD) $(ALL_LDFLAGS) -shared -o $@ $^ $(LIBS)
-
-../UniversalDetector/libUniversalDetector.a:
-	make -C ../UniversalDetector -f Makefile.linux GCC_OPTS+=-fPIC
 
 unar: $(UNAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
@@ -89,8 +90,8 @@ lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniver
 example: $(EXAMPLE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
-soexample: $(EXAMPLE_OBJS) libXADMaster.so
-	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
+soexample: $(EXAMPLE_OBJS)
+	gcc -Wl,--whole-archive -fexceptions -fgnu-runtime  -o soexample Build/example.o  -Wl,--no-whole-archive -lXADMaster -lgnustep-base -lz -lbz2 -lwavpack -licuuc -lobjc -lm
 
 BIN_INSTALL_DIR = /usr/bin
 LIB_INSTALL_DIR = /usr/lib

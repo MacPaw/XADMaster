@@ -10,8 +10,8 @@
 # Building
 XADMaster relies on directories structure. To start development you'll need to clone the main project with Universal Detector library:
 ```
-git clone https://github.com/MacPaw/XADMaster.git
-git clone https://github.com/MacPaw/universal-detector.git UniversalDetector
+git clone https://github.com/mafiosso/XADMaster.git
+git clone https://github.com/mafiosso/universal-detector.git UniversalDetector
 ```
 The resulting directory structure should look like:
 
@@ -35,7 +35,7 @@ The resulting directory structure should look like:
 
 - `/usr/bin` directory is used as target for `lsar` and `unar` tool.
 - `/usr/lib/libXADMaster.so` filename is used for the shared object.
-- `/usr/include/XADMaster.h` is used as a C-header location.
+- `/usr/include/libXADMaster.h` is used as a C-header location.
 
 *Notice:* `ldconfig` execution is done implicitly by running the `install` target. The `pkg-config` rule is also included - you may use `pkg-config --cflags --libs libXADMaster` later on your compilation.
 
@@ -49,7 +49,12 @@ This XADMaster fork provides also programmatic API for C in form of a shared obj
 Following code is showing how to compile your custom C code with the library.
 
 ```bash
-gcc `pkg-config --cflags libXADMaster` example.c  `pkg-config --libs libXADMaster` -L../UniversalDetector -lUniversalDetector
+gcc -Wl,--whole-archive -fexceptions -fgnu-runtime  -o example example.c  -Wl,--no-whole-archive -lXADMaster -lgnustep-base -lz -lbz2 -lwavpack -licuuc -lobjc -lm
+```
+or just
+
+```bash
+gcc `pkg-config --cflags libXADMaster` example.c  `pkg-config --libs libXADMaster` -L../UniversalDetector -lUniversalDetector -o example
 ```
 
 *Notice:* - you may use other C compilers - like clang.
@@ -66,7 +71,7 @@ Include to your .c files this inclusion line
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "libXADMaster.h"
+#include <libXADMaster.h>
 
 int main(int argc, char * argv[]) {
   Archive * a = ArchiveNew("/tmp/default.zip");
@@ -90,7 +95,7 @@ int main(int argc, char * argv[]) {
     char * frename = malloc(sizeof(char)*513);
     // Renaming field contains full path to the resulting file.
     snprintf(frename, 512, "binary%d.bin", i++);
-    (*es)->renaming = frename;
+    (*es)->renaming = frename; // Alternatively use EntrySetRenaming(*es, frename); free(frename);
     printf("MARKING ID: (%lu) WITH ORIGINAL NAME: (%s) TO EXTRACT AS: (%s)\n", (*es)->eid, (*es)->filename, (*es)->renaming);
     es++;
   }
@@ -129,6 +134,7 @@ int main(int argc, char * argv[]) {
 ```
 
 ## Integration To Higher Level Languages
+
 
 ## Memory Issues
 When testing with Valgrind tool some memory leaks are present at the exit. However no runtime memory leaks causing uncontrolled memory consumption were not detected. Further memory leaks prevention is time consuming task due to Objective-C use (OBJC garbage collector, automatized tasks in it, ...).

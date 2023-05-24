@@ -19,8 +19,8 @@
  * MA 02110-1301  USA
  */
 
-#ifndef CHEADER_H
-#define CHEADER_H
+#ifndef LIB_XADMASTER_H
+#define LIB_XADMASTER_H
 
 #include <string.h>
 

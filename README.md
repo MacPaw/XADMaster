@@ -39,6 +39,8 @@ The resulting directory structure should look like:
 
 *Notice:* `ldconfig` execution is done implicitly by running the `install` target. The `pkg-config` rule is also included - you may use `pkg-config --cflags --libs libXADMaster` later on your compilation.
 
+*Notice:* in order to use just `libXADMaster.so` use `libinstall` target only.
+
 # Usages
 - [The Unarchiver](https://theunarchiver.com/) application.
 
@@ -49,12 +51,12 @@ This XADMaster fork provides also programmatic API for C in form of a shared obj
 Following code is showing how to compile your custom C code with the library.
 
 ```bash
-gcc -Wl,--whole-archive -fexceptions -fgnu-runtime  -o example example.c  -Wl,--no-whole-archive -lXADMaster -lgnustep-base -lz -lbz2 -lwavpack -licuuc -lobjc -lm
+gcc -o example example.c -lXADMaster
 ```
-or just
+or by using `pkg-config` tool instead
 
 ```bash
-gcc `pkg-config --cflags libXADMaster` example.c  `pkg-config --libs libXADMaster` -L../UniversalDetector -lUniversalDetector -o example
+gcc `pkg-config --cflags libXADMaster` -o example example.c  `pkg-config --libs libXADMaster`
 ```
 
 *Notice:* - you may use other C compilers - like clang.
@@ -133,8 +135,10 @@ int main(int argc, char * argv[]) {
 }
 ```
 
+<!--
 ## Integration To Higher Level Languages
-
+There is Golang in
+-->
 
 ## Memory Issues
 When testing with Valgrind tool some memory leaks are present at the exit. However no runtime memory leaks causing uncontrolled memory consumption were not detected. Further memory leaks prevention is time consuming task due to Objective-C use (OBJC garbage collector, automatized tasks in it, ...).

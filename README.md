@@ -21,6 +21,16 @@ The resulting directory structure should look like:
   /UniversalDetector
 ```
 
+## Prerequisites (Ubuntu)
+```bash
+sudo apt install gobjc++s
+sudo apt install libobjc-10-dev
+sudo apt install libgnustep-base-dev
+sudo apt install libbz2-dev
+sudo apt install libwavpack-dev
+sudo apt install libicu-dev
+```
+
 ## Unar Tool
 `make -f Makefile.linux unar # For other OS change linux to your platform`
 

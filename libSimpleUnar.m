@@ -30,8 +30,6 @@
 #import "CommandLineCommon.h"
 #import "CSFileHandle.h"
 
-FILE *outstream,*errstream;
-
 NSAutoreleasePool *shared_pool = NULL;
 
 void __attribute__ ((constructor)) my_init(void);

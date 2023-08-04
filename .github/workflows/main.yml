@@ -30,7 +30,7 @@ jobs:
 
       # Preinsatll libs
       - name: Install libs
-        run: sudo apt-get install build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev
+        run: sudo apt-get update && sudo apt-get install --fix-missing build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev
 
       # Runs a single command using the runners shell
       - name: Build project

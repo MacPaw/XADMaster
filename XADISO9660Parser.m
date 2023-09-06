@@ -644,8 +644,8 @@ length:(uint32_t)length
 
 						case TypeID('C','E'):
                         {
-                            if(length!=28) break;
-                            if(system[pos+3]!=1) break;
+                            if (length != 28) break;
+                            if (system[pos+3] != 1) break;
                             
                             /**
                              This region is a SUSP, define in SUSP IEEE P1281 section 5.1, which says that
@@ -657,16 +657,16 @@ length:(uint32_t)length
                              We can read the next fields in BigEndian and LittleEndian format
                              and compare then in order to determine if the SUSP CE block is corrupted.
                              */
-                            uint32_t blockLE=CSUInt32LE(&system[pos+4]);
+                            uint32_t blockLE = CSUInt32LE(&system[pos+4]);
                             uint32_t blockBE = CSUInt32BE(&system[pos+8]);
                             
-                            uint32_t offsetLE=CSUInt32LE(&system[pos+12]);
+                            uint32_t offsetLE = CSUInt32LE(&system[pos+12]);
                             uint32_t offsetBE = CSUInt32BE(&system[pos+16]);
                             
-                            uint32_t lengthLE=CSUInt32LE(&system[pos+20]);
+                            uint32_t lengthLE = CSUInt32LE(&system[pos+20]);
                             uint32_t lengthBE = CSUInt32BE(&system[pos+24]);
                             
-                            if (blockLE!=blockBE || offsetLE!=offsetBE || lengthLE!=lengthBE) {
+                            if (blockLE != blockBE || offsetLE != offsetBE || lengthLE != lengthBE) {
                                 break;
                             }
                             

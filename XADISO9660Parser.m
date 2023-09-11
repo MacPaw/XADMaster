@@ -671,7 +671,7 @@ length:(uint32_t)length
                             }
                             
                             nextoffset = blockLE * 2048 + offsetLE;
-                            nextlength = length;
+                            nextlength = lengthLE;
 						}
 						break;
 

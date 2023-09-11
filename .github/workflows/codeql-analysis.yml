@@ -34,7 +34,7 @@ jobs:
           path: UniversalDetector
 
       - name: Install libs
-        run: sudo apt-get install build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev
+        run: sudo apt-get update && sudo apt-get install --fix-missing build-essential libgnustep-base-dev libz-dev libbz2-dev libssl-dev libicu-dev libwavpack-dev
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL

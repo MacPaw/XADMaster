@@ -430,7 +430,9 @@ resourceForkDictionary:(NSDictionary *)forkdict wantChecksum:(BOOL)checksum erro
 
 	NSString *linkdest=nil;
 	if(delegate) linkdest=[delegate unarchiver:self destinationForLink:link from:destpath];
-	if(!linkdest) return XADNoError; // Handle nil returns as a request to skip.
+    // linkdest can be empty or nil if the link points to a deleted file.
+    // linkdest must have a value to be used in the fileSystemRepresentation, otherwise it will crash.
+    if(!linkdest || linkdest.length == 0) return XADNoError; // Handle nil returns as a request to skip.
 
 	// Check if the link destination is an absolute path, or if it contains
 	// any .. path components.

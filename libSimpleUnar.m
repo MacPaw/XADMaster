@@ -109,14 +109,7 @@ void EntryDestroy(Entry * e) {
 	free(e);
 }
 
-void _check_pool() {
-	if( !shared_pool ) {
-		shared_pool = [NSAutoreleasePool new];
-	}
-}
-
 ArchivePrivate* ArchiveNew(const char * path) {
-	//_check_pool();
 	ArchivePrivate* ret = (ArchivePrivate*)calloc(1, sizeof(ArchivePrivate));
 	ret->pool_ctx = [NSAutoreleasePool new];
 	XADError openerror;
@@ -177,8 +170,6 @@ DEF_SETTER_BOOLEAN(MacResourceForkStyle)
 DEF_SETTER_BOOLEAN(PerIndexRenamedFiles)
 
 Entry ** ArchiveList(ArchivePrivate* archive) {
-	_check_pool();
-
 	NSString *path=[NSString stringWithUTF8String:archive->path];
 	NULLLister *lister = [[[NULLLister alloc] init] autorelease];
 	[archive->unarchiver setDelegate:lister];
@@ -260,8 +251,6 @@ EntryError ** getNativeErrors (NULLUnarchiver * unarchiver)
 }
 
 unsigned ArchiveExtract(ArchivePrivate* a, Entry ** ens) {
-	_check_pool();
-
 	Entry ** oens = ens;
 
 	unsigned numentries = 0;

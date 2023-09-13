@@ -18,7 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 #include <stdio.h>
 
 #define __LIBXAD_PRIVATE_PART 1
@@ -99,6 +98,7 @@ typedef struct ArchivePrivate {
 	ArchiveError error_num;
 
 	XADSimpleUnarchiver *unarchiver;
+	NSAutoreleasePool * pool_ctx;
 } ArchivePrivate;
 
 void EntryDestroy(Entry * e) {
@@ -116,10 +116,11 @@ void _check_pool() {
 }
 
 ArchivePrivate* ArchiveNew(const char * path) {
-	_check_pool();
+	//_check_pool();
+	ArchivePrivate* ret = (ArchivePrivate*)calloc(1, sizeof(ArchivePrivate));
+	ret->pool_ctx = [NSAutoreleasePool new];
 	XADError openerror;
 	NSString *filename=[NSString stringWithUTF8String:path];
-	ArchivePrivate* ret = (ArchivePrivate*)calloc(1, sizeof(ArchivePrivate));
 	ret->path = strdup(path);
 
 	XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];

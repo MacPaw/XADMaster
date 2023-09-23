@@ -38,19 +38,33 @@ static inline uint32_t RotateRight(uint32_t val,int n) { return (val>>n)+(val<<(
 	StuffItDESKeySchedule ks;
 
 	if(!mkey||[mkey length]!=8) [XADException raiseIllegalDataException];
-
-	uint8_t passblock[8]={0,0,0,0,0,0,0,0};
-	int length=[passworddata length];
-	if(length>8) length=8;
-	memcpy(passblock,[passworddata bytes],length);
-
+ 
 	// Calculate archive key and IV from password and mkey
-	uint8_t archivekey[8],archiveiv[8];
+	uint8_t archiveiv[8];
+	uint8_t archivekey[8]={0x01,0x23,0x45,0x67,0x89,0xab,0xcd,0xef};
+	uint32_t x = 0;
+	uint32_t length=[passworddata length];
+  
+	StuffItDESSetKey(archivekey,&ks);
+	
+	do
+ 	{
+		 uint8_t passblock[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	const uint8_t initialkey[8]={0x01,0x23,0x45,0x67,0x89,0xab,0xcd,0xef};
-	for(int i=0;i<8;i++) archivekey[i]=initialkey[i]^(passblock[i]&0x7f);
-	StuffItDESSetKey(initialkey,&ks);
-	StuffItDESCrypt(archivekey,&ks,YES);
+		memcpy(passblock, [passworddata bytes] + (x << 3), 8);
+
+		archivekey[0] ^= passblock[0] & 0x7f;
+		archivekey[1] ^= passblock[1] & 0x7f;
+		archivekey[2] ^= passblock[2] & 0x7f;
+		archivekey[3] ^= passblock[3] & 0x7f;
+		archivekey[4] ^= passblock[4] & 0x7f;
+		archivekey[5] ^= passblock[5] & 0x7f;
+		archivekey[6] ^= passblock[6] & 0x7f;
+		archivekey[7] ^= passblock[7] & 0x7f;
+
+		StuffItDESCrypt(archivekey, &ks, YES);
+		++x;
+	} while ((((x * (length >> 3)) << 3) <= length) && length >= 8);
 	
 	memcpy(archiveiv,[mkey bytes],8);
 	StuffItDESSetKey(archivekey,&ks);

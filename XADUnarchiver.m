@@ -562,11 +562,21 @@ deferDirectories:(BOOL)defer
 
 	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1050 || __IPHONE_OS_VERSION_MIN_REQUIRED>__IPHONE_2_0
 	if([manager createDirectoryAtPath:path
-	withIntermediateDirectories:NO attributes:nil error:NULL]) return XADNoError;
+          withIntermediateDirectories:NO attributes:nil error:NULL]) {
+        if (delegate) {
+            [delegate unarchiver:self didCreateDirectory:path];
+        }
+        return XADNoError;
+    }
 	#else
-	if([manager createDirectoryAtPath:path attributes:nil]) return XADNoError;
+    if([manager createDirectoryAtPath:path attributes:nil]) {
+        if (delegate) {
+            [delegate unarchiver:self didCreateDirectory:path];
+        }
+        return XADNoError;
+    }
 	#endif
-	else return XADMakeDirectoryError;
+    else return XADMakeDirectoryError;
 }
 
 
@@ -745,6 +755,7 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 -(void)unarchiver:(XADUnarchiver *)unarchiver didExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path error:(XADError)error {}
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldCreateDirectory:(NSString *)directory { return YES; }
+-(void)unarchiver:(XADUnarchiver *)unarchiver didCreateDirectory:(NSString *)directory { }
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldDeleteFileAndCreateDirectory:(NSString *)directory { return NO; }
 
 -(BOOL)unarchiver:(XADUnarchiver *)unarchiver shouldExtractArchiveEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path { return NO; }

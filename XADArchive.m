@@ -1041,8 +1041,12 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 	else return NO;
 }
 
-
-
+-(void)unarchiver:(XADUnarchiver *)unarchiver didCreateDirectory:(NSString *)directory
+{
+    if(delegate) {
+        [delegate archive:self didCreateDirectory:directory];
+    }
+}
 
 
 //
@@ -1147,6 +1151,9 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 -(BOOL)archive:(XADArchive *)arc shouldCreateDirectory:(NSString *)directory
 { return [delegate archive:arc shouldCreateDirectory:directory]; }
 
+-(void)archive:(XADArchive *)arc didCreateDirectory:(NSString *)directory
+{ [delegate archive:arc didCreateDirectory:directory]; }
+
 -(XADAction)archive:(XADArchive *)arc entry:(int)n collidesWithFile:(NSString *)file newFilename:(NSString **)newname
 { return [delegate archive:arc entry:n collidesWithFile:file newFilename:newname]; }
 
@@ -1207,6 +1214,7 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 
 -(BOOL)archiveExtractionShouldStop:(XADArchive *)archive { return NO; }
 -(BOOL)archive:(XADArchive *)archive shouldCreateDirectory:(NSString *)directory { return YES; }
+-(void)archive:(XADArchive *)archive didCreateDirectory:(NSString *)directory { }
 -(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithFile:(NSString *)file newFilename:(NSString **)newname { return XADOverwriteAction; }
 -(XADAction)archive:(XADArchive *)archive entry:(int)n collidesWithDirectory:(NSString *)file newFilename:(NSString **)newname { return XADSkipAction; }
 -(XADAction)archive:(XADArchive *)archive creatingDirectoryDidFailForEntry:(int)n { return XADAbortAction; }

@@ -1416,11 +1416,13 @@
 		734C13BA21C79C8500917EAA /* unpack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B621C79C8400917EAA /* unpack_utils.c */; };
 		7378D98B21CCD04000A4B11F /* CRCCalculationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7378D98A21CCD04000A4B11F /* CRCCalculationTests.m */; };
 		7398C7AE2059248700D7B977 /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B06D3770DDA5C2600D9C000 /* UniversalDetector.framework */; };
+		73A91A542ADC64DE0059C423 /* StuffitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73A91A4F2ADC64DE0059C423 /* StuffitTests.m */; };
+		73A91A562ADC64EB0059C423 /* StuffitFixtures in Resources */ = {isa = PBXBuildFile; fileRef = 73A91A552ADC64EB0059C423 /* StuffitFixtures */; };
 		73DA3468206B6BF1006ADB42 /* XADPlatformOSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */; };
 		73DA346A206B6BF1006ADB42 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
-		DF05DCF92806F104001E9C52 /* XADMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = DF05DCF52806EF40001E9C52 /* XADMaster.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C4C3241827AC25E9007919DB /* XADZippedBzip2LeakTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C3241727AC25E9007919DB /* XADZippedBzip2LeakTests.m */; };
 		C4C3241A27AC2655007919DB /* eicar.bz in Resources */ = {isa = PBXBuildFile; fileRef = C4C3241927AC2655007919DB /* eicar.bz */; };
+		DF05DCF92806F104001E9C52 /* XADMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = DF05DCF52806EF40001E9C52 /* XADMaster.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E424FB4721CAE11D00E1C950 /* XADArchiveParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E424FB4621CAE11D00E1C950 /* XADArchiveParserTests.m */; };
 		E424FB4E21CAEC0300E1C950 /* XADZipParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E424FB4D21CAEC0300E1C950 /* XADZipParserTests.m */; };
 		E46E6296225DC2DE00D44E0A /* XADSFXDetectionParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E46E6295225DC2DE00D44E0A /* XADSFXDetectionParserTests.m */; };
@@ -2142,13 +2144,15 @@
 		734C13B121C79B1A00917EAA /* unpack_seek.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_seek.c; sourceTree = "<group>"; };
 		734C13B621C79C8400917EAA /* unpack_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_utils.c; sourceTree = "<group>"; };
 		7378D98A21CCD04000A4B11F /* CRCCalculationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CRCCalculationTests.m; sourceTree = "<group>"; };
+		73A91A4F2ADC64DE0059C423 /* StuffitTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StuffitTests.m; sourceTree = "<group>"; };
+		73A91A552ADC64EB0059C423 /* StuffitFixtures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StuffitFixtures; sourceTree = "<group>"; };
 		73DA3465206B6BF1006ADB42 /* XADMasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XADMasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADPlatformOSXTests.m; sourceTree = "<group>"; };
 		73DA3469206B6BF1006ADB42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* XADMaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XADMaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4C3241727AC25E9007919DB /* XADZippedBzip2LeakTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADZippedBzip2LeakTests.m; sourceTree = "<group>"; };
-		DF05DCF52806EF40001E9C52 /* XADMaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XADMaster.h; sourceTree = "<group>"; };
 		C4C3241927AC2655007919DB /* eicar.bz */ = {isa = PBXFileReference; lastKnownFileType = file; path = eicar.bz; sourceTree = "<group>"; };
+		DF05DCF52806EF40001E9C52 /* XADMaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XADMaster.h; sourceTree = "<group>"; };
 		E424FB4621CAE11D00E1C950 /* XADArchiveParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADArchiveParserTests.m; sourceTree = "<group>"; };
 		E424FB4D21CAEC0300E1C950 /* XADZipParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADZipParserTests.m; sourceTree = "<group>"; };
 		E46E6295225DC2DE00D44E0A /* XADSFXDetectionParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADSFXDetectionParserTests.m; sourceTree = "<group>"; };
@@ -3254,9 +3258,19 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		73A91A4B2ADC64DE0059C423 /* Stuffit */ = {
+			isa = PBXGroup;
+			children = (
+				73A91A552ADC64EB0059C423 /* StuffitFixtures */,
+				73A91A4F2ADC64DE0059C423 /* StuffitTests.m */,
+			);
+			path = Stuffit;
+			sourceTree = "<group>";
+		};
 		73DA3466206B6BF1006ADB42 /* XADMasterTests */ = {
 			isa = PBXGroup;
 			children = (
+				73A91A4B2ADC64DE0059C423 /* Stuffit */,
 				73032E652626D2E0000C2751 /* WARC */,
 				7318A419248C67BD00D327B9 /* RAR */,
 				73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */,
@@ -4003,6 +4017,7 @@
 			files = (
 				C4C3241A27AC2655007919DB /* eicar.bz in Resources */,
 				73032E6E2626DB7C000C2751 /* WARCFixtures in Resources */,
+				73A91A562ADC64EB0059C423 /* StuffitFixtures in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4762,6 +4777,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7378D98B21CCD04000A4B11F /* CRCCalculationTests.m in Sources */,
+				73A91A542ADC64DE0059C423 /* StuffitTests.m in Sources */,
 				73032E6C2626D3DD000C2751 /* XADWARCParserTests.m in Sources */,
 				73DA3468206B6BF1006ADB42 /* XADPlatformOSXTests.m in Sources */,
 				C4C3241827AC25E9007919DB /* XADZippedBzip2LeakTests.m in Sources */,

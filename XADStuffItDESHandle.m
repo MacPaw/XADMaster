@@ -43,15 +43,25 @@ static inline uint32_t RotateRight(uint32_t val,int n) { return (val>>n)+(val<<(
 	uint8_t archiveiv[8];
 	uint8_t archivekey[8]={0x01,0x23,0x45,0x67,0x89,0xab,0xcd,0xef};
 	uint32_t x = 0;
+ 	uint32_t copybytes;
 	uint32_t length=[passworddata length];
   
 	StuffItDESSetKey(archivekey,&ks);
 	
 	do
  	{
-		 uint8_t passblock[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+		uint8_t passblock[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+  
+		if (length - (x << 3) >= 8)
+		{
+			copybytes = 8;
+		}
+		else
+		{
+			copybytes = length - (x << 3);
+		}
 
-		memcpy(passblock, [passworddata bytes] + (x << 3), 8);
+		memcpy(passblock, [passworddata bytes] + (x << 3), copybytes);
 
 		archivekey[0] ^= passblock[0] & 0x7f;
 		archivekey[1] ^= passblock[1] & 0x7f;

@@ -86,6 +86,12 @@ unar: $(UNAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniver
 lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
+xad.test: test.c
+	gcc test.c -lXADMaster -I/usr/include/GNUstep -L/GNUstep/System/Library/Libraries -std=c11 -o xad.test
+
+xad.unpack: unpack.c
+	gcc unpack.c -lXADMaster -I/usr/include/GNUstep -L/GNUstep/System/Library/Libraries -std=c11 -o xad.unpack
+
 example: $(EXAMPLE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 

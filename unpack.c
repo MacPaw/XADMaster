@@ -11,6 +11,9 @@ int main(int argc, const char **argv) {
     const char *destination = argv[2];
 
     Archive *archive = ArchiveNew(path);
+    if (archive->error_num != NO_ERROR) {
+        goto exit;
+    }
 
     ArchiveSetDestination(archive, destination);
     ArchiveSetAlwaysOverwritesFiles(archive, true);
@@ -38,9 +41,14 @@ int main(int argc, const char **argv) {
         entry++;
     }
 
-    ArchiveDestroy(archive);
     free(entries);
 
-    return archive->error_num;
+    exit:
+
+    int ret = archive->error_num;
+    if (ret != NO_ERROR) fprintf(stderr, "%s", archive->error_str);
+    ArchiveDestroy(archive);
+
+    return ret;
 
 }

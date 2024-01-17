@@ -407,7 +407,7 @@ length:(uint32_t)length
 		if(flags&0x04) [dict setObject:[NSNumber numberWithBool:YES] forKey:XADIsDirectoryKey];
 
 		int systemlength=recordlength-33-namelength-((namelength&1)^1);
-		if(systemlength)
+		if(systemlength>0)
 		{
 			NSMutableData *namedata=nil;
 			NSMutableData *linkdata=nil;

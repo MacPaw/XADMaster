@@ -376,7 +376,7 @@
 		1B3FAB050EC3859F006D2F06 /* CSMultiHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF30EC3859F006D2F06 /* CSMultiHandle.m */; };
 		1B3FAB060EC3859F006D2F06 /* CSFileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF40EC3859F006D2F06 /* CSFileHandle.h */; };
 		1B3FAB070EC3859F006D2F06 /* CSFileHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF50EC3859F006D2F06 /* CSFileHandle.m */; };
-		1B3FAB080EC3859F006D2F06 /* CSMemoryHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF60EC3859F006D2F06 /* CSMemoryHandle.h */; };
+		1B3FAB080EC3859F006D2F06 /* CSMemoryHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF60EC3859F006D2F06 /* CSMemoryHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAB090EC3859F006D2F06 /* CSMemoryHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF70EC3859F006D2F06 /* CSMemoryHandle.m */; };
 		1B3FAB0A0EC3859F006D2F06 /* CSStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B3FAAF80EC3859F006D2F06 /* CSStreamHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1B3FAB0B0EC3859F006D2F06 /* CSStreamHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B3FAAF90EC3859F006D2F06 /* CSStreamHandle.m */; };
@@ -3535,7 +3535,6 @@
 				1B3FAB020EC3859F006D2F06 /* CSSubHandle.h in Headers */,
 				1B3FAB040EC3859F006D2F06 /* CSMultiHandle.h in Headers */,
 				1B3FAB060EC3859F006D2F06 /* CSFileHandle.h in Headers */,
-				1B3FAB080EC3859F006D2F06 /* CSMemoryHandle.h in Headers */,
 				1B3FAB0A0EC3859F006D2F06 /* CSStreamHandle.h in Headers */,
 				1B3FAB0C0EC3859F006D2F06 /* CSBlockStreamHandle.h in Headers */,
 				1B3FAB100EC3859F006D2F06 /* CSZlibHandle.h in Headers */,
@@ -3547,6 +3546,7 @@
 				1BA266DE0FC78BF600279E95 /* XADPath.h in Headers */,
 				1B81DD460FFEB87B005C5B23 /* XADUnarchiver.h in Headers */,
 				1B3C98A8134E570D009F9674 /* CSByteStreamHandle.h in Headers */,
+				1B3FAB080EC3859F006D2F06 /* CSMemoryHandle.h in Headers */,
 				1B3C98A9134E5793009F9674 /* XADException.h in Headers */,
 				1B75B86A134E59B500510EA5 /* Checksums.h in Headers */,
 				1B75B89D134E5B3100510EA5 /* Bra.h in Headers */,

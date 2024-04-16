@@ -17,6 +17,7 @@ GNUSTEP_OPTS =	-DGNUSTEP \
 		-fconstant-string-class=NSConstantString
 
 GCC_OPTS = 	-O2 \
+		-fPIC \
 		-Wno-import \
 		-Wno-multichar \
 		-g \
@@ -71,14 +72,53 @@ libXADMaster.a: $(LIBRARY_OBJS)
 	rm -f $@
 	$(AR) rcs $@ $^
 
+
 ../UniversalDetector/libUniversalDetector.a:
-	make -C ../UniversalDetector -f Makefile.linux
+	make -C ../UniversalDetector -f Makefile.linux #GCC_OPTS+=-fPIC
+
+libXADMaster.so:  $(LIBRARY_OBJS) ../UniversalDetector/libUniversalDetector.a
+	rm -f $@
+	$(LD) $(ALL_LDFLAGS) -shared -o $@ $^ $(LIBS)
 
 unar: $(UNAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 
 lsar: $(LSAR_OBJS) $(CMDLINE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
+
+xad.test: test.c
+	gcc test.c -lXADMaster -I/usr/include/GNUstep -L/GNUstep/System/Library/Libraries -std=c11 -o xad.test
+
+xad.unpack: unpack.c
+	gcc unpack.c -lXADMaster -I/usr/include/GNUstep -L/GNUstep/System/Library/Libraries -std=c11 -o xad.unpack
+
+example: $(EXAMPLE_OBJS) libXADMaster.a ../UniversalDetector/libUniversalDetector.a
+	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
+
+soexample:
+	gcc -o soexample example.c -lXADMaster # Minimalistic example target - not using the Makefile's context (make libinstall is needed)
+
+BIN_INSTALL_DIR = /usr/bin
+LIB_INSTALL_DIR = /usr/lib
+INC_INSTALL_DIR = /usr/include
+PKC_INSTALL_DIR = /usr/lib/pkgconfig/
+
+libinstall: libXADMaster.so
+	sudo mkdir -p $(BIN_INSTALL_DIR) $(LIB_INSTALL_DIR) $(INC_INSTALL_DIR) $(PKC_INSTALL_DIR)
+	sudo cp libXADMaster.h $(INC_INSTALL_DIR)
+	sudo cp libXADMaster.pc $(PKC_INSTALL_DIR)
+	sudo cp libXADMaster.so $(LIB_INSTALL_DIR)
+	sudo ldconfig
+
+install: unar lsar libinstall
+	sudo cp unar lsar $(BIN_INSTALL_DIR)
+
+uninstall:
+	sudo rm $(BIN_INSTALL_DIR)/unar $(BIN_INSTALL_DIR)/lsar
+	sudo rm $(LIB_INSTALL_DIR)/libXADMaster.so
+	sudo rm $(INC_INSTALL_DIR)/libXADMaster.h
+	sudo rm $(PKC_INSTALL_DIR)/libXADMaster.pc
+	sudo ldconfig
 
 clean:
 	rm -rf $(BUILD_DIR) $(EXECUTABLE_FILES) $(LIBRARY_FILES)

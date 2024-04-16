@@ -12,6 +12,11 @@ Extract \fIFILE\fRs or the contents of \fIARCHIVE\fR.
 The directory to write the contents of the archive to.  Defaults to
 the current directory.
 .TP
+.BR \-I ", " \-index\-rename
+Instead of specifying the files to list as tuples of form
+" \findex_1 destination_1 ... index_n destination_n".
+Indexes are output by lsar and must be increasing from left to right.
+.TP
 .BR \-f ", " \-force\-overwrite
 Always overwrite files when a file to be unpacked already exists on
 disk.  By default, the program asks the user if possible, otherwise

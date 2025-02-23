@@ -24,50 +24,50 @@
 
 
 
-NSString *XADASCIIStringEncodingName=@"US-ASCII";
-NSString *XADUTF8StringEncodingName=@"UTF-8";
+NSString *const XADASCIIStringEncodingName=@"US-ASCII";
+NSString *const XADUTF8StringEncodingName=@"UTF-8";
 
-NSString *XADISOLatin1StringEncodingName=@"iso-8859-1";
-NSString *XADISOLatin2StringEncodingName=@"iso-8859-2";
-NSString *XADISOLatin3StringEncodingName=@"iso-8859-3";
-NSString *XADISOLatin4StringEncodingName=@"iso-8859-4";
-NSString *XADISOLatin5StringEncodingName=@"iso-8859-5";
-NSString *XADISOLatin6StringEncodingName=@"iso-8859-6";
-NSString *XADISOLatin7StringEncodingName=@"iso-8859-7";
-NSString *XADISOLatin8StringEncodingName=@"iso-8859-8";
-NSString *XADISOLatin9StringEncodingName=@"iso-8859-9";
-NSString *XADISOLatin10StringEncodingName=@"iso-8859-10";
-NSString *XADISOLatin11StringEncodingName=@"iso-8859-11";
-NSString *XADISOLatin12StringEncodingName=@"iso-8859-12";
-NSString *XADISOLatin13StringEncodingName=@"iso-8859-13";
-NSString *XADISOLatin14StringEncodingName=@"iso-8859-14";
-NSString *XADISOLatin15StringEncodingName=@"iso-8859-15";
-NSString *XADISOLatin16StringEncodingName=@"iso-8859-16";
+NSString *const XADISOLatin1StringEncodingName=@"iso-8859-1";
+NSString *const XADISOLatin2StringEncodingName=@"iso-8859-2";
+NSString *const XADISOLatin3StringEncodingName=@"iso-8859-3";
+NSString *const XADISOLatin4StringEncodingName=@"iso-8859-4";
+NSString *const XADISOLatin5StringEncodingName=@"iso-8859-5";
+NSString *const XADISOLatin6StringEncodingName=@"iso-8859-6";
+NSString *const XADISOLatin7StringEncodingName=@"iso-8859-7";
+NSString *const XADISOLatin8StringEncodingName=@"iso-8859-8";
+NSString *const XADISOLatin9StringEncodingName=@"iso-8859-9";
+NSString *const XADISOLatin10StringEncodingName=@"iso-8859-10";
+NSString *const XADISOLatin11StringEncodingName=@"iso-8859-11";
+NSString *const XADISOLatin12StringEncodingName=@"iso-8859-12";
+NSString *const XADISOLatin13StringEncodingName=@"iso-8859-13";
+NSString *const XADISOLatin14StringEncodingName=@"iso-8859-14";
+NSString *const XADISOLatin15StringEncodingName=@"iso-8859-15";
+NSString *const XADISOLatin16StringEncodingName=@"iso-8859-16";
 
-NSString *XADShiftJISStringEncodingName=@"Shift_JIS";
+NSString *const XADShiftJISStringEncodingName=@"Shift_JIS";
 
-NSString *XADWindowsCP1250StringEncodingName=@"windows-1250";
-NSString *XADWindowsCP1251StringEncodingName=@"windows-1251";
-NSString *XADWindowsCP1252StringEncodingName=@"windows-1252";
-NSString *XADWindowsCP1253StringEncodingName=@"windows-1253";
-NSString *XADWindowsCP1254StringEncodingName=@"windows-1254";
+NSString *const XADWindowsCP1250StringEncodingName=@"windows-1250";
+NSString *const XADWindowsCP1251StringEncodingName=@"windows-1251";
+NSString *const XADWindowsCP1252StringEncodingName=@"windows-1252";
+NSString *const XADWindowsCP1253StringEncodingName=@"windows-1253";
+NSString *const XADWindowsCP1254StringEncodingName=@"windows-1254";
 
-NSString *XADMacOSRomanStringEncodingName=@"macintosh";
-NSString *XADMacOSJapaneseStringEncodingName=@"x-mac-japanese";
-NSString *XADMacOSTraditionalChineseStringEncodingName=@"x-mac-trad-chinese";
-NSString *XADMacOSKoreanStringEncodingName=@"x-mac-korean";
-NSString *XADMacOSArabicStringEncodingName=@"x-mac-arabic";
-NSString *XADMacOSHebrewStringEncodingName=@"x-mac-hebrew";
-NSString *XADMacOSGreekStringEncodingName=@"x-mac-greek";
-NSString *XADMacOSCyrillicStringEncodingName=@"x-mac-cyrillic";
-NSString *XADMacOSSimplifiedChineseStringEncodingName=@"x-mac-simp-chinese";
-NSString *XADMacOSRomanianStringEncodingName=@"x-mac-romanian";
-NSString *XADMacOSUkranianStringEncodingName=@"x-mac-ukrainian";
-NSString *XADMacOSThaiStringEncodingName=@"x-mac-thai";
-NSString *XADMacOSCentralEuropeanRomanStringEncodingName=@"x-mac-centraleurroman";
-NSString *XADMacOSIcelandicStringEncodingName=@"x-mac-icelandic";
-NSString *XADMacOSTurkishStringEncodingName=@"x-mac-turkish";
-NSString *XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
+NSString *const XADMacOSRomanStringEncodingName=@"macintosh";
+NSString *const XADMacOSJapaneseStringEncodingName=@"x-mac-japanese";
+NSString *const XADMacOSTraditionalChineseStringEncodingName=@"x-mac-trad-chinese";
+NSString *const XADMacOSKoreanStringEncodingName=@"x-mac-korean";
+NSString *const XADMacOSArabicStringEncodingName=@"x-mac-arabic";
+NSString *const XADMacOSHebrewStringEncodingName=@"x-mac-hebrew";
+NSString *const XADMacOSGreekStringEncodingName=@"x-mac-greek";
+NSString *const XADMacOSCyrillicStringEncodingName=@"x-mac-cyrillic";
+NSString *const XADMacOSSimplifiedChineseStringEncodingName=@"x-mac-simp-chinese";
+NSString *const XADMacOSRomanianStringEncodingName=@"x-mac-romanian";
+NSString *const XADMacOSUkranianStringEncodingName=@"x-mac-ukrainian";
+NSString *const XADMacOSThaiStringEncodingName=@"x-mac-thai";
+NSString *const XADMacOSCentralEuropeanRomanStringEncodingName=@"x-mac-centraleurroman";
+NSString *const XADMacOSIcelandicStringEncodingName=@"x-mac-icelandic";
+NSString *const XADMacOSTurkishStringEncodingName=@"x-mac-turkish";
+NSString *const XADMacOSCroatianStringEncodingName=@"x-mac-croatian";
 
 static BOOL IsDataASCII(NSData *data);
 
@@ -242,7 +242,7 @@ encodingName:(NSString *)encoding
 
 
 
--(XADStringSource *)source { return source; }
+@synthesize source;
 
 
 
@@ -402,10 +402,7 @@ encodingName:(NSString *)encoding
 	return [detector confidence];
 }
 
--(UniversalDetector *)detector
-{
-	return detector;
-}
+@synthesize detector;
 
 -(void)setFixedEncodingName:(NSString *)encoding
 {

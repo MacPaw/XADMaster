@@ -111,9 +111,7 @@
 	NSMutableArray *filerecords=[NSMutableArray array];
 	NSMutableDictionary *root=[NSMutableDictionary dictionary];
 
-	NSEnumerator *enumerator=[recordarray objectEnumerator];
-	NSMutableDictionary *record;
-	while((record=[enumerator nextObject]))
+	for(NSMutableDictionary *record in recordarray)
 	{
 		NSString *type=[record objectForKey:@"WARC-Type"];
 		NSArray *headers=[record objectForKey:@"HTTPHeaders"];
@@ -149,8 +147,7 @@
 	// Iterate over the files, finding and loading the request
 	// records and emit archive entries. 
 
-	enumerator=[filerecords objectEnumerator];
-	while((record=[enumerator nextObject]))
+	for(NSMutableDictionary *record in filerecords)
 	{
 		NSString *target=[self getTargetURI:record];
 		NSNumber *startnum=[record objectForKey:@"HTTPBodyStart"];
@@ -333,9 +330,7 @@
 
 -(void)buildXADPathsForFilesInDirectory:(NSMutableDictionary *)dir parentPath:(XADPath *)parent
 {
-	NSEnumerator *enumerator=[dir keyEnumerator];
-	NSString *name;
-	while((name=[enumerator nextObject]))
+	for(NSString *name in [dir keyEnumerator])
 	{
 		NSMutableDictionary *entry=[dir objectForKey:name];
 		XADString *xadname=[self XADStringWithString:name];

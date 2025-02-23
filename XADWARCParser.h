@@ -20,7 +20,7 @@
  */
 #import "XADArchiveParser.h"
 
-@interface XADWARCParser:XADArchiveParser
+@interface XADWARCParser:XADArchiveParser <XADArchiveParserDelegate>
 {
 }
 

@@ -27,16 +27,14 @@
 -(id)initWithHandle:(CSHandle *)handle parts:(NSArray *)partarray
 {
 	off_t totallength=0;
-	NSEnumerator *enumerator=[partarray objectEnumerator];
-	NSDictionary *dict;
-	while((dict=[enumerator nextObject]))
+	for(NSDictionary *dict in partarray)
 	{
 		totallength+=[[dict objectForKey:@"InputLength"] longLongValue];
 	}
 
 	if((self=[super initWithParentHandle:handle length:totallength]))
 	{
-		parts=[partarray retain];
+		parts=[partarray copy];
 	}
 	return self;
 }

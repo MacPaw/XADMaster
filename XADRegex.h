@@ -20,12 +20,18 @@
  */
 #import <Foundation/Foundation.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wquoted-include-in-framework-header"
+#import "XADTypes.h"
+#pragma clang diagnostic pop
+
 #ifdef _WIN32
 #import "regex.h"
 #else
 #import <regex.h>
 #endif
 
+XADEXPORT
 @interface XADRegex:NSObject
 {
 	NSString *patternstring;

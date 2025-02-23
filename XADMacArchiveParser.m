@@ -25,9 +25,9 @@
 #import "NSDateXAD.h"
 #import "CRC.h"
 
-NSString *XADIsMacBinaryKey=@"XADIsMacBinary";
-NSString *XADMightBeMacBinaryKey=@"XADMightBeMacBinary";
-NSString *XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
+NSString *const XADIsMacBinaryKey=@"XADIsMacBinary";
+NSString *const XADMightBeMacBinaryKey=@"XADMightBeMacBinary";
+NSString *const XADDisableMacForkExpansionKey=@"XADDisableMacForkExpansionKey";
 
 @implementation XADMacArchiveParser
 

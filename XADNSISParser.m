@@ -588,12 +588,9 @@ newDateTimeOrder:(BOOL)neworder
 	// a little bit less slow, and put in solidness markers.
 	[self makeEntryArrayStrictlyIncreasing:files];
 
-	NSEnumerator *enumerator=[dirs objectEnumerator];
-	NSMutableDictionary *dict;
-	while((dict=[enumerator nextObject])) [self addEntryWithDictionary:dict];
+	for(NSMutableDictionary *dict in dirs) [self addEntryWithDictionary:dict];
   
-	enumerator=[files objectEnumerator];
-	while((dict=[enumerator nextObject])) [self addEntryWithDictionary:dict];
+	for(NSMutableDictionary *dict in files) [self addEntryWithDictionary:dict];
 }
 
 -(void)makeEntryArrayStrictlyIncreasing:(NSMutableArray *)array

@@ -914,8 +914,7 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
 {
 	off_t totalsize=0;
 	NSEnumerator *enumerator=[[folder objectForKey:@"InStreams"] objectEnumerator];
-	NSDictionary *instream;
-	while((instream=[enumerator nextObject]))
+	for(NSDictionary *instream in enumerator)
 	{
 		NSDictionary *packedstream=[instream objectForKey:@"PackedStream"];
 		if(packedstream) totalsize+=[[packedstream objectForKey:@"Size"] longLongValue];

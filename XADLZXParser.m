@@ -149,9 +149,7 @@
 				[NSNumber numberWithInt:method],@"Method",
 			nil];
 
-			NSEnumerator *enumerator=[solidfiles objectEnumerator];
-			NSMutableDictionary *dict;
-			while((dict=[enumerator nextObject]))
+			for(NSMutableDictionary *dict in solidfiles)
 			{
 				off_t compsize=0;
 				if(solidsize!=0) compsize=([[dict objectForKey:XADFileSizeKey] longLongValue]*(off_t)compsize)/solidsize;

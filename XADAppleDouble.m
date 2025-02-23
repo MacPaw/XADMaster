@@ -175,9 +175,7 @@ extendedAttributes:(NSDictionary *)extattrs
 
 	// Sort keys and iterate over them.
 	NSArray *keys=[[extattrs allKeys] sortedArrayUsingSelector:@selector(compare:)];
-	NSEnumerator *enumerator=[keys objectEnumerator];
-	NSString *key;
-	while((key=[enumerator nextObject]))
+	for(NSString *key in keys)
 	{
 		// Ignore FinderInfo.
 		if([key isEqual:@"com.apple.FinderInfo"]) continue;
@@ -253,9 +251,7 @@ extendedAttributes:(NSDictionary *)extattrs
 
 		// Write attribute entries.
 		int currdataoffset=datastart;
-		NSEnumerator *enumerator=[keys objectEnumerator];
-		NSString *key;
-		while((key=[enumerator nextObject]))
+		for(NSString *key in keys)
 		{
 			NSData *data=[extattrs objectForKey:key];
 			NSData *keydata=[encodedkeys objectForKey:key];
@@ -293,8 +289,7 @@ extendedAttributes:(NSDictionary *)extattrs
 		}
 
 		// Write attribute data.
-		enumerator=[keys objectEnumerator];
-		while((key=[enumerator nextObject]))
+		for(NSString *key in keys)
 		{
 			NSData *data=[extattrs objectForKey:key];
 			NSData *keydata=[encodedkeys objectForKey:key];

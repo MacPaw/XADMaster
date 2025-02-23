@@ -408,9 +408,7 @@ static BOOL IsDelimiter(uint8_t c);
 
 	// Parse any object streams that were encountered earlier, now that encryption
 	// should be properly set up.
-	NSEnumerator *enumerator=[objstreams objectEnumerator];
-	PDFStream *objstream;
-	while((objstream=[enumerator nextObject]))
+	for(PDFStream *objstream in objstreams)
 	{
 		off_t curroffs=[mainhandle offsetInFile];
 		[self parsePDFCompressedObjectStream:objstream];
@@ -935,16 +933,12 @@ static BOOL IsDelimiter(uint8_t c);
 
 -(void)resolveIndirectObjects
 {
-	NSEnumerator *enumerator=[unresolved objectEnumerator];
-	id obj;
-	while(obj=[enumerator nextObject])
+	for(id obj in unresolved)
 	{
 		if([obj isKindOfClass:[NSDictionary class]])
 		{
 			NSMutableDictionary *dict=obj;
-			NSEnumerator *keyenum=[[dict allKeys] objectEnumerator];
-			NSString *key;
-			while(key=[keyenum nextObject])
+			for(NSString *key in [dict allKeys])
 			{
 				id value=[dict objectForKey:key];
 				if([value isKindOfClass:[PDFObjectReference class]])

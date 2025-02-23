@@ -28,7 +28,7 @@
 }
 
 +(CSHandle *)handleWithPathArray:(NSArray *)patharray;
-+(CSHandle *)handleWithPaths:(CSHandle *)firstpath,...;
++(CSHandle *)handleWithPaths:(CSHandle *)firstpath,... NS_REQUIRES_NIL_TERMINATION;
 
 // Initializers
 -(id)initWithPaths:(NSArray *)patharray;

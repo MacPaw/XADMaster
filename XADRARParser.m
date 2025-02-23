@@ -752,7 +752,7 @@ isCorrupted:(BOOL)iscorrupted
 
 -(CSHandle *)inputHandleForFileWithIndex:(int)file files:(NSArray *)files
 {
-	if(file>=[files count]) [XADException raiseExceptionWithXADError:XADInputError]; // TODO: better error
+	if(file>=[files count]) [XADException raiseExceptionWithXADError:XADErrorInput]; // TODO: better error
 	NSDictionary *dict=[files objectAtIndex:file];
 
 	CSHandle *handle=[self inputHandleWithParts:[dict objectForKey:@"Parts"]
@@ -805,7 +805,7 @@ cryptoVersion:(int)version salt:(NSData *)salt
 
 -(off_t)outputLengthOfFileWithIndex:(int)file files:(NSArray *)files
 {
-	if(file>=[files count]) [XADException raiseExceptionWithXADError:XADInputError]; // TODO: better error
+	if(file>=[files count]) [XADException raiseExceptionWithXADError:XADErrorInput]; // TODO: better error
 	NSDictionary *dict=[files objectAtIndex:file];
 
 	return [[dict objectForKey:@"OutputLength"] longLongValue];

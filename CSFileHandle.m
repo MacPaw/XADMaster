@@ -19,18 +19,93 @@
  * MA 02110-1301  USA
  */
 #import "CSFileHandle.h"
+#import "XADException.h"
 
 #include <sys/stat.h>
 
 
 
-NSString *CSCannotOpenFileException=@"CSCannotOpenFileException";
-NSString *CSFileErrorException=@"CSFileErrorException";
+NSString *const CSCannotOpenFileException=@"CSCannotOpenFileException";
+NSString *const CSFileErrorException=@"CSFileErrorException";
 
 
 
 
 @implementation CSFileHandle
+@synthesize filePointer = fh;
+
++(CSFileHandle *)fileHandleForReadingAtFileURL:(NSURL *)path
+{ return [self fileHandleForFileURL:path modes:@"rb"]; }
+
++(CSFileHandle *)fileHandleForWritingAtFileURL:(NSURL *)path
+{ return [self fileHandleForFileURL:path modes:@"wb"]; }
+
++(CSFileHandle *)fileHandleForFileURL:(NSURL *)path modes:(NSString *)modes
+{
+	if(!path) return nil;
+	
+#if defined(__COCOTRON__) // Cocotron
+	FILE *fileh=_wfopen([path fileSystemRepresentationW],
+						(const wchar_t *)[modes cStringUsingEncoding:NSUnicodeStringEncoding]);
+#elif defined(__MINGW32__) // GNUstep under mingw32 - sort of untested
+	FILE *fileh=_wfopen((const wchar_t *)[path fileSystemRepresentation],
+						(const wchar_t *)[modes cStringUsingEncoding:NSUnicodeStringEncoding]);
+#else // Cocoa or GNUstep under Linux
+	FILE *fileh=fopen([path fileSystemRepresentation],modes.UTF8String);
+#endif
+	
+	if(!fileh) [[NSException exceptionWithName:CSCannotOpenFileException
+										reason: [NSString stringWithFormat:@"Error attempting to open file \"%@\" in mode \"%@\" (%d).",path,modes, (int)errno]
+									  userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil], NSUnderlyingErrorKey, path, NSURLErrorKey, nil]] raise];
+	
+	CSFileHandle *handle=[[CSFileHandle alloc] initWithFilePointer:fileh closeOnDealloc:YES path:path.path];
+	if(handle) return handle;
+	
+	fclose(fileh);
+	return nil;
+}
+
++(CSFileHandle *)fileHandleForReadingAtFileURL:(NSURL *)path error:(NSError **)outErr
+{ return [self fileHandleForFileURL:path modes:@"rb" error:outErr]; }
+
++(CSFileHandle *)fileHandleForWritingAtFileURL:(NSURL *)path error:(NSError **)outErr
+{ return [self fileHandleForFileURL:path modes:@"wb" error:outErr]; }
+
++(CSFileHandle *)fileHandleForFileURL:(NSURL *)path modes:(NSString *)modes error:(NSError **)outErr
+{
+	if(!path) {
+		if (outErr) {
+			*outErr = [NSError errorWithDomain:XADErrorDomain code:XADErrorBadParameters userInfo:nil];
+		}
+		return nil;
+	}
+	
+#if defined(__COCOTRON__) // Cocotron
+	FILE *fileh=_wfopen([path fileSystemRepresentationW],
+						(const wchar_t *)[modes cStringUsingEncoding:NSUnicodeStringEncoding]);
+#elif defined(__MINGW32__) // GNUstep under mingw32 - sort of untested
+	FILE *fileh=_wfopen((const wchar_t *)[path fileSystemRepresentation],
+						(const wchar_t *)[modes cStringUsingEncoding:NSUnicodeStringEncoding]);
+#else // Cocoa or GNUstep under Linux
+	FILE *fileh=fopen([path fileSystemRepresentation],modes.UTF8String);
+#endif
+	
+	if(!fileh) {
+		if (outErr) {
+			*outErr = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:[NSDictionary dictionaryWithObjectsAndKeys:path, NSURLErrorKey, nil]];
+		}
+		return nil;
+	}
+	
+	CSFileHandle *handle=[[CSFileHandle alloc] initWithFilePointer:fileh closeOnDealloc:YES path:path.path];
+	if(handle) return handle;
+	
+	fclose(fileh);
+	if (outErr) {
+		*outErr = [NSError errorWithDomain:XADErrorDomain code:XADErrorUnknown userInfo:[NSDictionary dictionaryWithObjectsAndKeys:path, NSURLErrorKey, nil]];
+	}
+	return nil;
+}
 
 +(CSFileHandle *)fileHandleForReadingAtPath:(NSString *)path
 { return [self fileHandleForPath:path modes:@"rb"]; }

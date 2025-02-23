@@ -24,8 +24,8 @@
 
 #define CSFileHandle XADFileHandle
 
-extern NSString *CSCannotOpenFileException;
-extern NSString *CSFileErrorException;
+extern NSExceptionName const CSCannotOpenFileException;
+extern NSExceptionName const CSFileErrorException;
 
 @interface CSFileHandle:CSHandle
 {
@@ -41,6 +41,12 @@ extern NSString *CSFileErrorException;
 +(CSFileHandle *)fileHandleForReadingAtPath:(NSString *)path;
 +(CSFileHandle *)fileHandleForWritingAtPath:(NSString *)path;
 +(CSFileHandle *)fileHandleForPath:(NSString *)path modes:(NSString *)modes;
++(CSFileHandle *)fileHandleForReadingAtFileURL:(NSURL *)path NS_SWIFT_UNAVAILABLE("Use throwing methods instead");
++(CSFileHandle *)fileHandleForWritingAtFileURL:(NSURL *)path NS_SWIFT_UNAVAILABLE("Use throwing methods instead");
++(CSFileHandle *)fileHandleForFileURL:(NSURL *)path modes:(NSString *)modes NS_SWIFT_UNAVAILABLE("Use throwing methods instead");
++(CSFileHandle *)fileHandleForReadingAtFileURL:(NSURL *)path error:(NSError**)outErr;
++(CSFileHandle *)fileHandleForWritingAtFileURL:(NSURL *)path error:(NSError**)outErr;
++(CSFileHandle *)fileHandleForFileURL:(NSURL *)path modes:(NSString *)modes error:(NSError**)outErr;
 +(CSFileHandle *)fileHandleForStandardInput;
 +(CSFileHandle *)fileHandleForStandardOutput;
 +(CSFileHandle *)fileHandleForStandardError;
@@ -52,12 +58,12 @@ extern NSString *CSFileErrorException;
 -(void)close;
 
 // Public methods
--(FILE *)filePointer;
+@property (readonly) FILE *filePointer NS_RETURNS_INNER_POINTER;
 
 // Implemented by this class
--(off_t)fileSize;
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
+@property (readonly) off_t fileSize;
+@property (readonly) off_t offsetInFile;
+@property (readonly) BOOL atEndOfFile;
 
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;

@@ -114,9 +114,7 @@
 	// and send all of them out at once.
 	[self parseDirectoryWithPath:[self XADPath] numberOfEntries:numentries entryArray:entries];
 
-	NSEnumerator *enumerator=[entries objectEnumerator];
-	NSMutableDictionary *dict;
-	while((dict=[enumerator nextObject])) [self addEntryWithDictionary:dict];
+	for(NSMutableDictionary *dict in entries) [self addEntryWithDictionary:dict];
 }
 
 -(BOOL)parseDirectoryWithPath:(XADPath *)parent numberOfEntries:(int)numentries entryArray:(NSMutableArray *)entries

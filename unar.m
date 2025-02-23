@@ -26,7 +26,7 @@
 
 #define VERSION_STRING @"v1.10.7"
 
-@interface Unarchiver:NSObject {}
+@interface Unarchiver:NSObject <XADSimpleUnarchiverDelegate> {}
 @end
 
 int numerrors;
@@ -129,7 +129,7 @@ int main(int argc,const char **argv)
 	@"and \"skip\" discards all resource forks. Defaults to \"fork\"."];
  	[cmdline addAlias:@"k" forOption:@"forks"];
 
-	int forkvalues[]={XADMacOSXForkStyle,XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADIgnoredForkStyle};
+	XADForkStyle forkvalues[]={XADForkStyleMacOSX,XADForkStyleVisibleAppleDouble,XADForkStyleHiddenAppleDouble,XADForkStyleIgnored};
 
 	#elif defined(_WIN32)
 
@@ -142,7 +142,7 @@ int main(int argc,const char **argv)
 	@"and \"skip\" discards all resource forks. Defaults to \"visible\"."];
  	[cmdline addAlias:@"k" forOption:@"forks"];
 
-	int forkvalues[]={XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADHFVExplorerAppleDoubleForkStyle,XADIgnoredForkStyle};
+	XADForkStyle forkvalues[]={XADForkStyleVisibleAppleDouble,XADForkStyleHiddenAppleDouble,XADForkStyleHFVExplorerAppleDouble,XADForkStyleIgnored};
 
 	#else
 
@@ -154,7 +154,7 @@ int main(int argc,const char **argv)
 	@"and \"skip\" discards all resource forks. Defaults to \"visible\"."];
  	[cmdline addAlias:@"k" forOption:@"forks"];
 
-	int forkvalues[]={XADVisibleAppleDoubleForkStyle,XADHiddenAppleDoubleForkStyle,XADIgnoredForkStyle};
+	XADForkStyle forkvalues[]={XADForkStyleVisibleAppleDouble,XADForkStyleHiddenAppleDouble,XADForkStyleIgnored};
 
 	#endif
 

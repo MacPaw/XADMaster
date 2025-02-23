@@ -56,7 +56,7 @@ static size_t ReadFunction(void *context,uint8_t *buffer,size_t length)
 	if(decompressor) FreeWinZipJPEGDecompressor(decompressor);
 
 	decompressor=AllocWinZipJPEGDecompressor(ReadFunction,input);
-	if(!decompressor) [XADException raiseExceptionWithXADError:XADOutOfMemoryError];
+	if(!decompressor) [XADException raiseExceptionWithXADError:XADErrorOutOfMemory];
 
 	int error=ReadWinZipJPEGHeader(decompressor);
 	if(error)
@@ -89,7 +89,7 @@ static size_t ReadFunction(void *context,uint8_t *buffer,size_t length)
 		if(error)
 		{
 			fprintf(stderr,"Error %d while trying to read next WinZip JPEG slice.\n",error);
-			[XADException raiseExceptionWithXADError:XADInputError];
+			[XADException raiseExceptionWithXADError:XADErrorInput];
 		}
 	}
 

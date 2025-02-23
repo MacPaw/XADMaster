@@ -177,9 +177,7 @@
 
 -(void)printArrayObjects:(NSArray *)array
 {
-	NSEnumerator *enumerator=[array objectEnumerator];
-	id object;
-	while((object=[enumerator nextObject])) [self printArrayObject:object];
+	for(id object in array) [self printArrayObject:object];
 }
 
 
@@ -219,9 +217,7 @@
 
 -(void)printDictionaryKeysAndObjects:(NSDictionary *)dictionary
 {
-	NSEnumerator *enumerator=[dictionary keyEnumerator];
-	id key;
-	while((key=[enumerator nextObject])) {
+	for(id key in dictionary) {
 		if (excludedKeys && [excludedKeys containsObject:key]) continue;
 		[self printDictionaryObject:[dictionary objectForKey:key] forKey:key];
 	}

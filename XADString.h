@@ -19,79 +19,92 @@
  * MA 02110-1301  USA
  */
 #import <Foundation/Foundation.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wquoted-include-in-framework-header"
+#import "XADTypes.h"
+#pragma clang diagnostic pop
 
 @class XADStringSource,UniversalDetector;
 
+#if defined(__swift__) && defined(__APPLE__)
+// Swift wrapping needed to make sure the Swift doesn't try to unwrap
+// an NSNumber posing as an NSString
+//! The supported encodings used by `XADString`.
+typedef NSObject<NSCopying, NSSecureCoding> *XADStringEncodingName NS_TYPED_ENUM NS_SWIFT_NAME(XADString.EncodingName);
+#else
+//! The supported encodings used by `XADString`.
+typedef NSString *XADStringEncodingName NS_TYPED_ENUM NS_SWIFT_NAME(XADString.EncodingName);
+#endif
 
-extern NSString *XADUTF8StringEncodingName;
-extern NSString *XADASCIIStringEncodingName;
+XADEXTERN XADStringEncodingName const XADUTF8StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.utf8);
+XADEXTERN XADStringEncodingName const XADASCIIStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.ascii);
 
-extern NSString *XADISOLatin1StringEncodingName;
-extern NSString *XADISOLatin2StringEncodingName;
-extern NSString *XADISOLatin3StringEncodingName;
-extern NSString *XADISOLatin4StringEncodingName;
-extern NSString *XADISOLatin5StringEncodingName;
-extern NSString *XADISOLatin6StringEncodingName;
-extern NSString *XADISOLatin7StringEncodingName;
-extern NSString *XADISOLatin8StringEncodingName;
-extern NSString *XADISOLatin9StringEncodingName;
-extern NSString *XADISOLatin10StringEncodingName;
-extern NSString *XADISOLatin11StringEncodingName;
-extern NSString *XADISOLatin12StringEncodingName;
-extern NSString *XADISOLatin13StringEncodingName;
-extern NSString *XADISOLatin14StringEncodingName;
-extern NSString *XADISOLatin15StringEncodingName;
-extern NSString *XADISOLatin16StringEncodingName;
+XADEXTERN XADStringEncodingName const XADISOLatin1StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin1);
+XADEXTERN XADStringEncodingName const XADISOLatin2StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin2);
+XADEXTERN XADStringEncodingName const XADISOLatin3StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin3);
+XADEXTERN XADStringEncodingName const XADISOLatin4StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin4);
+XADEXTERN XADStringEncodingName const XADISOLatin5StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin5);
+XADEXTERN XADStringEncodingName const XADISOLatin6StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin6);
+XADEXTERN XADStringEncodingName const XADISOLatin7StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin7);
+XADEXTERN XADStringEncodingName const XADISOLatin8StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin8);
+XADEXTERN XADStringEncodingName const XADISOLatin9StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin9);
+XADEXTERN XADStringEncodingName const XADISOLatin10StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin10);
+XADEXTERN XADStringEncodingName const XADISOLatin11StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin11);
+XADEXTERN XADStringEncodingName const XADISOLatin12StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin12);
+XADEXTERN XADStringEncodingName const XADISOLatin13StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin13);
+XADEXTERN XADStringEncodingName const XADISOLatin14StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin14);
+XADEXTERN XADStringEncodingName const XADISOLatin15StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin15);
+XADEXTERN XADStringEncodingName const XADISOLatin16StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.isoLatin16);
 
-extern NSString *XADShiftJISStringEncodingName;
+XADEXTERN XADStringEncodingName const XADShiftJISStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.shiftJIS);
 
-extern NSString *XADWindowsCP1250StringEncodingName;
-extern NSString *XADWindowsCP1251StringEncodingName;
-extern NSString *XADWindowsCP1252StringEncodingName;
-extern NSString *XADWindowsCP1253StringEncodingName;
-extern NSString *XADWindowsCP1254StringEncodingName;
+XADEXTERN XADStringEncodingName const XADWindowsCP1250StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.windowsCP1250);
+XADEXTERN XADStringEncodingName const XADWindowsCP1251StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.windowsCP1251);
+XADEXTERN XADStringEncodingName const XADWindowsCP1252StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.windowsCP1252);
+XADEXTERN XADStringEncodingName const XADWindowsCP1253StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.windowsCP1253);
+XADEXTERN XADStringEncodingName const XADWindowsCP1254StringEncodingName NS_SWIFT_NAME(XADStringEncodingName.windowsCP1254);
 
-extern NSString *XADMacOSRomanStringEncodingName;
-extern NSString *XADMacOSJapaneseStringEncodingName;
-extern NSString *XADMacOSTraditionalChineseStringEncodingName;
-extern NSString *XADMacOSKoreanStringEncodingName;
-extern NSString *XADMacOSArabicStringEncodingName;
-extern NSString *XADMacOSHebrewStringEncodingName;
-extern NSString *XADMacOSGreekStringEncodingName;
-extern NSString *XADMacOSCyrillicStringEncodingName;
-extern NSString *XADMacOSSimplifiedChineseStringEncodingName;
-extern NSString *XADMacOSRomanianStringEncodingName;
-extern NSString *XADMacOSUkranianStringEncodingName;
-extern NSString *XADMacOSThaiStringEncodingName;
-extern NSString *XADMacOSCentralEuropeanRomanStringEncodingName;
-extern NSString *XADMacOSIcelandicStringEncodingName;
-extern NSString *XADMacOSTurkishStringEncodingName;
-extern NSString *XADMacOSCroatianStringEncodingName;
+XADEXTERN XADStringEncodingName const XADMacOSRomanStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSRoman);
+XADEXTERN XADStringEncodingName const XADMacOSJapaneseStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSJapanese);
+XADEXTERN XADStringEncodingName const XADMacOSTraditionalChineseStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSTraditionalChinese);
+XADEXTERN XADStringEncodingName const XADMacOSKoreanStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSKorean);
+XADEXTERN XADStringEncodingName const XADMacOSArabicStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSArabic);
+XADEXTERN XADStringEncodingName const XADMacOSHebrewStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSHebrew);
+XADEXTERN XADStringEncodingName const XADMacOSGreekStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSGreek);
+XADEXTERN XADStringEncodingName const XADMacOSCyrillicStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSCyrillic);
+XADEXTERN XADStringEncodingName const XADMacOSSimplifiedChineseStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSSimplifiedChinese);
+XADEXTERN XADStringEncodingName const XADMacOSRomanianStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSRomanian);
+XADEXTERN XADStringEncodingName const XADMacOSUkranianStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSUkranian);
+XADEXTERN XADStringEncodingName const XADMacOSThaiStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSThai);
+XADEXTERN XADStringEncodingName const XADMacOSCentralEuropeanRomanStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSCentralEuropean);
+XADEXTERN XADStringEncodingName const XADMacOSIcelandicStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSIcelandic);
+XADEXTERN XADStringEncodingName const XADMacOSTurkishStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSTurkish);
+XADEXTERN XADStringEncodingName const XADMacOSCroatianStringEncodingName NS_SWIFT_NAME(XADStringEncodingName.macOSCroatian);
 
 
 @protocol XADString <NSObject>
 
--(BOOL)canDecodeWithEncodingName:(NSString *)encoding;
+-(BOOL)canDecodeWithEncodingName:(XADStringEncodingName)encoding;
 -(NSString *)string;
--(NSString *)stringWithEncodingName:(NSString *)encoding;
+-(NSString *)stringWithEncodingName:(XADStringEncodingName)encoding;
 -(NSData *)data;
 
--(BOOL)encodingIsKnown;
--(NSString *)encodingName;
--(float)confidence;
+@property (readonly, nonatomic) BOOL encodingIsKnown;
+@property (readonly, copy) XADStringEncodingName encodingName;
+@property (readonly) float confidence;
 
--(XADStringSource *)source;
+@property (nonatomic, readonly, retain) XADStringSource *source;
 
 #ifdef __APPLE__
 -(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding;
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
--(NSStringEncoding)encoding;
+@property (readonly) NSStringEncoding encoding;
 #endif
 
 @end
 
 
-
+XADEXPORT
 @interface XADString:NSObject <XADString,NSCopying>
 {
 	NSData *data;
@@ -101,10 +114,10 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 
 +(XADString *)XADStringWithString:(NSString *)string;
 +(XADString *)analyzedXADStringWithData:(NSData *)bytedata source:(XADStringSource *)stringsource;
-+(XADString *)decodedXADStringWithData:(NSData *)bytedata encodingName:(NSString *)encoding;
++(XADString *)decodedXADStringWithData:(NSData *)bytedata encodingName:(XADStringEncodingName)encoding;
 
 +(NSString *)escapedStringForData:(NSData *)data encodingName:(NSString *)encoding;
-+(NSString *)escapedStringForBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding;
++(NSString *)escapedStringForBytes:(const void *)bytes length:(size_t)length encodingName:(XADStringEncodingName)encoding;
 +(NSString *)escapedASCIIStringForBytes:(const void *)bytes length:(size_t)length;
 +(NSData *)escapedASCIIDataForString:(NSString *)string;
 
@@ -112,57 +125,52 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 -(id)initWithString:(NSString *)knownstring;
 -(void)dealloc;
 
--(BOOL)canDecodeWithEncodingName:(NSString *)encoding;
+-(BOOL)canDecodeWithEncodingName:(XADStringEncodingName)encoding;
 -(NSString *)string;
--(NSString *)stringWithEncodingName:(NSString *)encoding;
+-(NSString *)stringWithEncodingName:(XADStringEncodingName)encoding;
 -(NSData *)data;
 
--(BOOL)encodingIsKnown;
--(NSString *)encodingName;
--(float)confidence;
+@property (readonly, nonatomic) BOOL encodingIsKnown;
+@property (readonly, copy) XADStringEncodingName encodingName;
+@property (readonly) float confidence;
 
--(XADStringSource *)source;
+@property (nonatomic, readonly, retain) XADStringSource *source;
 
 -(BOOL)hasASCIIPrefix:(NSString *)asciiprefix;
 -(XADString *)XADStringByStrippingASCIIPrefixOfLength:(int)length;
 
--(BOOL)isEqual:(id)other;
--(NSUInteger)hash;
-
--(NSString *)description;
--(id)copyWithZone:(NSZone *)zone;
 
 #ifdef __APPLE__
 -(BOOL)canDecodeWithEncoding:(NSStringEncoding)encoding;
 -(NSString *)stringWithEncoding:(NSStringEncoding)encoding;
--(NSStringEncoding)encoding;
+@property (readonly) NSStringEncoding encoding;
 #endif
 
 @end
 
 @interface XADString (PlatformSpecific)
 
-+(BOOL)canDecodeData:(NSData *)data encodingName:(NSString *)encoding;
-+(BOOL)canDecodeBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding;
-+(NSString *)stringForData:(NSData *)data encodingName:(NSString *)encoding;
-+(NSString *)stringForBytes:(const void *)bytes length:(size_t)length encodingName:(NSString *)encoding;
-+(NSData *)dataForString:(NSString *)string encodingName:(NSString *)encoding;
++(BOOL)canDecodeData:(NSData *)data encodingName:(XADStringEncodingName)encoding;
++(BOOL)canDecodeBytes:(const void *)bytes length:(size_t)length encodingName:(XADStringEncodingName)encoding;
++(NSString *)stringForData:(NSData *)data encodingName:(XADStringEncodingName)encoding;
++(NSString *)stringForBytes:(const void *)bytes length:(size_t)length encodingName:(XADStringEncodingName)encoding;
++(NSData *)dataForString:(NSString *)string encodingName:(XADStringEncodingName)encoding;
 +(NSArray *)availableEncodingNames;
 
 #ifdef __APPLE__
-+(NSString *)encodingNameForEncoding:(NSStringEncoding)encoding;
-+(NSStringEncoding)encodingForEncodingName:(NSString *)encoding;
++(XADStringEncodingName)encodingNameForEncoding:(NSStringEncoding)encoding;
++(NSStringEncoding)encodingForEncodingName:(XADStringEncodingName)encoding;
 #endif
 
 @end
 
 
 
-
+XADEXPORT
 @interface XADStringSource:NSObject
 {
 	UniversalDetector *detector;
-	NSString *fixedencodingname;
+	XADStringEncodingName fixedencodingname;
 	BOOL mac,hasanalyzeddata;
 
 	#ifdef __APPLE__
@@ -176,16 +184,16 @@ extern NSString *XADMacOSCroatianStringEncodingName;
 -(void)analyzeData:(NSData *)data;
 
 -(BOOL)hasAnalyzedData;
--(NSString *)encodingName;
+-(XADStringEncodingName)encodingName;
 -(float)confidence;
--(UniversalDetector *)detector;
+@property (readonly, retain) UniversalDetector *detector;
 
--(void)setFixedEncodingName:(NSString *)encodingname;
--(BOOL)hasFixedEncoding;
+-(void)setFixedEncodingName:(XADStringEncodingName)encodingname;
+@property (readonly, nonatomic) BOOL hasFixedEncoding;
 -(void)setPrefersMacEncodings:(BOOL)prefermac;
 
 #ifdef __APPLE__
--(NSStringEncoding)encoding;
+@property (readonly) NSStringEncoding encoding;
 -(void)setFixedEncoding:(NSStringEncoding)encoding;
 #endif
 

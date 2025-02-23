@@ -26,6 +26,7 @@ FOUNDATION_EXPORT double XADMasterVersionNumber;
 //! Project version string for XADMaster.
 FOUNDATION_EXPORT const unsigned char XADMasterVersionString[];
 
+#import <XADMaster/XADTypes.h>
 #import <XADMaster/XADArchive.h>
 #import <XADMaster/XADPlatform.h>
 #import <XADMaster/XADException.h>

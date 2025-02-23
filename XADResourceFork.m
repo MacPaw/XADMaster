@@ -123,14 +123,11 @@
 		[dict setObject:references forKey:[NSNumber numberWithUnsignedInt:type]];
 	}
 
-	NSEnumerator *typeenumerator=[dict keyEnumerator];
-	NSNumber *type;
-	while(type=[typeenumerator nextObject])
+	for(NSNumber *type in dict)
 	{
 		NSDictionary *resourcesoftype=[dict objectForKey:type];
 		NSEnumerator *identifierenumerator=[resourcesoftype keyEnumerator];
-		NSNumber *identifier;
-		while(identifier=[identifierenumerator nextObject])
+		for(NSNumber *identifier in identifierenumerator)
 		{
 			NSMutableDictionary *resource=[resourcesoftype objectForKey:identifier];
 			[resource setObject:type forKey:@"Type"];

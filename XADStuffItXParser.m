@@ -352,9 +352,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 
 				// Find actual size of stream
 				NSMutableArray *forks=[streamforks objectForKey:[NSNumber numberWithLongLong:objid]];
-				NSEnumerator *enumerator=[forks objectEnumerator];
-				NSMutableDictionary *fork;
-				while((fork=[enumerator nextObject]))
+				for(NSMutableDictionary *fork in forks)
 				{
 					if((id)fork==[NSNull null]) [XADException raiseIllegalDataException];
 					NSNumber *lengthnum=[fork objectForKey:@"Length"];
@@ -364,9 +362,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 				// Send out all the entries without data streams first
 				if(forkedset)
 				{
-					NSEnumerator *enumerator=[entries objectEnumerator];
-					NSMutableDictionary *entry;
-					while((entry=[enumerator nextObject]))
+					for(NSMutableDictionary *entry in entries)
 					{
 						if(![forkedset containsObject:[entry objectForKey:@"StuffItXID"]])
 						{
@@ -417,9 +413,8 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 
 				NSValue *elementval=[NSValue valueWithBytes:&element objCType:@encode(StuffItXElement)];
 
-				enumerator=[forks objectEnumerator];
 				off_t offs=0;
-				while((fork=[enumerator nextObject]))
+				for(NSMutableDictionary *fork in forks)
 				{
 					if(![self shouldKeepParsing]) return;
 
@@ -442,9 +437,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 						if(uncompsize) currcompsize=[lengthnum longLongValue]*compsize/uncompsize;
 						NSNumber *currcompsizenum=[NSNumber numberWithLongLong:currcompsize];
 
-						NSEnumerator *entryenumerator=[entries objectEnumerator];
-						NSNumber *entrynum;
-						while((entrynum=[entryenumerator nextObject]))
+						for(NSNumber *entrynum in entries)
 						{
 							NSDictionary *entry=[entrydict objectForKey:entrynum];
 							NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:entry];
@@ -630,9 +623,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 
 -(void)parseCatalogWithHandle:(CSHandle *)fh entryArray:(NSArray *)entries entryDictionary:(NSDictionary *)dict
 {
-	NSEnumerator *enumerator=[entries objectEnumerator];
-	NSMutableDictionary *entry;
-	while((entry=[enumerator nextObject]))
+	for(NSMutableDictionary *entry in entries)
 	{
 		for(;;)
 		{

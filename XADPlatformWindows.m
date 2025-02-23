@@ -38,7 +38,7 @@
 +(XADError)extractResourceForkEntryWithDictionary:(NSDictionary *)dict
 unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 {
-	return XADNotSupportedError;
+	return XADErrorNotSupported;
 }
 
 +(XADError)updateFileAttributesAtPath:(NSString *)path
@@ -68,7 +68,7 @@ preservePermissions:(BOOL)preservepermissions
 	{
 		HANDLE handle=CreateFileW(wpath,GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,
 		NULL,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,NULL);
-		if(handle==INVALID_HANDLE_VALUE) return XADUnknownError; // TODO: better error
+		if(handle==INVALID_HANDLE_VALUE) return XADErrorUnknown; // TODO: better error
 
 		FILETIME creationtime,lastaccesstime,lastwritetime;
 
@@ -82,7 +82,7 @@ preservePermissions:(BOOL)preservepermissions
 		modification?&lastwritetime:NULL))
 		{
 			CloseHandle(handle);
-			return XADUnknownError; // TODO: better error
+			return XADErrorUnknown; // TODO: better error
 		}
 
 		CloseHandle(handle);
@@ -97,12 +97,12 @@ preservePermissions:(BOOL)preservepermissions
 		SetFileAttributesW(wpath,newattributes);
 	}
 
-	return XADNoError;
+	return XADErrorNone;
 }
 
 +(XADError)createLinkAtPath:(NSString *)path withDestinationPath:(NSString *)link
 {
-	return XADNotSupportedError;
+	return XADErrorNotSupported;
 }
 
 
@@ -281,7 +281,7 @@ preservePermissions:(BOOL)preservepermissions
 
 +(CSHandle *)handleForReadingResourceForkAtPath:(NSString *)path { return nil; }
 
-
++(CSHandle *)handleForReadingResourceForkAtFileURL:(NSURL *)path { return nil; }
 
 //
 // Time functions.

@@ -57,9 +57,7 @@
 
 	NSString *parts[256]={nil};
 
-	NSEnumerator *enumerator=[dircontents objectEnumerator];
-	NSString *filename;
-	while((filename=[enumerator nextObject]))
+	for(NSString *filename in dircontents)
 	{
 		if(![filename hasPrefix:basename]) continue;
 
@@ -106,9 +104,7 @@
 	XADSkipHandle *sh=[self skipHandle];
 	off_t curroffset=0;
 
-	NSEnumerator *enumerator=[volumesizes objectEnumerator];
-	NSNumber *volumesize;
-	while((volumesize=[enumerator nextObject]))
+	for(NSNumber *volumesize in volumesizes)
 	{
 		[sh addSkipFrom:curroffset length:100];
 		curroffset+=[volumesize longLongValue];

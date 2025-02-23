@@ -27,27 +27,27 @@
 
 
 
-static NSString *NamesKey=@"NamesKey";
-static NSString *AllowedValuesKey=@"AllowedValuesKey";
-static NSString *DefaultValueKey=@"DefaultValueKey";
-static NSString *OptionTypeKey=@"OptionType";
-static NSString *DescriptionKey=@"DescriptionKey";
-static NSString *ArgumentDescriptionKey=@"ArgumentDescriptionKey";
-static NSString *AliasTargetKey=@"AliasTargetKey";
-static NSString *RequiredOptionsKey=@"RequiredOptionsKey";
+static NSString *const NamesKey=@"NamesKey";
+static NSString *const AllowedValuesKey=@"AllowedValuesKey";
+static NSString *const DefaultValueKey=@"DefaultValueKey";
+static NSString *const OptionTypeKey=@"OptionType";
+static NSString *const DescriptionKey=@"DescriptionKey";
+static NSString *const ArgumentDescriptionKey=@"ArgumentDescriptionKey";
+static NSString *const AliasTargetKey=@"AliasTargetKey";
+static NSString *const RequiredOptionsKey=@"RequiredOptionsKey";
 
-static NSString *NumberValueKey=@"NumberValue";
-static NSString *StringValueKey=@"StringValue";
-static NSString *ArrayValueKey=@"ArrayValue";
+static NSString *const NumberValueKey=@"NumberValue";
+static NSString *const StringValueKey=@"StringValue";
+static NSString *const ArrayValueKey=@"ArrayValue";
 
-static NSString *StringOptionType=@"StringOptionType";
-static NSString *MultipleChoiceOptionType=@"MultipleChoiceOptionType";
-static NSString *IntegerOptionType=@"IntegerOptionType";
-static NSString *FloatingPointOptionType=@"FloatingPointOptionType";
-static NSString *SwitchOptionType=@"SwitchOptionType";
-static NSString *HelpOptionType=@"HelpOptionType";
-static NSString *VersionOptionType=@"VersionOptionType";
-static NSString *AliasOptionType=@"AliasOptionType";
+static NSString *const StringOptionType=@"StringOptionType";
+static NSString *const MultipleChoiceOptionType=@"MultipleChoiceOptionType";
+static NSString *const IntegerOptionType=@"IntegerOptionType";
+static NSString *const FloatingPointOptionType=@"FloatingPointOptionType";
+static NSString *const SwitchOptionType=@"SwitchOptionType";
+static NSString *const HelpOptionType=@"HelpOptionType";
+static NSString *const VersionOptionType=@"VersionOptionType";
+static NSString *const AliasOptionType=@"AliasOptionType";
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED<1050
 @interface NSScanner (BuildKludge)
@@ -388,9 +388,7 @@ description:(NSString *)description argumentDescription:(NSString *)argdescripti
 
 -(void)addRequiredOptionsArray:(NSArray *)requiredoptions
 {
-	NSEnumerator *enumerator=[requiredoptions objectEnumerator];
-	NSString *requiredoption;
-	while((requiredoption=[enumerator nextObject])) [self addRequiredOption:requiredoption];
+	for(NSString *requiredoption in requiredoptions) [self addRequiredOption:requiredoption];
 }
 
 -(void)addRequiredOption:(NSString *)requiredoption forOption:(NSString *)option
@@ -409,9 +407,7 @@ description:(NSString *)description argumentDescription:(NSString *)argdescripti
 
 -(void)addRequiredOptionsArray:(NSArray *)requiredoptions forOption:(NSString *)option
 {
-	NSEnumerator *enumerator=[requiredoptions objectEnumerator];
-	NSString *requiredoption;
-	while((requiredoption=[enumerator nextObject])) [self addRequiredOption:requiredoption forOption:option];
+	for(NSString *requiredoption in requiredoptions) [self addRequiredOption:requiredoption forOption:option];
 }
 
 
@@ -620,9 +616,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 -(void)_setDefaultValues
 {
-	NSEnumerator *enumerator=[options objectEnumerator];
-	NSMutableDictionary *dict;
-	while((dict=[enumerator nextObject]))
+	for(NSMutableDictionary *dict in [options objectEnumerator])
 	{
 		id defaultvalue=[dict objectForKey:DefaultValueKey];
 		if(!defaultvalue) continue;
@@ -660,9 +654,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 {
 	if([alwaysrequiredoptions count]) [self _requireOptionsInArray:alwaysrequiredoptions when:@"" errors:errors];
 
-	NSEnumerator *enumerator=[options objectEnumerator];
-	NSDictionary *dict;
-	while((dict=[enumerator nextObject]))
+	for(NSDictionary *dict in [options objectEnumerator])
 	{
 		NSArray *names=[dict objectForKey:NamesKey];
 		NSString *name=[names objectAtIndex:0];
@@ -682,9 +674,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 {
 	NSMutableSet *set=[NSMutableSet set];
 
-	NSEnumerator *enumerator=[requiredoptions objectEnumerator];
-	NSString *requiredoption;
-	while((requiredoption=[enumerator nextObject]))
+	for(NSString *requiredoption in requiredoptions)
 	{
 		if(![self _isOptionDefined:requiredoption]) [set addObject:requiredoption];
 	}
@@ -693,9 +683,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 	NSMutableArray *array=[NSMutableArray array];
 
-	enumerator=[optionordering objectEnumerator];
-	NSString *option;
-	while((option=[enumerator nextObject]))
+	for(NSString *option in optionordering)
 	{
 		if([set containsObject:option]) [array addObject:[self _describeOption:option]];
 	}
@@ -737,9 +725,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 -(void)_reportErrors:(NSArray *)errors
 {
-	NSEnumerator *enumerator=[errors objectEnumerator];
-	NSString *error;
-	while((error=[enumerator nextObject]))
+	for(NSString *error in errors)
 	{
 		[error print];
 		[@"\n" print];

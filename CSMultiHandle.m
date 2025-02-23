@@ -60,9 +60,7 @@
 	if(self=[super initAsCopyOf:other])
 	{
 		NSMutableArray *handlearray=[NSMutableArray arrayWithCapacity:[other->handles count]];
-		NSEnumerator *enumerator=[other->handles objectEnumerator];
-		CSHandle *handle;
-		while((handle=[enumerator nextObject])) [handlearray addObject:[[handle copy] autorelease]];
+		for(CSHandle *handle in other->handles) [handlearray addObject:[[handle copy] autorelease]];
 
 		handles=[[NSArray arrayWithArray:handlearray] retain];
 	}

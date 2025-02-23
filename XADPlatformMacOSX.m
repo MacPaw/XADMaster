@@ -103,8 +103,8 @@ unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 		if(S_ISLNK(st.st_mode))
 		{
 			NSNumber *sizenum=[dict objectForKey:XADFileSizeKey];
-			if(!sizenum) return XADNoError;
-			else if([sizenum longLongValue]==0) return XADNoError;
+			if(!sizenum) return XADErrorNone;
+			else if([sizenum longLongValue]==0) return XADErrorNone;
 		}
 
 		// Otherwise, try changing permissions.
@@ -113,7 +113,7 @@ unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 		chmod(cpath,0700);
 
 		fd=open(cpath,O_WRONLY|O_CREAT|O_NOFOLLOW,0666);
-		if(fd==-1) return XADOpenFileError; // TODO: Better error.
+		if(fd==-1) return XADErrorOpenFile; // TODO: Better error.
 	}
 
 	struct ResourceOutputArguments args={ .fd=fd, .offset=0 };
@@ -133,11 +133,11 @@ unarchiver:(XADUnarchiver *)unarchiver toPath:(NSString *)destpath
 {
 	struct ResourceOutputArguments *args=[pointerval pointerValue];
 	if(fsetxattr(args->fd,XATTR_RESOURCEFORK_NAME,bytes,length,
-	args->offset,0)) return XADOutputError;
+				 args->offset,0)) return XADErrorOutput;
 
 	args->offset+=length;
 
-	return XADNoError;
+	return XADErrorNone;
 }
 
 
@@ -151,7 +151,7 @@ preservePermissions:(BOOL)preservepermissions
 
 	// Read file permissions.
 	struct stat st;
-	if(lstat(cpath,&st)!=0) return XADOpenFileError; // TODO: better error
+	if(lstat(cpath,&st)!=0) return XADErrorOpenFile; // TODO: better error
 
 	// If the file does not have write permissions, change this temporarily.
 	if(!(st.st_mode&S_IWUSR)) chmod(cpath,0700);
@@ -160,9 +160,7 @@ preservePermissions:(BOOL)preservepermissions
 	NSDictionary *extattrs=[parser extendedAttributesForDictionary:dict];
 	if(extattrs)
 	{
-		NSEnumerator *enumerator=[extattrs keyEnumerator];
-		NSString *key;
-		while((key=[enumerator nextObject]))
+		for(NSString *key in extattrs)
 		{
 			NSData *data=[extattrs objectForKey:key];
 
@@ -233,7 +231,7 @@ preservePermissions:(BOOL)preservepermissions
 	// Finally, set all attributes.
 	setattrlist(cpath,&list,attrdata,attrptr-attrdata,FSOPT_NOFOLLOW);
 
-	return XADNoError;
+	return XADErrorNone;
 }
 
 +(void)setComment:(NSString *)comment forPath:(NSString *)path;
@@ -260,19 +258,22 @@ preservePermissions:(BOOL)preservepermissions
 
 	NSAppleEventDescriptor *commentdesc=[NSAppleEventDescriptor descriptorWithString:comment];
 
-	FSRef ref;
-	bzero(&ref,sizeof(ref));
-	if(FSPathMakeRef((UInt8 *)[path fileSystemRepresentation],&ref,NULL)!=noErr) return;
+	NSURL *fileURL = [NSURL fileURLWithPath:path];
+	NSData *fileStrData = (NSData*)CFURLCreateData(kCFAllocatorDefault, (CFURLRef)fileURL, kCFStringEncodingUTF8, true);
 
+	// TODO: The alias manager has been deprecated for awhile: Use typeFileURL or
+	// typeBookmarkData instead… but that would most likely mean re-writing the eventformat
+	// string or migrating it to something else.
 	AEDesc filedesc;
 	AEInitializeDesc(&filedesc);
-	if(AECoercePtr(typeFSRef,&ref,sizeof(ref),typeAlias,&filedesc)!=noErr) return;
+	if(AECoercePtr(typeFileURL,[fileStrData bytes],[fileStrData length],typeAlias,&filedesc)!=noErr) {[fileStrData release]; return;}
 
 	AEDesc builtevent,replyevent;
 	AEInitializeDesc(&builtevent);
 	AEInitializeDesc(&replyevent);
+	[fileStrData release];
 
-	static OSType findersignature='MACS';
+	static const OSType findersignature='MACS';
 
 	OSErr err=AEBuildAppleEvent(kAECoreSuite,kAESetData,
 	typeApplSignature,&findersignature,sizeof(findersignature),
@@ -297,9 +298,9 @@ preservePermissions:(BOOL)preservepermissions
 	struct stat st;
 	const char *destcstr=[path fileSystemRepresentation];
 	if(lstat(destcstr,&st)==0) unlink(destcstr);
-	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADLinkError;
+	if(symlink([link fileSystemRepresentation],destcstr)!=0) return XADErrorLink;
 
-	return XADNoError;
+	return XADErrorNone;
 }
 
 
@@ -531,6 +532,33 @@ preservePermissions:(BOOL)preservepermissions
 //
 
 +(CSHandle *)handleForReadingResourceForkAtPath:(NSString *)path
+{
+	// TODO: Make an actual CSHandle subclass? Possible but sort of useless.
+	NSMutableData *data=[NSMutableData data];
+
+	const char *cpath=[path fileSystemRepresentation];
+	int fd=open(cpath,O_RDONLY);
+	if(fd==-1) return nil;
+
+	uint32_t pos=0;
+	for(;;)
+	{
+		uint8_t buffer[16384];
+
+		ssize_t actual=fgetxattr(fd,XATTR_RESOURCEFORK_NAME,buffer,sizeof(buffer),pos,0);
+		if(actual<0) { close(fd); return nil; }
+		if(actual==0) break;
+
+		[data appendBytes:buffer length:actual];
+		pos+=actual;
+	}
+
+	close(fd);
+
+	return [CSMemoryHandle memoryHandleForReadingData:data];
+}
+
++(CSHandle *)handleForReadingResourceForkAtFileURL:(NSURL *)path
 {
 	// TODO: Make an actual CSHandle subclass? Possible but sort of useless.
 	NSMutableData *data=[NSMutableData data];

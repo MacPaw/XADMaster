@@ -81,8 +81,7 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 	// Find image objects in object list
 	NSMutableArray *images=[NSMutableArray array];
 	NSEnumerator *enumerator=[[parser objectDictionary] objectEnumerator];
-	id object;
-	while(object=[enumerator nextObject])
+	for(id object in enumerator)
 	{
 		if([object isKindOfClass:[PDFStream class]]&&[object isImage])
 		[images addObject:object];
@@ -108,9 +107,7 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 			{
 				page++;
 				NSDictionary *xobjects=[[curr objectForKey:@"Resources"] objectForKey:@"XObject"];
-				NSEnumerator *enumerator=[xobjects objectEnumerator];
-				id object;
-				while(object=[enumerator nextObject])
+				for(id object in [xobjects objectEnumerator])
 				{
 					if([object isKindOfClass:[PDFStream class]]&&[object isImage])
 					[order setObject:[NSNumber numberWithInt:page] forKey:[object reference]];
@@ -124,9 +121,7 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 	[images sortUsingFunction:(void *)SortPages context:order];
 
 	// Output images.
-	enumerator=[images objectEnumerator];
-	PDFStream *image;
-	while(image=[enumerator nextObject])
+	for(PDFStream *image in images)
 	{
 		PDFObjectReference *ref=[image reference];
 		NSNumber *page=[order objectForKey:ref];
@@ -534,12 +529,8 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries)
 	uint32_t dataoffset=8+2+[entries count]*12+4;
 	uint32_t datasize=0;
 
-	NSEnumerator *enumerator;
-	NSDictionary *entry;
-
 	// Calculate total data size.
-	enumerator=[entries objectEnumerator];
-	while((entry=[enumerator nextObject]))
+	for(NSDictionary *entry in entries)
 	{
 		NSData *data=[entry objectForKey:@"Data"];
 		int length=[data length];
@@ -549,8 +540,7 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries)
 	uint32_t imagestart=dataoffset+datasize;
 
 	// Write IFD entries.
-	enumerator=[entries objectEnumerator];
-	while((entry=[enumerator nextObject]))
+	for(NSDictionary *entry in entries)
 	{
 		NSNumber *tag=[entry objectForKey:@"Tag"];
 		NSNumber *type=[entry objectForKey:@"Type"];
@@ -580,8 +570,7 @@ static NSData *CreateTIFFHeaderWithEntries(NSArray *entries)
 	[header writeUInt32LE:0]; // Next IFD offset.
 
 	// Write data segments.
-	enumerator=[entries objectEnumerator];
-	while((entry=[enumerator nextObject]))
+	for(NSDictionary *entry in entries)
 	{
 		NSData *data=[entry objectForKey:@"Data"];
 		[header writeData:data];

@@ -21,9 +21,9 @@
 #import "XADArchiveParser.h"
 #import "CSStreamHandle.h"
 
-extern NSString *XADIsMacBinaryKey;
-extern NSString *XADMightBeMacBinaryKey;
-extern NSString *XADDisableMacForkExpansionKey;
+extern NSString *const XADIsMacBinaryKey;
+extern NSString *const XADMightBeMacBinaryKey;
+extern NSString *const XADDisableMacForkExpansionKey;
 
 @interface XADMacArchiveParser:XADArchiveParser
 {

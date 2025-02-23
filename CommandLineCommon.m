@@ -41,9 +41,7 @@ BOOL IsListRequest(NSString *encoding)
 
 void PrintEncodingList()
 {
-	NSEnumerator *enumerator=[[XADString availableEncodingNames] objectEnumerator];
-	NSArray *encodingarray;
-	while((encodingarray=[enumerator nextObject]))
+	for(NSArray *encodingarray in [XADString availableEncodingNames])
 	{
 		NSString *description=[encodingarray objectAtIndex:0];
 		if((id)description==[NSNull null]||[description length]==0) description=nil;
@@ -344,9 +342,8 @@ NSString *CompressionNameExplanationForLongInfo()
 {
 	NSMutableString *res=nil;
 
-	NSEnumerator *enumerator=[[[codeforname allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
-	NSString *compname;
-	while((compname=[enumerator nextObject]))
+	NSArray *sortArray=[[codeforname allKeys] sortedArrayUsingSelector:@selector(compare:)];
+	for(NSString *compname in sortArray)
 	{
 		NSString *code=[codeforname objectForKey:compname];
 		if([code isEqualToString:compname]) continue;

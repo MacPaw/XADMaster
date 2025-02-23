@@ -350,9 +350,7 @@ NSString *XADHumanReadableEntryWithDictionary(NSDictionary *dict,XADArchiveParse
 	NSMutableArray *labels=[NSMutableArray array];
 	NSMutableArray *values=[NSMutableArray array];
 
-	NSEnumerator *enumerator=[keys objectEnumerator];
-	NSString *key;
-	while((key=[enumerator nextObject]))
+	for(NSString *key in keys)
 	{
 		NSString *label=[parser descriptionOfKey:key];
 		NSString *value=[parser descriptionOfValueInDictionary:dict key:key];
@@ -440,9 +438,7 @@ NSString *XADHumanReadableDictionary(NSDictionary *dict)
 	NSMutableArray *labels=[NSMutableArray array];
 	NSMutableArray *values=[NSMutableArray array];
 
-	NSEnumerator *enumerator=[keys objectEnumerator];
-	NSString *key;
-	while((key=[enumerator nextObject]))
+	for(NSString *key in keys)
 	{
 		id value=[dict objectForKey:key];
 		[labels addObject:key];

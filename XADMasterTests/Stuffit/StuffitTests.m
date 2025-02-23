@@ -60,7 +60,7 @@
     XCTAssertEqual(simpleUnarchiverError, XADNoError, @"Error creation: %@", [XADException describeXADError:simpleUnarchiverError]);
     XCTAssertNotNil(unarchiver);
 
-    [unarchiver setDelegate:self.delegate];
+    [unarchiver setDelegate:(id)self.delegate];
     [unarchiver setPassword:@"1234567"];
     [unarchiver setDestination:self.tempDirURL.path];
 
@@ -86,7 +86,7 @@
     XCTAssertEqual(simpleUnarchiverError, XADNoError, @"Error creation: %@", [XADException describeXADError:simpleUnarchiverError]);
     XCTAssertNotNil(unarchiver);
 
-    [unarchiver setDelegate:self.delegate];
+    [unarchiver setDelegate:(id)self.delegate];
     [unarchiver setPassword:@"123456789012"];
     [unarchiver setDestination:self.tempDirURL.path];
 

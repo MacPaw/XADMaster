@@ -24,10 +24,10 @@
 #include <sys/stat.h>
 
 
-NSString *CSOutOfMemoryException=@"CSOutOfMemoryException";
-NSString *CSEndOfFileException=@"CSEndOfFileException";
-NSString *CSNotImplementedException=@"CSNotImplementedException";
-NSString *CSNotSupportedException=@"CSNotSupportedException";
+NSString *const CSOutOfMemoryException=@"CSOutOfMemoryException";
+NSString *const CSEndOfFileException=@"CSEndOfFileException";
+NSString *const CSNotImplementedException=@"CSNotImplementedException";
+NSString *const CSNotSupportedException=@"CSNotSupportedException";
 
 
 

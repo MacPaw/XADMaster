@@ -18,7 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wquoted-include-in-framework-header"
 #import "CSHandle.h"
+#pragma clang diagnostic pop
 
 typedef struct XADSkipRegion
 {
@@ -27,6 +30,7 @@ typedef struct XADSkipRegion
 
 //static inline XADSkip XADMakeSkip(off_t start,off_t length) { XADSkip skip={start,length}; return skip; }
 
+XADEXPORT
 @interface XADSkipHandle:CSHandle
 {
 	XADSkipRegion *regions;
@@ -42,9 +46,9 @@ typedef struct XADSkipRegion
 -(off_t)actualOffsetForSkipOffset:(off_t)skipoffset;
 -(off_t)skipOffsetForActualOffset:(off_t)actualoffset;
 
--(off_t)fileSize;
--(off_t)offsetInFile;
--(BOOL)atEndOfFile;
+@property (readonly, nonatomic) off_t fileSize;
+@property (readonly, nonatomic) off_t offsetInFile;
+@property (readonly, nonatomic) BOOL atEndOfFile;
 
 -(void)seekToFileOffset:(off_t)offs;
 -(void)seekToEndOfFile;

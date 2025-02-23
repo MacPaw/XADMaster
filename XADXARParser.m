@@ -37,12 +37,12 @@
 #define ExtendedAttributeState 5
 #define OldExtendedAttributeState 6
 
-static const NSString *StringFormat=@"String";
-static const NSString *XADStringFormat=@"XADString";
-static const NSString *DecimalFormat=@"Decimal";
-static const NSString *OctalFormat=@"Octal";
-static const NSString *HexFormat=@"Hex";
-static const NSString *DateFormat=@"Date";
+static const NSString *const StringFormat=@"String";
+static const NSString *const XADStringFormat=@"XADString";
+static const NSString *const DecimalFormat=@"Decimal";
+static const NSString *const OctalFormat=@"Octal";
+static const NSString *const HexFormat=@"Hex";
+static const NSString *const DateFormat=@"Date";
 
 @implementation XADXARParser
 
@@ -140,9 +140,7 @@ static const NSString *DateFormat=@"Date";
 		}
 	}
 
-	NSEnumerator *enumerator=[files objectEnumerator];
-	NSMutableDictionary *file;
-	while((file=[enumerator nextObject]))
+	for(NSMutableDictionary *file in files)
 	{
 		if(![self shouldKeepParsing]) break;
 		[self finishFile:file parentPath:[self XADPath]];
@@ -181,9 +179,7 @@ static const NSString *DateFormat=@"Date";
 	int numeas=0;
 	if(eas)
 	{
-		NSEnumerator *enumerator=[eas objectEnumerator];
-		NSMutableDictionary *ea;
-		while((ea=[enumerator nextObject]))
+		for(NSMutableDictionary *ea in eas)
 		{
 			NSString *name=[ea objectForKey:@"Name"];
 			if(!name) continue;
@@ -272,9 +268,7 @@ static const NSString *DateFormat=@"Date";
 
 	if(filearray)
 	{
-		NSEnumerator *enumerator=[filearray objectEnumerator];
-		NSMutableDictionary *file;
-		while((file=[enumerator nextObject])) [self finishFile:file parentPath:path];
+		for(NSMutableDictionary *file in filearray) [self finishFile:file parentPath:path];
 	}
 }
 
@@ -440,9 +434,7 @@ namespaceURI:(NSString *)namespace qualifiedName:(NSString *)qname
 -(void)startSimpleElement:(NSString *)name attributes:(NSDictionary *)attributes
 definitions:(NSDictionary *)definitions destinationDictionary:(NSMutableDictionary *)dest
 {
-	NSEnumerator *enumerator=[attributes keyEnumerator];
-	NSString *key;
-	while((key=[enumerator nextObject]))
+	for(NSString *key in attributes)
 	{
 		NSArray *definition=[definitions objectForKey:[NSString stringWithFormat:@"%@ %@",name,key]];
 		if(definition) [self parseDefinition:definition string:[attributes objectForKey:key] destinationDictionary:dest];

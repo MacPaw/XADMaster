@@ -329,9 +329,7 @@ inputParts:(NSArray *)parts isCorrupted:(BOOL)iscorrupted
 
 	// Calculate and set the total compressed size.
 	off_t compsize=0;
-	NSEnumerator *enumerator=[parts objectEnumerator];
-	NSDictionary *part;
-	while(part=[enumerator nextObject]) compsize+=[[part objectForKey:@"InputLength"] longLongValue];
+	for(NSDictionary *part in parts) compsize+=[[part objectForKey:@"InputLength"] longLongValue];
 
 	[dict setObject:[NSNumber numberWithLongLong:compsize] forKey:XADCompressedSizeKey];
 

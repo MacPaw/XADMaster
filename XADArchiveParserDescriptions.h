@@ -18,30 +18,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wquoted-include-in-framework-header"
 #import "XADArchiveParser.h"
+#pragma clang diagnostic pop
 
 @interface XADArchiveParser (Descriptions)
 
--(NSString *)descriptionOfValueInDictionary:(NSDictionary *)dict key:(NSString *)key;
--(NSString *)descriptionOfKey:(NSString *)key;
+-(NSString *)descriptionOfValueInDictionary:(NSDictionary *)dict key:(XADArchiveKeys)key;
+-(NSString *)descriptionOfKey:(XADArchiveKeys)key;
 -(NSArray *)descriptiveOrderingOfKeysInDictionary:(NSDictionary *)dict;
 
 @end
 
-NSString *XADHumanReadableFileSize(uint64_t size);
-NSString *XADShortHumanReadableFileSize(uint64_t size);
-NSString *XADHumanReadableBoolean(uint64_t boolean);
-NSString *XADHumanReadablePOSIXPermissions(uint64_t permissions);
-NSString *XADHumanReadableAmigaProtectionBits(uint64_t protection);
-NSString *XADHumanReadableDOSFileAttributes(uint64_t attributes);
-NSString *XADHumanReadableWindowsFileAttributes(uint64_t attributes);
-NSString *XADHumanReadableOSType(uint64_t ostype);
-NSString *XADHumanReadableEntryWithDictionary(NSDictionary *dict,XADArchiveParser *parser);
+XADEXTERN NSString *XADHumanReadableFileSize(uint64_t size);
+XADEXTERN NSString *XADShortHumanReadableFileSize(uint64_t size);
+XADEXTERN NSString *XADHumanReadableBoolean(uint64_t boolean);
+XADEXTERN NSString *XADHumanReadablePOSIXPermissions(uint64_t permissions);
+XADEXTERN NSString *XADHumanReadableAmigaProtectionBits(uint64_t protection);
+XADEXTERN NSString *XADHumanReadableDOSFileAttributes(uint64_t attributes);
+XADEXTERN NSString *XADHumanReadableWindowsFileAttributes(uint64_t attributes);
+XADEXTERN NSString *XADHumanReadableOSType(uint64_t ostype);
+XADEXTERN NSString *XADHumanReadableEntryWithDictionary(NSDictionary *dict,XADArchiveParser *parser);
 
-NSString *XADHumanReadableObject(id object);
-NSString *XADHumanReadableDate(NSDate *date);
-NSString *XADHumanReadableData(NSData *data);
-NSString *XADHumanReadableArray(NSArray *array);
-NSString *XADHumanReadableDictionary(NSDictionary *dict);
-NSString *XADHumanReadableList(NSArray *labels,NSArray *values);
-NSString *XADIndentTextWithSpaces(NSString *text,int spaces);
+XADEXTERN NSString *XADHumanReadableObject(id object);
+XADEXTERN NSString *XADHumanReadableDate(NSDate *date);
+XADEXTERN NSString *XADHumanReadableData(NSData *data);
+XADEXTERN NSString *XADHumanReadableArray(NSArray *array);
+XADEXTERN NSString *XADHumanReadableDictionary(NSDictionary *dict);
+XADEXTERN NSString *XADHumanReadableList(NSArray *labels,NSArray *values);
+XADEXTERN NSString *XADIndentTextWithSpaces(NSString *text,int spaces);

@@ -76,9 +76,7 @@ static const char PDFPasswordPadding[32]=
 			algorithms=[[NSMutableDictionary dictionary] retain];
 
 			NSDictionary *filters=[encrypt objectForKey:@"CF"];
-			NSEnumerator *enumerator=[filters keyEnumerator];
-			NSString *key;
-			while(key=[enumerator nextObject])
+			for(NSString *key in filters)
 			{
 				NSDictionary *dict=[filters objectForKey:key];
 				NSString *cfm=[dict objectForKey:@"CFM"];

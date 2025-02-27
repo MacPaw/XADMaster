@@ -32,7 +32,7 @@ uint32_t XADCalculateCRC(uint32_t prevcrc,const uint8_t *buffer,int length,const
 	return crc;
 }
 
-#if XAD_BYTE_ORDER_BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 static inline uint32_t swap(uint32_t x)
 {
 #if defined(__GNUC__) || defined(__clang__)
@@ -58,7 +58,7 @@ uint32_t XADCalculateCRCFast(uint32_t prevcrc,const uint8_t *buffer,int length, 
     {
         for (size_t unrolling = 0; unrolling < Unroll; unrolling++)
         {
-#if XAD_BYTE_ORDER_BIG_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
             uint32_t a   = *pos++ ^ swap(crc);
             uint32_t b   = *pos++;
             uint32_t c   = *pos++;

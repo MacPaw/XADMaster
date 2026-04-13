@@ -27,12 +27,11 @@ jobs:
             bash -lc '
               set -eux
               apt-get update
-              apt-get install -y --no-install-recommends gcc gobjc gnustep-make libgnustep-base-dev
-              set +u
-              . /usr/share/GNUstep/Makefiles/GNUstep.sh
-              set -u
-              gcc $(gnustep-config --objc-flags) -std=gnu99 -I. -c CRC.m -o CRC.o
-              gcc $(gnustep-config --objc-flags) -std=gnu99 -I. -c Tests/CRCFastRegression.m -o CRCFastRegression.o
-              gcc CRC.o CRCFastRegression.o -o crc-fast-regression $(gnustep-config --base-libs)
+              apt-get install -y --no-install-recommends gcc gobjc libgnustep-base-dev libobjc-12-dev
+              OBJCFLAGS="-std=gnu99 -I. -I/usr/include/GNUstep -fconstant-string-class=NSConstantString"
+              LDFLAGS="-lgnustep-base -lobjc"
+              gcc $OBJCFLAGS -c CRC.m -o CRC.o
+              gcc $OBJCFLAGS -c Tests/CRCFastRegression.m -o CRCFastRegression.o
+              gcc CRC.o CRCFastRegression.o -o crc-fast-regression $LDFLAGS
               ./crc-fast-regression
             '

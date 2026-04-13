@@ -1,4 +1,4 @@
-name: Debian Tests
+name: Big Endian Systems (Debian)
 
 on:
   push:

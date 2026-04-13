@@ -28,6 +28,7 @@ jobs:
               set -eux
               apt-get update
               apt-get install -y --no-install-recommends gcc gobjc gnustep-make libgnustep-base-dev
+              . /usr/share/GNUstep/Makefiles/GNUstep.sh
               gcc $(gnustep-config --objc-flags) -std=gnu99 -I. -c CRC.m -o CRC.o
               gcc $(gnustep-config --objc-flags) -std=gnu99 -I. -c Tests/CRCFastRegression.m -o CRCFastRegression.o
               gcc CRC.o CRCFastRegression.o -o crc-fast-regression $(gnustep-config --base-libs)

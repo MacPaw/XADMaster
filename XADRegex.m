@@ -113,6 +113,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	{
 		patternstring=[pattern retain];
 		currdata=nil;
+		nullterminateddata=nil;
 		matches=NULL;
 
 		int err=regcomp(&preg,[pattern UTF8String],options|REG_EXTENDED);
@@ -140,6 +141,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	regfree(&preg);
 	free(matches);
 	[currdata release];
+	[nullterminateddata release];
 	[super dealloc];
 }
 
@@ -149,19 +151,32 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 
 -(void)beginMatchingData:(NSData *)data range:(NSRange)range
 {
+	if(!data) data=[NSData data];
+	NSUInteger datalength=[data length];
+	if(range.location>datalength||range.length>datalength-range.location) range=NSMakeRange(datalength,0);
 	matchrange=range;
-	if(data==currdata) return;
 	[currdata release];
-	currdata=[data retain];
+	currdata=[data copy];
+
+	[nullterminateddata release];
+	NSMutableData *terminated=[NSMutableData dataWithData:currdata];
+	[terminated appendBytes:"\0" length:1];
+	nullterminateddata=[terminated retain];
 }
 
--(void)finishMatching { [currdata release]; currdata=nil; }
+-(void)finishMatching
+{
+	[currdata release];
+	currdata=nil;
+	[nullterminateddata release];
+	nullterminateddata=nil;
+}
 
 -(BOOL)matchNext
 {
 	matches[0].rm_so=matchrange.location;
 	matches[0].rm_eo=matchrange.location+matchrange.length;
-	if(regexec(&preg,[currdata bytes],preg.re_nsub+1,matches,REG_STARTEND)==0)
+	if(regexec(&preg,[nullterminateddata bytes],preg.re_nsub+1,matches,REG_STARTEND)==0)
 	{
 		matchrange.length-=matches[0].rm_eo-matchrange.location;
 		matchrange.location=(long)matches[0].rm_eo;
@@ -294,4 +309,3 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 -(NSString *)escapedPattern { return [XADRegex patternForLiteralString:self]; }
 
 @end
-

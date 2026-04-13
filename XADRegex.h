@@ -33,6 +33,7 @@
 	regmatch_t *matches;
 	NSRange matchrange;
 	NSData *currdata;
+	NSData *nullterminateddata;
 }
 
 +(XADRegex *)regexWithPattern:(NSString *)pattern options:(int)options;

@@ -1,4 +1,4 @@
-name: CRC Big Endian
+name: Debian Tests
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 jobs:
   crc-s390x:
+    name: CRC Regression (s390x)
     runs-on: ubuntu-latest
 
     steps:

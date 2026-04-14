@@ -1,0 +1,56 @@
+name: Big Endian Systems (Debian)
+
+on:
+  push:
+    branches: [ master ]
+    # Keep this emulated s390x job scoped to the CRC/endian code it protects.
+    # The workflow file itself stays in the filter so trigger changes can verify.
+    paths:
+      - .github/workflows/crc-big-endian.yml
+      - CRC.m
+      - CRC.h
+      - Crypto/brg_endian.h
+      - Tests/CRCFastRegression.m
+      - XADMasterTests/CRCCalculationTests.m
+  pull_request:
+    branches: [ master ]
+    # Keep this emulated s390x job scoped to the CRC/endian code it protects.
+    # The workflow file itself stays in the filter so trigger changes can verify.
+    paths:
+      - .github/workflows/crc-big-endian.yml
+      - CRC.m
+      - CRC.h
+      - Crypto/brg_endian.h
+      - Tests/CRCFastRegression.m
+      - XADMasterTests/CRCCalculationTests.m
+
+jobs:
+  crc-s390x:
+    name: CRC Regression (s390x)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: s390x
+
+      - name: Run CRC regression on s390x
+        run: |
+          docker run --rm --platform linux/s390x \
+            -v "$GITHUB_WORKSPACE:/work" \
+            -w /work \
+            debian:bookworm-slim \
+            bash -lc '
+              set -eux
+              apt-get update
+              apt-get install -y --no-install-recommends gcc gobjc libgnustep-base-dev libobjc-12-dev
+              OBJCFLAGS="-std=gnu99 -I. -I/usr/include/GNUstep -fconstant-string-class=NSConstantString"
+              LDFLAGS="-lgnustep-base -lobjc"
+              gcc $OBJCFLAGS -c CRC.m -o CRC.o
+              gcc $OBJCFLAGS -c Tests/CRCFastRegression.m -o CRCFastRegression.o
+              gcc CRC.o CRCFastRegression.o -o crc-fast-regression $LDFLAGS
+              ./crc-fast-regression
+            '

@@ -113,6 +113,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	{
 		patternstring=[pattern retain];
 		currdata=nil;
+		currdatalength=0;
 		matches=NULL;
 
 		int err=regcomp(&preg,[pattern UTF8String],options|REG_EXTENDED);
@@ -154,6 +155,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	if(range.location>datalength||range.length>datalength-range.location) range=NSMakeRange(datalength,0);
 	matchrange=range;
 	[currdata release];
+	currdatalength=datalength;
 	NSMutableData *terminated=[NSMutableData dataWithData:data];
 	// regexec() expects a NUL-terminated C string even when REG_STARTEND bounds the match range.
 	[terminated appendBytes:"\0" length:1];
@@ -164,6 +166,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 {
 	[currdata release];
 	currdata=nil;
+	currdatalength=0;
 }
 
 -(BOOL)matchNext
@@ -259,7 +262,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 		encoding:NSUTF8StringEncoding] autorelease]];
 		prevstart=matches[0].rm_eo;
 	}
-	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)([currdata length]-1-prevstart)
+	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(currdatalength-prevstart)
 	encoding:NSUTF8StringEncoding] autorelease]];
 
 	[self finishMatching];

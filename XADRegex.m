@@ -112,8 +112,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	if((self=[super init]))
 	{
 		patternstring=[pattern retain];
-		currdata=nil;
-		nullterminateddata=nil;
+		matchdata=nil;
 		matches=NULL;
 
 		int err=regcomp(&preg,[pattern UTF8String],options|REG_EXTENDED);
@@ -140,8 +139,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	[patternstring release];
 	regfree(&preg);
 	free(matches);
-	[currdata release];
-	[nullterminateddata release];
+	[matchdata release];
 	[super dealloc];
 }
 
@@ -155,28 +153,24 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	NSUInteger datalength=[data length];
 	if(range.location>datalength||range.length>datalength-range.location) range=NSMakeRange(datalength,0);
 	matchrange=range;
-	[currdata release];
-	currdata=[data copy];
-
-	[nullterminateddata release];
-	NSMutableData *terminated=[NSMutableData dataWithData:currdata];
+	[matchdata release];
+	NSMutableData *terminated=[NSMutableData dataWithData:data];
+	// regexec() expects a NUL-terminated C string even when REG_STARTEND bounds the match range.
 	[terminated appendBytes:"\0" length:1];
-	nullterminateddata=[terminated retain];
+	matchdata=[terminated retain];
 }
 
 -(void)finishMatching
 {
-	[currdata release];
-	currdata=nil;
-	[nullterminateddata release];
-	nullterminateddata=nil;
+	[matchdata release];
+	matchdata=nil;
 }
 
 -(BOOL)matchNext
 {
 	matches[0].rm_so=matchrange.location;
 	matches[0].rm_eo=matchrange.location+matchrange.length;
-	if(regexec(&preg,[nullterminateddata bytes],preg.re_nsub+1,matches,REG_STARTEND)==0)
+	if(regexec(&preg,[matchdata bytes],preg.re_nsub+1,matches,REG_STARTEND)==0)
 	{
 		matchrange.length-=matches[0].rm_eo-matchrange.location;
 		matchrange.location=(long)matches[0].rm_eo;
@@ -190,7 +184,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 {
 	if(n>preg.re_nsub||n<0) [NSException raise:NSRangeException format:@"Index %d out of range for regex \"%@\"",n,self];
  	if(matches[n].rm_so==-1&&matches[n].rm_eo==-1) return nil;
-	return [[[NSString alloc] initWithBytes:[currdata bytes]+matches[n].rm_so
+	return [[[NSString alloc] initWithBytes:[matchdata bytes]+matches[n].rm_so
 	length:(long)(matches[n].rm_eo-matches[n].rm_so) encoding:NSUTF8StringEncoding] autorelease];
 }
 
@@ -258,14 +252,14 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	NSMutableArray *array=[NSMutableArray array];
 
 	regoff_t prevstart=0;
-	const char *bytes=[currdata bytes];
+	const char *bytes=[matchdata bytes];
 	while([self matchNext])
 	{
 		[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(matches[0].rm_so-prevstart)
 		encoding:NSUTF8StringEncoding] autorelease]];
 		prevstart=matches[0].rm_eo;
 	}
-	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)([currdata length]-prevstart)
+	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)([matchdata length]-1-prevstart)
 	encoding:NSUTF8StringEncoding] autorelease]];
 
 	[self finishMatching];

@@ -41,35 +41,35 @@
  * I16 - little-endian Intel format, 16 bit value
  */
 
-#define EndGetM32(a)  (((((unsigned char *) a)[0]) << 24) |             \
-                       ((((unsigned char *) a)[1]) << 16) |             \
-                       ((((unsigned char *) a)[2]) <<  8) |             \
-                       ((((unsigned char *) a)[3])))
-#define EndGetM24(a)  (((((unsigned char *) a)[0]) << 16) |             \
-                       ((((unsigned char *) a)[1]) <<  8) |             \
-                       ((((unsigned char *) a)[2])))
-#define EndGetM16(a)  (((((unsigned char *) a)[0]) <<  8) |             \
-                       ((((unsigned char *) a)[1])))
+#define EndGetM32(a)  (((xadUINT32) (((unsigned char *) a)[0]) << 24) | \
+                       ((xadUINT32) (((unsigned char *) a)[1]) << 16) | \
+                       ((xadUINT32) (((unsigned char *) a)[2]) <<  8) | \
+                       ((xadUINT32) (((unsigned char *) a)[3])))
+#define EndGetM24(a)  (((xadUINT32) (((unsigned char *) a)[0]) << 16) | \
+                       ((xadUINT32) (((unsigned char *) a)[1]) <<  8) | \
+                       ((xadUINT32) (((unsigned char *) a)[2])))
+#define EndGetM16(a)  (((xadUINT32) (((unsigned char *) a)[0]) <<  8) | \
+                       ((xadUINT32) (((unsigned char *) a)[1])))
 
-#define EndGetI32(a)  (((((unsigned char *) a)[3]) << 24) |             \
-                       ((((unsigned char *) a)[2]) << 16) |             \
-                       ((((unsigned char *) a)[1]) <<  8) |             \
-                       ((((unsigned char *) a)[0])))
-#define EndGetI24(a)  (((((unsigned char *) a)[2]) << 16) |             \
-                       ((((unsigned char *) a)[1]) <<  8) |             \
-                       ((((unsigned char *) a)[0])))
-#define EndGetI16(a)  (((((unsigned char *) a)[1]) <<  8) |             \
-                       ((((unsigned char *) a)[0])))
+#define EndGetI32(a)  (((xadUINT32) (((unsigned char *) a)[3]) << 24) | \
+                       ((xadUINT32) (((unsigned char *) a)[2]) << 16) | \
+                       ((xadUINT32) (((unsigned char *) a)[1]) <<  8) | \
+                       ((xadUINT32) (((unsigned char *) a)[0])))
+#define EndGetI24(a)  (((xadUINT32) (((unsigned char *) a)[2]) << 16) | \
+                       ((xadUINT32) (((unsigned char *) a)[1]) <<  8) | \
+                       ((xadUINT32) (((unsigned char *) a)[0])))
+#define EndGetI16(a)  (((xadUINT32) (((unsigned char *) a)[1]) <<  8) | \
+                       ((xadUINT32) (((unsigned char *) a)[0])))
 
 /* 64-bit support */
-#define _convM32(a,n)(((((unsigned char *) a)[n+0]) << 24) |            \
-                      ((((unsigned char *) a)[n+1]) << 16) |            \
-                      ((((unsigned char *) a)[n+2]) <<  8) |            \
-                      ((((unsigned char *) a)[n+3])))
-#define _convI32(a,n)(((((unsigned char *) a)[n+3]) << 24) |            \
-                      ((((unsigned char *) a)[n+2]) << 16) |            \
-                      ((((unsigned char *) a)[n+1]) <<  8) |            \
-                      ((((unsigned char *) a)[n+0])))
+#define _convM32(a,n)(((xadUINT32) (((unsigned char *) a)[n+0]) << 24) | \
+                      ((xadUINT32) (((unsigned char *) a)[n+1]) << 16) | \
+                      ((xadUINT32) (((unsigned char *) a)[n+2]) <<  8) | \
+                      ((xadUINT32) (((unsigned char *) a)[n+3])))
+#define _convI32(a,n)(((xadUINT32) (((unsigned char *) a)[n+3]) << 24) | \
+                      ((xadUINT32) (((unsigned char *) a)[n+2]) << 16) | \
+                      ((xadUINT32) (((unsigned char *) a)[n+1]) <<  8) | \
+                      ((xadUINT32) (((unsigned char *) a)[n+0])))
 
 #if defined(AMIGA) /* AMIGA XAD has not 64 bit types yet */
 #  define EndGetI64(a) ((unsigned int) _convi32(a,0))

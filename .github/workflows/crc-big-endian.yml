@@ -3,8 +3,22 @@ name: Big Endian Systems (Debian)
 on:
   push:
     branches: [ master ]
+    paths:
+      - .github/workflows/crc-big-endian.yml
+      - CRC.m
+      - CRC.h
+      - Crypto/brg_endian.h
+      - Tests/CRCFastRegression.m
+      - XADMasterTests/CRCCalculationTests.m
   pull_request:
     branches: [ master ]
+    paths:
+      - .github/workflows/crc-big-endian.yml
+      - CRC.m
+      - CRC.h
+      - Crypto/brg_endian.h
+      - Tests/CRCFastRegression.m
+      - XADMasterTests/CRCCalculationTests.m
 
 jobs:
   crc-s390x:

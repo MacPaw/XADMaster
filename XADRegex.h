@@ -32,7 +32,7 @@
 	regex_t preg;
 	regmatch_t *matches;
 	NSRange matchrange;
-	NSData *matchdata;
+	NSData *currdata;
 }
 
 +(XADRegex *)regexWithPattern:(NSString *)pattern options:(int)options;

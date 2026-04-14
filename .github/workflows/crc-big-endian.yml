@@ -3,6 +3,8 @@ name: Big Endian Systems (Debian)
 on:
   push:
     branches: [ master ]
+    # Keep this emulated s390x job scoped to the CRC/endian code it protects.
+    # The workflow file itself stays in the filter so trigger changes can verify.
     paths:
       - .github/workflows/crc-big-endian.yml
       - CRC.m
@@ -12,6 +14,8 @@ on:
       - XADMasterTests/CRCCalculationTests.m
   pull_request:
     branches: [ master ]
+    # Keep this emulated s390x job scoped to the CRC/endian code it protects.
+    # The workflow file itself stays in the filter so trigger changes can verify.
     paths:
       - .github/workflows/crc-big-endian.yml
       - CRC.m

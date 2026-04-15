@@ -258,9 +258,21 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	const char *bytes=[currdata bytes];
 	while([self matchNext])
 	{
-		[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(matches[0].rm_so-prevstart)
+		regoff_t start=matches[0].rm_so;
+		regoff_t end=matches[0].rm_eo;
+		if(start<prevstart||end<start||end>(regoff_t)currdatalength||prevstart>(regoff_t)currdatalength)
+		{
+			[self finishMatching];
+			return nil;
+		}
+		[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(start-prevstart)
 		encoding:NSUTF8StringEncoding] autorelease]];
-		prevstart=matches[0].rm_eo;
+		prevstart=end;
+	}
+	if(prevstart>(regoff_t)currdatalength)
+	{
+		[self finishMatching];
+		return nil;
 	}
 	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(currdatalength-prevstart)
 	encoding:NSUTF8StringEncoding] autorelease]];

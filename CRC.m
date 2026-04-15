@@ -19,6 +19,7 @@
  * MA 02110-1301  USA
  */
 #import "Checksums.h"
+#import "Crypto/brg_endian.h"
 
 uint32_t XADCRC(uint32_t prevcrc,uint8_t byte,const uint32_t *table)
 {
@@ -32,7 +33,7 @@ uint32_t XADCalculateCRC(uint32_t prevcrc,const uint8_t *buffer,int length,const
 	return crc;
 }
 
-#if XAD_BYTE_ORDER_BIG_ENDIAN
+#if PLATFORM_BYTE_ORDER == IS_BIG_ENDIAN
 static inline uint32_t swap(uint32_t x)
 {
 #if defined(__GNUC__) || defined(__clang__)
@@ -58,7 +59,7 @@ uint32_t XADCalculateCRCFast(uint32_t prevcrc,const uint8_t *buffer,int length, 
     {
         for (size_t unrolling = 0; unrolling < Unroll; unrolling++)
         {
-#if XAD_BYTE_ORDER_BIG_ENDIAN
+#if PLATFORM_BYTE_ORDER == IS_BIG_ENDIAN
             uint32_t a   = *pos++ ^ swap(crc);
             uint32_t b   = *pos++;
             uint32_t c   = *pos++;

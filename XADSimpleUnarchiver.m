@@ -124,6 +124,7 @@
 
 	[regexes release];
 	[indices release];
+	[idxrenaming release];
 
 	[entries release];
 	[reasonsforinterest release];
@@ -190,6 +191,9 @@
 -(BOOL)alwaysRenamesFiles { return rename; }
 -(void)setAlwaysRenamesFiles:(BOOL)renameflag { rename=renameflag; }
 
+-(BOOL)perIndexRenamedFiles { return perindexrename; }
+-(void)setPerIndexRenamedFiles:(BOOL)renamepass { perindexrename=renamepass; }
+
 -(BOOL)alwaysSkipsFiles { return skip; }
 -(void)setAlwaysSkipsFiles:(BOOL)skipflag { skip=skipflag; }
 
@@ -244,6 +248,12 @@
 {
 	if(!regexes) regexes=[NSMutableArray new];
 	[regexes addObject:regex];
+}
+
+-(void)addIndexRenaming:(NSString *)dest
+{
+	if(!idxrenaming) idxrenaming=[NSMutableArray new];
+	[idxrenaming addObject:dest];
 }
 
 -(void)addIndexFilter:(int)index
@@ -441,7 +451,7 @@
 			if(size) totalsize+=[size longLongValue];
 			else totalsize=-1;
 		}
-		
+
 
 		// Run test for single top-level items.
 		[self _testForSoloItems:entry];
@@ -781,43 +791,54 @@
 	NSString *path=unpackdestination;
 	NSArray *components=[safefilename pathComponents];
 	int numcomponents=[components count];
-	for(int i=0;i<numcomponents;i++)
-	{
-		NSString *component=[components objectAtIndex:i];
-		NSMutableDictionary *pathdict=[parent objectForKey:component];
-		if(!pathdict)
+
+	if( perindexrename ){
+		NSString *last=[components objectAtIndex:numcomponents-1];
+		NSString* idxrename = [idxrenaming objectAtIndex:0];
+
+		/* remove destpath from queue idxrename */
+		[idxrenaming removeObject:idxrename];
+		path = idxrename;
+	}
+	else {
+		for(int i=0;i<numcomponents;i++)
 		{
-			// This path has not been encountered yet. First, build a
-			// path based on the current component and the parent's path.
-			path=[path stringByAppendingPathComponent:component];
-
-			// Check it for collisions.
-			path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
-
-			if(path)
+			NSString *component=[components objectAtIndex:i];
+			NSMutableDictionary *pathdict=[parent objectForKey:component];
+			if(!pathdict)
 			{
-				// Store path and dictionary in path hierarchy.
-				pathdict=[NSMutableDictionary dictionaryWithObject:path forKey:@"."];
-				[parent setObject:pathdict forKey:component];
+				// This path has not been encountered yet. First, build a
+				// path based on the current component and the parent's path.
+				path=[path stringByAppendingPathComponent:component];
+
+				// Check it for collisions.
+				path=[self _checkPath:path forEntryWithDictionary:dict deferred:NO];
+
+				if(path)
+				{
+					// Store path and dictionary in path hierarchy.
+					pathdict=[NSMutableDictionary dictionaryWithObject:path forKey:@"."];
+					[parent setObject:pathdict forKey:component];
+				}
+				else
+				{
+					// If skipping was requested, store a marker in the path hierarchy
+					// for future requests, and skip.
+					pathdict=[NSMutableDictionary dictionaryWithObject:[NSNull null] forKey:@"."];
+					[parent setObject:pathdict forKey:component];
+					return NO;
+				}
 			}
 			else
 			{
-				// If skipping was requested, store a marker in the path hierarchy
-				// for future requests, and skip.
-				pathdict=[NSMutableDictionary dictionaryWithObject:[NSNull null] forKey:@"."];
-				[parent setObject:pathdict forKey:component];
-				return NO;
+				path=[pathdict objectForKey:@"."];
+
+				// Check if this path was marked as skipped earlier.
+				if((id)path==[NSNull null]) return NO;
 			}
-		}
-		else
-		{
-			path=[pathdict objectForKey:@"."];
 
-			// Check if this path was marked as skipped earlier.
-			if((id)path==[NSNull null]) return NO;
+			parent=pathdict;
 		}
-
-		parent=pathdict;
 	}
 
 	*pathptr=path;

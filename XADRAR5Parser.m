@@ -43,6 +43,11 @@ static BOOL IsRAR5Signature(const uint8_t *ptr)
 	ptr[4]==0x1a && ptr[5]==0x07 && ptr[6]==0x01 && ptr[7]==0x00;
 }
 
+static BOOL IsSFXSignature(const uint8_t *ptr)
+{
+	return ptr[0]=='M' && ptr[1]=='Z';
+}
+
 static uint64_t ReadRAR5VInt(CSHandle *handle)
 {
 	uint64_t res=0;
@@ -86,8 +91,13 @@ static inline BOOL IsZeroHeaderBlock(RAR5HeaderBlock block) { return IsZeroBlock
     
     if(length<8) return RAR5SignatureNotFound; // TODO: fix to use correct min size
     
-    // for SFXX, RAR Signature can be found not at start, but anywhere in the data
-    int maxxSearch = MIN(length, RAR5MaximumSFXHeader) - 8;
+	int maxxSearch = 8;
+	
+    // For SFXX, RAR Signature can be found not at start, but anywhere in the data,
+	// but be sure it has the executable signature first
+	if (IsSFXSignature(bytes)) {
+		maxxSearch = MIN(length, RAR5MaximumSFXHeader) - 8;
+	}
     
     const uint8_t *sign = bytes;
     for (int i =0 ; i < maxxSearch; i++, sign++) {

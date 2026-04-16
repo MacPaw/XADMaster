@@ -32,7 +32,9 @@
 	regex_t preg;
 	regmatch_t *matches;
 	NSRange matchrange;
+	// Owned byte snapshot used for regexec(); always includes a trailing NUL terminator.
 	NSData *currdata;
+	NSUInteger currdatalength;
 }
 
 +(XADRegex *)regexWithPattern:(NSString *)pattern options:(int)options;

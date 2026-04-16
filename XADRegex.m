@@ -113,6 +113,7 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	{
 		patternstring=[pattern retain];
 		currdata=nil;
+		currdatalength=0;
 		matches=NULL;
 
 		int err=regcomp(&preg,[pattern UTF8String],options|REG_EXTENDED);
@@ -149,13 +150,24 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 
 -(void)beginMatchingData:(NSData *)data range:(NSRange)range
 {
+	if(!data) data=[NSData data];
+	NSUInteger datalength=[data length];
+	if(range.location>datalength||range.length>datalength-range.location) range=NSMakeRange(datalength,0);
 	matchrange=range;
-	if(data==currdata) return;
 	[currdata release];
-	currdata=[data retain];
+	currdatalength=datalength;
+	NSMutableData *terminated=[NSMutableData dataWithData:data];
+	// regexec() expects a NUL-terminated C string even when REG_STARTEND bounds the match range.
+	[terminated appendBytes:"\0" length:1];
+	currdata=[terminated retain];
 }
 
--(void)finishMatching { [currdata release]; currdata=nil; }
+-(void)finishMatching
+{
+	[currdata release];
+	currdata=nil;
+	currdatalength=0;
+}
 
 -(BOOL)matchNext
 {
@@ -246,11 +258,23 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 	const char *bytes=[currdata bytes];
 	while([self matchNext])
 	{
-		[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(matches[0].rm_so-prevstart)
+		regoff_t start=matches[0].rm_so;
+		regoff_t end=matches[0].rm_eo;
+		if(start<prevstart||end<start||end>(regoff_t)currdatalength||prevstart>(regoff_t)currdatalength)
+		{
+			[self finishMatching];
+			return nil;
+		}
+		[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(start-prevstart)
 		encoding:NSUTF8StringEncoding] autorelease]];
-		prevstart=matches[0].rm_eo;
+		prevstart=end;
 	}
-	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)([currdata length]-prevstart)
+	if(prevstart>(regoff_t)currdatalength)
+	{
+		[self finishMatching];
+		return nil;
+	}
+	[array addObject:[[[NSString alloc] initWithBytes:bytes+prevstart length:(long)(currdatalength-prevstart)
 	encoding:NSUTF8StringEncoding] autorelease]];
 
 	[self finishMatching];
@@ -294,4 +318,3 @@ static BOOL IsRegexSpecialCharacter(unichar c)
 -(NSString *)escapedPattern { return [XADRegex patternForLiteralString:self]; }
 
 @end
-

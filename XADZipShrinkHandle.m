@@ -62,7 +62,7 @@
 					symbolsize++;
 					if(symbolsize>13) [XADException raiseDecrunchException];
 				}
-				else if(next==2) ClearLZWTable(lzw);
+				else if(next==2) ClearLZWLeaves(lzw);
 			}
 			else break;
 		}

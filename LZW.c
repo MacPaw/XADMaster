@@ -38,6 +38,7 @@ LZW *AllocLZW(int maxsymbols,int reservedsymbols)
 	{
 		self->nodes[i].chr=i;
 		self->nodes[i].parent=-1;
+		self->nodes[i].inuse=1;
 	}
 
 	ClearLZWTable(self);
@@ -56,30 +57,83 @@ void FreeLZW(LZW *self)
 
 void ClearLZWTable(LZW *self)
 {
-	self->numsymbols=256+self->reservedsymbols;
+	self->freesymbols=256+self->reservedsymbols;
+	for (int i=self->freesymbols; i<self->maxsymbols; i++)
+	{
+		self->nodes[i].parent=i+1;
+		self->nodes[i].inuse=0;
+	}
+	self->nodes[self->maxsymbols-1].parent=-1;
 	self->prevsymbol=-1;
 	self->symbolsize=9; // TODO: technically this depends on reservedsymbols
 }
 
-static uint8_t FindFirstByte(LZWTreeNode *nodes,int symbol)
+// Partial clearing as used by the ZIP Shrink algorithm
+void ClearLZWLeaves(LZW *self)
 {
-	while(nodes[symbol].parent>=0) symbol=nodes[symbol].parent;
-	return nodes[symbol].chr;
+	int firstsymbol=256+self->reservedsymbols;
+
+	// Mark the parents of any nodes currently in use
+	// self->nodes[x].inuse will be 2 for any such parents; these nodes will
+	// not be cleared
+	for (int i=firstsymbol; i<self->maxsymbols; i++)
+	{
+		if (self->nodes[i].inuse)
+		{
+			int parent=self->nodes[i].parent;
+			if (parent>=firstsymbol) self->nodes[parent].inuse=2;
+		}
+	}
+	// Mark leaf nodes as free and rebuild the free list
+	self->freesymbols=-1;
+	for (int i=self->maxsymbols-1; i>=firstsymbol; i--)
+	{
+		if (self->nodes[i].inuse==2)
+		{
+			// This node is not to be cleared
+			self->nodes[i].inuse=1;
+		}
+		else
+		{
+			// This node is to be cleared, or was already free
+			self->nodes[i].inuse=0;
+			self->nodes[i].parent=self->freesymbols;
+			self->freesymbols=i;
+		}
+	}
+	// self->prevsymbol is left alone
+}
+
+static uint8_t FindFirstByte(LZW *self,int symbol)
+{
+	while (1)
+	{
+		if (!self->nodes[symbol].inuse && symbol!=self->prevsymbol)
+			// This can happen after ClearLZWLeaves
+			// Check for symbol!-self->prevsymbol avoids infinite loop
+			symbol=self->prevsymbol;
+		else if (self->nodes[symbol].parent>=0)
+			symbol=self->nodes[symbol].parent;
+		else
+			break;
+	}
+	return self->nodes[symbol].chr;
 }
 
 int NextLZWSymbol(LZW *self,int symbol)
 {
 	if(self->prevsymbol<0)
 	{
-		if(symbol>=self->numsymbols) return LZWInvalidCodeError;
+		if(symbol>=self->maxsymbols) return LZWInvalidCodeError;
+		if(!self->nodes[symbol].inuse) return LZWInvalidCodeError;
 		self->prevsymbol=symbol;
 
 		return LZWNoError;
 	}
 
 	int postfixbyte;
-	if(symbol<self->numsymbols) postfixbyte=FindFirstByte(self->nodes,symbol);
-	else if(symbol==self->numsymbols) postfixbyte=FindFirstByte(self->nodes,self->prevsymbol);
+	if(symbol<self->maxsymbols && self->nodes[symbol].inuse) postfixbyte=FindFirstByte(self,symbol);
+	else if(symbol==self->freesymbols) postfixbyte=FindFirstByte(self,self->prevsymbol);
 	else return LZWInvalidCodeError;
 
 	int parent=self->prevsymbol;
@@ -87,12 +141,14 @@ int NextLZWSymbol(LZW *self,int symbol)
 
 	if(!LZWSymbolListFull(self))
 	{
-		self->nodes[self->numsymbols].parent=parent;
-		self->nodes[self->numsymbols].chr=postfixbyte;
-		self->numsymbols++;
+		int nextsymbol=self->nodes[self->freesymbols].parent;
+		self->nodes[self->freesymbols].parent=parent;
+		self->nodes[self->freesymbols].chr=postfixbyte;
+		self->nodes[self->freesymbols].inuse=1;
+		self->freesymbols=nextsymbol;
 
 		if(!LZWSymbolListFull(self))
-		if((self->numsymbols&self->numsymbols-1)==0) self->symbolsize++;
+		if((self->freesymbols&(self->freesymbols-1))==0) self->symbolsize++;
 
 		return LZWNoError;
 	}
@@ -104,10 +160,11 @@ int NextLZWSymbol(LZW *self,int symbol)
 
 int ReplaceLZWSymbol(LZW *self,int oldsymbol,int symbol)
 {
-	if(symbol>=self->numsymbols) return LZWInvalidCodeError;
+	if(symbol>=self->maxsymbols || !self->nodes[symbol].inuse) return LZWInvalidCodeError;
 
 	self->nodes[oldsymbol].parent=self->prevsymbol;
-	self->nodes[oldsymbol].chr=FindFirstByte(self->nodes,symbol);
+	self->nodes[oldsymbol].chr=FindFirstByte(self,symbol);
+	self->nodes[oldsymbol].inuse=1;
 
 	self->prevsymbol=symbol;
 

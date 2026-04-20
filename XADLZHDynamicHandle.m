@@ -25,6 +25,11 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
+	return [self initWithHandle:handle length:length hasStopCode:NO];
+}
+
+-(id)initWithHandle:(CSHandle *)handle length:(off_t)length hasStopCode:(BOOL)hasStopCode
+{
 	if((self=[super initWithInputBufferForHandle:handle length:length windowSize:4096]))
 	{
 		static const int lengths[64]=
@@ -37,6 +42,7 @@
 
 		distancecode=[[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:64
 		maximumLength:8 shortestCodeIsZeros:YES];
+		hasstopcode=hasStopCode;
 	}
 	return self;
 }
@@ -96,9 +102,13 @@
 	int lit=node->value;
 
 	if(lit<0x100) return lit;
+	else if (lit==0x100 && hasstopcode)
+		return XADLZSSEnd;
 	else
 	{
 		*length=lit-0x100+3;
+		if (hasstopcode)
+			--(*length);
 
 		int highbits=CSInputNextSymbolUsingCode(input,distancecode);
 		int lowbits=CSInputNextBitString(input,6);

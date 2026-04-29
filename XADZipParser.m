@@ -841,6 +841,20 @@ uncompressedSizePointer:(off_t *)uncompsizeptr compressedSizePointer:(off_t *)co
 
 
 
+static uint16_t EquivalentUNIXPermissions(uint32_t extfileattrib)
+{
+	uint16_t perms = 0400;
+
+	// Convert from read-only bit to write permissions.
+	if(!(extfileattrib&1)) perms |= 0200;
+
+	// For subdirectories, set the executable bit.
+	if(extfileattrib&0x10) perms |= 0100;
+
+	return perms;
+}
+
+
 
 -(void)addZipEntryWithSystem:(int)system
 extractVersion:(int)extractversion
@@ -996,10 +1010,21 @@ isLastEntry:(BOOL)islastentry
             // While the original system was MSDos, most novel archivers on those systems can still set valid permissions
             // For example, Archive created on windows, can still have valid symlinks in it
             int perm = extfileattrib >> 16;
+
+            bool use_posix_permissions = true;
+
             // Ignore permissions set to 0, as these are most likely writte by buggy archivers.
+            if(perm == 0) use_posix_permissions = false;
 
             // Ignore file permissions, because these can lead to the incorrect handling of the files on MacOS
-            if (perm >= S_IFIFO) {
+            else if(perm < S_IFIFO) use_posix_permissions = false;
+
+            // If the UNIX permissions and MS-DOS permissions are inconsistent, ignore the UNIX permissions.
+            // This is the same logic as used in Info-ZIP (unzip).
+            else if((perm&0700) != EquivalentUNIXPermissions(extfileattrib)) use_posix_permissions = false;
+
+            if(use_posix_permissions)
+            {
             	[dict setObject:[NSNumber numberWithInt:perm] forKey:XADPosixPermissionsKey];
             }
 

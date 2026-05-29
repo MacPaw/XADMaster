@@ -22,6 +22,8 @@
 #import "XADBlockHandle.h"
 #import "NSDateXAD.h"
 
+static const int kCFBFEntryNameMaxSize = 64;
+
 @implementation XADCFBFParser
 
 -(id)init
@@ -134,9 +136,11 @@
 		[self seekToSector:dirsec];
 		for(int i=0;i<secsize;i+=128)
 		{
-			uint8_t name[64];
-			[fh readBytes:64 toBuffer:name];
-			int numnamebytes=[fh readUInt16LE];
+			uint8_t name[kCFBFEntryNameMaxSize];
+			[fh readBytes:kCFBFEntryNameMaxSize toBuffer:name];
+			// The name field in a CFBF directory entry is always kCFBFEntryNameMaxSize bytes,
+			// but the stored length may exceed this in malformed files.
+			int numnamebytes=[self sanitizedNameLength:[fh readUInt16LE] fromBuffer:name];
 			int type=[fh readUInt8];
 			int black=[fh readUInt8];
 			uint32_t leftchild=[fh readUInt32LE];
@@ -272,6 +276,19 @@
 
 	uint32_t right=[[entry objectForKey:@"CFBFRightChild"] unsignedIntValue];
 	if(right!=0xffffffff) [self processEntry:right atPath:path entries:entries];
+}
+
+-(int)sanitizedNameLength:(int)numnamebytes fromBuffer:(const uint8_t *)bytes
+{
+	if(numnamebytes<=kCFBFEntryNameMaxSize) return numnamebytes;
+
+	for(int i=0;i<=kCFBFEntryNameMaxSize-2;i+=2)
+	{
+		if(CSUInt16LE(&bytes[i])==0) return i+2;
+	}
+
+	[XADException raiseIllegalDataException];
+	return 0; // unreachable
 }
 
 -(void)seekToSector:(uint32_t)sector

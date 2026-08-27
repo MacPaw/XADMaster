@@ -158,9 +158,15 @@ static void XADBuildEnglishDictionaryOnce(void)
 			index*=52;
 			if(c2<='Z') index+=c2-'A'+26+1;
 			else index+=c2-'a'+1;
-		}
 
-		if(index>=NumberOfWords) [XADException raiseIllegalDataException];
+			// The word number is spelled out in letters used as base 52 digits, most
+			// significant first: 'a' to 'z' are 1 to 26, 'A' to 'Z' are 27 to 52. Three
+			// digits cover the whole dictionary, so the bound has to be checked on every
+			// one of them — left to run, a longer sequence overflows index and wraps it
+			// negative, and a negative index passes a check that only asks whether the
+			// number is too large.
+			if(index>=NumberOfWords) [XADException raiseIllegalDataException];
+		}
 
 		const uint8_t **pointers=[XADStuffItXEnglishHandle dictionaryPointers];
 

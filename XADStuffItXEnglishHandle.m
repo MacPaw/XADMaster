@@ -23,6 +23,7 @@
 #import "XADPPMdHandles.h"
 #import "XADException.h"
 #import "CRC.h"
+#import <pthread.h>
 
 #define NumberOfWords 100366
 #define UncompressedSize 881863
@@ -31,6 +32,10 @@
 
 extern uint8_t StuffItXEnglishDictionary[];
 
+@interface XADStuffItXEnglishHandle ()
++(const uint8_t **)buildDictionaryTable;
+@end
+
 @implementation XADStuffItXEnglishHandle
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
@@ -38,35 +43,46 @@ extern uint8_t StuffItXEnglishDictionary[];
 	return [super initWithInputBufferForHandle:handle length:length];
 }
 
+#pragma mark - English Dictionary
+
+// Exists only to satisfy the `pthread_once interface`, should not be used directly.
+static const uint8_t **dictionarytable=NULL;
+static id dictionaryexception=nil;
+
+// Exists only to satisfy the pthread_once interface, should not be called from anywhere else.
+static void XADBuildEnglishDictionaryOnce(void)
+{
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+	@try
+	{
+		dictionarytable=[XADStuffItXEnglishHandle buildDictionaryTable];
+	}
+	@catch(id exception)
+	{
+		// Besides the raises in `buildDictionaryTable` and `copyDataOfLength:`,
+		// the PPMd decoder inside it also generates exceptions. An exception must not
+		// extend beyond this routine: if it does, pthread_once leaves the control word
+		// unset, and every later caller runs the whole build over again.
+		dictionaryexception=[exception retain];
+	}
+
+	[pool release];
+}
+
+#pragma mark -
+
 +(const uint8_t **)dictionaryPointers
 {
-	static const uint8_t **wordpointers=NULL;
-	static id buildexception;
-	static dispatch_once_t oncetoken;
+	static pthread_once_t oncecontrol=PTHREAD_ONCE_INIT;
 
-	dispatch_once(&oncetoken,^{
-		@autoreleasepool
-		{
-			@try
-			{
-				wordpointers=[XADStuffItXEnglishHandle buildDictionaryTable];
-			}
-			@catch(id exception)
-			{
-				// Besides the raises in `buildDictionaryTable` and `copyDataOfLength:`,
-				// the PPMd decoder inside it also generates exceptions. An exception must not
-				// extend beyond the `dispatch_once` block: if it does, the token will remain undefined,
-				// and its internal lock will never be released, causing all subsequent calls to hang.
-				buildexception=[exception retain];
-			}
-		}
-	});
+	pthread_once(&oncecontrol,XADBuildEnglishDictionaryOnce);
 
 	// A failed build is never retried. The input is a constant blob compiled into
 	// the binary and the decode is deterministic, so a retry would fail identically.
-	if(!wordpointers) @throw buildexception;
+	if(!dictionarytable) @throw dictionaryexception;
 
-	return wordpointers;
+	return dictionarytable;
 }
 
 // The decoded dictionary is one flat buffer of newline-separated words. The table gets

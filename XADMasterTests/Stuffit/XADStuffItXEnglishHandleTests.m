@@ -38,6 +38,9 @@
 #define NumberOfWords 100366
 #define UncompressedSize 881863
 
+// Mirrors the wordbuf ivar in XADStuffItXEnglishHandle.h.
+#define WordBufferSize 33
+
 // dictionaryPointers is internal to the implementation and not declared in the header.
 @interface XADStuffItXEnglishHandle (Testing)
 + (const uint8_t **)dictionaryPointers;
@@ -69,6 +72,25 @@
 
 	XCTAssertTrue(pointers[NumberOfWords] <= start + UncompressedSize,
 		@"Last entry runs past the end of the decoded data");
+}
+
+// produceByteAtOffset: copies a word into the 33-byte wordbuf and then appends one more
+// byte to it, without checking at runtime that either fits. The dictionary blob is a fixed
+// part of the StuffItX format, so that holds today — this is what would catch it if the
+// blob were ever replaced by one carrying longer words.
+- (void)testLongestWordFitsInTheWordBuffer
+{
+	const uint8_t **pointers = [XADStuffItXEnglishHandle dictionaryPointers];
+
+	ptrdiff_t longest = 0;
+	for (int i = 0; i < NumberOfWords; i++)
+	{
+		ptrdiff_t wordlen = pointers[i + 1] - pointers[i] - 1;
+		if (wordlen > longest) longest = wordlen;
+	}
+
+	XCTAssertLessThan(longest, (ptrdiff_t)WordBufferSize,
+		@"Longest word no longer leaves room for the byte appended after it");
 }
 
 @end

@@ -20,6 +20,8 @@
  */
 
 #import <XCTest/XCTest.h>
+#import "../../CSMemoryHandle.h"
+#import "../../XADException.h"
 #import "../../XADStuffItXEnglishHandle.h"
 
 // StuffItX compresses English text by index: the stream carries a word number and the
@@ -91,6 +93,55 @@
 
 	XCTAssertLessThan(longest, (ptrdiff_t)WordBufferSize,
 		@"Longest word no longer leaves room for the byte appended after it");
+}
+
+// A word number is spelled out in letters, base 52 (a-z is 1-26, A-Z is 27-52), and the
+// run ends at the first non-letter. Seven letters overflow the int the number accumulates
+// in, wrapping it negative — and a negative number slips past a bounds check that only
+// asks whether the number is too large. The lookup then reads far in front of the table.
+//
+// Four letters already exceed the word count, so a decoder that checks the bound as it
+// goes rejects this long before reaching seven.
+- (void)testOverlongWordNumberRaisesIllegalData
+{
+	uint8_t bytes[] = {
+		0x01,                                 // esccode
+		0x02,                                 // wordcode
+		0x03,                                 // firstcode
+		0x04,                                 // uppercode
+
+		0x02,                                 // word marker: a number follows
+		'a', 'a', 'a', 'a', 'a', 'a', 'a',    // 20158268677, which wraps to -1316567803
+		' ',                                  // non-letter, ends the number
+	};
+
+	NSException *caught = [self caughtExceptionReadingBytes:bytes length:sizeof(bytes)];
+
+	XCTAssertNotNil(caught, @"Expected XADException to be thrown");
+	XCTAssertEqualObjects(caught.name, XADExceptionName);
+	XCTAssertEqual([caught.userInfo[@"XADError"] intValue], XADIllegalDataError);
+}
+
+#pragma mark - Helpers
+
+- (NSException *)caughtExceptionReadingBytes:(uint8_t *)bytes length:(size_t)length
+{
+	CSMemoryHandle *handle =
+		[CSMemoryHandle memoryHandleForReadingBuffer:bytes
+											  length:(unsigned int)length];
+	XADStuffItXEnglishHandle *englishHandle =
+		[[XADStuffItXEnglishHandle alloc] initWithHandle:handle
+												  length:CSHandleMaxLength];
+
+	NSException *caught = nil;
+	uint8_t out[16];
+	@try {
+		[englishHandle readAtMost:sizeof(out) toBuffer:out];
+	} @catch (NSException *e) {
+		caught = e;
+	}
+	[englishHandle release];
+	return caught;
 }
 
 @end

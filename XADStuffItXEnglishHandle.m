@@ -27,6 +27,7 @@
 #define NumberOfWords 100366
 #define UncompressedSize 881863
 #define CompressedSize 325602
+#define ExpectedCRC 0xfb1dcfd5
 
 extern uint8_t StuffItXEnglishDictionary[];
 
@@ -39,33 +40,61 @@ extern uint8_t StuffItXEnglishDictionary[];
 
 +(const uint8_t **)dictionaryPointers
 {
-	static const uint8_t **pointers=NULL;
-	if(!pointers)
-	{
-		CSHandle *mem=[CSMemoryHandle memoryHandleForReadingBuffer:StuffItXEnglishDictionary length:CompressedSize];
-		CSHandle *ppmd=[[[XADPPMdVariantIHandle alloc] initWithHandle:mem
-		length:UncompressedSize maxOrder:16 subAllocSize:16*1024*1024 modelRestorationMethod:0] autorelease];
+	static const uint8_t **wordpointers=NULL;
+	static id buildexception;
+	static dispatch_once_t oncetoken;
 
-		NSData *dictionarywords=[ppmd copyDataOfLength:UncompressedSize];
-
-		const uint8_t *dictbytes=[dictionarywords bytes];
-
-		if((XADCalculateCRC(0xffffffff,dictbytes,UncompressedSize,
-		XADCRCTable_edb88320)^0xffffffff)!=0xfb1dcfd5) [XADException raiseUnknownException];
-
-		pointers=malloc(sizeof(uint8_t *)*(NumberOfWords+1));
-		pointers[0]=dictbytes;
-
-		const uint8_t *ptr=dictbytes;
-		for(int i=1;i<=NumberOfWords;i++)
+	dispatch_once(&oncetoken,^{
+		@autoreleasepool
 		{
-			while(*ptr!=0x0a) ptr++;
-			pointers[i]=++ptr;
+			@try
+			{
+				wordpointers=[XADStuffItXEnglishHandle buildDictionaryTable];
+			}
+			@catch(id exception)
+			{
+				// Besides the raises in `buildDictionaryTable` and `copyDataOfLength:`,
+				// the PPMd decoder inside it also generates exceptions. An exception must not
+				// extend beyond the `dispatch_once` block: if it does, the token will remain undefined,
+				// and its internal lock will never be released, causing all subsequent calls to hang.
+				buildexception=[exception retain];
+			}
 		}
+	});
 
+	// A failed build is never retried. The input is a constant blob compiled into
+	// the binary and the decode is deterministic, so a retry would fail identically.
+	if(!wordpointers) @throw buildexception;
+
+	return wordpointers;
+}
+
++(const uint8_t **)buildDictionaryTable
+{
+	CSHandle *mem=[CSMemoryHandle memoryHandleForReadingBuffer:StuffItXEnglishDictionary length:CompressedSize];
+	CSHandle *ppmd=[[[XADPPMdVariantIHandle alloc] initWithHandle:mem length:UncompressedSize maxOrder:16 subAllocSize:16*1024*1024 modelRestorationMethod:0] autorelease];
+
+	NSData *dictionarywords=[ppmd copyDataOfLength:UncompressedSize];
+	const uint8_t *dictbytes=[dictionarywords bytes];
+
+	uint32_t dictionaryCRC=XADCalculateCRC(0xffffffff,dictbytes,UncompressedSize,XADCRCTable_edb88320)^0xffffffff;
+	if(dictionaryCRC!=ExpectedCRC)
+	{
+		[XADException raiseUnknownException];
 	}
 
-	return pointers;
+	const uint8_t **table=malloc(sizeof(uint8_t *)*(NumberOfWords+1));
+	if(!table) [XADException raiseOutOfMemoryException];
+	table[0]=dictbytes;
+
+	const uint8_t *ptr=dictbytes;
+	for(int i=1;i<=NumberOfWords;i++)
+	{
+		while(*ptr!=0x0a) ptr++;
+		table[i]=++ptr;
+	}
+
+	return table;
 }
 
 -(void)resetByteStream

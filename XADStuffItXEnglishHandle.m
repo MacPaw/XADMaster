@@ -46,6 +46,7 @@ extern uint8_t StuffItXEnglishDictionary[];
 #pragma mark - English Dictionary
 
 // Exists only to satisfy the `pthread_once interface`, should not be used directly.
+static NSData *dictionarywords=nil;
 static const uint8_t **dictionarytable=NULL;
 static id dictionaryexception=nil;
 
@@ -95,7 +96,9 @@ static void XADBuildEnglishDictionaryOnce(void)
 	CSHandle *mem=[CSMemoryHandle memoryHandleForReadingBuffer:StuffItXEnglishDictionary length:CompressedSize];
 	CSHandle *ppmd=[[[XADPPMdVariantIHandle alloc] initWithHandle:mem length:UncompressedSize maxOrder:16 subAllocSize:16*1024*1024 modelRestorationMethod:0] autorelease];
 
-	NSData *dictionarywords=[ppmd copyDataOfLength:UncompressedSize];
+	// It owns the bytes pointed to by the table, so they are intentionally retained for the
+	// entire lifetime of the process — freeing them would leave every entry in it dangling.
+	dictionarywords=[ppmd copyDataOfLength:UncompressedSize];
 	const uint8_t *dictbytes=[dictionarywords bytes];
 
 	uint32_t dictionaryCRC=XADCalculateCRC(0xffffffff,dictbytes,UncompressedSize,XADCRCTable_edb88320)^0xffffffff;

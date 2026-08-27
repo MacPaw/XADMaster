@@ -69,6 +69,11 @@ extern uint8_t StuffItXEnglishDictionary[];
 	return wordpointers;
 }
 
+// The decoded dictionary is one flat buffer of newline-separated words. The table gets
+// one entry per word plus a closing boundary, so that the length of word i is
+// table[i+1]-table[i]-1 for every i, the last one included. The longest word in the
+// buffer is 25 bytes, which is what the 33-byte wordbuf is sized for: produceByteAtOffset:
+// copies a word into it and then appends one more byte.
 +(const uint8_t **)buildDictionaryTable
 {
 	CSHandle *mem=[CSMemoryHandle memoryHandleForReadingBuffer:StuffItXEnglishDictionary length:CompressedSize];

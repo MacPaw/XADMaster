@@ -31,12 +31,13 @@
 typedef struct LZWTreeNode
 {
 	uint8_t chr;
+	uint8_t inuse;
 	int parent;
 } LZWTreeNode;
 
 typedef struct LZW
 {
-	int numsymbols,maxsymbols,reservedsymbols;
+	int freesymbols,maxsymbols,reservedsymbols;
 	int prevsymbol;
 	int symbolsize;
 
@@ -49,6 +50,7 @@ typedef struct LZW
 LZW *AllocLZW(int maxsymbols,int reservedsymbols);
 void FreeLZW(LZW *self);
 void ClearLZWTable(LZW *self);
+void ClearLZWLeaves(LZW *self);
 
 int NextLZWSymbol(LZW *self,int symbol);
 int ReplaceLZWSymbol(LZW *self,int oldsymbol,int symbol);
@@ -67,14 +69,17 @@ static inline uint8_t *LZWInternalBuffer(LZW *self)
 	return self->buffer;
 }
 
+// If ClearLZWLeaves has not been called, self->freesymbols is equal to the
+// number of symbols in use. This function will not be reliable if
+// ClearLZWLeaves has ever been called on this table.
 static inline int LZWSymbolCount(LZW *self)
 {
-	return self->numsymbols;
+	return self->freesymbols < 0 ? self->maxsymbols : self->freesymbols;
 }
 
 static inline bool LZWSymbolListFull(LZW *self)
 {
-	return self->numsymbols==self->maxsymbols;
+	return self->freesymbols < 0;
 }
 
 static inline LZWTreeNode *LZWSymbols(LZW *self)

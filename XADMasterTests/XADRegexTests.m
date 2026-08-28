@@ -48,4 +48,16 @@
     XCTAssertEqualObjects([regex stringForMatch:0], @"abc");
 }
 
+- (void)testNullMarkerIsDistinctFromAnEmptyMatch {
+    // The null marker stands in for a capture group that took no part in the match, since
+    // NSArray cannot hold nil. A group that did take part and matched an empty string has
+    // to stay tellable apart from it, and identity is the only thing that separates them.
+    NSArray *absent = [[XADRegex regexWithPattern:@"(a)?(b)"] capturedSubstringsOfString:@"b"];
+    NSArray *empty = [[XADRegex regexWithPattern:@"(a*)(b)"] capturedSubstringsOfString:@"b"];
+
+    XCTAssertEqual([absent objectAtIndex:1], [XADRegex null]);
+    XCTAssertNotEqual([empty objectAtIndex:1], [XADRegex null]);
+    XCTAssertEqualObjects([empty objectAtIndex:1], @"");
+}
+
 @end

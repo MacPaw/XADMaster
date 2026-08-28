@@ -153,7 +153,7 @@ static NSComparisonResult CompareParserSignaturesLocations(id first,id second,vo
 
 @implementation XADArchiveParser
 
-static NSMutableArray *parserclasses=nil;
+static NSArray *parserclasses=nil;
 static NSArray *parsersWithFloatingSignaturesClasses=nil;
 
 static int maxheader=0;
@@ -164,7 +164,7 @@ static int maxheader=0;
 	if(hasinitialized) return;
 	hasinitialized=YES;
 
-	parserclasses=[[NSMutableArray arrayWithObjects:
+	parserclasses=[[NSArray arrayWithObjects:
 		// Common formats
 		[XADZipParser class],
 		[XADRARParser class],

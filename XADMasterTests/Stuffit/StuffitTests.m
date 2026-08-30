@@ -97,7 +97,39 @@
     
     XCTAssertEqual(error, XADNoError, @"Error unarchiving: %@", [XADException describeXADError:error]);
     XCTAssertFalse(_delegate.extractionFailed, @"Extraction failed: %@", [XADException describeXADError:_delegate.error]);
-        
+
+}
+
+- (void)testExtractionWithWrongPasswordDoesNotLeaveFilesOnDisk
+{
+    // Arrange
+    NSURL *fixtureURL = [[NSBundle bundleForClass:[XADStuffitTests class]]
+        URLForResource:@"1234567" withExtension:@"sit.bin" subdirectory:@"StuffitFixtures"];
+    XCTAssertNotNil(fixtureURL, @"Fixture file not found");
+
+    XADError createError;
+    XADSimpleUnarchiver *unarchiver = [XADSimpleUnarchiver simpleUnarchiverForPath:fixtureURL.path
+                                                                            error:&createError];
+    XCTAssertEqual(createError, XADNoError);
+    XCTAssertNotNil(unarchiver);
+
+    [unarchiver setDelegate:self.delegate];
+    [unarchiver setPassword:@"wrongpassword"];
+    [unarchiver setDestination:self.tempDirURL.path];
+
+    XADError parseError = [unarchiver parse];
+    XCTAssertEqual(parseError, XADNoError, @"Parse should succeed regardless of password");
+
+    // Act
+    [unarchiver unarchive];
+
+    // Assert — wrong password was actually the failure cause
+    XCTAssertTrue(self.delegate.extractionFailed);
+    XCTAssertEqual(self.delegate.error, XADPasswordError);
+
+    // Assert — no leftover files on disk
+    NSArray *items = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.tempDirURL.path error:nil];
+    XCTAssertEqualObjects(items, @[], @"Leftover files found after failed extraction: %@", items);
 }
 
 @end

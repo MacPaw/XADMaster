@@ -249,7 +249,7 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	long length=[data length];
 	if(length&&bytes[length-1]=='\r') [data setLength:length-1];
 
-	return [NSData dataWithData:data];
+	return data;
 }
 
 -(NSString *)readLineWithEncoding:(NSStringEncoding)encoding
@@ -283,7 +283,7 @@ CSReadValueImpl(uint32_t,readID,CSUInt32BE)
 	}
 	while(actual!=0);
 
-	return [NSData dataWithData:data];
+	return data;
 }
 
 -(NSData *)readDataOfLength:(int)length

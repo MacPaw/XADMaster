@@ -1,0 +1,30 @@
+name: macOS Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: XCTest (macOS)
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: XADMaster
+
+      - uses: actions/checkout@v4
+        with:
+          repository: MacPaw/universal-detector
+          path: UniversalDetector
+
+      - name: Run tests
+        run: |
+          xcodebuild test \
+            -project XADMaster/XADMaster.xcodeproj \
+            -scheme XADMasterTests \
+            -destination 'platform=macOS' \
+            | xcpretty || exit ${PIPESTATUS[0]}

@@ -29,10 +29,15 @@ static BOOL IsDataASCIIOrSeparator(NSData *data,const char *separators);
 
 @implementation XADPath
 
+static XADPath *emptypath=nil;
+
++(void)initialize
+{
+	if(self==[XADPath class]) emptypath=[[XADPath alloc] init];
+}
+
 +(XADPath *)emptyPath
 {
-	static XADPath *emptypath=nil;
-	if(!emptypath) emptypath=[[XADPath alloc] init];
 	return emptypath;
 }
 

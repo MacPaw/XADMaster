@@ -21,6 +21,9 @@
 #import "XADCFBFParser.h"
 #import "XADBlockHandle.h"
 #import "NSDateXAD.h"
+#import <limits.h>
+
+static const int kCFBFEntryNameMaxSize = 64;
 
 @implementation XADCFBFParser
 
@@ -30,6 +33,7 @@
 	{
 		sectable=NULL;
 		minisectable=NULL;
+		secvisitedtable=NULL;
 	}
 	return self;
 }
@@ -38,6 +42,7 @@
 {
 	free(sectable);
 	free(minisectable);
+	free(secvisitedtable);
 	[super dealloc];
 }
 
@@ -56,7 +61,7 @@
 {
 	CSHandle *fh=[self handle];
 
-	// Read header
+	/* Read header */
 
 	[fh skipBytes:30];
 	int secshift=[fh readUInt16LE];
@@ -71,18 +76,52 @@
 	uint32_t firstmastersec=[fh readUInt32LE];
 	/*uint32_t nummastersecs=*/[fh readUInt32LE];
 
+	const int maxSecShift=(int)(sizeof(secsize)*CHAR_BIT)-1;
+	const int maxMiniSecShift=(int)(sizeof(minisecsize)*CHAR_BIT)-1;
+	if(secshift>=maxSecShift || minisecshift>=maxMiniSecShift)
+	{
+		[XADException raiseIllegalDataException];
+	}
+
+	// Shift values are validated above to prevent overflow.
 	secsize=1<<secshift;
 	minisecsize=1<<minisecshift;
 
-
-
-	// Read allocation table through the master allocation table
+	/* Read allocation table through the master allocation table */
 
 	int idspersec=secsize/4;
+	// Per MS-CFB spec, Sector Shift MUST be 0x0009 (version 3) or 0x000C (version 4),
+	// giving idspersec of 128 or 1024. We do not enforce spec values to preserve
+	// compatibility with non-conformant files. However, idspersec==0 (secsize<4)
+	// and idspersec==1 (secsize==4) must be rejected: the DIFAT traversal below
+	// uses (idspersec-1) as a modulo divisor, which would be zero in those cases.
+	if(idspersec<=1)
+	{
+		[XADException raiseIllegalDataException];
+	}
 
-	numsectors=numtablesecs*idspersec;
-	sectable=malloc(numsectors*sizeof(uint32_t));
-	secvisitedtable=calloc(numsectors*sizeof(bool),1);
+	// numtablesecs*idspersec must not overflow int.
+	// numtablesecs==0 means no FAT sectors, which is invalid.
+	if(numtablesecs==0 || numtablesecs>(uint32_t)(INT_MAX/idspersec))
+	{
+		[XADException raiseIllegalDataException];
+	}
+	numsectors=(int)(numtablesecs*(uint32_t)idspersec);
+	// numsectors*sizeof(uint32_t) must not overflow size_t.
+	if((size_t)numsectors>SIZE_MAX/sizeof(uint32_t))
+	{
+		[XADException raiseIllegalDataException];
+	}
+	sectable=malloc((size_t)numsectors*sizeof(uint32_t));
+	if(!sectable)
+	{
+		[XADException raiseOutOfMemoryException];
+	}
+	secvisitedtable=calloc(numsectors,sizeof(bool));
+	if(!secvisitedtable)
+	{
+		[XADException raiseOutOfMemoryException];
+	}
 
 	for(int i=0;i<numtablesecs;i++)
 	{
@@ -104,12 +143,29 @@
 		[fh seekToFileOffset:currpos];
 	}
 
+	/* Read short-sector allocation table */
 
-
-	// Read short-sector allocation table
-
-	numminisectors=numminitablesecs*idspersec;
-	minisectable=malloc(numminisectors*sizeof(uint32_t));
+	// numminitablesecs*idspersec must not overflow int.
+	if(numminitablesecs>(uint32_t)(INT_MAX/idspersec))
+	{
+		[XADException raiseIllegalDataException];
+	}
+	numminisectors=(int)(numminitablesecs*(uint32_t)idspersec);
+	// numminitablesecs==0 is valid for files with no mini-stream.
+	// Skip allocation; malloc(0) may return NULL, which would be misidentified as OOM.
+	if(numminisectors>0)
+	{
+		// numminisectors*sizeof(uint32_t) must not overflow size_t.
+		if((size_t)numminisectors>SIZE_MAX/sizeof(uint32_t))
+		{
+			[XADException raiseIllegalDataException];
+		}
+		minisectable=malloc((size_t)numminisectors*sizeof(uint32_t));
+		if(!minisectable)
+		{
+			[XADException raiseOutOfMemoryException];
+		}
+	}
 
 	uint32_t minitablesec=firstminitablesec;
 	for(int i=0;i<numminitablesecs;i++)
@@ -119,9 +175,7 @@
 		minitablesec=[self nextSectorAfter:minitablesec];
 	}
 
-
-
-	// Read directory entries
+	/* Read directory entries */
 
 	NSMutableArray *entries=[NSMutableArray array];
 
@@ -129,14 +183,18 @@
 	uint32_t dirsec=firstdirsec;
 	while(dirsec!=0xfffffffe)
 	{
+		// dirsec comes from the file and may exceed the secvisitedtable bounds.
+		if(dirsec>=(uint32_t)numsectors) [XADException raiseIllegalDataException];
 		if(secvisitedtable[dirsec]) [XADException raiseIllegalDataException];
 		secvisitedtable[dirsec]=true;
 		[self seekToSector:dirsec];
 		for(int i=0;i<secsize;i+=128)
 		{
-			uint8_t name[64];
-			[fh readBytes:64 toBuffer:name];
-			int numnamebytes=[fh readUInt16LE];
+			uint8_t name[kCFBFEntryNameMaxSize];
+			[fh readBytes:kCFBFEntryNameMaxSize toBuffer:name];
+			// The name field in a CFBF directory entry is always kCFBFEntryNameMaxSize bytes,
+			// but the stored length may exceed this in malformed files.
+			int numnamebytes=[self sanitizedNameLength:[fh readUInt16LE] fromBuffer:name];
 			int type=[fh readUInt8];
 			int black=[fh readUInt8];
 			uint32_t leftchild=[fh readUInt32LE];
@@ -208,9 +266,7 @@
 		dirsec=[self nextSectorAfter:dirsec];
 	}
 
-
-
-	// Resolve directory structure
+	/* Resolve directory structure */
 
 	[self processEntry:rootdirectorynode atPath:[self XADPath] entries:entries];
 }
@@ -272,6 +328,19 @@
 
 	uint32_t right=[[entry objectForKey:@"CFBFRightChild"] unsignedIntValue];
 	if(right!=0xffffffff) [self processEntry:right atPath:path entries:entries];
+}
+
+-(int)sanitizedNameLength:(int)numnamebytes fromBuffer:(const uint8_t *)bytes
+{
+	if(numnamebytes<=kCFBFEntryNameMaxSize) return numnamebytes;
+
+	for(int i=0;i<=kCFBFEntryNameMaxSize-2;i+=2)
+	{
+		if(CSUInt16LE(&bytes[i])==0) return i+2;
+	}
+
+	[XADException raiseIllegalDataException];
+	return 0; // unreachable
 }
 
 -(void)seekToSector:(uint32_t)sector

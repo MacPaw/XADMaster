@@ -1,5 +1,8 @@
 # Objective-C library for archive and file unarchiving and extraction
+
+![XADMaster](.github/header.png)
 [![Build](https://github.com/MacPaw/XADMaster/actions/workflows/main.yml/badge.svg)](https://github.com/MacPaw/XADMaster/actions/workflows/main.yml)
+
 * Supports multiple archive formats such as Zip, Tar, Gzip, Bzip2, 7-Zip, Rar, LhA, StuffIt, several old Amiga file and disk archives, CAB, LZX. Read [the wiki page](http://code.google.com/p/theunarchiver/wiki/SupportedFormats) for a more thorough listing of formats.
 * Supports split archives for certain formats, like RAR.
 * Uses [libxad](http://sourceforge.net/projects/libxad/) for older and more obscure formats. This is an old Amiga library for handling unpacking of archives.

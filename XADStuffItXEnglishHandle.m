@@ -23,12 +23,18 @@
 #import "XADPPMdHandles.h"
 #import "XADException.h"
 #import "CRC.h"
+#import <pthread.h>
 
 #define NumberOfWords 100366
 #define UncompressedSize 881863
 #define CompressedSize 325602
+#define ExpectedCRC 0xfb1dcfd5
 
 extern uint8_t StuffItXEnglishDictionary[];
+
+@interface XADStuffItXEnglishHandle ()
++(const uint8_t **)buildDictionaryTable;
+@end
 
 @implementation XADStuffItXEnglishHandle
 
@@ -37,35 +43,82 @@ extern uint8_t StuffItXEnglishDictionary[];
 	return [super initWithInputBufferForHandle:handle length:length];
 }
 
-+(const uint8_t **)dictionaryPointers
+#pragma mark - English Dictionary
+
+// Exists only to satisfy the `pthread_once interface`, should not be used directly.
+static NSData *dictionarywords=nil;
+static const uint8_t **dictionarytable=NULL;
+static id dictionaryexception=nil;
+
+// Exists only to satisfy the pthread_once interface, should not be called from anywhere else.
+static void XADBuildEnglishDictionaryOnce(void)
 {
-	static const uint8_t **pointers=NULL;
-	if(!pointers)
+	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+
+	@try
 	{
-		CSHandle *mem=[CSMemoryHandle memoryHandleForReadingBuffer:StuffItXEnglishDictionary length:CompressedSize];
-		CSHandle *ppmd=[[[XADPPMdVariantIHandle alloc] initWithHandle:mem
-		length:UncompressedSize maxOrder:16 subAllocSize:16*1024*1024 modelRestorationMethod:0] autorelease];
-
-		NSData *dictionarywords=[ppmd copyDataOfLength:UncompressedSize];
-
-		const uint8_t *dictbytes=[dictionarywords bytes];
-
-		if((XADCalculateCRC(0xffffffff,dictbytes,UncompressedSize,
-		XADCRCTable_edb88320)^0xffffffff)!=0xfb1dcfd5) [XADException raiseUnknownException];
-
-		pointers=malloc(sizeof(uint8_t *)*(NumberOfWords+1));
-		pointers[0]=dictbytes;
-
-		const uint8_t *ptr=dictbytes;
-		for(int i=1;i<=NumberOfWords;i++)
-		{
-			while(*ptr!=0x0a) ptr++;
-			pointers[i]=++ptr;
-		}
-
+		dictionarytable=[XADStuffItXEnglishHandle buildDictionaryTable];
+	}
+	@catch(id exception)
+	{
+		// Besides the raises in `buildDictionaryTable` and `copyDataOfLength:`,
+		// the PPMd decoder inside it also generates exceptions. An exception must not
+		// extend beyond this routine: if it does, pthread_once leaves the control word
+		// unset, and every later caller runs the whole build over again.
+		dictionaryexception=[exception retain];
 	}
 
-	return pointers;
+	[pool release];
+}
+
+#pragma mark -
+
++(const uint8_t **)dictionaryPointers
+{
+	static pthread_once_t oncecontrol=PTHREAD_ONCE_INIT;
+
+	pthread_once(&oncecontrol,XADBuildEnglishDictionaryOnce);
+
+	// A failed build is never retried. The input is a constant blob compiled into
+	// the binary and the decode is deterministic, so a retry would fail identically.
+	if(!dictionarytable) @throw dictionaryexception;
+
+	return dictionarytable;
+}
+
+// The decoded dictionary is one flat buffer of newline-separated words. The table gets
+// one entry per word plus a closing boundary, so that the length of word i is
+// table[i+1]-table[i]-1 for every i, the last one included. The longest word in the
+// buffer is 25 bytes, which is what the 33-byte wordbuf is sized for: produceByteAtOffset:
+// copies a word into it and then appends one more byte.
++(const uint8_t **)buildDictionaryTable
+{
+	CSHandle *mem=[CSMemoryHandle memoryHandleForReadingBuffer:StuffItXEnglishDictionary length:CompressedSize];
+	CSHandle *ppmd=[[[XADPPMdVariantIHandle alloc] initWithHandle:mem length:UncompressedSize maxOrder:16 subAllocSize:16*1024*1024 modelRestorationMethod:0] autorelease];
+
+	// It owns the bytes pointed to by the table, so they are intentionally retained for the
+	// entire lifetime of the process — freeing them would leave every entry in it dangling.
+	dictionarywords=[ppmd copyDataOfLength:UncompressedSize];
+	const uint8_t *dictbytes=[dictionarywords bytes];
+
+	uint32_t dictionaryCRC=XADCalculateCRC(0xffffffff,dictbytes,UncompressedSize,XADCRCTable_edb88320)^0xffffffff;
+	if(dictionaryCRC!=ExpectedCRC)
+	{
+		[XADException raiseUnknownException];
+	}
+
+	const uint8_t **table=malloc(sizeof(uint8_t *)*(NumberOfWords+1));
+	if(!table) [XADException raiseOutOfMemoryException];
+	table[0]=dictbytes;
+
+	const uint8_t *ptr=dictbytes;
+	for(int i=1;i<=NumberOfWords;i++)
+	{
+		while(*ptr!=0x0a) ptr++;
+		table[i]=++ptr;
+	}
+
+	return table;
 }
 
 -(void)resetByteStream
@@ -105,9 +158,15 @@ extern uint8_t StuffItXEnglishDictionary[];
 			index*=52;
 			if(c2<='Z') index+=c2-'A'+26+1;
 			else index+=c2-'a'+1;
-		}
 
-		if(index>=NumberOfWords) [XADException raiseIllegalDataException];
+			// The word number is spelled out in letters used as base 52 digits, most
+			// significant first: 'a' to 'z' are 1 to 26, 'A' to 'Z' are 27 to 52. Three
+			// digits cover the whole dictionary, so the bound has to be checked on every
+			// one of them — left to run, a longer sequence overflows index and wraps it
+			// negative, and a negative index passes a check that only asks whether the
+			// number is too large.
+			if(index>=NumberOfWords) [XADException raiseIllegalDataException];
+		}
 
 		const uint8_t **pointers=[XADStuffItXEnglishHandle dictionaryPointers];
 

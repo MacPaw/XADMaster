@@ -414,6 +414,13 @@ resourceForkDictionary:(NSDictionary *)forkdict wantChecksum:(BOOL)checksum erro
 
 	[fh close];
 
+	// Remove the output file on any failure. This includes XADBreakError, which in
+	// most cases produces a partial file (cancellation is checked per 256KB chunk).
+	if(err!=XADNoError)
+	{
+		[XADPlatform removeItemAtPath:destpath];
+	}
+
 	return err;
 }
 
@@ -498,19 +505,29 @@ resourceForkDictionary:(NSDictionary *)forkdict wantChecksum:(BOOL)checksum erro
 
 	NSDictionary *extattrs=[parser extendedAttributesForDictionary:dict];
 
+	XADError error=XADNoError;
 	@try
 	{
 		// TODO: Should this function handle exceptions itself?
-		[XADAppleDouble writeAppleDoubleHeaderToHandle:fh resourceForkSize:(int)ressize
-		extendedAttributes:extattrs];
+		[XADAppleDouble writeAppleDoubleHeaderToHandle:fh
+									  resourceForkSize:(int)ressize
+									extendedAttributes:extattrs];
+		if(ressize)
+		{
+			error=[self runExtractorWithDictionary:dict outputHandle:fh];
+		}
+	} @catch(id e) {
+		error=[XADException parseException:e];
 	}
-	@catch(id e) { return [XADException parseException:e]; }
-
-	// Write resource fork.
-	XADError error=XADNoError;
-	if(ressize) error=[self runExtractorWithDictionary:dict outputHandle:fh];
 
 	[fh close];
+
+	// Remove the output file on any failure. This includes XADBreakError, which in
+	// most cases produces a partial file (cancellation is checked per 256KB chunk).
+	if(error!=XADNoError)
+	{
+		[XADPlatform removeItemAtPath:destpath];
+	}
 
 	return error;
 }
@@ -687,8 +704,10 @@ outputTarget:(id)target selector:(SEL)selector argument:(id)argument
 	{
 		return [XADException parseException:e];
 	}
-
-	free(buf);
+	@finally
+	{
+		free(buf);
+	}
 
 	return XADNoError;
 }

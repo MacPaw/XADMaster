@@ -1415,13 +1415,15 @@
 		734C13B921C79C8500917EAA /* unpack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B621C79C8400917EAA /* unpack_utils.c */; };
 		734C13BA21C79C8500917EAA /* unpack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 734C13B621C79C8400917EAA /* unpack_utils.c */; };
 		7378D98B21CCD04000A4B11F /* CRCCalculationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7378D98A21CCD04000A4B11F /* CRCCalculationTests.m */; };
-		73B1C2012B4A100100ABCDEF /* XADRegexTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73B1C2002B4A100100ABCDEF /* XADRegexTests.m */; };
-		73F0AA6402D14A5300A1B2C3 /* EndianConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F0AA6302D14A5300A1B2C3 /* EndianConversionTests.m */; };
 		7398C7AE2059248700D7B977 /* UniversalDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B06D3770DDA5C2600D9C000 /* UniversalDetector.framework */; };
 		73A91A542ADC64DE0059C423 /* StuffitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73A91A4F2ADC64DE0059C423 /* StuffitTests.m */; };
 		73A91A562ADC64EB0059C423 /* StuffitFixtures in Resources */ = {isa = PBXBuildFile; fileRef = 73A91A552ADC64EB0059C423 /* StuffitFixtures */; };
+		73B1C2012B4A100100ABCDEF /* XADRegexTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73B1C2002B4A100100ABCDEF /* XADRegexTests.m */; };
 		73DA3468206B6BF1006ADB42 /* XADPlatformOSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */; };
 		73DA346A206B6BF1006ADB42 /* XADMaster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* XADMaster.framework */; };
+		73F0AA6402D14A5300A1B2C3 /* EndianConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73F0AA6302D14A5300A1B2C3 /* EndianConversionTests.m */; };
+		BA5204602FCDDC450041EA37 /* XADStuffItXIronHandleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA52045F2FCDDC450041EA37 /* XADStuffItXIronHandleTests.m */; };
+		BA5204702FCDDC450041EA37 /* XADStuffItXEnglishHandleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA52046F2FCDDC450041EA37 /* XADStuffItXEnglishHandleTests.m */; };
 		C4C3241827AC25E9007919DB /* XADZippedBzip2LeakTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C4C3241727AC25E9007919DB /* XADZippedBzip2LeakTests.m */; };
 		C4C3241A27AC2655007919DB /* eicar.bz in Resources */ = {isa = PBXBuildFile; fileRef = C4C3241927AC2655007919DB /* eicar.bz */; };
 		DF05DCF92806F104001E9C52 /* XADMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = DF05DCF52806EF40001E9C52 /* XADMaster.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2146,14 +2148,16 @@
 		734C13B121C79B1A00917EAA /* unpack_seek.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_seek.c; sourceTree = "<group>"; };
 		734C13B621C79C8400917EAA /* unpack_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unpack_utils.c; sourceTree = "<group>"; };
 		7378D98A21CCD04000A4B11F /* CRCCalculationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CRCCalculationTests.m; sourceTree = "<group>"; };
-		73B1C2002B4A100100ABCDEF /* XADRegexTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADRegexTests.m; sourceTree = "<group>"; };
-		73F0AA6302D14A5300A1B2C3 /* EndianConversionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EndianConversionTests.m; sourceTree = "<group>"; };
 		73A91A4F2ADC64DE0059C423 /* StuffitTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StuffitTests.m; sourceTree = "<group>"; };
 		73A91A552ADC64EB0059C423 /* StuffitFixtures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StuffitFixtures; sourceTree = "<group>"; };
+		73B1C2002B4A100100ABCDEF /* XADRegexTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADRegexTests.m; sourceTree = "<group>"; };
 		73DA3465206B6BF1006ADB42 /* XADMasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XADMasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73DA3467206B6BF1006ADB42 /* XADPlatformOSXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADPlatformOSXTests.m; sourceTree = "<group>"; };
 		73DA3469206B6BF1006ADB42 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		73F0AA6302D14A5300A1B2C3 /* EndianConversionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EndianConversionTests.m; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* XADMaster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XADMaster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA52045F2FCDDC450041EA37 /* XADStuffItXIronHandleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXIronHandleTests.m; sourceTree = "<group>"; };
+		BA52046F2FCDDC450041EA37 /* XADStuffItXEnglishHandleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADStuffItXEnglishHandleTests.m; sourceTree = "<group>"; };
 		C4C3241727AC25E9007919DB /* XADZippedBzip2LeakTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XADZippedBzip2LeakTests.m; sourceTree = "<group>"; };
 		C4C3241927AC2655007919DB /* eicar.bz */ = {isa = PBXFileReference; lastKnownFileType = file; path = eicar.bz; sourceTree = "<group>"; };
 		DF05DCF52806EF40001E9C52 /* XADMaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XADMaster.h; sourceTree = "<group>"; };
@@ -3267,6 +3271,8 @@
 			children = (
 				73A91A552ADC64EB0059C423 /* StuffitFixtures */,
 				73A91A4F2ADC64DE0059C423 /* StuffitTests.m */,
+				BA52045F2FCDDC450041EA37 /* XADStuffItXIronHandleTests.m */,
+				BA52046F2FCDDC450041EA37 /* XADStuffItXEnglishHandleTests.m */,
 			);
 			path = Stuffit;
 			sourceTree = "<group>";
@@ -4782,6 +4788,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA5204602FCDDC450041EA37 /* XADStuffItXIronHandleTests.m in Sources */,
+				BA5204702FCDDC450041EA37 /* XADStuffItXEnglishHandleTests.m in Sources */,
 				7378D98B21CCD04000A4B11F /* CRCCalculationTests.m in Sources */,
 				73F0AA6402D14A5300A1B2C3 /* EndianConversionTests.m in Sources */,
 				73B1C2012B4A100100ABCDEF /* XADRegexTests.m in Sources */,

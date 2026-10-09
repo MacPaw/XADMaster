@@ -22,12 +22,14 @@
 
 @interface XADARCParser:XADArchiveParser
 {
+	BOOL isARC7;
 }
 
 +(int)requiredHeaderSize;
 +(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data
 name:(NSString *)name;
 
+-(id)init;
 -(void)parse;
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum;
 -(NSString *)formatName;

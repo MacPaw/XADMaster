@@ -51,6 +51,10 @@ int main(int argc,const char **argv)
 
 	[cmdline setProgramVersion:VERSION_STRING];
 
+	[cmdline addSwitchOption:@"index-rename" description:
+	@"Index passed as tuples id_1 destination_1 ... id_n destination_n"];
+	[cmdline addAlias:@"I" forOption:@"index-rename"];
+
 	[cmdline addStringOption:@"output-directory" description:
 	@"The directory to write the contents of the archive to. "
 	@"Defaults to the current directory. If set to a single dash (-), "
@@ -167,6 +171,7 @@ int main(int argc,const char **argv)
 
 	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) exit(1);
 
+	BOOL indexrename = [cmdline boolValueForOption:@"index-rename"];
 	NSString *destination=[cmdline stringValueForOption:@"output-directory"];
 	BOOL forceoverwrite=[cmdline boolValueForOption:@"force-overwrite"];
 	BOOL forcerename=[cmdline boolValueForOption:@"force-rename"];
@@ -257,17 +262,48 @@ int main(int argc,const char **argv)
 	[unarchiver setPropagatesRelevantMetadata:!noquarantine];
 	[unarchiver setCopiesArchiveModificationTimeToEnclosingDirectory:copytime];
 	[unarchiver setMacResourceForkStyle:forkstyle];
+	[unarchiver setPerIndexRenamedFiles:indexrename];
 
-	for(int i=1;i<numfiles;i++)
-	{
-		NSString *filter=[files objectAtIndex:i];
-		if(indexes) [unarchiver addIndexFilter:[filter intValue]];
-		else [unarchiver addGlobFilter:filter];
+	XADError parseerror;
+
+	if(indexrename){
+		if(numfiles <= 1)
+		{
+			[@"Archive parsing failed! (Not enough index/destination tuples - at least one tuple is needed)\n" printToFile:errstream];
+			parseerror = 223;
+			goto skip_extraction;
+		}
+		if((numfiles % 2) != 1)
+		{
+			[@"Archive parsing failed! (Bad format of index/destination tuples)\n" printToFile:errstream];
+			parseerror = 224;
+			goto skip_extraction;
+		}
+
+		for(int i=1;i<numfiles;i++)
+		{
+			if( i % 2 ) {
+				NSString *filter=[files objectAtIndex:i];
+				[unarchiver addIndexFilter:[filter intValue]];
+			}
+			else {
+				NSString *destpath=[files objectAtIndex:i];
+				[unarchiver addIndexRenaming: destpath];
+			}
+		}
+	}
+	else {
+		for(int i=1;i<numfiles;i++)
+		{
+			NSString *filter=[files objectAtIndex:i];
+			if(indexes) [unarchiver addIndexFilter:[filter intValue]];
+			else [unarchiver addGlobFilter:filter];
+		}
 	}
 
 	[unarchiver setDelegate:[[Unarchiver new] autorelease]];
 
-	XADError parseerror=[unarchiver parse];
+	parseerror=[unarchiver parse];
 
 	if([unarchiver innerArchiveParser])
 	{
@@ -336,7 +372,7 @@ int main(int argc,const char **argv)
 	}
 
 	// TODO: Print interest?
-
+skip_extraction:
 	[pool release];
 
 	return parseerror||unarchiveerror||numerrors;

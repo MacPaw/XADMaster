@@ -38,11 +38,12 @@
 
 	NSString *destination,*enclosingdir;
 	BOOL extractsubarchives,removesolo;
-	BOOL overwrite,rename,skip;
+	BOOL overwrite,rename,skip,perindexrename;
 	BOOL copydatetoenclosing,copydatetosolo,resetsolodate;
 	BOOL propagatemetadata;
 
 	NSMutableArray *regexes;
+	NSMutableArray *idxrenaming;
 	NSMutableIndexSet *indices;
 
 	NSMutableArray *entries,*reasonsforinterest;
@@ -96,6 +97,9 @@
 -(BOOL)alwaysSkipsFiles;
 -(void)setAlwaysSkipsFiles:(BOOL)skipflag;
 
+-(BOOL)perIndexRenamedFiles;
+-(void)setPerIndexRenamedFiles:(BOOL)renamepass;
+
 -(BOOL)extractsSubArchives;
 -(void)setExtractsSubArchives:(BOOL)extractflag;
 
@@ -122,6 +126,9 @@
 
 -(void)addGlobFilter:(NSString *)wildcard;
 -(void)addRegexFilter:(XADRegex *)regex;
+
+-(void)addIndexRenaming:(NSString *)dest;
+
 -(void)addIndexFilter:(int)index;
 -(void)setIndices:(NSIndexSet *)indices;
 

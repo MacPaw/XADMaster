@@ -74,12 +74,6 @@ static inline BOOL IsZeroHeaderBlock(RAR5HeaderBlock block) { return IsZeroBlock
 	return 8;
 }
 
-+(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
-{
-    off_t signatureLocation = [self signatureLocationInData:data];
-    return signatureLocation != RAR5SignatureNotFound;
-}
-
 + (off_t)signatureLocationInData:(NSData *)data {
     const uint8_t *bytes=[data bytes];
     int length=[data length];
@@ -96,6 +90,12 @@ static inline BOOL IsZeroHeaderBlock(RAR5HeaderBlock block) { return IsZeroBlock
         }
     }
     return RAR5SignatureNotFound;
+}
+
++(BOOL)recognizeFileWithHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
+{
+    off_t signatureLocation = [self signatureLocationInData:data];
+    return signatureLocation != RAR5SignatureNotFound;
 }
 
 +(NSArray *)volumesForHandle:(CSHandle *)handle firstBytes:(NSData *)data name:(NSString *)name
